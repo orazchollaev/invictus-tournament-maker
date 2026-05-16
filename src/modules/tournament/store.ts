@@ -95,9 +95,20 @@ export const useTournamentStore = defineStore("tournament", () => {
     const t = tournaments.value.find((t) => t.id === tournamentId)
     if (!t) return
 
-    for (const round of t.rounds) {
+    for (let r = 0; r < t.rounds.length; r++) {
+      const round = t.rounds[r]
+
       for (const match of round.matches) {
-        match.result = null
+        // 🟢 First round: only reset score
+        if (r === 0) {
+          match.result = null
+        }
+        // 🔴 Later rounds: reset everything (they depend on winners)
+        else {
+          match.result = null
+          match.homeId = null
+          match.awayId = null
+        }
       }
     }
 
