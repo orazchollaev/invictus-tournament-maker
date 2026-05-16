@@ -103,9 +103,9 @@
 import { computed } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import { useTeamsStore } from "@/modules/teams/store"
-import { useTournamentStore } from "../store"
+import { useTournamentStore } from "@/modules/tournament/store"
 import { simulateMatch } from "@/engine/logic"
-import Bracket from "../components/Bracket.vue"
+import Bracket from "@/modules/tournament/components/Bracket.vue"
 
 const route = useRoute()
 const router = useRouter()
