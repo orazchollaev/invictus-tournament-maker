@@ -17,7 +17,7 @@
       <tr v-for="row in sorted" :key="row.team.id">
         <td>
           <span class="flex" style="gap: 6px">
-            <span class="dot" :style="{ background: row.team.color }"></span>
+            <span class="dot" :style="{ background: row.team.color }" />
             {{ row.team.name }}
           </span>
         </td>
@@ -57,7 +57,7 @@ function toggleSort(key: SortKey) {
 }
 
 // Result order: winner first, then eliminated by round (latest first), then TBD
-const RESULT_ORDER = { winner: 0, tbd: 99 }
+// const RESULT_ORDER = { winner: 0, tbd: 99 }
 
 interface Row {
   team: Team

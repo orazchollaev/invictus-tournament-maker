@@ -1,6 +1,6 @@
 <template>
   <span class="team-badge">
-    <span class="dot" :style="{ background: team?.color ?? '#ccc' }"></span>
+    <span class="dot" :style="{ background: team?.color ?? '#ccc' }" />
     <span class="name">{{ team?.name ?? "TBD" }}</span>
   </span>
 </template>

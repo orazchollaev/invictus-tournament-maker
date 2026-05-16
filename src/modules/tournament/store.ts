@@ -1,6 +1,6 @@
 import { defineStore } from "pinia"
 import { ref } from "vue"
-import type { Tournament, Match } from "./types"
+import type { Tournament } from "./types"
 import { createTournament, propagateWinners, simulateMatch, getWinnerId } from "@/engine/logic"
 import { useTeamsStore } from "../teams/store"
 
@@ -40,7 +40,7 @@ export const useTournamentStore = defineStore("tournament", () => {
     t.winnerId = getWinnerId(final)
   }
 
-  function clearDownstream(t: Tournament, fromRound: number, fromMatch: number) {
+  function clearDownstream(t: Tournament, fromRound: number, _fromMatch: number) {
     for (let r = fromRound + 1; r < t.rounds.length; r++) {
       t.rounds[r].matches.forEach((m) => {
         m.homeId = null
@@ -56,7 +56,7 @@ export const useTournamentStore = defineStore("tournament", () => {
     const allTeams = getTeams()
     for (let r = 0; r < t.rounds.length; r++) {
       propagateWinners(t.rounds, allTeams)
-      t.rounds[r].matches.forEach((match, mi) => {
+      t.rounds[r].matches.forEach((match, _mi) => {
         if (!match.result && match.homeId && match.awayId) {
           match.result = simulateMatch(match, allTeams)
         }

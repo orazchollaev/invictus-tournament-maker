@@ -29,7 +29,7 @@
             </label>
             <label v-for="team in teamsStore.teams" :key="team.id" class="team-check">
               <input v-model="selected" type="checkbox" :value="team.id" />
-              <span class="dot" :style="{ background: team.color }"></span>
+              <span class="dot" :style="{ background: team.color }" />
               {{ team.name }}
               <span style="color: var(--text-muted)">({{ team.power }})</span>
             </label>

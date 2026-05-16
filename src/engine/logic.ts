@@ -79,7 +79,7 @@ export function getWinnerId(match: Match): string | null {
   return null
 }
 
-export function propagateWinners(rounds: Round[], teams: Team[]) {
+export function propagateWinners(rounds: Round[], _teams: Team[]) {
   for (let r = 0; r < rounds.length - 1; r++) {
     const curr = rounds[r]
     const next = rounds[r + 1]

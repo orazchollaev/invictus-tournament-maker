@@ -9,13 +9,13 @@
               <th>Color</th>
               <th>Name</th>
               <th>Power</th>
-              <th></th>
+              <th />
             </tr>
           </thead>
           <tbody>
             <tr v-for="team in store.teams" :key="team.id">
               <td>
-                <span class="color-dot" :style="{ background: team.color }"></span>
+                <span class="color-dot" :style="{ background: team.color }" />
               </td>
               <td>
                 <input v-if="editing === team.id" v-model="editName" style="width: 140px" />
@@ -57,7 +57,7 @@
       </div>
     </div>
 
-    <div class="section-box" v-if="store.teams.length < 16">
+    <div v-if="store.teams.length < 16" class="section-box">
       <h2>Add Team</h2>
       <div class="section-body">
         <div class="flex">
@@ -74,7 +74,7 @@
           />
           <label>Power:</label>
           <input v-model.number="newPower" type="number" min="1" max="100" style="width: 60px" />
-          <button class="primary" @click="addTeam" :disabled="!newName.trim()">Add</button>
+          <button class="primary" :disabled="!newName.trim()" @click="addTeam">Add</button>
         </div>
       </div>
     </div>

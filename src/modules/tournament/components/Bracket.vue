@@ -2,13 +2,11 @@
   <div class="bracket-wrap">
     <div class="bracket">
       <template v-for="(round, ri) in tournament.rounds" :key="ri">
-        <div
-          v-if="ri > 0"
-          :ref="(el) => setConnRef(el as Element | null, ri)"
-          class="conn-col"
-        ></div>
+        <div v-if="ri > 0" :ref="(el) => setConnRef(el as Element | null, ri)" class="conn-col" />
         <div class="round-col">
-          <div class="round-title">{{ round.name }}</div>
+          <div class="round-title">
+            {{ round.name }}
+          </div>
           <div class="matches-col">
             <div
               v-for="(match, mi) in round.matches"
@@ -85,7 +83,7 @@ function startEdit(match: Match) {
   editAway.value = match.result?.away ?? 0
 }
 
-function saveResult(ri: number, mi: number, match: Match) {
+function saveResult(ri: number, mi: number, _match: Match) {
   if (editHome.value === editAway.value) return
   emit("set-result", ri, mi, editHome.value, editAway.value)
   editingMatch.value = null
