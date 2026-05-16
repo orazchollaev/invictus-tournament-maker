@@ -1,6 +1,7 @@
 import tseslint from "typescript-eslint"
 import vue from "eslint-plugin-vue"
 import vueParser from "vue-eslint-parser"
+import unusedImports from "eslint-plugin-unused-imports"
 
 export default tseslint.config(
   ...vue.configs["flat/recommended"],
@@ -19,6 +20,7 @@ export default tseslint.config(
 
     plugins: {
       vue,
+      "unuserd-imports": unusedImports,
     },
 
     rules: {
@@ -48,6 +50,22 @@ export default tseslint.config(
       "no-var": "error",
       "object-shorthand": "error",
       "prefer-template": "error",
+
+      // normal unused disable
+      "no-unused-vars": "off",
+      "@typescript-eslint/no-unused-vars": "off",
+
+      // auto fix yapan rule
+      "unused-imports/no-unused-imports": "error",
+      "unused-imports/no-unused-vars": [
+        "warn",
+        {
+          vars: "all",
+          varsIgnorePattern: "^_",
+          args: "after-used",
+          argsIgnorePattern: "^_",
+        },
+      ],
     },
   }
 )
