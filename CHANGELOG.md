@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.1.2](https://github.com/orazchollaev/tournament-sim/compare/v0.1.1...v0.1.2) (2026-05-16)
+
+### Features
+
+- add data reset functionality ([ded357b](https://github.com/orazchollaev/tournament-sim/commit/ded357b3c1f67bea803fbc4fc4eac927b9ba7f4b))
+
+### Bug Fixes
+
+- bracket layout positioning issue ([a39a2d4](https://github.com/orazchollaev/tournament-sim/commit/a39a2d4cbe1362baac315129c20bac2f2834f2e0))
+
 ## [0.1.1](https://github.com/orazchollaev/tournament-sim/compare/v0.1.0...v0.1.1) (2026-05-16)
 
 ### Features
