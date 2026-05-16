@@ -107,23 +107,42 @@ function poisson(lambda: number): number {
 }
 
 export function simulateMatch(match: Match, teams: Team[]): { home: number; away: number } {
-  const home = teams.find((t) => t.id === match.homeId)
-  const away = teams.find((t) => t.id === match.awayId)
-  const hp = home?.power ?? 50
-  const ap = away?.power ?? 50
+  const homeTeam = teams.find((t) => t.id === match.homeId)
+  const awayTeam = teams.find((t) => t.id === match.awayId)
 
-  // Power difference shifts expected goals. 20pt gap ≈ +0.5 lambda.
-  const diff = (hp - ap) / 100
-  const base = 1.3
-  const hLambda = Math.max(0.3, base + diff * 1.5)
-  const aLambda = Math.max(0.3, base - diff * 1.5)
+  const hp = homeTeam?.power ?? 50
+  const ap = awayTeam?.power ?? 50
 
-  let h = poisson(hLambda)
-  let a = poisson(aLambda)
+  const homeAdvantage = 6
 
-  // No draws in knockout — stronger side wins the tiebreak more often
+  const hpAdjusted = hp + homeAdvantage
+
+  const diff = (hpAdjusted - ap) / 40
+  const strength = Math.tanh(diff)
+
+  const base = 1.45
+
+  const randomFactor = 0.85 + Math.random() * 0.3
+
+  let hLambda = base * (1 + strength * 0.95) * randomFactor
+  let aLambda = base * (1 - strength * 0.95) * randomFactor
+
+  if (strength > 0.55 && Math.random() < 0.008) {
+    return Math.random() < 0.5 ? { home: 0, away: 3 } : { home: 3, away: 0 }
+  }
+
+  const chaos = Math.random()
+  if (chaos < 0.06) {
+    hLambda *= 1.4
+    aLambda *= 1.4
+  }
+
+  let h = poisson(Math.max(0.25, hLambda))
+  let a = poisson(Math.max(0.25, aLambda))
+
   if (h === a) {
-    Math.random() * (hp + ap) < hp ? h++ : a++
+    const strongerWins = Math.random() < hpAdjusted / (hpAdjusted + ap)
+    strongerWins ? h++ : a++
   }
 
   return { home: h, away: a }

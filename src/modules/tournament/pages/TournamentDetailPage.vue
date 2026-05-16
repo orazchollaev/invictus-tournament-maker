@@ -52,8 +52,14 @@
         </div>
       </div>
 
-      <div style="margin-top: 8px; text-align: right">
-        <button class="danger" @click="deleteTournament">Delete Tournament</button>
+      <div class="flex" style="justify-content: flex-end; gap: 12px">
+        <div style="margin-top: 8px; text-align: right">
+          <button class="danger" @click="resetTournament">Reset Tournament</button>
+        </div>
+
+        <div style="margin-top: 8px; text-align: right">
+          <button class="danger" @click="deleteTournament">Delete Tournament</button>
+        </div>
       </div>
     </template>
   </div>
@@ -95,6 +101,11 @@ function deleteTournament() {
   if (!confirm("Delete this tournament?")) return
   store.remove(route.params.id as string)
   router.push("/tournaments")
+}
+
+function resetTournament() {
+  if (!confirm("Reset this tournament?")) return
+  store.resetResults(route.params.id as string)
 }
 </script>
 

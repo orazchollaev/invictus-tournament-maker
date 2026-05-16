@@ -91,5 +91,28 @@ export const useTournamentStore = defineStore("tournament", () => {
     return tournaments.value.find((t) => t.id === id)
   }
 
-  return { tournaments, active, create, setResult, simulateAll, simulateRound, remove, getById }
+  function resetResults(tournamentId: string) {
+    const t = tournaments.value.find((t) => t.id === tournamentId)
+    if (!t) return
+
+    for (const round of t.rounds) {
+      for (const match of round.matches) {
+        match.result = null
+      }
+    }
+
+    t.winnerId = null
+  }
+
+  return {
+    tournaments,
+    active,
+    create,
+    setResult,
+    simulateAll,
+    simulateRound,
+    remove,
+    getById,
+    resetResults,
+  }
 })
