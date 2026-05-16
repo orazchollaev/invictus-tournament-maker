@@ -19,6 +19,10 @@
             </button>
           </div>
           <div class="flex-wrap">
+            <label class="team-check">
+              <input v-model="allSelected" type="checkbox" />
+              <strong>Select All</strong>
+            </label>
             <label v-for="team in teamsStore.teams" :key="team.id" class="team-check">
               <input v-model="selected" type="checkbox" :value="team.id" />
               <span class="dot" :style="{ background: team.color }"></span>
@@ -118,6 +122,13 @@ function createTournament() {
 }
 
 const activeTournament = computed(() => (store.active ? store.getById(store.active) : null))
+
+const allSelected = computed({
+  get: () => selected.value.length === teamsStore.teams.length,
+  set: (value: boolean) => {
+    selected.value = value ? teamsStore.teams.map((team) => team.id) : []
+  },
+})
 
 function winnerName(t: Tournament) {
   return allTeams.value.find((tm) => tm.id === t.winnerId)?.name ?? "?"
