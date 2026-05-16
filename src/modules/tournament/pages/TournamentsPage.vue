@@ -12,15 +12,15 @@
             <input v-model="newName" placeholder="Tournament name" style="width: 200px" />
             <button
               class="primary"
-              @click="createTournament"
               :disabled="!newName.trim() || selected.length < 2"
+              @click="createTournament"
             >
               Create ({{ selected.length }} teams)
             </button>
           </div>
           <div class="flex-wrap">
             <label v-for="team in teamsStore.teams" :key="team.id" class="team-check">
-              <input type="checkbox" :value="team.id" v-model="selected" />
+              <input v-model="selected" type="checkbox" :value="team.id" />
               <span class="dot" :style="{ background: team.color }"></span>
               {{ team.name }}
               <span style="color: var(--text-muted)">({{ team.power }})</span>
@@ -37,7 +37,7 @@
     </div>
 
     <!-- Tournament list -->
-    <div class="section-box" v-if="store.tournaments.length">
+    <div v-if="store.tournaments.length" class="section-box">
       <h2>Tournaments</h2>
       <div class="section-body" style="padding: 0">
         <div
@@ -65,7 +65,7 @@
     </div>
 
     <!-- Active bracket view -->
-    <div class="section-box" v-if="activeTournament">
+    <div v-if="activeTournament" class="section-box">
       <h2>{{ activeTournament.name }} — Bracket</h2>
       <div class="section-body" style="padding: 8px 0">
         <div class="flex" style="margin-bottom: 10px; padding: 0 8px">
@@ -99,7 +99,7 @@
 import { ref, computed } from "vue"
 import { useTeamsStore } from "@/modules/teams/store"
 import { useTournamentStore } from "../store"
-import { simulateMatch, propagateWinners, getWinnerId } from "@/engine/logic"
+import { simulateMatch } from "@/engine/logic"
 import Bracket from "../components/Bracket.vue"
 import type { Tournament } from "../types"
 

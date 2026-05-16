@@ -2,39 +2,52 @@ import tseslint from "typescript-eslint"
 import vue from "eslint-plugin-vue"
 import vueParser from "vue-eslint-parser"
 
-export default tseslint.config({
-  files: ["**/*.{ts,vue}"],
+export default tseslint.config(
+  ...vue.configs["flat/recommended"],
 
-  languageOptions: {
-    parser: vueParser,
-    parserOptions: {
-      parser: tseslint.parser,
-      ecmaVersion: "latest",
-      sourceType: "module",
+  {
+    files: ["**/*.{ts,vue}"],
+
+    languageOptions: {
+      parser: vueParser,
+      parserOptions: {
+        parser: tseslint.parser,
+        ecmaVersion: "latest",
+        sourceType: "module",
+      },
     },
-  },
 
-  rules: {
-    "no-undef": "off",
+    plugins: {
+      vue,
+    },
 
-    // Vue
-    "vue/multi-word-component-names": "off",
-    "vue/no-multiple-template-root": "off",
-    "vue/require-default-prop": "off",
-    "vue/no-v-html": "warn",
+    rules: {
+      "no-undef": "off",
+      "vue/max-attributes-per-line": "off",
+      "vue/singleline-html-element-content-newline": "off",
+      "vue/multiline-html-element-content-newline": "off",
+      "vue/html-indent": "off",
+      "vue/first-attribute-linebreak": "off",
 
-    // prettier ile cakisabilir
-    "vue/html-self-closing": "off",
-    "vue/padding-line-between-blocks": "off",
+      // Vue
+      "vue/multi-word-component-names": "off",
+      "vue/no-multiple-template-root": "off",
+      "vue/require-default-prop": "off",
+      "vue/no-v-html": "warn",
 
-    // TS
-    "@typescript-eslint/consistent-type-imports": "off",
+      // prettier ile çakışabilir
+      "vue/html-self-closing": "off",
+      "vue/padding-line-between-blocks": "off",
 
-    // General
-    "no-console": ["warn", { allow: ["warn", "error", "info"] }],
-    "prefer-const": "error",
-    "no-var": "error",
-    "object-shorthand": "error",
-    "prefer-template": "error",
-  },
-})
+      // TS
+      "@typescript-eslint/consistent-type-imports": "off",
+
+      // General
+      "no-console": ["warn", { allow: ["warn", "error", "info"] }],
+      "prefer-const": "error",
+      "no-var": "error",
+      "object-shorthand": "error",
+      "prefer-template": "error",
+    },
+  }
+)
