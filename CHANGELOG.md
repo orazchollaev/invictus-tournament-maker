@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.1.3](https://github.com/orazchollaev/tournament-sim/compare/v0.1.2...v0.1.3) (2026-05-16)
+
+### Features
+
+- add elimination round table to tournament detail page ([c6f4bce](https://github.com/orazchollaev/tournament-sim/commit/c6f4bce3142e4ca0b0356287974bfb28ccb72a60))
+- extract tournament detail page ([42a4c37](https://github.com/orazchollaev/tournament-sim/commit/42a4c37bad419b4cf8e81a83c8396b3c1765555f))
+
+### Code Refactoring
+
+- extract header into reusable component ([8be00eb](https://github.com/orazchollaev/tournament-sim/commit/8be00eb320f113843134de27c66279c975700197))
+
 ## [0.1.2](https://github.com/orazchollaev/tournament-sim/compare/v0.1.1...v0.1.2) (2026-05-16)
 
 ### Features
