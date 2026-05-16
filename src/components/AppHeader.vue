@@ -72,9 +72,4 @@ nav a.router-link-active {
 .clear-data {
   margin-left: auto;
 }
-
-.clear-data button {
-  font-size: 11px;
-  padding: 1px 6px;
-}
 </style>

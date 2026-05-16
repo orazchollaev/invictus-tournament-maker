@@ -7,14 +7,12 @@
       </p>
     </div>
     <template v-else>
-      <!-- Header -->
       <div class="t-header">
         <RouterLink to="/tournaments" class="back">← Tournaments</RouterLink>
         <h1>{{ tournament.name }}</h1>
         <span class="t-meta">{{ tournament.teamIds.length }} teams · Created {{ dateStr }}</span>
       </div>
 
-      <!-- Winner banner -->
       <div
         v-if="tournament.winnerId"
         class="winner-banner"
@@ -25,7 +23,6 @@
         wins the tournament!
       </div>
 
-      <!-- Bracket section -->
       <div class="section-box">
         <h2>Bracket</h2>
         <div class="section-body" style="padding: 8px 0">
@@ -48,50 +45,13 @@
         </div>
       </div>
 
-      <!-- Teams in this tournament -->
       <div class="section-box">
         <h2>Participants</h2>
         <div class="section-body" style="padding: 0">
-          <table>
-            <thead>
-              <tr>
-                <th>Team</th>
-                <th>Power</th>
-                <th>Result</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="team in participantTeams" :key="team.id">
-                <td>
-                  <span class="flex" style="gap: 6px">
-                    <span class="dot" :style="{ background: team.color }"></span>
-                    {{ team.name }}
-                  </span>
-                </td>
-                <td>{{ team.power }}</td>
-                <td>
-                  <span
-                    v-if="tournament.winnerId === team.id"
-                    class="tag"
-                    :style="{ background: team.color }"
-                  >
-                    Winner
-                  </span>
-                  <span
-                    v-else-if="isEliminated(team.id)"
-                    style="color: var(--text-muted); font-size: 12px"
-                  >
-                    Eliminated
-                  </span>
-                  <span v-else style="font-size: 12px; color: var(--text-muted)">—</span>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+          <ParticipantsTable :teams="allTeams" :tournament="tournament" />
         </div>
       </div>
 
-      <!-- Danger zone -->
       <div style="margin-top: 8px; text-align: right">
         <button class="danger" @click="deleteTournament">Delete Tournament</button>
       </div>
@@ -106,6 +66,7 @@ import { useTeamsStore } from "@/modules/teams/store"
 import { useTournamentStore } from "@/modules/tournament/store"
 import { simulateMatch } from "@/engine/logic"
 import Bracket from "@/modules/tournament/components/Bracket.vue"
+import ParticipantsTable from "@/modules/tournament/components/ParticipantsTable.vue"
 
 const route = useRoute()
 const router = useRouter()
@@ -114,31 +75,12 @@ const store = useTournamentStore()
 
 const allTeams = computed(() => teamsStore.teams)
 const tournament = computed(() => store.getById(route.params.id as string))
-
 const winnerTeam = computed(() => allTeams.value.find((t) => t.id === tournament.value?.winnerId))
-
-const participantTeams = computed(() =>
-  allTeams.value.filter((t) => tournament.value?.teamIds.includes(t.id))
-)
 
 const dateStr = computed(() => {
   if (!tournament.value) return ""
   return new Date(tournament.value.createdAt).toLocaleDateString()
 })
-
-function isEliminated(teamId: string): boolean {
-  const t = tournament.value
-  if (!t) return false
-  for (const round of t.rounds) {
-    for (const match of round.matches) {
-      if ((match.homeId === teamId || match.awayId === teamId) && match.result) {
-        const loser = match.result.home > match.result.away ? match.awayId : match.homeId
-        if (loser === teamId) return true
-      }
-    }
-  }
-  return false
-}
 
 function simMatch(ri: number, mi: number) {
   const t = tournament.value
@@ -174,7 +116,6 @@ function deleteTournament() {
   font-size: 12px;
   color: var(--text-muted);
 }
-
 .winner-banner {
   border: 1px solid var(--border);
   border-left-width: 4px;
@@ -182,12 +123,5 @@ function deleteTournament() {
   padding: 10px 14px;
   margin-bottom: 16px;
   font-size: 14px;
-}
-
-.dot {
-  display: inline-block;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
 }
 </style>
