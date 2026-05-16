@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.1.5](https://github.com/orazchollaev/tournament-sim/compare/v0.1.4...v0.1.5) (2026-05-16)
+
+### Features
+
+- **engine:** improve match simulation realism with balanced randomness and strength scaling ([db2170b](https://github.com/orazchollaev/tournament-sim/commit/db2170b6cab85ca3dfcb03c52f0f3f5a98eee004))
+- **tournament:** add full reset functionality for match results and winner state ([a1a43a8](https://github.com/orazchollaev/tournament-sim/commit/a1a43a81bd02f0a5ce338baa9d2068b08356d35b))
+
+### Chores
+
+- **eslint:** correct unused-imports plugin configuration ([d69fd9f](https://github.com/orazchollaev/tournament-sim/commit/d69fd9f1a1e9737e4a6cdf3646f3eb502fe8dd6f))
+- fix unused variables and improve TypeScript/ESLint compliance ([0bdaaca](https://github.com/orazchollaev/tournament-sim/commit/0bdaacaec99951b9dcc3e888b3ab8b8b54186b19))
+
 ## [0.1.4](https://github.com/orazchollaev/tournament-sim/compare/v0.1.3...v0.1.4) (2026-05-16)
 
 ### Features
