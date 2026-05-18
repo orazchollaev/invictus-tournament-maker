@@ -12,14 +12,14 @@ export const useTournamentStore = defineStore("tournament", () => {
     return useTeamsStore().teams
   }
 
-  function create(name: string, teamIds: string[]) {
+  function create(name: string, teamIds: string[], seeded = false) {
     const allTeams = getTeams()
     const selected = allTeams.filter((t) => teamIds.includes(t.id))
     const season =
       tournaments.value
         .filter((t) => t.name === name)
         .reduce((max, t) => Math.max(max, t.season), 0) + 1
-    const t = createTournament(name, selected, season)
+    const t = createTournament(name, selected, season, seeded)
     tournaments.value.push(t)
     active.value = t.id
     return t.id
@@ -31,7 +31,7 @@ export const useTournamentStore = defineStore("tournament", () => {
     t.name = newName.trim()
   }
 
-  function newSeason(id: string): string | undefined {
+  function newSeason(id: string, seeded = false): string | undefined {
     const t = tournaments.value.find((t) => t.id === id)
     if (!t || !t.winnerId) return
     const allTeams = getTeams()
@@ -40,7 +40,7 @@ export const useTournamentStore = defineStore("tournament", () => {
       tournaments.value
         .filter((tr) => tr.name === t.name)
         .reduce((max, tr) => Math.max(max, tr.season), 0) + 1
-    const newT = createTournament(t.name, selected, season)
+    const newT = createTournament(t.name, selected, season, seeded)
     tournaments.value.push(newT)
     active.value = newT.id
     return newT.id

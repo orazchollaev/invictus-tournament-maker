@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref } from "vue"
 import Bracket from "@/modules/tournament/components/Bracket.vue"
 import ParticipantsTable from "@/modules/tournament/components/ParticipantsTable.vue"
 import { useTournamentDetail } from "../composables/useTournamentDetail"
@@ -14,6 +15,8 @@ const {
   resetTournament,
   startNewSeason,
 } = useTournamentDetail()
+
+const showSeasonChoice = ref(false)
 </script>
 
 <template>
@@ -74,7 +77,27 @@ const {
       </div>
 
       <div class="flex" style="justify-content: flex-end; gap: 8px; margin-top: 8px">
-        <button v-if="tournament.winnerId" class="primary" @click="startNewSeason">
+        <template v-if="tournament.winnerId && showSeasonChoice">
+          <span style="font-size: 12px; color: var(--text-muted)">Draw:</span>
+          <button
+            @click="
+              startNewSeason(false)
+              showSeasonChoice = false
+            "
+          >
+            Random
+          </button>
+          <button
+            @click="
+              startNewSeason(true)
+              showSeasonChoice = false
+            "
+          >
+            Seeded
+          </button>
+          <button @click="showSeasonChoice = false">Cancel</button>
+        </template>
+        <button v-else-if="tournament.winnerId" class="primary" @click="showSeasonChoice = true">
           New Season
         </button>
         <button class="danger" @click="resetTournament">Reset</button>

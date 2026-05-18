@@ -14,23 +14,45 @@ function shuffle<T>(arr: T[]): T[] {
   return a
 }
 
-export function createTournament(name: string, teams: Team[], season = 1): Tournament {
+export function createTournament(
+  name: string,
+  teams: Team[],
+  season = 1,
+  seeded = false
+): Tournament {
   const count = teams.length
   const size = Math.pow(2, Math.ceil(Math.log2(count)))
-  const shuffled = shuffle(teams)
   const byes = size - count
 
   const firstMatches: Match[] = []
-  let teamIdx = 0
-  for (let i = 0; i < size / 2; i++) {
-    const home = shuffled[teamIdx++] ?? null
-    const away = byes > 0 && i < byes ? null : (shuffled[teamIdx++] ?? null)
-    firstMatches.push({
-      id: uid(),
-      homeId: home?.id ?? null,
-      awayId: away?.id ?? null,
-      result: null,
-    })
+
+  if (seeded) {
+    // Sort by power desc; strongest teams get byes, rest split into two pots
+    const sorted = [...teams].sort((a, b) => b.power - a.power)
+    const byeTeams = sorted.slice(0, byes)
+    const rest = sorted.slice(byes)
+    const half = rest.length / 2
+    const pot1 = shuffle(rest.slice(0, half))
+    const pot2 = shuffle(rest.slice(half))
+    for (const t of byeTeams) {
+      firstMatches.push({ id: uid(), homeId: t.id, awayId: null, result: null })
+    }
+    for (let i = 0; i < pot1.length; i++) {
+      firstMatches.push({ id: uid(), homeId: pot1[i].id, awayId: pot2[i].id, result: null })
+    }
+  } else {
+    const shuffled = shuffle(teams)
+    let teamIdx = 0
+    for (let i = 0; i < size / 2; i++) {
+      const home = shuffled[teamIdx++] ?? null
+      const away = byes > 0 && i < byes ? null : (shuffled[teamIdx++] ?? null)
+      firstMatches.push({
+        id: uid(),
+        homeId: home?.id ?? null,
+        awayId: away?.id ?? null,
+        result: null,
+      })
+    }
   }
 
   firstMatches.forEach((m) => {

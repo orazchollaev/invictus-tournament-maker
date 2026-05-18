@@ -9,6 +9,7 @@ const {
   store,
   newName,
   selected,
+  seeded,
   allSelected,
   toggleAll,
   createTournament,
@@ -18,6 +19,7 @@ const {
 
 const editingId = ref<string | null>(null)
 const editName = ref("")
+const pendingSeasonId = ref<string | null>(null)
 
 function startEdit(t: Tournament) {
   editingId.value = t.id
@@ -29,8 +31,9 @@ function saveEdit(id: string) {
   editingId.value = null
 }
 
-function startNewSeason(t: Tournament) {
-  const id = store.newSeason(t.id)
+function doNewSeason(t: Tournament, isSeeded: boolean) {
+  pendingSeasonId.value = null
+  const id = store.newSeason(t.id, isSeeded)
   if (id) router.push(`/tournaments/${id}`)
 }
 </script>
@@ -44,7 +47,7 @@ function startNewSeason(t: Tournament) {
           Add at least 2 teams on the Teams tab first.
         </div>
         <template v-else>
-          <div class="flex" style="margin-bottom: 10px">
+          <div class="flex" style="margin-bottom: 8px">
             <input
               v-model="newName"
               placeholder="Tournament name"
@@ -58,6 +61,16 @@ function startNewSeason(t: Tournament) {
             >
               Create ({{ selected.length }} teams)
             </button>
+          </div>
+          <div class="flex" style="margin-bottom: 10px; gap: 12px">
+            <label class="radio-opt">
+              <input v-model="seeded" type="radio" :value="false" />
+              Random draw
+            </label>
+            <label class="radio-opt">
+              <input v-model="seeded" type="radio" :value="true" />
+              Seeded (strong–weak)
+            </label>
           </div>
           <div class="flex-wrap">
             <label class="team-check select-all">
@@ -85,6 +98,7 @@ function startNewSeason(t: Tournament) {
       <h2>Tournaments</h2>
       <div class="section-body" style="padding: 0">
         <div v-for="t in store.tournaments" :key="t.id" class="t-row">
+          <!-- Rename mode -->
           <template v-if="editingId === t.id">
             <input
               v-model="editName"
@@ -103,6 +117,22 @@ function startNewSeason(t: Tournament) {
               Cancel
             </button>
           </template>
+          <!-- New Season seeding choice -->
+          <template v-else-if="pendingSeasonId === t.id">
+            <span class="t-name">{{ t.name }}</span>
+            <span class="t-season">S{{ t.season }}</span>
+            <span class="t-meta" style="margin-left: auto">Draw:</span>
+            <button style="font-size: 11px; padding: 1px 8px" @click="doNewSeason(t, false)">
+              Random
+            </button>
+            <button style="font-size: 11px; padding: 1px 8px" @click="doNewSeason(t, true)">
+              Seeded
+            </button>
+            <button style="font-size: 11px; padding: 1px 8px" @click="pendingSeasonId = null">
+              Cancel
+            </button>
+          </template>
+          <!-- Normal row -->
           <template v-else>
             <span class="t-name">{{ t.name }}</span>
             <span class="t-season">S{{ t.season }}</span>
@@ -119,7 +149,7 @@ function startNewSeason(t: Tournament) {
                 v-if="t.winnerId"
                 class="primary"
                 style="font-size: 11px; padding: 1px 8px"
-                @click.stop="startNewSeason(t)"
+                @click.stop="pendingSeasonId = t.id"
               >
                 New Season
               </button>
@@ -200,5 +230,12 @@ function startNewSeason(t: Tournament) {
   height: 10px;
   border-radius: 50%;
   flex-shrink: 0;
+}
+.radio-opt {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13px;
+  cursor: pointer;
 }
 </style>

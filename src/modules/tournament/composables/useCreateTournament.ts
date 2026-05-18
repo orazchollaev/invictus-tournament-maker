@@ -11,6 +11,7 @@ export function useCreateTournament() {
 
   const newName = ref("")
   const selected = ref<string[]>([])
+  const seeded = ref(false)
 
   const allSelected = computed(
     () => selected.value.length === teamsStore.teams.length && teamsStore.teams.length > 0
@@ -22,9 +23,10 @@ export function useCreateTournament() {
 
   function createTournament() {
     if (!newName.value.trim() || selected.value.length < 2) return
-    const id = store.create(newName.value.trim(), selected.value)
+    const id = store.create(newName.value.trim(), selected.value, seeded.value)
     newName.value = ""
     selected.value = []
+    seeded.value = false
     router.push(`/tournaments/${id}`)
   }
 
@@ -42,6 +44,7 @@ export function useCreateTournament() {
     store,
     newName,
     selected,
+    seeded,
     allSelected,
     toggleAll,
     createTournament,
