@@ -208,7 +208,7 @@ window.addEventListener("resize", drawConnectors)
   border-bottom: none;
 }
 .match-row.winner {
-  background: #f0f9f0;
+  background: color-mix(in srgb, var(--success) 12%, var(--surface));
   font-weight: 700;
 }
 .score {
