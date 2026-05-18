@@ -1,9 +1,12 @@
 <script setup lang="ts">
+import { useRouter } from "vue-router"
 import { useSettingsStore } from "../store"
 import type { Theme } from "../store"
 import { useTeamsStore } from "../../teams/store"
 import { useTournamentStore } from "../../tournament/store"
 import { version } from "../../../../package.json"
+
+const router = useRouter()
 
 const settings = useSettingsStore()
 const teamsStore = useTeamsStore()
@@ -88,8 +91,11 @@ function importData() {
 
 <template>
   <div class="page">
-    <div class="section-box">
+    <div class="page-header">
+      <button class="back-btn" @click="router.back()">&#8592; Back</button>
       <h2>Settings</h2>
+    </div>
+    <div class="section-box">
       <div class="section-body">
         <div class="setting-row">
           <span class="setting-label">Theme</span>
@@ -140,6 +146,28 @@ function importData() {
 </template>
 
 <style scoped>
+.page-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.page-header h2 {
+  margin: 0;
+}
+.back-btn {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 4px 12px;
+  font-size: 13px;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+.back-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
 .divider {
   border: none;
   border-top: 1px solid var(--border-light);
