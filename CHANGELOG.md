@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/orazchollaev/tournament-sim/compare/v0.3.2...v0.4.0) (2026-05-18)
+
+### Features
+
+- add responsive design support ([cdea19a](https://github.com/orazchollaev/tournament-sim/commit/cdea19a1d1a50e8fcf346cf5ea467e8117df08b6))
+- **settings:** add file-based sample datasets with auto-discovery ([d80265d](https://github.com/orazchollaev/tournament-sim/commit/d80265d374136de6f298209810787a027b5405ab))
+
 ## [0.3.2](https://github.com/orazchollaev/tournament-sim/compare/v0.3.1...v0.3.2) (2026-05-18)
 
 ### Bug Fixes
