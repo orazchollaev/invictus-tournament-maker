@@ -1,65 +1,3 @@
-<template>
-  <div class="bracket-wrap">
-    <div class="bracket">
-      <template v-for="(round, ri) in tournament.rounds" :key="ri">
-        <div v-if="ri > 0" :ref="(el) => setConnRef(el as Element | null, ri)" class="conn-col" />
-        <div class="round-col">
-          <div class="round-title">
-            {{ round.name }}
-          </div>
-          <div class="matches-col">
-            <div
-              v-for="(match, mi) in round.matches"
-              :key="match.id"
-              :ref="(el) => setMatchRef(el as Element | null, ri, mi)"
-              class="match-card"
-            >
-              <div class="match-row" :class="{ winner: isWinner(match, match.homeId) }">
-                <TeamBadge :team-id="match.homeId" :teams="teams" />
-                <span v-if="match.result !== null" class="score">{{ match.result.home }}</span>
-                <span v-else class="score tbd">-</span>
-              </div>
-              <div class="match-row" :class="{ winner: isWinner(match, match.awayId) }">
-                <TeamBadge :team-id="match.awayId" :teams="teams" />
-                <span v-if="match.result !== null" class="score">{{ match.result.away }}</span>
-                <span v-else class="score tbd">-</span>
-              </div>
-              <div v-if="match.homeId && match.awayId" class="match-actions">
-                <template v-if="editingMatch === match.id">
-                  <input v-model.number="editHome" type="number" min="0" style="width: 34px" />
-                  <span>–</span>
-                  <input v-model.number="editAway" type="number" min="0" style="width: 34px" />
-                  <button
-                    class="primary"
-                    style="font-size: 11px; padding: 1px 5px"
-                    @click="saveResult(ri, mi, match)"
-                  >
-                    OK
-                  </button>
-                  <button style="font-size: 11px; padding: 1px 4px" @click="editingMatch = null">
-                    ✕
-                  </button>
-                </template>
-                <template v-else>
-                  <button style="font-size: 11px; padding: 1px 5px" @click="startEdit(match)">
-                    {{ match.result ? "Edit" : "Set score" }}
-                  </button>
-                  <button
-                    style="font-size: 11px; padding: 1px 5px"
-                    @click="emit('sim-match', ri, mi)"
-                  >
-                    🎲
-                  </button>
-                </template>
-              </div>
-            </div>
-          </div>
-        </div>
-      </template>
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
 import { ref, nextTick, watch, onMounted, onUnmounted } from "vue"
 import type { Tournament, Match } from "../types"
@@ -156,6 +94,68 @@ onMounted(async () => {
 onUnmounted(() => window.removeEventListener("resize", drawConnectors))
 window.addEventListener("resize", drawConnectors)
 </script>
+
+<template>
+  <div class="bracket-wrap">
+    <div class="bracket">
+      <template v-for="(round, ri) in tournament.rounds" :key="ri">
+        <div v-if="ri > 0" :ref="(el) => setConnRef(el as Element | null, ri)" class="conn-col" />
+        <div class="round-col">
+          <div class="round-title">
+            {{ round.name }}
+          </div>
+          <div class="matches-col">
+            <div
+              v-for="(match, mi) in round.matches"
+              :key="match.id"
+              :ref="(el) => setMatchRef(el as Element | null, ri, mi)"
+              class="match-card"
+            >
+              <div class="match-row" :class="{ winner: isWinner(match, match.homeId) }">
+                <TeamBadge :team-id="match.homeId" :teams="teams" />
+                <span v-if="match.result !== null" class="score">{{ match.result.home }}</span>
+                <span v-else class="score tbd">-</span>
+              </div>
+              <div class="match-row" :class="{ winner: isWinner(match, match.awayId) }">
+                <TeamBadge :team-id="match.awayId" :teams="teams" />
+                <span v-if="match.result !== null" class="score">{{ match.result.away }}</span>
+                <span v-else class="score tbd">-</span>
+              </div>
+              <div v-if="match.homeId && match.awayId" class="match-actions">
+                <template v-if="editingMatch === match.id">
+                  <input v-model.number="editHome" type="number" min="0" style="width: 34px" />
+                  <span>–</span>
+                  <input v-model.number="editAway" type="number" min="0" style="width: 34px" />
+                  <button
+                    class="primary"
+                    style="font-size: 11px; padding: 1px 5px"
+                    @click="saveResult(ri, mi, match)"
+                  >
+                    OK
+                  </button>
+                  <button style="font-size: 11px; padding: 1px 4px" @click="editingMatch = null">
+                    ✕
+                  </button>
+                </template>
+                <template v-else>
+                  <button style="font-size: 11px; padding: 1px 5px" @click="startEdit(match)">
+                    {{ match.result ? "Edit" : "Set score" }}
+                  </button>
+                  <button
+                    style="font-size: 11px; padding: 1px 5px"
+                    @click="emit('sim-match', ri, mi)"
+                  >
+                    🎲
+                  </button>
+                </template>
+              </div>
+            </div>
+          </div>
+        </div>
+      </template>
+    </div>
+  </div>
+</template>
 
 <style scoped>
 .bracket-wrap {

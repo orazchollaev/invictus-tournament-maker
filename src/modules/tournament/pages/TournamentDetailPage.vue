@@ -1,3 +1,47 @@
+<script setup lang="ts">
+import { computed } from "vue"
+import { useRoute, useRouter } from "vue-router"
+import { useTeamsStore } from "@/modules/teams/store"
+import { useTournamentStore } from "@/modules/tournament/store"
+import { simulateMatch } from "@/engine/logic"
+import Bracket from "@/modules/tournament/components/Bracket.vue"
+import ParticipantsTable from "@/modules/tournament/components/ParticipantsTable.vue"
+
+const route = useRoute()
+const router = useRouter()
+const teamsStore = useTeamsStore()
+const store = useTournamentStore()
+
+const allTeams = computed(() => teamsStore.teams)
+const tournament = computed(() => store.getById(route.params.id as string))
+const winnerTeam = computed(() => allTeams.value.find((t) => t.id === tournament.value?.winnerId))
+
+const dateStr = computed(() => {
+  if (!tournament.value) return ""
+  return new Date(tournament.value.createdAt).toLocaleDateString()
+})
+
+function simMatch(ri: number, mi: number) {
+  const t = tournament.value
+  if (!t) return
+  const match = t.rounds[ri].matches[mi]
+  if (!match.homeId || !match.awayId) return
+  const result = simulateMatch(match, allTeams.value)
+  store.setResult(t.id, ri, mi, result.home, result.away)
+}
+
+function deleteTournament() {
+  if (!confirm("Delete this tournament?")) return
+  store.remove(route.params.id as string)
+  router.push("/tournaments")
+}
+
+function resetTournament() {
+  if (!confirm("Reset this tournament?")) return
+  store.resetResults(route.params.id as string)
+}
+</script>
+
 <template>
   <div class="page">
     <div v-if="!tournament">
@@ -64,50 +108,6 @@
     </template>
   </div>
 </template>
-
-<script setup lang="ts">
-import { computed } from "vue"
-import { useRoute, useRouter } from "vue-router"
-import { useTeamsStore } from "@/modules/teams/store"
-import { useTournamentStore } from "@/modules/tournament/store"
-import { simulateMatch } from "@/engine/logic"
-import Bracket from "@/modules/tournament/components/Bracket.vue"
-import ParticipantsTable from "@/modules/tournament/components/ParticipantsTable.vue"
-
-const route = useRoute()
-const router = useRouter()
-const teamsStore = useTeamsStore()
-const store = useTournamentStore()
-
-const allTeams = computed(() => teamsStore.teams)
-const tournament = computed(() => store.getById(route.params.id as string))
-const winnerTeam = computed(() => allTeams.value.find((t) => t.id === tournament.value?.winnerId))
-
-const dateStr = computed(() => {
-  if (!tournament.value) return ""
-  return new Date(tournament.value.createdAt).toLocaleDateString()
-})
-
-function simMatch(ri: number, mi: number) {
-  const t = tournament.value
-  if (!t) return
-  const match = t.rounds[ri].matches[mi]
-  if (!match.homeId || !match.awayId) return
-  const result = simulateMatch(match, allTeams.value)
-  store.setResult(t.id, ri, mi, result.home, result.away)
-}
-
-function deleteTournament() {
-  if (!confirm("Delete this tournament?")) return
-  store.remove(route.params.id as string)
-  router.push("/tournaments")
-}
-
-function resetTournament() {
-  if (!confirm("Reset this tournament?")) return
-  store.resetResults(route.params.id as string)
-}
-</script>
 
 <style scoped>
 .t-header {

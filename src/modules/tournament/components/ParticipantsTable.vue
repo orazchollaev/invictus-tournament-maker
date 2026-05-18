@@ -1,42 +1,3 @@
-<template>
-  <table>
-    <thead>
-      <tr>
-        <th>Team</th>
-        <th class="sortable" @click="toggleSort('power')">
-          Power
-          <span class="sort-icon">{{ sortKey === "power" ? (sortAsc ? "↑" : "↓") : "↕" }}</span>
-        </th>
-        <th class="sortable" @click="toggleSort('result')">
-          Result
-          <span class="sort-icon">{{ sortKey === "result" ? (sortAsc ? "↑" : "↓") : "↕" }}</span>
-        </th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr v-for="row in sorted" :key="row.team.id">
-        <td>
-          <span class="flex" style="gap: 6px">
-            <span class="dot" :style="{ background: row.team.color }" />
-            {{ row.team.name }}
-          </span>
-        </td>
-        <td>{{ row.team.power }}</td>
-        <td>
-          <span v-if="row.isWinner" class="tag" :style="{ background: row.team.color }">
-            Winner
-          </span>
-          <span v-else-if="row.eliminatedRound !== null" class="elim">
-            Eliminated ·
-            <span class="round-name">{{ row.eliminatedRound }}</span>
-          </span>
-          <span v-else style="color: var(--text-muted); font-size: 12px">—</span>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-</template>
-
 <script setup lang="ts">
 import { ref, computed } from "vue"
 import type { Team } from "@/modules/teams/types"
@@ -108,6 +69,45 @@ const sorted = computed(() => {
   })
 })
 </script>
+
+<template>
+  <table>
+    <thead>
+      <tr>
+        <th>Team</th>
+        <th class="sortable" @click="toggleSort('power')">
+          Power
+          <span class="sort-icon">{{ sortKey === "power" ? (sortAsc ? "↑" : "↓") : "↕" }}</span>
+        </th>
+        <th class="sortable" @click="toggleSort('result')">
+          Result
+          <span class="sort-icon">{{ sortKey === "result" ? (sortAsc ? "↑" : "↓") : "↕" }}</span>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr v-for="row in sorted" :key="row.team.id">
+        <td>
+          <span class="flex" style="gap: 6px">
+            <span class="dot" :style="{ background: row.team.color }" />
+            {{ row.team.name }}
+          </span>
+        </td>
+        <td>{{ row.team.power }}</td>
+        <td>
+          <span v-if="row.isWinner" class="tag" :style="{ background: row.team.color }">
+            Winner
+          </span>
+          <span v-else-if="row.eliminatedRound !== null" class="elim">
+            Eliminated ·
+            <span class="round-name">{{ row.eliminatedRound }}</span>
+          </span>
+          <span v-else style="color: var(--text-muted); font-size: 12px">—</span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</template>
 
 <style scoped>
 table {
