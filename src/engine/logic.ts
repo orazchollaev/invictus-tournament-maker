@@ -18,7 +18,8 @@ export function createTournament(
   name: string,
   teams: Team[],
   season = 1,
-  seeded = false
+  seeded = false,
+  orderedTeams?: Team[]
 ): Tournament {
   const count = teams.length
   const size = Math.pow(2, Math.ceil(Math.log2(count)))
@@ -26,7 +27,19 @@ export function createTournament(
 
   const firstMatches: Match[] = []
 
-  if (seeded) {
+  if (orderedTeams) {
+    let teamIdx = 0
+    for (let i = 0; i < size / 2; i++) {
+      const home = orderedTeams[teamIdx++] ?? null
+      const away = byes > 0 && i < byes ? null : (orderedTeams[teamIdx++] ?? null)
+      firstMatches.push({
+        id: uid(),
+        homeId: home?.id ?? null,
+        awayId: away?.id ?? null,
+        result: null,
+      })
+    }
+  } else if (seeded) {
     // Sort by power desc; strongest teams get byes, rest split into two pots
     const sorted = [...teams].sort((a, b) => b.power - a.power)
     const byeTeams = sorted.slice(0, byes)

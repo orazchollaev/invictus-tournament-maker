@@ -12,26 +12,23 @@ export const useTournamentStore = defineStore("tournament", () => {
     return useTeamsStore().teams
   }
 
-  function create(name: string, teamIds: string[], seeded = false) {
+  function create(name: string, teamIds: string[], seeded = false, orderedIds?: string[]) {
     const allTeams = getTeams()
     const selected = allTeams.filter((t) => teamIds.includes(t.id))
     const season =
       tournaments.value
         .filter((t) => t.name === name)
         .reduce((max, t) => Math.max(max, t.season), 0) + 1
-    const t = createTournament(name, selected, season, seeded)
+    const ordered = orderedIds
+      ? orderedIds.map((id) => allTeams.find((t) => t.id === id)).filter(Boolean)
+      : undefined
+    const t = createTournament(name, selected, season, seeded, ordered as any)
     tournaments.value.push(t)
     active.value = t.id
     return t.id
   }
 
-  function rename(id: string, newName: string) {
-    const t = tournaments.value.find((t) => t.id === id)
-    if (!t || !newName.trim()) return
-    t.name = newName.trim()
-  }
-
-  function newSeason(id: string, seeded = false): string | undefined {
+  function newSeason(id: string, seeded = false, orderedIds?: string[]): string | undefined {
     const t = tournaments.value.find((t) => t.id === id)
     if (!t || !t.winnerId) return
     const allTeams = getTeams()
@@ -40,7 +37,10 @@ export const useTournamentStore = defineStore("tournament", () => {
       tournaments.value
         .filter((tr) => tr.name === t.name)
         .reduce((max, tr) => Math.max(max, tr.season), 0) + 1
-    const newT = createTournament(t.name, selected, season, seeded)
+    const ordered = orderedIds
+      ? orderedIds.map((oid) => allTeams.find((tm) => tm.id === oid)).filter(Boolean)
+      : undefined
+    const newT = createTournament(t.name, selected, season, seeded, ordered as any)
     tournaments.value.push(newT)
     active.value = newT.id
     return newT.id
@@ -145,7 +145,6 @@ export const useTournamentStore = defineStore("tournament", () => {
     tournaments,
     active,
     create,
-    rename,
     newSeason,
     setResult,
     simulateAll,

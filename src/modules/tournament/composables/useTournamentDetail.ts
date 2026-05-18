@@ -41,8 +41,8 @@ export function useTournamentDetail() {
     store.resetResults(route.params.id as string)
   }
 
-  function startNewSeason(seeded: boolean) {
-    const id = store.newSeason(route.params.id as string, seeded)
+  function startNewSeason(seeded: boolean, orderedIds?: string[]) {
+    const id = store.newSeason(route.params.id as string, seeded, orderedIds)
     if (id) router.push(`/tournaments/${id}`)
   }
 

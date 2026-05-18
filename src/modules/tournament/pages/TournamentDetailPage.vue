@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { ref } from "vue"
+import { ref, computed } from "vue"
 import Bracket from "@/modules/tournament/components/Bracket.vue"
 import ParticipantsTable from "@/modules/tournament/components/ParticipantsTable.vue"
+import ManualDraw from "@/modules/tournament/components/ManualDraw.vue"
 import { useTournamentDetail } from "../composables/useTournamentDetail"
 
 const {
@@ -17,10 +18,26 @@ const {
 } = useTournamentDetail()
 
 const showSeasonChoice = ref(false)
+const showManualSeason = ref(false)
+
+const tournamentTeams = computed(() =>
+  allTeams.value.filter((t) => tournament.value?.teamIds.includes(t.id) ?? false)
+)
 
 function handleNewSeason(seeded: boolean) {
   startNewSeason(seeded)
   showSeasonChoice.value = false
+}
+
+function handleManualSeasonConfirm(orderedIds: string[]) {
+  startNewSeason(false, orderedIds)
+  showSeasonChoice.value = false
+  showManualSeason.value = false
+}
+
+function cancelSeasonChoice() {
+  showSeasonChoice.value = false
+  showManualSeason.value = false
 }
 </script>
 
@@ -81,12 +98,27 @@ function handleNewSeason(seeded: boolean) {
         </div>
       </div>
 
-      <div class="flex" style="justify-content: flex-end; gap: 8px; margin-top: 8px">
+      <div
+        class="flex"
+        style="justify-content: flex-end; gap: 8px; margin-top: 8px; flex-wrap: wrap"
+      >
         <template v-if="tournament.winnerId && showSeasonChoice">
-          <span style="font-size: 12px; color: var(--text-muted)">Draw:</span>
-          <button @click="handleNewSeason(false)">Random</button>
-          <button @click="handleNewSeason(true)">Seeded</button>
-          <button @click="showSeasonChoice = false">Cancel</button>
+          <template v-if="showManualSeason">
+            <div class="manual-season-wrap">
+              <ManualDraw
+                :teams="tournamentTeams"
+                @confirm="handleManualSeasonConfirm"
+                @cancel="showManualSeason = false"
+              />
+            </div>
+          </template>
+          <template v-else>
+            <span style="font-size: 12px; color: var(--text-muted)">Draw:</span>
+            <button @click="handleNewSeason(false)">Random</button>
+            <button @click="handleNewSeason(true)">Seeded</button>
+            <button @click="showManualSeason = true">Manual</button>
+            <button @click="cancelSeasonChoice">Cancel</button>
+          </template>
         </template>
         <button v-else-if="tournament.winnerId" class="primary" @click="showSeasonChoice = true">
           New Season
@@ -135,5 +167,11 @@ function handleNewSeason(seeded: boolean) {
   padding: 10px 14px;
   margin-bottom: 16px;
   font-size: 14px;
+}
+.manual-season-wrap {
+  background: var(--surface);
+  border: 1px solid var(--border-light);
+  padding: 12px;
+  width: 100%;
 }
 </style>

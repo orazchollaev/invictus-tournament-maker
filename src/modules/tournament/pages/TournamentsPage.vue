@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue"
 import { useCreateTournament } from "../composables/useCreateTournament"
+import ManualDraw from "../components/ManualDraw.vue"
 import type { Tournament } from "../types"
 
 const {
@@ -9,33 +10,47 @@ const {
   store,
   newName,
   selected,
-  seeded,
+  selectedTeams,
+  drawType,
   allSelected,
   toggleAll,
-  createTournament,
+  doCreate,
   winnerName,
   winnerColor,
 } = useCreateTournament()
 
-const editingId = ref<string | null>(null)
-const editName = ref("")
+const showManualDraw = ref(false)
 const seasonModal = ref<Tournament | null>(null)
+const showSeasonManual = ref(false)
 
-function startEdit(t: Tournament) {
-  editingId.value = t.id
-  editName.value = t.name
+function handleCreate() {
+  if (drawType.value === "manual") {
+    showManualDraw.value = true
+  } else {
+    doCreate()
+  }
 }
 
-function saveEdit(id: string) {
-  store.rename(id, editName.value)
-  editingId.value = null
+function handleManualConfirm(orderedIds: string[]) {
+  showManualDraw.value = false
+  doCreate(orderedIds)
 }
 
-function doNewSeason(isSeeded: boolean) {
+function cancelManualDraw() {
+  showManualDraw.value = false
+}
+
+function doNewSeason(isSeeded: boolean, orderedIds?: string[]) {
   if (!seasonModal.value) return
-  const id = store.newSeason(seasonModal.value.id, isSeeded)
+  const id = store.newSeason(seasonModal.value.id, isSeeded, orderedIds)
   seasonModal.value = null
+  showSeasonManual.value = false
   if (id) router.push(`/tournaments/${id}`)
+}
+
+function closeSeasonModal() {
+  seasonModal.value = null
+  showSeasonManual.value = false
 }
 </script>
 
@@ -48,28 +63,39 @@ function doNewSeason(isSeeded: boolean) {
         <div v-if="teamsStore.teams.length < 2" class="notice">
           Add at least 2 teams on the Teams tab first.
         </div>
+        <template v-else-if="showManualDraw">
+          <ManualDraw
+            :teams="selectedTeams"
+            @confirm="handleManualConfirm"
+            @cancel="cancelManualDraw"
+          />
+        </template>
         <template v-else>
           <div class="form-row">
             <input
               v-model="newName"
               placeholder="Tournament name"
               class="name-input"
-              @keyup.enter="createTournament"
+              @keyup.enter="handleCreate"
             />
             <div class="radio-row">
               <label class="radio-opt">
-                <input v-model="seeded" type="radio" :value="false" />
+                <input v-model="drawType" type="radio" value="random" />
                 Random draw
               </label>
               <label class="radio-opt">
-                <input v-model="seeded" type="radio" :value="true" />
+                <input v-model="drawType" type="radio" value="seeded" />
                 Seeded
+              </label>
+              <label class="radio-opt">
+                <input v-model="drawType" type="radio" value="manual" />
+                Manual
               </label>
             </div>
             <button
               class="primary"
               :disabled="!newName.trim() || selected.length < 2"
-              @click="createTournament"
+              @click="handleCreate"
             >
               Create
               <span class="count-badge">{{ selected.length }}</span>
@@ -99,38 +125,22 @@ function doNewSeason(isSeeded: boolean) {
       <h2>Tournaments</h2>
       <div class="t-list">
         <div v-for="t in store.tournaments" :key="t.id" class="t-row">
-          <!-- Rename mode -->
-          <template v-if="editingId === t.id">
-            <input
-              v-model="editName"
-              class="rename-input"
-              @keyup.enter="saveEdit(t.id)"
-              @keyup.escape="editingId = null"
-            />
-            <button class="primary sm" @click="saveEdit(t.id)">Save</button>
-            <button class="sm" @click="editingId = null">Cancel</button>
-          </template>
-
-          <!-- Normal row -->
-          <template v-else>
-            <span class="t-name">{{ t.name }}</span>
-            <span class="t-season">S{{ t.season }}</span>
-            <span class="t-meta">{{ t.teamIds.length }} teams</span>
-            <span v-if="t.winnerId" class="tag" :style="{ background: winnerColor(t) }">
-              🏆 {{ winnerName(t) }}
-            </span>
-            <span v-else class="t-meta">In progress</span>
-            <div class="ml-auto flex">
-              <button class="sm" @click.stop="startEdit(t)">Rename</button>
-              <button v-if="t.winnerId" class="primary sm" @click.stop="seasonModal = t">
-                + Season
-              </button>
-              <button class="primary sm" @click.stop="router.push(`/tournaments/${t.id}`)">
-                Open
-              </button>
-              <button class="danger sm" @click.stop="store.remove(t.id)">✕</button>
-            </div>
-          </template>
+          <span class="t-name">{{ t.name }}</span>
+          <span class="t-season">S{{ t.season }}</span>
+          <span class="t-meta">{{ t.teamIds.length }} teams</span>
+          <span v-if="t.winnerId" class="tag" :style="{ background: winnerColor(t) }">
+            🏆 {{ winnerName(t) }}
+          </span>
+          <span v-else class="t-meta">In progress</span>
+          <div class="ml-auto flex">
+            <button v-if="t.winnerId" class="primary sm" @click.stop="seasonModal = t">
+              + Season
+            </button>
+            <button class="primary sm" @click.stop="router.push(`/tournaments/${t.id}`)">
+              Open
+            </button>
+            <button class="danger sm" @click.stop="store.remove(t.id)">✕</button>
+          </div>
         </div>
       </div>
     </div>
@@ -138,16 +148,28 @@ function doNewSeason(isSeeded: boolean) {
     <p v-else-if="teamsStore.teams.length >= 2" class="empty-text">No tournaments yet.</p>
 
     <!-- New Season modal -->
-    <div v-if="seasonModal" class="modal-backdrop" @click.self="seasonModal = null">
+    <div v-if="seasonModal" class="modal-backdrop" @click.self="closeSeasonModal">
       <div class="modal">
         <div class="modal-header">New Season — {{ seasonModal.name }}</div>
         <div class="modal-body">
-          <p class="modal-desc">Choose draw type for Season {{ (seasonModal.season ?? 1) + 1 }}</p>
-          <div class="modal-actions">
-            <button class="primary" @click="doNewSeason(false)">Random draw</button>
-            <button class="primary" @click="doNewSeason(true)">Seeded</button>
-            <button @click="seasonModal = null">Cancel</button>
-          </div>
+          <template v-if="showSeasonManual">
+            <ManualDraw
+              :teams="teamsStore.teams.filter((t) => seasonModal!.teamIds.includes(t.id))"
+              @confirm="(ids) => doNewSeason(false, ids)"
+              @cancel="showSeasonManual = false"
+            />
+          </template>
+          <template v-else>
+            <p class="modal-desc">
+              Choose draw type for Season {{ (seasonModal.season ?? 1) + 1 }}
+            </p>
+            <div class="modal-actions">
+              <button class="primary" @click="doNewSeason(false)">Random draw</button>
+              <button class="primary" @click="doNewSeason(true)">Seeded</button>
+              <button class="primary" @click="showSeasonManual = true">Manual</button>
+              <button @click="closeSeasonModal">Cancel</button>
+            </div>
+          </template>
         </div>
       </div>
     </div>
@@ -260,9 +282,6 @@ function doNewSeason(isSeeded: boolean) {
   font-size: 12px;
   color: var(--text-muted);
 }
-.rename-input {
-  width: 160px;
-}
 
 /* Small button variant */
 .sm {
@@ -283,7 +302,7 @@ function doNewSeason(isSeeded: boolean) {
 .modal {
   background: var(--surface);
   border: 1px solid var(--border);
-  width: 300px;
+  width: 360px;
 }
 .modal-header {
   font-family: var(--font);
@@ -303,5 +322,6 @@ function doNewSeason(isSeeded: boolean) {
 .modal-actions {
   display: flex;
   gap: 8px;
+  flex-wrap: wrap;
 }
 </style>

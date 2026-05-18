@@ -4,6 +4,8 @@ import { useTeamsStore } from "@/modules/teams/store"
 import { useTournamentStore } from "@/modules/tournament/store"
 import type { Tournament } from "@/modules/tournament/types"
 
+export type DrawType = "random" | "seeded" | "manual"
+
 export function useCreateTournament() {
   const router = useRouter()
   const teamsStore = useTeamsStore()
@@ -11,22 +13,27 @@ export function useCreateTournament() {
 
   const newName = ref("")
   const selected = ref<string[]>([])
-  const seeded = ref(false)
+  const drawType = ref<DrawType>("random")
 
   const allSelected = computed(
     () => selected.value.length === teamsStore.teams.length && teamsStore.teams.length > 0
+  )
+
+  const selectedTeams = computed(() =>
+    teamsStore.teams.filter((t) => selected.value.includes(t.id))
   )
 
   function toggleAll() {
     selected.value = allSelected.value ? [] : teamsStore.teams.map((t) => t.id)
   }
 
-  function createTournament() {
+  function doCreate(orderedIds?: string[]) {
     if (!newName.value.trim() || selected.value.length < 2) return
-    const id = store.create(newName.value.trim(), selected.value, seeded.value)
+    const isSeeded = drawType.value === "seeded"
+    const id = store.create(newName.value.trim(), selected.value, isSeeded, orderedIds)
     newName.value = ""
     selected.value = []
-    seeded.value = false
+    drawType.value = "random"
     router.push(`/tournaments/${id}`)
   }
 
@@ -44,10 +51,11 @@ export function useCreateTournament() {
     store,
     newName,
     selected,
-    seeded,
+    selectedTeams,
+    drawType,
     allSelected,
     toggleAll,
-    createTournament,
+    doCreate,
     winnerName,
     winnerColor,
   }
