@@ -57,6 +57,7 @@ export function useTournamentDetail() {
         spread: 55,
         origin: { x: 0, y: 0.6 },
         colors: [color, "#ffffff"],
+        zIndex: 9999,
       })
       // Sağ
       confetti({
@@ -65,6 +66,7 @@ export function useTournamentDetail() {
         spread: 55,
         origin: { x: 1, y: 0.6 },
         colors: [color, "#ffffff"],
+        zIndex: 9999,
       })
 
       if (Date.now() < end) requestAnimationFrame(frame)
