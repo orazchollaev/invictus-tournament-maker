@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { useTeamsStore } from "../store"
 import { useTeamForm } from "../composables/useTeamForm"
 
@@ -63,7 +63,7 @@ const {
         Teams
         <span class="count">{{ store.teams.length }}/32</span>
       </h2>
-      <div class="section-body" style="padding: 0">
+      <div class="section-body flush">
         <div v-if="store.teams.length" class="teams-list">
           <div
             v-for="team in store.teams"
@@ -206,5 +206,8 @@ const {
   color: var(--text-muted);
   padding: 12px;
   font-size: 13px;
+}
+.flush {
+  padding: 0;
 }
 </style>

@@ -44,7 +44,7 @@ function closeSeasonModal() {
 <template>
   <div class="page">
     <div v-if="!tournament">
-      <p style="color: var(--text-muted)">
+      <p class="not-found">
         Tournament not found.
         <RouterLink to="/tournaments">← Back</RouterLink>
       </p>
@@ -71,8 +71,8 @@ function closeSeasonModal() {
 
       <div class="section-box">
         <h2>Bracket</h2>
-        <div class="section-body" style="padding: 8px 0">
-          <div class="flex" style="padding: 0 8px; margin-bottom: 10px; flex-wrap: wrap; gap: 6px">
+        <div class="section-body bracket-body">
+          <div class="flex sim-toolbar">
             <button @click="store.simulateAll(tournament.id)">🎲 Simulate All</button>
             <button
               v-for="(round, ri) in tournament.rounds"
@@ -93,12 +93,12 @@ function closeSeasonModal() {
 
       <div class="section-box">
         <h2>Participants</h2>
-        <div class="section-body" style="padding: 0">
+        <div class="section-body flush">
           <ParticipantsTable :teams="allTeams" :tournament="tournament" />
         </div>
       </div>
 
-      <div class="flex" style="justify-content: flex-end; gap: 8px; margin-top: 8px">
+      <div class="flex t-actions">
         <button v-if="tournament.winnerId" class="primary" @click="showSeasonModal = true">
           New Season
         </button>
@@ -137,6 +137,25 @@ function closeSeasonModal() {
 </template>
 
 <style scoped>
+.not-found {
+  color: var(--text-muted);
+}
+.bracket-body {
+  padding: 8px 0;
+}
+.sim-toolbar {
+  padding: 0 8px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.flush {
+  padding: 0;
+}
+.t-actions {
+  justify-content: flex-end;
+  margin-top: 8px;
+}
 .t-header {
   margin-bottom: 16px;
 }

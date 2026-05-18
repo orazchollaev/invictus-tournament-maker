@@ -231,26 +231,23 @@ window.addEventListener("resize", drawConnectors)
               </div>
               <div v-if="match.homeId && match.awayId" class="match-actions">
                 <template v-if="editingMatch === match.id">
-                  <input v-model.number="editHome" type="number" min="0" style="width: 34px" />
+                  <input v-model.number="editHome" type="number" min="0" class="score-input" />
                   <span>–</span>
-                  <input v-model.number="editAway" type="number" min="0" style="width: 34px" />
+                  <input v-model.number="editAway" type="number" min="0" class="score-input" />
                   <button
-                    class="primary"
-                    style="font-size: 11px; padding: 1px 5px"
+                    class="primary btn-xs"
                     @click="saveResult(match._origRound, match._origMatch, match)"
                   >
                     OK
                   </button>
-                  <button style="font-size: 11px; padding: 1px 4px" @click="editingMatch = null">
-                    ✕
-                  </button>
+                  <button class="btn-xs" @click="editingMatch = null">✕</button>
                 </template>
                 <template v-else>
-                  <button style="font-size: 11px; padding: 1px 5px" @click="startEdit(match)">
+                  <button class="btn-xs" @click="startEdit(match)">
                     {{ match.result ? "Edit" : "Set score" }}
                   </button>
                   <button
-                    style="font-size: 11px; padding: 1px 5px"
+                    class="btn-xs"
                     @click="emit('sim-match', match._origRound, match._origMatch)"
                   >
                     🎲
@@ -284,26 +281,23 @@ window.addEventListener("resize", drawConnectors)
             </div>
             <div v-if="finalMatch.homeId && finalMatch.awayId" class="match-actions">
               <template v-if="editingMatch === finalMatch.id">
-                <input v-model.number="editHome" type="number" min="0" style="width: 34px" />
+                <input v-model.number="editHome" type="number" min="0" class="score-input" />
                 <span>–</span>
-                <input v-model.number="editAway" type="number" min="0" style="width: 34px" />
+                <input v-model.number="editAway" type="number" min="0" class="score-input" />
                 <button
-                  class="primary"
-                  style="font-size: 11px; padding: 1px 5px"
+                  class="primary btn-xs"
                   @click="saveResult(finalMatch._origRound, finalMatch._origMatch, finalMatch)"
                 >
                   OK
                 </button>
-                <button style="font-size: 11px; padding: 1px 4px" @click="editingMatch = null">
-                  ✕
-                </button>
+                <button class="btn-xs" @click="editingMatch = null">✕</button>
               </template>
               <template v-else>
-                <button style="font-size: 11px; padding: 1px 5px" @click="startEdit(finalMatch)">
+                <button class="btn-xs" @click="startEdit(finalMatch)">
                   {{ finalMatch.result ? "Edit" : "Set score" }}
                 </button>
                 <button
-                  style="font-size: 11px; padding: 1px 5px"
+                  class="btn-xs"
                   @click="emit('sim-match', finalMatch._origRound, finalMatch._origMatch)"
                 >
                   🎲
@@ -338,26 +332,23 @@ window.addEventListener("resize", drawConnectors)
               </div>
               <div v-if="match.homeId && match.awayId" class="match-actions">
                 <template v-if="editingMatch === match.id">
-                  <input v-model.number="editHome" type="number" min="0" style="width: 34px" />
+                  <input v-model.number="editHome" type="number" min="0" class="score-input" />
                   <span>–</span>
-                  <input v-model.number="editAway" type="number" min="0" style="width: 34px" />
+                  <input v-model.number="editAway" type="number" min="0" class="score-input" />
                   <button
-                    class="primary"
-                    style="font-size: 11px; padding: 1px 5px"
+                    class="primary btn-xs"
                     @click="saveResult(match._origRound, match._origMatch, match)"
                   >
                     OK
                   </button>
-                  <button style="font-size: 11px; padding: 1px 4px" @click="editingMatch = null">
-                    ✕
-                  </button>
+                  <button class="btn-xs" @click="editingMatch = null">✕</button>
                 </template>
                 <template v-else>
-                  <button style="font-size: 11px; padding: 1px 5px" @click="startEdit(match)">
+                  <button class="btn-xs" @click="startEdit(match)">
                     {{ match.result ? "Edit" : "Set score" }}
                   </button>
                   <button
-                    style="font-size: 11px; padding: 1px 5px"
+                    class="btn-xs"
                     @click="emit('sim-match', match._origRound, match._origMatch)"
                   >
                     🎲
@@ -450,5 +441,12 @@ window.addEventListener("resize", drawConnectors)
 .conn-col {
   width: 20px;
   flex-shrink: 0;
+}
+.score-input {
+  width: 34px;
+}
+.btn-xs {
+  font-size: 11px;
+  padding: 1px 5px;
 }
 </style>

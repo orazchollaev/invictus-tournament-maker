@@ -88,7 +88,7 @@ const sorted = computed(() => {
     <tbody>
       <tr v-for="row in sorted" :key="row.team.id">
         <td>
-          <span class="flex" style="gap: 6px">
+          <span class="flex team-cell">
             <span class="dot" :style="{ background: row.team.color }" />
             {{ row.team.name }}
           </span>
@@ -102,7 +102,7 @@ const sorted = computed(() => {
             Eliminated ·
             <span class="round-name">{{ row.eliminatedRound }}</span>
           </span>
-          <span v-else style="color: var(--text-muted); font-size: 12px">—</span>
+          <span v-else class="pending">—</span>
         </td>
       </tr>
     </tbody>
@@ -151,5 +151,12 @@ th.sortable:hover {
 .round-name {
   color: var(--text);
   font-style: italic;
+}
+.team-cell {
+  gap: 6px;
+}
+.pending {
+  color: var(--text-muted);
+  font-size: 12px;
 }
 </style>
