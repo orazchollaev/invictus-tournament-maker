@@ -27,13 +27,11 @@ export default tseslint.config(
     rules: {
       "no-undef": "off",
 
-      // Vue
       "vue/multi-word-component-names": "off",
       "vue/no-multiple-template-root": "off",
       "vue/require-default-prop": "off",
       "vue/no-v-html": "warn",
 
-      // Prettier ile çakışan Vue kuralları
       "vue/html-closing-bracket-newline": "off",
       "vue/html-closing-bracket-spacing": "off",
       "vue/html-end-tags": "off",
@@ -45,7 +43,6 @@ export default tseslint.config(
       "vue/no-multi-spaces": "off",
       "vue/no-spaces-around-equal-signs-in-attribute": "off",
       "vue/singleline-html-element-content-newline": "off",
-      // "special rule" — Prettier'ın davranışıyla uyumlu değer:
       "vue/html-self-closing": [
         "warn",
         {
@@ -54,8 +51,6 @@ export default tseslint.config(
           math: "always",
         },
       ],
-
-      // unused imports plugin
       "no-unused-vars": "off",
       "@typescript-eslint/no-unused-vars": "off",
       "unused-imports/no-unused-imports": "error",
@@ -77,5 +72,5 @@ export default tseslint.config(
     },
   },
 
-  prettierConfig // en sona, objenin dışında
+  prettierConfig
 )

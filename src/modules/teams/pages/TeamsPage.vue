@@ -1,4 +1,5 @@
 ﻿<script setup lang="ts">
+import { useRouter } from "vue-router"
 import { useTeamsStore } from "../store"
 import { useTeamForm } from "../composables/useTeamForm"
 
@@ -15,6 +16,8 @@ const {
   startEdit,
   saveEdit,
 } = useTeamForm()
+
+const router = useRouter()
 </script>
 
 <template>
@@ -89,6 +92,7 @@ const {
               <span class="team-name">{{ team.name }}</span>
               <span class="team-power">{{ team.power }}</span>
               <div class="row-actions">
+                <button class="sm" @click="router.push(`/teams/${team.id}`)">Open</button>
                 <button class="sm" @click="startEdit(team)">Edit</button>
                 <button class="danger sm" @click="store.remove(team.id)">✕</button>
               </div>
