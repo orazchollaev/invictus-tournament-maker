@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.2.1](https://github.com/orazchollaev/tournament-sim/compare/v0.2.0...v0.2.1) (2026-05-18)
+
+### Features
+
+- **tournament:** add manual draw and remove tournament rename ([f959cfd](https://github.com/orazchollaev/tournament-sim/commit/f959cfd759512cb7419de6f680248af5e9bd7dbc))
+- **ui:** replace inline styles with css classes and add new season modal ([4bc89bc](https://github.com/orazchollaev/tournament-sim/commit/4bc89bca4d5f95b4b9112aa57297efeb637d339b))
+
+### Bug Fixes
+
+- **tournament:** extract new season handlers to fix template syntax error ([41c9b55](https://github.com/orazchollaev/tournament-sim/commit/41c9b55b93378de935d3f2921324016eacf930a7))
+- **tournament:** show new season draw picker as modal in detail page ([508c896](https://github.com/orazchollaev/tournament-sim/commit/508c896d8b01d5e4e5f467fd5ce4e26d303f13d0))
+
+### Styles
+
+- **tournament:** replace radio inputs with segmented control and highlight selected team chips ([4b8c453](https://github.com/orazchollaev/tournament-sim/commit/4b8c453fb0f5067523c672b69e5a3f658e878c05))
+
 ## [0.2.0](https://github.com/orazchollaev/tournament-sim/compare/v0.1.7...v0.2.0) (2026-05-18)
 
 ### Features
