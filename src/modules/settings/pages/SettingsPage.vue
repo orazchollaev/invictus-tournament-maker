@@ -95,6 +95,8 @@ function importData() {
         </div>
       </div>
     </div>
+
+    <p class="version">v{{ version }}</p>
   </div>
 </template>
 
@@ -140,5 +142,10 @@ function importData() {
 .btn-group {
   display: flex;
   gap: 8px;
+}
+.version {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 8px;
 }
 </style>
