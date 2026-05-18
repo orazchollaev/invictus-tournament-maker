@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.3.0](https://github.com/orazchollaev/tournament-sim/compare/v0.2.2...v0.3.0) (2026-05-18)
+
+### Features
+
+- **settings:** add data export and import functionality ([0a428d9](https://github.com/orazchollaev/tournament-sim/commit/0a428d9ce4e79722213ae580542a54edecb88895))
+- **settings:** show app version below settings ([8cef388](https://github.com/orazchollaev/tournament-sim/commit/8cef388a41a03c868b468dcf6dbb952f6a8db3f1))
+- **ui:** increase team limit to 32 and improve large-bracket UX ([6d514d6](https://github.com/orazchollaev/tournament-sim/commit/6d514d6fdc49f980ee6926a4600f44a914960368))
+
+### Bug Fixes
+
+- **ui:** bracket winner background dark mode color fixed ([81c487f](https://github.com/orazchollaev/tournament-sim/commit/81c487fb14affc5bfefefe0fb49a1549f994a488))
+
+### Code Refactoring
+
+- **style:** replace inline styles with scoped CSS classes ([8b92a85](https://github.com/orazchollaev/tournament-sim/commit/8b92a85a95e147fb66c6e2258a5785ba3a58eca7))
+
 ## [0.2.2](https://github.com/orazchollaev/tournament-sim/compare/v0.2.1...v0.2.2) (2026-05-18)
 
 ### Features
