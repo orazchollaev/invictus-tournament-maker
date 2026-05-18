@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.1.6](https://github.com/orazchollaev/tournament-sim/compare/v0.1.5...v0.1.6) (2026-05-18)
+
+### Features
+
+- **ui:** disable add team section instead of hiding it at max limit ([775b0eb](https://github.com/orazchollaev/tournament-sim/commit/775b0ebfc78f93ca64771d346c9bc79a75d23d26))
+- **ui:** move team creation section to top ([3a6bd9a](https://github.com/orazchollaev/tournament-sim/commit/3a6bd9afbf4540f80dd202d5eddcc80cd7f02555))
+
+### Chores
+
+- add 'vue/block-order' config in eslint.config.mjs ([a7b55f7](https://github.com/orazchollaev/tournament-sim/commit/a7b55f73e085ec3ef03014e8bd08be34974a81ec))
+- fix eslint config for vue ([b5e1b4e](https://github.com/orazchollaev/tournament-sim/commit/b5e1b4e6d405d6061496f22f983fa9e100bc45c0))
+
+### Styles
+
+- switch UI font to IBM Plex Sans ([a483a8e](https://github.com/orazchollaev/tournament-sim/commit/a483a8e485e321406d031a15c642c2a3fcb6e755))
+
 ## [0.1.5](https://github.com/orazchollaev/tournament-sim/compare/v0.1.4...v0.1.5) (2026-05-16)
 
 ### Features
