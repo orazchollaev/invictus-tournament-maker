@@ -23,6 +23,11 @@
   --font-ui: "IBM Plex Sans", "sans-serif";
 }
 
+html {
+  scrollbar-width: thin;
+  scrollbar-color: #c8ccd1 var(--bg);
+}
+
 body {
   font-family: var(--font-ui);
   background: var(--bg);
