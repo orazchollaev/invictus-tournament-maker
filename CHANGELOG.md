@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.3.1](https://github.com/orazchollaev/tournament-sim/compare/v0.3.0...v0.3.1) (2026-05-18)
+
+### Features
+
+- **bracket:** add fullscreen full view modal ([f375efc](https://github.com/orazchollaev/tournament-sim/commit/f375efc6c98a4534c38c8f260204b4792689a17a))
+
 ## [0.3.0](https://github.com/orazchollaev/tournament-sim/compare/v0.2.2...v0.3.0) (2026-05-18)
 
 ### Features
