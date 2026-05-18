@@ -1,4 +1,4 @@
-# Tournament Simulator
+# Tournament Sim
 
 A browser-based tournament bracket simulator built with Vue 3 and TypeScript.
 
