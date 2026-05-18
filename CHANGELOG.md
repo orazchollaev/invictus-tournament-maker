@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.2.2](https://github.com/orazchollaev/tournament-sim/compare/v0.2.1...v0.2.2) (2026-05-18)
+
+### Features
+
+- **settings:** add settings page with theme switcher and clear data ([9cdb002](https://github.com/orazchollaev/tournament-sim/commit/9cdb0026d860ce448fadf44925d59820f7c83f32))
+
 ## [0.2.1](https://github.com/orazchollaev/tournament-sim/compare/v0.2.0...v0.2.1) (2026-05-18)
 
 ### Features
