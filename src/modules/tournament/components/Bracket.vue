@@ -260,16 +260,23 @@ window.addEventListener("resize", drawConnectors)
             >
               <div class="match-row" :class="{ winner: isWinner(match, match.homeId) }">
                 <TeamBadge :team-id="match.homeId" :teams="teams" />
-                <span v-if="match.result !== null" class="score">{{ match.result.home }}</span>
+                <span v-if="match.result !== null" class="score">
+                  {{ match.result.home }}
+                  <span v-if="match.result.penHome !== undefined" class="pen-badge">
+                    [{{ match.result.penHome }}]
+                  </span>
+                </span>
                 <span v-else class="score tbd">-</span>
               </div>
               <div class="match-row" :class="{ winner: isWinner(match, match.awayId) }">
                 <TeamBadge :team-id="match.awayId" :teams="teams" />
-                <span v-if="match.result !== null" class="score">{{ match.result.away }}</span>
+                <span v-if="match.result !== null" class="score">
+                  {{ match.result.away }}
+                  <span v-if="match.result.penAway !== undefined" class="pen-badge">
+                    [{{ match.result.penAway }}]
+                  </span>
+                </span>
                 <span v-else class="score tbd">-</span>
-              </div>
-              <div v-if="match.result?.penHome !== undefined" class="pen-row">
-                pen. {{ match.result.penHome }}–{{ match.result.penAway }}
               </div>
               <div v-if="match.homeId && match.awayId" class="match-actions">
                 <template v-if="editingMatch === match.id && editMode === 'penalty'">
@@ -325,6 +332,9 @@ window.addEventListener("resize", drawConnectors)
               <TeamBadge :team-id="finalMatch.homeId" :teams="teams" />
               <span v-if="finalMatch.result !== null" class="score">
                 {{ finalMatch.result.home }}
+                <span v-if="finalMatch.result.penHome !== undefined" class="pen-badge">
+                  [{{ finalMatch.result.penHome }}]
+                </span>
               </span>
               <span v-else class="score tbd">-</span>
             </div>
@@ -332,11 +342,11 @@ window.addEventListener("resize", drawConnectors)
               <TeamBadge :team-id="finalMatch.awayId" :teams="teams" />
               <span v-if="finalMatch.result !== null" class="score">
                 {{ finalMatch.result.away }}
+                <span v-if="finalMatch.result.penAway !== undefined" class="pen-badge">
+                  [{{ finalMatch.result.penAway }}]
+                </span>
               </span>
               <span v-else class="score tbd">-</span>
-            </div>
-            <div v-if="finalMatch.result?.penHome !== undefined" class="pen-row">
-              pen. {{ finalMatch.result.penHome }}–{{ finalMatch.result.penAway }}
             </div>
             <div v-if="finalMatch.homeId && finalMatch.awayId" class="match-actions">
               <template v-if="editingMatch === finalMatch.id && editMode === 'penalty'">
@@ -395,16 +405,23 @@ window.addEventListener("resize", drawConnectors)
             >
               <div class="match-row" :class="{ winner: isWinner(match, match.homeId) }">
                 <TeamBadge :team-id="match.homeId" :teams="teams" />
-                <span v-if="match.result !== null" class="score">{{ match.result.home }}</span>
+                <span v-if="match.result !== null" class="score">
+                  {{ match.result.home }}
+                  <span v-if="match.result.penHome !== undefined" class="pen-badge">
+                    [{{ match.result.penHome }}]
+                  </span>
+                </span>
                 <span v-else class="score tbd">-</span>
               </div>
               <div class="match-row" :class="{ winner: isWinner(match, match.awayId) }">
                 <TeamBadge :team-id="match.awayId" :teams="teams" />
-                <span v-if="match.result !== null" class="score">{{ match.result.away }}</span>
+                <span v-if="match.result !== null" class="score">
+                  {{ match.result.away }}
+                  <span v-if="match.result.penAway !== undefined" class="pen-badge">
+                    [{{ match.result.penAway }}]
+                  </span>
+                </span>
                 <span v-else class="score tbd">-</span>
-              </div>
-              <div v-if="match.result?.penHome !== undefined" class="pen-row">
-                pen. {{ match.result.penHome }}–{{ match.result.penAway }}
               </div>
               <div v-if="match.homeId && match.awayId" class="match-actions">
                 <template v-if="editingMatch === match.id && editMode === 'penalty'">
@@ -492,16 +509,18 @@ window.addEventListener("resize", drawConnectors)
 }
 .match-card {
   border: 1px solid var(--border);
+  border-radius: 6px;
   background: var(--surface);
   font-size: 12px;
   flex-shrink: 0;
+  overflow: hidden;
 }
 .match-row {
   display: flex;
   align-items: center;
-  padding: 4px 6px;
+  padding: 5px 8px;
   border-bottom: 1px solid var(--border-light);
-  gap: 4px;
+  gap: 6px;
 }
 .match-row:last-of-type {
   border-bottom: none;
@@ -513,18 +532,34 @@ window.addEventListener("resize", drawConnectors)
 .score {
   margin-left: auto;
   font-weight: 700;
-  min-width: 14px;
-  text-align: center;
+  min-width: 22px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 2px;
+  background: color-mix(in srgb, var(--text-muted) 12%, var(--surface));
+  border-radius: 3px;
+  padding: 1px 5px;
 }
 .score.tbd {
   color: var(--text-muted);
   font-weight: normal;
+  background: transparent;
+}
+.pen-badge {
+  font-size: 10px;
+  font-weight: 400;
+  color: var(--text-muted);
+  letter-spacing: 0;
 }
 .match-actions {
   display: flex;
   gap: 4px;
   align-items: center;
-  padding: 3px 6px;
+  justify-content: center;
+  flex-wrap: wrap;
+  padding: 4px 6px;
   border-top: 1px solid var(--border-light);
   background: var(--bg);
 }
@@ -533,22 +568,34 @@ window.addEventListener("resize", drawConnectors)
   flex-shrink: 0;
 }
 .score-input {
-  width: 34px;
+  width: 32px;
+  text-align: center;
+  background: color-mix(in srgb, var(--text-muted) 10%, var(--surface));
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 2px 4px;
+  font-size: 12px;
+  font-weight: 700;
+  color: inherit;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+.score-input::-webkit-outer-spin-button,
+.score-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 .btn-xs {
   font-size: 11px;
-  padding: 1px 5px;
-}
-.pen-row {
-  font-size: 10px;
-  color: var(--text-muted);
-  text-align: center;
   padding: 2px 6px;
-  border-top: 1px solid var(--border-light);
+  border-radius: 3px;
 }
 .pen-label {
   font-size: 10px;
+  font-weight: 600;
   color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
   flex-shrink: 0;
 }
 </style>

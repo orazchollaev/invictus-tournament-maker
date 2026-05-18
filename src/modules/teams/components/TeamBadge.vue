@@ -22,10 +22,11 @@ const team = computed(() => props.teams.find((t) => t.id === props.teamId))
   min-width: 0;
 }
 .dot {
-  width: 10px;
-  height: 10px;
+  width: 11px;
+  height: 11px;
   border-radius: 50%;
   flex-shrink: 0;
+  box-shadow: 0 0 0 1.5px rgba(0, 0, 0, 0.15);
 }
 .name {
   overflow: hidden;
