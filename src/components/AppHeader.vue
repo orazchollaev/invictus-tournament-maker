@@ -1,14 +1,4 @@
-<script setup lang="ts">
-function clearData() {
-  const isConfirm = confirm("Are you sure you want to clear all data? This cannot be undone.")
-
-  if (isConfirm) {
-    localStorage.removeItem("teams")
-    localStorage.removeItem("tournament")
-    location.reload()
-  }
-}
-</script>
+<script setup lang="ts"></script>
 
 <template>
   <header class="site-header">
@@ -20,9 +10,9 @@ function clearData() {
         <RouterLink to="/tournaments">Tournaments</RouterLink>
       </nav>
 
-      <div class="clear-data">
-        <button class="danger" @click="clearData">Clear all data</button>
-      </div>
+      <nav class="nav-right">
+        <RouterLink to="/settings">Settings</RouterLink>
+      </nav>
     </div>
   </header>
 </template>
@@ -69,7 +59,7 @@ nav a.router-link-active {
   color: var(--accent);
 }
 
-.clear-data {
+.nav-right {
   margin-left: auto;
 }
 </style>

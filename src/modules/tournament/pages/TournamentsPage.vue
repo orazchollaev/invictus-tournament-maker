@@ -277,7 +277,7 @@ function closeSeasonModal() {
   background: var(--bg);
 }
 .team-chip.chip-selected {
-  background: #eaf3fb;
+  background: color-mix(in srgb, var(--accent) 12%, var(--surface));
   border-color: var(--accent);
   color: var(--accent);
 }

@@ -23,6 +23,19 @@
   --font-ui: "IBM Plex Sans", "sans-serif";
 }
 
+[data-theme="dark"] {
+  --bg: #1a1b1e;
+  --surface: #25262b;
+  --border: #4a4d5a;
+  --border-light: #2e3038;
+  --text: #e8e9ea;
+  --text-muted: #9a9da4;
+  --accent: #4a90d9;
+  --accent-hover: #6aaae8;
+  --danger: #e05555;
+  --success: #00d4a8;
+}
+
 html {
   scrollbar-width: thin;
   scrollbar-color: #c8ccd1 var(--bg);
@@ -71,7 +84,7 @@ button.danger {
   border-color: var(--danger);
 }
 button.danger:hover {
-  background: #fff0f0;
+  background: color-mix(in srgb, var(--danger) 10%, var(--surface));
 }
 button:disabled {
   opacity: 0.5;
