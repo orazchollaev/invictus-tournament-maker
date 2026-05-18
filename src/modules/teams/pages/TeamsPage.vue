@@ -36,13 +36,13 @@ function saveEdit(id: string) {
 
 <template>
   <div class="page">
-    <div v-if="store.teams.length < 16" class="section-box">
+    <div class="section-box">
       <h2>Add Team</h2>
-      <div class="section-body">
+      <div :class="['section-body', { 'disable-add': store.teams.length >= 16 }]">
         <div class="flex">
           <input
             v-model="newName"
-            placeholder="Team name"
+            :placeholder="store.teams.length >= 16 ? 'Team limit reached' : 'Team name'"
             style="width: 160px"
             @keyup.enter="addTeam"
           />
@@ -124,5 +124,10 @@ function saveEdit(id: string) {
   height: 16px;
   border-radius: 50%;
   border: 1px solid var(--border);
+}
+
+.disable-add {
+  opacity: 0.5;
+  pointer-events: none;
 }
 </style>
