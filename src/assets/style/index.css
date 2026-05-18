@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100..700;1,100..700&display=swap");
 *,
 *::before,
 *::after {
@@ -18,8 +19,8 @@
   --danger: #cc3333;
   --success: #00af89;
   --radius: 2px;
-  --font: Georgia, "Times New Roman", serif;
-  --font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font: "Georgia", "Times New Roman", serif;
+  --font-ui: "IBM Plex Sans", "sans-serif";
 }
 
 body {
@@ -153,7 +154,6 @@ th {
 .ml-auto {
   margin-left: auto;
 }
-
 .notice {
   background: #eaf3fb;
   border: 1px solid #a2c3e0;

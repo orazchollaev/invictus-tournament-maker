@@ -44,6 +44,7 @@ function saveEdit(id: string) {
             v-model="newName"
             :placeholder="store.teams.length >= 16 ? 'Team limit reached' : 'Team name'"
             style="width: 160px"
+            :disabled="store.teams.length >= 16"
             @keyup.enter="addTeam"
           />
           <input
