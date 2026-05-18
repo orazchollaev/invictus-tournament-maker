@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.3.2](https://github.com/orazchollaev/tournament-sim/compare/v0.3.1...v0.3.2) (2026-05-18)
+
+### Bug Fixes
+
+- **confetti:** raise z-index above bracket fullscreen modal ([02df297](https://github.com/orazchollaev/tournament-sim/commit/02df29720f2950fde18ee1df7e0b72d9ca4690ca))
+
 ## [0.3.1](https://github.com/orazchollaev/tournament-sim/compare/v0.3.0...v0.3.1) (2026-05-18)
 
 ### Features
