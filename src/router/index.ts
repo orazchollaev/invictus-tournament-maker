@@ -5,6 +5,7 @@ import TeamDetailPage from "../modules/teams/pages/TeamDetailPage.vue"
 import TournamentsPage from "../modules/tournament/pages/TournamentsPage.vue"
 import TournamentDetailPage from "../modules/tournament/pages/TournamentDetailPage.vue"
 import SettingsPage from "../modules/settings/pages/SettingsPage.vue"
+import NotFoundPage from "../modules/core/pages/NotFoundPage.vue"
 
 export default createRouter({
   history: createWebHashHistory(),
@@ -15,5 +16,6 @@ export default createRouter({
     { path: "/tournaments", component: TournamentsPage },
     { path: "/tournaments/:id", component: TournamentDetailPage },
     { path: "/settings", component: SettingsPage },
+    { path: "/:pathMatch(.*)*", component: NotFoundPage },
   ],
 })
