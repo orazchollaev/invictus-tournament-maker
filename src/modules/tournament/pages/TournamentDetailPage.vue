@@ -105,7 +105,9 @@ function closeSeasonModal() {
           <Bracket
             :tournament="tournament"
             :teams="allTeams"
-            @set-result="(ri, mi, h, a) => store.setResult(tournament!.id, ri, mi, h, a)"
+            @set-result="
+              (ri, mi, h, a, ph, pa) => store.setResult(tournament!.id, ri, mi, h, a, ph, pa)
+            "
             @sim-match="(ri, mi) => simMatch(ri, mi)"
           />
         </div>
@@ -142,7 +144,9 @@ function closeSeasonModal() {
           <Bracket
             :tournament="tournament!"
             :teams="allTeams"
-            @set-result="(ri, mi, h, a) => store.setResult(tournament!.id, ri, mi, h, a)"
+            @set-result="
+              (ri, mi, h, a, ph, pa) => store.setResult(tournament!.id, ri, mi, h, a, ph, pa)
+            "
             @sim-match="(ri, mi) => simMatch(ri, mi)"
           />
         </div>

@@ -2,7 +2,7 @@ import { computed, watch } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import { useTeamsStore } from "@/modules/teams/store"
 import { useTournamentStore } from "@/modules/tournament/store"
-import { simulateMatch } from "@/engine/logic"
+import { simulateMatch, simulatePenaltyShootout } from "@/engine/logic"
 
 import confetti from "canvas-confetti"
 
@@ -27,7 +27,12 @@ export function useTournamentDetail() {
     const match = t.rounds[ri].matches[mi]
     if (!match.homeId || !match.awayId) return
     const result = simulateMatch(match, allTeams.value)
-    store.setResult(t.id, ri, mi, result.home, result.away)
+    if (result.home === result.away) {
+      const pen = simulatePenaltyShootout(match, allTeams.value)
+      store.setResult(t.id, ri, mi, result.home, result.away, pen.penHome, pen.penAway)
+    } else {
+      store.setResult(t.id, ri, mi, result.home, result.away)
+    }
   }
 
   function deleteTournament() {

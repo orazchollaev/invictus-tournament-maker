@@ -1,4 +1,4 @@
-export type MatchResult = { home: number; away: number }
+export type MatchResult = { home: number; away: number; penHome?: number; penAway?: number }
 
 export interface Match {
   id: string

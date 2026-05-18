@@ -1,7 +1,13 @@
 import { defineStore } from "pinia"
 import { ref } from "vue"
 import type { Tournament } from "./types"
-import { createTournament, propagateWinners, simulateMatch, getWinnerId } from "@/engine/logic"
+import {
+  createTournament,
+  propagateWinners,
+  simulateMatch,
+  simulatePenaltyShootout,
+  getWinnerId,
+} from "@/engine/logic"
 import { useTeamsStore } from "../teams/store"
 
 export const useTournamentStore = defineStore("tournament", () => {
@@ -51,12 +57,18 @@ export const useTournamentStore = defineStore("tournament", () => {
     roundIdx: number,
     matchIdx: number,
     home: number,
-    away: number
+    away: number,
+    penHome?: number,
+    penAway?: number
   ) {
     const t = tournaments.value.find((t) => t.id === tournamentId)
     if (!t) return
     const match = t.rounds[roundIdx].matches[matchIdx]
-    match.result = { home, away }
+    match.result = {
+      home,
+      away,
+      ...(penHome !== undefined && penAway !== undefined ? { penHome, penAway } : {}),
+    }
     // Clear downstream slots that will now change
     clearDownstream(t, roundIdx, matchIdx)
     propagateWinners(t.rounds, getTeams())
@@ -84,7 +96,12 @@ export const useTournamentStore = defineStore("tournament", () => {
       propagateWinners(t.rounds, allTeams)
       t.rounds[r].matches.forEach((match, _mi) => {
         if (!match.result && match.homeId && match.awayId) {
-          match.result = simulateMatch(match, allTeams)
+          const result = simulateMatch(match, allTeams)
+          if (result.home === result.away) {
+            match.result = { ...result, ...simulatePenaltyShootout(match, allTeams) }
+          } else {
+            match.result = result
+          }
         }
       })
     }
@@ -100,7 +117,12 @@ export const useTournamentStore = defineStore("tournament", () => {
     propagateWinners(t.rounds, allTeams)
     t.rounds[roundIdx].matches.forEach((match) => {
       if (!match.result && match.homeId && match.awayId) {
-        match.result = simulateMatch(match, allTeams)
+        const result = simulateMatch(match, allTeams)
+        if (result.home === result.away) {
+          match.result = { ...result, ...simulatePenaltyShootout(match, allTeams) }
+        } else {
+          match.result = result
+        }
       }
     })
     propagateWinners(t.rounds, allTeams)

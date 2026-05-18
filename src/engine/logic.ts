@@ -112,7 +112,44 @@ export function getWinnerId(match: Match): string | null {
   if (!match.result) return null
   if (match.result.home > match.result.away) return match.homeId
   if (match.result.away > match.result.home) return match.awayId
+  if (match.result.penHome !== undefined && match.result.penAway !== undefined) {
+    if (match.result.penHome > match.result.penAway) return match.homeId
+    if (match.result.penAway > match.result.penHome) return match.awayId
+  }
   return null
+}
+
+export function simulatePenaltyShootout(
+  match: Match,
+  teams: Team[]
+): { penHome: number; penAway: number } {
+  const homeTeam = teams.find((t) => t.id === match.homeId)
+  const awayTeam = teams.find((t) => t.id === match.awayId)
+  const hp = homeTeam?.power ?? 50
+  const ap = awayTeam?.power ?? 50
+
+  const hRate = 0.65 + (hp / 100) * 0.15
+  const aRate = 0.65 + (ap / 100) * 0.15
+
+  let ph = 0
+  let pa = 0
+  for (let i = 0; i < 5; i++) {
+    if (Math.random() < hRate) ph++
+    if (Math.random() < aRate) pa++
+  }
+
+  let maxSD = 20
+  while (ph === pa && maxSD-- > 0) {
+    const h = Math.random() < hRate ? 1 : 0
+    const a = Math.random() < aRate ? 1 : 0
+    if (h !== a) {
+      ph += h
+      pa += a
+    }
+  }
+
+  if (ph === pa) ph++
+  return { penHome: ph, penAway: pa }
 }
 
 export function propagateWinners(rounds: Round[], _teams: Team[]) {
@@ -175,11 +212,6 @@ export function simulateMatch(match: Match, teams: Team[]): { home: number; away
 
   let h = poisson(Math.max(0.25, hLambda))
   let a = poisson(Math.max(0.25, aLambda))
-
-  if (h === a) {
-    const strongerWins = Math.random() < hpAdjusted / (hpAdjusted + ap)
-    strongerWins ? h++ : a++
-  }
 
   return { home: h, away: a }
 }

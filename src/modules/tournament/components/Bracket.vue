@@ -7,24 +7,63 @@ import { getWinnerId } from "@/engine/logic"
 
 const props = defineProps<{ tournament: Tournament; teams: Team[] }>()
 const emit = defineEmits<{
-  "set-result": [round: number, match: number, home: number, away: number]
+  "set-result": [
+    round: number,
+    match: number,
+    home: number,
+    away: number,
+    penHome?: number,
+    penAway?: number,
+  ]
   "sim-match": [round: number, match: number]
 }>()
 
 const editingMatch = ref<string | null>(null)
+const editMode = ref<"score" | "penalty">("score")
 const editHome = ref(0)
 const editAway = ref(0)
+const editPenHome = ref(0)
+const editPenAway = ref(0)
 
 function startEdit(match: Match) {
   editingMatch.value = match.id
+  editMode.value = "score"
   editHome.value = match.result?.home ?? 0
   editAway.value = match.result?.away ?? 0
+  editPenHome.value = match.result?.penHome ?? 0
+  editPenAway.value = match.result?.penAway ?? 0
 }
 
-function saveResult(origRound: number, origMatch: number, _match: Match) {
-  if (editHome.value === editAway.value) return
+function cancelEdit() {
+  editingMatch.value = null
+  editMode.value = "score"
+}
+
+function saveResult(origRound: number, origMatch: number, match: Match) {
+  if (editHome.value === editAway.value) {
+    editMode.value = "penalty"
+    editPenHome.value = match.result?.penHome ?? 0
+    editPenAway.value = match.result?.penAway ?? 0
+    return
+  }
   emit("set-result", origRound, origMatch, editHome.value, editAway.value)
   editingMatch.value = null
+  editMode.value = "score"
+}
+
+function savePenalties(origRound: number, origMatch: number) {
+  if (editPenHome.value === editPenAway.value) return
+  emit(
+    "set-result",
+    origRound,
+    origMatch,
+    editHome.value,
+    editAway.value,
+    editPenHome.value,
+    editPenAway.value
+  )
+  editingMatch.value = null
+  editMode.value = "score"
 }
 
 function isWinner(match: Match, teamId: string | null) {
@@ -229,8 +268,25 @@ window.addEventListener("resize", drawConnectors)
                 <span v-if="match.result !== null" class="score">{{ match.result.away }}</span>
                 <span v-else class="score tbd">-</span>
               </div>
+              <div v-if="match.result?.penHome !== undefined" class="pen-row">
+                pen. {{ match.result.penHome }}–{{ match.result.penAway }}
+              </div>
               <div v-if="match.homeId && match.awayId" class="match-actions">
-                <template v-if="editingMatch === match.id">
+                <template v-if="editingMatch === match.id && editMode === 'penalty'">
+                  <span class="pen-label">Pen.</span>
+                  <input v-model.number="editPenHome" type="number" min="0" class="score-input" />
+                  <span>–</span>
+                  <input v-model.number="editPenAway" type="number" min="0" class="score-input" />
+                  <button
+                    class="primary btn-xs"
+                    :disabled="editPenHome === editPenAway"
+                    @click="savePenalties(match._origRound, match._origMatch)"
+                  >
+                    OK
+                  </button>
+                  <button class="btn-xs" @click="cancelEdit()">✕</button>
+                </template>
+                <template v-else-if="editingMatch === match.id">
                   <input v-model.number="editHome" type="number" min="0" class="score-input" />
                   <span>–</span>
                   <input v-model.number="editAway" type="number" min="0" class="score-input" />
@@ -240,7 +296,7 @@ window.addEventListener("resize", drawConnectors)
                   >
                     OK
                   </button>
-                  <button class="btn-xs" @click="editingMatch = null">✕</button>
+                  <button class="btn-xs" @click="cancelEdit()">✕</button>
                 </template>
                 <template v-else>
                   <button class="btn-xs" @click="startEdit(match)">
@@ -279,8 +335,25 @@ window.addEventListener("resize", drawConnectors)
               </span>
               <span v-else class="score tbd">-</span>
             </div>
+            <div v-if="finalMatch.result?.penHome !== undefined" class="pen-row">
+              pen. {{ finalMatch.result.penHome }}–{{ finalMatch.result.penAway }}
+            </div>
             <div v-if="finalMatch.homeId && finalMatch.awayId" class="match-actions">
-              <template v-if="editingMatch === finalMatch.id">
+              <template v-if="editingMatch === finalMatch.id && editMode === 'penalty'">
+                <span class="pen-label">Pen.</span>
+                <input v-model.number="editPenHome" type="number" min="0" class="score-input" />
+                <span>–</span>
+                <input v-model.number="editPenAway" type="number" min="0" class="score-input" />
+                <button
+                  class="primary btn-xs"
+                  :disabled="editPenHome === editPenAway"
+                  @click="savePenalties(finalMatch._origRound, finalMatch._origMatch)"
+                >
+                  OK
+                </button>
+                <button class="btn-xs" @click="cancelEdit()">✕</button>
+              </template>
+              <template v-else-if="editingMatch === finalMatch.id">
                 <input v-model.number="editHome" type="number" min="0" class="score-input" />
                 <span>–</span>
                 <input v-model.number="editAway" type="number" min="0" class="score-input" />
@@ -290,7 +363,7 @@ window.addEventListener("resize", drawConnectors)
                 >
                   OK
                 </button>
-                <button class="btn-xs" @click="editingMatch = null">✕</button>
+                <button class="btn-xs" @click="cancelEdit()">✕</button>
               </template>
               <template v-else>
                 <button class="btn-xs" @click="startEdit(finalMatch)">
@@ -330,8 +403,25 @@ window.addEventListener("resize", drawConnectors)
                 <span v-if="match.result !== null" class="score">{{ match.result.away }}</span>
                 <span v-else class="score tbd">-</span>
               </div>
+              <div v-if="match.result?.penHome !== undefined" class="pen-row">
+                pen. {{ match.result.penHome }}–{{ match.result.penAway }}
+              </div>
               <div v-if="match.homeId && match.awayId" class="match-actions">
-                <template v-if="editingMatch === match.id">
+                <template v-if="editingMatch === match.id && editMode === 'penalty'">
+                  <span class="pen-label">Pen.</span>
+                  <input v-model.number="editPenHome" type="number" min="0" class="score-input" />
+                  <span>–</span>
+                  <input v-model.number="editPenAway" type="number" min="0" class="score-input" />
+                  <button
+                    class="primary btn-xs"
+                    :disabled="editPenHome === editPenAway"
+                    @click="savePenalties(match._origRound, match._origMatch)"
+                  >
+                    OK
+                  </button>
+                  <button class="btn-xs" @click="cancelEdit()">✕</button>
+                </template>
+                <template v-else-if="editingMatch === match.id">
                   <input v-model.number="editHome" type="number" min="0" class="score-input" />
                   <span>–</span>
                   <input v-model.number="editAway" type="number" min="0" class="score-input" />
@@ -341,7 +431,7 @@ window.addEventListener("resize", drawConnectors)
                   >
                     OK
                   </button>
-                  <button class="btn-xs" @click="editingMatch = null">✕</button>
+                  <button class="btn-xs" @click="cancelEdit()">✕</button>
                 </template>
                 <template v-else>
                   <button class="btn-xs" @click="startEdit(match)">
@@ -448,5 +538,17 @@ window.addEventListener("resize", drawConnectors)
 .btn-xs {
   font-size: 11px;
   padding: 1px 5px;
+}
+.pen-row {
+  font-size: 10px;
+  color: var(--text-muted);
+  text-align: center;
+  padding: 2px 6px;
+  border-top: 1px solid var(--border-light);
+}
+.pen-label {
+  font-size: 10px;
+  color: var(--text-muted);
+  flex-shrink: 0;
 }
 </style>
