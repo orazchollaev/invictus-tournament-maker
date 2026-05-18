@@ -17,10 +17,10 @@ const COLORS = [
 
 export const useTeamsStore = defineStore("teams", () => {
   const teams = ref<Team[]>([
-    { id: "1", name: "Galatasaray", color: "#e63946", power: 82 },
-    { id: "2", name: "Fenerbahçe", color: "#e9c46a", power: 80 },
-    { id: "3", name: "Beşiktaş", color: "#264653", power: 75 },
-    { id: "4", name: "Trabzonspor", color: "#1982c4", power: 72 },
+    { id: "1", name: "Team 1", color: "#e63946", power: 82 },
+    { id: "2", name: "Team 2", color: "#457b9d", power: 80 },
+    { id: "3", name: "Team 3", color: "#2a9d8f", power: 75 },
+    { id: "4", name: "Team 4", color: "#e9c46a", power: 72 },
   ])
 
   function add(name: string, color: string, power: number) {
