@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.5.0](https://github.com/orazchollaev/tournament-sim/compare/v0.4.1...v0.5.0) (2026-05-18)
+
+### ⚠ BREAKING CHANGES
+
+- add penalty system
+
+### Features
+
+- add not found page ([2507858](https://github.com/orazchollaev/tournament-sim/commit/2507858f2a2c010e5b4f376c85652dbb54f78b5e))
+- add penalty shootout for drawn matches ([0db449a](https://github.com/orazchollaev/tournament-sim/commit/0db449a207f202f4952ef319a14a7df8941c1f1a))
+- add penalty system ([563b1a1](https://github.com/orazchollaev/tournament-sim/commit/563b1a1d02bd7eaa340185e319b5d88eb1ccb50e))
+
 ## [0.4.1](https://github.com/orazchollaev/tournament-sim/compare/v0.4.0...v0.4.1) (2026-05-18)
 
 ### Features
