@@ -16,6 +16,28 @@ const themes: { value: Theme; label: string }[] = [
 
 const DATA_KEYS = ["teams", "tournament"] as const
 
+interface Dataset {
+  label: string
+  description: string
+  teams: { id: string; name: string; color: string; power: number }[]
+}
+
+const globbed = import.meta.glob<Dataset>("../../../examples/*.json", {
+  eager: true,
+  import: "default",
+})
+const SAMPLE_DATASETS = Object.values(globbed)
+
+function loadDataset(dataset: Dataset) {
+  const isConfirm = confirm(
+    `Load "${dataset.label}" dataset? This will replace your teams and clear all tournaments.`
+  )
+  if (!isConfirm) return
+  localStorage.setItem("teams", JSON.stringify({ teams: dataset.teams }))
+  localStorage.setItem("tournament", JSON.stringify({ tournaments: [], active: null }))
+  location.reload()
+}
+
 function clearData() {
   const isConfirm = confirm("Are you sure you want to clear all data? This cannot be undone.")
   if (isConfirm) {
@@ -86,6 +108,23 @@ function importData() {
         <hr class="divider" />
 
         <div class="setting-row">
+          <span class="setting-label">Sample data</span>
+          <div class="dataset-list">
+            <button
+              v-for="ds in SAMPLE_DATASETS"
+              :key="ds.label"
+              class="dataset-btn"
+              @click="loadDataset(ds)"
+            >
+              <span class="dataset-name">{{ ds.label }}</span>
+              <span class="dataset-desc">{{ ds.description }}</span>
+            </button>
+          </div>
+        </div>
+
+        <hr class="divider" />
+
+        <div class="setting-row">
           <span class="setting-label">Data</span>
           <div class="btn-group">
             <button @click="exportData">Export</button>
@@ -142,6 +181,38 @@ function importData() {
 .btn-group {
   display: flex;
   gap: 8px;
+}
+.dataset-list {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.dataset-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 8px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+  transition:
+    border-color 0.15s,
+    background 0.15s;
+}
+.dataset-btn:hover {
+  border-color: var(--accent);
+  background: var(--border-light);
+}
+.dataset-name {
+  font-size: 13px;
+  font-weight: 600;
+}
+.dataset-desc {
+  font-size: 11px;
+  color: var(--text-muted);
 }
 .version {
   font-size: 12px;
