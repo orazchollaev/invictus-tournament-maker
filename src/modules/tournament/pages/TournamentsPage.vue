@@ -78,19 +78,31 @@ function closeSeasonModal() {
               class="name-input"
               @keyup.enter="handleCreate"
             />
-            <div class="radio-row">
-              <label class="radio-opt">
-                <input v-model="drawType" type="radio" value="random" />
-                Random draw
-              </label>
-              <label class="radio-opt">
-                <input v-model="drawType" type="radio" value="seeded" />
+            <div class="draw-group">
+              <button
+                type="button"
+                class="draw-btn"
+                :class="{ active: drawType === 'random' }"
+                @click="drawType = 'random'"
+              >
+                Random
+              </button>
+              <button
+                type="button"
+                class="draw-btn"
+                :class="{ active: drawType === 'seeded' }"
+                @click="drawType = 'seeded'"
+              >
                 Seeded
-              </label>
-              <label class="radio-opt">
-                <input v-model="drawType" type="radio" value="manual" />
+              </button>
+              <button
+                type="button"
+                class="draw-btn"
+                :class="{ active: drawType === 'manual' }"
+                @click="drawType = 'manual'"
+              >
                 Manual
-              </label>
+              </button>
             </div>
             <button
               class="primary"
@@ -103,12 +115,22 @@ function closeSeasonModal() {
           </div>
 
           <div class="team-grid">
-            <label class="team-chip chip-all">
-              <input type="checkbox" :checked="allSelected" @change="toggleAll" />
+            <label class="team-chip chip-all" :class="{ 'chip-selected': allSelected }">
+              <input
+                type="checkbox"
+                :checked="allSelected"
+                class="chip-check"
+                @change="toggleAll"
+              />
               All
             </label>
-            <label v-for="team in teamsStore.teams" :key="team.id" class="team-chip">
-              <input v-model="selected" type="checkbox" :value="team.id" />
+            <label
+              v-for="team in teamsStore.teams"
+              :key="team.id"
+              class="team-chip"
+              :class="{ 'chip-selected': selected.includes(team.id) }"
+            >
+              <input v-model="selected" type="checkbox" :value="team.id" class="chip-check" />
               <span class="dot" :style="{ background: team.color }" />
               {{ team.name }}
               <span class="power">{{ team.power }}</span>
@@ -187,17 +209,6 @@ function closeSeasonModal() {
 .name-input {
   width: 200px;
 }
-.radio-row {
-  display: flex;
-  gap: 12px;
-}
-.radio-opt {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 13px;
-  cursor: pointer;
-}
 .count-badge {
   display: inline-block;
   background: rgba(255, 255, 255, 0.3);
@@ -207,7 +218,40 @@ function closeSeasonModal() {
   margin-left: 2px;
 }
 
+/* Draw type segmented control */
+.draw-group {
+  display: flex;
+}
+.draw-btn {
+  border-radius: 0;
+  font-size: 12px;
+  padding: 4px 10px;
+  border-right-width: 0;
+  transition:
+    background 0.1s,
+    color 0.1s;
+}
+.draw-btn:first-child {
+  border-radius: var(--radius) 0 0 var(--radius);
+}
+.draw-btn:last-child {
+  border-radius: 0 var(--radius) var(--radius) 0;
+  border-right-width: 1px;
+}
+.draw-btn.active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent-hover);
+  z-index: 1;
+}
+.draw-btn:hover:not(.active) {
+  background: var(--border-light);
+}
+
 /* Team selection */
+.chip-check {
+  display: none;
+}
 .team-grid {
   display: flex;
   flex-wrap: wrap;
@@ -224,13 +268,29 @@ function closeSeasonModal() {
   background: var(--surface);
   border-radius: 2px;
   user-select: none;
+  transition:
+    border-color 0.1s,
+    background 0.1s,
+    color 0.1s;
 }
 .team-chip:hover {
   background: var(--bg);
 }
+.team-chip.chip-selected {
+  background: #eaf3fb;
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.team-chip.chip-selected .power {
+  color: var(--accent);
+  opacity: 0.65;
+}
 .chip-all {
   color: var(--text-muted);
   font-style: italic;
+}
+.chip-all.chip-selected {
+  font-style: normal;
 }
 .dot {
   width: 8px;
