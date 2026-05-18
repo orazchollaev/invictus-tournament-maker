@@ -394,4 +394,30 @@ function closeSeasonModal() {
   gap: 8px;
   flex-wrap: wrap;
 }
+
+@media (max-width: 600px) {
+  .form-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .name-input {
+    width: 100%;
+  }
+  .draw-group {
+    align-self: flex-start;
+  }
+
+  .t-row {
+    flex-wrap: wrap;
+    row-gap: 4px;
+  }
+  .t-row .ml-auto {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .modal {
+    width: calc(100vw - 32px);
+  }
+}
 </style>

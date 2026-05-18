@@ -148,4 +148,15 @@ function importData() {
   color: var(--text-muted);
   margin-top: 8px;
 }
+
+@media (max-width: 600px) {
+  .setting-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .btn-group {
+    flex-wrap: wrap;
+  }
+}
 </style>

@@ -178,4 +178,13 @@ function confirm() {
   padding-top: 4px;
   border-top: 1px solid var(--border-light);
 }
+
+@media (max-width: 500px) {
+  .md-matches-grid {
+    grid-template-columns: 1fr;
+  }
+  .md-sel {
+    width: 100%;
+  }
+}
 </style>

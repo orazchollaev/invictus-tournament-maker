@@ -301,4 +301,21 @@ function closeSeasonModal() {
   gap: 8px;
   flex-wrap: wrap;
 }
+
+@media (max-width: 600px) {
+  .t-header h1 {
+    font-size: 18px;
+  }
+  .t-actions {
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+  .modal {
+    width: calc(100vw - 32px);
+  }
+  .full-bracket-modal {
+    width: 100vw;
+    height: 100dvh;
+  }
+}
 </style>

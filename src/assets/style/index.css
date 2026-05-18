@@ -179,3 +179,9 @@ th {
   font-size: 13px;
   color: #36466f;
 }
+
+@media (max-width: 600px) {
+  .page {
+    padding: 12px 10px;
+  }
+}

@@ -62,4 +62,32 @@ nav a.router-link-active {
 .nav-right {
   margin-left: auto;
 }
+
+@media (max-width: 600px) {
+  .header-inner {
+    flex-wrap: wrap;
+    height: auto;
+    gap: 0;
+    padding: 0 10px;
+  }
+  .logo {
+    order: 1;
+    flex: 1;
+    line-height: 44px;
+  }
+  .nav-right {
+    order: 2;
+    margin-left: 0;
+  }
+  nav:not(.nav-right) {
+    order: 3;
+    width: 100%;
+    border-top: 1px solid var(--border-light);
+  }
+  nav a {
+    padding: 0 10px;
+    line-height: 38px;
+    font-size: 13px;
+  }
+}
 </style>

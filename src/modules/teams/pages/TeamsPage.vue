@@ -210,4 +210,26 @@ const {
 .flush {
   padding: 0;
 }
+
+@media (max-width: 600px) {
+  .section-body > .flex {
+    flex-wrap: wrap;
+  }
+  .name-input {
+    width: 100%;
+    flex: 1 1 100%;
+  }
+  .power-input {
+    width: 80px;
+  }
+  .team-row {
+    flex-wrap: wrap;
+  }
+  .team-row.is-editing {
+    row-gap: 6px;
+  }
+  .edit-name {
+    flex: 1 1 100%;
+  }
+}
 </style>
