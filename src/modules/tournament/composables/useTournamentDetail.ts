@@ -1,10 +1,10 @@
-import { computed } from "vue"
+import { computed, watch } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import { useTeamsStore } from "@/modules/teams/store"
 import { useTournamentStore } from "@/modules/tournament/store"
 import { simulateMatch } from "@/engine/logic"
 
-// import confetti from "canvas-confetti"
+import confetti from "canvas-confetti"
 
 export function useTournamentDetail() {
   const route = useRoute()
@@ -41,41 +41,41 @@ export function useTournamentDetail() {
     store.resetResults(route.params.id as string)
   }
 
-  // function fireTeamConfetti(color: string) {
-  //   const end = Date.now() + 2000
+  function fireTeamConfetti(color: string) {
+    const end = Date.now() + 2000
 
-  //   const frame = () => {
-  //     // Sol
-  //     confetti({
-  //       particleCount: 4,
-  //       angle: 60,
-  //       spread: 55,
-  //       origin: { x: 0, y: 0.6 },
-  //       colors: [color, "#ffffff"],
-  //     })
-  //     // Sağ
-  //     confetti({
-  //       particleCount: 4,
-  //       angle: 120,
-  //       spread: 55,
-  //       origin: { x: 1, y: 0.6 },
-  //       colors: [color, "#ffffff"],
-  //     })
+    const frame = () => {
+      // Sol
+      confetti({
+        particleCount: 4,
+        angle: 60,
+        spread: 55,
+        origin: { x: 0, y: 0.6 },
+        colors: [color, "#ffffff"],
+      })
+      // Sağ
+      confetti({
+        particleCount: 4,
+        angle: 120,
+        spread: 55,
+        origin: { x: 1, y: 0.6 },
+        colors: [color, "#ffffff"],
+      })
 
-  //     if (Date.now() < end) requestAnimationFrame(frame)
-  //   }
+      if (Date.now() < end) requestAnimationFrame(frame)
+    }
 
-  //   frame()
-  // }
+    frame()
+  }
 
-  // watch(
-  //   () => tournament.value?.winnerId,
-  //   (winnerId) => {
-  //     if (!winnerId) return
-  //     const team = allTeams.value.find((t) => t.id === winnerId)
-  //     if (team) fireTeamConfetti(team.color)
-  //   }
-  // )
+  watch(
+    () => tournament.value?.winnerId,
+    (winnerId) => {
+      if (!winnerId) return
+      const team = allTeams.value.find((t) => t.id === winnerId)
+      if (team) fireTeamConfetti(team.color)
+    }
+  )
 
   return {
     store,
