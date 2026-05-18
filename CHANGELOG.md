@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.2.0](https://github.com/orazchollaev/tournament-sim/compare/v0.1.7...v0.2.0) (2026-05-18)
+
+### Features
+
+- **tournament:** add season numbering, rename, and new season support ([2f9d98f](https://github.com/orazchollaev/tournament-sim/commit/2f9d98f718d2e7a5ef5a0b1e8c20bf33ed64d785))
+- **tournament:** add seeded draw option for new tournaments and seasons ([d7c5ea4](https://github.com/orazchollaev/tournament-sim/commit/d7c5ea4b1d4f94d740677ae739b4f5c0fbcc672b))
+
+### Code Refactoring
+
+- change default team names ([738a455](https://github.com/orazchollaev/tournament-sim/commit/738a45586db849bf52fd242374b6480eca19c0ae))
+
+### Documentation
+
+- change project name in README.md ([2b5799e](https://github.com/orazchollaev/tournament-sim/commit/2b5799e15fd5f2d5bea0b6f5993783f0c27962a0))
+- update README.md ([6767a2d](https://github.com/orazchollaev/tournament-sim/commit/6767a2dcfdcc29046600206f41b62821f1e0ad16))
+
 ## [0.1.7](https://github.com/orazchollaev/tournament-sim/compare/v0.1.6...v0.1.7) (2026-05-18)
 
 ### Features
