@@ -17,7 +17,7 @@ const {
   startNewSeason,
 } = useTournamentDetail()
 
-const showSeasonChoice = ref(false)
+const showSeasonModal = ref(false)
 const showManualSeason = ref(false)
 
 const tournamentTeams = computed(() =>
@@ -26,17 +26,17 @@ const tournamentTeams = computed(() =>
 
 function handleNewSeason(seeded: boolean) {
   startNewSeason(seeded)
-  showSeasonChoice.value = false
+  showSeasonModal.value = false
 }
 
 function handleManualSeasonConfirm(orderedIds: string[]) {
   startNewSeason(false, orderedIds)
-  showSeasonChoice.value = false
+  showSeasonModal.value = false
   showManualSeason.value = false
 }
 
-function cancelSeasonChoice() {
-  showSeasonChoice.value = false
+function closeSeasonModal() {
+  showSeasonModal.value = false
   showManualSeason.value = false
 }
 </script>
@@ -98,35 +98,41 @@ function cancelSeasonChoice() {
         </div>
       </div>
 
-      <div
-        class="flex"
-        style="justify-content: flex-end; gap: 8px; margin-top: 8px; flex-wrap: wrap"
-      >
-        <template v-if="tournament.winnerId && showSeasonChoice">
-          <template v-if="showManualSeason">
-            <div class="manual-season-wrap">
-              <ManualDraw
-                :teams="tournamentTeams"
-                @confirm="handleManualSeasonConfirm"
-                @cancel="showManualSeason = false"
-              />
-            </div>
-          </template>
-          <template v-else>
-            <span style="font-size: 12px; color: var(--text-muted)">Draw:</span>
-            <button @click="handleNewSeason(false)">Random</button>
-            <button @click="handleNewSeason(true)">Seeded</button>
-            <button @click="showManualSeason = true">Manual</button>
-            <button @click="cancelSeasonChoice">Cancel</button>
-          </template>
-        </template>
-        <button v-else-if="tournament.winnerId" class="primary" @click="showSeasonChoice = true">
+      <div class="flex" style="justify-content: flex-end; gap: 8px; margin-top: 8px">
+        <button v-if="tournament.winnerId" class="primary" @click="showSeasonModal = true">
           New Season
         </button>
         <button class="danger" @click="resetTournament">Reset</button>
         <button class="danger" @click="deleteTournament">Delete</button>
       </div>
     </template>
+
+    <!-- New Season modal -->
+    <div v-if="showSeasonModal" class="modal-backdrop" @click.self="closeSeasonModal">
+      <div class="modal">
+        <div class="modal-header">New Season — {{ tournament?.name }}</div>
+        <div class="modal-body">
+          <template v-if="showManualSeason">
+            <ManualDraw
+              :teams="tournamentTeams"
+              @confirm="handleManualSeasonConfirm"
+              @cancel="showManualSeason = false"
+            />
+          </template>
+          <template v-else>
+            <p class="modal-desc">
+              Choose draw type for Season {{ (tournament?.season ?? 1) + 1 }}
+            </p>
+            <div class="modal-actions">
+              <button class="primary" @click="handleNewSeason(false)">Random draw</button>
+              <button class="primary" @click="handleNewSeason(true)">Seeded</button>
+              <button class="primary" @click="showManualSeason = true">Manual</button>
+              <button @click="closeSeasonModal">Cancel</button>
+            </div>
+          </template>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -168,10 +174,38 @@ function cancelSeasonChoice() {
   margin-bottom: 16px;
   font-size: 14px;
 }
-.manual-season-wrap {
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(32, 33, 34, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+}
+.modal {
   background: var(--surface);
-  border: 1px solid var(--border-light);
-  padding: 12px;
-  width: 100%;
+  border: 1px solid var(--border);
+  width: 360px;
+}
+.modal-header {
+  font-family: var(--font);
+  font-size: 16px;
+  border-bottom: 1px solid var(--border-light);
+  padding: 10px 14px;
+  background: var(--bg);
+}
+.modal-body {
+  padding: 14px;
+}
+.modal-desc {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+.modal-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 </style>
