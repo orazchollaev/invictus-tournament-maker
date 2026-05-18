@@ -45,42 +45,49 @@ function confirm() {
 
 <template>
   <div class="md-wrap">
-    <div v-if="byeCount > 0" class="md-group">
-      <div class="md-group-label">Byes (automatic win)</div>
-      <div v-for="(_, i) in byeSlots" :key="'bye-' + i" class="md-row">
-        <span class="md-idx">{{ i + 1 }}</span>
-        <select v-model="byeSlots[i]" class="md-sel">
-          <option value="">— Pick team</option>
-          <option v-for="t in available(byeSlots[i])" :key="t.id" :value="t.id">
-            {{ t.name }}
-          </option>
-        </select>
-        <span class="md-bye">BYE</span>
+    <!-- Byes -->
+    <div v-if="byeCount > 0" class="md-section">
+      <div class="md-label">Byes (automatic win)</div>
+      <div class="md-bye-grid">
+        <div v-for="(_, i) in byeSlots" :key="'bye-' + i" class="md-bye-row">
+          <span class="md-idx">{{ i + 1 }}</span>
+          <select v-model="byeSlots[i]" class="md-sel">
+            <option value="">— Pick team</option>
+            <option v-for="t in available(byeSlots[i])" :key="t.id" :value="t.id">
+              {{ t.name }}
+            </option>
+          </select>
+          <span class="md-bye-tag">BYE</span>
+        </div>
       </div>
     </div>
 
-    <div class="md-group">
-      <div v-if="byeCount > 0" class="md-group-label">Matches</div>
-      <div v-for="(slot, i) in matchSlots" :key="'match-' + i" class="md-row">
-        <span class="md-idx">{{ byeCount + i + 1 }}</span>
-        <select v-model="slot.homeId" class="md-sel">
-          <option value="">— Pick team</option>
-          <option v-for="t in available(slot.homeId)" :key="t.id" :value="t.id">
-            {{ t.name }}
-          </option>
-        </select>
-        <span class="md-vs">vs</span>
-        <select v-model="slot.awayId" class="md-sel">
-          <option value="">— Pick team</option>
-          <option v-for="t in available(slot.awayId)" :key="t.id" :value="t.id">
-            {{ t.name }}
-          </option>
-        </select>
+    <!-- Matches -->
+    <div class="md-section">
+      <div v-if="byeCount > 0" class="md-label">Matches</div>
+      <div class="md-matches-grid">
+        <div v-for="(slot, i) in matchSlots" :key="'match-' + i" class="md-card">
+          <span class="md-card-num">{{ byeCount + i + 1 }}</span>
+          <select v-model="slot.homeId" class="md-sel-full">
+            <option value="">— Home</option>
+            <option v-for="t in available(slot.homeId)" :key="t.id" :value="t.id">
+              {{ t.name }}
+            </option>
+          </select>
+          <span class="md-vs">vs</span>
+          <select v-model="slot.awayId" class="md-sel-full">
+            <option value="">— Away</option>
+            <option v-for="t in available(slot.awayId)" :key="t.id" :value="t.id">
+              {{ t.name }}
+            </option>
+          </select>
+        </div>
       </div>
     </div>
 
+    <!-- Actions -->
     <div class="md-actions">
-      <button class="primary" :disabled="!complete" @click="confirm">Confirm</button>
+      <button class="primary" :disabled="!complete" @click="confirm">Confirm draw</button>
       <button @click="emit('cancel')">Cancel</button>
     </div>
   </div>
@@ -92,23 +99,64 @@ function confirm() {
   flex-direction: column;
   gap: 12px;
 }
-.md-group {
+.md-section {
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
-.md-group-label {
+.md-label {
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--text-muted);
-  margin-bottom: 2px;
 }
-.md-row {
+
+/* Byes: single column */
+.md-bye-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.md-bye-row {
   display: flex;
   align-items: center;
   gap: 8px;
 }
+
+/* Matches: 2-column card grid */
+.md-matches-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  max-height: 360px;
+  overflow-y: auto;
+  padding-right: 2px;
+}
+.md-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 6px 8px;
+  border: 1px solid var(--border-light);
+  background: var(--bg);
+}
+.md-card-num {
+  font-size: 10px;
+  color: var(--text-muted);
+  font-weight: 600;
+  line-height: 1;
+}
+.md-sel-full {
+  width: 100%;
+  font-size: 12px;
+}
+.md-vs {
+  font-size: 10px;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+/* Shared */
 .md-idx {
   font-size: 11px;
   color: var(--text-muted);
@@ -119,11 +167,7 @@ function confirm() {
 .md-sel {
   width: 140px;
 }
-.md-vs {
-  font-size: 11px;
-  color: var(--text-muted);
-}
-.md-bye {
+.md-bye-tag {
   font-size: 11px;
   color: var(--text-muted);
   font-style: italic;
@@ -131,6 +175,7 @@ function confirm() {
 .md-actions {
   display: flex;
   gap: 8px;
-  margin-top: 4px;
+  padding-top: 4px;
+  border-top: 1px solid var(--border-light);
 }
 </style>

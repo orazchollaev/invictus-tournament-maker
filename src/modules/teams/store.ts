@@ -24,7 +24,7 @@ export const useTeamsStore = defineStore("teams", () => {
   ])
 
   function add(name: string, color: string, power: number) {
-    if (teams.value.length >= 16) return
+    if (teams.value.length >= 32) return
     teams.value.push({ id: Date.now().toString(), name, color, power })
   }
 

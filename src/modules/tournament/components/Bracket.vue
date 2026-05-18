@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, nextTick, watch, onMounted, onUnmounted } from "vue"
+import { ref, computed, nextTick, watch, onMounted, onUnmounted } from "vue"
 import type { Tournament, Match } from "../types"
 import type { Team } from "@/modules/teams/types"
 import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
@@ -21,9 +21,9 @@ function startEdit(match: Match) {
   editAway.value = match.result?.away ?? 0
 }
 
-function saveResult(ri: number, mi: number, _match: Match) {
+function saveResult(origRound: number, origMatch: number, _match: Match) {
   if (editHome.value === editAway.value) return
-  emit("set-result", ri, mi, editHome.value, editAway.value)
+  emit("set-result", origRound, origMatch, editHome.value, editAway.value)
   editingMatch.value = null
 }
 
@@ -32,18 +32,79 @@ function isWinner(match: Match, teamId: string | null) {
   return getWinnerId(match) === teamId
 }
 
-// --- Connector refs ---
-const matchRefs: Record<number, Record<number, HTMLElement>> = {}
-const connRefs: Record<number, HTMLElement> = {}
+// --- Split bracket data ---
 
-function setMatchRef(el: Element | null, ri: number, mi: number) {
-  if (!el) return
-  if (!matchRefs[ri]) matchRefs[ri] = {}
-  matchRefs[ri][mi] = el as HTMLElement
+interface DisplayMatch extends Match {
+  _origRound: number
+  _origMatch: number
 }
 
-function setConnRef(el: Element | null, ri: number) {
-  if (el) connRefs[ri] = el as HTMLElement
+const allRounds = computed(() => props.tournament.rounds)
+const nonFinalRounds = computed(() => allRounds.value.slice(0, -1))
+const finalRound = computed(() => allRounds.value[allRounds.value.length - 1])
+
+const finalMatch = computed(
+  (): DisplayMatch => ({
+    ...finalRound.value.matches[0],
+    _origRound: allRounds.value.length - 1,
+    _origMatch: 0,
+  })
+)
+
+// Left: each non-final round's first half, outer→inner
+const leftRounds = computed((): DisplayMatch[][] =>
+  nonFinalRounds.value.map((r, ri) =>
+    r.matches.slice(0, r.matches.length / 2).map((m, mi) => ({
+      ...m,
+      _origRound: ri,
+      _origMatch: mi,
+    }))
+  )
+)
+
+// Right: each non-final round's second half reversed, then rounds reversed (inner→outer)
+const rightRounds = computed((): DisplayMatch[][] =>
+  [...nonFinalRounds.value]
+    .map((r, ri) => {
+      const total = r.matches.length
+      return r.matches
+        .slice(total / 2)
+        .reverse()
+        .map((m, di) => ({
+          ...m,
+          _origRound: ri,
+          _origMatch: total - 1 - di,
+        }))
+    })
+    .reverse()
+)
+
+// Round names for right side (inner→outer = reverse of nonFinalRounds)
+function rightRoundName(ri: number) {
+  const origIndex = nonFinalRounds.value.length - 1 - ri
+  return nonFinalRounds.value[origIndex]?.name ?? ""
+}
+
+// --- Refs ---
+const leftMatchRefs: Record<number, Record<number, HTMLElement>> = {}
+const rightMatchRefs: Record<number, Record<number, HTMLElement>> = {}
+const leftConnRefs: Record<number, HTMLElement> = {}
+const rightConnRefs: Record<number, HTMLElement> = {}
+function setLeftRef(el: Element | null, li: number, mi: number) {
+  if (!el) return
+  if (!leftMatchRefs[li]) leftMatchRefs[li] = {}
+  leftMatchRefs[li][mi] = el as HTMLElement
+}
+function setRightRef(el: Element | null, ri: number, mi: number) {
+  if (!el) return
+  if (!rightMatchRefs[ri]) rightMatchRefs[ri] = {}
+  rightMatchRefs[ri][mi] = el as HTMLElement
+}
+function setLeftConnRef(el: Element | null, li: number) {
+  if (el) leftConnRefs[li] = el as HTMLElement
+}
+function setRightConnRef(el: Element | null, ri: number) {
+  if (el) rightConnRefs[ri] = el as HTMLElement
 }
 
 function midY(el: HTMLElement, ref: DOMRect): number {
@@ -51,32 +112,81 @@ function midY(el: HTMLElement, ref: DOMRect): number {
   return (r.top + r.bottom) / 2 - ref.top
 }
 
+function makeSvg(paths: string[]): string {
+  return `<svg width="100%" height="100%" style="display:block;overflow:visible">${paths
+    .map((d) => `<path d="${d}" fill="none" stroke="var(--border)" stroke-width="1"/>`)
+    .join("")}</svg>`
+}
+
 function drawConnectors() {
-  props.tournament.rounds.forEach((round, ri) => {
-    if (ri === 0) return
-    const connEl = connRefs[ri]
-    if (!connEl) return
-    const connRect = connEl.getBoundingClientRect()
-    const w = connRect.width
+  const nLeft = leftRounds.value.length
+
+  // Left connectors
+  for (let li = 0; li < nLeft; li++) {
+    const connEl = leftConnRefs[li]
+    if (!connEl) continue
+    const rect = connEl.getBoundingClientRect()
+    const w = rect.width
     const mid = w / 2
     const paths: string[] = []
 
-    round.matches.forEach((_, ci) => {
-      const srcA = matchRefs[ri - 1]?.[ci * 2]
-      const srcB = matchRefs[ri - 1]?.[ci * 2 + 1]
-      const dst = matchRefs[ri]?.[ci]
-      if (!srcA || !srcB || !dst) return
-      const ay = midY(srcA, connRect)
-      const by = midY(srcB, connRect)
-      const dy = midY(dst, connRect)
-      paths.push(`M0 ${ay} H${mid} V${by} H0`)
-      paths.push(`M${mid} ${dy} H${w}`)
-    })
+    if (li < nLeft - 1) {
+      // Standard branching connector
+      leftRounds.value[li + 1].forEach((_, ci) => {
+        const srcA = leftMatchRefs[li]?.[ci * 2]
+        const srcB = leftMatchRefs[li]?.[ci * 2 + 1]
+        const dst = leftMatchRefs[li + 1]?.[ci]
+        if (!srcA || !srcB || !dst) return
+        const ay = midY(srcA, rect)
+        const by = midY(srcB, rect)
+        const dy = midY(dst, rect)
+        paths.push(`M0 ${ay} H${mid} V${by} H0`)
+        paths.push(`M${mid} ${dy} H${w}`)
+      })
+    } else {
+      // SF-left → Final (simple horizontal line)
+      const src = leftMatchRefs[li]?.[0]
+      if (src) {
+        const sy = midY(src, rect)
+        paths.push(`M0 ${sy} H${w}`)
+      }
+    }
+    connEl.innerHTML = makeSvg(paths)
+  }
 
-    connEl.innerHTML = `<svg width="100%" height="100%" style="display:block;overflow:visible">
-      ${paths.map((d) => `<path d="${d}" fill="none" stroke="var(--border)" stroke-width="1"/>`).join("")}
-    </svg>`
-  })
+  // Right connectors
+  const nRight = rightRounds.value.length
+  for (let ri = 0; ri < nRight; ri++) {
+    const connEl = rightConnRefs[ri]
+    if (!connEl) continue
+    const rect = connEl.getBoundingClientRect()
+    const w = rect.width
+    const mid = w / 2
+    const paths: string[] = []
+
+    if (ri === 0) {
+      // Final → SF-right (simple horizontal line)
+      const dst = rightMatchRefs[0]?.[0]
+      if (dst) {
+        const dy = midY(dst, rect)
+        paths.push(`M0 ${dy} H${w}`)
+      }
+    } else {
+      // Mirrored branching connector: inner (left) → outer (right)
+      rightRounds.value[ri - 1].forEach((_, ci) => {
+        const srcA = rightMatchRefs[ri]?.[ci * 2]
+        const srcB = rightMatchRefs[ri]?.[ci * 2 + 1]
+        const dst = rightMatchRefs[ri - 1]?.[ci]
+        if (!srcA || !srcB || !dst) return
+        const ay = midY(srcA, rect)
+        const by = midY(srcB, rect)
+        const dy = midY(dst, rect)
+        paths.push(`M${w} ${ay} H${mid} V${by} H${w}`)
+        paths.push(`M${mid} ${dy} H0`)
+      })
+    }
+    connEl.innerHTML = makeSvg(paths)
+  }
 }
 
 watch(
@@ -98,17 +208,15 @@ window.addEventListener("resize", drawConnectors)
 <template>
   <div class="bracket-wrap">
     <div class="bracket">
-      <template v-for="(round, ri) in tournament.rounds" :key="ri">
-        <div v-if="ri > 0" :ref="(el) => setConnRef(el as Element | null, ri)" class="conn-col" />
+      <!-- LEFT SIDE: outer → inner -->
+      <template v-for="(leftHalf, li) in leftRounds" :key="'left-' + li">
         <div class="round-col">
-          <div class="round-title">
-            {{ round.name }}
-          </div>
+          <div class="round-title">{{ nonFinalRounds[li].name }}</div>
           <div class="matches-col">
             <div
-              v-for="(match, mi) in round.matches"
+              v-for="(match, mi) in leftHalf"
               :key="match.id"
-              :ref="(el) => setMatchRef(el as Element | null, ri, mi)"
+              :ref="(el) => setLeftRef(el as Element | null, li, mi)"
               class="match-card"
             >
               <div class="match-row" :class="{ winner: isWinner(match, match.homeId) }">
@@ -129,7 +237,7 @@ window.addEventListener("resize", drawConnectors)
                   <button
                     class="primary"
                     style="font-size: 11px; padding: 1px 5px"
-                    @click="saveResult(ri, mi, match)"
+                    @click="saveResult(match._origRound, match._origMatch, match)"
                   >
                     OK
                   </button>
@@ -143,7 +251,114 @@ window.addEventListener("resize", drawConnectors)
                   </button>
                   <button
                     style="font-size: 11px; padding: 1px 5px"
-                    @click="emit('sim-match', ri, mi)"
+                    @click="emit('sim-match', match._origRound, match._origMatch)"
+                  >
+                    🎲
+                  </button>
+                </template>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div :ref="(el) => setLeftConnRef(el as Element | null, li)" class="conn-col" />
+      </template>
+
+      <!-- FINAL -->
+      <div class="round-col final-col">
+        <div class="round-title">{{ finalRound.name }}</div>
+        <div class="matches-col">
+          <div class="match-card">
+            <div class="match-row" :class="{ winner: isWinner(finalMatch, finalMatch.homeId) }">
+              <TeamBadge :team-id="finalMatch.homeId" :teams="teams" />
+              <span v-if="finalMatch.result !== null" class="score">
+                {{ finalMatch.result.home }}
+              </span>
+              <span v-else class="score tbd">-</span>
+            </div>
+            <div class="match-row" :class="{ winner: isWinner(finalMatch, finalMatch.awayId) }">
+              <TeamBadge :team-id="finalMatch.awayId" :teams="teams" />
+              <span v-if="finalMatch.result !== null" class="score">
+                {{ finalMatch.result.away }}
+              </span>
+              <span v-else class="score tbd">-</span>
+            </div>
+            <div v-if="finalMatch.homeId && finalMatch.awayId" class="match-actions">
+              <template v-if="editingMatch === finalMatch.id">
+                <input v-model.number="editHome" type="number" min="0" style="width: 34px" />
+                <span>–</span>
+                <input v-model.number="editAway" type="number" min="0" style="width: 34px" />
+                <button
+                  class="primary"
+                  style="font-size: 11px; padding: 1px 5px"
+                  @click="saveResult(finalMatch._origRound, finalMatch._origMatch, finalMatch)"
+                >
+                  OK
+                </button>
+                <button style="font-size: 11px; padding: 1px 4px" @click="editingMatch = null">
+                  ✕
+                </button>
+              </template>
+              <template v-else>
+                <button style="font-size: 11px; padding: 1px 5px" @click="startEdit(finalMatch)">
+                  {{ finalMatch.result ? "Edit" : "Set score" }}
+                </button>
+                <button
+                  style="font-size: 11px; padding: 1px 5px"
+                  @click="emit('sim-match', finalMatch._origRound, finalMatch._origMatch)"
+                >
+                  🎲
+                </button>
+              </template>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT SIDE: inner → outer -->
+      <template v-for="(rightHalf, ri) in rightRounds" :key="'right-' + ri">
+        <div :ref="(el) => setRightConnRef(el as Element | null, ri)" class="conn-col" />
+        <div class="round-col">
+          <div class="round-title">{{ rightRoundName(ri) }}</div>
+          <div class="matches-col">
+            <div
+              v-for="(match, mi) in rightHalf"
+              :key="match.id"
+              :ref="(el) => setRightRef(el as Element | null, ri, mi)"
+              class="match-card"
+            >
+              <div class="match-row" :class="{ winner: isWinner(match, match.homeId) }">
+                <TeamBadge :team-id="match.homeId" :teams="teams" />
+                <span v-if="match.result !== null" class="score">{{ match.result.home }}</span>
+                <span v-else class="score tbd">-</span>
+              </div>
+              <div class="match-row" :class="{ winner: isWinner(match, match.awayId) }">
+                <TeamBadge :team-id="match.awayId" :teams="teams" />
+                <span v-if="match.result !== null" class="score">{{ match.result.away }}</span>
+                <span v-else class="score tbd">-</span>
+              </div>
+              <div v-if="match.homeId && match.awayId" class="match-actions">
+                <template v-if="editingMatch === match.id">
+                  <input v-model.number="editHome" type="number" min="0" style="width: 34px" />
+                  <span>–</span>
+                  <input v-model.number="editAway" type="number" min="0" style="width: 34px" />
+                  <button
+                    class="primary"
+                    style="font-size: 11px; padding: 1px 5px"
+                    @click="saveResult(match._origRound, match._origMatch, match)"
+                  >
+                    OK
+                  </button>
+                  <button style="font-size: 11px; padding: 1px 4px" @click="editingMatch = null">
+                    ✕
+                  </button>
+                </template>
+                <template v-else>
+                  <button style="font-size: 11px; padding: 1px 5px" @click="startEdit(match)">
+                    {{ match.result ? "Edit" : "Set score" }}
+                  </button>
+                  <button
+                    style="font-size: 11px; padding: 1px 5px"
+                    @click="emit('sim-match', match._origRound, match._origMatch)"
                   >
                     🎲
                   </button>
@@ -172,6 +387,9 @@ window.addEventListener("resize", drawConnectors)
   flex-direction: column;
   min-width: 172px;
   flex-shrink: 0;
+}
+.final-col {
+  min-width: 180px;
 }
 .round-title {
   font-size: 10px;

@@ -63,13 +63,6 @@ function closeSeasonModal() {
         <div v-if="teamsStore.teams.length < 2" class="notice">
           Add at least 2 teams on the Teams tab first.
         </div>
-        <template v-else-if="showManualDraw">
-          <ManualDraw
-            :teams="selectedTeams"
-            @confirm="handleManualConfirm"
-            @cancel="cancelManualDraw"
-          />
-        </template>
         <template v-else>
           <div class="form-row">
             <input
@@ -169,6 +162,20 @@ function closeSeasonModal() {
 
     <p v-else-if="teamsStore.teams.length >= 2" class="empty-text">No tournaments yet.</p>
 
+    <!-- Manual Draw modal -->
+    <div v-if="showManualDraw" class="modal-backdrop" @click.self="cancelManualDraw">
+      <div class="modal">
+        <div class="modal-header">Manual Draw — {{ newName || "New Tournament" }}</div>
+        <div class="modal-body">
+          <ManualDraw
+            :teams="selectedTeams"
+            @confirm="handleManualConfirm"
+            @cancel="cancelManualDraw"
+          />
+        </div>
+      </div>
+    </div>
+
     <!-- New Season modal -->
     <div v-if="seasonModal" class="modal-backdrop" @click.self="closeSeasonModal">
       <div class="modal">
@@ -256,6 +263,9 @@ function closeSeasonModal() {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
+  max-height: 140px;
+  overflow-y: auto;
+  padding: 2px 0;
 }
 .team-chip {
   display: flex;
@@ -362,7 +372,7 @@ function closeSeasonModal() {
 .modal {
   background: var(--surface);
   border: 1px solid var(--border);
-  width: 360px;
+  width: 420px;
 }
 .modal-header {
   font-family: var(--font);
