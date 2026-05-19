@@ -424,7 +424,7 @@ export function seedBracketFromGroups(tournament: Tournament, teams: Team[]) {
   if (!tournament.groups) return
   tournament.groups.forEach((g) => recalcStandings(g))
 
-  const qualifiers: Team[] = []
+  // const qualifiers: Team[] = []
   // Interleave: 1st from each group, then 2nd from each group
   // Then cross-seed for bracket
   const firsts = tournament.groups.map((g) => teams.find((t) => t.id === g.standings[0]?.teamId)!)
