@@ -120,8 +120,9 @@ const sorted = computed(() => {
       const diff = b.team.power - a.team.power
       return sortAsc.value ? -diff : diff
     }
+
     const score = (r: Row) => {
-      if (r.isWinner) return sortAsc.value ? -1 : 999
+      if (r.isWinner) return sortAsc.value ? -1000 : 10000
       if (r.eliminatedRoundIdx === -1) return sortAsc.value ? 999 : -1
       return sortAsc.value ? 100 - r.eliminatedRoundIdx : r.eliminatedRoundIdx
     }

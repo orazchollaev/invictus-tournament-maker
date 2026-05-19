@@ -67,7 +67,16 @@ export const useTournamentStore = defineStore("tournament", () => {
     const ordered = orderedIds
       ? orderedIds.map((oid) => allTeams.find((tm) => tm.id === oid)).filter(Boolean)
       : undefined
-    const newT = createTournament(t.name, selected, season, seeded, ordered as any, groupCount)
+    const effectiveGroupCount =
+      groupCount ?? (t.format === "group+bracket" ? t.groups?.length : undefined)
+    const newT = createTournament(
+      t.name,
+      selected,
+      season,
+      seeded,
+      ordered as any,
+      effectiveGroupCount
+    )
     tournaments.value.push(newT)
     active.value = newT.id
     return newT.id

@@ -2,6 +2,7 @@
 import { ref, computed } from "vue"
 import { useCreateTournament } from "../composables/useCreateTournament"
 import ManualDraw from "../components/ManualDraw.vue"
+import GroupDraw from "../components/GroupDraw.vue"
 import type { Tournament } from "../types"
 
 const {
@@ -25,6 +26,7 @@ const showFormatModal = ref(false)
 const chosenFormat = ref<TournamentFormat>("bracket")
 const groupCount = ref(4)
 const showManualDraw = ref(false)
+const showGroupDraw = ref(false)
 
 const minGroups = computed(() => {
   // at least 2 groups, each group needs at least 2 teams
@@ -42,7 +44,11 @@ function openFormatModal() {
 function proceedFromFormat() {
   showFormatModal.value = false
   if (drawType.value === "manual") {
-    showManualDraw.value = true
+    if (chosenFormat.value === "group+bracket") {
+      showGroupDraw.value = true
+    } else {
+      showManualDraw.value = true
+    }
   } else {
     doCreate(undefined, chosenFormat.value === "group+bracket" ? groupCount.value : undefined)
   }
@@ -50,11 +56,17 @@ function proceedFromFormat() {
 
 function handleManualConfirm(orderedIds: string[]) {
   showManualDraw.value = false
-  doCreate(orderedIds, chosenFormat.value === "group+bracket" ? groupCount.value : undefined)
+  doCreate(orderedIds, undefined)
+}
+
+function handleGroupDrawConfirm(orderedIds: string[]) {
+  showGroupDraw.value = false
+  doCreate(orderedIds, groupCount.value)
 }
 
 function cancelManualDraw() {
   showManualDraw.value = false
+  showGroupDraw.value = false
 }
 function closeFormatModal() {
   showFormatModal.value = false
@@ -63,18 +75,29 @@ function closeFormatModal() {
 // ─── Season modal ──────────────────────────────────────────────
 const seasonModal = ref<Tournament | null>(null)
 const showSeasonManual = ref(false)
+const showSeasonGroupDraw = ref(false)
 
 function doNewSeason(isSeeded: boolean, orderedIds?: string[]) {
   if (!seasonModal.value) return
   const id = store.newSeason(seasonModal.value.id, isSeeded, orderedIds)
   seasonModal.value = null
   showSeasonManual.value = false
+  showSeasonGroupDraw.value = false
   if (id) router.push(`/tournaments/${id}`)
+}
+
+function openSeasonManual() {
+  if (seasonModal.value?.format === "group+bracket") {
+    showSeasonGroupDraw.value = true
+  } else {
+    showSeasonManual.value = true
+  }
 }
 
 function closeSeasonModal() {
   seasonModal.value = null
   showSeasonManual.value = false
+  showSeasonGroupDraw.value = false
 }
 </script>
 
@@ -255,7 +278,7 @@ function closeSeasonModal() {
       </div>
     </div>
 
-    <!-- Manual Draw modal -->
+    <!-- Manual Draw modal (bracket only) -->
     <div v-if="showManualDraw" class="modal-backdrop" @click.self="cancelManualDraw">
       <div class="modal">
         <div class="modal-header">Manual Draw — {{ newName || "New Tournament" }}</div>
@@ -269,9 +292,24 @@ function closeSeasonModal() {
       </div>
     </div>
 
+    <!-- Group Draw modal (group+bracket create) -->
+    <div v-if="showGroupDraw" class="modal-backdrop" @click.self="cancelManualDraw">
+      <div class="modal group-draw-modal">
+        <div class="modal-header">Group Draw — {{ newName || "New Tournament" }}</div>
+        <div class="modal-body">
+          <GroupDraw
+            :teams="selectedTeams"
+            :group-count="groupCount"
+            @confirm="handleGroupDrawConfirm"
+            @cancel="cancelManualDraw"
+          />
+        </div>
+      </div>
+    </div>
+
     <!-- New Season modal -->
     <div v-if="seasonModal" class="modal-backdrop" @click.self="closeSeasonModal">
-      <div class="modal">
+      <div class="modal" :class="{ 'group-draw-modal': showSeasonGroupDraw }">
         <div class="modal-header">New Season — {{ seasonModal.name }}</div>
         <div class="modal-body">
           <template v-if="showSeasonManual">
@@ -281,6 +319,14 @@ function closeSeasonModal() {
               @cancel="showSeasonManual = false"
             />
           </template>
+          <template v-else-if="showSeasonGroupDraw">
+            <GroupDraw
+              :teams="teamsStore.teams.filter((t) => seasonModal!.teamIds.includes(t.id))"
+              :group-count="seasonModal.groups?.length ?? 2"
+              @confirm="(ids) => doNewSeason(false, ids)"
+              @cancel="showSeasonGroupDraw = false"
+            />
+          </template>
           <template v-else>
             <p class="modal-desc">
               Choose draw type for Season {{ (seasonModal.season ?? 1) + 1 }}
@@ -288,7 +334,7 @@ function closeSeasonModal() {
             <div class="modal-actions">
               <button class="primary" @click="doNewSeason(false)">Random draw</button>
               <button class="primary" @click="doNewSeason(true)">Seeded</button>
-              <button class="primary" @click="showSeasonManual = true">Manual</button>
+              <button class="primary" @click="openSeasonManual">Manual</button>
               <button @click="closeSeasonModal">Cancel</button>
             </div>
           </template>
@@ -560,6 +606,9 @@ function closeSeasonModal() {
   background: var(--surface);
   border: 1px solid var(--border);
   width: 420px;
+}
+.group-draw-modal {
+  width: min(680px, calc(100vw - 32px));
 }
 .modal-header {
   font-family: var(--font);

@@ -4,6 +4,7 @@ import Bracket from "@/modules/tournament/components/Bracket.vue"
 import GroupStage from "@/modules/tournament/components/GroupStage.vue"
 import ParticipantsTable from "@/modules/tournament/components/ParticipantsTable.vue"
 import ManualDraw from "@/modules/tournament/components/ManualDraw.vue"
+import GroupDraw from "@/modules/tournament/components/GroupDraw.vue"
 import { useTournamentDetail } from "../composables/useTournamentDetail"
 
 const {
@@ -243,10 +244,18 @@ function closeSeasonModal() {
 
     <!-- New Season modal -->
     <div v-if="showSeasonModal" class="modal-backdrop" @click.self="closeSeasonModal">
-      <div class="modal">
+      <div class="modal" :class="{ 'season-group-modal': showManualSeason && isGroupFormat }">
         <div class="modal-header">New Season — {{ tournament?.name }}</div>
         <div class="modal-body">
-          <template v-if="showManualSeason">
+          <template v-if="showManualSeason && isGroupFormat">
+            <GroupDraw
+              :teams="tournamentTeams"
+              :group-count="tournament?.groups?.length ?? 2"
+              @confirm="handleManualSeasonConfirm"
+              @cancel="showManualSeason = false"
+            />
+          </template>
+          <template v-else-if="showManualSeason">
             <ManualDraw
               :teams="tournamentTeams"
               @confirm="handleManualSeasonConfirm"
@@ -457,6 +466,10 @@ function closeSeasonModal() {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
+}
+
+.season-group-modal {
+  width: min(680px, calc(100vw - 32px));
 }
 
 @media (max-width: 600px) {

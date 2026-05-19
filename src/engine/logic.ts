@@ -237,6 +237,45 @@ export function createTournament(
   }
 }
 
+// ─── Round-robin fixture builder (circle method) ────────────────
+// Groups matches by round so no team plays twice in the same round.
+// Home/away alternates per pair to balance home games (±1 over the season).
+function buildGroupFixture(teamIds: string[]): GroupMatch[] {
+  const n = teamIds.length
+  if (n < 2) return []
+
+  const teams = [...teamIds]
+  if (teams.length % 2 !== 0) teams.push("") // phantom bye for odd counts
+  const size = teams.length
+  const fixed = teams[0]
+  const rotating = teams.slice(1)
+  const posMap = new Map(teamIds.map((id, i) => [id, i]))
+  const matches: GroupMatch[] = []
+
+  for (let r = 0; r < size - 1; r++) {
+    const circle = [fixed, ...rotating]
+    for (let i = 0; i < size / 2; i++) {
+      const a = circle[i]
+      const b = circle[size - 1 - i]
+      if (!a || !b) continue
+      const posA = posMap.get(a) ?? 0
+      const posB = posMap.get(b) ?? 0
+      const sum = posA + posB
+      // Even sum → lower index is home; odd sum → higher index is home
+      const aIsHome = sum % 2 === 0 ? posA < posB : posA > posB
+      matches.push({
+        id: uid(),
+        homeId: aIsHome ? a : b,
+        awayId: aIsHome ? b : a,
+        result: null,
+      })
+    }
+    rotating.unshift(rotating.pop()!)
+  }
+
+  return matches
+}
+
 // ─── Group + Bracket creation ───────────────────────────────────
 function createGroupBracketTournament(
   name: string,
@@ -271,11 +310,7 @@ function createGroupBracketTournament(
   // Build round-robin matches + empty standings for each group
   for (const group of groups) {
     const ids = group.teamIds
-    for (let i = 0; i < ids.length; i++) {
-      for (let j = i + 1; j < ids.length; j++) {
-        group.matches.push({ id: uid(), homeId: ids[i], awayId: ids[j], result: null })
-      }
-    }
+    group.matches = buildGroupFixture(ids)
     group.standings = ids.map((teamId) => ({
       teamId,
       played: 0,
