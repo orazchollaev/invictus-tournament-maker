@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue"
+import { ref, computed } from "vue"
 import { useCreateTournament } from "../composables/useCreateTournament"
 import ManualDraw from "../components/ManualDraw.vue"
 import type { Tournament } from "../types"
@@ -19,26 +19,50 @@ const {
   winnerColor,
 } = useCreateTournament()
 
+// ─── Format modal ──────────────────────────────────────────────
+type TournamentFormat = "bracket" | "group+bracket"
+const showFormatModal = ref(false)
+const chosenFormat = ref<TournamentFormat>("bracket")
+const groupCount = ref(4)
 const showManualDraw = ref(false)
-const seasonModal = ref<Tournament | null>(null)
-const showSeasonManual = ref(false)
 
-function handleCreate() {
+const minGroups = computed(() => {
+  // at least 2 groups, each group needs at least 2 teams
+  return 2
+})
+const maxGroups = computed(() => Math.floor(selected.value.length / 2))
+
+function openFormatModal() {
+  if (!newName.value.trim() || selected.value.length < 2) return
+  chosenFormat.value = "bracket"
+  groupCount.value = Math.min(4, maxGroups.value)
+  showFormatModal.value = true
+}
+
+function proceedFromFormat() {
+  showFormatModal.value = false
   if (drawType.value === "manual") {
     showManualDraw.value = true
   } else {
-    doCreate()
+    doCreate(undefined, chosenFormat.value === "group+bracket" ? groupCount.value : undefined)
   }
 }
 
 function handleManualConfirm(orderedIds: string[]) {
   showManualDraw.value = false
-  doCreate(orderedIds)
+  doCreate(orderedIds, chosenFormat.value === "group+bracket" ? groupCount.value : undefined)
 }
 
 function cancelManualDraw() {
   showManualDraw.value = false
 }
+function closeFormatModal() {
+  showFormatModal.value = false
+}
+
+// ─── Season modal ──────────────────────────────────────────────
+const seasonModal = ref<Tournament | null>(null)
+const showSeasonManual = ref(false)
 
 function doNewSeason(isSeeded: boolean, orderedIds?: string[]) {
   if (!seasonModal.value) return
@@ -69,7 +93,7 @@ function closeSeasonModal() {
               v-model="newName"
               placeholder="Tournament name"
               class="name-input"
-              @keyup.enter="handleCreate"
+              @keyup.enter="openFormatModal"
             />
             <div class="draw-group">
               <button
@@ -100,7 +124,7 @@ function closeSeasonModal() {
             <button
               class="primary"
               :disabled="!newName.trim() || selected.length < 2"
-              @click="handleCreate"
+              @click="openFormatModal"
             >
               Create
               <span class="count-badge">{{ selected.length }}</span>
@@ -143,6 +167,7 @@ function closeSeasonModal() {
           <span class="t-name">{{ t.name }}</span>
           <span class="t-season">S{{ t.season }}</span>
           <span class="t-meta">{{ t.teamIds.length }} teams</span>
+          <span class="t-format">{{ t.format === "group+bracket" ? "Groups+KO" : "Bracket" }}</span>
           <span v-if="t.winnerId" class="winner-tag" :style="{ '--team-color': winnerColor(t) }">
             🏆 {{ winnerName(t) }}
           </span>
@@ -161,6 +186,74 @@ function closeSeasonModal() {
     </div>
 
     <p v-else-if="teamsStore.teams.length >= 2" class="empty-text">No tournaments yet.</p>
+
+    <!-- ─── Format selection modal ─────────────────────────────── -->
+    <div v-if="showFormatModal" class="modal-backdrop" @click.self="closeFormatModal">
+      <div class="modal format-modal">
+        <div class="modal-header">Tournament Format — {{ newName }}</div>
+        <div class="modal-body">
+          <p class="modal-desc">Choose the format for this tournament</p>
+
+          <div class="format-cards">
+            <!-- Bracket only -->
+            <button
+              class="format-card"
+              :class="{ 'format-card--active': chosenFormat === 'bracket' }"
+              @click="chosenFormat = 'bracket'"
+            >
+              <span class="format-icon">🏆</span>
+              <span class="format-title">Knockout Bracket</span>
+              <span class="format-desc">Single-elimination bracket only</span>
+            </button>
+
+            <!-- Group + Bracket -->
+            <button
+              class="format-card"
+              :class="{ 'format-card--active': chosenFormat === 'group+bracket' }"
+              :disabled="selected.length < 4"
+              @click="chosenFormat = 'group+bracket'"
+            >
+              <span class="format-icon">⚽</span>
+              <span class="format-title">Groups + Knockout</span>
+              <span class="format-desc">Group stage → top 2 advance to knockout</span>
+            </button>
+          </div>
+
+          <!-- Group count picker -->
+          <div v-if="chosenFormat === 'group+bracket'" class="group-count-row">
+            <label class="gc-label">Number of groups</label>
+            <div class="gc-stepper">
+              <button
+                class="gc-btn"
+                :disabled="groupCount <= minGroups"
+                @click="groupCount = Math.max(minGroups, groupCount - 1)"
+              >
+                −
+              </button>
+              <span class="gc-val">{{ groupCount }}</span>
+              <button
+                class="gc-btn"
+                :disabled="groupCount >= maxGroups"
+                @click="groupCount = Math.min(maxGroups, groupCount + 1)"
+              >
+                +
+              </button>
+            </div>
+            <span class="gc-hint">
+              {{ Math.ceil(selected.length / groupCount) }}–{{
+                Math.ceil(selected.length / groupCount)
+              }}
+              teams/group · {{ groupCount * 2 }} qualifiers
+            </span>
+          </div>
+
+          <div class="modal-actions">
+            <button class="primary" @click="proceedFromFormat">Confirm</button>
+            <button @click="closeFormatModal">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- Manual Draw modal -->
     <div v-if="showManualDraw" class="modal-backdrop" @click.self="cancelManualDraw">
@@ -225,7 +318,7 @@ function closeSeasonModal() {
   margin-left: 2px;
 }
 
-/* Draw type segmented control */
+/* Draw type */
 .draw-group {
   display: flex;
 }
@@ -255,7 +348,7 @@ function closeSeasonModal() {
   background: var(--border-light);
 }
 
-/* Team selection */
+/* Team chips */
 .chip-check {
   display: none;
 }
@@ -348,18 +441,112 @@ function closeSeasonModal() {
   border-radius: 2px;
   padding: 1px 5px;
 }
+.t-format {
+  font-size: 11px;
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
+  border-radius: 2px;
+  padding: 1px 5px;
+}
 .t-meta {
   font-size: 12px;
   color: var(--text-muted);
 }
-
-/* Small button variant */
 .sm {
   font-size: 12px;
   padding: 2px 8px;
 }
 
-/* Modal */
+/* Format modal */
+.format-modal {
+  width: 420px;
+}
+.format-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.format-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 14px 10px;
+  border: 2px solid var(--border-light);
+  background: var(--bg);
+  cursor: pointer;
+  text-align: center;
+  border-radius: var(--radius);
+  transition:
+    border-color 0.15s,
+    background 0.15s;
+}
+.format-card:hover:not(:disabled) {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 6%, var(--bg));
+}
+.format-card--active {
+  border-color: var(--accent) !important;
+  background: color-mix(in srgb, var(--accent) 10%, var(--bg)) !important;
+}
+.format-card:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.format-icon {
+  font-size: 24px;
+}
+.format-title {
+  font-size: 13px;
+  font-weight: 600;
+}
+.format-desc {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* Group count */
+.group-count-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  border-top: 1px solid var(--border-light);
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+.gc-label {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+.gc-stepper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.gc-btn {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.gc-val {
+  font-size: 18px;
+  font-weight: 700;
+  min-width: 24px;
+  text-align: center;
+}
+.gc-hint {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* Modal shared */
 .modal-backdrop {
   position: fixed;
   inset: 0;
@@ -406,7 +593,6 @@ function closeSeasonModal() {
   .draw-group {
     align-self: flex-start;
   }
-
   .t-row {
     flex-wrap: wrap;
     row-gap: 4px;
@@ -415,9 +601,12 @@ function closeSeasonModal() {
     margin-left: 0;
     width: 100%;
   }
-
-  .modal {
+  .modal,
+  .format-modal {
     width: calc(100vw - 32px);
+  }
+  .format-cards {
+    grid-template-columns: 1fr;
   }
 }
 </style>

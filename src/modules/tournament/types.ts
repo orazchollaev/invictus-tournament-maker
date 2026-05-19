@@ -1,8 +1,15 @@
-export type MatchResult = { home: number; away: number; penHome?: number; penAway?: number }
+// modules/tournament/types.ts
+
+export interface MatchResult {
+  home: number
+  away: number
+  penHome?: number
+  penAway?: number
+}
 
 export interface Match {
   id: string
-  homeId: string | null // null = TBD
+  homeId: string | null
   awayId: string | null
   result: MatchResult | null
 }
@@ -12,12 +19,50 @@ export interface Round {
   matches: Match[]
 }
 
+// ─── Group Stage ────────────────────────────────────────────────
+export interface GroupMatch {
+  id: string
+  homeId: string
+  awayId: string
+  result: MatchResult | null
+}
+
+export interface GroupStanding {
+  teamId: string
+  played: number
+  won: number
+  drawn: number
+  lost: number
+  gf: number // goals for
+  ga: number // goals against
+  gd: number // goal difference
+  pts: number
+}
+
+export interface Group {
+  name: string // "Group A", "Group B", …
+  teamIds: string[]
+  matches: GroupMatch[]
+  standings: GroupStanding[]
+}
+
+// ─── Tournament ──────────────────────────────────────────────────
+export type TournamentFormat = "bracket" | "group+bracket"
+
 export interface Tournament {
   id: string
   name: string
   season: number
+  format: TournamentFormat
   teamIds: string[]
+
+  // bracket-only / knockout phase
   rounds: Round[]
   winnerId: string | null
+
+  // group stage (only when format === "group+bracket")
+  groups?: Group[]
+  groupsDone?: boolean // true once bracket has been seeded from groups
+
   createdAt: number
 }

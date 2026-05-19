@@ -1,3 +1,4 @@
+// modules/tournament/store.ts
 import { defineStore } from "pinia"
 import { ref } from "vue"
 import type { Tournament } from "./types"
@@ -7,6 +8,13 @@ import {
   simulateMatch,
   simulatePenaltyShootout,
   getWinnerId,
+  setGroupMatchResult,
+  simulateGroupMatch,
+  simulateGroup,
+  simulateAllGroups,
+  allGroupsDone,
+  seedBracketFromGroups,
+  recalcStandings,
 } from "@/engine/logic"
 import { useTeamsStore } from "../teams/store"
 
@@ -18,7 +26,14 @@ export const useTournamentStore = defineStore("tournament", () => {
     return useTeamsStore().teams
   }
 
-  function create(name: string, teamIds: string[], seeded = false, orderedIds?: string[]) {
+  // ─── Create ────────────────────────────────────────────────────
+  function create(
+    name: string,
+    teamIds: string[],
+    seeded = false,
+    orderedIds?: string[],
+    groupCount?: number
+  ) {
     const allTeams = getTeams()
     const selected = allTeams.filter((t) => teamIds.includes(t.id))
     const season =
@@ -28,13 +43,19 @@ export const useTournamentStore = defineStore("tournament", () => {
     const ordered = orderedIds
       ? orderedIds.map((id) => allTeams.find((t) => t.id === id)).filter(Boolean)
       : undefined
-    const t = createTournament(name, selected, season, seeded, ordered as any)
+    const t = createTournament(name, selected, season, seeded, ordered as any, groupCount)
     tournaments.value.push(t)
     active.value = t.id
     return t.id
   }
 
-  function newSeason(id: string, seeded = false, orderedIds?: string[]): string | undefined {
+  // ─── New season ────────────────────────────────────────────────
+  function newSeason(
+    id: string,
+    seeded = false,
+    orderedIds?: string[],
+    groupCount?: number
+  ): string | undefined {
     const t = tournaments.value.find((t) => t.id === id)
     if (!t || !t.winnerId) return
     const allTeams = getTeams()
@@ -46,12 +67,13 @@ export const useTournamentStore = defineStore("tournament", () => {
     const ordered = orderedIds
       ? orderedIds.map((oid) => allTeams.find((tm) => tm.id === oid)).filter(Boolean)
       : undefined
-    const newT = createTournament(t.name, selected, season, seeded, ordered as any)
+    const newT = createTournament(t.name, selected, season, seeded, ordered as any, groupCount)
     tournaments.value.push(newT)
     active.value = newT.id
     return newT.id
   }
 
+  // ─── Bracket result ────────────────────────────────────────────
   function setResult(
     tournamentId: string,
     roundIdx: number,
@@ -69,10 +91,8 @@ export const useTournamentStore = defineStore("tournament", () => {
       away,
       ...(penHome !== undefined && penAway !== undefined ? { penHome, penAway } : {}),
     }
-    // Clear downstream slots that will now change
     clearDownstream(t, roundIdx, matchIdx)
     propagateWinners(t.rounds, getTeams())
-    // Check if tournament is over
     const final = t.rounds[t.rounds.length - 1].matches[0]
     t.winnerId = getWinnerId(final)
   }
@@ -88,20 +108,20 @@ export const useTournamentStore = defineStore("tournament", () => {
     }
   }
 
+  // ─── Bracket simulation ────────────────────────────────────────
   function simulateAll(tournamentId: string) {
     const t = tournaments.value.find((t) => t.id === tournamentId)
     if (!t) return
     const allTeams = getTeams()
     for (let r = 0; r < t.rounds.length; r++) {
       propagateWinners(t.rounds, allTeams)
-      t.rounds[r].matches.forEach((match, _mi) => {
+      t.rounds[r].matches.forEach((match) => {
         if (!match.result && match.homeId && match.awayId) {
           const result = simulateMatch(match, allTeams)
-          if (result.home === result.away) {
-            match.result = { ...result, ...simulatePenaltyShootout(match, allTeams) }
-          } else {
-            match.result = result
-          }
+          match.result =
+            result.home === result.away
+              ? { ...result, ...simulatePenaltyShootout(match, allTeams) }
+              : result
         }
       })
     }
@@ -118,11 +138,10 @@ export const useTournamentStore = defineStore("tournament", () => {
     t.rounds[roundIdx].matches.forEach((match) => {
       if (!match.result && match.homeId && match.awayId) {
         const result = simulateMatch(match, allTeams)
-        if (result.home === result.away) {
-          match.result = { ...result, ...simulatePenaltyShootout(match, allTeams) }
-        } else {
-          match.result = result
-        }
+        match.result =
+          result.home === result.away
+            ? { ...result, ...simulatePenaltyShootout(match, allTeams) }
+            : result
       }
     })
     propagateWinners(t.rounds, allTeams)
@@ -130,6 +149,51 @@ export const useTournamentStore = defineStore("tournament", () => {
     t.winnerId = getWinnerId(final)
   }
 
+  // ─── Group stage actions ───────────────────────────────────────
+  function setGroupResult(
+    tournamentId: string,
+    groupIdx: number,
+    matchIdx: number,
+    home: number,
+    away: number
+  ) {
+    const t = tournaments.value.find((t) => t.id === tournamentId)
+    if (!t) return
+    setGroupMatchResult(t, groupIdx, matchIdx, home, away)
+  }
+
+  function simGroupMatch(tournamentId: string, groupIdx: number, matchIdx: number) {
+    const t = tournaments.value.find((t) => t.id === tournamentId)
+    if (!t) return
+    simulateGroupMatch(t, groupIdx, matchIdx, getTeams())
+  }
+
+  function simGroup(tournamentId: string, groupIdx: number) {
+    const t = tournaments.value.find((t) => t.id === tournamentId)
+    if (!t) return
+    simulateGroup(t, groupIdx, getTeams())
+  }
+
+  function simAllGroups(tournamentId: string) {
+    const t = tournaments.value.find((t) => t.id === tournamentId)
+    if (!t) return
+    simulateAllGroups(t, getTeams())
+  }
+
+  function advanceToBracket(tournamentId: string) {
+    const t = tournaments.value.find((t) => t.id === tournamentId)
+    if (!t || !t.groups) return
+    if (!allGroupsDone(t)) return
+    seedBracketFromGroups(t, getTeams())
+  }
+
+  function isGroupsDone(tournamentId: string): boolean {
+    const t = tournaments.value.find((t) => t.id === tournamentId)
+    if (!t) return false
+    return allGroupsDone(t)
+  }
+
+  // ─── Misc ──────────────────────────────────────────────────────
   function remove(id: string) {
     tournaments.value = tournaments.value.filter((t) => t.id !== id)
     if (active.value === id) active.value = tournaments.value[0]?.id ?? null
@@ -143,17 +207,20 @@ export const useTournamentStore = defineStore("tournament", () => {
     const t = tournaments.value.find((t) => t.id === tournamentId)
     if (!t) return
 
-    for (let r = 0; r < t.rounds.length; r++) {
-      const round = t.rounds[r]
+    // Reset group stage
+    if (t.groups) {
+      for (const group of t.groups) {
+        group.matches.forEach((m) => (m.result = null))
+        recalcStandings(group)
+      }
+      t.groupsDone = false
+    }
 
-      for (const match of round.matches) {
-        // 🟢 First round: only reset score
-        if (r === 0) {
-          match.result = null
-        }
-        // 🔴 Later rounds: reset everything (they depend on winners)
-        else {
-          match.result = null
+    // Reset bracket
+    for (let r = 0; r < t.rounds.length; r++) {
+      for (const match of t.rounds[r].matches) {
+        match.result = null
+        if (r > 0 || t.format === "group+bracket") {
           match.homeId = null
           match.awayId = null
         }
@@ -171,6 +238,12 @@ export const useTournamentStore = defineStore("tournament", () => {
     setResult,
     simulateAll,
     simulateRound,
+    setGroupResult,
+    simGroupMatch,
+    simGroup,
+    simAllGroups,
+    advanceToBracket,
+    isGroupsDone,
     remove,
     getById,
     resetResults,

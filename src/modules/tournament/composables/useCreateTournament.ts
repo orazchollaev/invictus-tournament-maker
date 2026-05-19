@@ -1,3 +1,4 @@
+// modules/tournament/composables/useCreateTournament.ts
 import { ref, computed } from "vue"
 import { useRouter } from "vue-router"
 import { useTeamsStore } from "@/modules/teams/store"
@@ -27,10 +28,10 @@ export function useCreateTournament() {
     selected.value = allSelected.value ? [] : teamsStore.teams.map((t) => t.id)
   }
 
-  function doCreate(orderedIds?: string[]) {
+  function doCreate(orderedIds?: string[], groupCount?: number) {
     if (!newName.value.trim() || selected.value.length < 2) return
     const isSeeded = drawType.value === "seeded"
-    const id = store.create(newName.value.trim(), selected.value, isSeeded, orderedIds)
+    const id = store.create(newName.value.trim(), selected.value, isSeeded, orderedIds, groupCount)
     newName.value = ""
     selected.value = []
     drawType.value = "random"

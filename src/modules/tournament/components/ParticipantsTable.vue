@@ -18,24 +18,86 @@ function toggleSort(key: SortKey) {
   }
 }
 
-// Result order: winner first, then eliminated by round (latest first), then TBD
-// const RESULT_ORDER = { winner: 0, tbd: 99 }
-
 interface Row {
   team: Team
   isWinner: boolean
   eliminatedRound: string | null
-  eliminatedRoundIdx: number // for sorting
+  eliminatedRoundIdx: number
 }
 
 const rows = computed<Row[]>(() => {
   return props.teams
     .filter((t) => props.tournament.teamIds.includes(t.id))
-    .map((team) => {
+    .map((team): Row => {
+      // Tournament winner
       if (props.tournament.winnerId === team.id) {
         return { team, isWinner: true, eliminatedRound: null, eliminatedRoundIdx: -1 }
       }
-      // Find elimination round
+
+      // ── Group + Bracket format ──────────────────────────────
+      if (props.tournament.format === "group+bracket") {
+        // 1) Check knockout rounds first (if bracket has been seeded)
+        if (props.tournament.groupsDone) {
+          for (let ri = 0; ri < props.tournament.rounds.length; ri++) {
+            const round = props.tournament.rounds[ri]
+            for (const match of round.matches) {
+              if ((match.homeId === team.id || match.awayId === team.id) && match.result) {
+                const winnerId = getWinnerId(match)
+                if (winnerId && winnerId !== team.id) {
+                  return {
+                    team,
+                    isWinner: false,
+                    eliminatedRound: round.name,
+                    // offset by 1000 so knockout always sorts after group eliminations
+                    eliminatedRoundIdx: 1000 + ri,
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        // 2) Check if team qualified from groups
+        const qualified = props.tournament.groupsDone
+          ? props.tournament.rounds[0]?.matches.some(
+              (m) => m.homeId === team.id || m.awayId === team.id
+            )
+          : false
+
+        // 3) Find the group this team belongs to
+        const groupIdx =
+          props.tournament.groups?.findIndex((g) => g.teamIds.includes(team.id)) ?? -1
+        const group = groupIdx >= 0 ? props.tournament.groups![groupIdx] : null
+
+        if (group) {
+          const allGroupMatchesDone = group.matches.every((m) => m.result !== null)
+
+          if (allGroupMatchesDone && !qualified && props.tournament.groupsDone) {
+            // Eliminated in group stage — find their group name
+            return {
+              team,
+              isWinner: false,
+              eliminatedRound: `${group.name}`,
+              eliminatedRoundIdx: -1,
+            }
+          }
+
+          if (allGroupMatchesDone && !qualified && !props.tournament.groupsDone) {
+            // Groups done but bracket not seeded yet
+            return {
+              team,
+              isWinner: false,
+              eliminatedRound: `${group.name}`,
+              eliminatedRoundIdx: -1,
+            }
+          }
+        }
+
+        // Still in tournament (group not finished or qualified and in bracket)
+        return { team, isWinner: false, eliminatedRound: null, eliminatedRoundIdx: -1 }
+      }
+
+      // ── Pure bracket format ──────────────────────────────────
       for (let ri = 0; ri < props.tournament.rounds.length; ri++) {
         const round = props.tournament.rounds[ri]
         for (const match of round.matches) {
@@ -47,6 +109,7 @@ const rows = computed<Row[]>(() => {
           }
         }
       }
+
       return { team, isWinner: false, eliminatedRound: null, eliminatedRoundIdx: -1 }
     })
 })
@@ -57,18 +120,23 @@ const sorted = computed(() => {
       const diff = b.team.power - a.team.power
       return sortAsc.value ? -diff : diff
     }
-    // result sort:
-    // asc  → winner first, latest eliminated → earliest, TBD last
-    // desc → TBD first, earliest eliminated, winner last
     const score = (r: Row) => {
       if (r.isWinner) return sortAsc.value ? -1 : 999
       if (r.eliminatedRoundIdx === -1) return sortAsc.value ? 999 : -1
-      // later round = better finish → lower score when asc
       return sortAsc.value ? 100 - r.eliminatedRoundIdx : r.eliminatedRoundIdx
     }
     return score(a) - score(b)
   })
 })
+
+function eliminationLabel(row: Row): string {
+  if (!row.eliminatedRound) return ""
+  // Group elimination
+  if (props.tournament.format === "group+bracket" && row.eliminatedRoundIdx === -1) {
+    return `Eliminated · ${row.eliminatedRound}`
+  }
+  return `Eliminated · ${row.eliminatedRound}`
+}
 </script>
 
 <template>
@@ -100,8 +168,7 @@ const sorted = computed(() => {
             Winner
           </span>
           <span v-else-if="row.eliminatedRound !== null" class="elim">
-            Eliminated ·
-            <span class="round-name">{{ row.eliminatedRound }}</span>
+            {{ eliminationLabel(row) }}
           </span>
           <span v-else class="pending">—</span>
         </td>
@@ -149,15 +216,18 @@ th.sortable:hover {
   font-size: 12px;
   color: var(--text-muted);
 }
-.round-name {
-  color: var(--text);
-  font-style: italic;
-}
 .team-cell {
   gap: 6px;
 }
 .pending {
   color: var(--text-muted);
   font-size: 12px;
+}
+.tag {
+  display: inline-block;
+  padding: 1px 8px;
+  border-radius: 2px;
+  font-size: 12px;
+  color: #fff;
 }
 </style>

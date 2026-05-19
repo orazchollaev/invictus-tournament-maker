@@ -12,25 +12,70 @@ const teamsStore = useTeamsStore()
 const tournamentStore = useTournamentStore()
 
 const teamId = computed(() => route.params.id as string)
-
 const team = computed(() => teamsStore.teams.find((t) => t.id === teamId.value))
 
-const allMatches = computed(() => {
-  const results: {
-    tournamentName: string
-    tournamentSeason: number
-    round: string
-    match: Match
-    opponentId: string | null
-    goalsFor: number
-    goalsAgainst: number
-    penGoalsFor: number | null
-    penGoalsAgainst: number | null
-    outcome: "W" | "L"
-  }[] = []
+// ─── Bracket match history ────────────────────────────────────
+interface MatchRow {
+  tournamentName: string
+  tournamentSeason: number
+  round: string
+  roundPhase: "group" | "knockout"
+  match:
+    | Match
+    | { id: string; homeId: string; awayId: string; result: { home: number; away: number } }
+  opponentId: string | null
+  goalsFor: number
+  goalsAgainst: number
+  penGoalsFor: number | null
+  penGoalsAgainst: number | null
+  outcome: "W" | "D" | "L"
+}
+
+const allMatches = computed((): MatchRow[] => {
+  const results: MatchRow[] = []
 
   for (const t of tournamentStore.tournaments) {
     if (!t.teamIds.includes(teamId.value)) continue
+
+    // ── Group stage matches ──────────────────────────────────
+    if (t.format === "group+bracket" && t.groups) {
+      for (const group of t.groups) {
+        if (!group.teamIds.includes(teamId.value)) continue
+        for (const match of group.matches) {
+          const isHome = match.homeId === teamId.value
+          const isAway = match.awayId === teamId.value
+          if (!isHome && !isAway) continue
+          if (!match.result) continue
+
+          const { home, away } = match.result
+          const goalsFor = isHome ? home : away
+          const goalsAgainst = isHome ? away : home
+          const opponentId = isHome ? match.awayId : match.homeId
+
+          let outcome: "W" | "D" | "L"
+          if (goalsFor > goalsAgainst) outcome = "W"
+          else if (goalsFor < goalsAgainst) outcome = "L"
+          else outcome = "D"
+
+          // Cast group match to compatible shape for display
+          results.push({
+            tournamentName: t.name,
+            tournamentSeason: t.season,
+            round: group.name,
+            roundPhase: "group",
+            match: match as any,
+            opponentId,
+            goalsFor,
+            goalsAgainst,
+            penGoalsFor: null,
+            penGoalsAgainst: null,
+            outcome,
+          })
+        }
+      }
+    }
+
+    // ── Knockout / bracket matches ───────────────────────────
     for (const round of t.rounds) {
       for (const match of round.matches) {
         const isHome = match.homeId === teamId.value
@@ -55,6 +100,7 @@ const allMatches = computed(() => {
           tournamentName: t.name,
           tournamentSeason: t.season,
           round: round.name,
+          roundPhase: "knockout",
           match,
           opponentId,
           goalsFor,
@@ -73,17 +119,19 @@ const allMatches = computed(() => {
 const stats = computed(() => {
   const played = allMatches.value.length
   const wins = allMatches.value.filter((m) => m.outcome === "W").length
-  const losses = played - wins
+  const draws = allMatches.value.filter((m) => m.outcome === "D").length
+  const losses = allMatches.value.filter((m) => m.outcome === "L").length
   const gf = allMatches.value.reduce((s, m) => s + m.goalsFor, 0)
   const ga = allMatches.value.reduce((s, m) => s + m.goalsAgainst, 0)
   const winRate = played > 0 ? Math.round((wins / played) * 100) : 0
-  return { played, wins, losses, gf, ga, winRate }
+  return { played, wins, draws, losses, gf, ga, winRate }
 })
 
 const tournamentWins = computed(() =>
   tournamentStore.tournaments.filter((t) => t.winnerId === teamId.value)
 )
 
+// Recent form: last 5 matches (most recent first → reverse for display left-to-right)
 const recentForm = computed(() => allMatches.value.slice(0, 5).reverse())
 
 function getTeamName(id: string | null) {
@@ -107,6 +155,7 @@ function getTeamColor(id: string | null) {
     </div>
 
     <template v-else>
+      <!-- Header -->
       <div class="section-box">
         <div class="section-body">
           <div class="team-header">
@@ -123,6 +172,7 @@ function getTeamColor(id: string | null) {
         </div>
       </div>
 
+      <!-- Stats -->
       <div class="section-box">
         <h2>All Statistics</h2>
         <div class="section-body">
@@ -134,6 +184,10 @@ function getTeamColor(id: string | null) {
             <div class="stat-cell">
               <span class="stat-value win">{{ stats.wins }}</span>
               <span class="stat-label">Wins</span>
+            </div>
+            <div class="stat-cell">
+              <span class="stat-value draw">{{ stats.draws }}</span>
+              <span class="stat-label">Draws</span>
             </div>
             <div class="stat-cell">
               <span class="stat-value loss">{{ stats.losses }}</span>
@@ -162,6 +216,7 @@ function getTeamColor(id: string | null) {
         </div>
       </div>
 
+      <!-- Recent Form -->
       <div v-if="allMatches.length" class="section-box">
         <h2>
           Recent Form
@@ -173,12 +228,11 @@ function getTeamColor(id: string | null) {
               v-for="(m, i) in recentForm"
               :key="i"
               class="form-bubble"
-              :class="m.outcome === 'W' ? 'form-w' : 'form-l'"
+              :class="m.outcome === 'W' ? 'form-w' : m.outcome === 'D' ? 'form-d' : 'form-l'"
               :title="`${m.outcome} vs ${getTeamName(m.opponentId)} ${m.goalsFor}–${m.goalsAgainst}${m.penGoalsFor !== null ? ` (pen. ${m.penGoalsFor}–${m.penGoalsAgainst})` : ''}`"
             >
               {{ m.outcome }}
             </div>
-            <span v-if="recentForm.length === 0" class="empty-text">No matches yet.</span>
           </div>
           <div class="form-labels">
             <span v-for="(m, i) in recentForm" :key="i" class="form-label">
@@ -192,6 +246,7 @@ function getTeamColor(id: string | null) {
         </div>
       </div>
 
+      <!-- Titles -->
       <div v-if="tournamentWins.length" class="section-box">
         <h2>Tournament Titles</h2>
         <div class="section-body flush">
@@ -203,6 +258,7 @@ function getTeamColor(id: string | null) {
         </div>
       </div>
 
+      <!-- Match History -->
       <div class="section-box">
         <h2>
           Match History
@@ -211,19 +267,38 @@ function getTeamColor(id: string | null) {
         <div class="section-body flush">
           <div v-if="allMatches.length" class="match-list">
             <div v-for="(m, i) in allMatches" :key="i" class="match-row">
-              <span class="outcome-badge" :class="m.outcome === 'W' ? 'badge-w' : 'badge-l'">
+              <!-- Outcome badge -->
+              <span
+                class="outcome-badge"
+                :class="m.outcome === 'W' ? 'badge-w' : m.outcome === 'D' ? 'badge-d' : 'badge-l'"
+              >
                 {{ m.outcome }}
               </span>
+
+              <!-- Score -->
               <span class="match-score">
                 {{ m.goalsFor }}–{{ m.goalsAgainst }}
                 <span v-if="m.penGoalsFor !== null" class="pen-suffix">
                   (p. {{ m.penGoalsFor }}–{{ m.penGoalsAgainst }})
                 </span>
               </span>
+
               <span class="vs-label">vs</span>
+
               <span class="opponent-dot" :style="{ background: getTeamColor(m.opponentId) }" />
               <span class="match-opponent">{{ getTeamName(m.opponentId) }}</span>
-              <span class="match-round">{{ m.round }}</span>
+
+              <!-- Round + phase chip -->
+              <span class="match-round">
+                <span
+                  class="phase-chip"
+                  :class="m.roundPhase === 'group' ? 'chip-group' : 'chip-ko'"
+                >
+                  {{ m.roundPhase === "group" ? "GS" : "KO" }}
+                </span>
+                {{ m.round }}
+              </span>
+
               <span class="match-tournament">{{ m.tournamentName }} S{{ m.tournamentSeason }}</span>
             </div>
           </div>
@@ -291,6 +366,9 @@ function getTeamColor(id: string | null) {
 .stat-value.win {
   color: var(--success);
 }
+.stat-value.draw {
+  color: var(--text-muted);
+}
 .stat-value.loss {
   color: var(--danger);
 }
@@ -326,6 +404,9 @@ function getTeamColor(id: string | null) {
 }
 .form-w {
   background: var(--success);
+}
+.form-d {
+  background: var(--text-muted);
 }
 .form-l {
   background: var(--danger);
@@ -374,6 +455,9 @@ function getTeamColor(id: string | null) {
 .badge-w {
   background: var(--success);
 }
+.badge-d {
+  background: var(--text-muted);
+}
 .badge-l {
   background: var(--danger);
 }
@@ -417,6 +501,9 @@ function getTeamColor(id: string | null) {
   font-size: 11px;
   color: var(--text-muted);
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 .match-tournament {
   font-size: 11px;
@@ -426,6 +513,26 @@ function getTeamColor(id: string | null) {
 .trophy-icon {
   font-size: 14px;
   flex-shrink: 0;
+}
+
+/* Phase chip */
+.phase-chip {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 700;
+  padding: 1px 4px;
+  border-radius: 2px;
+  letter-spacing: 0.03em;
+}
+.chip-group {
+  background: color-mix(in srgb, var(--accent) 15%, transparent);
+  color: var(--accent);
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+}
+.chip-ko {
+  background: color-mix(in srgb, var(--danger) 12%, transparent);
+  color: var(--danger);
+  border: 1px solid color-mix(in srgb, var(--danger) 25%, transparent);
 }
 
 .count {

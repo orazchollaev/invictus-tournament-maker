@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from "vue"
 import Bracket from "@/modules/tournament/components/Bracket.vue"
+import GroupStage from "@/modules/tournament/components/GroupStage.vue"
 import ParticipantsTable from "@/modules/tournament/components/ParticipantsTable.vue"
 import ManualDraw from "@/modules/tournament/components/ManualDraw.vue"
 import { useTournamentDetail } from "../composables/useTournamentDetail"
@@ -20,6 +21,20 @@ const {
 const showSeasonModal = ref(false)
 const showManualSeason = ref(false)
 const showFullBracket = ref(false)
+
+// Tab: "groups" | "bracket" — only relevant for group+bracket format
+const activeTab = ref<"groups" | "bracket">("groups")
+
+const isGroupFormat = computed(() => tournament.value?.format === "group+bracket")
+
+// Auto-switch to bracket tab when groups are done and bracket is seeded
+import { watch } from "vue"
+watch(
+  () => tournament.value?.groupsDone,
+  (done) => {
+    if (done) activeTab.value = "bracket"
+  }
+)
 
 function openFullBracket() {
   showFullBracket.value = true
@@ -72,6 +87,9 @@ function closeSeasonModal() {
         <h1>
           {{ tournament.name }}
           <span class="t-season">S{{ tournament.season }}</span>
+          <span class="t-format-tag">
+            {{ tournament.format === "group+bracket" ? "Groups + KO" : "Bracket" }}
+          </span>
         </h1>
         <span class="t-meta">{{ tournament.teamIds.length }} teams · Created {{ dateStr }}</span>
       </div>
@@ -86,33 +104,103 @@ function closeSeasonModal() {
         wins the tournament!
       </div>
 
-      <div class="section-box">
-        <h2 class="bracket-heading">
-          Bracket
-          <button class="btn-xs" @click="openFullBracket">⛶ Full View</button>
-        </h2>
-        <div class="section-body bracket-body">
-          <div class="flex sim-toolbar">
-            <button @click="store.simulateAll(tournament.id)">🎲 Simulate All</button>
-            <button
-              v-for="(round, ri) in tournament.rounds"
-              :key="ri"
-              @click="store.simulateRound(tournament.id, ri)"
-            >
-              Sim {{ round.name }}
-            </button>
-          </div>
-          <Bracket
-            :tournament="tournament"
-            :teams="allTeams"
-            @set-result="
-              (ri, mi, h, a, ph, pa) => store.setResult(tournament!.id, ri, mi, h, a, ph, pa)
-            "
-            @sim-match="(ri, mi) => simMatch(ri, mi)"
-          />
+      <!-- ─── Group + Bracket format ───────────────────────────── -->
+      <template v-if="isGroupFormat">
+        <!-- Phase tabs -->
+        <div class="phase-tabs">
+          <button
+            class="phase-tab"
+            :class="{ active: activeTab === 'groups' }"
+            @click="activeTab = 'groups'"
+          >
+            Group Stage
+          </button>
+          <button
+            class="phase-tab"
+            :class="{ active: activeTab === 'bracket', disabled: !tournament.groupsDone }"
+            :disabled="!tournament.groupsDone"
+            @click="tournament.groupsDone && (activeTab = 'bracket')"
+          >
+            Knockout
+            <span v-if="!tournament.groupsDone" class="tab-lock">🔒</span>
+          </button>
         </div>
-      </div>
 
+        <!-- Group Stage tab -->
+        <div v-if="activeTab === 'groups'" class="section-box">
+          <div class="section-body gs-body">
+            <GroupStage
+              :tournament="tournament"
+              :teams="allTeams"
+              @set-result="(gi, mi, h, a) => store.setGroupResult(tournament!.id, gi, mi, h, a)"
+              @sim-match="(gi, mi) => store.simGroupMatch(tournament!.id, gi, mi)"
+              @sim-group="(gi) => store.simGroup(tournament!.id, gi)"
+              @sim-all="store.simAllGroups(tournament!.id)"
+              @advance="store.advanceToBracket(tournament!.id)"
+            />
+          </div>
+        </div>
+
+        <!-- Knockout tab -->
+        <div v-if="activeTab === 'bracket'" class="section-box">
+          <h2 class="bracket-heading">
+            Knockout Stage
+            <button class="btn-xs" @click="openFullBracket">⛶ Full View</button>
+          </h2>
+          <div class="section-body bracket-body">
+            <div class="flex sim-toolbar">
+              <button @click="store.simulateAll(tournament.id)">🎲 Simulate All</button>
+              <button
+                v-for="(round, ri) in tournament.rounds"
+                :key="ri"
+                @click="store.simulateRound(tournament.id, ri)"
+              >
+                Sim {{ round.name }}
+              </button>
+            </div>
+            <Bracket
+              :tournament="tournament"
+              :teams="allTeams"
+              @set-result="
+                (ri, mi, h, a, ph, pa) => store.setResult(tournament!.id, ri, mi, h, a, ph, pa)
+              "
+              @sim-match="(ri, mi) => simMatch(ri, mi)"
+            />
+          </div>
+        </div>
+      </template>
+
+      <!-- ─── Pure Bracket format ─────────────────────────────── -->
+      <template v-else>
+        <div class="section-box">
+          <h2 class="bracket-heading">
+            Bracket
+            <button class="btn-xs" @click="openFullBracket">⛶ Full View</button>
+          </h2>
+          <div class="section-body bracket-body">
+            <div class="flex sim-toolbar">
+              <button @click="store.simulateAll(tournament.id)">🎲 Simulate All</button>
+              <button
+                v-for="(round, ri) in tournament.rounds"
+                :key="ri"
+                @click="store.simulateRound(tournament.id, ri)"
+              >
+                Sim {{ round.name }}
+              </button>
+            </div>
+            <Bracket
+              :tournament="tournament"
+              :teams="allTeams"
+              @set-result="
+                (ri, mi, h, a, ph, pa) => store.setResult(tournament!.id, ri, mi, h, a, ph, pa)
+              "
+              @sim-match="(ri, mi) => simMatch(ri, mi)"
+            />
+          </div>
+        </div>
+      </template>
+
+      <!-- Participants -->
       <div class="section-box">
         <h2>Participants</h2>
         <div class="section-body flush">
@@ -137,7 +225,7 @@ function closeSeasonModal() {
     >
       <div class="full-bracket-modal">
         <div class="full-bracket-header">
-          <span>{{ tournament?.name }} — Bracket</span>
+          <span>{{ tournament?.name }} — Knockout</span>
           <button class="btn-xs" @click="closeFullBracket">✕ Close</button>
         </div>
         <div class="full-bracket-body">
@@ -186,6 +274,8 @@ function closeSeasonModal() {
 .not-found {
   color: var(--text-muted);
 }
+
+/* Header */
 .bracket-heading {
   display: flex;
   align-items: center;
@@ -194,6 +284,62 @@ function closeSeasonModal() {
 .bracket-body {
   padding: 8px 0;
 }
+.t-format-tag {
+  font-size: 11px;
+  color: var(--text-muted);
+  background: color-mix(in srgb, var(--accent) 12%, var(--surface));
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+  border-radius: 2px;
+  padding: 1px 7px;
+  font-family: var(--font-ui);
+}
+
+/* Phase tabs */
+.phase-tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 12px;
+  border-bottom: 1px solid var(--border-light);
+}
+.phase-tab {
+  padding: 7px 18px;
+  font-size: 13px;
+  font-family: var(--font-ui);
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  cursor: pointer;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition:
+    color 0.15s,
+    border-color 0.15s;
+}
+.phase-tab:hover:not(:disabled) {
+  color: var(--text);
+}
+.phase-tab.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+.phase-tab.disabled,
+.phase-tab:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+.tab-lock {
+  font-size: 11px;
+}
+
+/* Group stage body */
+.gs-body {
+  padding: 8px 0;
+}
+
+/* Full bracket modal */
 .full-bracket-backdrop {
   z-index: 300;
 }
@@ -221,15 +367,19 @@ function closeSeasonModal() {
   overflow: auto;
   padding: 16px;
 }
+
+/* Toolbar */
 .sim-toolbar {
   padding: 0 8px;
   margin-bottom: 10px;
   flex-wrap: wrap;
   gap: 6px;
 }
+
 .flush {
   padding: 0;
 }
+
 .t-actions {
   justify-content: flex-end;
   margin-top: 8px;
@@ -249,6 +399,7 @@ function closeSeasonModal() {
   display: flex;
   align-items: center;
   gap: 8px;
+  flex-wrap: wrap;
 }
 .t-season {
   font-size: 13px;
@@ -271,6 +422,8 @@ function closeSeasonModal() {
   margin-bottom: 16px;
   font-size: 14px;
 }
+
+/* Modal */
 .modal-backdrop {
   position: fixed;
   inset: 0;
