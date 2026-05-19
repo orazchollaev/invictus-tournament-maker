@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.6.5](https://github.com/orazchollaev/tournament-sim/compare/v0.6.4...v0.6.5) (2026-05-19)
+
+### Features
+
+- add tournament settings modal with team management and draw controls ([1cb1df7](https://github.com/orazchollaev/tournament-sim/commit/1cb1df791cacb302d3cd6549aab5513c5a8cb63a))
+- move reset/delete to settings danger zone, new season to header ([dc7fbda](https://github.com/orazchollaev/tournament-sim/commit/dc7fbda5ac41b683e3fd1131a5d34b1d4aee971d))
+
+### Bug Fixes
+
+- distribute bracket byes evenly to prevent null-vs-null matches ([ebf0fc0](https://github.com/orazchollaev/tournament-sim/commit/ebf0fc06b85d7da2dcfdb0e3ba4cd41b215bb9fc))
+
 ## [0.6.4](https://github.com/orazchollaev/tournament-sim/compare/v0.6.3...v0.6.4) (2026-05-19)
 
 ### Chores
