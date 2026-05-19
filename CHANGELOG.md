@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.6.4](https://github.com/orazchollaev/tournament-sim/compare/v0.6.3...v0.6.4) (2026-05-19)
+
+### Chores
+
+- test github release ([4ac1d12](https://github.com/orazchollaev/tournament-sim/commit/4ac1d1297475ee94ecd1a8bab40c7f9d1959bdb8))
+
 ## [0.6.3](https://github.com/orazchollaev/tournament-sim/compare/v0.6.2...v0.6.3) (2026-05-19)
 
 ### Features
