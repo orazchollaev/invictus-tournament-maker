@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.6.2](https://github.com/orazchollaev/tournament-sim/compare/v0.6.1...v0.6.2) (2026-05-19)
+
+### Features
+
+- add rank index column to group standings table ([66e23a8](https://github.com/orazchollaev/tournament-sim/commit/66e23a80090a26ae9cc44458d2b8941cd722001e))
+
+### Bug Fixes
+
+- stabilize group stage UI and clean up GroupDraw strings ([650f84d](https://github.com/orazchollaev/tournament-sim/commit/650f84da84754e8b201938b9bba1a8ac40a4911c))
+
+### Code Refactoring
+
+- **engine:** split logic.ts into focused modules ([03764c5](https://github.com/orazchollaev/tournament-sim/commit/03764c5597d19f3425ca8586fa9a1ee1fa78073e))
+
 ## [0.6.1](https://github.com/orazchollaev/tournament-sim/compare/v0.6.0...v0.6.1) (2026-05-19)
 
 ### Bug Fixes
