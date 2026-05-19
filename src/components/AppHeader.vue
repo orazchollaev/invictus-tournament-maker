@@ -1,9 +1,14 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import AppLogo from "./AppLogo.vue"
+</script>
 
 <template>
   <header class="site-header">
     <div class="header-inner">
-      <span class="logo">⚽ Tournament Sim</span>
+      <div class="logo">
+        <AppLogo class="logo-img" />
+        Tournament Sim
+      </div>
 
       <nav>
         <RouterLink to="/teams">Teams</RouterLink>
@@ -35,8 +40,16 @@
   height: 44px;
 }
 .logo {
+  display: flex;
+  align-items: center;
   font-weight: 700;
   font-size: 15px;
+}
+.logo-img {
+  margin-right: 8px;
+  width: 24px;
+  height: 24px;
+  color: var(--accent);
 }
 nav {
   display: flex;

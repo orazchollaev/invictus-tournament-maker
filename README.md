@@ -1,6 +1,12 @@
+<div align="center">
+
+<img src="./public/logo.svg" width="140" />
+
 # Tournament Sim
 
 A browser-based tournament bracket simulator built with Vue 3 and TypeScript.
+
+</div>
 
 ## Tech Stack
 
