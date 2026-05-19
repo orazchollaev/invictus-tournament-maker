@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.6.1](https://github.com/orazchollaev/tournament-sim/compare/v0.6.0...v0.6.1) (2026-05-19)
+
+### Bug Fixes
+
+- add manuel group draw, resolve new season group format issue and group ui stabilized ([6ea08eb](https://github.com/orazchollaev/tournament-sim/commit/6ea08ebba9e9dd126165eb23cad5cab96260a131))
+- randomize group placement within seeded tiers on new season ([6c89a5f](https://github.com/orazchollaev/tournament-sim/commit/6c89a5ff45fa976fc5172b0ae39ebe207a1a6fae))
+
+### Chores
+
+- resolve vercel deploy issue ([2648f6b](https://github.com/orazchollaev/tournament-sim/commit/2648f6bfcf88a8e77ef4fbb8c668ebd41b58aa1f))
+
 ## [0.6.0](https://github.com/orazchollaev/tournament-sim/compare/v0.5.0...v0.6.0) (2026-05-19)
 
 ### Features
