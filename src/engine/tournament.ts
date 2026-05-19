@@ -134,11 +134,25 @@ export function seedBracketFromGroups(tournament: Tournament, teams: Team[]) {
     bracketOrder.push(seconds[i - 1] ?? null)
   }
 
-  // Pad to power-of-2 with nulls
+  // Build slots for each bracket half. Byes (nulls) must each be paired with a real
+  // team — never with another null — otherwise null-vs-null matches produce no winner
+  // and the cascade breaks every subsequent round. Strategy: place each bye immediately
+  // after its paired team at the start of the half, then pack remaining real matches.
   const size = Math.pow(2, Math.ceil(Math.log2(bracketOrder.filter(Boolean).length || 2)))
-  while (bracketOrder.length < size) bracketOrder.push(null)
+  const half = size / 2
 
-  const rounds = buildBracketRounds(bracketOrder)
+  function buildHalfSlots(teams: (Team | null)[], targetSize: number): (Team | null)[] {
+    const byes = targetSize - teams.filter(Boolean).length
+    const slots: (Team | null)[] = []
+    for (let i = 0; i < byes; i++) slots.push(teams[i] ?? null, null)
+    for (let i = byes; i < teams.length; i++) slots.push(teams[i] ?? null)
+    return slots
+  }
+
+  const rounds = buildBracketRounds([
+    ...buildHalfSlots(bracketOrder.slice(0, gc), half),
+    ...buildHalfSlots(bracketOrder.slice(gc), half),
+  ])
   propagateWinners(rounds, teams)
 
   tournament.rounds = rounds
