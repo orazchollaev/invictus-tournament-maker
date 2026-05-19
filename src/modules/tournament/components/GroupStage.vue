@@ -89,6 +89,7 @@ function homeOutcome(match: GroupMatch): "W" | "D" | "L" | null {
         <table class="gs-table">
           <thead>
             <tr>
+              <th class="col-rank">#</th>
               <th class="col-team">Team</th>
               <th title="Played">P</th>
               <th title="Won">W</th>
@@ -106,6 +107,7 @@ function homeOutcome(match: GroupMatch): "W" | "D" | "L" | null {
               :key="row.teamId"
               :class="{ 'row-qualify': ri < 2, 'row-out': ri >= 2 }"
             >
+              <td class="col-rank">{{ ri + 1 }}</td>
               <td class="col-team">
                 <span class="flex team-cell">
                   <span
@@ -267,6 +269,11 @@ function homeOutcome(match: GroupMatch): "W" | "D" | "L" | null {
   font-weight: 600;
   font-size: 11px;
   color: var(--text-muted);
+}
+.gs-table .col-rank {
+  width: 18px;
+  color: var(--text-muted);
+  font-size: 11px;
 }
 .gs-table .col-team {
   text-align: left;
