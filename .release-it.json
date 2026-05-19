@@ -5,7 +5,8 @@
     "requireCleanWorkingDir": true
   },
   "github": {
-    "release": false
+    "release": true,
+    "repostory": "orazchollaev/tournament-sim"
   },
   "plugins": {
     "@release-it/conventional-changelog": {
