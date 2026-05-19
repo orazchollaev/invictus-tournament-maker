@@ -6,7 +6,7 @@
 
 A browser-based tournament bracket simulator built with Vue 3 and TypeScript.
 
-Create tournaments, manage teams, simulate matches with penalty shootouts, and follow the bracket from group stage to final.
+Create tournaments, manage teams, simulate matches with penalty shootouts, and follow the bracket from first match to final.
 
 </div>
 
