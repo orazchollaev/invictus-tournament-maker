@@ -93,7 +93,16 @@ function closeSeasonModal() {
       <div class="t-header">
         <div class="t-header-top">
           <RouterLink to="/tournaments" class="back">← Tournaments</RouterLink>
-          <button class="settings-btn" @click="showSettingsModal = true">⚙ Settings</button>
+          <div class="t-header-actions">
+            <button
+              v-if="tournament.winnerId"
+              class="primary new-season-btn"
+              @click="showSeasonModal = true"
+            >
+              New Season
+            </button>
+            <button class="settings-btn" @click="showSettingsModal = true">⚙ Settings</button>
+          </div>
         </div>
         <h1>
           {{ tournament.name }}
@@ -218,14 +227,6 @@ function closeSeasonModal() {
           <ParticipantsTable :teams="allTeams" :tournament="tournament" />
         </div>
       </div>
-
-      <div class="flex t-actions">
-        <button v-if="tournament.winnerId" class="primary" @click="showSeasonModal = true">
-          New Season
-        </button>
-        <button class="danger" @click="resetTournament">Reset</button>
-        <button class="danger" @click="deleteTournament">Delete</button>
-      </div>
     </template>
 
     <!-- Settings modal -->
@@ -239,6 +240,8 @@ function closeSeasonModal() {
       @remove-team="removeTeam"
       @redraw="redrawTournament"
       @set-playoff-seed-mode="setPlayoffSeedMode"
+      @reset="resetTournament"
+      @delete="deleteTournament"
       @close="showSettingsModal = false"
     />
 
@@ -413,10 +416,6 @@ function closeSeasonModal() {
   padding: 0;
 }
 
-.t-actions {
-  justify-content: flex-end;
-  margin-top: 8px;
-}
 .t-header {
   margin-bottom: 16px;
 }
@@ -503,6 +502,15 @@ function closeSeasonModal() {
   justify-content: space-between;
   margin-bottom: 2px;
 }
+.t-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.new-season-btn {
+  font-size: 12px;
+  padding: 3px 10px;
+}
 .settings-btn {
   font-size: 12px;
   padding: 3px 10px;
@@ -517,10 +525,6 @@ function closeSeasonModal() {
 @media (max-width: 600px) {
   .t-header h1 {
     font-size: 18px;
-  }
-  .t-actions {
-    justify-content: flex-start;
-    flex-wrap: wrap;
   }
   .modal {
     width: calc(100vw - 32px);

@@ -15,6 +15,8 @@ const emit = defineEmits<{
   removeTeam: [teamId: string]
   redraw: []
   setPlayoffSeedMode: [mode: PlayoffSeedMode]
+  reset: []
+  delete: []
   close: []
 }>()
 
@@ -150,6 +152,24 @@ const isGroupFormat = () => props.tournament.format === "group+bracket"
             </div>
           </div>
         </template>
+
+        <!-- ── Danger Zone ──────────────────────────────── -->
+        <div class="ts-divider"></div>
+        <div class="ts-section">
+          <div class="ts-section-title">Danger Zone</div>
+          <div class="danger-row">
+            <div class="danger-item">
+              <div class="danger-label">Reset Tournament</div>
+              <div class="danger-desc">Clears all match results, keeping teams and draw.</div>
+              <button class="danger" @click="emit('reset')">Reset</button>
+            </div>
+            <div class="danger-item">
+              <div class="danger-label">Delete Tournament</div>
+              <div class="danger-desc">Permanently removes this tournament and all its data.</div>
+              <button class="danger" @click="emit('delete')">Delete</button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -234,6 +254,8 @@ const isGroupFormat = () => props.tournament.format === "group+bracket"
   flex-direction: column;
   gap: 4px;
   margin-bottom: 10px;
+  max-height: 220px;
+  overflow-y: auto;
 }
 .team-row {
   display: flex;
@@ -303,6 +325,31 @@ const isGroupFormat = () => props.tournament.format === "group+bracket"
   font-weight: normal;
 }
 
+/* Danger zone */
+.danger-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.danger-item {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 10px 12px;
+  border: 1px solid color-mix(in srgb, var(--danger) 30%, transparent);
+  background: color-mix(in srgb, var(--danger) 5%, var(--surface));
+}
+.danger-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--danger);
+}
+.danger-desc {
+  font-size: 11px;
+  color: var(--text-muted);
+  flex: 1;
+}
+
 @media (max-width: 560px) {
   .ts-backdrop {
     padding: 0;
@@ -313,6 +360,9 @@ const isGroupFormat = () => props.tournament.format === "group+bracket"
     min-height: 100dvh;
   }
   .seed-grid {
+    grid-template-columns: 1fr;
+  }
+  .danger-row {
     grid-template-columns: 1fr;
   }
 }
