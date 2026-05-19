@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.6.0](https://github.com/orazchollaev/tournament-sim/compare/v0.5.0...v0.6.0) (2026-05-19)
+
+### Features
+
+- add basic group stage system ([d844e0e](https://github.com/orazchollaev/tournament-sim/commit/d844e0ecd83fbfe18aa7f96e7773c3b60e7427f8))
+- add match result with penalties in team detail page ([f39fac9](https://github.com/orazchollaev/tournament-sim/commit/f39fac9228f3ce2c3a156253be3954d791278446))
+- add project logos and branding assets ([c397750](https://github.com/orazchollaev/tournament-sim/commit/c397750d5d089b62d4eb2dc8739c69108a685693))
+
+### Documentation
+
+- add logo in README.md ([ee3ce07](https://github.com/orazchollaev/tournament-sim/commit/ee3ce0744aa5717f61844e1b1132a4957e9eca8a))
+- enrich README with features, project structure, and tech table ([ce815a8](https://github.com/orazchollaev/tournament-sim/commit/ce815a8cd9deead946def71f5b7bbb0fafae2d5e))
+- fix README group stage text ([dcf3eca](https://github.com/orazchollaev/tournament-sim/commit/dcf3ecac89243c64e1441234046fe0fa0f9acd2a))
+
 ## [0.5.0](https://github.com/orazchollaev/tournament-sim/compare/v0.4.1...v0.5.0) (2026-05-18)
 
 ### ⚠ BREAKING CHANGES
