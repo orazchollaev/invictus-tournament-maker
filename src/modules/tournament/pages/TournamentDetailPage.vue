@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from "vue"
+import { ref, computed, watch } from "vue"
 import Bracket from "@/modules/tournament/components/Bracket.vue"
 import GroupStage from "@/modules/tournament/components/GroupStage.vue"
 import ParticipantsTable from "@/modules/tournament/components/ParticipantsTable.vue"
@@ -29,7 +29,6 @@ const activeTab = ref<"groups" | "bracket">("groups")
 const isGroupFormat = computed(() => tournament.value?.format === "group+bracket")
 
 // Auto-switch to bracket tab when groups are done and bracket is seeded
-import { watch } from "vue"
 watch(
   () => tournament.value?.groupsDone,
   (done) => {

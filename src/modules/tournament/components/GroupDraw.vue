@@ -66,7 +66,7 @@ function teamById(id: string) {
 
 <template>
   <div class="gd-wrap">
-    <p class="gd-hint">Her gruba takım ata — sıra tur çekilişini belirler.</p>
+    <p class="gd-hint">Assign teams to each group — order determines the draw.</p>
 
     <div class="gd-groups">
       <div v-for="(_, g) in groupSlots" :key="g" class="gd-group">
@@ -80,7 +80,7 @@ function teamById(id: string) {
               :style="{ background: teamById(groupSlots[g][slot])?.color ?? '#888' }"
             />
             <select v-model="groupSlots[g][slot]" class="gd-sel">
-              <option value="">— Takım seç</option>
+              <option value="">— Select team</option>
               <option v-for="t in available(groupSlots[g][slot])" :key="t.id" :value="t.id">
                 {{ t.name }} ({{ t.power }})
               </option>
@@ -91,8 +91,8 @@ function teamById(id: string) {
     </div>
 
     <div class="gd-actions">
-      <button class="primary" :disabled="!complete" @click="confirm">Çekilişi Onayla</button>
-      <button @click="emit('cancel')">İptal</button>
+      <button class="primary" :disabled="!complete" @click="confirm">Confirm Draw</button>
+      <button @click="emit('cancel')">Cancel</button>
     </div>
   </div>
 </template>

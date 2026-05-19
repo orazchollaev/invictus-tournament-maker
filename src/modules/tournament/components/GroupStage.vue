@@ -70,11 +70,15 @@ function homeOutcome(match: GroupMatch): "W" | "D" | "L" | null {
     </div>
 
     <!-- Toolbar (only when not locked) -->
-    <div v-else class="gs-toolbar">
-      <button @click="emit('simAll')">🎲 Simulate All Groups</button>
-      <button v-for="(g, gi) in tournament.groups" :key="gi" @click="emit('simGroup', gi)">
-        Sim {{ g.name }}
-      </button>
+    <div v-else class="gs-toolbar-wrap">
+      <div class="gs-toolbar">
+        <button :disabled="allDone" @click="emit('simAll')">🎲 Simulate All Groups</button>
+        <template v-for="(g, gi) in tournament.groups" :key="gi">
+          <button v-if="g.matches.some((m) => !m.result)" @click="emit('simGroup', gi)">
+            Sim {{ g.name }}
+          </button>
+        </template>
+      </div>
       <button v-if="allDone" class="primary advance-btn" @click="emit('advance')">
         ✔ Advance to Knockout →
       </button>
@@ -221,15 +225,20 @@ function homeOutcome(match: GroupMatch): "W" | "D" | "L" | null {
   margin: 0 8px;
 }
 
+.gs-toolbar-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0 8px;
+}
 .gs-toolbar {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
-  padding: 0 8px;
   align-items: center;
 }
 .advance-btn {
-  margin-left: auto;
+  align-self: flex-start;
 }
 
 .gs-groups {
