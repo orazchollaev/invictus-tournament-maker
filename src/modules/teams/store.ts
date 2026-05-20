@@ -1,6 +1,7 @@
 import { defineStore } from "pinia"
 import { ref } from "vue"
 import type { Team } from "./types"
+import { useTournamentStore } from "@/modules/tournament/store"
 
 const COLORS = [
   "#e63946",
@@ -16,6 +17,8 @@ const COLORS = [
 ]
 
 export const useTeamsStore = defineStore("teams", () => {
+  const { tournaments } = useTournamentStore()
+
   const teams = ref<Team[]>([
     { id: "1", name: "Team 1", color: "#e63946", power: 82 },
     { id: "2", name: "Team 2", color: "#457b9d", power: 80 },
@@ -29,12 +32,21 @@ export const useTeamsStore = defineStore("teams", () => {
   }
 
   function remove(id: string) {
+    if (isTeamInTournament(id)) {
+      alert("This team cannot be deleted because it is used in a tournament")
+      return
+    }
+
     teams.value = teams.value.filter((t) => t.id !== id)
   }
 
   function update(id: string, data: Partial<Omit<Team, "id">>) {
     const t = teams.value.find((t) => t.id === id)
     if (t) Object.assign(t, data)
+  }
+
+  function isTeamInTournament(id: string) {
+    return tournaments.some((t) => t.teamIds.find((tmId) => tmId == id))
   }
 
   return { teams, add, remove, update, COLORS }
