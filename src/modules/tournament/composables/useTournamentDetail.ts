@@ -68,8 +68,8 @@ export function useTournamentDetail() {
     store.removeTeamFromTournament(tournamentId.value, teamId)
   }
 
-  function redrawTournament() {
-    store.redrawTournament(tournamentId.value)
+  function redrawTournament(seeded = false, orderedIds?: string[]) {
+    store.redrawTournament(tournamentId.value, seeded, orderedIds)
   }
 
   function setPlayoffSeedMode(mode: PlayoffSeedMode) {

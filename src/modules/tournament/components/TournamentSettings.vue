@@ -1,7 +1,11 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from "vue"
+import { ref, onMounted, onUnmounted, computed } from "vue"
 import type { Tournament, PlayoffSeedMode } from "@/modules/tournament/types"
 import type { Team } from "@/modules/teams/types"
+import ManualDraw from "@/modules/tournament/components/ManualDraw.vue"
+import GroupDraw from "@/modules/tournament/components/GroupDraw.vue"
+
+type DrawType = "random" | "seeded" | "manual"
 
 const props = defineProps<{
   tournament: Tournament
@@ -13,7 +17,7 @@ const props = defineProps<{
 const emit = defineEmits<{
   addTeam: [teamId: string]
   removeTeam: [teamId: string]
-  redraw: []
+  redraw: [seeded: boolean, orderedIds?: string[]]
   setPlayoffSeedMode: [mode: PlayoffSeedMode]
   reset: []
   delete: []
@@ -21,6 +25,13 @@ const emit = defineEmits<{
 }>()
 
 const selectedTeamToAdd = ref("")
+const drawType = ref<DrawType>("random")
+const showManualDraw = ref(false)
+
+const tournamentTeams = computed(() =>
+  props.allTeams.filter((t) => props.tournament.teamIds.includes(t.id))
+)
+const isGroupFormat = computed(() => props.tournament.format === "group+bracket")
 
 function handleAddTeam() {
   if (!selectedTeamToAdd.value) return
@@ -29,12 +40,27 @@ function handleAddTeam() {
 }
 
 function handleRedraw() {
+  if (drawType.value === "manual") {
+    showManualDraw.value = true
+    return
+  }
   if (!confirm("Kura çekimini sıfırlayıp yeniden oluştur?")) return
-  emit("redraw")
+  emit("redraw", drawType.value === "seeded")
+}
+
+function handleManualConfirm(orderedIds: string[]) {
+  showManualDraw.value = false
+  emit("redraw", false, orderedIds)
 }
 
 function onKey(e: KeyboardEvent) {
-  if (e.key === "Escape") emit("close")
+  if (e.key === "Escape") {
+    if (showManualDraw.value) {
+      showManualDraw.value = false
+    } else {
+      emit("close")
+    }
+  }
 }
 
 onMounted(() => {
@@ -46,10 +72,6 @@ onUnmounted(() => {
   document.body.style.overflow = ""
   document.removeEventListener("keydown", onKey)
 })
-
-const tournamentTeams = () => props.allTeams.filter((t) => props.tournament.teamIds.includes(t.id))
-
-const isGroupFormat = () => props.tournament.format === "group+bracket"
 </script>
 
 <template>
@@ -68,7 +90,7 @@ const isGroupFormat = () => props.tournament.format === "group+bracket"
           <div class="ts-section-title">Manage Teams</div>
           <template v-if="!hasAnyResults">
             <div class="team-list">
-              <div v-for="team in tournamentTeams()" :key="team.id" class="team-row">
+              <div v-for="team in tournamentTeams" :key="team.id" class="team-row">
                 <span class="team-dot" :style="{ background: team.color }"></span>
                 <span class="team-name">{{ team.name }}</span>
                 <button
@@ -102,10 +124,52 @@ const isGroupFormat = () => props.tournament.format === "group+bracket"
         <div class="ts-section">
           <div class="ts-section-title">Draw</div>
           <template v-if="!hasAnyResults">
-            <div class="ts-row">
-              <button @click="handleRedraw">↺ Regenerate Draw</button>
-              <span class="ts-hint">Reshuffles all teams into a new random draw.</span>
-            </div>
+            <template v-if="showManualDraw">
+              <GroupDraw
+                v-if="isGroupFormat"
+                :teams="tournamentTeams"
+                :group-count="tournament.groups?.length ?? 2"
+                @confirm="handleManualConfirm"
+                @cancel="showManualDraw = false"
+              />
+              <ManualDraw
+                v-else
+                :teams="tournamentTeams"
+                @confirm="handleManualConfirm"
+                @cancel="showManualDraw = false"
+              />
+            </template>
+            <template v-else>
+              <div class="draw-type-grid">
+                <button
+                  class="draw-type-card"
+                  :class="{ active: drawType === 'random' }"
+                  @click="drawType = 'random'"
+                >
+                  <strong>Random</strong>
+                  <span>Teams shuffled randomly</span>
+                </button>
+                <button
+                  class="draw-type-card"
+                  :class="{ active: drawType === 'seeded' }"
+                  @click="drawType = 'seeded'"
+                >
+                  <strong>Seeded</strong>
+                  <span>Stronger teams kept apart</span>
+                </button>
+                <button
+                  class="draw-type-card"
+                  :class="{ active: drawType === 'manual' }"
+                  @click="drawType = 'manual'"
+                >
+                  <strong>Manual</strong>
+                  <span>Place teams yourself</span>
+                </button>
+              </div>
+              <div class="ts-row" style="margin-top: 10px">
+                <button @click="handleRedraw">↺ Regenerate Draw</button>
+              </div>
+            </template>
           </template>
           <p v-else class="ts-hint ts-hint--warn">
             Draw cannot be changed once matches have been played.
@@ -113,7 +177,7 @@ const isGroupFormat = () => props.tournament.format === "group+bracket"
         </div>
 
         <!-- ── Playoff Seeding (group+bracket only) ──── -->
-        <template v-if="isGroupFormat()">
+        <template v-if="isGroupFormat">
           <div class="ts-divider"></div>
           <div class="ts-section">
             <div class="ts-section-title">Playoff Seeding</div>
@@ -286,6 +350,45 @@ const isGroupFormat = () => props.tournament.format === "group+bracket"
   min-width: 0;
 }
 
+/* Draw type cards */
+.draw-type-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.draw-type-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  text-align: left;
+  cursor: pointer;
+  border-radius: var(--radius);
+  transition:
+    border-color 0.15s,
+    background 0.15s;
+}
+.draw-type-card:hover {
+  background: var(--bg);
+}
+.draw-type-card.active {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 8%, var(--surface));
+}
+.draw-type-card strong {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+.draw-type-card span {
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.4;
+  font-weight: normal;
+}
+
 /* Seed mode cards */
 .seed-grid {
   display: grid;
@@ -359,6 +462,7 @@ const isGroupFormat = () => props.tournament.format === "group+bracket"
     max-width: 100%;
     min-height: 100dvh;
   }
+  .draw-type-grid,
   .seed-grid {
     grid-template-columns: 1fr;
   }

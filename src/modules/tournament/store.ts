@@ -258,14 +258,17 @@ export const useTournamentStore = defineStore("tournament", () => {
     return false
   }
 
-  function rebuildDraw(t: Tournament) {
+  function rebuildDraw(t: Tournament, seeded = false, orderedIds?: string[]) {
     const allTeams = getTeams()
     const selected = allTeams.filter((tm) => t.teamIds.includes(tm.id))
     const groupCount =
       t.format === "group+bracket"
         ? Math.min(t.groups?.length ?? 2, Math.floor(selected.length / 2))
         : undefined
-    const fresh = createTournament(t.name, selected, t.season, false, undefined, groupCount)
+    const ordered = orderedIds
+      ? (orderedIds.map((id) => allTeams.find((tm) => tm.id === id)).filter(Boolean) as any)
+      : undefined
+    const fresh = createTournament(t.name, selected, t.season, seeded, ordered, groupCount)
     t.rounds = fresh.rounds
     t.winnerId = null
     if (fresh.groups) {
@@ -290,10 +293,10 @@ export const useTournamentStore = defineStore("tournament", () => {
     rebuildDraw(t)
   }
 
-  function redrawTournament(tournamentId: string) {
+  function redrawTournament(tournamentId: string, seeded = false, orderedIds?: string[]) {
     const t = tournaments.value.find((t) => t.id === tournamentId)
     if (!t || hasAnyResults(tournamentId)) return
-    rebuildDraw(t)
+    rebuildDraw(t, seeded, orderedIds)
   }
 
   function setPlayoffSeedMode(tournamentId: string, mode: PlayoffSeedMode) {
