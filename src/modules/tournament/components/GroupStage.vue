@@ -53,12 +53,11 @@ function matchResultStr(match: GroupMatch): string {
   return `${match.result.home} – ${match.result.away}`
 }
 
-// W/D/L from home team perspective — used for score button color
-function homeOutcome(match: GroupMatch): "W" | "D" | "L" | null {
-  if (!match.result) return null
-  if (match.result.home > match.result.away) return "W"
-  if (match.result.home < match.result.away) return "L"
-  return "D"
+function scoreAccentColor(match: GroupMatch): string {
+  if (!match.result) return ""
+  if (match.result.home > match.result.away) return teamById(match.homeId)?.color ?? ""
+  if (match.result.away > match.result.home) return teamById(match.awayId)?.color ?? ""
+  return "var(--border)"
 }
 </script>
 
@@ -70,16 +69,14 @@ function homeOutcome(match: GroupMatch): "W" | "D" | "L" | null {
     </div>
 
     <!-- Toolbar (only when not locked) -->
-    <div v-else class="gs-toolbar-wrap">
-      <div class="gs-toolbar">
-        <button :disabled="allDone" @click="emit('simAll')">🎲 Simulate All Groups</button>
-        <template v-for="(g, gi) in tournament.groups" :key="gi">
-          <button v-if="g.matches.some((m) => !m.result)" @click="emit('simGroup', gi)">
-            Sim {{ g.name }}
-          </button>
-        </template>
-      </div>
-      <button v-if="allDone" class="primary advance-btn" @click="emit('advance')">
+    <div v-else class="gs-toolbar">
+      <button :disabled="allDone" @click="emit('simAll')">🎲 Simulate All</button>
+      <template v-for="(g, gi) in tournament.groups" :key="gi">
+        <button v-if="g.matches.some((m) => !m.result)" @click="emit('simGroup', gi)">
+          Sim {{ g.name }}
+        </button>
+      </template>
+      <button v-if="allDone" class="primary" style="margin-left: auto" @click="emit('advance')">
         ✔ Advance to Knockout →
       </button>
     </div>
@@ -137,18 +134,16 @@ function homeOutcome(match: GroupMatch): "W" | "D" | "L" | null {
         <div class="gs-matches">
           <div v-for="(match, mi) in group.matches" :key="match.id" class="gs-match">
             <span class="gs-team gs-team--home">
+              <span class="gs-team-name">{{ teamById(match.homeId)?.name }}</span>
               <span class="dot" :style="{ background: teamById(match.homeId)?.color ?? '#888' }" />
-              {{ teamById(match.homeId)?.name }}
             </span>
 
             <button
               class="gs-score-btn"
-              :class="{
-                'gs-score-btn--locked': locked,
-                'score-w': homeOutcome(match) === 'W',
-                'score-l': homeOutcome(match) === 'L',
-                'score-d': homeOutcome(match) === 'D',
-              }"
+              :class="{ 'gs-score-btn--locked': locked }"
+              :style="
+                match.result ? { borderColor: scoreAccentColor(match), borderLeftWidth: '3px' } : {}
+              "
               :disabled="locked"
               @click="openEdit(gi, mi, match)"
             >
@@ -156,8 +151,8 @@ function homeOutcome(match: GroupMatch): "W" | "D" | "L" | null {
             </button>
 
             <span class="gs-team gs-team--away">
-              {{ teamById(match.awayId)?.name }}
               <span class="dot" :style="{ background: teamById(match.awayId)?.color ?? '#888' }" />
+              <span class="gs-team-name">{{ teamById(match.awayId)?.name }}</span>
             </span>
 
             <button v-if="!locked" class="btn-xs sim-btn" @click="emit('simMatch', gi, mi)">
@@ -221,24 +216,16 @@ function homeOutcome(match: GroupMatch): "W" | "D" | "L" | null {
   background: var(--bg);
   border: 1px solid var(--border-light);
   border-left: 3px solid var(--accent);
-  padding: 8px 12px;
+  padding: 6px 10px;
   margin: 0 8px;
 }
 
-.gs-toolbar-wrap {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 0 8px;
-}
 .gs-toolbar {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
   align-items: center;
-}
-.advance-btn {
-  align-self: flex-start;
+  padding: 0 8px;
 }
 
 .gs-groups {
@@ -302,35 +289,40 @@ function homeOutcome(match: GroupMatch): "W" | "D" | "L" | null {
 }
 
 .gs-matches {
-  padding: 6px 8px;
+  padding: 4px 8px 6px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
   border-top: 1px solid var(--border-light);
 }
 .gs-match {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr auto;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
   font-size: 12px;
-  padding: 3px 0;
+  padding: 2px 0;
 }
 .gs-team {
-  flex: 1;
   display: flex;
   align-items: center;
   gap: 5px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  min-width: 0;
 }
 .gs-team--home {
   justify-content: flex-end;
-  text-align: right;
 }
 .gs-team--away {
   justify-content: flex-start;
-  text-align: left;
+}
+.gs-team-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+.gs-team--home .gs-team-name {
+  text-align: right;
 }
 
 .gs-score-btn {
@@ -351,17 +343,6 @@ function homeOutcome(match: GroupMatch): "W" | "D" | "L" | null {
 .gs-score-btn--locked {
   cursor: default;
   pointer-events: none;
-}
-.score-w {
-  border-color: var(--success);
-  color: var(--success);
-}
-.score-l {
-  border-color: var(--danger);
-  color: var(--danger);
-}
-.score-d {
-  border-color: var(--text-muted);
 }
 
 .sim-btn {
