@@ -22,6 +22,7 @@ const emit = defineEmits<{
   redraw: [seeded: boolean, orderedIds?: string[]]
   setPlayoffSeedMode: [mode: PlayoffSeedMode]
   changeGroupCount: [count: number]
+  changeQualifiersPerGroup: [qpg: number]
   reset: []
   delete: []
   close: []
@@ -59,6 +60,10 @@ const isGroupFormat = computed(() => props.tournament.format === "group+bracket"
 const currentGroupCount = computed(() => props.tournament.groups?.length ?? 2)
 const maxGroups = computed(() => Math.floor(props.tournament.teamIds.length / 2))
 const minGroups = 2
+
+const currentQpg = computed(() => props.tournament.qualifiersPerGroup ?? 2)
+const maxQpg = computed(() => Math.floor(props.tournament.teamIds.length / currentGroupCount.value))
+const minQpg = 1
 
 function handleAddTeam() {
   if (!selectedTeamToAdd.value) return
@@ -164,7 +169,8 @@ function handleManualConfirm(orderedIds: string[]) {
           <div class="ts-section">
             <div class="ts-section-title">Groups</div>
             <template v-if="!hasAnyResults">
-              <div class="ts-row">
+              <div class="ts-row gc-setting-row">
+                <span class="ts-hint gc-setting-label">Groups</span>
                 <div class="gc-stepper">
                   <button
                     class="btn-xs"
@@ -182,11 +188,31 @@ function handleManualConfirm(orderedIds: string[]) {
                     +
                   </button>
                 </div>
-                <span class="ts-hint">groups (max {{ maxGroups }})</span>
+              </div>
+              <div class="ts-row gc-setting-row">
+                <span class="ts-hint gc-setting-label">Qualifiers / group</span>
+                <div class="gc-stepper">
+                  <button
+                    class="btn-xs"
+                    :disabled="currentQpg <= minQpg"
+                    @click="emit('changeQualifiersPerGroup', currentQpg - 1)"
+                  >
+                    −
+                  </button>
+                  <span class="gc-val">{{ currentQpg }}</span>
+                  <button
+                    class="btn-xs"
+                    :disabled="currentQpg >= maxQpg"
+                    @click="emit('changeQualifiersPerGroup', currentQpg + 1)"
+                  >
+                    +
+                  </button>
+                </div>
+                <span class="ts-hint">→ {{ currentQpg * currentGroupCount }} advance</span>
               </div>
             </template>
             <p v-else class="ts-hint ts-hint--warn">
-              Group count cannot be changed once matches have been played.
+              Group structure cannot be changed once matches have been played.
             </p>
           </div>
         </template>
@@ -381,6 +407,15 @@ function handleManualConfirm(orderedIds: string[]) {
   font-size: 11px;
   color: var(--text-muted);
   margin-top: 1px;
+}
+
+.gc-setting-row {
+  margin-bottom: 6px;
+  align-items: center;
+}
+.gc-setting-label {
+  width: 130px;
+  flex-shrink: 0;
 }
 
 .gc-stepper {

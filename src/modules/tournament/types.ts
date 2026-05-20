@@ -65,6 +65,7 @@ export interface Tournament {
   // group stage (only when format === "group+bracket")
   groups?: Group[]
   groupsDone?: boolean // true once bracket has been seeded from groups
+  qualifiersPerGroup?: number // how many teams advance per group (default 2)
   playoffSeedMode?: PlayoffSeedMode // how groups feed into the bracket
 
   createdAt: number

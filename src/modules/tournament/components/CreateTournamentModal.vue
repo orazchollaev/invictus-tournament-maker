@@ -22,6 +22,7 @@ const selected = ref<string[]>([])
 const drawType = ref<DrawType>("random")
 const format = ref<TournamentFormat>("bracket")
 const groupCount = ref(4)
+const qualifiersPerGroup = ref(2)
 const showManualDraw = ref(false)
 
 useModal(() => {
@@ -39,6 +40,10 @@ const allSelected = computed(
 )
 const minGroups = 2
 const maxGroups = computed(() => Math.floor(selected.value.length / 2))
+const minQpg = 1
+const maxQpg = computed(() =>
+  groupCount.value > 0 ? Math.floor(selected.value.length / groupCount.value) : 2
+)
 const canCreate = computed(() => !!name.value.trim() && selected.value.length >= 2)
 
 const drawOptions = [
@@ -50,6 +55,9 @@ const drawOptions = [
 watch(maxGroups, (max) => {
   groupCount.value = Math.max(minGroups, Math.min(groupCount.value, max))
 })
+watch(maxQpg, (max) => {
+  qualifiersPerGroup.value = Math.max(minQpg, Math.min(qualifiersPerGroup.value, max))
+})
 
 function toggleAll() {
   selected.value = allSelected.value ? [] : allTeams.value.map((t) => t.id)
@@ -59,6 +67,7 @@ function setFormat(f: TournamentFormat) {
   format.value = f
   if (f === "group+bracket") {
     groupCount.value = Math.min(4, maxGroups.value)
+    qualifiersPerGroup.value = Math.min(2, maxQpg.value)
   }
 }
 
@@ -73,8 +82,9 @@ function handleCreate() {
 
 function doCreate(orderedIds?: string[]) {
   const gc = format.value === "group+bracket" ? groupCount.value : undefined
+  const qpg = format.value === "group+bracket" ? qualifiersPerGroup.value : undefined
   const isSeeded = drawType.value === "seeded"
-  const id = store.create(name.value.trim(), selected.value, isSeeded, orderedIds, gc)
+  const id = store.create(name.value.trim(), selected.value, isSeeded, orderedIds, gc, qpg)
   router.push(`/tournaments/${id}`)
   emit("close")
 }
@@ -182,27 +192,48 @@ const teamsPerGroup = computed(() =>
               </button>
             </div>
 
-            <!-- Group count -->
-            <div v-if="format === 'group+bracket'" class="ct-gc-row">
-              <span class="ct-gc-label">Groups</span>
-              <div class="ct-gc-stepper">
-                <button
-                  :disabled="groupCount <= minGroups"
-                  @click="groupCount = Math.max(minGroups, groupCount - 1)"
-                >
-                  −
-                </button>
-                <span class="ct-gc-val">{{ groupCount }}</span>
-                <button
-                  :disabled="groupCount >= maxGroups"
-                  @click="groupCount = Math.min(maxGroups, groupCount + 1)"
-                >
-                  +
-                </button>
+            <!-- Group count + qualifiers per group -->
+            <div v-if="format === 'group+bracket'" class="ct-gc-block">
+              <div class="ct-gc-row">
+                <span class="ct-gc-label">Groups</span>
+                <div class="ct-gc-stepper">
+                  <button
+                    :disabled="groupCount <= minGroups"
+                    @click="groupCount = Math.max(minGroups, groupCount - 1)"
+                  >
+                    −
+                  </button>
+                  <span class="ct-gc-val">{{ groupCount }}</span>
+                  <button
+                    :disabled="groupCount >= maxGroups"
+                    @click="groupCount = Math.min(maxGroups, groupCount + 1)"
+                  >
+                    +
+                  </button>
+                </div>
+                <span class="ct-gc-hint">~{{ teamsPerGroup }} teams/group</span>
               </div>
-              <span class="ct-gc-hint">
-                ~{{ teamsPerGroup }} teams/group · {{ groupCount * 2 }} qualifiers
-              </span>
+              <div class="ct-gc-row">
+                <span class="ct-gc-label">Qualifiers / group</span>
+                <div class="ct-gc-stepper">
+                  <button
+                    :disabled="qualifiersPerGroup <= minQpg"
+                    @click="qualifiersPerGroup = Math.max(minQpg, qualifiersPerGroup - 1)"
+                  >
+                    −
+                  </button>
+                  <span class="ct-gc-val">{{ qualifiersPerGroup }}</span>
+                  <button
+                    :disabled="qualifiersPerGroup >= maxQpg"
+                    @click="qualifiersPerGroup = Math.min(maxQpg, qualifiersPerGroup + 1)"
+                  >
+                    +
+                  </button>
+                </div>
+                <span class="ct-gc-hint">
+                  → {{ qualifiersPerGroup * groupCount }} advance to KO
+                </span>
+              </div>
             </div>
           </div>
 
@@ -417,18 +448,25 @@ const teamsPerGroup = computed(() =>
 }
 
 /* Group count */
+.ct-gc-block {
+  padding: 8px 0 0;
+  border-top: 1px solid var(--border-light);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
 .ct-gc-row {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 8px 0 0;
-  border-top: 1px solid var(--border-light);
   flex-wrap: wrap;
 }
 
 .ct-gc-label {
   font-size: 12px;
   color: var(--text-muted);
+  width: 130px;
+  flex-shrink: 0;
 }
 
 .ct-gc-stepper {

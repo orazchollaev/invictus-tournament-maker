@@ -30,6 +30,7 @@ const {
   redrawTournament,
   setPlayoffSeedMode,
   changeGroupCount,
+  changeQualifiersPerGroup,
 } = useTournamentDetail()
 
 const showSeasonModal = ref(false)
@@ -247,6 +248,7 @@ function closeSeasonModal() {
       @remove-team="removeTeam"
       @redraw="redrawTournament"
       @change-group-count="changeGroupCount"
+      @change-qualifiers-per-group="changeQualifiersPerGroup"
       @set-playoff-seed-mode="setPlayoffSeedMode"
       @reset="resetTournament"
       @delete="deleteTournament"

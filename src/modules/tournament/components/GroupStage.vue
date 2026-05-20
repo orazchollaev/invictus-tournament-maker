@@ -105,7 +105,10 @@ function scoreAccentColor(match: GroupMatch): string {
             <tr
               v-for="(row, ri) in group.standings"
               :key="row.teamId"
-              :class="{ 'row-qualify': ri < 2, 'row-out': ri >= 2 }"
+              :class="{
+                'row-qualify': ri < (tournament.qualifiersPerGroup ?? 2),
+                'row-out': ri >= (tournament.qualifiersPerGroup ?? 2),
+              }"
             >
               <td class="col-rank">{{ ri + 1 }}</td>
               <td class="col-team">

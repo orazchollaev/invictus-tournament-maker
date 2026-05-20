@@ -80,6 +80,10 @@ export function useTournamentDetail() {
     store.changeGroupCount(tournamentId.value, count)
   }
 
+  function changeQualifiersPerGroup(qpg: number) {
+    store.changeQualifiersPerGroup(tournamentId.value, qpg)
+  }
+
   function fireTeamConfetti(color: string) {
     const end = Date.now() + 2000
 
@@ -135,5 +139,6 @@ export function useTournamentDetail() {
     redrawTournament,
     setPlayoffSeedMode,
     changeGroupCount,
+    changeQualifiersPerGroup,
   }
 }

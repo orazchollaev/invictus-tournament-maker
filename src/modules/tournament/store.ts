@@ -32,7 +32,8 @@ export const useTournamentStore = defineStore("tournament", () => {
     teamIds: string[],
     seeded = false,
     orderedIds?: string[],
-    groupCount?: number
+    groupCount?: number,
+    qualifiersPerGroup?: number
   ) {
     const allTeams = getTeams()
     const selected = allTeams.filter((t) => teamIds.includes(t.id))
@@ -43,7 +44,15 @@ export const useTournamentStore = defineStore("tournament", () => {
     const ordered = orderedIds
       ? orderedIds.map((id) => allTeams.find((t) => t.id === id)).filter(Boolean)
       : undefined
-    const t = createTournament(name, selected, season, seeded, ordered as any, groupCount)
+    const t = createTournament(
+      name,
+      selected,
+      season,
+      seeded,
+      ordered as any,
+      groupCount,
+      qualifiersPerGroup
+    )
     tournaments.value.push(t)
     active.value = t.id
     return t.id
@@ -69,13 +78,15 @@ export const useTournamentStore = defineStore("tournament", () => {
       : undefined
     const effectiveGroupCount =
       groupCount ?? (t.format === "group+bracket" ? t.groups?.length : undefined)
+    const effectiveQpg = t.format === "group+bracket" ? (t.qualifiersPerGroup ?? 2) : undefined
     const newT = createTournament(
       t.name,
       selected,
       season,
       seeded,
       ordered as any,
-      effectiveGroupCount
+      effectiveGroupCount,
+      effectiveQpg
     )
     if (t.playoffSeedMode) newT.playoffSeedMode = t.playoffSeedMode
     tournaments.value.push(newT)
@@ -259,22 +270,39 @@ export const useTournamentStore = defineStore("tournament", () => {
     return false
   }
 
-  function rebuildDraw(t: Tournament, seeded = false, orderedIds?: string[], groupCount?: number) {
+  function rebuildDraw(
+    t: Tournament,
+    seeded = false,
+    orderedIds?: string[],
+    groupCount?: number,
+    qualifiersPerGroup?: number
+  ) {
     const allTeams = getTeams()
     const selected = allTeams.filter((tm) => t.teamIds.includes(tm.id))
     const resolvedGroupCount =
       t.format === "group+bracket"
         ? Math.min(groupCount ?? t.groups?.length ?? 2, Math.floor(selected.length / 2))
         : undefined
+    const resolvedQpg =
+      t.format === "group+bracket" ? (qualifiersPerGroup ?? t.qualifiersPerGroup ?? 2) : undefined
     const ordered = orderedIds
       ? (orderedIds.map((id) => allTeams.find((tm) => tm.id === id)).filter(Boolean) as any)
       : undefined
-    const fresh = createTournament(t.name, selected, t.season, seeded, ordered, resolvedGroupCount)
+    const fresh = createTournament(
+      t.name,
+      selected,
+      t.season,
+      seeded,
+      ordered,
+      resolvedGroupCount,
+      resolvedQpg
+    )
     t.rounds = fresh.rounds
     t.winnerId = null
     if (fresh.groups) {
       t.groups = fresh.groups
       t.groupsDone = false
+      t.qualifiersPerGroup = fresh.qualifiersPerGroup
     }
   }
 
@@ -283,7 +311,19 @@ export const useTournamentStore = defineStore("tournament", () => {
     if (!t || t.format !== "group+bracket" || hasAnyResults(tournamentId)) return
     const max = Math.floor(t.teamIds.length / 2)
     const clamped = Math.max(2, Math.min(count, max))
-    rebuildDraw(t, false, undefined, clamped)
+    // Clamp qualifiersPerGroup to new min group size
+    const minGroupSize = Math.floor(t.teamIds.length / clamped)
+    const clampedQpg = Math.max(1, Math.min(t.qualifiersPerGroup ?? 2, minGroupSize))
+    rebuildDraw(t, false, undefined, clamped, clampedQpg)
+  }
+
+  function changeQualifiersPerGroup(tournamentId: string, qpg: number) {
+    const t = tournaments.value.find((t) => t.id === tournamentId)
+    if (!t || t.format !== "group+bracket" || hasAnyResults(tournamentId)) return
+    const gc = t.groups?.length ?? 2
+    const minGroupSize = Math.floor(t.teamIds.length / gc)
+    const clamped = Math.max(1, Math.min(qpg, minGroupSize))
+    rebuildDraw(t, false, undefined, gc, clamped)
   }
 
   function addTeamToTournament(tournamentId: string, teamId: string) {
@@ -337,5 +377,6 @@ export const useTournamentStore = defineStore("tournament", () => {
     redrawTournament,
     setPlayoffSeedMode,
     changeGroupCount,
+    changeQualifiersPerGroup,
   }
 })
