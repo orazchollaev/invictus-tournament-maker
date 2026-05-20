@@ -8,6 +8,7 @@ import ParticipantsTable from "@/modules/tournament/components/ParticipantsTable
 import ManualDraw from "@/modules/tournament/components/ManualDraw.vue"
 import GroupDraw from "@/modules/tournament/components/GroupDraw.vue"
 import TournamentSettings from "@/modules/tournament/components/TournamentSettings.vue"
+import TournamentStats from "@/modules/tournament/components/TournamentStats.vue"
 import AppModal from "@/components/AppModal.vue"
 import { useTournamentDetail } from "../composables/useTournamentDetail"
 import { Settings, Trophy, Lock, Maximize2, Shuffle, X } from "lucide-vue-next"
@@ -243,6 +244,12 @@ function closeSeasonModal() {
           </div>
         </div>
       </template>
+
+      <!-- Stats -->
+      <div class="section-box">
+        <h2>Statistics</h2>
+        <TournamentStats :tournament="tournament" :teams="allTeams" />
+      </div>
 
       <!-- Participants -->
       <div class="section-box">
