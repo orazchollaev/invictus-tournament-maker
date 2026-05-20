@@ -90,18 +90,18 @@ export function useTournamentDetail() {
     const frame = () => {
       // Sol
       confetti({
-        particleCount: 4,
+        particleCount: 2,
         angle: 60,
-        spread: 55,
+        spread: 50,
         origin: { x: 0, y: 0.6 },
         colors: [color, "#ffffff"],
         zIndex: 9999,
       })
       // Sağ
       confetti({
-        particleCount: 4,
+        particleCount: 2,
         angle: 120,
-        spread: 55,
+        spread: 50,
         origin: { x: 1, y: 0.6 },
         colors: [color, "#ffffff"],
         zIndex: 9999,
