@@ -4,6 +4,7 @@ import type { Tournament, Match } from "../types"
 import type { Team } from "@/modules/teams/types"
 import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
 import { getWinnerId } from "@/engine"
+import { X, Shuffle } from "lucide-vue-next"
 
 const props = defineProps<{ tournament: Tournament; teams: Team[] }>()
 const emit = defineEmits<{
@@ -291,7 +292,7 @@ window.addEventListener("resize", drawConnectors)
                   >
                     OK
                   </button>
-                  <button class="btn-xs" @click="cancelEdit()">✕</button>
+                  <button class="btn-xs" @click="cancelEdit()"><X :size="13" /></button>
                 </template>
                 <template v-else-if="editingMatch === match.id">
                   <input v-model.number="editHome" type="number" min="0" class="score-input" />
@@ -303,7 +304,7 @@ window.addEventListener("resize", drawConnectors)
                   >
                     OK
                   </button>
-                  <button class="btn-xs" @click="cancelEdit()">✕</button>
+                  <button class="btn-xs" @click="cancelEdit()"><X :size="13" /></button>
                 </template>
                 <template v-else>
                   <button class="btn-xs" @click="startEdit(match)">
@@ -313,7 +314,7 @@ window.addEventListener("resize", drawConnectors)
                     class="btn-xs"
                     @click="emit('sim-match', match._origRound, match._origMatch)"
                   >
-                    🎲
+                    <Shuffle :size="13" />
                   </button>
                 </template>
               </div>
@@ -436,7 +437,7 @@ window.addEventListener("resize", drawConnectors)
                   >
                     OK
                   </button>
-                  <button class="btn-xs" @click="cancelEdit()">✕</button>
+                  <button class="btn-xs" @click="cancelEdit()"><X :size="13" /></button>
                 </template>
                 <template v-else-if="editingMatch === match.id">
                   <input v-model.number="editHome" type="number" min="0" class="score-input" />
@@ -448,7 +449,7 @@ window.addEventListener("resize", drawConnectors)
                   >
                     OK
                   </button>
-                  <button class="btn-xs" @click="cancelEdit()">✕</button>
+                  <button class="btn-xs" @click="cancelEdit()"><X :size="13" /></button>
                 </template>
                 <template v-else>
                   <button class="btn-xs" @click="startEdit(match)">
@@ -458,7 +459,7 @@ window.addEventListener("resize", drawConnectors)
                     class="btn-xs"
                     @click="emit('sim-match', match._origRound, match._origMatch)"
                   >
-                    🎲
+                    <Shuffle :size="13" />
                   </button>
                 </template>
               </div>

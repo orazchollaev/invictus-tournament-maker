@@ -6,6 +6,7 @@ import ManualDraw from "@/modules/tournament/components/ManualDraw.vue"
 import GroupDraw from "@/modules/tournament/components/GroupDraw.vue"
 import BtnGroup from "@/components/BtnGroup.vue"
 import { useModal } from "@/composables/useModal"
+import { Settings, X } from "lucide-vue-next"
 
 type DrawType = "random" | "seeded" | "manual"
 
@@ -91,8 +92,14 @@ function handleManualConfirm(orderedIds: string[]) {
     <div class="ts-modal">
       <!-- Header -->
       <div class="ts-header">
-        <span>⚙ Tournament Settings</span>
-        <button class="btn-xs" @click="emit('close')">✕ Close</button>
+        <span>
+          <Settings :size="14" />
+          Tournament Settings
+        </span>
+        <button class="btn-xs" @click="emit('close')">
+          <X :size="13" />
+          Close
+        </button>
       </div>
 
       <!-- Body -->
@@ -110,7 +117,7 @@ function handleManualConfirm(orderedIds: string[]) {
                   :disabled="tournament.teamIds.length <= 2"
                   @click="emit('removeTeam', team.id)"
                 >
-                  ✕
+                  <X :size="13" />
                 </button>
               </div>
             </div>
@@ -174,6 +181,7 @@ function handleManualConfirm(orderedIds: string[]) {
                 <div class="gc-stepper">
                   <button
                     class="btn-xs"
+                    style="display: flex; align-items: center; justify-content: center"
                     :disabled="currentGroupCount <= minGroups"
                     @click="emit('changeGroupCount', currentGroupCount - 1)"
                   >
@@ -182,6 +190,7 @@ function handleManualConfirm(orderedIds: string[]) {
                   <span class="gc-val">{{ currentGroupCount }}</span>
                   <button
                     class="btn-xs"
+                    style="display: flex; align-items: center; justify-content: center"
                     :disabled="currentGroupCount >= maxGroups"
                     @click="emit('changeGroupCount', currentGroupCount + 1)"
                   >
@@ -194,6 +203,7 @@ function handleManualConfirm(orderedIds: string[]) {
                 <div class="gc-stepper">
                   <button
                     class="btn-xs"
+                    style="display: flex; align-items: center; justify-content: center"
                     :disabled="currentQpg <= minQpg"
                     @click="emit('changeQualifiersPerGroup', currentQpg - 1)"
                   >
@@ -202,6 +212,7 @@ function handleManualConfirm(orderedIds: string[]) {
                   <span class="gc-val">{{ currentQpg }}</span>
                   <button
                     class="btn-xs"
+                    style="display: flex; align-items: center; justify-content: center"
                     :disabled="currentQpg >= maxQpg"
                     @click="emit('changeQualifiersPerGroup', currentQpg + 1)"
                   >

@@ -8,6 +8,7 @@ import GroupDraw from "../components/GroupDraw.vue"
 import AppModal from "@/components/AppModal.vue"
 import CreateTournamentModal from "../components/CreateTournamentModal.vue"
 import type { Tournament } from "../types"
+import { Trophy, X } from "lucide-vue-next"
 
 const router = useRouter()
 const teamsStore = useTeamsStore()
@@ -80,7 +81,8 @@ function closeSeasonModal() {
           <span class="t-meta">{{ t.teamIds.length }} teams</span>
           <span class="t-format">{{ t.format === "group+bracket" ? "Groups+KO" : "Bracket" }}</span>
           <span v-if="t.winnerId" class="winner-tag" :style="{ '--team-color': winnerColor(t) }">
-            🏆 {{ winnerName(t) }}
+            <Trophy :size="14" />
+            {{ winnerName(t) }}
           </span>
           <span v-else class="t-meta">In progress</span>
           <div class="ml-auto flex">
@@ -90,7 +92,7 @@ function closeSeasonModal() {
             <button class="primary sm" @click.stop="router.push(`/tournaments/${t.id}`)">
               Open
             </button>
-            <button class="danger sm" @click.stop="store.remove(t.id)">✕</button>
+            <button class="danger sm" @click.stop="store.remove(t.id)"><X :size="14" /></button>
           </div>
         </div>
       </div>

@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "canvas-confetti": "^1.9.4",
+    "lucide-vue-next": "^1.0.0",
     "pinia": "^3.0.4",
     "pinia-plugin-persistedstate-2": "^2.0.32",
     "vue": "^3.5.34",

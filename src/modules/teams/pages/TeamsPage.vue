@@ -2,6 +2,7 @@
 import { useRouter } from "vue-router"
 import { useTeamsStore } from "../store"
 import { useTeamForm } from "../composables/useTeamForm"
+import { X } from "lucide-vue-next"
 
 const store = useTeamsStore()
 const {
@@ -94,7 +95,7 @@ const router = useRouter()
               <div class="row-actions">
                 <button class="sm" @click="router.push(`/teams/${team.id}`)">Open</button>
                 <button class="sm" @click="startEdit(team)">Edit</button>
-                <button class="danger sm" @click="store.remove(team.id)">✕</button>
+                <button class="danger sm" @click="store.remove(team.id)"><X :size="14" /></button>
               </div>
             </template>
           </div>

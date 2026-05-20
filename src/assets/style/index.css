@@ -72,6 +72,9 @@ button {
   padding: 5px 13px;
   border-radius: var(--radius);
   color: var(--text);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
   transition:
     background 0.12s,
     border-color 0.12s,

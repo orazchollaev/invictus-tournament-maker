@@ -10,6 +10,7 @@ import GroupDraw from "@/modules/tournament/components/GroupDraw.vue"
 import TournamentSettings from "@/modules/tournament/components/TournamentSettings.vue"
 import AppModal from "@/components/AppModal.vue"
 import { useTournamentDetail } from "../composables/useTournamentDetail"
+import { Settings, Trophy, Lock, Maximize2, Shuffle, X } from "lucide-vue-next"
 
 const route = useRoute()
 
@@ -112,7 +113,10 @@ function closeSeasonModal() {
             >
               New Season
             </button>
-            <button class="settings-btn" @click="showSettingsModal = true">⚙ Settings</button>
+            <button class="settings-btn" @click="showSettingsModal = true">
+              <Settings :size="14" />
+              Settings
+            </button>
           </div>
         </div>
         <h1>
@@ -130,7 +134,7 @@ function closeSeasonModal() {
         class="winner-banner"
         :style="{ borderColor: winnerTeam?.color }"
       >
-        🏆
+        <Trophy :size="18" />
         <strong>{{ winnerTeam?.name }}</strong>
         wins the tournament!
       </div>
@@ -152,7 +156,7 @@ function closeSeasonModal() {
             @click="tournament.groupsDone && (activeTab = 'bracket')"
           >
             Knockout
-            <span v-if="!tournament.groupsDone" class="tab-lock">🔒</span>
+            <Lock v-if="!tournament.groupsDone" :size="13" class="tab-lock" />
           </button>
         </div>
 
@@ -173,11 +177,17 @@ function closeSeasonModal() {
         <div v-if="activeTab === 'bracket'" class="section-box">
           <h2 class="bracket-heading">
             Knockout Stage
-            <button class="btn-xs" @click="openFullBracket">⛶ Full View</button>
+            <button class="btn-xs" @click="openFullBracket">
+              <Maximize2 :size="13" />
+              Full View
+            </button>
           </h2>
           <div class="section-body bracket-body">
             <div class="flex sim-toolbar">
-              <button @click="store.simulateAll(tournament.id)">🎲 Simulate All</button>
+              <button @click="store.simulateAll(tournament.id)">
+                <Shuffle :size="14" />
+                Simulate All
+              </button>
               <button
                 v-for="(round, ri) in tournament.rounds"
                 :key="ri"
@@ -203,11 +213,17 @@ function closeSeasonModal() {
         <div class="section-box">
           <h2 class="bracket-heading">
             Bracket
-            <button class="btn-xs" @click="openFullBracket">⛶ Full View</button>
+            <button class="btn-xs" @click="openFullBracket">
+              <Maximize2 :size="13" />
+              Full View
+            </button>
           </h2>
           <div class="section-body bracket-body">
             <div class="flex sim-toolbar">
-              <button @click="store.simulateAll(tournament.id)">🎲 Simulate All</button>
+              <button @click="store.simulateAll(tournament.id)">
+                <Shuffle :size="14" />
+                Simulate All
+              </button>
               <button
                 v-for="(round, ri) in tournament.rounds"
                 :key="ri"
@@ -264,7 +280,10 @@ function closeSeasonModal() {
       <div class="full-bracket-modal">
         <div class="full-bracket-header">
           <span>{{ tournament?.name }} — Knockout</span>
-          <button class="btn-xs" @click="closeFullBracket">✕ Close</button>
+          <button class="btn-xs" @click="closeFullBracket">
+            <X :size="13" />
+            Close
+          </button>
         </div>
         <div class="full-bracket-body">
           <Bracket
@@ -459,6 +478,9 @@ function closeSeasonModal() {
   color: var(--text-muted);
 }
 .winner-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   border: 1px solid var(--border-light);
   border-left: 4px solid var(--team-color, var(--accent-2));
   background: color-mix(in srgb, var(--accent-2) 8%, var(--surface));

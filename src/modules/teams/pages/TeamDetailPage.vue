@@ -6,6 +6,7 @@ import { useTournamentStore } from "@/modules/tournament/store"
 import { getWinnerId } from "@/engine"
 import { useTeamLookup } from "@/composables/useTeamLookup"
 import type { Match } from "@/modules/tournament/types"
+import { Trophy } from "lucide-vue-next"
 
 const route = useRoute()
 const router = useRouter()
@@ -199,7 +200,8 @@ const recentForm = computed(() => allMatches.value.slice(0, 5).reverse())
             </div>
             <div class="stat-cell">
               <span v-if="tournamentWins.length > 0" class="stat-value trophy">
-                🏆 {{ tournamentWins.length }}
+                <Trophy :size="15" />
+                {{ tournamentWins.length }}
               </span>
               <span v-else class="stat-value">—</span>
               <span class="stat-label">Titles</span>
@@ -243,7 +245,7 @@ const recentForm = computed(() => allMatches.value.slice(0, 5).reverse())
         <h2>Tournament Titles</h2>
         <div class="section-body flush">
           <div v-for="t in tournamentWins" :key="t.id" class="match-row">
-            <span class="trophy-icon">🏆</span>
+            <Trophy :size="16" class="trophy-icon" />
             <span class="match-tournament">{{ t.name }}</span>
             <span class="match-round">Season {{ t.season }}</span>
           </div>

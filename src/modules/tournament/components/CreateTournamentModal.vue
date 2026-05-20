@@ -7,6 +7,7 @@ import ManualDraw from "./ManualDraw.vue"
 import GroupDraw from "./GroupDraw.vue"
 import BtnGroup from "@/components/BtnGroup.vue"
 import { useModal } from "@/composables/useModal"
+import { X, Trophy, LayoutGrid } from "lucide-vue-next"
 
 type DrawType = "random" | "seeded" | "manual"
 type TournamentFormat = "bracket" | "group+bracket"
@@ -100,7 +101,10 @@ const teamsPerGroup = computed(() =>
       <!-- Header -->
       <div class="ct-header">
         <span>New Tournament</span>
-        <button class="btn-xs" @click="emit('close')">✕ Close</button>
+        <button class="btn-xs" @click="emit('close')">
+          <X :size="13" />
+          Close
+        </button>
       </div>
 
       <!-- Manual draw view -->
@@ -176,7 +180,7 @@ const teamsPerGroup = computed(() =>
                 :class="{ 'ct-format-card--on': format === 'bracket' }"
                 @click="setFormat('bracket')"
               >
-                <span class="ct-format-icon">🏆</span>
+                <Trophy :size="28" class="ct-format-icon" />
                 <span class="ct-format-title">Knockout Bracket</span>
                 <span class="ct-format-desc">Single-elimination only</span>
               </button>
@@ -186,7 +190,7 @@ const teamsPerGroup = computed(() =>
                 :disabled="selected.length < 4"
                 @click="setFormat('group+bracket')"
               >
-                <span class="ct-format-icon">⚽</span>
+                <LayoutGrid :size="28" class="ct-format-icon" />
                 <span class="ct-format-title">Groups + Knockout</span>
                 <span class="ct-format-desc">Group stage → top 2 advance</span>
               </button>

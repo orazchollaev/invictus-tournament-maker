@@ -4,6 +4,7 @@ import type { Team } from "@/modules/teams/types"
 import type { Tournament, GroupMatch } from "@/modules/tournament/types"
 import AppModal from "@/components/AppModal.vue"
 import { useTeamLookup } from "@/composables/useTeamLookup"
+import { Lock, Shuffle, Check } from "lucide-vue-next"
 
 const props = defineProps<{
   tournament: Tournament
@@ -64,19 +65,24 @@ function scoreAccentColor(match: GroupMatch): string {
   <div class="gs-wrap">
     <!-- Locked notice -->
     <div v-if="locked" class="gs-locked-notice">
-      🔒 Group stage complete — results are locked. Switch to the Knockout tab to continue.
+      <Lock :size="14" />
+      Group stage complete — results are locked. Switch to the Knockout tab to continue.
     </div>
 
     <!-- Toolbar (only when not locked) -->
     <div v-else class="gs-toolbar">
-      <button :disabled="allDone" @click="emit('simAll')">🎲 Simulate All</button>
+      <button :disabled="allDone" @click="emit('simAll')">
+        <Shuffle :size="14" />
+        Simulate All
+      </button>
       <template v-for="(g, gi) in tournament.groups" :key="gi">
         <button v-if="g.matches.some((m) => !m.result)" @click="emit('simGroup', gi)">
           Sim {{ g.name }}
         </button>
       </template>
       <button v-if="allDone" class="primary" style="margin-left: auto" @click="emit('advance')">
-        ✔ Advance to Knockout →
+        <Check :size="14" />
+        Advance to Knockout →
       </button>
     </div>
 
@@ -158,7 +164,7 @@ function scoreAccentColor(match: GroupMatch): string {
             </span>
 
             <button v-if="!locked" class="btn-xs sim-btn" @click="emit('simMatch', gi, mi)">
-              🎲
+              <Shuffle :size="13" />
             </button>
           </div>
         </div>
@@ -204,6 +210,9 @@ function scoreAccentColor(match: GroupMatch): string {
 }
 
 .gs-locked-notice {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   font-size: 12px;
   color: var(--text-muted);
   background: var(--bg);
