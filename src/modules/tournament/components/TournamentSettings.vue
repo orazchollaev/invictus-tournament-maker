@@ -94,7 +94,7 @@ onUnmounted(() => {
                 <span class="team-dot" :style="{ background: team.color }"></span>
                 <span class="team-name">{{ team.name }}</span>
                 <button
-                  class="danger btn-xs ml-auto"
+                  class="danger team-remove"
                   :disabled="tournament.teamIds.length <= 2"
                   @click="emit('removeTeam', team.id)"
                 >
@@ -104,11 +104,11 @@ onUnmounted(() => {
             </div>
             <div v-if="availableTeams.length > 0" class="add-team-row">
               <select v-model="selectedTeamToAdd">
-                <option value="" disabled>Select a team to add…</option>
+                <option value="" disabled>Add team…</option>
                 <option v-for="t in availableTeams" :key="t.id" :value="t.id">{{ t.name }}</option>
               </select>
               <button class="primary" :disabled="!selectedTeamToAdd" @click="handleAddTeam">
-                + Add
+                Add
               </button>
             </div>
             <p v-else class="ts-hint">All available teams are already in this tournament.</p>
@@ -140,34 +140,19 @@ onUnmounted(() => {
               />
             </template>
             <template v-else>
-              <div class="draw-type-grid">
-                <button
-                  class="draw-type-card"
-                  :class="{ active: drawType === 'random' }"
-                  @click="drawType = 'random'"
-                >
-                  <strong>Random</strong>
-                  <span>Teams shuffled randomly</span>
-                </button>
-                <button
-                  class="draw-type-card"
-                  :class="{ active: drawType === 'seeded' }"
-                  @click="drawType = 'seeded'"
-                >
-                  <strong>Seeded</strong>
-                  <span>Stronger teams kept apart</span>
-                </button>
-                <button
-                  class="draw-type-card"
-                  :class="{ active: drawType === 'manual' }"
-                  @click="drawType = 'manual'"
-                >
-                  <strong>Manual</strong>
-                  <span>Place teams yourself</span>
-                </button>
-              </div>
-              <div class="ts-row" style="margin-top: 10px">
-                <button @click="handleRedraw">↺ Regenerate Draw</button>
+              <div class="ts-row">
+                <div class="btn-group">
+                  <button :class="{ active: drawType === 'random' }" @click="drawType = 'random'">
+                    Random
+                  </button>
+                  <button :class="{ active: drawType === 'seeded' }" @click="drawType = 'seeded'">
+                    Seeded
+                  </button>
+                  <button :class="{ active: drawType === 'manual' }" @click="drawType = 'manual'">
+                    Manual
+                  </button>
+                </div>
+                <button @click="handleRedraw">↺ Regenerate</button>
               </div>
             </template>
           </template>
@@ -181,39 +166,31 @@ onUnmounted(() => {
           <div class="ts-divider"></div>
           <div class="ts-section">
             <div class="ts-section-title">Playoff Seeding</div>
-            <p class="ts-hint" style="margin-bottom: 12px">
-              Choose how group-stage qualifiers are seeded into the knockout bracket. Takes effect
-              when you click "Advance to Knockout".
+            <template v-if="!tournament.groupsDone">
+              <div class="btn-group btn-group--wrap">
+                <button
+                  :class="{ active: (tournament.playoffSeedMode ?? 'cross') === 'cross' }"
+                  @click="emit('setPlayoffSeedMode', 'cross')"
+                >
+                  Cross-bracket
+                </button>
+                <button
+                  :class="{ active: tournament.playoffSeedMode === 'no-same-group' }"
+                  @click="emit('setPlayoffSeedMode', 'no-same-group')"
+                >
+                  No same-group R1
+                </button>
+                <button
+                  :class="{ active: tournament.playoffSeedMode === 'random' }"
+                  @click="emit('setPlayoffSeedMode', 'random')"
+                >
+                  Fully random
+                </button>
+              </div>
+            </template>
+            <p v-else class="ts-hint ts-hint--warn">
+              Locked — group stage is complete and bracket has been seeded.
             </p>
-            <div class="seed-grid">
-              <button
-                class="seed-card"
-                :class="{ active: (tournament.playoffSeedMode ?? 'cross') === 'cross' }"
-                @click="emit('setPlayoffSeedMode', 'cross')"
-              >
-                <strong>Classic cross-bracket</strong>
-                <span>Group leaders face runners-up from paired groups (1A–2B, 1B–2A…)</span>
-              </button>
-              <button
-                class="seed-card"
-                :class="{ active: tournament.playoffSeedMode === 'no-same-group' }"
-                @click="emit('setPlayoffSeedMode', 'no-same-group')"
-              >
-                <strong>No same-group R1</strong>
-                <span>
-                  Rotation seeding — teams from the same group can't meet in the first knockout
-                  round
-                </span>
-              </button>
-              <button
-                class="seed-card"
-                :class="{ active: tournament.playoffSeedMode === 'random' }"
-                @click="emit('setPlayoffSeedMode', 'random')"
-              >
-                <strong>Fully random</strong>
-                <span>Complete random draw, no seeding restrictions</span>
-              </button>
-            </div>
           </div>
         </template>
 
@@ -221,15 +198,19 @@ onUnmounted(() => {
         <div class="ts-divider"></div>
         <div class="ts-section">
           <div class="ts-section-title">Danger Zone</div>
-          <div class="danger-row">
+          <div class="danger-list">
             <div class="danger-item">
-              <div class="danger-label">Reset Tournament</div>
-              <div class="danger-desc">Clears all match results, keeping teams and draw.</div>
+              <div class="danger-info">
+                <div class="danger-label">Reset Tournament</div>
+                <div class="danger-desc">Clears all match results, keeping teams and draw.</div>
+              </div>
               <button class="danger" @click="emit('reset')">Reset</button>
             </div>
             <div class="danger-item">
-              <div class="danger-label">Delete Tournament</div>
-              <div class="danger-desc">Permanently removes this tournament and all its data.</div>
+              <div class="danger-info">
+                <div class="danger-label">Delete Tournament</div>
+                <div class="danger-desc">Permanently removes this tournament and all its data.</div>
+              </div>
               <button class="danger" @click="emit('delete')">Delete</button>
             </div>
           </div>
@@ -248,7 +229,7 @@ onUnmounted(() => {
   align-items: flex-start;
   justify-content: center;
   z-index: 250;
-  padding: 48px 16px 24px;
+  padding: 40px 16px 24px;
   overflow-y: auto;
 }
 
@@ -256,7 +237,7 @@ onUnmounted(() => {
   background: var(--surface);
   border: 1px solid var(--border);
   width: 100%;
-  max-width: 560px;
+  max-width: 520px;
   flex-shrink: 0;
 }
 
@@ -264,11 +245,11 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 14px;
+  padding: 8px 12px;
   border-bottom: 1px solid var(--border);
   background: var(--bg);
   font-family: var(--font);
-  font-size: 16px;
+  font-size: 15px;
 }
 
 .ts-body {
@@ -276,16 +257,16 @@ onUnmounted(() => {
 }
 
 .ts-section {
-  padding: 14px 16px;
+  padding: 10px 12px;
 }
 
 .ts-section-title {
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 700;
-  letter-spacing: 0.07em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--text-muted);
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 .ts-divider {
@@ -301,7 +282,7 @@ onUnmounted(() => {
 .ts-hint--warn {
   background: color-mix(in srgb, var(--danger) 8%, var(--surface));
   border: 1px solid color-mix(in srgb, var(--danger) 25%, transparent);
-  padding: 7px 10px;
+  padding: 6px 8px;
   font-size: 12px;
   color: var(--danger);
 }
@@ -309,138 +290,106 @@ onUnmounted(() => {
 .ts-row {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 /* Team list */
 .team-list {
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
   gap: 4px;
-  margin-bottom: 10px;
-  max-height: 220px;
-  overflow-y: auto;
+  margin-bottom: 8px;
 }
 .team-row {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 5px 8px;
+  gap: 5px;
+  padding: 2px 5px 2px 6px;
   border: 1px solid var(--border-light);
   background: var(--bg);
 }
 .team-dot {
-  width: 10px;
-  height: 10px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   flex-shrink: 0;
 }
 .team-name {
-  font-size: 13px;
-  flex: 1;
+  font-size: 12px;
 }
 .add-team-row {
   display: flex;
-  gap: 8px;
+  gap: 6px;
   align-items: center;
-  margin-top: 6px;
 }
 .add-team-row select {
   flex: 1;
   min-width: 0;
 }
-
-/* Draw type cards */
-.draw-type-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-}
-.draw-type-card {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 10px 12px;
-  border: 1px solid var(--border);
-  background: var(--surface);
-  text-align: left;
-  cursor: pointer;
-  border-radius: var(--radius);
-  transition:
-    border-color 0.15s,
-    background 0.15s;
-}
-.draw-type-card:hover {
-  background: var(--bg);
-}
-.draw-type-card.active {
-  border-color: var(--accent);
-  background: color-mix(in srgb, var(--accent) 8%, var(--surface));
-}
-.draw-type-card strong {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text);
-}
-.draw-type-card span {
-  font-size: 11px;
+.team-remove {
+  font-size: 10px;
+  padding: 0px 4px;
+  line-height: 16px;
+  border-color: transparent;
   color: var(--text-muted);
-  line-height: 1.4;
-  font-weight: normal;
+}
+.team-remove:not(:disabled):hover {
+  color: var(--danger);
+  border-color: var(--danger);
+  background: color-mix(in srgb, var(--danger) 8%, var(--surface));
 }
 
-/* Seed mode cards */
-.seed-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-}
-.seed-card {
+/* Button group (segmented control) */
+.btn-group {
   display: flex;
-  flex-direction: column;
-  gap: 5px;
-  padding: 10px 12px;
-  border: 1px solid var(--border);
-  background: var(--surface);
-  text-align: left;
-  cursor: pointer;
+}
+.btn-group button {
+  border-radius: 0;
+  margin-left: -1px;
+  position: relative;
+}
+.btn-group button:first-child {
+  margin-left: 0;
+  border-radius: var(--radius) 0 0 var(--radius);
+}
+.btn-group button:last-child {
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+.btn-group button.active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent-hover);
+  z-index: 1;
+}
+.btn-group button.active:hover {
+  background: var(--accent-hover);
+}
+.btn-group--wrap {
+  flex-wrap: wrap;
+}
+.btn-group--wrap button {
   border-radius: var(--radius);
-  transition:
-    border-color 0.15s,
-    background 0.15s;
-}
-.seed-card:hover {
-  background: var(--bg);
-}
-.seed-card.active {
-  border-color: var(--accent);
-  background: color-mix(in srgb, var(--accent) 8%, var(--surface));
-}
-.seed-card strong {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text);
-}
-.seed-card span {
-  font-size: 11px;
-  color: var(--text-muted);
-  line-height: 1.4;
-  font-weight: normal;
+  margin-left: 0;
+  margin-right: -1px;
+  margin-bottom: -1px;
 }
 
 /* Danger zone */
-.danger-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
+.danger-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 .danger-item {
   display: flex;
-  flex-direction: column;
-  gap: 5px;
-  padding: 10px 12px;
-  border: 1px solid color-mix(in srgb, var(--danger) 30%, transparent);
-  background: color-mix(in srgb, var(--danger) 5%, var(--surface));
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border: 1px solid color-mix(in srgb, var(--danger) 25%, transparent);
+  background: color-mix(in srgb, var(--danger) 4%, var(--surface));
+}
+.danger-info {
+  flex: 1;
 }
 .danger-label {
   font-size: 12px;
@@ -450,7 +399,7 @@ onUnmounted(() => {
 .danger-desc {
   font-size: 11px;
   color: var(--text-muted);
-  flex: 1;
+  margin-top: 1px;
 }
 
 @media (max-width: 560px) {
@@ -461,13 +410,6 @@ onUnmounted(() => {
   .ts-modal {
     max-width: 100%;
     min-height: 100dvh;
-  }
-  .draw-type-grid,
-  .seed-grid {
-    grid-template-columns: 1fr;
-  }
-  .danger-row {
-    grid-template-columns: 1fr;
   }
 }
 </style>
