@@ -77,6 +77,7 @@ export const useTournamentStore = defineStore("tournament", () => {
       ordered as any,
       effectiveGroupCount
     )
+    if (t.playoffSeedMode) newT.playoffSeedMode = t.playoffSeedMode
     tournaments.value.push(newT)
     active.value = newT.id
     return newT.id
