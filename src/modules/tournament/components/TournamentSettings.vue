@@ -21,6 +21,7 @@ const emit = defineEmits<{
   removeTeam: [teamId: string]
   redraw: [seeded: boolean, orderedIds?: string[]]
   setPlayoffSeedMode: [mode: PlayoffSeedMode]
+  changeGroupCount: [count: number]
   reset: []
   delete: []
   close: []
@@ -54,6 +55,10 @@ const tournamentTeams = computed(() =>
   props.allTeams.filter((t) => props.tournament.teamIds.includes(t.id))
 )
 const isGroupFormat = computed(() => props.tournament.format === "group+bracket")
+
+const currentGroupCount = computed(() => props.tournament.groups?.length ?? 2)
+const maxGroups = computed(() => Math.floor(props.tournament.teamIds.length / 2))
+const minGroups = 2
 
 function handleAddTeam() {
   if (!selectedTeamToAdd.value) return
@@ -152,6 +157,39 @@ function handleManualConfirm(orderedIds: string[]) {
             Draw cannot be changed once matches have been played.
           </p>
         </div>
+
+        <!-- ── Group Count (group+bracket only) ─────── -->
+        <template v-if="isGroupFormat">
+          <div class="ts-divider"></div>
+          <div class="ts-section">
+            <div class="ts-section-title">Groups</div>
+            <template v-if="!hasAnyResults">
+              <div class="ts-row">
+                <div class="gc-stepper">
+                  <button
+                    class="btn-xs"
+                    :disabled="currentGroupCount <= minGroups"
+                    @click="emit('changeGroupCount', currentGroupCount - 1)"
+                  >
+                    −
+                  </button>
+                  <span class="gc-val">{{ currentGroupCount }}</span>
+                  <button
+                    class="btn-xs"
+                    :disabled="currentGroupCount >= maxGroups"
+                    @click="emit('changeGroupCount', currentGroupCount + 1)"
+                  >
+                    +
+                  </button>
+                </div>
+                <span class="ts-hint">groups (max {{ maxGroups }})</span>
+              </div>
+            </template>
+            <p v-else class="ts-hint ts-hint--warn">
+              Group count cannot be changed once matches have been played.
+            </p>
+          </div>
+        </template>
 
         <!-- ── Playoff Seeding (group+bracket only) ──── -->
         <template v-if="isGroupFormat">
@@ -343,6 +381,34 @@ function handleManualConfirm(orderedIds: string[]) {
   font-size: 11px;
   color: var(--text-muted);
   margin-top: 1px;
+}
+
+.gc-stepper {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  border: 1px solid var(--border);
+}
+.gc-stepper button {
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  font-size: 14px;
+  line-height: 1;
+}
+.gc-stepper button:first-child {
+  border-right: 1px solid var(--border);
+}
+.gc-stepper button:last-child {
+  border-left: 1px solid var(--border);
+}
+.gc-val {
+  width: 32px;
+  text-align: center;
+  font-size: 13px;
+  font-family: var(--font-ui);
 }
 
 /* Playoff seeding wrap variant */

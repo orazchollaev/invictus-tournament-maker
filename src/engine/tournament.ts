@@ -162,10 +162,11 @@ export function seedBracketFromGroups(
   const half = size / 2
 
   function buildHalfSlots(halfTeams: (Team | null)[], targetSize: number): (Team | null)[] {
-    const byes = targetSize - halfTeams.filter(Boolean).length
+    const realTeams = halfTeams.filter(Boolean) as Team[]
+    const byes = targetSize - realTeams.length
     const slots: (Team | null)[] = []
-    for (let i = 0; i < byes; i++) slots.push(halfTeams[i] ?? null, null)
-    for (let i = byes; i < halfTeams.length; i++) slots.push(halfTeams[i] ?? null)
+    for (let i = 0; i < byes; i++) slots.push(realTeams[i] ?? null, null)
+    for (let i = byes; i < realTeams.length; i++) slots.push(realTeams[i])
     return slots
   }
 

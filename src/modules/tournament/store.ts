@@ -259,23 +259,31 @@ export const useTournamentStore = defineStore("tournament", () => {
     return false
   }
 
-  function rebuildDraw(t: Tournament, seeded = false, orderedIds?: string[]) {
+  function rebuildDraw(t: Tournament, seeded = false, orderedIds?: string[], groupCount?: number) {
     const allTeams = getTeams()
     const selected = allTeams.filter((tm) => t.teamIds.includes(tm.id))
-    const groupCount =
+    const resolvedGroupCount =
       t.format === "group+bracket"
-        ? Math.min(t.groups?.length ?? 2, Math.floor(selected.length / 2))
+        ? Math.min(groupCount ?? t.groups?.length ?? 2, Math.floor(selected.length / 2))
         : undefined
     const ordered = orderedIds
       ? (orderedIds.map((id) => allTeams.find((tm) => tm.id === id)).filter(Boolean) as any)
       : undefined
-    const fresh = createTournament(t.name, selected, t.season, seeded, ordered, groupCount)
+    const fresh = createTournament(t.name, selected, t.season, seeded, ordered, resolvedGroupCount)
     t.rounds = fresh.rounds
     t.winnerId = null
     if (fresh.groups) {
       t.groups = fresh.groups
       t.groupsDone = false
     }
+  }
+
+  function changeGroupCount(tournamentId: string, count: number) {
+    const t = tournaments.value.find((t) => t.id === tournamentId)
+    if (!t || t.format !== "group+bracket" || hasAnyResults(tournamentId)) return
+    const max = Math.floor(t.teamIds.length / 2)
+    const clamped = Math.max(2, Math.min(count, max))
+    rebuildDraw(t, false, undefined, clamped)
   }
 
   function addTeamToTournament(tournamentId: string, teamId: string) {
@@ -328,5 +336,6 @@ export const useTournamentStore = defineStore("tournament", () => {
     removeTeamFromTournament,
     redrawTournament,
     setPlayoffSeedMode,
+    changeGroupCount,
   }
 })

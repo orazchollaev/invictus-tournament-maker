@@ -284,6 +284,8 @@ function scoreAccentColor(match: GroupMatch): string {
   flex-direction: column;
   gap: 2px;
   border-top: 1px solid var(--border-light);
+  max-height: 250px;
+  overflow-y: auto;
 }
 .gs-match {
   display: grid;

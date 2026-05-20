@@ -76,6 +76,10 @@ export function useTournamentDetail() {
     store.setPlayoffSeedMode(tournamentId.value, mode)
   }
 
+  function changeGroupCount(count: number) {
+    store.changeGroupCount(tournamentId.value, count)
+  }
+
   function fireTeamConfetti(color: string) {
     const end = Date.now() + 2000
 
@@ -130,5 +134,6 @@ export function useTournamentDetail() {
     removeTeam,
     redrawTournament,
     setPlayoffSeedMode,
+    changeGroupCount,
   }
 }
