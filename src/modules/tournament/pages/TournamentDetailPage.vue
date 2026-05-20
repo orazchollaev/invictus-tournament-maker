@@ -316,9 +316,10 @@ function closeSeasonModal() {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 8px;
 }
 .bracket-body {
-  padding: 8px 0;
+  padding: 6px 0;
 }
 .t-format-tag {
   font-size: 11px;
