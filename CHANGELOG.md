@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.8.0](https://github.com/orazchollaev/tournament-sim/compare/v0.7.1...v0.8.0) (2026-05-20)
+
+### Features
+
+- add group count editing in tournament settings ([c71c27c](https://github.com/orazchollaev/tournament-sim/commit/c71c27cecee724e5b60b0f58789f480c0b7381a8))
+- configurable qualifiers-per-group with correct cross seeding ([e20f6ac](https://github.com/orazchollaev/tournament-sim/commit/e20f6ac7de50e3c99a3c60088a559701bc4a1255))
+- **style:** flat sports theme with accent colors, rounded cards, and clean tab borders ([fa24ffb](https://github.com/orazchollaev/tournament-sim/commit/fa24ffb03f88a911ed122801ef17201d225fdcb3))
+- **ui:** create separate modal for tournament creation ([3298f30](https://github.com/orazchollaev/tournament-sim/commit/3298f3037765d08c39761dee6beb03124499e7b9))
+- **ui:** replaced emojis with proper icons across the app ([804bc99](https://github.com/orazchollaev/tournament-sim/commit/804bc99bc43afa2c45bd8ee239898783c7d7a9af))
+
+### Bug Fixes
+
+- group matches replay bug fixed ([4b25340](https://github.com/orazchollaev/tournament-sim/commit/4b25340f965963a4a55d2e318cda6eea4320c63d))
+- **teams:** block deletion of teams added to tournaments ([cca8ec4](https://github.com/orazchollaev/tournament-sim/commit/cca8ec4f863976b3c00e56ac7c477df0280ef2bd))
+- **ui:** fixed dark and light mode colors of notices ([54393be](https://github.com/orazchollaev/tournament-sim/commit/54393be306c45663de06c6e47d4ac0b5a51bfe4b))
+
 ## [0.7.1](https://github.com/orazchollaev/tournament-sim/compare/v0.7.0...v0.7.1) (2026-05-20)
 
 ### Bug Fixes
