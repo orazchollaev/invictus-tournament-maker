@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from "vue"
 import type { Team } from "@/modules/teams/types"
+import { useTeamLookup } from "@/composables/useTeamLookup"
 
 const props = defineProps<{
   teams: Team[]
@@ -11,6 +12,8 @@ const emit = defineEmits<{
   confirm: [orderedIds: string[]]
   cancel: []
 }>()
+
+const { teamById } = useTeamLookup(() => props.teams)
 
 // Some groups get one extra team when division is uneven
 function slotsForGroup(g: number): number {
@@ -57,10 +60,6 @@ function confirm() {
     }
   }
   emit("confirm", ids)
-}
-
-function teamById(id: string) {
-  return props.teams.find((t) => t.id === id)
 }
 </script>
 

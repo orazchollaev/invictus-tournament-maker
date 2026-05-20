@@ -4,12 +4,14 @@ import { useRoute, useRouter } from "vue-router"
 import { useTeamsStore } from "../../teams/store"
 import { useTournamentStore } from "@/modules/tournament/store"
 import { getWinnerId } from "@/engine"
+import { useTeamLookup } from "@/composables/useTeamLookup"
 import type { Match } from "@/modules/tournament/types"
 
 const route = useRoute()
 const router = useRouter()
 const teamsStore = useTeamsStore()
 const tournamentStore = useTournamentStore()
+const { getTeamName, getTeamColor } = useTeamLookup(() => teamsStore.teams)
 
 const teamId = computed(() => route.params.id as string)
 const team = computed(() => teamsStore.teams.find((t) => t.id === teamId.value))
@@ -133,16 +135,6 @@ const tournamentWins = computed(() =>
 
 // Recent form: last 5 matches (most recent first → reverse for display left-to-right)
 const recentForm = computed(() => allMatches.value.slice(0, 5).reverse())
-
-function getTeamName(id: string | null) {
-  if (!id) return "BYE"
-  return teamsStore.teams.find((t) => t.id === id)?.name ?? "Unknown"
-}
-
-function getTeamColor(id: string | null) {
-  if (!id) return "#999"
-  return teamsStore.teams.find((t) => t.id === id)?.color ?? "#999"
-}
 </script>
 
 <template>
@@ -533,21 +525,6 @@ function getTeamColor(id: string | null) {
   background: color-mix(in srgb, var(--danger) 12%, transparent);
   color: var(--danger);
   border: 1px solid color-mix(in srgb, var(--danger) 25%, transparent);
-}
-
-.count {
-  font-family: var(--font-ui);
-  font-size: 12px;
-  font-weight: normal;
-  color: var(--text-muted);
-  margin-left: 6px;
-}
-.empty-text {
-  color: var(--text-muted);
-  font-size: 13px;
-}
-.flush {
-  padding: 0;
 }
 
 @media (max-width: 600px) {

@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, computed } from "vue"
+import { ref, computed } from "vue"
 import type { Tournament, PlayoffSeedMode } from "@/modules/tournament/types"
 import type { Team } from "@/modules/teams/types"
 import ManualDraw from "@/modules/tournament/components/ManualDraw.vue"
 import GroupDraw from "@/modules/tournament/components/GroupDraw.vue"
+import BtnGroup from "@/components/BtnGroup.vue"
+import { useModal } from "@/composables/useModal"
 
 type DrawType = "random" | "seeded" | "manual"
 
@@ -24,9 +26,29 @@ const emit = defineEmits<{
   close: []
 }>()
 
+useModal(() => {
+  if (showManualDraw.value) {
+    showManualDraw.value = false
+  } else {
+    emit("close")
+  }
+})
+
 const selectedTeamToAdd = ref("")
 const drawType = ref<DrawType>("random")
 const showManualDraw = ref(false)
+
+const drawOptions = [
+  { value: "random", label: "Random" },
+  { value: "seeded", label: "Seeded" },
+  { value: "manual", label: "Manual" },
+]
+
+const playoffOptions = [
+  { value: "cross", label: "Cross-bracket" },
+  { value: "no-same-group", label: "No same-group R1" },
+  { value: "random", label: "Fully random" },
+]
 
 const tournamentTeams = computed(() =>
   props.allTeams.filter((t) => props.tournament.teamIds.includes(t.id))
@@ -52,26 +74,6 @@ function handleManualConfirm(orderedIds: string[]) {
   showManualDraw.value = false
   emit("redraw", false, orderedIds)
 }
-
-function onKey(e: KeyboardEvent) {
-  if (e.key === "Escape") {
-    if (showManualDraw.value) {
-      showManualDraw.value = false
-    } else {
-      emit("close")
-    }
-  }
-}
-
-onMounted(() => {
-  document.body.style.overflow = "hidden"
-  document.addEventListener("keydown", onKey)
-})
-
-onUnmounted(() => {
-  document.body.style.overflow = ""
-  document.removeEventListener("keydown", onKey)
-})
 </script>
 
 <template>
@@ -141,17 +143,7 @@ onUnmounted(() => {
             </template>
             <template v-else>
               <div class="ts-row">
-                <div class="btn-group">
-                  <button :class="{ active: drawType === 'random' }" @click="drawType = 'random'">
-                    Random
-                  </button>
-                  <button :class="{ active: drawType === 'seeded' }" @click="drawType = 'seeded'">
-                    Seeded
-                  </button>
-                  <button :class="{ active: drawType === 'manual' }" @click="drawType = 'manual'">
-                    Manual
-                  </button>
-                </div>
+                <BtnGroup v-model="drawType" :options="drawOptions" />
                 <button @click="handleRedraw">↺ Regenerate</button>
               </div>
             </template>
@@ -167,26 +159,12 @@ onUnmounted(() => {
           <div class="ts-section">
             <div class="ts-section-title">Playoff Seeding</div>
             <template v-if="!tournament.groupsDone">
-              <div class="btn-group btn-group--wrap">
-                <button
-                  :class="{ active: (tournament.playoffSeedMode ?? 'cross') === 'cross' }"
-                  @click="emit('setPlayoffSeedMode', 'cross')"
-                >
-                  Cross-bracket
-                </button>
-                <button
-                  :class="{ active: tournament.playoffSeedMode === 'no-same-group' }"
-                  @click="emit('setPlayoffSeedMode', 'no-same-group')"
-                >
-                  No same-group R1
-                </button>
-                <button
-                  :class="{ active: tournament.playoffSeedMode === 'random' }"
-                  @click="emit('setPlayoffSeedMode', 'random')"
-                >
-                  Fully random
-                </button>
-              </div>
+              <BtnGroup
+                :model-value="tournament.playoffSeedMode ?? 'cross'"
+                :options="playoffOptions"
+                class="btn-group--wrap"
+                @update:model-value="emit('setPlayoffSeedMode', $event as PlayoffSeedMode)"
+              />
             </template>
             <p v-else class="ts-hint ts-hint--warn">
               Locked — group stage is complete and bracket has been seeded.
@@ -339,41 +317,6 @@ onUnmounted(() => {
   background: color-mix(in srgb, var(--danger) 8%, var(--surface));
 }
 
-/* Button group (segmented control) */
-.btn-group {
-  display: flex;
-}
-.btn-group button {
-  border-radius: 0;
-  margin-left: -1px;
-  position: relative;
-}
-.btn-group button:first-child {
-  margin-left: 0;
-  border-radius: var(--radius) 0 0 var(--radius);
-}
-.btn-group button:last-child {
-  border-radius: 0 var(--radius) var(--radius) 0;
-}
-.btn-group button.active {
-  background: var(--accent);
-  color: #fff;
-  border-color: var(--accent-hover);
-  z-index: 1;
-}
-.btn-group button.active:hover {
-  background: var(--accent-hover);
-}
-.btn-group--wrap {
-  flex-wrap: wrap;
-}
-.btn-group--wrap button {
-  border-radius: var(--radius);
-  margin-left: 0;
-  margin-right: -1px;
-  margin-bottom: -1px;
-}
-
 /* Danger zone */
 .danger-list {
   display: flex;
@@ -400,6 +343,17 @@ onUnmounted(() => {
   font-size: 11px;
   color: var(--text-muted);
   margin-top: 1px;
+}
+
+/* Playoff seeding wrap variant */
+:deep(.btn-group--wrap) {
+  flex-wrap: wrap;
+}
+:deep(.btn-group--wrap button) {
+  border-radius: var(--radius);
+  margin-left: 0;
+  margin-right: -1px;
+  margin-bottom: -1px;
 }
 
 @media (max-width: 560px) {

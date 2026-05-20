@@ -6,6 +6,7 @@ import ParticipantsTable from "@/modules/tournament/components/ParticipantsTable
 import ManualDraw from "@/modules/tournament/components/ManualDraw.vue"
 import GroupDraw from "@/modules/tournament/components/GroupDraw.vue"
 import TournamentSettings from "@/modules/tournament/components/TournamentSettings.vue"
+import AppModal from "@/components/AppModal.vue"
 import { useTournamentDetail } from "../composables/useTournamentDetail"
 
 const {
@@ -31,12 +32,9 @@ const showManualSeason = ref(false)
 const showFullBracket = ref(false)
 const showSettingsModal = ref(false)
 
-// Tab: "groups" | "bracket" — only relevant for group+bracket format
 const activeTab = ref<"groups" | "bracket">("groups")
-
 const isGroupFormat = computed(() => tournament.value?.format === "group+bracket")
 
-// Auto-switch to bracket tab when groups are done and bracket is seeded
 watch(
   () => tournament.value?.groupsDone,
   (done) => {
@@ -126,7 +124,6 @@ function closeSeasonModal() {
 
       <!-- ─── Group + Bracket format ───────────────────────────── -->
       <template v-if="isGroupFormat">
-        <!-- Phase tabs -->
         <div class="phase-tabs">
           <button
             class="phase-tab"
@@ -146,7 +143,6 @@ function closeSeasonModal() {
           </button>
         </div>
 
-        <!-- Group Stage tab -->
         <div v-if="activeTab === 'groups'" class="section-box">
           <div class="section-body gs-body">
             <GroupStage
@@ -161,7 +157,6 @@ function closeSeasonModal() {
           </div>
         </div>
 
-        <!-- Knockout tab -->
         <div v-if="activeTab === 'bracket'" class="section-box">
           <h2 class="bracket-heading">
             Knockout Stage
@@ -270,39 +265,37 @@ function closeSeasonModal() {
     </div>
 
     <!-- New Season modal -->
-    <div v-if="showSeasonModal" class="modal-backdrop" @click.self="closeSeasonModal">
-      <div class="modal" :class="{ 'season-group-modal': showManualSeason && isGroupFormat }">
-        <div class="modal-header">New Season — {{ tournament?.name }}</div>
-        <div class="modal-body">
-          <template v-if="showManualSeason && isGroupFormat">
-            <GroupDraw
-              :teams="tournamentTeams"
-              :group-count="tournament?.groups?.length ?? 2"
-              @confirm="handleManualSeasonConfirm"
-              @cancel="showManualSeason = false"
-            />
-          </template>
-          <template v-else-if="showManualSeason">
-            <ManualDraw
-              :teams="tournamentTeams"
-              @confirm="handleManualSeasonConfirm"
-              @cancel="showManualSeason = false"
-            />
-          </template>
-          <template v-else>
-            <p class="modal-desc">
-              Choose draw type for Season {{ (tournament?.season ?? 1) + 1 }}
-            </p>
-            <div class="modal-actions">
-              <button class="primary" @click="handleNewSeason(false)">Random draw</button>
-              <button class="primary" @click="handleNewSeason(true)">Seeded</button>
-              <button class="primary" @click="showManualSeason = true">Manual</button>
-              <button @click="closeSeasonModal">Cancel</button>
-            </div>
-          </template>
+    <AppModal
+      v-if="showSeasonModal"
+      :title="`New Season — ${tournament?.name}`"
+      :width="showManualSeason && isGroupFormat ? 'min(680px, calc(100vw - 32px))' : undefined"
+      @close="closeSeasonModal"
+    >
+      <template v-if="showManualSeason && isGroupFormat">
+        <GroupDraw
+          :teams="tournamentTeams"
+          :group-count="tournament?.groups?.length ?? 2"
+          @confirm="handleManualSeasonConfirm"
+          @cancel="showManualSeason = false"
+        />
+      </template>
+      <template v-else-if="showManualSeason">
+        <ManualDraw
+          :teams="tournamentTeams"
+          @confirm="handleManualSeasonConfirm"
+          @cancel="showManualSeason = false"
+        />
+      </template>
+      <template v-else>
+        <p class="modal-desc">Choose draw type for Season {{ (tournament?.season ?? 1) + 1 }}</p>
+        <div class="modal-actions">
+          <button class="primary" @click="handleNewSeason(false)">Random draw</button>
+          <button class="primary" @click="handleNewSeason(true)">Seeded</button>
+          <button class="primary" @click="showManualSeason = true">Manual</button>
+          <button @click="closeSeasonModal">Cancel</button>
         </div>
-      </div>
-    </div>
+      </template>
+    </AppModal>
   </div>
 </template>
 
@@ -311,7 +304,6 @@ function closeSeasonModal() {
   color: var(--text-muted);
 }
 
-/* Header */
 .bracket-heading {
   display: flex;
   align-items: center;
@@ -371,12 +363,20 @@ function closeSeasonModal() {
   font-size: 11px;
 }
 
-/* Group stage body */
 .gs-body {
   padding: 8px 0;
 }
 
 /* Full bracket modal */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(32, 33, 34, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+}
 .full-bracket-backdrop {
   z-index: 300;
 }
@@ -405,16 +405,11 @@ function closeSeasonModal() {
   padding: 16px;
 }
 
-/* Toolbar */
 .sim-toolbar {
   padding: 0 8px;
   margin-bottom: 10px;
   flex-wrap: wrap;
   gap: 6px;
-}
-
-.flush {
-  padding: 0;
 }
 
 .t-header {
@@ -456,47 +451,6 @@ function closeSeasonModal() {
   font-size: 14px;
 }
 
-/* Modal */
-.modal-backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(32, 33, 34, 0.45);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 200;
-}
-.modal {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  width: 360px;
-}
-.modal-header {
-  font-family: var(--font);
-  font-size: 16px;
-  border-bottom: 1px solid var(--border-light);
-  padding: 10px 14px;
-  background: var(--bg);
-}
-.modal-body {
-  padding: 14px;
-}
-.modal-desc {
-  font-size: 13px;
-  color: var(--text-muted);
-  margin-bottom: 12px;
-}
-.modal-actions {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.season-group-modal {
-  width: min(680px, calc(100vw - 32px));
-}
-
-/* Settings button in header */
 .t-header-top {
   display: flex;
   align-items: center;
@@ -526,9 +480,6 @@ function closeSeasonModal() {
 @media (max-width: 600px) {
   .t-header h1 {
     font-size: 18px;
-  }
-  .modal {
-    width: calc(100vw - 32px);
   }
   .full-bracket-modal {
     width: 100vw;

@@ -200,19 +200,8 @@ const router = useRouter()
   flex-shrink: 0;
 }
 
-/* Small button variant */
-.sm {
-  font-size: 12px;
-  padding: 2px 8px;
-}
-
 .empty-text {
-  color: var(--text-muted);
   padding: 12px;
-  font-size: 13px;
-}
-.flush {
-  padding: 0;
 }
 
 @media (max-width: 600px) {

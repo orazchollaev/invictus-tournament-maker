@@ -3,6 +3,8 @@ import { ref, computed } from "vue"
 import { useCreateTournament } from "../composables/useCreateTournament"
 import ManualDraw from "../components/ManualDraw.vue"
 import GroupDraw from "../components/GroupDraw.vue"
+import AppModal from "@/components/AppModal.vue"
+import BtnGroup from "@/components/BtnGroup.vue"
 import type { Tournament } from "../types"
 
 const {
@@ -20,6 +22,12 @@ const {
   winnerColor,
 } = useCreateTournament()
 
+const drawOptions = [
+  { value: "random", label: "Random" },
+  { value: "seeded", label: "Seeded" },
+  { value: "manual", label: "Manual" },
+]
+
 // ─── Format modal ──────────────────────────────────────────────
 type TournamentFormat = "bracket" | "group+bracket"
 const showFormatModal = ref(false)
@@ -28,10 +36,7 @@ const groupCount = ref(4)
 const showManualDraw = ref(false)
 const showGroupDraw = ref(false)
 
-const minGroups = computed(() => {
-  // at least 2 groups, each group needs at least 2 teams
-  return 2
-})
+const minGroups = computed(() => 2)
 const maxGroups = computed(() => Math.floor(selected.value.length / 2))
 
 function openFormatModal() {
@@ -118,32 +123,7 @@ function closeSeasonModal() {
               class="name-input"
               @keyup.enter="openFormatModal"
             />
-            <div class="draw-group">
-              <button
-                type="button"
-                class="draw-btn"
-                :class="{ active: drawType === 'random' }"
-                @click="drawType = 'random'"
-              >
-                Random
-              </button>
-              <button
-                type="button"
-                class="draw-btn"
-                :class="{ active: drawType === 'seeded' }"
-                @click="drawType = 'seeded'"
-              >
-                Seeded
-              </button>
-              <button
-                type="button"
-                class="draw-btn"
-                :class="{ active: drawType === 'manual' }"
-                @click="drawType = 'manual'"
-              >
-                Manual
-              </button>
-            </div>
+            <BtnGroup v-model="drawType" :options="drawOptions" />
             <button
               class="primary"
               :disabled="!newName.trim() || selected.length < 2"
@@ -211,136 +191,130 @@ function closeSeasonModal() {
     <p v-else-if="teamsStore.teams.length >= 2" class="empty-text">No tournaments yet.</p>
 
     <!-- ─── Format selection modal ─────────────────────────────── -->
-    <div v-if="showFormatModal" class="modal-backdrop" @click.self="closeFormatModal">
-      <div class="modal format-modal">
-        <div class="modal-header">Tournament Format — {{ newName }}</div>
-        <div class="modal-body">
-          <p class="modal-desc">Choose the format for this tournament</p>
+    <AppModal
+      v-if="showFormatModal"
+      :title="`Tournament Format — ${newName}`"
+      width="420px"
+      @close="closeFormatModal"
+    >
+      <p class="modal-desc">Choose the format for this tournament</p>
 
-          <div class="format-cards">
-            <!-- Bracket only -->
-            <button
-              class="format-card"
-              :class="{ 'format-card--active': chosenFormat === 'bracket' }"
-              @click="chosenFormat = 'bracket'"
-            >
-              <span class="format-icon">🏆</span>
-              <span class="format-title">Knockout Bracket</span>
-              <span class="format-desc">Single-elimination bracket only</span>
-            </button>
+      <div class="format-cards">
+        <button
+          class="format-card"
+          :class="{ 'format-card--active': chosenFormat === 'bracket' }"
+          @click="chosenFormat = 'bracket'"
+        >
+          <span class="format-icon">🏆</span>
+          <span class="format-title">Knockout Bracket</span>
+          <span class="format-desc">Single-elimination bracket only</span>
+        </button>
 
-            <!-- Group + Bracket -->
-            <button
-              class="format-card"
-              :class="{ 'format-card--active': chosenFormat === 'group+bracket' }"
-              :disabled="selected.length < 4"
-              @click="chosenFormat = 'group+bracket'"
-            >
-              <span class="format-icon">⚽</span>
-              <span class="format-title">Groups + Knockout</span>
-              <span class="format-desc">Group stage → top 2 advance to knockout</span>
-            </button>
-          </div>
-
-          <!-- Group count picker -->
-          <div v-if="chosenFormat === 'group+bracket'" class="group-count-row">
-            <label class="gc-label">Number of groups</label>
-            <div class="gc-stepper">
-              <button
-                class="gc-btn"
-                :disabled="groupCount <= minGroups"
-                @click="groupCount = Math.max(minGroups, groupCount - 1)"
-              >
-                −
-              </button>
-              <span class="gc-val">{{ groupCount }}</span>
-              <button
-                class="gc-btn"
-                :disabled="groupCount >= maxGroups"
-                @click="groupCount = Math.min(maxGroups, groupCount + 1)"
-              >
-                +
-              </button>
-            </div>
-            <span class="gc-hint">
-              {{ Math.ceil(selected.length / groupCount) }}–{{
-                Math.ceil(selected.length / groupCount)
-              }}
-              teams/group · {{ groupCount * 2 }} qualifiers
-            </span>
-          </div>
-
-          <div class="modal-actions">
-            <button class="primary" @click="proceedFromFormat">Confirm</button>
-            <button @click="closeFormatModal">Cancel</button>
-          </div>
-        </div>
+        <button
+          class="format-card"
+          :class="{ 'format-card--active': chosenFormat === 'group+bracket' }"
+          :disabled="selected.length < 4"
+          @click="chosenFormat = 'group+bracket'"
+        >
+          <span class="format-icon">⚽</span>
+          <span class="format-title">Groups + Knockout</span>
+          <span class="format-desc">Group stage → top 2 advance to knockout</span>
+        </button>
       </div>
-    </div>
+
+      <div v-if="chosenFormat === 'group+bracket'" class="group-count-row">
+        <label class="gc-label">Number of groups</label>
+        <div class="gc-stepper">
+          <button
+            class="gc-btn"
+            :disabled="groupCount <= minGroups"
+            @click="groupCount = Math.max(minGroups, groupCount - 1)"
+          >
+            −
+          </button>
+          <span class="gc-val">{{ groupCount }}</span>
+          <button
+            class="gc-btn"
+            :disabled="groupCount >= maxGroups"
+            @click="groupCount = Math.min(maxGroups, groupCount + 1)"
+          >
+            +
+          </button>
+        </div>
+        <span class="gc-hint">
+          {{ Math.ceil(selected.length / groupCount) }}–{{
+            Math.ceil(selected.length / groupCount)
+          }}
+          teams/group · {{ groupCount * 2 }} qualifiers
+        </span>
+      </div>
+
+      <div class="modal-actions">
+        <button class="primary" @click="proceedFromFormat">Confirm</button>
+        <button @click="closeFormatModal">Cancel</button>
+      </div>
+    </AppModal>
 
     <!-- Manual Draw modal (bracket only) -->
-    <div v-if="showManualDraw" class="modal-backdrop" @click.self="cancelManualDraw">
-      <div class="modal">
-        <div class="modal-header">Manual Draw — {{ newName || "New Tournament" }}</div>
-        <div class="modal-body">
-          <ManualDraw
-            :teams="selectedTeams"
-            @confirm="handleManualConfirm"
-            @cancel="cancelManualDraw"
-          />
-        </div>
-      </div>
-    </div>
+    <AppModal
+      v-if="showManualDraw"
+      :title="`Manual Draw — ${newName || 'New Tournament'}`"
+      @close="cancelManualDraw"
+    >
+      <ManualDraw
+        :teams="selectedTeams"
+        @confirm="handleManualConfirm"
+        @cancel="cancelManualDraw"
+      />
+    </AppModal>
 
     <!-- Group Draw modal (group+bracket create) -->
-    <div v-if="showGroupDraw" class="modal-backdrop" @click.self="cancelManualDraw">
-      <div class="modal group-draw-modal">
-        <div class="modal-header">Group Draw — {{ newName || "New Tournament" }}</div>
-        <div class="modal-body">
-          <GroupDraw
-            :teams="selectedTeams"
-            :group-count="groupCount"
-            @confirm="handleGroupDrawConfirm"
-            @cancel="cancelManualDraw"
-          />
-        </div>
-      </div>
-    </div>
+    <AppModal
+      v-if="showGroupDraw"
+      :title="`Group Draw — ${newName || 'New Tournament'}`"
+      width="min(680px, calc(100vw - 32px))"
+      @close="cancelManualDraw"
+    >
+      <GroupDraw
+        :teams="selectedTeams"
+        :group-count="groupCount"
+        @confirm="handleGroupDrawConfirm"
+        @cancel="cancelManualDraw"
+      />
+    </AppModal>
 
     <!-- New Season modal -->
-    <div v-if="seasonModal" class="modal-backdrop" @click.self="closeSeasonModal">
-      <div class="modal" :class="{ 'group-draw-modal': showSeasonGroupDraw }">
-        <div class="modal-header">New Season — {{ seasonModal.name }}</div>
-        <div class="modal-body">
-          <template v-if="showSeasonManual">
-            <ManualDraw
-              :teams="teamsStore.teams.filter((t) => seasonModal!.teamIds.includes(t.id))"
-              @confirm="(ids) => doNewSeason(false, ids)"
-              @cancel="showSeasonManual = false"
-            />
-          </template>
-          <template v-else-if="showSeasonGroupDraw">
-            <GroupDraw
-              :teams="teamsStore.teams.filter((t) => seasonModal!.teamIds.includes(t.id))"
-              :group-count="seasonModal.groups?.length ?? 2"
-              @confirm="(ids) => doNewSeason(false, ids)"
-              @cancel="showSeasonGroupDraw = false"
-            />
-          </template>
-          <template v-else>
-            <p class="modal-desc">
-              Choose draw type for Season {{ (seasonModal.season ?? 1) + 1 }}
-            </p>
-            <div class="modal-actions">
-              <button class="primary" @click="doNewSeason(false)">Random draw</button>
-              <button class="primary" @click="doNewSeason(true)">Seeded</button>
-              <button class="primary" @click="openSeasonManual">Manual</button>
-              <button @click="closeSeasonModal">Cancel</button>
-            </div>
-          </template>
+    <AppModal
+      v-if="seasonModal"
+      :title="`New Season — ${seasonModal.name}`"
+      :width="showSeasonGroupDraw ? 'min(680px, calc(100vw - 32px))' : undefined"
+      @close="closeSeasonModal"
+    >
+      <template v-if="showSeasonManual">
+        <ManualDraw
+          :teams="teamsStore.teams.filter((t) => seasonModal!.teamIds.includes(t.id))"
+          @confirm="(ids) => doNewSeason(false, ids)"
+          @cancel="showSeasonManual = false"
+        />
+      </template>
+      <template v-else-if="showSeasonGroupDraw">
+        <GroupDraw
+          :teams="teamsStore.teams.filter((t) => seasonModal!.teamIds.includes(t.id))"
+          :group-count="seasonModal.groups?.length ?? 2"
+          @confirm="(ids) => doNewSeason(false, ids)"
+          @cancel="showSeasonGroupDraw = false"
+        />
+      </template>
+      <template v-else>
+        <p class="modal-desc">Choose draw type for Season {{ (seasonModal.season ?? 1) + 1 }}</p>
+        <div class="modal-actions">
+          <button class="primary" @click="doNewSeason(false)">Random draw</button>
+          <button class="primary" @click="doNewSeason(true)">Seeded</button>
+          <button class="primary" @click="openSeasonManual">Manual</button>
+          <button @click="closeSeasonModal">Cancel</button>
         </div>
-      </div>
-    </div>
+      </template>
+    </AppModal>
   </div>
 </template>
 
@@ -362,36 +336,6 @@ function closeSeasonModal() {
   padding: 0 6px;
   font-size: 11px;
   margin-left: 2px;
-}
-
-/* Draw type */
-.draw-group {
-  display: flex;
-}
-.draw-btn {
-  border-radius: 0;
-  font-size: 12px;
-  padding: 4px 10px;
-  border-right-width: 0;
-  transition:
-    background 0.1s,
-    color 0.1s;
-}
-.draw-btn:first-child {
-  border-radius: var(--radius) 0 0 var(--radius);
-}
-.draw-btn:last-child {
-  border-radius: 0 var(--radius) var(--radius) 0;
-  border-right-width: 1px;
-}
-.draw-btn.active {
-  background: var(--accent);
-  color: #fff;
-  border-color: var(--accent-hover);
-  z-index: 1;
-}
-.draw-btn:hover:not(.active) {
-  background: var(--border-light);
 }
 
 /* Team chips */
@@ -456,11 +400,6 @@ function closeSeasonModal() {
   font-size: 12px;
   margin-top: 6px;
 }
-.empty-text {
-  color: var(--text-muted);
-  margin-top: 8px;
-  font-size: 13px;
-}
 
 /* Tournament list */
 .t-list {
@@ -499,15 +438,8 @@ function closeSeasonModal() {
   font-size: 12px;
   color: var(--text-muted);
 }
-.sm {
-  font-size: 12px;
-  padding: 2px 8px;
-}
 
 /* Format modal */
-.format-modal {
-  width: 420px;
-}
 .format-cards {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -592,45 +524,6 @@ function closeSeasonModal() {
   color: var(--text-muted);
 }
 
-/* Modal shared */
-.modal-backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(32, 33, 34, 0.45);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 200;
-}
-.modal {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  width: 420px;
-}
-.group-draw-modal {
-  width: min(680px, calc(100vw - 32px));
-}
-.modal-header {
-  font-family: var(--font);
-  font-size: 16px;
-  border-bottom: 1px solid var(--border-light);
-  padding: 10px 14px;
-  background: var(--bg);
-}
-.modal-body {
-  padding: 14px;
-}
-.modal-desc {
-  font-size: 13px;
-  color: var(--text-muted);
-  margin-bottom: 12px;
-}
-.modal-actions {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
 @media (max-width: 600px) {
   .form-row {
     flex-direction: column;
@@ -639,9 +532,6 @@ function closeSeasonModal() {
   .name-input {
     width: 100%;
   }
-  .draw-group {
-    align-self: flex-start;
-  }
   .t-row {
     flex-wrap: wrap;
     row-gap: 4px;
@@ -649,10 +539,6 @@ function closeSeasonModal() {
   .t-row .ml-auto {
     margin-left: 0;
     width: 100%;
-  }
-  .modal,
-  .format-modal {
-    width: calc(100vw - 32px);
   }
   .format-cards {
     grid-template-columns: 1fr;

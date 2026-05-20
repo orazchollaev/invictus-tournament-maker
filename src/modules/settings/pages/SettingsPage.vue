@@ -5,6 +5,7 @@ import type { Theme } from "../store"
 import { useTeamsStore } from "../../teams/store"
 import { useTournamentStore } from "../../tournament/store"
 import { version } from "../../../../package.json"
+import BtnGroup from "@/components/BtnGroup.vue"
 
 const router = useRouter()
 
@@ -99,16 +100,7 @@ function importData() {
       <div class="section-body">
         <div class="setting-row">
           <span class="setting-label">Theme</span>
-          <div class="seg-ctrl">
-            <button
-              v-for="t in themes"
-              :key="t.value"
-              :class="{ active: settings.theme === t.value }"
-              @click="settings.theme = t.value"
-            >
-              {{ t.label }}
-            </button>
-          </div>
+          <BtnGroup v-model="settings.theme" :options="themes" />
         </div>
 
         <hr class="divider" />
@@ -181,30 +173,6 @@ function importData() {
 .setting-label {
   font-size: 14px;
   min-width: 80px;
-}
-.seg-ctrl {
-  display: inline-flex;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  overflow: hidden;
-}
-.seg-ctrl button {
-  border: none;
-  border-radius: 0;
-  padding: 4px 16px;
-  font-size: 13px;
-  background: var(--surface);
-  color: var(--text);
-}
-.seg-ctrl button:not(:last-child) {
-  border-right: 1px solid var(--border);
-}
-.seg-ctrl button.active {
-  background: var(--accent);
-  color: #fff;
-}
-.seg-ctrl button:hover:not(.active) {
-  background: var(--border-light);
 }
 .btn-group {
   display: flex;

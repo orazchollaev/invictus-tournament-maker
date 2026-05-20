@@ -198,3 +198,38 @@ th {
   background: var(--bg);
   color: var(--text);
 }
+
+/* ── Utility classes ────────────────────────────────────────── */
+.sm {
+  font-size: 12px;
+  padding: 2px 8px;
+}
+.btn-xs {
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+.flush {
+  padding: 0;
+}
+.empty-text {
+  color: var(--text-muted);
+  font-size: 13px;
+}
+.count {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: normal;
+  color: var(--text-muted);
+  margin-left: 6px;
+}
+.modal-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.modal-desc {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}

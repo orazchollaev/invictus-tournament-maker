@@ -2,6 +2,8 @@
 import { ref, computed } from "vue"
 import type { Team } from "@/modules/teams/types"
 import type { Tournament, GroupMatch } from "@/modules/tournament/types"
+import AppModal from "@/components/AppModal.vue"
+import { useTeamLookup } from "@/composables/useTeamLookup"
 
 const props = defineProps<{
   tournament: Tournament
@@ -16,16 +18,13 @@ const emit = defineEmits<{
   advance: []
 }>()
 
-// After knockout is seeded, group results are locked
 const locked = computed(() => !!props.tournament.groupsDone)
 
 const editingMatch = ref<{ gi: number; mi: number } | null>(null)
 const editHome = ref(0)
 const editAway = ref(0)
 
-function teamById(id: string) {
-  return props.teams.find((t) => t.id === id)
-}
+const { teamById } = useTeamLookup(() => props.teams)
 
 function openEdit(gi: number, mi: number, match: GroupMatch) {
   if (locked.value) return
@@ -174,32 +173,23 @@ function scoreAccentColor(match: GroupMatch): string {
 
   <!-- Score edit modal -->
   <Teleport to="body">
-    <div v-if="editingMatch && !locked" class="modal-backdrop" @click.self="cancelEdit">
-      <div class="modal score-modal">
-        <div class="modal-header">Set Result</div>
-        <div class="modal-body">
-          <div class="score-row">
-            <span class="score-team">
-              {{
-                teamById(tournament.groups![editingMatch.gi].matches[editingMatch.mi].homeId)?.name
-              }}
-            </span>
-            <input v-model.number="editHome" type="number" min="0" class="score-input" />
-            <span class="score-sep">–</span>
-            <input v-model.number="editAway" type="number" min="0" class="score-input" />
-            <span class="score-team">
-              {{
-                teamById(tournament.groups![editingMatch.gi].matches[editingMatch.mi].awayId)?.name
-              }}
-            </span>
-          </div>
-          <div class="modal-actions mt">
-            <button class="primary" @click="confirmEdit">Save</button>
-            <button @click="cancelEdit">Cancel</button>
-          </div>
-        </div>
+    <AppModal v-if="editingMatch && !locked" title="Set Result" width="360px" @close="cancelEdit">
+      <div class="score-row">
+        <span class="score-team">
+          {{ teamById(tournament.groups![editingMatch.gi].matches[editingMatch.mi].homeId)?.name }}
+        </span>
+        <input v-model.number="editHome" type="number" min="0" class="score-input" />
+        <span class="score-sep">–</span>
+        <input v-model.number="editAway" type="number" min="0" class="score-input" />
+        <span class="score-team">
+          {{ teamById(tournament.groups![editingMatch.gi].matches[editingMatch.mi].awayId)?.name }}
+        </span>
       </div>
-    </div>
+      <div class="modal-actions mt">
+        <button class="primary" @click="confirmEdit">Save</button>
+        <button @click="cancelEdit">Cancel</button>
+      </div>
+    </AppModal>
   </Teleport>
 </template>
 
@@ -363,9 +353,6 @@ function scoreAccentColor(match: GroupMatch): string {
   color: var(--accent);
 }
 
-.score-modal {
-  width: 360px;
-}
 .score-row {
   display: flex;
   align-items: center;
@@ -393,34 +380,6 @@ function scoreAccentColor(match: GroupMatch): string {
   margin-top: 12px;
 }
 
-.modal-backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(32, 33, 34, 0.45);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 200;
-}
-.modal {
-  background: var(--surface);
-  border: 1px solid var(--border);
-}
-.modal-header {
-  font-family: var(--font);
-  font-size: 15px;
-  border-bottom: 1px solid var(--border-light);
-  padding: 10px 14px;
-  background: var(--bg);
-}
-.modal-body {
-  padding: 14px;
-}
-.modal-actions {
-  display: flex;
-  gap: 8px;
-}
-
 .dot {
   display: inline-block;
   width: 8px;
@@ -439,9 +398,6 @@ function scoreAccentColor(match: GroupMatch): string {
 @media (max-width: 600px) {
   .gs-groups {
     grid-template-columns: 1fr;
-  }
-  .score-modal {
-    width: calc(100vw - 32px);
   }
 }
 </style>

@@ -585,11 +585,6 @@ window.addEventListener("resize", drawConnectors)
   -webkit-appearance: none;
   margin: 0;
 }
-.btn-xs {
-  font-size: 11px;
-  padding: 2px 6px;
-  border-radius: 3px;
-}
 .pen-label {
   font-size: 10px;
   font-weight: 600;

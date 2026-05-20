@@ -179,19 +179,7 @@ function eliminationLabel(row: Row): string {
 </template>
 
 <style scoped>
-table {
-  border-collapse: collapse;
-  width: 100%;
-}
-th,
-td {
-  border: 1px solid var(--border-light);
-  padding: 6px 10px;
-  text-align: left;
-}
 th {
-  background: var(--bg);
-  font-weight: 600;
   font-size: 13px;
 }
 th.sortable {
