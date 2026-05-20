@@ -111,7 +111,6 @@ export function simulateGroupMatch(
   teams: Team[]
 ) {
   const match = tournament.groups![groupIdx].matches[matchIdx]
-  if (match.result) return
   match.result = simulateMatch(match as any, teams)
   recalcStandings(tournament.groups![groupIdx])
 }
