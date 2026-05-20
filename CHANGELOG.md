@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.7.0](https://github.com/orazchollaev/tournament-sim/compare/v0.6.5...v0.7.0) (2026-05-20)
+
+### Features
+
+- add random/seeded/manual draw type selection to regenerate draw in tournament settings ([f92210d](https://github.com/orazchollaev/tournament-sim/commit/f92210d816e014d890e73641b1f3f5248f9fbd47))
+- **group-stage:** score button accent color from winning team, grey for draws ([465acd6](https://github.com/orazchollaev/tournament-sim/commit/465acd6791a5fcb60acd55e64cc959a1f344243a))
+- **settings:** carry playoff seed mode to new seasons ([9039a03](https://github.com/orazchollaev/tournament-sim/commit/9039a03d023fb31ed3bbc116878e4e37976fdbcf))
+
+### Code Refactoring
+
+- **settings:** replace card grids with compact btn-group selectors and inline team chips ([7376a47](https://github.com/orazchollaev/tournament-sim/commit/7376a479a5ff0c3fddca4c0344a32fb37f44d3bf))
+- **tournament-detail:** tighten bracket section spacing ([4965292](https://github.com/orazchollaev/tournament-sim/commit/49652923f537936737ad04c967afc44156859f29))
+
 ## [0.6.5](https://github.com/orazchollaev/tournament-sim/compare/v0.6.4...v0.6.5) (2026-05-19)
 
 ### Features
