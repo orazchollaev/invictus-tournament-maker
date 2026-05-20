@@ -173,11 +173,11 @@ th {
   margin-left: auto;
 }
 .notice {
-  background: #eaf3fb;
-  border: 1px solid #a2c3e0;
+  background: var(--surface);
+  border: 1px solid var(--border);
   padding: 8px 12px;
   font-size: 13px;
-  color: #36466f;
+  color: var(--text);
 }
 
 @media (max-width: 600px) {
