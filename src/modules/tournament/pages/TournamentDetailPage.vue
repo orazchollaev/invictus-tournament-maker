@@ -352,6 +352,7 @@ function closeSeasonModal() {
   background: transparent;
   border: none;
   border-bottom: 2px solid transparent;
+  border-radius: 0;
   margin-bottom: -1px;
   cursor: pointer;
   color: var(--text-muted);
@@ -436,8 +437,8 @@ function closeSeasonModal() {
 }
 .t-header h1 {
   font-size: 22px;
-  font-weight: normal;
-  font-family: var(--font);
+  font-weight: 800;
+  letter-spacing: -0.02em;
   margin: 6px 0 4px;
   display: flex;
   align-items: center;
@@ -458,12 +459,14 @@ function closeSeasonModal() {
   color: var(--text-muted);
 }
 .winner-banner {
-  border: 1px solid var(--border);
-  border-left-width: 4px;
-  background: var(--surface);
+  border: 1px solid var(--border-light);
+  border-left: 4px solid var(--team-color, var(--accent-2));
+  background: color-mix(in srgb, var(--accent-2) 8%, var(--surface));
   padding: 10px 14px;
   margin-bottom: 16px;
   font-size: 14px;
+  border-radius: var(--radius);
+  font-weight: 600;
 }
 
 .t-header-top {

@@ -230,15 +230,19 @@ function scoreAccentColor(match: GroupMatch): string {
 .gs-group {
   border: 1px solid var(--border-light);
   background: var(--surface);
+  border-radius: var(--radius);
+  overflow: hidden;
 }
 .gs-group-header {
-  font-family: var(--font);
-  font-size: 13px;
-  font-weight: 600;
-  padding: 6px 10px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  padding: 7px 10px;
   background: var(--bg);
   border-bottom: 1px solid var(--border-light);
-  letter-spacing: 0.03em;
+  color: var(--text-muted);
+  border-left: 3px solid var(--accent);
 }
 
 .gs-table {
@@ -252,6 +256,9 @@ function scoreAccentColor(match: GroupMatch): string {
   border-bottom: 1px solid var(--border-light);
   padding: 4px 6px;
   text-align: center;
+}
+.gs-table tbody tr:last-child td {
+  border-bottom: none;
 }
 .gs-table th {
   background: var(--bg);

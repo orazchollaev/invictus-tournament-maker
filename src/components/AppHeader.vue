@@ -25,7 +25,8 @@ import AppLogo from "./AppLogo.vue"
 <style scoped>
 .site-header {
   background: var(--surface);
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--border-light);
+  border-top: 3px solid var(--accent);
   position: sticky;
   top: 0;
   z-index: 10;
@@ -37,18 +38,22 @@ import AppLogo from "./AppLogo.vue"
   display: flex;
   align-items: center;
   gap: 24px;
-  height: 44px;
+  height: 48px;
 }
 .logo {
   display: flex;
   align-items: center;
-  font-weight: 700;
-  font-size: 15px;
+  font-weight: 800;
+  font-size: 14px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--text);
+  gap: 0;
 }
 .logo-img {
   margin-right: 8px;
-  width: 24px;
-  height: 24px;
+  width: 22px;
+  height: 22px;
   color: var(--accent);
 }
 nav {
@@ -58,14 +63,17 @@ nav {
 nav a {
   display: block;
   padding: 0 14px;
-  line-height: 44px;
-  color: var(--text);
-  font-size: 14px;
+  line-height: 48px;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 500;
   border-bottom: 3px solid transparent;
   text-decoration: none;
+  transition: color 0.12s;
 }
 nav a:hover {
-  border-bottom-color: var(--border);
+  color: var(--text);
+  text-decoration: none;
 }
 nav a.router-link-active {
   border-bottom-color: var(--accent);
@@ -74,6 +82,10 @@ nav a.router-link-active {
 
 .nav-right {
   margin-left: auto;
+}
+.nav-right a {
+  font-size: 12px;
+  color: var(--text-muted);
 }
 
 @media (max-width: 600px) {
@@ -86,7 +98,7 @@ nav a.router-link-active {
   .logo {
     order: 1;
     flex: 1;
-    line-height: 44px;
+    line-height: 48px;
   }
   .nav-right {
     order: 2;

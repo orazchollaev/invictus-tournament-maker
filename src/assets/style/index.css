@@ -8,37 +8,41 @@
 }
 
 :root {
-  --bg: #f8f9fa;
+  --bg: #f1f5f9;
   --surface: #ffffff;
-  --border: #a2a9b1;
-  --border-light: #eaecf0;
-  --text: #202122;
-  --text-muted: #54595d;
-  --accent: #3366cc;
-  --accent-hover: #2a4b8d;
-  --danger: #cc3333;
-  --success: #00af89;
-  --radius: 2px;
-  --font: "Georgia", "Times New Roman", serif;
-  --font-ui: "IBM Plex Sans", "sans-serif";
+  --border: #94a3b8;
+  --border-light: #e2e8f0;
+  --text: #0f172a;
+  --text-muted: #475569;
+  --accent: #2563eb;
+  --accent-hover: #1d4ed8;
+  --accent-subtle: color-mix(in srgb, var(--accent) 10%, transparent);
+  --accent-2: #f59e0b;
+  --danger: #dc2626;
+  --success: #059669;
+  --radius: 5px;
+  --font: "IBM Plex Sans", sans-serif;
+  --font-ui: "IBM Plex Sans", sans-serif;
 }
 
 [data-theme="dark"] {
-  --bg: #1a1b1e;
-  --surface: #25262b;
-  --border: #4a4d5a;
-  --border-light: #2e3038;
-  --text: #e8e9ea;
-  --text-muted: #9a9da4;
-  --accent: #4a90d9;
-  --accent-hover: #6aaae8;
-  --danger: #e05555;
-  --success: #00d4a8;
+  --bg: #0f172a;
+  --surface: #1e293b;
+  --border: #334155;
+  --border-light: #243044;
+  --text: #f1f5f9;
+  --text-muted: #94a3b8;
+  --accent: #3b82f6;
+  --accent-hover: #60a5fa;
+  --accent-subtle: color-mix(in srgb, var(--accent) 12%, transparent);
+  --accent-2: #fbbf24;
+  --danger: #f87171;
+  --success: #34d399;
 }
 
 html {
   scrollbar-width: thin;
-  scrollbar-color: #c8ccd1 var(--bg);
+  scrollbar-color: var(--border) var(--bg);
 }
 
 body {
@@ -61,23 +65,31 @@ a:hover {
 button {
   font-family: var(--font-ui);
   font-size: 13px;
+  font-weight: 500;
   cursor: pointer;
   border: 1px solid var(--border);
   background: var(--surface);
-  padding: 4px 12px;
+  padding: 5px 13px;
   border-radius: var(--radius);
   color: var(--text);
+  transition:
+    background 0.12s,
+    border-color 0.12s,
+    color 0.12s;
 }
 button:hover {
   background: var(--border-light);
+  border-color: var(--border);
 }
 button.primary {
   background: var(--accent);
+  background-image: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.08));
   color: #fff;
   border-color: var(--accent-hover);
 }
 button.primary:hover {
   background: var(--accent-hover);
+  background-image: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.1));
 }
 button.danger {
   color: var(--danger);
@@ -87,7 +99,7 @@ button.danger:hover {
   background: color-mix(in srgb, var(--danger) 10%, var(--surface));
 }
 button:disabled {
-  opacity: 0.5;
+  opacity: 0.4;
   cursor: not-allowed;
 }
 
@@ -96,14 +108,17 @@ select {
   font-family: var(--font-ui);
   font-size: 13px;
   border: 1px solid var(--border);
-  padding: 4px 8px;
+  padding: 5px 9px;
   border-radius: var(--radius);
   background: var(--surface);
   color: var(--text);
+  transition: border-color 0.12s;
 }
 input:focus,
 select:focus {
-  outline: 1px solid var(--accent);
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-subtle);
 }
 
 input[type="number"]::-webkit-outer-spin-button,
@@ -119,35 +134,50 @@ table {
 th,
 td {
   border: 1px solid var(--border-light);
-  padding: 6px 10px;
+  padding: 7px 10px;
   text-align: left;
 }
 th {
   background: var(--bg);
   font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+}
+/* Remove bottom border on last row so it doesn't double up with section-box border */
+.section-box table tr:last-child td,
+.section-box table tr:last-child th {
+  border-bottom: none;
 }
 
 .page {
   max-width: 960px;
   margin: 0 auto;
-  padding: 24px 16px;
+  padding: 28px 16px;
 }
 
 .section-box {
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-light);
   background: var(--surface);
   margin-bottom: 16px;
+  border-radius: var(--radius);
 }
 .section-box h2 {
-  font-family: var(--font);
-  font-size: 18px;
-  font-weight: normal;
-  border-bottom: 1px solid var(--border);
-  padding: 8px 12px;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border-light);
+  border-left: 3px solid var(--accent);
+  padding: 9px 12px;
   background: var(--bg);
+  border-radius: var(--radius) var(--radius) 0 0;
 }
 .section-body {
-  padding: 12px;
+  padding: 14px;
 }
 
 .tag {
@@ -173,16 +203,19 @@ th {
   margin-left: auto;
 }
 .notice {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  padding: 8px 12px;
+  background: color-mix(in srgb, var(--accent-2) 12%, var(--surface));
+  border: 1px solid color-mix(in srgb, var(--accent-2) 40%, transparent);
+  border-left: 3px solid var(--accent-2);
+  padding: 9px 12px;
   font-size: 13px;
   color: var(--text);
+  border-radius: var(--radius);
+  margin-bottom: 12px;
 }
 
 @media (max-width: 600px) {
   .page {
-    padding: 12px 10px;
+    padding: 14px 10px;
   }
 }
 
@@ -202,11 +235,11 @@ th {
 /* ── Utility classes ────────────────────────────────────────── */
 .sm {
   font-size: 12px;
-  padding: 2px 8px;
+  padding: 3px 9px;
 }
 .btn-xs {
   font-size: 11px;
-  padding: 2px 6px;
+  padding: 2px 7px;
   border-radius: 3px;
 }
 .flush {
@@ -218,8 +251,9 @@ th {
 }
 .count {
   font-family: var(--font-ui);
-  font-size: 12px;
-  font-weight: normal;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
   color: var(--text-muted);
   margin-left: 6px;
 }

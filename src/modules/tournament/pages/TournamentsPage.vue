@@ -151,8 +151,8 @@ function closeSeasonModal() {
 .page-title {
   margin: 0;
   font-size: 20px;
-  font-weight: normal;
-  font-family: var(--font);
+  font-weight: 800;
+  letter-spacing: -0.02em;
 }
 
 .t-list {
