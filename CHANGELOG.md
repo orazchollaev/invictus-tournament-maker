@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.7.1](https://github.com/orazchollaev/tournament-sim/compare/v0.7.0...v0.7.1) (2026-05-20)
+
+### Bug Fixes
+
+- reset activeTab to 'groups' on new season start after group tournament ([451a62e](https://github.com/orazchollaev/tournament-sim/commit/451a62e60e6dc64c9a054ec2113ad6e3110ff651))
+
+### Code Refactoring
+
+- extract some components, useModal/useTeamLookup composables, unify utility CSS ([06b4ee0](https://github.com/orazchollaev/tournament-sim/commit/06b4ee0d9196f01162f1a961833660b980d1a1b1))
+
 ## [0.7.0](https://github.com/orazchollaev/tournament-sim/compare/v0.6.5...v0.7.0) (2026-05-20)
 
 ### Features
