@@ -25,6 +25,7 @@ const format = ref<TournamentFormat>("bracket")
 const groupCount = ref(4)
 const qualifiersPerGroup = ref(2)
 const showManualDraw = ref(false)
+const hasThirdPlace = ref(false)
 
 useModal(() => {
   if (showManualDraw.value) {
@@ -86,6 +87,7 @@ function doCreate(orderedIds?: string[]) {
   const qpg = format.value === "group+bracket" ? qualifiersPerGroup.value : undefined
   const isSeeded = drawType.value === "seeded"
   const id = store.create(name.value.trim(), selected.value, isSeeded, orderedIds, gc, qpg)
+  if (hasThirdPlace.value) store.toggleThirdPlace(id)
   router.push(`/tournaments/${id}`)
   emit("close")
 }
@@ -248,6 +250,19 @@ const teamsPerGroup = computed(() =>
             <div class="ct-label">Draw</div>
             <BtnGroup v-model="drawType" :options="drawOptions" />
           </div>
+
+          <!-- Format options -->
+          <template v-if="selected.length >= 4">
+            <div class="ct-divider" />
+            <div class="ct-section">
+              <div class="ct-label">Options</div>
+              <label class="ct-toggle-row">
+                <input v-model="hasThirdPlace" type="checkbox" />
+                <span class="ct-toggle-label">3rd Place Match</span>
+                <span class="ct-toggle-hint">Semi-final losers play for bronze</span>
+              </label>
+            </div>
+          </template>
         </div>
 
         <!-- Footer -->
@@ -502,6 +517,23 @@ const teamsPerGroup = computed(() =>
 }
 
 .ct-gc-hint {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* Format options toggle */
+.ct-toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+}
+.ct-toggle-label {
+  font-size: 13px;
+  font-weight: 500;
+}
+.ct-toggle-hint {
   font-size: 11px;
   color: var(--text-muted);
 }

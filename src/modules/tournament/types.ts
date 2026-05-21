@@ -68,5 +68,8 @@ export interface Tournament {
   qualifiersPerGroup?: number // how many teams advance per group (default 2)
   playoffSeedMode?: PlayoffSeedMode // how groups feed into the bracket
 
+  hasThirdPlace?: boolean
+  thirdPlaceMatch?: Match
+
   createdAt: number
 }

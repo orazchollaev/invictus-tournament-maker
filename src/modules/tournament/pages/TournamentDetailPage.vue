@@ -204,6 +204,10 @@ function closeSeasonModal() {
                 (ri, mi, h, a, ph, pa) => store.setResult(tournament!.id, ri, mi, h, a, ph, pa)
               "
               @sim-match="(ri, mi) => simMatch(ri, mi)"
+              @set-third-place-result="
+                (h, a, ph, pa) => store.setThirdPlaceResult(tournament!.id, h, a, ph, pa)
+              "
+              @sim-third-place="store.simulateThirdPlace(tournament.id)"
             />
           </div>
         </div>
@@ -240,6 +244,10 @@ function closeSeasonModal() {
                 (ri, mi, h, a, ph, pa) => store.setResult(tournament!.id, ri, mi, h, a, ph, pa)
               "
               @sim-match="(ri, mi) => simMatch(ri, mi)"
+              @set-third-place-result="
+                (h, a, ph, pa) => store.setThirdPlaceResult(tournament!.id, h, a, ph, pa)
+              "
+              @sim-third-place="store.simulateThirdPlace(tournament.id)"
             />
           </div>
         </div>
@@ -272,6 +280,7 @@ function closeSeasonModal() {
       @redraw="redrawTournament"
       @change-group-count="changeGroupCount"
       @change-qualifiers-per-group="changeQualifiersPerGroup"
+      @toggle-third-place="store.toggleThirdPlace(tournament!.id)"
       @set-playoff-seed-mode="setPlayoffSeedMode"
       @reset="resetTournament"
       @delete="deleteTournament"
@@ -300,6 +309,10 @@ function closeSeasonModal() {
               (ri, mi, h, a, ph, pa) => store.setResult(tournament!.id, ri, mi, h, a, ph, pa)
             "
             @sim-match="(ri, mi) => simMatch(ri, mi)"
+            @set-third-place-result="
+              (h, a, ph, pa) => store.setThirdPlaceResult(tournament!.id, h, a, ph, pa)
+            "
+            @sim-third-place="store.simulateThirdPlace(tournament!.id)"
           />
         </div>
       </div>

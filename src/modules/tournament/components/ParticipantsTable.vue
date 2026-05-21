@@ -2,7 +2,7 @@
 import { ref, computed } from "vue"
 import type { Team } from "@/modules/teams/types"
 import type { Tournament } from "@/modules/tournament/types"
-import { getWinnerId } from "@/engine"
+import { getWinnerId, getLoserId } from "@/engine"
 
 const props = defineProps<{ teams: Team[]; tournament: Tournament }>()
 
@@ -21,17 +21,76 @@ function toggleSort(key: SortKey) {
 interface Row {
   team: Team
   isWinner: boolean
+  isSecondPlace: boolean
+  isThirdPlace: boolean
+  isFourthPlace: boolean
   eliminatedRound: string | null
   eliminatedRoundIdx: number
 }
 
 const rows = computed<Row[]>(() => {
+  const tpMatch = props.tournament.thirdPlaceMatch
+  const tpWinnerId = tpMatch ? getWinnerId(tpMatch) : null
+  const tpLoserId = tpMatch ? getLoserId(tpMatch) : null
+
+  // 2nd place: loser of the final (last round)
+  const finalRound = props.tournament.rounds[props.tournament.rounds.length - 1]
+  const finalMatch = finalRound?.matches[0]
+  const secondPlaceId = finalMatch ? getLoserId(finalMatch) : null
+
   return props.teams
     .filter((t) => props.tournament.teamIds.includes(t.id))
     .map((team): Row => {
-      // Tournament winner
+      // Tournament winner (1st)
       if (props.tournament.winnerId === team.id) {
-        return { team, isWinner: true, eliminatedRound: null, eliminatedRoundIdx: -1 }
+        return {
+          team,
+          isWinner: true,
+          isSecondPlace: false,
+          isThirdPlace: false,
+          isFourthPlace: false,
+          eliminatedRound: null,
+          eliminatedRoundIdx: -1,
+        }
+      }
+
+      // 2nd place: finalist who lost
+      if (secondPlaceId && secondPlaceId === team.id) {
+        return {
+          team,
+          isWinner: false,
+          isSecondPlace: true,
+          isThirdPlace: false,
+          isFourthPlace: false,
+          eliminatedRound: null,
+          eliminatedRoundIdx: -1,
+        }
+      }
+
+      // 3rd place winner
+      if (tpWinnerId && tpWinnerId === team.id) {
+        return {
+          team,
+          isWinner: false,
+          isSecondPlace: false,
+          isThirdPlace: true,
+          isFourthPlace: false,
+          eliminatedRound: null,
+          eliminatedRoundIdx: -2,
+        }
+      }
+
+      // 4th place: loser of the 3rd place match
+      if (tpLoserId && tpLoserId === team.id) {
+        return {
+          team,
+          isWinner: false,
+          isSecondPlace: false,
+          isThirdPlace: false,
+          isFourthPlace: true,
+          eliminatedRound: null,
+          eliminatedRoundIdx: -2,
+        }
       }
 
       // ── Group + Bracket format ──────────────────────────────
@@ -47,6 +106,9 @@ const rows = computed<Row[]>(() => {
                   return {
                     team,
                     isWinner: false,
+                    isSecondPlace: false,
+                    isThirdPlace: false,
+                    isFourthPlace: false,
                     eliminatedRound: round.name,
                     // offset by 1000 so knockout always sorts after group eliminations
                     eliminatedRoundIdx: 1000 + ri,
@@ -77,6 +139,9 @@ const rows = computed<Row[]>(() => {
             return {
               team,
               isWinner: false,
+              isSecondPlace: false,
+              isThirdPlace: false,
+              isFourthPlace: false,
               eliminatedRound: `${group.name}`,
               eliminatedRoundIdx: -1,
             }
@@ -87,6 +152,9 @@ const rows = computed<Row[]>(() => {
             return {
               team,
               isWinner: false,
+              isSecondPlace: false,
+              isThirdPlace: false,
+              isFourthPlace: false,
               eliminatedRound: `${group.name}`,
               eliminatedRoundIdx: -1,
             }
@@ -94,7 +162,15 @@ const rows = computed<Row[]>(() => {
         }
 
         // Still in tournament (group not finished or qualified and in bracket)
-        return { team, isWinner: false, eliminatedRound: null, eliminatedRoundIdx: -1 }
+        return {
+          team,
+          isWinner: false,
+          isSecondPlace: false,
+          isThirdPlace: false,
+          isFourthPlace: false,
+          eliminatedRound: null,
+          eliminatedRoundIdx: -1,
+        }
       }
 
       // ── Pure bracket format ──────────────────────────────────
@@ -104,13 +180,29 @@ const rows = computed<Row[]>(() => {
           if ((match.homeId === team.id || match.awayId === team.id) && match.result) {
             const winnerId = getWinnerId(match)
             if (winnerId && winnerId !== team.id) {
-              return { team, isWinner: false, eliminatedRound: round.name, eliminatedRoundIdx: ri }
+              return {
+                team,
+                isWinner: false,
+                isSecondPlace: false,
+                isThirdPlace: false,
+                isFourthPlace: false,
+                eliminatedRound: round.name,
+                eliminatedRoundIdx: ri,
+              }
             }
           }
         }
       }
 
-      return { team, isWinner: false, eliminatedRound: null, eliminatedRoundIdx: -1 }
+      return {
+        team,
+        isWinner: false,
+        isSecondPlace: false,
+        isThirdPlace: false,
+        isFourthPlace: false,
+        eliminatedRound: null,
+        eliminatedRoundIdx: -1,
+      }
     })
 })
 
@@ -123,6 +215,9 @@ const sorted = computed(() => {
 
     const score = (r: Row) => {
       if (r.isWinner) return sortAsc.value ? -1000 : 10000
+      if (r.isSecondPlace) return sortAsc.value ? -998 : 9998
+      if (r.isThirdPlace) return sortAsc.value ? -997 : 9997
+      if (r.isFourthPlace) return sortAsc.value ? -996 : 9996
       if (r.eliminatedRoundIdx === -1) return sortAsc.value ? 999 : -1
       return sortAsc.value ? 100 - r.eliminatedRoundIdx : r.eliminatedRoundIdx
     }
@@ -166,7 +261,28 @@ function eliminationLabel(row: Row): string {
         <td>{{ row.team.power }}</td>
         <td>
           <span v-if="row.isWinner" class="tag" :style="{ background: row.team.color }">
-            Winner
+            1st Place
+          </span>
+          <span
+            v-else-if="row.isSecondPlace"
+            class="tag tag--place"
+            :style="{ borderColor: row.team.color, color: row.team.color }"
+          >
+            2nd Place
+          </span>
+          <span
+            v-else-if="row.isThirdPlace"
+            class="tag tag--place"
+            :style="{ borderColor: row.team.color, color: row.team.color }"
+          >
+            3rd Place
+          </span>
+          <span
+            v-else-if="row.isFourthPlace"
+            class="tag tag--place"
+            :style="{ borderColor: row.team.color, color: row.team.color }"
+          >
+            4th Place
           </span>
           <span v-else-if="row.eliminatedRound !== null" class="elim">
             {{ eliminationLabel(row) }}
@@ -218,5 +334,10 @@ th.sortable:hover {
   border-radius: 2px;
   font-size: 12px;
   color: #fff;
+}
+.tag--place {
+  background: transparent;
+  border: 1px solid;
+  font-weight: 600;
 }
 </style>

@@ -24,6 +24,7 @@ const emit = defineEmits<{
   setPlayoffSeedMode: [mode: PlayoffSeedMode]
   changeGroupCount: [count: number]
   changeQualifiersPerGroup: [qpg: number]
+  toggleThirdPlace: []
   reset: []
   delete: []
   close: []
@@ -247,6 +248,28 @@ function handleManualConfirm(orderedIds: string[]) {
           </div>
         </template>
 
+        <!-- ── Format Options ──────────────────────────── -->
+        <template v-if="tournament.rounds.length >= 2">
+          <div class="ts-divider"></div>
+          <div class="ts-section">
+            <div class="ts-section-title">Format Options</div>
+            <template v-if="!hasAnyResults">
+              <label class="ts-toggle-row">
+                <input
+                  type="checkbox"
+                  :checked="!!tournament.hasThirdPlace"
+                  @change="emit('toggleThirdPlace')"
+                />
+                <span class="ts-toggle-label">3rd Place Match</span>
+                <span class="ts-hint">Semi-final losers play for bronze</span>
+              </label>
+            </template>
+            <p v-else class="ts-hint ts-hint--warn">
+              Format cannot be changed once matches have been played.
+            </p>
+          </div>
+        </template>
+
         <!-- ── Danger Zone ──────────────────────────────── -->
         <div class="ts-divider"></div>
         <div class="ts-section">
@@ -455,6 +478,18 @@ function handleManualConfirm(orderedIds: string[]) {
   text-align: center;
   font-size: 13px;
   font-family: var(--font-ui);
+}
+
+.ts-toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+}
+.ts-toggle-label {
+  font-size: 13px;
+  font-weight: 500;
 }
 
 /* Playoff seeding wrap variant */

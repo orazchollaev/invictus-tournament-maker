@@ -3,10 +3,12 @@ export { uid, shuffle, getRoundName } from "./utils"
 export { simulateMatch, simulatePenaltyShootout } from "./simulation"
 export {
   getWinnerId,
+  getLoserId,
   propagateWinners,
   buildBracketRounds,
   buildEmptyBracketRounds,
   buildPureBracket,
+  updateThirdPlaceSlots,
 } from "./bracket"
 export {
   buildGroupFixture,

@@ -15,6 +15,8 @@ import {
   allGroupsDone,
   seedBracketFromGroups,
   recalcStandings,
+  updateThirdPlaceSlots,
+  uid,
 } from "@/engine"
 import { useTeamsStore } from "../teams/store"
 
@@ -113,7 +115,11 @@ export const useTournamentStore = defineStore("tournament", () => {
       ...(penHome !== undefined && penAway !== undefined ? { penHome, penAway } : {}),
     }
     clearDownstream(t, roundIdx, matchIdx)
+    if (t.thirdPlaceMatch && roundIdx === t.rounds.length - 2) {
+      t.thirdPlaceMatch.result = null
+    }
     propagateWinners(t.rounds, getTeams())
+    updateThirdPlaceSlots(t)
     const final = t.rounds[t.rounds.length - 1].matches[0]
     t.winnerId = getWinnerId(final)
   }
@@ -147,6 +153,8 @@ export const useTournamentStore = defineStore("tournament", () => {
       })
     }
     propagateWinners(t.rounds, allTeams)
+    updateThirdPlaceSlots(t)
+    simulateThirdPlace(tournamentId)
     const final = t.rounds[t.rounds.length - 1].matches[0]
     t.winnerId = getWinnerId(final)
   }
@@ -166,8 +174,54 @@ export const useTournamentStore = defineStore("tournament", () => {
       }
     })
     propagateWinners(t.rounds, allTeams)
+    updateThirdPlaceSlots(t)
     const final = t.rounds[t.rounds.length - 1].matches[0]
     t.winnerId = getWinnerId(final)
+  }
+
+  // ─── 3rd place match ──────────────────────────────────────────
+  function toggleThirdPlace(tournamentId: string) {
+    const t = tournaments.value.find((t) => t.id === tournamentId)
+    if (!t || t.rounds.length < 2) return
+    if (t.hasThirdPlace) {
+      t.hasThirdPlace = false
+      t.thirdPlaceMatch = undefined
+    } else {
+      t.hasThirdPlace = true
+      t.thirdPlaceMatch = { id: uid(), homeId: null, awayId: null, result: null }
+      updateThirdPlaceSlots(t)
+    }
+  }
+
+  function setThirdPlaceResult(
+    tournamentId: string,
+    home: number,
+    away: number,
+    penHome?: number,
+    penAway?: number
+  ) {
+    const t = tournaments.value.find((t) => t.id === tournamentId)
+    if (!t?.thirdPlaceMatch) return
+    t.thirdPlaceMatch.result = {
+      home,
+      away,
+      ...(penHome !== undefined && penAway !== undefined ? { penHome, penAway } : {}),
+    }
+  }
+
+  function simulateThirdPlace(tournamentId: string) {
+    const t = tournaments.value.find((t) => t.id === tournamentId)
+    if (!t?.thirdPlaceMatch) return
+    const m = t.thirdPlaceMatch
+    if (!m.homeId || !m.awayId || m.result) return
+    const allTeams = getTeams()
+    const result = simulateMatch(m, allTeams)
+    if (result.home === result.away) {
+      const pen = simulatePenaltyShootout(m, allTeams)
+      setThirdPlaceResult(tournamentId, result.home, result.away, pen.penHome, pen.penAway)
+    } else {
+      setThirdPlaceResult(tournamentId, result.home, result.away)
+    }
   }
 
   // ─── Group stage actions ───────────────────────────────────────
@@ -246,6 +300,12 @@ export const useTournamentStore = defineStore("tournament", () => {
           match.awayId = null
         }
       }
+    }
+
+    if (t.thirdPlaceMatch) {
+      t.thirdPlaceMatch.homeId = null
+      t.thirdPlaceMatch.awayId = null
+      t.thirdPlaceMatch.result = null
     }
 
     t.winnerId = null
@@ -378,5 +438,8 @@ export const useTournamentStore = defineStore("tournament", () => {
     setPlayoffSeedMode,
     changeGroupCount,
     changeQualifiersPerGroup,
+    toggleThirdPlace,
+    setThirdPlaceResult,
+    simulateThirdPlace,
   }
 })

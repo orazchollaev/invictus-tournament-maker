@@ -17,6 +17,8 @@ const emit = defineEmits<{
     penAway?: number,
   ]
   "sim-match": [round: number, match: number]
+  "set-third-place-result": [home: number, away: number, penHome?: number, penAway?: number]
+  "sim-third-place": []
 }>()
 
 const editingMatch = ref<string | null>(null)
@@ -72,6 +74,47 @@ function isWinner(match: Match, teamId: string | null) {
   return getWinnerId(match) === teamId
 }
 
+const thirdPlaceMatch = computed(() => props.tournament.thirdPlaceMatch ?? null)
+const editingTp = ref(false)
+const tpEditMode = ref<"score" | "penalty">("score")
+const tpHome = ref(0)
+const tpAway = ref(0)
+const tpPenHome = ref(0)
+const tpPenAway = ref(0)
+
+function startTpEdit() {
+  const m = thirdPlaceMatch.value
+  if (!m) return
+  editingTp.value = true
+  tpEditMode.value = "score"
+  tpHome.value = m.result?.home ?? 0
+  tpAway.value = m.result?.away ?? 0
+  tpPenHome.value = m.result?.penHome ?? 0
+  tpPenAway.value = m.result?.penAway ?? 0
+}
+
+function cancelTpEdit() {
+  editingTp.value = false
+  tpEditMode.value = "score"
+}
+
+function saveTpResult() {
+  if (tpHome.value === tpAway.value) {
+    tpEditMode.value = "penalty"
+    return
+  }
+  emit("set-third-place-result", tpHome.value, tpAway.value)
+  editingTp.value = false
+  tpEditMode.value = "score"
+}
+
+function saveTpPenalties() {
+  if (tpPenHome.value === tpPenAway.value) return
+  emit("set-third-place-result", tpHome.value, tpAway.value, tpPenHome.value, tpPenAway.value)
+  editingTp.value = false
+  tpEditMode.value = "score"
+}
+
 // --- Split bracket data ---
 
 interface DisplayMatch extends Match {
@@ -90,6 +133,17 @@ const finalMatch = computed(
     _origMatch: 0,
   })
 )
+
+const bracketRef = ref<HTMLElement | null>(null)
+const finalColRef = ref<HTMLElement | null>(null)
+const tpLeft = ref(0)
+
+function updateTpLeft() {
+  const b = bracketRef.value
+  const c = finalColRef.value
+  if (!b || !c) return
+  tpLeft.value = c.getBoundingClientRect().left / 2 + 166
+}
 
 // Left: each non-final round's first half, outer→inner
 const leftRounds = computed((): DisplayMatch[][] =>
@@ -227,6 +281,8 @@ function drawConnectors() {
     }
     connEl.innerHTML = makeSvg(paths)
   }
+
+  updateTpLeft()
 }
 
 watch(
@@ -247,7 +303,78 @@ window.addEventListener("resize", drawConnectors)
 
 <template>
   <div class="bracket-wrap">
-    <div class="bracket">
+    <div ref="bracketRef" class="bracket">
+      <div v-if="tournament.hasThirdPlace && thirdPlaceMatch" class="tp-row">
+        <div class="tp-section">
+          <div class="round-title tp-title">3rd Place</div>
+          <div class="matches-col tp-matches-col">
+            <div class="match-card tp-match-card">
+              <div
+                class="match-row"
+                :class="{ winner: isWinner(thirdPlaceMatch, thirdPlaceMatch.homeId) }"
+              >
+                <TeamBadge :team-id="thirdPlaceMatch.homeId" :teams="teams" />
+                <span v-if="thirdPlaceMatch.result !== null" class="score">
+                  {{ thirdPlaceMatch.result!.home }}
+                  <span v-if="thirdPlaceMatch.result!.penHome !== undefined" class="pen-badge">
+                    [{{ thirdPlaceMatch.result!.penHome }}]
+                  </span>
+                </span>
+                <span v-else class="score tbd">-</span>
+              </div>
+              <div
+                class="match-row"
+                :class="{ winner: isWinner(thirdPlaceMatch, thirdPlaceMatch.awayId) }"
+              >
+                <TeamBadge :team-id="thirdPlaceMatch.awayId" :teams="teams" />
+                <span v-if="thirdPlaceMatch.result !== null" class="score">
+                  {{ thirdPlaceMatch.result!.away }}
+                  <span v-if="thirdPlaceMatch.result!.penAway !== undefined" class="pen-badge">
+                    [{{ thirdPlaceMatch.result!.penAway }}]
+                  </span>
+                </span>
+                <span v-else class="score tbd">-</span>
+              </div>
+              <div v-if="thirdPlaceMatch.homeId && thirdPlaceMatch.awayId" class="match-actions">
+                <template v-if="editingTp && tpEditMode === 'penalty'">
+                  <span class="pen-label">Pen.</span>
+                  <input v-model.number="tpPenHome" type="number" min="0" class="score-input" />
+                  <span>–</span>
+                  <input v-model.number="tpPenAway" type="number" min="0" class="score-input" />
+                  <button
+                    class="primary btn-xs"
+                    :disabled="tpPenHome === tpPenAway"
+                    @click="saveTpPenalties"
+                  >
+                    OK
+                  </button>
+                  <button class="btn-xs" @click="cancelTpEdit"><X :size="13" /></button>
+                </template>
+                <template v-else-if="editingTp">
+                  <input v-model.number="tpHome" type="number" min="0" class="score-input" />
+                  <span>–</span>
+                  <input v-model.number="tpAway" type="number" min="0" class="score-input" />
+                  <button class="primary btn-xs" @click="saveTpResult">OK</button>
+                  <button class="btn-xs" @click="cancelTpEdit"><X :size="13" /></button>
+                </template>
+                <template v-else>
+                  <button class="btn-xs" @click="startTpEdit">
+                    {{ thirdPlaceMatch.result ? "Edit" : "Set score" }}
+                  </button>
+                  <button
+                    v-if="!thirdPlaceMatch.result"
+                    class="btn-xs"
+                    @click="emit('sim-third-place')"
+                  >
+                    <Shuffle :size="13" />
+                  </button>
+                </template>
+              </div>
+              <div v-else class="match-actions tp-waiting">Waiting for semi-finals…</div>
+            </div>
+          </div>
+        </div>
+      </div>
       <!-- LEFT SIDE: outer → inner -->
       <template v-for="(leftHalf, li) in leftRounds" :key="'left-' + li">
         <div class="round-col">
@@ -325,7 +452,7 @@ window.addEventListener("resize", drawConnectors)
       </template>
 
       <!-- FINAL -->
-      <div class="round-col final-col">
+      <div ref="finalColRef" class="round-col final-col">
         <div class="round-title">{{ finalRound.name }}</div>
         <div class="matches-col">
           <div class="match-card">
@@ -384,7 +511,7 @@ window.addEventListener("resize", drawConnectors)
                   class="btn-xs"
                   @click="emit('sim-match', finalMatch._origRound, finalMatch._origMatch)"
                 >
-                  🎲
+                  <Shuffle :size="13" />
                 </button>
               </template>
             </div>
@@ -468,13 +595,28 @@ window.addEventListener("resize", drawConnectors)
         </div>
       </template>
     </div>
+
+    <!-- 3rd Place — outside bracket row, aligned under the final column -->
   </div>
 </template>
 
 <style scoped>
 .bracket-wrap {
+  width: fit-content;
+  max-width: 100%;
   overflow-x: auto;
+  height: 100%;
   padding-bottom: 8px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+.tp-row {
+  padding-top: 4px;
+  position: absolute;
+  left: 50%;
+  top: 35%;
+  transform: translate(-50%, -50%);
 }
 .bracket {
   display: flex;
@@ -489,6 +631,30 @@ window.addEventListener("resize", drawConnectors)
 }
 .final-col {
   min-width: 180px;
+  display: flex;
+  flex-direction: column;
+}
+.tp-section {
+  min-width: 180px;
+  max-width: 180px;
+  display: flex;
+  flex-direction: column;
+  margin-top: 12px;
+  padding-bottom: 6px;
+}
+.tp-title {
+  color: var(--accent-2);
+}
+.tp-matches-col {
+  flex: none;
+}
+.tp-match-card {
+  border-color: color-mix(in srgb, var(--accent-2) 40%, var(--border));
+}
+.tp-waiting {
+  font-size: 11px;
+  color: var(--text-muted);
+  justify-content: center;
 }
 .round-title {
   font-size: 10px;
