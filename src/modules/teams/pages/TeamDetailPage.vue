@@ -114,6 +114,48 @@ const allMatches = computed((): MatchRow[] => {
         })
       }
     }
+
+    if (t.thirdPlaceMatch) {
+      const match = t.thirdPlaceMatch
+
+      const isHome = match.homeId === teamId.value
+      const isAway = match.awayId === teamId.value
+
+      if ((isHome || isAway) && match.result) {
+        const winnerId = getWinnerId(match)
+        const outcome = winnerId === teamId.value ? "W" : "L"
+
+        const opponentId = isHome ? match.awayId : match.homeId
+
+        const goalsFor = isHome ? match.result.home : match.result.away
+
+        const goalsAgainst = isHome ? match.result.away : match.result.home
+
+        const hasPen = match.result.penHome !== undefined
+
+        const penGoalsFor = hasPen ? (isHome ? match.result.penHome! : match.result.penAway!) : null
+
+        const penGoalsAgainst = hasPen
+          ? isHome
+            ? match.result.penAway!
+            : match.result.penHome!
+          : null
+
+        results.push({
+          tournamentName: t.name,
+          tournamentSeason: t.season,
+          round: "3rd Place",
+          roundPhase: "knockout",
+          match,
+          opponentId,
+          goalsFor,
+          goalsAgainst,
+          penGoalsFor,
+          penGoalsAgainst,
+          outcome,
+        })
+      }
+    }
   }
 
   return results.reverse()

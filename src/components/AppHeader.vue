@@ -32,7 +32,7 @@ import AppLogo from "./AppLogo.vue"
   z-index: 10;
 }
 .header-inner {
-  max-width: 1200px;
+  max-width: 1024px;
   margin: 0 auto;
   padding: 0 16px;
   display: flex;
