@@ -48,6 +48,21 @@ const allDone = computed(
   () => props.tournament.groups?.every((g) => g.matches.every((m) => m.result !== null)) ?? false
 )
 
+function getMatchRounds(
+  group: (typeof props.tournament.groups)[number]
+): { match: GroupMatch; mi: number }[][] {
+  const n = group.teamIds.length
+  const matchesPerRound = Math.floor(n / 2)
+  if (matchesPerRound < 1) return [group.matches.map((match, mi) => ({ match, mi }))]
+  const rounds: { match: GroupMatch; mi: number }[][] = []
+  for (let i = 0; i < group.matches.length; i += matchesPerRound) {
+    rounds.push(
+      group.matches.slice(i, i + matchesPerRound).map((match, j) => ({ match, mi: i + j }))
+    )
+  }
+  return rounds
+}
+
 function matchResultStr(match: GroupMatch): string {
   if (!match.result) return "–"
   return `${match.result.home} – ${match.result.away}`
@@ -138,35 +153,46 @@ function scoreAccentColor(match: GroupMatch): string {
           </tbody>
         </table>
 
-        <!-- Matches -->
+        <!-- Matches grouped by round -->
         <div class="gs-matches">
-          <div v-for="(match, mi) in group.matches" :key="match.id" class="gs-match">
-            <span class="gs-team gs-team--home">
-              <span class="gs-team-name">{{ teamById(match.homeId)?.name }}</span>
-              <span class="dot" :style="{ background: teamById(match.homeId)?.color ?? '#888' }" />
-            </span>
+          <template v-for="(round, roundIdx) in getMatchRounds(group)" :key="roundIdx">
+            <div class="gs-round-header">{{ roundIdx + 1 }}. Maçlar</div>
+            <div v-for="{ match, mi } in round" :key="match.id" class="gs-match">
+              <span class="gs-team gs-team--home">
+                <span class="gs-team-name">{{ teamById(match.homeId)?.name }}</span>
+                <span
+                  class="dot"
+                  :style="{ background: teamById(match.homeId)?.color ?? '#888' }"
+                />
+              </span>
 
-            <button
-              class="gs-score-btn"
-              :class="{ 'gs-score-btn--locked': locked }"
-              :style="
-                match.result ? { borderColor: scoreAccentColor(match), borderLeftWidth: '3px' } : {}
-              "
-              :disabled="locked"
-              @click="openEdit(gi, mi, match)"
-            >
-              {{ matchResultStr(match) }}
-            </button>
+              <button
+                class="gs-score-btn"
+                :class="{ 'gs-score-btn--locked': locked }"
+                :style="
+                  match.result
+                    ? { borderColor: scoreAccentColor(match), borderLeftWidth: '3px' }
+                    : {}
+                "
+                :disabled="locked"
+                @click="openEdit(gi, mi, match)"
+              >
+                {{ matchResultStr(match) }}
+              </button>
 
-            <span class="gs-team gs-team--away">
-              <span class="dot" :style="{ background: teamById(match.awayId)?.color ?? '#888' }" />
-              <span class="gs-team-name">{{ teamById(match.awayId)?.name }}</span>
-            </span>
+              <span class="gs-team gs-team--away">
+                <span
+                  class="dot"
+                  :style="{ background: teamById(match.awayId)?.color ?? '#888' }"
+                />
+                <span class="gs-team-name">{{ teamById(match.awayId)?.name }}</span>
+              </span>
 
-            <button v-if="!locked" class="btn-xs sim-btn" @click="emit('simMatch', gi, mi)">
-              <Shuffle :size="13" />
-            </button>
-          </div>
+              <button v-if="!locked" class="btn-xs sim-btn" @click="emit('simMatch', gi, mi)">
+                <Shuffle :size="13" />
+              </button>
+            </div>
+          </template>
         </div>
       </div>
     </div>
@@ -303,8 +329,22 @@ function scoreAccentColor(match: GroupMatch): string {
   flex-direction: column;
   gap: 2px;
   border-top: 1px solid var(--border-light);
-  max-height: 250px;
+  max-height: 300px;
   overflow-y: auto;
+}
+.gs-round-header {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding: 5px 0 2px;
+  border-bottom: 1px solid var(--border-light);
+  margin-bottom: 2px;
+  margin-top: 4px;
+}
+.gs-round-header:first-child {
+  margin-top: 2px;
 }
 .gs-match {
   display: grid;
