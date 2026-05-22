@@ -156,7 +156,7 @@ function scoreAccentColor(match: GroupMatch): string {
         <!-- Matches grouped by round -->
         <div class="gs-matches">
           <template v-for="(round, roundIdx) in getMatchRounds(group)" :key="roundIdx">
-            <div class="gs-round-header">{{ roundIdx + 1 }}. Maçlar</div>
+            <div class="gs-round-header">{{ roundIdx + 1 }}. Matches</div>
             <div v-for="{ match, mi } in round" :key="match.id" class="gs-match">
               <span class="gs-team gs-team--home">
                 <span class="gs-team-name">{{ teamById(match.homeId)?.name }}</span>
@@ -381,7 +381,7 @@ function scoreAccentColor(match: GroupMatch): string {
   font-size: 12px;
   font-weight: 600;
   min-width: 48px;
-  text-align: center;
+  justify-content: center;
   padding: 2px 6px;
   background: var(--bg);
   border: 1px solid var(--border-light);

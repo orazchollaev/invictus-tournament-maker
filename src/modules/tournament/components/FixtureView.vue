@@ -368,7 +368,7 @@ function scoreAccentColor(match: FlatMatch): string {
   font-size: 12px;
   font-weight: 600;
   min-width: 48px;
-  text-align: center;
+  justify-content: center;
   padding: 2px 6px;
   background: var(--bg);
   border: 1px solid var(--border-light);
