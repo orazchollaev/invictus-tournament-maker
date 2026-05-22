@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { ref, computed, nextTick, watch, onMounted, onUnmounted } from "vue"
+import { ref, computed } from "vue"
 import type { Tournament, Match } from "../types"
 import type { Team } from "@/modules/teams/types"
 import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
 import { getWinnerId } from "@/engine"
 import { X, Shuffle } from "lucide-vue-next"
 
+// ─── Props & Emits ────────────────────────────────────────────
 const props = defineProps<{ tournament: Tournament; teams: Team[] }>()
 const emit = defineEmits<{
   "set-result": [
@@ -21,6 +22,7 @@ const emit = defineEmits<{
   "sim-third-place": []
 }>()
 
+// ─── Edit state ───────────────────────────────────────────────
 const editingMatch = ref<string | null>(null)
 const editMode = ref<"score" | "penalty">("score")
 const editHome = ref(0)
@@ -28,7 +30,7 @@ const editAway = ref(0)
 const editPenHome = ref(0)
 const editPenAway = ref(0)
 
-function startEdit(match: Match) {
+function startEdit(match: Match & { _origRound: number; _origMatch: number }) {
   editingMatch.value = match.id
   editMode.value = "score"
   editHome.value = match.result?.home ?? 0
@@ -36,13 +38,11 @@ function startEdit(match: Match) {
   editPenHome.value = match.result?.penHome ?? 0
   editPenAway.value = match.result?.penAway ?? 0
 }
-
 function cancelEdit() {
   editingMatch.value = null
   editMode.value = "score"
 }
-
-function saveResult(origRound: number, origMatch: number, match: Match) {
+function saveResult(origRound: number, origMatch: number, match: any) {
   if (editHome.value === editAway.value) {
     editMode.value = "penalty"
     editPenHome.value = match.result?.penHome ?? 0
@@ -50,10 +50,8 @@ function saveResult(origRound: number, origMatch: number, match: Match) {
     return
   }
   emit("set-result", origRound, origMatch, editHome.value, editAway.value)
-  editingMatch.value = null
-  editMode.value = "score"
+  cancelEdit()
 }
-
 function savePenalties(origRound: number, origMatch: number) {
   if (editPenHome.value === editPenAway.value) return
   emit(
@@ -65,22 +63,17 @@ function savePenalties(origRound: number, origMatch: number) {
     editPenHome.value,
     editPenAway.value
   )
-  editingMatch.value = null
-  editMode.value = "score"
+  cancelEdit()
 }
 
-function isWinner(match: Match, teamId: string | null) {
-  if (!match.result || !teamId) return false
-  return getWinnerId(match) === teamId
-}
-
-const thirdPlaceMatch = computed(() => props.tournament.thirdPlaceMatch ?? null)
+// ─── 3. yer edit state ────────────────────────────────────────
 const editingTp = ref(false)
 const tpEditMode = ref<"score" | "penalty">("score")
 const tpHome = ref(0)
 const tpAway = ref(0)
 const tpPenHome = ref(0)
 const tpPenAway = ref(0)
+const thirdPlaceMatch = computed(() => props.tournament.thirdPlaceMatch ?? null)
 
 function startTpEdit() {
   const m = thirdPlaceMatch.value
@@ -92,303 +85,139 @@ function startTpEdit() {
   tpPenHome.value = m.result?.penHome ?? 0
   tpPenAway.value = m.result?.penAway ?? 0
 }
-
 function cancelTpEdit() {
   editingTp.value = false
   tpEditMode.value = "score"
 }
-
 function saveTpResult() {
   if (tpHome.value === tpAway.value) {
     tpEditMode.value = "penalty"
     return
   }
   emit("set-third-place-result", tpHome.value, tpAway.value)
-  editingTp.value = false
-  tpEditMode.value = "score"
+  cancelTpEdit()
 }
-
 function saveTpPenalties() {
   if (tpPenHome.value === tpPenAway.value) return
   emit("set-third-place-result", tpHome.value, tpAway.value, tpPenHome.value, tpPenAway.value)
-  editingTp.value = false
-  tpEditMode.value = "score"
+  cancelTpEdit()
 }
 
-// --- Split bracket data ---
+// ─── Yardımcı ─────────────────────────────────────────────────
+function isWinner(match: Match, teamId: string | null) {
+  if (!match.result || !teamId) return false
+  return getWinnerId(match) === teamId
+}
 
+// ─── Bracket yapısı ───────────────────────────────────────────
 interface DisplayMatch extends Match {
   _origRound: number
   _origMatch: number
 }
 
 const allRounds = computed(() => props.tournament.rounds)
-const nonFinalRounds = computed(() => allRounds.value.slice(0, -1))
-const finalRound = computed(() => allRounds.value[allRounds.value.length - 1])
 
-const finalMatch = computed(
-  (): DisplayMatch => ({
-    ...finalRound.value.matches[0],
-    _origRound: allRounds.value.length - 1,
-    _origMatch: 0,
-  })
-)
-
-const bracketRef = ref<HTMLElement | null>(null)
-const finalColRef = ref<HTMLElement | null>(null)
-const tpLeft = ref(0)
-
-function updateTpLeft() {
-  const b = bracketRef.value
-  const c = finalColRef.value
-  if (!b || !c) return
-  tpLeft.value = c.getBoundingClientRect().left / 2 + 166
-}
-
-// Left: each non-final round's first half, outer→inner
-const leftRounds = computed((): DisplayMatch[][] =>
-  nonFinalRounds.value.map((r, ri) =>
-    r.matches.slice(0, r.matches.length / 2).map((m, mi) => ({
-      ...m,
-      _origRound: ri,
-      _origMatch: mi,
-    }))
+const displayRounds = computed((): DisplayMatch[][] =>
+  allRounds.value.map((r, ri) =>
+    r.matches.map((m, mi) => ({ ...m, _origRound: ri, _origMatch: mi }))
   )
 )
 
-// Right: each non-final round's second half reversed, then rounds reversed (inner→outer)
-const rightRounds = computed((): DisplayMatch[][] =>
-  [...nonFinalRounds.value]
-    .map((r, ri) => {
-      const total = r.matches.length
-      return r.matches
-        .slice(total / 2)
-        .reverse()
-        .map((m, di) => ({
-          ...m,
-          _origRound: ri,
-          _origMatch: total - 1 - di,
-        }))
-    })
-    .reverse()
-)
+// ─── Layout hesabı ────────────────────────────────────────────
+// İlk round'daki maç sayısına göre bracket yüksekliğini belirle.
+// Her maç kartı sabit yükseklikte. Round i'deki maç j'nin Y merkezi:
+//   slot = toplam slot / maç sayısı  (her maç kaç slot kaplar)
+//   Y_center(i, j) = (j + 0.5) * slot * CARD_H
 
-// Round names for right side (inner→outer = reverse of nonFinalRounds)
-function rightRoundName(ri: number) {
-  const origIndex = nonFinalRounds.value.length - 1 - ri
-  return nonFinalRounds.value[origIndex]?.name ?? ""
-}
+const CARD_H = 90 // match-card yaklaşık yüksekliği px (border + 2 satır + actions)
+const CARD_GAP = 20 // ilk round maçlar arası minimum boşluk
+const CARD_W = 172
+const COL_GAP = 32 // connector genişliği
+const HEADER_H = 28 // round-title yüksekliği
 
-// --- Refs ---
-const leftMatchRefs: Record<number, Record<number, HTMLElement>> = {}
-const rightMatchRefs: Record<number, Record<number, HTMLElement>> = {}
-const leftConnRefs: Record<number, HTMLElement> = {}
-const rightConnRefs: Record<number, HTMLElement> = {}
-function setLeftRef(el: Element | null, li: number, mi: number) {
-  if (!el) return
-  if (!leftMatchRefs[li]) leftMatchRefs[li] = {}
-  leftMatchRefs[li][mi] = el as HTMLElement
-}
-function setRightRef(el: Element | null, ri: number, mi: number) {
-  if (!el) return
-  if (!rightMatchRefs[ri]) rightMatchRefs[ri] = {}
-  rightMatchRefs[ri][mi] = el as HTMLElement
-}
-function setLeftConnRef(el: Element | null, li: number) {
-  if (el) leftConnRefs[li] = el as HTMLElement
-}
-function setRightConnRef(el: Element | null, ri: number) {
-  if (el) rightConnRefs[ri] = el as HTMLElement
-}
-
-function midY(el: HTMLElement, ref: DOMRect): number {
-  const r = el.getBoundingClientRect()
-  return (r.top + r.bottom) / 2 - ref.top
-}
-
-function makeSvg(paths: string[]): string {
-  return `<svg width="100%" height="100%" style="display:block;overflow:visible">${paths
-    .map((d) => `<path d="${d}" fill="none" stroke="var(--border)" stroke-width="1"/>`)
-    .join("")}</svg>`
-}
-
-function drawConnectors() {
-  const nLeft = leftRounds.value.length
-
-  // Left connectors
-  for (let li = 0; li < nLeft; li++) {
-    const connEl = leftConnRefs[li]
-    if (!connEl) continue
-    const rect = connEl.getBoundingClientRect()
-    const w = rect.width
-    const mid = w / 2
-    const paths: string[] = []
-
-    if (li < nLeft - 1) {
-      // Standard branching connector
-      leftRounds.value[li + 1].forEach((_, ci) => {
-        const srcA = leftMatchRefs[li]?.[ci * 2]
-        const srcB = leftMatchRefs[li]?.[ci * 2 + 1]
-        const dst = leftMatchRefs[li + 1]?.[ci]
-        if (!srcA || !srcB || !dst) return
-        const ay = midY(srcA, rect)
-        const by = midY(srcB, rect)
-        const dy = midY(dst, rect)
-        paths.push(`M0 ${ay} H${mid} V${by} H0`)
-        paths.push(`M${mid} ${dy} H${w}`)
-      })
-    } else {
-      // SF-left → Final (simple horizontal line)
-      const src = leftMatchRefs[li]?.[0]
-      if (src) {
-        const sy = midY(src, rect)
-        paths.push(`M0 ${sy} H${w}`)
-      }
-    }
-    connEl.innerHTML = makeSvg(paths)
-  }
-
-  // Right connectors
-  const nRight = rightRounds.value.length
-  for (let ri = 0; ri < nRight; ri++) {
-    const connEl = rightConnRefs[ri]
-    if (!connEl) continue
-    const rect = connEl.getBoundingClientRect()
-    const w = rect.width
-    const mid = w / 2
-    const paths: string[] = []
-
-    if (ri === 0) {
-      // Final → SF-right (simple horizontal line)
-      const dst = rightMatchRefs[0]?.[0]
-      if (dst) {
-        const dy = midY(dst, rect)
-        paths.push(`M0 ${dy} H${w}`)
-      }
-    } else {
-      // Mirrored branching connector: inner (left) → outer (right)
-      rightRounds.value[ri - 1].forEach((_, ci) => {
-        const srcA = rightMatchRefs[ri]?.[ci * 2]
-        const srcB = rightMatchRefs[ri]?.[ci * 2 + 1]
-        const dst = rightMatchRefs[ri - 1]?.[ci]
-        if (!srcA || !srcB || !dst) return
-        const ay = midY(srcA, rect)
-        const by = midY(srcB, rect)
-        const dy = midY(dst, rect)
-        paths.push(`M${w} ${ay} H${mid} V${by} H${w}`)
-        paths.push(`M${mid} ${dy} H0`)
-      })
-    }
-    connEl.innerHTML = makeSvg(paths)
-  }
-
-  updateTpLeft()
-}
-
-watch(
-  () => props.tournament,
-  async () => {
-    await nextTick()
-    drawConnectors()
-  },
-  { deep: true }
-)
-onMounted(async () => {
-  await nextTick()
-  drawConnectors()
+const totalBracketH = computed(() => {
+  const firstCount = displayRounds.value[0]?.length ?? 1
+  // Her maç için CARD_H + GAP, son maçta gap yok
+  return firstCount * CARD_H + (firstCount - 1) * CARD_GAP
 })
-onUnmounted(() => window.removeEventListener("resize", drawConnectors))
-window.addEventListener("resize", drawConnectors)
+
+// Round i'deki maç j'nin Y merkezi (bracket alanı içinde, header hariç)
+function matchCenterY(roundIndex: number, matchIndex: number): number {
+  const firstCount = displayRounds.value[0]?.length ?? 1
+  const matchCount = displayRounds.value[roundIndex]?.length ?? 1
+  const totalH = firstCount * CARD_H + (firstCount - 1) * CARD_GAP
+  const slotSize = totalH / matchCount
+  return slotSize * matchIndex + slotSize / 2
+}
+
+// Kart top pozisyonu (merkez - yarı yükseklik)
+function cardTop(roundIndex: number, matchIndex: number): number {
+  return matchCenterY(roundIndex, matchIndex) - CARD_H / 2
+}
+
+// ─── SVG connector çizimi ─────────────────────────────────────
+interface ConnPath {
+  ay: number
+  by: number
+  dy: number
+}
+
+function connectorPaths(roundIndex: number): ConnPath[] {
+  const nextCount = displayRounds.value[roundIndex + 1]?.length ?? 0
+  const paths: ConnPath[] = []
+  for (let ci = 0; ci < nextCount; ci++) {
+    const ay = matchCenterY(roundIndex, ci * 2)
+    const by = matchCenterY(roundIndex, ci * 2 + 1)
+    const dy = matchCenterY(roundIndex + 1, ci)
+    paths.push({ ay, by, dy })
+  }
+  return paths
+}
+
+function svgPath(p: ConnPath, w: number): string {
+  const mid = w / 2
+  return [
+    `M0,${p.ay} H${mid}`,
+    `M0,${p.by} H${mid}`,
+    `M${mid},${p.ay} V${p.by}`,
+    `M${mid},${(p.ay + p.by) / 2} H${w}`,
+  ].join(" ")
+}
 </script>
 
 <template>
   <div class="bracket-wrap">
-    <div ref="bracketRef" class="bracket">
-      <div v-if="tournament.hasThirdPlace && thirdPlaceMatch" class="tp-row">
-        <div class="tp-section">
-          <div class="round-title tp-title">3rd Place</div>
-          <div class="matches-col tp-matches-col">
-            <div class="match-card tp-match-card">
-              <div
-                class="match-row"
-                :class="{ winner: isWinner(thirdPlaceMatch, thirdPlaceMatch.homeId) }"
-              >
-                <TeamBadge :team-id="thirdPlaceMatch.homeId" :teams="teams" />
-                <span v-if="thirdPlaceMatch.result !== null" class="score">
-                  {{ thirdPlaceMatch.result!.home }}
-                  <span v-if="thirdPlaceMatch.result!.penHome !== undefined" class="pen-badge">
-                    [{{ thirdPlaceMatch.result!.penHome }}]
-                  </span>
-                </span>
-                <span v-else class="score tbd">-</span>
-              </div>
-              <div
-                class="match-row"
-                :class="{ winner: isWinner(thirdPlaceMatch, thirdPlaceMatch.awayId) }"
-              >
-                <TeamBadge :team-id="thirdPlaceMatch.awayId" :teams="teams" />
-                <span v-if="thirdPlaceMatch.result !== null" class="score">
-                  {{ thirdPlaceMatch.result!.away }}
-                  <span v-if="thirdPlaceMatch.result!.penAway !== undefined" class="pen-badge">
-                    [{{ thirdPlaceMatch.result!.penAway }}]
-                  </span>
-                </span>
-                <span v-else class="score tbd">-</span>
-              </div>
-              <div v-if="thirdPlaceMatch.homeId && thirdPlaceMatch.awayId" class="match-actions">
-                <template v-if="editingTp && tpEditMode === 'penalty'">
-                  <span class="pen-label">Pen.</span>
-                  <input v-model.number="tpPenHome" type="number" min="0" class="score-input" />
-                  <span>–</span>
-                  <input v-model.number="tpPenAway" type="number" min="0" class="score-input" />
-                  <button
-                    class="primary btn-xs"
-                    :disabled="tpPenHome === tpPenAway"
-                    @click="saveTpPenalties"
-                  >
-                    OK
-                  </button>
-                  <button class="btn-xs" @click="cancelTpEdit"><X :size="13" /></button>
-                </template>
-                <template v-else-if="editingTp">
-                  <input v-model.number="tpHome" type="number" min="0" class="score-input" />
-                  <span>–</span>
-                  <input v-model.number="tpAway" type="number" min="0" class="score-input" />
-                  <button class="primary btn-xs" @click="saveTpResult">OK</button>
-                  <button class="btn-xs" @click="cancelTpEdit"><X :size="13" /></button>
-                </template>
-                <template v-else>
-                  <button class="btn-xs" @click="startTpEdit">
-                    {{ thirdPlaceMatch.result ? "Edit" : "Set score" }}
-                  </button>
-                  <button
-                    v-if="!thirdPlaceMatch.result"
-                    class="btn-xs"
-                    @click="emit('sim-third-place')"
-                  >
-                    <Shuffle :size="13" />
-                  </button>
-                </template>
-              </div>
-              <div v-else class="match-actions tp-waiting">Waiting for semi-finals…</div>
-            </div>
+    <div class="bracket" :style="{ height: totalBracketH + HEADER_H + 'px' }">
+      <template v-for="(roundMatches, ri) in displayRounds" :key="'round-' + ri">
+        <!-- Round kolonu -->
+        <div class="round-col" :style="{ width: CARD_W + 'px' }">
+          <div class="round-title" :class="{ 'final-title': ri === displayRounds.length - 1 }">
+            {{ allRounds[ri].name }}
           </div>
-        </div>
-      </div>
-      <!-- LEFT SIDE: outer → inner -->
-      <template v-for="(leftHalf, li) in leftRounds" :key="'left-' + li">
-        <div class="round-col">
-          <div class="round-title">{{ nonFinalRounds[li].name }}</div>
-          <div class="matches-col">
+          <!-- Absolute-positioned maç kartları -->
+          <div class="matches-area" :style="{ height: totalBracketH + 'px' }">
             <div
-              v-for="(match, mi) in leftHalf"
+              v-for="(match, mi) in roundMatches"
               :key="match.id"
-              :ref="(el) => setLeftRef(el as Element | null, li, mi)"
               class="match-card"
+              :class="{ final: ri === displayRounds.length - 1 }"
+              :style="{
+                position: 'absolute',
+                top: cardTop(ri, mi) + 'px',
+                left: 0,
+                right: 0,
+              }"
             >
-              <div class="match-row" :class="{ winner: isWinner(match, match.homeId) }">
+              <!-- Home -->
+              <div
+                class="match-row"
+                :class="{
+                  winner: isWinner(match, match.homeId),
+                  loser: match.result && !isWinner(match, match.homeId),
+                }"
+              >
                 <TeamBadge :team-id="match.homeId" :teams="teams" />
-                <span v-if="match.result !== null" class="score">
+                <span v-if="match.result" class="score">
                   {{ match.result.home }}
                   <span v-if="match.result.penHome !== undefined" class="pen-badge">
                     [{{ match.result.penHome }}]
@@ -396,9 +225,16 @@ window.addEventListener("resize", drawConnectors)
                 </span>
                 <span v-else class="score tbd">-</span>
               </div>
-              <div class="match-row" :class="{ winner: isWinner(match, match.awayId) }">
+              <!-- Away -->
+              <div
+                class="match-row"
+                :class="{
+                  winner: isWinner(match, match.awayId),
+                  loser: match.result && !isWinner(match, match.awayId),
+                }"
+              >
                 <TeamBadge :team-id="match.awayId" :teams="teams" />
-                <span v-if="match.result !== null" class="score">
+                <span v-if="match.result" class="score">
                   {{ match.result.away }}
                   <span v-if="match.result.penAway !== undefined" class="pen-badge">
                     [{{ match.result.penAway }}]
@@ -406,6 +242,7 @@ window.addEventListener("resize", drawConnectors)
                 </span>
                 <span v-else class="score tbd">-</span>
               </div>
+              <!-- Aksiyonlar -->
               <div v-if="match.homeId && match.awayId" class="match-actions">
                 <template v-if="editingMatch === match.id && editMode === 'penalty'">
                   <span class="pen-label">Pen.</span>
@@ -419,7 +256,7 @@ window.addEventListener("resize", drawConnectors)
                   >
                     OK
                   </button>
-                  <button class="btn-xs" @click="cancelEdit()"><X :size="13" /></button>
+                  <button class="btn-xs" @click="cancelEdit"><X :size="13" /></button>
                 </template>
                 <template v-else-if="editingMatch === match.id">
                   <input v-model.number="editHome" type="number" min="0" class="score-input" />
@@ -431,7 +268,7 @@ window.addEventListener("resize", drawConnectors)
                   >
                     OK
                   </button>
-                  <button class="btn-xs" @click="cancelEdit()"><X :size="13" /></button>
+                  <button class="btn-xs" @click="cancelEdit"><X :size="13" /></button>
                 </template>
                 <template v-else>
                   <button class="btn-xs" @click="startEdit(match)">
@@ -448,155 +285,127 @@ window.addEventListener("resize", drawConnectors)
             </div>
           </div>
         </div>
-        <div :ref="(el) => setLeftConnRef(el as Element | null, li)" class="conn-col" />
+
+        <!-- Connector (son round'dan sonra yok) -->
+        <div
+          v-if="ri < displayRounds.length - 1"
+          class="conn-col"
+          :style="{
+            width: COL_GAP + 'px',
+            marginTop: HEADER_H + 'px',
+            height: totalBracketH + 'px',
+          }"
+        >
+          <svg width="100%" height="100%" style="display: block; overflow: visible">
+            <path
+              v-for="(p, pi) in connectorPaths(ri)"
+              :key="pi"
+              :d="svgPath(p, COL_GAP)"
+              fill="none"
+              stroke="var(--border-light)"
+              stroke-width="1.5"
+            />
+          </svg>
+        </div>
       </template>
 
-      <!-- FINAL -->
-      <div ref="finalColRef" class="round-col final-col">
-        <div class="round-title">{{ finalRound.name }}</div>
-        <div class="matches-col">
-          <div class="match-card">
-            <div class="match-row" :class="{ winner: isWinner(finalMatch, finalMatch.homeId) }">
-              <TeamBadge :team-id="finalMatch.homeId" :teams="teams" />
-              <span v-if="finalMatch.result !== null" class="score">
-                {{ finalMatch.result.home }}
-                <span v-if="finalMatch.result.penHome !== undefined" class="pen-badge">
-                  [{{ finalMatch.result.penHome }}]
-                </span>
-              </span>
-              <span v-else class="score tbd">-</span>
-            </div>
-            <div class="match-row" :class="{ winner: isWinner(finalMatch, finalMatch.awayId) }">
-              <TeamBadge :team-id="finalMatch.awayId" :teams="teams" />
-              <span v-if="finalMatch.result !== null" class="score">
-                {{ finalMatch.result.away }}
-                <span v-if="finalMatch.result.penAway !== undefined" class="pen-badge">
-                  [{{ finalMatch.result.penAway }}]
-                </span>
-              </span>
-              <span v-else class="score tbd">-</span>
-            </div>
-            <div v-if="finalMatch.homeId && finalMatch.awayId" class="match-actions">
-              <template v-if="editingMatch === finalMatch.id && editMode === 'penalty'">
-                <span class="pen-label">Pen.</span>
-                <input v-model.number="editPenHome" type="number" min="0" class="score-input" />
-                <span>–</span>
-                <input v-model.number="editPenAway" type="number" min="0" class="score-input" />
-                <button
-                  class="primary btn-xs"
-                  :disabled="editPenHome === editPenAway"
-                  @click="savePenalties(finalMatch._origRound, finalMatch._origMatch)"
-                >
-                  OK
-                </button>
-                <button class="btn-xs" @click="cancelEdit()">✕</button>
-              </template>
-              <template v-else-if="editingMatch === finalMatch.id">
-                <input v-model.number="editHome" type="number" min="0" class="score-input" />
-                <span>–</span>
-                <input v-model.number="editAway" type="number" min="0" class="score-input" />
-                <button
-                  class="primary btn-xs"
-                  @click="saveResult(finalMatch._origRound, finalMatch._origMatch, finalMatch)"
-                >
-                  OK
-                </button>
-                <button class="btn-xs" @click="cancelEdit()">✕</button>
+      <!-- ── 3. yer maçı ── -->
+      <template v-if="tournament.hasThirdPlace && thirdPlaceMatch">
+        <div
+          class="tp-divider"
+          :style="{ marginTop: HEADER_H + 'px', height: totalBracketH + 'px' }"
+        />
+        <div class="round-col" :style="{ width: CARD_W + 'px' }">
+          <div class="round-title tp-title">3rd Place</div>
+          <div class="matches-area" :style="{ height: totalBracketH + 'px' }">
+            <div
+              class="match-card tp-card"
+              :style="{
+                position: 'absolute',
+                top: totalBracketH / 2 - CARD_H / 2 + 'px',
+                left: 0,
+                right: 0,
+              }"
+            >
+              <template v-if="!thirdPlaceMatch.homeId || !thirdPlaceMatch.awayId">
+                <div class="tp-waiting">Waiting for semi-finals…</div>
               </template>
               <template v-else>
-                <button class="btn-xs" @click="startEdit(finalMatch)">
-                  {{ finalMatch.result ? "Edit" : "Set score" }}
-                </button>
-                <button
-                  class="btn-xs"
-                  @click="emit('sim-match', finalMatch._origRound, finalMatch._origMatch)"
+                <div
+                  class="match-row"
+                  :class="{
+                    winner: isWinner(thirdPlaceMatch, thirdPlaceMatch.homeId),
+                    loser:
+                      thirdPlaceMatch.result && !isWinner(thirdPlaceMatch, thirdPlaceMatch.homeId),
+                  }"
                 >
-                  <Shuffle :size="13" />
-                </button>
+                  <TeamBadge :team-id="thirdPlaceMatch.homeId" :teams="teams" />
+                  <span v-if="thirdPlaceMatch.result" class="score">
+                    {{ thirdPlaceMatch.result.home }}
+                    <span v-if="thirdPlaceMatch.result.penHome !== undefined" class="pen-badge">
+                      [{{ thirdPlaceMatch.result.penHome }}]
+                    </span>
+                  </span>
+                  <span v-else class="score tbd">-</span>
+                </div>
+                <div
+                  class="match-row"
+                  :class="{
+                    winner: isWinner(thirdPlaceMatch, thirdPlaceMatch.awayId),
+                    loser:
+                      thirdPlaceMatch.result && !isWinner(thirdPlaceMatch, thirdPlaceMatch.awayId),
+                  }"
+                >
+                  <TeamBadge :team-id="thirdPlaceMatch.awayId" :teams="teams" />
+                  <span v-if="thirdPlaceMatch.result" class="score">
+                    {{ thirdPlaceMatch.result.away }}
+                    <span v-if="thirdPlaceMatch.result.penAway !== undefined" class="pen-badge">
+                      [{{ thirdPlaceMatch.result.penAway }}]
+                    </span>
+                  </span>
+                  <span v-else class="score tbd">-</span>
+                </div>
+                <div class="match-actions">
+                  <template v-if="editingTp && tpEditMode === 'penalty'">
+                    <span class="pen-label">Pen.</span>
+                    <input v-model.number="tpPenHome" type="number" min="0" class="score-input" />
+                    <span>–</span>
+                    <input v-model.number="tpPenAway" type="number" min="0" class="score-input" />
+                    <button
+                      class="primary btn-xs"
+                      :disabled="tpPenHome === tpPenAway"
+                      @click="saveTpPenalties"
+                    >
+                      OK
+                    </button>
+                    <button class="btn-xs" @click="cancelTpEdit"><X :size="13" /></button>
+                  </template>
+                  <template v-else-if="editingTp">
+                    <input v-model.number="tpHome" type="number" min="0" class="score-input" />
+                    <span>–</span>
+                    <input v-model.number="tpAway" type="number" min="0" class="score-input" />
+                    <button class="primary btn-xs" @click="saveTpResult">OK</button>
+                    <button class="btn-xs" @click="cancelTpEdit"><X :size="13" /></button>
+                  </template>
+                  <template v-else>
+                    <button class="btn-xs" @click="startTpEdit">
+                      {{ thirdPlaceMatch.result ? "Edit" : "Set score" }}
+                    </button>
+                    <button
+                      v-if="!thirdPlaceMatch.result"
+                      class="btn-xs"
+                      @click="emit('sim-third-place')"
+                    >
+                      <Shuffle :size="13" />
+                    </button>
+                  </template>
+                </div>
               </template>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- RIGHT SIDE: inner → outer -->
-      <template v-for="(rightHalf, ri) in rightRounds" :key="'right-' + ri">
-        <div :ref="(el) => setRightConnRef(el as Element | null, ri)" class="conn-col" />
-        <div class="round-col">
-          <div class="round-title">{{ rightRoundName(ri) }}</div>
-          <div class="matches-col">
-            <div
-              v-for="(match, mi) in rightHalf"
-              :key="match.id"
-              :ref="(el) => setRightRef(el as Element | null, ri, mi)"
-              class="match-card"
-            >
-              <div class="match-row" :class="{ winner: isWinner(match, match.homeId) }">
-                <TeamBadge :team-id="match.homeId" :teams="teams" />
-                <span v-if="match.result !== null" class="score">
-                  {{ match.result.home }}
-                  <span v-if="match.result.penHome !== undefined" class="pen-badge">
-                    [{{ match.result.penHome }}]
-                  </span>
-                </span>
-                <span v-else class="score tbd">-</span>
-              </div>
-              <div class="match-row" :class="{ winner: isWinner(match, match.awayId) }">
-                <TeamBadge :team-id="match.awayId" :teams="teams" />
-                <span v-if="match.result !== null" class="score">
-                  {{ match.result.away }}
-                  <span v-if="match.result.penAway !== undefined" class="pen-badge">
-                    [{{ match.result.penAway }}]
-                  </span>
-                </span>
-                <span v-else class="score tbd">-</span>
-              </div>
-              <div v-if="match.homeId && match.awayId" class="match-actions">
-                <template v-if="editingMatch === match.id && editMode === 'penalty'">
-                  <span class="pen-label">Pen.</span>
-                  <input v-model.number="editPenHome" type="number" min="0" class="score-input" />
-                  <span>–</span>
-                  <input v-model.number="editPenAway" type="number" min="0" class="score-input" />
-                  <button
-                    class="primary btn-xs"
-                    :disabled="editPenHome === editPenAway"
-                    @click="savePenalties(match._origRound, match._origMatch)"
-                  >
-                    OK
-                  </button>
-                  <button class="btn-xs" @click="cancelEdit()"><X :size="13" /></button>
-                </template>
-                <template v-else-if="editingMatch === match.id">
-                  <input v-model.number="editHome" type="number" min="0" class="score-input" />
-                  <span>–</span>
-                  <input v-model.number="editAway" type="number" min="0" class="score-input" />
-                  <button
-                    class="primary btn-xs"
-                    @click="saveResult(match._origRound, match._origMatch, match)"
-                  >
-                    OK
-                  </button>
-                  <button class="btn-xs" @click="cancelEdit()"><X :size="13" /></button>
-                </template>
-                <template v-else>
-                  <button class="btn-xs" @click="startEdit(match)">
-                    {{ match.result ? "Edit" : "Set score" }}
-                  </button>
-                  <button
-                    class="btn-xs"
-                    @click="emit('sim-match', match._origRound, match._origMatch)"
-                  >
-                    <Shuffle :size="13" />
-                  </button>
-                </template>
-              </div>
             </div>
           </div>
         </div>
       </template>
     </div>
-
-    <!-- 3rd Place — outside bracket row, aligned under the final column -->
   </div>
 </template>
 
@@ -605,57 +414,22 @@ window.addEventListener("resize", drawConnectors)
   width: fit-content;
   max-width: 100%;
   overflow-x: auto;
-  height: 100%;
   padding-bottom: 8px;
-  display: flex;
-  flex-direction: column;
-  position: relative;
 }
-.tp-row {
-  padding-top: 4px;
-  position: absolute;
-  left: 50%;
-  top: 35%;
-  transform: translate(-50%, -50%);
-}
+
 .bracket {
   display: flex;
-  align-items: stretch;
-  min-height: 200px;
+  align-items: flex-start;
+  position: relative;
 }
+
+/* ── Round kolonu ── */
 .round-col {
   display: flex;
   flex-direction: column;
-  min-width: 172px;
   flex-shrink: 0;
 }
-.final-col {
-  min-width: 180px;
-  display: flex;
-  flex-direction: column;
-}
-.tp-section {
-  min-width: 180px;
-  max-width: 180px;
-  display: flex;
-  flex-direction: column;
-  margin-top: 12px;
-  padding-bottom: 6px;
-}
-.tp-title {
-  color: var(--accent-2);
-}
-.tp-matches-col {
-  flex: none;
-}
-.tp-match-card {
-  border-color: color-mix(in srgb, var(--accent-2) 40%, var(--border));
-}
-.tp-waiting {
-  font-size: 11px;
-  color: var(--text-muted);
-  justify-content: center;
-}
+
 .round-title {
   font-size: 10px;
   font-weight: 700;
@@ -665,61 +439,78 @@ window.addEventListener("resize", drawConnectors)
   padding: 4px 8px 8px;
   text-align: center;
   flex-shrink: 0;
+  height: 28px;
+  box-sizing: border-box;
 }
-.matches-col {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  justify-content: space-around;
-  padding: 0 6px;
-  gap: 6px;
+
+/* Maçların absolute içinde yer aldığı kap */
+.matches-area {
+  position: relative;
+  width: 100%;
 }
+
+/* ── Connector kolonu ── */
+.conn-col {
+  flex-shrink: 0;
+}
+
+/* ── Maç kartı ── */
 .match-card {
-  border: 1px solid var(--border);
-  border-radius: 6px;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius);
   background: var(--surface);
   font-size: 12px;
-  flex-shrink: 0;
   overflow: hidden;
+  box-sizing: border-box;
 }
+
+/* ── Takım satırı ── */
 .match-row {
   display: flex;
   align-items: center;
   padding: 5px 8px;
   border-bottom: 1px solid var(--border-light);
   gap: 6px;
+  min-height: 28px;
+  transition: background 0.1s;
 }
 .match-row:last-of-type {
   border-bottom: none;
 }
 .match-row.winner {
-  background: color-mix(in srgb, var(--success) 12%, var(--surface));
+  background: color-mix(in srgb, var(--success) 10%, var(--surface));
   font-weight: 700;
 }
+.match-row.loser {
+  opacity: 0.55;
+}
+
+/* ── Skor ── */
 .score {
   margin-left: auto;
   font-weight: 700;
-  min-width: 22px;
+  min-width: 20px;
   flex-shrink: 0;
-  display: flex;
+  display: inline-flex;
   align-items: baseline;
   justify-content: center;
   gap: 2px;
-  background: color-mix(in srgb, var(--text-muted) 12%, var(--surface));
+  background: color-mix(in srgb, var(--text-muted) 10%, var(--surface));
   border-radius: 3px;
   padding: 1px 5px;
 }
 .score.tbd {
   color: var(--text-muted);
-  font-weight: normal;
+  font-weight: 400;
   background: transparent;
 }
 .pen-badge {
   font-size: 10px;
   font-weight: 400;
   color: var(--text-muted);
-  letter-spacing: 0;
 }
+
+/* ── Aksiyon satırı ── */
 .match-actions {
   display: flex;
   gap: 4px;
@@ -730,22 +521,25 @@ window.addEventListener("resize", drawConnectors)
   border-top: 1px solid var(--border-light);
   background: var(--bg);
 }
-.conn-col {
-  width: 20px;
-  flex-shrink: 0;
-}
+
+/* ── Skor input ── */
 .score-input {
   width: 32px;
   text-align: center;
-  background: color-mix(in srgb, var(--text-muted) 10%, var(--surface));
+  background: var(--bg);
   border: 1px solid var(--border);
   border-radius: 3px;
   padding: 2px 4px;
   font-size: 12px;
   font-weight: 700;
   color: inherit;
+  font-family: var(--font-ui);
   -moz-appearance: textfield;
   appearance: textfield;
+}
+.score-input:focus {
+  outline: none;
+  border-color: var(--accent);
 }
 .score-input::-webkit-outer-spin-button,
 .score-input::-webkit-inner-spin-button {
@@ -759,5 +553,53 @@ window.addEventListener("resize", drawConnectors)
   text-transform: uppercase;
   letter-spacing: 0.05em;
   flex-shrink: 0;
+}
+
+/* ── Final kartı: altın tema ── */
+.match-card.final {
+  border-color: #c9a227;
+  box-shadow:
+    0 0 0 1px #c9a22733,
+    0 2px 12px #c9a22722;
+}
+.match-card.final .match-row {
+  border-bottom-color: #c9a22733;
+}
+.match-card.final .match-row.winner {
+  background: color-mix(in srgb, #c9a227 14%, var(--surface));
+}
+.match-card.final .score {
+  background: color-mix(in srgb, #c9a227 18%, var(--surface));
+  color: #b8860b;
+}
+.final-title {
+  color: #c9a227 !important;
+}
+
+.match-card.final .match-actions {
+  border-top-color: #c9a22733;
+  background: color-mix(in srgb, #c9a227 6%, var(--bg));
+}
+
+/* ── 3. yer ── */
+.tp-divider {
+  width: 1px;
+  background: var(--border-light);
+  flex-shrink: 0;
+  margin-left: 16px;
+  margin-right: 16px;
+  opacity: 0.5;
+}
+.tp-title {
+  color: var(--accent-2);
+}
+.tp-card {
+  border-color: color-mix(in srgb, var(--accent-2) 35%, var(--border-light));
+}
+.tp-waiting {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-align: center;
+  padding: 10px 8px;
 }
 </style>
