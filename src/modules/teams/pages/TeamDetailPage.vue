@@ -34,6 +34,8 @@ interface MatchRow {
   outcome: "W" | "D" | "L"
 }
 
+const isByeMatch = (match: Match) => !match.homeId || !match.awayId
+
 const allMatches = computed((): MatchRow[] => {
   const results: MatchRow[] = []
 
@@ -45,6 +47,8 @@ const allMatches = computed((): MatchRow[] => {
       for (const group of t.groups) {
         if (!group.teamIds.includes(teamId.value)) continue
         for (const match of group.matches) {
+          if (isByeMatch(match)) continue
+
           const isHome = match.homeId === teamId.value
           const isAway = match.awayId === teamId.value
           if (!isHome && !isAway) continue
@@ -81,6 +85,8 @@ const allMatches = computed((): MatchRow[] => {
     // ── Knockout / bracket matches ───────────────────────────
     for (const round of t.rounds) {
       for (const match of round.matches) {
+        if (isByeMatch(match)) continue
+
         const isHome = match.homeId === teamId.value
         const isAway = match.awayId === teamId.value
         if (!isHome && !isAway) continue
