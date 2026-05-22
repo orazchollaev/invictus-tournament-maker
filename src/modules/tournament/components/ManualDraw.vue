@@ -179,12 +179,13 @@ function confirm() {
   border-top: 1px solid var(--border-light);
 }
 
-@media (max-width: 500px) {
+@media (max-width: 560px) {
   .md-matches-grid {
     grid-template-columns: 1fr;
   }
   .md-sel {
     width: 100%;
+    flex: 1;
   }
 }
 </style>

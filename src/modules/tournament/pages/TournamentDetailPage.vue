@@ -389,5 +389,20 @@ function closeSeasonModal() {
   .t-header h1 {
     font-size: 18px;
   }
+  .t-header-top {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .t-header-actions {
+    flex-wrap: wrap;
+  }
+  .phase-tab {
+    padding: 7px 12px;
+    font-size: 12px;
+  }
+  .winner-banner {
+    font-size: 13px;
+    padding: 8px 10px;
+  }
 }
 </style>

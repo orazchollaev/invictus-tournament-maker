@@ -597,5 +597,17 @@ const recentForm = computed(() => allMatches.value.slice(0, 5).reverse())
   .match-tournament {
     display: none;
   }
+  .match-row {
+    flex-wrap: wrap;
+    row-gap: 2px;
+  }
+  .match-round {
+    order: 5;
+    flex: 1 1 100%;
+    font-size: 10px;
+  }
+  .team-title {
+    font-size: 18px;
+  }
 }
 </style>

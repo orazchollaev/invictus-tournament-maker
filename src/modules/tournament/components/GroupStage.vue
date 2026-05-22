@@ -107,51 +107,53 @@ function scoreAccentColor(match: GroupMatch): string {
         <div class="gs-group-header">{{ group.name }}</div>
 
         <!-- Standings -->
-        <table class="gs-table">
-          <thead>
-            <tr>
-              <th class="col-rank">#</th>
-              <th class="col-team">Team</th>
-              <th title="Played">P</th>
-              <th title="Won">W</th>
-              <th title="Drawn">D</th>
-              <th title="Lost">L</th>
-              <th title="Goals For">GF</th>
-              <th title="Goals Against">GA</th>
-              <th title="Goal Difference">GD</th>
-              <th title="Points">Pts</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr
-              v-for="(row, ri) in group.standings"
-              :key="row.teamId"
-              :class="{
-                'row-qualify': ri < (tournament.qualifiersPerGroup ?? 2),
-                'row-out': ri >= (tournament.qualifiersPerGroup ?? 2),
-              }"
-            >
-              <td class="col-rank">{{ ri + 1 }}</td>
-              <td class="col-team">
-                <span class="flex team-cell">
-                  <span
-                    class="dot"
-                    :style="{ background: teamById(row.teamId)?.color ?? '#888' }"
-                  />
-                  {{ teamById(row.teamId)?.name ?? row.teamId }}
-                </span>
-              </td>
-              <td>{{ row.played }}</td>
-              <td>{{ row.won }}</td>
-              <td>{{ row.drawn }}</td>
-              <td>{{ row.lost }}</td>
-              <td>{{ row.gf }}</td>
-              <td>{{ row.ga }}</td>
-              <td>{{ row.gd >= 0 ? "+" + row.gd : row.gd }}</td>
-              <td class="col-pts">{{ row.pts }}</td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="gs-table-scroll">
+          <table class="gs-table">
+            <thead>
+              <tr>
+                <th class="col-rank">#</th>
+                <th class="col-team">Team</th>
+                <th title="Played">P</th>
+                <th title="Won">W</th>
+                <th title="Drawn">D</th>
+                <th title="Lost">L</th>
+                <th title="Goals For">GF</th>
+                <th title="Goals Against">GA</th>
+                <th title="Goal Difference">GD</th>
+                <th title="Points">Pts</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                v-for="(row, ri) in group.standings"
+                :key="row.teamId"
+                :class="{
+                  'row-qualify': ri < (tournament.qualifiersPerGroup ?? 2),
+                  'row-out': ri >= (tournament.qualifiersPerGroup ?? 2),
+                }"
+              >
+                <td class="col-rank">{{ ri + 1 }}</td>
+                <td class="col-team">
+                  <span class="flex team-cell">
+                    <span
+                      class="dot"
+                      :style="{ background: teamById(row.teamId)?.color ?? '#888' }"
+                    />
+                    {{ teamById(row.teamId)?.name ?? row.teamId }}
+                  </span>
+                </td>
+                <td>{{ row.played }}</td>
+                <td>{{ row.won }}</td>
+                <td>{{ row.drawn }}</td>
+                <td>{{ row.lost }}</td>
+                <td>{{ row.gf }}</td>
+                <td>{{ row.ga }}</td>
+                <td>{{ row.gd >= 0 ? "+" + row.gd : row.gd }}</td>
+                <td class="col-pts">{{ row.pts }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
         <!-- Matches grouped by round -->
         <div class="gs-matches">
@@ -258,9 +260,14 @@ function scoreAccentColor(match: GroupMatch): string {
 
 .gs-groups {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr));
   gap: 12px;
   padding: 0 8px 8px;
+}
+
+.gs-table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 .gs-group {
   border: 1px solid var(--border-light);
@@ -459,6 +466,13 @@ function scoreAccentColor(match: GroupMatch): string {
 @media (max-width: 600px) {
   .gs-groups {
     grid-template-columns: 1fr;
+    padding: 0 4px 8px;
+  }
+  .gs-matches {
+    max-height: none;
+  }
+  .gs-table .col-team {
+    min-width: 90px;
   }
 }
 </style>

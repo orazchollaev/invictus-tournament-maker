@@ -297,6 +297,16 @@ function scoreAccentColor(match: FlatMatch): string {
   padding: 0 8px 6px;
 }
 
+@media (max-width: 560px) {
+  .fixture-list {
+    grid-template-columns: 1fr;
+  }
+  .fx-match.solo {
+    width: 100%;
+    grid-column: auto;
+  }
+}
+
 .empty-state {
   grid-column: 1 / -1;
 }

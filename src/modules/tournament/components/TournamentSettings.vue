@@ -512,5 +512,14 @@ function handleManualConfirm(orderedIds: string[]) {
     max-width: 100%;
     min-height: 100dvh;
   }
+  .gc-setting-label {
+    width: auto;
+    min-width: 0;
+    flex: 1 1 100%;
+  }
+  .gc-setting-row {
+    flex-wrap: wrap;
+    row-gap: 4px;
+  }
 }
 </style>

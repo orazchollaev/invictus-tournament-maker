@@ -82,20 +82,24 @@ function closeSeasonModal() {
     <div v-if="store.tournaments.length" class="section-box">
       <div class="t-list">
         <div v-for="t in store.tournaments" :key="t.id" class="t-row">
-          <span class="t-name">{{ t.name }}</span>
-          <span class="t-season">S{{ t.season }}</span>
-          <span class="t-meta">{{ t.teamIds.length }} teams</span>
-          <span class="t-format">{{ t.format === "group+bracket" ? "Groups+KO" : "Bracket" }}</span>
-          <span
-            v-if="store.isTournamentFinished(t.id)"
-            class="winner-tag"
-            :style="{ '--team-color': winnerColor(t) }"
-          >
-            <Trophy :size="14" />
-            {{ winnerName(t) }}
-          </span>
-          <span v-else class="t-meta">In progress</span>
-          <div class="ml-auto flex">
+          <div class="t-main">
+            <span class="t-name">{{ t.name }}</span>
+            <span class="t-season">S{{ t.season }}</span>
+            <span class="t-format">
+              {{ t.format === "group+bracket" ? "Groups+KO" : "Bracket" }}
+            </span>
+            <span class="t-meta">{{ t.teamIds.length }} teams</span>
+            <span
+              v-if="store.isTournamentFinished(t.id)"
+              class="winner-tag"
+              :style="{ '--team-color': winnerColor(t) }"
+            >
+              <Trophy :size="14" />
+              {{ winnerName(t) }}
+            </span>
+            <span v-else class="t-meta">In progress</span>
+          </div>
+          <div class="t-actions flex">
             <button
               v-if="store.isTournamentFinished(t.id)"
               class="primary sm"
@@ -190,9 +194,18 @@ function closeSeasonModal() {
   gap: 8px;
   padding: 8px 12px;
   border-bottom: 1px solid var(--border-light);
+  min-width: 0;
 }
 .t-row:last-child {
   border-bottom: none;
+}
+.t-main {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  flex: 1;
+  min-width: 0;
 }
 .t-name {
   font-weight: 600;
@@ -232,11 +245,18 @@ function closeSeasonModal() {
 @media (max-width: 600px) {
   .t-row {
     flex-wrap: wrap;
-    row-gap: 4px;
+    row-gap: 6px;
+    padding: 10px 12px;
   }
-  .t-row .ml-auto {
-    margin-left: 0;
-    width: 100%;
+  .t-main {
+    flex: 1 1 100%;
+  }
+  .t-actions {
+    flex: 1 1 100%;
+    flex-wrap: wrap;
+  }
+  .t-name {
+    font-size: 14px;
   }
 }
 </style>

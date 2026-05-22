@@ -174,7 +174,7 @@ onUnmounted(() => {
 }
 
 .bracket-wrapper {
-  max-height: 600px;
+  max-height: clamp(300px, 60vh, 600px);
   padding: 0 10px;
   overflow: auto;
 }

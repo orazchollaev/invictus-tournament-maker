@@ -39,6 +39,15 @@ const emit = defineEmits<{ close: [] }>()
   width: 420px;
   max-width: calc(100vw - 32px);
 }
+
+@media (max-width: 480px) {
+  .modal {
+    max-width: calc(100vw - 16px);
+  }
+  .modal-body {
+    padding: 12px;
+  }
+}
 .modal-header {
   font-family: var(--font);
   font-size: 16px;
