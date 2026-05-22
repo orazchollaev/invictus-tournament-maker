@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from "vue"
 import type { Team } from "@/modules/teams/types"
-import type { Tournament, GroupMatch } from "@/modules/tournament/types"
+import type { Tournament, GroupMatch, Group } from "@/modules/tournament/types"
 import AppModal from "@/components/AppModal.vue"
 import { useTeamLookup } from "@/composables/useTeamLookup"
 import { Lock, Shuffle, Check } from "lucide-vue-next"
@@ -48,9 +48,7 @@ const allDone = computed(
   () => props.tournament.groups?.every((g) => g.matches.every((m) => m.result !== null)) ?? false
 )
 
-function getMatchRounds(
-  group: (typeof props.tournament.groups)[number]
-): { match: GroupMatch; mi: number }[][] {
+function getMatchRounds(group: Group): { match: GroupMatch; mi: number }[][] {
   const n = group.teamIds.length
   const matchesPerRound = Math.floor(n / 2)
   if (matchesPerRound < 1) return [group.matches.map((match, mi) => ({ match, mi }))]
