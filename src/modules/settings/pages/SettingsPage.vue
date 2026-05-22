@@ -6,6 +6,7 @@ import { useTeamsStore } from "../../teams/store"
 import { useTournamentStore } from "../../tournament/store"
 import { version } from "../../../../package.json"
 import BtnGroup from "@/components/BtnGroup.vue"
+import { ArrowLeft } from "lucide-vue-next"
 
 const router = useRouter()
 
@@ -93,7 +94,10 @@ function importData() {
 <template>
   <div class="page">
     <div class="page-header">
-      <button class="back-btn" @click="router.back()">&#8592; Back</button>
+      <button class="back-btn" @click="router.back()">
+        <ArrowLeft :size="14" />
+        Back
+      </button>
       <h2>Settings</h2>
     </div>
     <div class="section-box">
@@ -148,6 +152,9 @@ function importData() {
   margin: 0;
 }
 .back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
   background: none;
   border: 1px solid var(--border);
   border-radius: var(--radius);

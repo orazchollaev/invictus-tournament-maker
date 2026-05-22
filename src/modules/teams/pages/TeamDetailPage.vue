@@ -6,7 +6,7 @@ import { useTournamentStore } from "@/modules/tournament/store"
 import { getWinnerId } from "@/engine"
 import { useTeamLookup } from "@/composables/useTeamLookup"
 import type { Match } from "@/modules/tournament/types"
-import { Trophy } from "lucide-vue-next"
+import { Trophy, ArrowLeft } from "lucide-vue-next"
 
 const route = useRoute()
 const router = useRouter()
@@ -191,7 +191,10 @@ const recentForm = computed(() => allMatches.value.slice(0, 5).reverse())
     <div v-if="!team" class="section-box">
       <div class="section-body">
         <p class="empty-text">Team not found.</p>
-        <button @click="router.back()">← Back</button>
+        <button @click="router.back()">
+          <ArrowLeft :size="14" />
+          Back
+        </button>
       </div>
     </div>
 
@@ -200,7 +203,10 @@ const recentForm = computed(() => allMatches.value.slice(0, 5).reverse())
       <div class="section-box">
         <div class="section-body">
           <div class="team-header">
-            <button class="back-btn" @click="router.back()">← Back</button>
+            <button class="back-btn" @click="router.back()">
+              <ArrowLeft :size="14" />
+              Back
+            </button>
             <span class="team-badge" :style="{ background: team.color }" />
             <div>
               <h1 class="team-title">{{ team.name }}</h1>
@@ -359,6 +365,9 @@ const recentForm = computed(() => allMatches.value.slice(0, 5).reverse())
   gap: 12px;
 }
 .back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
   font-size: 12px;
   padding: 2px 8px;
   flex-shrink: 0;

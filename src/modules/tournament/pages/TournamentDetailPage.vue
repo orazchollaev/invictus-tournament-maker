@@ -11,7 +11,7 @@ import TournamentSettings from "@/modules/tournament/components/TournamentSettin
 import TournamentStats from "@/modules/tournament/components/TournamentStats.vue"
 import AppModal from "@/components/AppModal.vue"
 import { useTournamentDetail } from "../composables/useTournamentDetail"
-import { Settings, Trophy, Lock } from "lucide-vue-next"
+import { Settings, Trophy, Lock, ArrowLeft } from "lucide-vue-next"
 
 const route = useRoute()
 
@@ -84,13 +84,19 @@ function closeSeasonModal() {
     <div v-if="!tournament">
       <p class="not-found">
         Tournament not found.
-        <RouterLink to="/tournaments">← Back</RouterLink>
+        <RouterLink to="/tournaments">
+          <ArrowLeft :size="14" />
+          Back
+        </RouterLink>
       </p>
     </div>
     <template v-else>
       <div class="t-header">
         <div class="t-header-top">
-          <RouterLink to="/tournaments" class="back">← Tournaments</RouterLink>
+          <RouterLink to="/tournaments" class="back">
+            <ArrowLeft :size="14" />
+            Tournaments
+          </RouterLink>
           <div class="t-header-actions">
             <button
               v-if="isFinished"
@@ -242,6 +248,9 @@ function closeSeasonModal() {
 }
 
 .back {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
   font-size: 13px;
   color: var(--accent);
 }
