@@ -140,7 +140,6 @@ function closeSeasonModal() {
         wins the tournament!
       </div>
 
-      <!-- ─── Group + Bracket format ───────────────────────────── -->
       <template v-if="isGroupFormat">
         <div class="phase-tabs">
           <button
@@ -198,6 +197,7 @@ function closeSeasonModal() {
               </button>
             </div>
             <Bracket
+              class="bracket-wrapper"
               :tournament="tournament"
               :teams="allTeams"
               @set-result="
@@ -213,7 +213,6 @@ function closeSeasonModal() {
         </div>
       </template>
 
-      <!-- ─── Pure Bracket format ─────────────────────────────── -->
       <template v-else>
         <div class="section-box">
           <h2 class="bracket-heading">
@@ -237,29 +236,29 @@ function closeSeasonModal() {
                 Sim {{ round.name }}
               </button>
             </div>
-            <Bracket
-              :tournament="tournament"
-              :teams="allTeams"
-              @set-result="
-                (ri, mi, h, a, ph, pa) => store.setResult(tournament!.id, ri, mi, h, a, ph, pa)
-              "
-              @sim-match="(ri, mi) => simMatch(ri, mi)"
-              @set-third-place-result="
-                (h, a, ph, pa) => store.setThirdPlaceResult(tournament!.id, h, a, ph, pa)
-              "
-              @sim-third-place="store.simulateThirdPlace(tournament.id)"
-            />
+            <div class="bracket-wrapper">
+              <Bracket
+                :tournament="tournament"
+                :teams="allTeams"
+                @set-result="
+                  (ri, mi, h, a, ph, pa) => store.setResult(tournament!.id, ri, mi, h, a, ph, pa)
+                "
+                @sim-match="(ri, mi) => simMatch(ri, mi)"
+                @set-third-place-result="
+                  (h, a, ph, pa) => store.setThirdPlaceResult(tournament!.id, h, a, ph, pa)
+                "
+                @sim-third-place="store.simulateThirdPlace(tournament.id)"
+              />
+            </div>
           </div>
         </div>
       </template>
 
-      <!-- Stats -->
       <div class="section-box">
         <h2>Statistics</h2>
         <TournamentStats :tournament="tournament" :teams="allTeams" />
       </div>
 
-      <!-- Participants -->
       <div class="section-box">
         <h2>Participants</h2>
         <div class="section-body flush">
@@ -268,7 +267,6 @@ function closeSeasonModal() {
       </div>
     </template>
 
-    <!-- Settings modal -->
     <TournamentSettings
       v-if="showSettingsModal && tournament"
       :tournament="tournament"
@@ -287,7 +285,6 @@ function closeSeasonModal() {
       @close="showSettingsModal = false"
     />
 
-    <!-- Full Bracket modal -->
     <div
       v-if="showFullBracket"
       class="modal-backdrop full-bracket-backdrop"
@@ -318,7 +315,6 @@ function closeSeasonModal() {
       </div>
     </div>
 
-    <!-- New Season modal -->
     <AppModal
       v-if="showSeasonModal"
       :title="`New Season — ${tournament?.name}`"
@@ -535,6 +531,12 @@ function closeSeasonModal() {
 .settings-btn:hover {
   color: var(--text);
   border-color: var(--border);
+}
+
+.bracket-wrapper {
+  max-height: 600px;
+  padding: 0 10px;
+  overflow: auto;
 }
 
 @media (max-width: 600px) {
