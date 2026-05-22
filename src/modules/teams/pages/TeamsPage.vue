@@ -3,6 +3,7 @@ import { useRouter } from "vue-router"
 import { useTeamsStore } from "../store"
 import { useTeamForm } from "../composables/useTeamForm"
 import { X } from "lucide-vue-next"
+import { MAX_TEAMS } from "@/constants"
 
 const store = useTeamsStore()
 const {
@@ -26,20 +27,22 @@ const router = useRouter()
     <!-- Add Team -->
     <div class="section-box">
       <h2>Add Team</h2>
-      <div :class="['section-body', { 'is-disabled': store.teams.length >= 32 }]">
+      <div :class="['section-body', { 'is-disabled': store.teams.length >= MAX_TEAMS }]">
         <div class="flex">
           <input
             v-model="newName"
-            :placeholder="store.teams.length >= 32 ? 'Team limit reached (32)' : 'Team name'"
+            :placeholder="
+              store.teams.length >= MAX_TEAMS ? `Team limit reached (${MAX_TEAMS})` : 'Team name'
+            "
             class="name-input"
-            :disabled="store.teams.length >= 32"
+            :disabled="store.teams.length >= MAX_TEAMS"
             @keyup.enter="addTeam"
           />
           <input
             v-model="newColor"
             type="color"
             class="color-input"
-            :disabled="store.teams.length >= 32"
+            :disabled="store.teams.length >= MAX_TEAMS"
           />
           <label class="field-label">Power</label>
           <input
@@ -48,11 +51,11 @@ const router = useRouter()
             min="1"
             max="100"
             class="power-input"
-            :disabled="store.teams.length >= 32"
+            :disabled="store.teams.length >= MAX_TEAMS"
           />
           <button
             class="primary"
-            :disabled="!newName.trim() || store.teams.length >= 32"
+            :disabled="!newName.trim() || store.teams.length >= MAX_TEAMS"
             @click="addTeam"
           >
             Add
@@ -65,7 +68,7 @@ const router = useRouter()
     <div class="section-box">
       <h2>
         Teams
-        <span class="count">{{ store.teams.length }}/32</span>
+        <span class="count">{{ store.teams.length }}/{{ MAX_TEAMS }}</span>
       </h2>
       <div class="section-body flush">
         <div v-if="store.teams.length" class="teams-list">

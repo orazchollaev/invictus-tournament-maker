@@ -1,6 +1,6 @@
 {
   "label": "World Cup",
-  "description": "32 FIFA World Cup teams",
+  "description": "40 FIFA World Cup teams",
   "teams": [
     { "id": "nt-01", "name": "France", "color": "#003189", "power": 95 },
     { "id": "nt-02", "name": "Brazil", "color": "#009C3B", "power": 93 },
@@ -33,6 +33,14 @@
     { "id": "nt-29", "name": "Tunisia", "color": "#E70013", "power": 67 },
     { "id": "nt-30", "name": "Iran", "color": "#239F40", "power": 66 },
     { "id": "nt-31", "name": "Wales", "color": "#C8102E", "power": 66 },
-    { "id": "nt-32", "name": "Qatar", "color": "#8D1B3D", "power": 60 }
+    { "id": "nt-32", "name": "Qatar", "color": "#8D1B3D", "power": 60 },
+    { "id": "nt-33", "name": "Algeria", "color": "#006233", "power": 68 },
+    { "id": "nt-34", "name": "Egypt", "color": "#CE1126", "power": 67 },
+    { "id": "nt-35", "name": "Nigeria", "color": "#008751", "power": 67 },
+    { "id": "nt-36", "name": "Turkey", "color": "#E30A17", "power": 66 },
+    { "id": "nt-37", "name": "Chile", "color": "#D52B1E", "power": 65 },
+    { "id": "nt-38", "name": "Peru", "color": "#D91023", "power": 64 },
+    { "id": "nt-39", "name": "Saudi Arabia", "color": "#006C35", "power": 63 },
+    { "id": "nt-40", "name": "Costa Rica", "color": "#002B7F", "power": 62 }
   ]
 }

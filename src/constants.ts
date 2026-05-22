@@ -1,1 +1,1 @@
-export const MAX_TEAMS = 32
+export const MAX_TEAMS = 40

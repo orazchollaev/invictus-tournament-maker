@@ -2,6 +2,7 @@ import { defineStore } from "pinia"
 import { ref } from "vue"
 import type { Team } from "./types"
 import { useTournamentStore } from "@/modules/tournament/store"
+import { MAX_TEAMS } from "@/constants"
 
 const COLORS = [
   "#e63946",
@@ -27,7 +28,7 @@ export const useTeamsStore = defineStore("teams", () => {
   ])
 
   function add(name: string, color: string, power: number) {
-    if (teams.value.length >= 32) return
+    if (teams.value.length >= MAX_TEAMS) return
     teams.value.push({ id: Date.now().toString(), name, color, power })
   }
 
