@@ -3,8 +3,6 @@ import { useRoute, useRouter } from "vue-router"
 import { useTeamsStore } from "@/modules/teams/store"
 import { useTournamentStore } from "@/modules/tournament/store"
 import type { PlayoffSeedMode } from "@/modules/tournament/types"
-import { simulateMatch, simulatePenaltyShootout } from "@/engine"
-
 import confetti from "canvas-confetti"
 
 export function useTournamentDetail() {
@@ -21,20 +19,6 @@ export function useTournamentDetail() {
     if (!tournament.value) return ""
     return new Date(tournament.value.createdAt).toLocaleDateString()
   })
-
-  function simMatch(ri: number, mi: number) {
-    const t = tournament.value
-    if (!t) return
-    const match = t.rounds[ri].matches[mi]
-    if (!match.homeId || !match.awayId) return
-    const result = simulateMatch(match, allTeams.value)
-    if (result.home === result.away) {
-      const pen = simulatePenaltyShootout(match, allTeams.value)
-      store.setResult(t.id, ri, mi, result.home, result.away, pen.penHome, pen.penAway)
-    } else {
-      store.setResult(t.id, ri, mi, result.home, result.away)
-    }
-  }
 
   function deleteTournament() {
     if (!confirm("Delete this tournament?")) return
@@ -134,7 +118,6 @@ export function useTournamentDetail() {
     tournament,
     winnerTeam,
     dateStr,
-    simMatch,
     deleteTournament,
     resetTournament,
     startNewSeason,
