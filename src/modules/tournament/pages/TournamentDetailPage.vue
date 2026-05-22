@@ -3,6 +3,7 @@ import { ref, computed, watch } from "vue"
 import { useRoute } from "vue-router"
 
 import Bracket from "@/modules/tournament/components/Bracket.vue"
+import FixtureView from "@/modules/tournament/components/FixtureView.vue"
 import GroupStage from "@/modules/tournament/components/GroupStage.vue"
 import ParticipantsTable from "@/modules/tournament/components/ParticipantsTable.vue"
 import ManualDraw from "@/modules/tournament/components/ManualDraw.vue"
@@ -41,6 +42,7 @@ const showFullBracket = ref(false)
 const showSettingsModal = ref(false)
 
 const activeTab = ref<"groups" | "bracket">("groups")
+const bracketView = ref<"bracket" | "fixtures">("bracket")
 const isGroupFormat = computed(() => tournament.value?.format === "group+bracket")
 const isFinished = computed(() => store.isTournamentFinished(tournament.value!.id))
 
@@ -178,10 +180,28 @@ function closeSeasonModal() {
         <div v-if="activeTab === 'bracket'" class="section-box">
           <h2 class="bracket-heading">
             Knockout Stage
-            <button class="btn-xs" @click="openFullBracket">
-              <Maximize2 :size="13" />
-              Full View
-            </button>
+            <div class="bracket-heading-right">
+              <div class="view-toggle">
+                <button
+                  class="view-toggle-btn"
+                  :class="{ active: bracketView === 'bracket' }"
+                  @click="bracketView = 'bracket'"
+                >
+                  Bracket
+                </button>
+                <button
+                  class="view-toggle-btn"
+                  :class="{ active: bracketView === 'fixtures' }"
+                  @click="bracketView = 'fixtures'"
+                >
+                  Fixtures
+                </button>
+              </div>
+              <button class="btn-xs" @click="openFullBracket">
+                <Maximize2 :size="13" />
+                Full View
+              </button>
+            </div>
           </h2>
           <div class="section-body bracket-body">
             <div class="flex sim-toolbar">
@@ -198,7 +218,22 @@ function closeSeasonModal() {
               </button>
             </div>
             <Bracket
+              v-if="bracketView === 'bracket'"
               class="bracket-wrapper"
+              :tournament="tournament"
+              :teams="allTeams"
+              @set-result="
+                (ri, mi, h, a, ph, pa) => store.setResult(tournament!.id, ri, mi, h, a, ph, pa)
+              "
+              @sim-match="(ri, mi) => simMatch(ri, mi)"
+              @set-third-place-result="
+                (h, a, ph, pa) => store.setThirdPlaceResult(tournament!.id, h, a, ph, pa)
+              "
+              @sim-third-place="store.simulateThirdPlace(tournament.id)"
+            />
+            <FixtureView
+              v-else
+              class="fixture-wrapper"
               :tournament="tournament"
               :teams="allTeams"
               @set-result="
@@ -218,10 +253,28 @@ function closeSeasonModal() {
         <div class="section-box">
           <h2 class="bracket-heading">
             Bracket
-            <button class="btn-xs" @click="openFullBracket">
-              <Maximize2 :size="13" />
-              Full View
-            </button>
+            <div class="bracket-heading-right">
+              <div class="view-toggle">
+                <button
+                  class="view-toggle-btn"
+                  :class="{ active: bracketView === 'bracket' }"
+                  @click="bracketView = 'bracket'"
+                >
+                  Bracket
+                </button>
+                <button
+                  class="view-toggle-btn"
+                  :class="{ active: bracketView === 'fixtures' }"
+                  @click="bracketView = 'fixtures'"
+                >
+                  Fixtures
+                </button>
+              </div>
+              <button class="btn-xs" @click="openFullBracket">
+                <Maximize2 :size="13" />
+                Full View
+              </button>
+            </div>
           </h2>
           <div class="section-body bracket-body">
             <div class="flex sim-toolbar">
@@ -237,7 +290,7 @@ function closeSeasonModal() {
                 Sim {{ round.name }}
               </button>
             </div>
-            <div class="bracket-wrapper">
+            <div v-if="bracketView === 'bracket'" class="bracket-wrapper">
               <Bracket
                 :tournament="tournament"
                 :teams="allTeams"
@@ -251,6 +304,20 @@ function closeSeasonModal() {
                 @sim-third-place="store.simulateThirdPlace(tournament.id)"
               />
             </div>
+            <FixtureView
+              v-else
+              class="fixture-wrapper"
+              :tournament="tournament"
+              :teams="allTeams"
+              @set-result="
+                (ri, mi, h, a, ph, pa) => store.setResult(tournament!.id, ri, mi, h, a, ph, pa)
+              "
+              @sim-match="(ri, mi) => simMatch(ri, mi)"
+              @set-third-place-result="
+                (h, a, ph, pa) => store.setThirdPlaceResult(tournament!.id, h, a, ph, pa)
+              "
+              @sim-third-place="store.simulateThirdPlace(tournament.id)"
+            />
           </div>
         </div>
       </template>
@@ -538,6 +605,47 @@ function closeSeasonModal() {
   max-height: 600px;
   padding: 0 10px;
   overflow: auto;
+}
+
+.bracket-heading-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.view-toggle {
+  display: flex;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.view-toggle-btn {
+  padding: 3px 10px;
+  font-size: 12px;
+  font-family: var(--font-ui);
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  cursor: pointer;
+  color: var(--text-muted);
+  transition:
+    background 0.1s,
+    color 0.1s;
+}
+.view-toggle-btn:not(:last-child) {
+  border-right: 1px solid var(--border);
+}
+.view-toggle-btn:hover:not(.active) {
+  background: color-mix(in srgb, var(--accent) 8%, var(--surface));
+  color: var(--text);
+}
+.view-toggle-btn.active {
+  background: var(--accent);
+  color: #fff;
+}
+
+.fixture-wrapper {
+  padding: 0 8px;
 }
 
 @media (max-width: 600px) {

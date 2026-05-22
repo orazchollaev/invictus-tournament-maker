@@ -80,21 +80,13 @@ function closeSeasonModal() {
           <span class="t-season">S{{ t.season }}</span>
           <span class="t-meta">{{ t.teamIds.length }} teams</span>
           <span class="t-format">{{ t.format === "group+bracket" ? "Groups+KO" : "Bracket" }}</span>
-          <span
-            v-if="store.isTournamentFinished(t.id)"
-            class="winner-tag"
-            :style="{ '--team-color': winnerColor(t) }"
-          >
+          <span v-if="t.winnerId" class="winner-tag" :style="{ '--team-color': winnerColor(t) }">
             <Trophy :size="14" />
             {{ winnerName(t) }}
           </span>
           <span v-else class="t-meta">In progress</span>
           <div class="ml-auto flex">
-            <button
-              v-if="store.isTournamentFinished(t.id)"
-              class="primary sm"
-              @click.stop="seasonModal = t"
-            >
+            <button v-if="t.winnerId" class="primary sm" @click.stop="seasonModal = t">
               + Season
             </button>
             <button class="primary sm" @click.stop="router.push(`/tournaments/${t.id}`)">
