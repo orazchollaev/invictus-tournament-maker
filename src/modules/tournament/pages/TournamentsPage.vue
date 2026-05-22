@@ -29,9 +29,15 @@ const seasonModal = ref<Tournament | null>(null)
 const showSeasonManual = ref(false)
 const showSeasonGroupDraw = ref(false)
 
-function doNewSeason(isSeeded: boolean, orderedIds?: string[]) {
+function doNewSeason(isSeeded: boolean, orderedIds?: string[], isHaveThirdPlace?: boolean) {
   if (!seasonModal.value) return
-  const id = store.newSeason(seasonModal.value.id, isSeeded, orderedIds)
+  const id = store.newSeason(
+    seasonModal.value.id,
+    isSeeded,
+    orderedIds,
+    undefined,
+    isHaveThirdPlace
+  )
   seasonModal.value = null
   showSeasonManual.value = false
   showSeasonGroupDraw.value = false
@@ -80,13 +86,21 @@ function closeSeasonModal() {
           <span class="t-season">S{{ t.season }}</span>
           <span class="t-meta">{{ t.teamIds.length }} teams</span>
           <span class="t-format">{{ t.format === "group+bracket" ? "Groups+KO" : "Bracket" }}</span>
-          <span v-if="t.winnerId" class="winner-tag" :style="{ '--team-color': winnerColor(t) }">
+          <span
+            v-if="store.isTournamentFinished(t.id)"
+            class="winner-tag"
+            :style="{ '--team-color': winnerColor(t) }"
+          >
             <Trophy :size="14" />
             {{ winnerName(t) }}
           </span>
           <span v-else class="t-meta">In progress</span>
           <div class="ml-auto flex">
-            <button v-if="t.winnerId" class="primary sm" @click.stop="seasonModal = t">
+            <button
+              v-if="store.isTournamentFinished(t.id)"
+              class="primary sm"
+              @click.stop="seasonModal = t"
+            >
               + Season
             </button>
             <button class="primary sm" @click.stop="router.push(`/tournaments/${t.id}`)">
@@ -117,7 +131,7 @@ function closeSeasonModal() {
       <template v-if="showSeasonManual">
         <ManualDraw
           :teams="teamsStore.teams.filter((t) => seasonModal!.teamIds.includes(t.id))"
-          @confirm="(ids) => doNewSeason(false, ids)"
+          @confirm="(ids) => doNewSeason(false, ids, seasonModal?.hasThirdPlace ?? false)"
           @cancel="showSeasonManual = false"
         />
       </template>
@@ -125,15 +139,25 @@ function closeSeasonModal() {
         <GroupDraw
           :teams="teamsStore.teams.filter((t) => seasonModal!.teamIds.includes(t.id))"
           :group-count="seasonModal.groups?.length ?? 2"
-          @confirm="(ids) => doNewSeason(false, ids)"
+          @confirm="(ids) => doNewSeason(false, ids, seasonModal?.hasThirdPlace ?? false)"
           @cancel="showSeasonGroupDraw = false"
         />
       </template>
       <template v-else>
         <p class="modal-desc">Choose draw type for Season {{ (seasonModal.season ?? 1) + 1 }}</p>
         <div class="modal-actions">
-          <button class="primary" @click="doNewSeason(false)">Random draw</button>
-          <button class="primary" @click="doNewSeason(true)">Seeded</button>
+          <button
+            class="primary"
+            @click="doNewSeason(false, undefined, seasonModal?.hasThirdPlace ?? false)"
+          >
+            Random draw
+          </button>
+          <button
+            class="primary"
+            @click="doNewSeason(true, undefined, seasonModal?.hasThirdPlace ?? false)"
+          >
+            Seeded
+          </button>
           <button class="primary" @click="openSeasonManual">Manual</button>
           <button @click="closeSeasonModal">Cancel</button>
         </div>
