@@ -7,6 +7,7 @@ import { getWinnerId } from "@/engine"
 import { useTeamLookup } from "@/composables/useTeamLookup"
 import type { Match } from "@/modules/tournament/types"
 import { Trophy, ArrowLeft } from "lucide-vue-next"
+import SeasonChart from "../components/SeasonChart.vue"
 
 const route = useRoute()
 const router = useRouter()
@@ -184,6 +185,23 @@ const tournamentWins = computed(() =>
 
 // Recent form: last 5 matches (most recent first → reverse for display left-to-right)
 const recentForm = computed(() => allMatches.value.slice(0, 5).reverse())
+
+const seasonStats = computed(() =>
+  tournamentStore.tournaments
+    .filter((t) => t.teamIds.includes(teamId.value))
+    .map((t) => {
+      const matches = allMatches.value.filter(
+        (m) => m.tournamentName === t.name && m.tournamentSeason === t.season
+      )
+      return {
+        label: `${t.name} S${t.season}`,
+        wins: matches.filter((m) => m.outcome === "W").length,
+        draws: matches.filter((m) => m.outcome === "D").length,
+        losses: matches.filter((m) => m.outcome === "L").length,
+      }
+    })
+    .filter((s) => s.wins + s.draws + s.losses > 0)
+)
 </script>
 
 <template>
@@ -291,6 +309,17 @@ const recentForm = computed(() => allMatches.value.slice(0, 5).reverse())
               </template>
             </span>
           </div>
+        </div>
+      </div>
+
+      <!-- Season History Chart -->
+      <div v-if="seasonStats.length >= 1" class="section-box">
+        <h2>
+          Season History
+          <span class="count">({{ seasonStats.length }} seasons)</span>
+        </h2>
+        <div class="section-body">
+          <SeasonChart :stats="seasonStats" />
         </div>
       </div>
 
