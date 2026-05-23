@@ -1,5 +1,33 @@
 # Changelog
 
+## [1.0.0](https://github.com/orazchollaev/tournament-sim/compare/v0.8.1...v1.0.0) (2026-05-23)
+
+### Features
+
+- add third place matches to team history and stats ([32dd20c](https://github.com/orazchollaev/tournament-sim/commit/32dd20cdf5bd0f26eeccf736d67f3380dfe40a48))
+- **groups:** group fixture matches by round day with headers ([a75935c](https://github.com/orazchollaev/tournament-sim/commit/a75935ca436fe79cdfd6af43f74a990dd96bf3d9))
+- increase maximum team limit from 32 to 40 ([e632faa](https://github.com/orazchollaev/tournament-sim/commit/e632faabae56cf2689f16535cb79c30f7556002d))
+- make project fully responsive for mobile screens ([e0dfca5](https://github.com/orazchollaev/tournament-sim/commit/e0dfca5d5061d678ec472a9cc15877e27234958e))
+- **tournament:** add fixture system as alternative to bracket format ([9e5b45f](https://github.com/orazchollaev/tournament-sim/commit/9e5b45fb9645107962346e52bfc579cac5e0f46c))
+- **ui:** increase container width for wider layout support ([7074924](https://github.com/orazchollaev/tournament-sim/commit/707492467e0bb670b9718cbecad463fc51cfe9f1))
+
+### Bug Fixes
+
+- align back button icons with text using inline-flex ([1e67ed1](https://github.com/orazchollaev/tournament-sim/commit/1e67ed102c8357b95c9e8fe300920b81efbd1d10))
+- exclude bye matches from team statistics and history ([69695cb](https://github.com/orazchollaev/tournament-sim/commit/69695cbdb0651df8c7aec139885c28ab78b92a9a))
+- **groups:** resolve TypeScript errors in getMatchRounds function ([7441c0a](https://github.com/orazchollaev/tournament-sim/commit/7441c0a73377be5468724f8585b2857cb6ab455a))
+- prevent new season start before third place match is completed ([2bdf70e](https://github.com/orazchollaev/tournament-sim/commit/2bdf70e9dee6eefb674d3c3e8b325f6ca74a7055))
+- **tournament:** ensure third place match is not reset in subsequent seasons ([b368002](https://github.com/orazchollaev/tournament-sim/commit/b3680022759fc8b7aff9e7e5c86e095a956abe59))
+
+### Code Refactoring
+
+- **tournament:** split store into slices and extract BracketPanel component ([3c35c4e](https://github.com/orazchollaev/tournament-sim/commit/3c35c4e7897dfb0cd4c57d2769c1029db4f8e79c))
+
+### Styles
+
+- refresh header with pill nav and settings icon button ([6132ed1](https://github.com/orazchollaev/tournament-sim/commit/6132ed17d0b49c7b86983636d2b2d9bfd540ac4c))
+- soften light theme, darken dark theme, switch accent to teal ([2937b19](https://github.com/orazchollaev/tournament-sim/commit/2937b19960d8576a5ab910dc25bedf441726a37e))
+
 ## [0.8.1](https://github.com/orazchollaev/tournament-sim/compare/v0.8.0...v0.8.1) (2026-05-22)
 
 ### Features
