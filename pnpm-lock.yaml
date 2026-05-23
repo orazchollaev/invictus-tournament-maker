@@ -11,6 +11,9 @@ importers:
       canvas-confetti:
         specifier: ^1.9.4
         version: 1.9.4
+      html-to-image:
+        specifier: ^1.11.13
+        version: 1.11.13
       lucide-vue-next:
         specifier: ^1.0.0
         version: 1.0.0(vue@3.5.34(typescript@6.0.3))
@@ -2218,6 +2221,9 @@ packages:
   hosted-git-info@8.1.0:
     resolution: {integrity: sha512-Rw/B2DNQaPBICNXEm8balFz9a6WpZrkCGpcWFpy7nCj+NyhSdqXipmfvtmWt9xGfp0wZnBxB+iVpLmQMYt47Tw==}
     engines: {node: ^18.17.0 || >=20.5.0}
+
+  html-to-image@1.11.13:
+    resolution: {integrity: sha512-cuOPoI7WApyhBElTTb9oqsawRvZ0rHhaHwghRLlTuffoD1B2aDemlCruLeZrUIIdvG7gs9xeELEPm6PhuASqrg==}
 
   http-proxy-agent@8.0.0:
     resolution: {integrity: sha512-7pose0uGgrCJeH2Qh4JcNhWZp3u/oNrWjNYDK4ydOLxOpTw8V8ogHFAmkz0VWq96JBFj4umVJpvmQi287rSYLg==}
@@ -5981,6 +5987,8 @@ snapshots:
   hosted-git-info@8.1.0:
     dependencies:
       lru-cache: 10.4.3
+
+  html-to-image@1.11.13: {}
 
   http-proxy-agent@8.0.0:
     dependencies:

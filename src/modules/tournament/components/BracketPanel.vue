@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { ref, onUnmounted } from "vue"
+import { ref, onUnmounted, nextTick } from "vue"
 import type { Tournament } from "../types"
 import type { Team } from "@/modules/teams/types"
 import Bracket from "./Bracket.vue"
 import FixtureView from "./FixtureView.vue"
 import { useTournamentStore } from "../store"
-import { Maximize2, Minus, Plus, Shuffle, X } from "lucide-vue-next"
+import { Maximize2, Minus, Plus, Shuffle, X, Download } from "lucide-vue-next"
+import { toPng } from "html-to-image"
 
 const props = defineProps<{
   tournament: Tournament
@@ -18,6 +19,32 @@ const bracketView = ref<"bracket" | "fixtures">("bracket")
 const showFullBracket = ref(false)
 const zoom = ref(1)
 const fullZoom = ref(1)
+const bracketWrapperRef = ref<HTMLElement | null>(null)
+const isExporting = ref(false)
+
+async function exportPng() {
+  const el = bracketWrapperRef.value
+  if (!el || isExporting.value) return
+  isExporting.value = true
+  const prevZoom = zoom.value
+  zoom.value = 1
+  await nextTick()
+  try {
+    const dataUrl = await toPng(el, {
+      pixelRatio: 2,
+      width: el.scrollWidth,
+      height: el.scrollHeight,
+      style: { overflow: "visible", maxHeight: "none" },
+    })
+    const link = document.createElement("a")
+    link.download = `${props.tournament.name}-S${props.tournament.season}.png`
+    link.href = dataUrl
+    link.click()
+  } finally {
+    zoom.value = prevZoom
+    isExporting.value = false
+  }
+}
 
 function zoomIn() {
   zoom.value = Math.min(2, +(zoom.value + 0.1).toFixed(1))
@@ -100,6 +127,15 @@ onUnmounted(() => {
             Fixtures
           </button>
         </div>
+        <button
+          v-if="bracketView === 'bracket'"
+          class="btn-xs"
+          :disabled="isExporting"
+          @click="exportPng"
+        >
+          <Download :size="13" />
+          {{ isExporting ? "Exporting…" : "Export PNG" }}
+        </button>
         <button class="btn-xs" @click="openFullBracket">
           <Maximize2 :size="13" />
           Full View
@@ -120,7 +156,7 @@ onUnmounted(() => {
           Sim {{ round.name }}
         </button>
       </div>
-      <div v-if="bracketView === 'bracket'" class="bracket-wrapper">
+      <div v-if="bracketView === 'bracket'" ref="bracketWrapperRef" class="bracket-wrapper">
         <Bracket
           :style="{ zoom }"
           :tournament="tournament"
