@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import AppLogo from "./AppLogo.vue"
+import AppLogoWordmark from "./AppLogoWordmark.vue"
 import { Settings } from "lucide-vue-next"
 </script>
 
@@ -7,8 +7,7 @@ import { Settings } from "lucide-vue-next"
   <header class="site-header">
     <div class="header-inner">
       <RouterLink to="/" class="brand">
-        <AppLogo class="brand-logo" />
-        <span class="brand-name">TournSim</span>
+        <AppLogoWordmark class="brand-wordmark" />
       </RouterLink>
 
       <nav class="main-nav">
@@ -52,18 +51,10 @@ import { Settings } from "lucide-vue-next"
   text-decoration: none;
   margin-right: 12px;
 }
-.brand-logo {
-  width: 24px;
-  height: 24px;
-  color: var(--accent);
+.brand-wordmark {
+  height: 30px;
+  width: auto;
   flex-shrink: 0;
-}
-.brand-name {
-  font-size: 13px;
-  font-weight: 800;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--text);
 }
 
 /* Main nav */
@@ -129,8 +120,8 @@ import { Settings } from "lucide-vue-next"
     padding: 0 12px;
     height: 48px;
   }
-  .brand-name {
-    display: none;
+  .brand-wordmark {
+    height: 24px;
   }
   .main-nav a {
     padding: 5px 10px;
