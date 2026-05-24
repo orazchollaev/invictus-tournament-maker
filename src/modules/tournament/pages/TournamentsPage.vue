@@ -79,39 +79,38 @@ function closeSeasonModal() {
     </div>
 
     <!-- Tournament list -->
-    <div v-if="store.tournaments.length" class="section-box">
-      <div class="t-list">
-        <div v-for="t in store.tournaments" :key="t.id" class="t-row">
-          <div class="t-main">
+    <div v-if="store.tournaments.length" class="t-list">
+      <div v-for="t in store.tournaments" :key="t.id" class="t-row">
+        <div class="t-body">
+          <div class="t-top">
             <span class="t-name">{{ t.name }}</span>
-            <span class="t-season">S{{ t.season }}</span>
-            <span class="t-format">
-              {{ t.format === "group+bracket" ? "Groups+KO" : "Bracket" }}
-            </span>
-            <span class="t-meta">{{ t.teamIds.length }} teams</span>
             <span
               v-if="store.isTournamentFinished(t.id)"
               class="winner-tag"
               :style="{ '--team-color': winnerColor(t) }"
             >
-              <Trophy :size="14" />
+              <Trophy :size="11" />
+              <span class="winner-dot" />
               {{ winnerName(t) }}
             </span>
-            <span v-else class="t-meta">In progress</span>
+            <span v-else class="status-live">Live</span>
           </div>
-          <div class="t-actions flex">
-            <button
-              v-if="store.isTournamentFinished(t.id)"
-              class="primary sm"
-              @click.stop="seasonModal = t"
-            >
-              + Season
-            </button>
-            <button class="primary sm" @click.stop="router.push(`/tournaments/${t.id}`)">
-              Open
-            </button>
-            <button class="danger sm" @click.stop="store.remove(t.id)"><X :size="14" /></button>
+          <div class="t-meta-row">
+            <span class="t-badge">S{{ t.season }}</span>
+            <span class="t-badge accent">
+              {{ t.format === "group+bracket" ? "Groups+KO" : "Bracket" }}
+            </span>
+            <span class="t-dot">{{ t.teamIds.length }} teams</span>
           </div>
+        </div>
+        <div class="t-actions">
+          <button v-if="store.isTournamentFinished(t.id)" class="sm" @click.stop="seasonModal = t">
+            + Season
+          </button>
+          <button class="primary sm" @click.stop="router.push(`/tournaments/${t.id}`)">Open</button>
+          <button class="danger sm icon-btn" @click.stop="store.remove(t.id)">
+            <X :size="13" />
+          </button>
         </div>
       </div>
     </div>
@@ -186,49 +185,122 @@ function closeSeasonModal() {
 }
 
 .t-list {
-  border-top: 1px solid var(--border-light);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 .t-row {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  border-bottom: 1px solid var(--border-light);
+  gap: 12px;
+  padding: 10px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
   min-width: 0;
+  transition: border-color 0.12s;
 }
-.t-row:last-child {
-  border-bottom: none;
-}
-.t-main {
+
+.t-body {
   display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 5px;
   flex: 1;
   min-width: 0;
 }
-.t-name {
-  font-weight: 600;
+
+.t-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
 }
-.t-season {
+.t-name {
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.t-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.t-badge {
   font-size: 11px;
   color: var(--text-muted);
   background: var(--bg);
   border: 1px solid var(--border-light);
-  border-radius: 2px;
-  padding: 1px 5px;
+  border-radius: 4px;
+  padding: 1px 6px;
+  line-height: 1.6;
 }
-.t-format {
-  font-size: 11px;
+.t-badge.accent {
   color: var(--accent);
   background: color-mix(in srgb, var(--accent) 10%, transparent);
-  border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
-  border-radius: 2px;
-  padding: 1px 5px;
+  border-color: color-mix(in srgb, var(--accent) 25%, transparent);
 }
-.t-meta {
-  font-size: 12px;
+.t-dot {
+  font-size: 11px;
   color: var(--text-muted);
+}
+.t-dot::before {
+  content: "·";
+  margin-right: 6px;
+  opacity: 0.5;
+}
+
+.winner-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border-light);
+  border-radius: 4px;
+  padding: 2px 7px 2px 5px;
+  line-height: 1.6;
+  flex-shrink: 0;
+}
+.winner-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--team-color, #888);
+  flex-shrink: 0;
+}
+
+.status-live {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #22c55e;
+  background: color-mix(in srgb, #22c55e 12%, transparent);
+  border: 1px solid color-mix(in srgb, #22c55e 30%, transparent);
+  border-radius: 4px;
+  padding: 1px 6px;
+  line-height: 1.6;
+  flex-shrink: 0;
+}
+
+.t-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.icon-btn {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .notice {
@@ -245,18 +317,14 @@ function closeSeasonModal() {
 @media (max-width: 600px) {
   .t-row {
     flex-wrap: wrap;
-    row-gap: 6px;
+    row-gap: 8px;
     padding: 10px 12px;
   }
-  .t-main {
+  .t-body {
     flex: 1 1 100%;
   }
   .t-actions {
     flex: 1 1 100%;
-    flex-wrap: wrap;
-  }
-  .t-name {
-    font-size: 14px;
   }
 }
 </style>
