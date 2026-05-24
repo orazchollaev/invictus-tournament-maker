@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue"
+import { ref, computed } from "vue"
 import { useRouter } from "vue-router"
 import { useTeamsStore } from "@/modules/teams/store"
 import { useTournamentStore } from "@/modules/tournament/store"
@@ -8,7 +8,7 @@ import GroupDraw from "../components/GroupDraw.vue"
 import AppModal from "@/components/AppModal.vue"
 import CreateTournamentModal from "../components/CreateTournamentModal.vue"
 import type { Tournament } from "../types"
-import { Trophy, X } from "lucide-vue-next"
+import { Trophy, X, Search } from "lucide-vue-next"
 
 const router = useRouter()
 const teamsStore = useTeamsStore()
@@ -20,6 +20,13 @@ function winnerName(t: Tournament) {
 function winnerColor(t: Tournament) {
   return teamsStore.teams.find((tm) => tm.id === t.winnerId)?.color ?? "#888"
 }
+
+const query = ref("")
+const filtered = computed(() => {
+  const q = query.value.trim().toLowerCase()
+  if (!q) return store.tournaments
+  return store.tournaments.filter((t) => t.name.toLowerCase().includes(q))
+})
 
 // ─── Create modal ──────────────────────────────────────────────
 const showCreateModal = ref(false)
@@ -79,8 +86,16 @@ function closeSeasonModal() {
     </div>
 
     <!-- Tournament list -->
+    <div v-if="store.tournaments.length" class="search-row">
+      <div class="search-wrap">
+        <Search :size="14" class="search-icon" />
+        <input v-model="query" class="search-input" placeholder="Search tournaments…" />
+      </div>
+    </div>
+
     <div v-if="store.tournaments.length" class="t-list">
-      <div v-for="t in store.tournaments" :key="t.id" class="t-row">
+      <p v-if="!filtered.length" class="empty-text">No tournaments match "{{ query }}".</p>
+      <div v-for="t in filtered" :key="t.id" class="t-row">
         <div class="t-body">
           <div class="t-top">
             <span class="t-name">{{ t.name }}</span>
@@ -182,6 +197,25 @@ function closeSeasonModal() {
   font-size: 20px;
   font-weight: 800;
   letter-spacing: -0.02em;
+}
+
+.search-row {
+  margin-bottom: 10px;
+}
+.search-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.search-icon {
+  position: absolute;
+  left: 10px;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+.search-input {
+  width: 100%;
+  padding-left: 32px;
 }
 
 .t-list {

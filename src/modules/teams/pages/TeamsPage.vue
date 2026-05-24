@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { ref } from "vue"
+import { ref, computed } from "vue"
 import { useRouter } from "vue-router"
 import { useTeamsStore } from "../store"
 import TeamFormModal from "../components/TeamFormModal.vue"
 import type { Team } from "../types"
-import { X, Pencil } from "lucide-vue-next"
+import { X, Pencil, Search } from "lucide-vue-next"
 import { MAX_TEAMS } from "@/constants"
 
 const store = useTeamsStore()
@@ -12,6 +12,13 @@ const router = useRouter()
 
 const showAddModal = ref(false)
 const editingTeam = ref<Team | null>(null)
+const query = ref("")
+
+const filtered = computed(() => {
+  const q = query.value.trim().toLowerCase()
+  if (!q) return store.teams
+  return store.teams.filter((t) => t.name.toLowerCase().includes(q))
+})
 </script>
 
 <template>
@@ -31,8 +38,16 @@ const editingTeam = ref<Team | null>(null)
       </button>
     </div>
 
+    <div v-if="store.teams.length" class="search-row">
+      <div class="search-wrap">
+        <Search :size="14" class="search-icon" />
+        <input v-model="query" class="search-input" placeholder="Search teams…" />
+      </div>
+    </div>
+
     <div v-if="store.teams.length" class="t-list">
-      <div v-for="team in store.teams" :key="team.id" class="t-row">
+      <p v-if="!filtered.length" class="empty-text">No teams match "{{ query }}".</p>
+      <div v-for="team in filtered" :key="team.id" class="t-row">
         <span class="color-dot" :style="{ background: team.color }" />
         <div class="t-body">
           <span class="t-name">{{ team.name }}</span>
@@ -79,6 +94,25 @@ const editingTeam = ref<Team | null>(null)
   font-weight: 400;
   color: var(--text-muted);
   margin-left: 6px;
+}
+
+.search-row {
+  margin-bottom: 10px;
+}
+.search-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.search-icon {
+  position: absolute;
+  left: 10px;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+.search-input {
+  width: 100%;
+  padding-left: 32px;
 }
 
 .t-list {
