@@ -145,6 +145,18 @@ const allMatches = computed((): MatchRow[] => {
           if (goalsFor > goalsAgainst) outcome = "W"
           else if (goalsFor < goalsAgainst) outcome = "L"
           else outcome = "D"
+          // penHome = leg2 home team's (original awayId) pens, penAway = original homeId's pens
+          const hasPen = match.leg2Result.penHome !== undefined
+          const penGoalsFor = hasPen
+            ? teamIsLeg2Home
+              ? match.leg2Result.penHome!
+              : match.leg2Result.penAway!
+            : null
+          const penGoalsAgainst = hasPen
+            ? teamIsLeg2Home
+              ? match.leg2Result.penAway!
+              : match.leg2Result.penHome!
+            : null
           results.push({
             tournamentName: t.name,
             tournamentSeason: t.season,
@@ -154,8 +166,8 @@ const allMatches = computed((): MatchRow[] => {
             opponentId,
             goalsFor,
             goalsAgainst,
-            penGoalsFor: null,
-            penGoalsAgainst: null,
+            penGoalsFor,
+            penGoalsAgainst,
             outcome,
           })
         }
