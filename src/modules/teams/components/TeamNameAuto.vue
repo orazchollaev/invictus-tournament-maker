@@ -2,6 +2,9 @@
 import { ref, computed, onMounted, onBeforeUnmount, watch, nextTick } from "vue"
 import type { Team } from "../types"
 import { teamAbbr } from "@/composables/useTeamLookup"
+import { useSettingsStore } from "@/modules/settings/store"
+
+const settings = useSettingsStore()
 
 const props = defineProps<{ team: Team | undefined | null; fallback?: string }>()
 
@@ -33,7 +36,7 @@ watch(() => props.team, check)
 
 const text = computed(() => {
   if (!props.team) return props.fallback ?? "TBD"
-  return showAbbr.value ? teamAbbr(props.team) : props.team.name
+  return settings.showTeamAbbr && showAbbr.value ? teamAbbr(props.team) : props.team.name
 })
 </script>
 

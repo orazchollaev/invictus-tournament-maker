@@ -133,6 +133,21 @@ function importData() {
 
         <hr class="divider" />
 
+        <div class="setting-section-title">Display</div>
+
+        <div class="setting-row">
+          <span class="setting-label">Team abbreviations</span>
+          <BtnGroup
+            v-model="settings.showTeamAbbr"
+            :options="[
+              { value: true, label: 'Show' },
+              { value: false, label: 'Hide' },
+            ]"
+          />
+        </div>
+
+        <hr class="divider" />
+
         <div class="setting-section-title">Simulation</div>
 
         <div class="setting-row">
