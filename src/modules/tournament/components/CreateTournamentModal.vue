@@ -34,8 +34,8 @@ const knockoutLegMode = ref<LegMode>(settingsStore.knockoutLegMode)
 const finalLegMode = ref<LegMode>(settingsStore.finalLegMode)
 
 const legOptions = [
-  { value: "single", label: "Tek Maç" },
-  { value: "double", label: "Çift Maç" },
+  { value: "single", label: "Single" },
+  { value: "double", label: "Double" },
 ]
 
 useModal(() => {
@@ -293,14 +293,14 @@ const teamsPerGroup = computed(() =>
           <!-- Leg mode -->
           <div class="ct-divider" />
           <div class="ct-section">
-            <div class="ct-label">Maç Sayısı</div>
+            <div class="ct-label">Legs per Match</div>
             <div class="ct-leg-rows">
               <div v-if="format === 'group+bracket'" class="ct-leg-row">
-                <span class="ct-leg-label">Grup Aşaması</span>
+                <span class="ct-leg-label">Group Stage</span>
                 <BtnGroup v-model="groupLegMode" :options="legOptions" />
               </div>
               <div class="ct-leg-row">
-                <span class="ct-leg-label">Eleme Turları</span>
+                <span class="ct-leg-label">Knockout</span>
                 <BtnGroup v-model="knockoutLegMode" :options="legOptions" />
               </div>
               <div class="ct-leg-row">

@@ -82,7 +82,7 @@ export function useTournamentDetail() {
     const end = Date.now() + 2000
 
     const frame = () => {
-      // Sol
+      // Left
       confetti({
         particleCount: 2,
         angle: 60,
@@ -91,7 +91,7 @@ export function useTournamentDetail() {
         colors: [color, "#ffffff"],
         zIndex: 9999,
       })
-      // Sağ
+      // Right
       confetti({
         particleCount: 2,
         angle: 120,

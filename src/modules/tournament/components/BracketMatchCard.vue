@@ -341,10 +341,10 @@ const isEditing = computed(() => sMode.value !== "off" || editingLeg.value !== n
         </template>
         <!-- Single-leg idle -->
         <template v-else-if="!isDouble">
-          <button class="abt" title="Düzenle" @click="singleEdit"><Pencil :size="11" /></button>
+          <button class="abt" title="Edit" @click="singleEdit"><Pencil :size="11" /></button>
           <button
             class="abt"
-            title="Simüle Et"
+            title="Simulate"
             @click="$emit('sim-match', match._origRound, match._origMatch)"
           >
             <Shuffle :size="11" />
@@ -355,7 +355,7 @@ const isEditing = computed(() => sMode.value !== "off" || editingLeg.value !== n
           <button
             class="abt"
             :class="{ active: dblPick === 'edit' }"
-            title="Düzenle"
+            title="Edit"
             @click="dblPick = dblPick === 'edit' ? 'idle' : 'edit'"
           >
             <Pencil :size="11" />
@@ -363,7 +363,7 @@ const isEditing = computed(() => sMode.value !== "off" || editingLeg.value !== n
           <button
             class="abt"
             :class="{ active: dblPick === 'sim' }"
-            title="Simüle Et"
+            title="Simulate"
             @click="dblPick = dblPick === 'sim' ? 'idle' : 'sim'"
           >
             <Shuffle :size="11" />

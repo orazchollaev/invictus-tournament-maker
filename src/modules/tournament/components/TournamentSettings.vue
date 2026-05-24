@@ -32,8 +32,8 @@ const emit = defineEmits<{
 }>()
 
 const legOptions = [
-  { value: "single", label: "Tek Maç" },
-  { value: "double", label: "Çift Maç" },
+  { value: "single", label: "Single" },
+  { value: "double", label: "Double" },
 ]
 
 useModal(() => {
@@ -84,7 +84,7 @@ function handleRedraw() {
     showManualDraw.value = true
     return
   }
-  if (!confirm("Kura çekimini sıfırlayıp yeniden oluştur?")) return
+  if (!confirm("Reset the draw and regenerate?")) return
   emit("redraw", drawType.value === "seeded")
 }
 
@@ -279,11 +279,11 @@ function handleManualConfirm(orderedIds: string[]) {
         <!-- ── Maç Sayısı ──────────────────────────────── -->
         <div class="ts-divider"></div>
         <div class="ts-section">
-          <div class="ts-section-title">Maç Sayısı</div>
+          <div class="ts-section-title">Legs per Match</div>
           <template v-if="!hasAnyResults">
             <div class="ts-leg-rows">
               <div v-if="isGroupFormat" class="ts-leg-row">
-                <span class="ts-hint ts-leg-label">Grup Aşaması</span>
+                <span class="ts-hint ts-leg-label">Group Stage</span>
                 <BtnGroup
                   :model-value="tournament.groupLegMode ?? 'single'"
                   :options="legOptions"
@@ -291,7 +291,7 @@ function handleManualConfirm(orderedIds: string[]) {
                 />
               </div>
               <div class="ts-leg-row">
-                <span class="ts-hint ts-leg-label">Eleme Turları</span>
+                <span class="ts-hint ts-leg-label">Knockout</span>
                 <BtnGroup
                   :model-value="tournament.knockoutLegMode ?? 'single'"
                   :options="legOptions"
@@ -309,7 +309,7 @@ function handleManualConfirm(orderedIds: string[]) {
             </div>
           </template>
           <p v-else class="ts-hint ts-hint--warn">
-            Maç sayısı maçlar başladıktan sonra değiştirilemez.
+            Leg settings cannot be changed after matches have started.
           </p>
         </div>
 

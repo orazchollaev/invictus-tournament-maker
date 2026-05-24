@@ -269,14 +269,14 @@ function singleScoreColor(match: FlatMatch): string {
             <button
               v-if="match.homeId && match.awayId"
               class="btn-xs sim-btn"
-              title="Her iki maçı simüle et"
+              title="Simulate both legs"
               @click="$emit('sim-match', match._origRound, match._origMatch)"
             >
               <Shuffle :size="12" />
             </button>
           </div>
 
-          <!-- Leg 1: homeId evinde -->
+          <!-- Leg 1: homeId at home -->
           <div class="fx-leg-block">
             <span class="fx-leg-tag">L1</span>
             <div class="fx-match-inner">
@@ -309,7 +309,7 @@ function singleScoreColor(match: FlatMatch): string {
                   <button
                     v-if="match.homeId && match.awayId"
                     class="btn-xs sim-btn"
-                    title="1. maçı simüle et"
+                    title="Simulate leg 1"
                     @click="$emit('sim-leg1', match._origRound, match._origMatch)"
                   >
                     <Shuffle :size="12" />
@@ -329,7 +329,7 @@ function singleScoreColor(match: FlatMatch): string {
             </div>
           </div>
 
-          <!-- Leg 2: awayId evinde (takımlar yer değiştirdi) -->
+          <!-- Leg 2: awayId at home (teams switched) -->
           <div class="fx-leg-block">
             <span class="fx-leg-tag">L2</span>
             <div class="fx-match-inner">
@@ -376,7 +376,7 @@ function singleScoreColor(match: FlatMatch): string {
                   <button
                     v-if="match.result"
                     class="btn-xs sim-btn"
-                    title="2. maçı simüle et"
+                    title="Simulate leg 2"
                     @click="$emit('sim-leg2', match._origRound, match._origMatch)"
                   >
                     <Shuffle :size="12" />
