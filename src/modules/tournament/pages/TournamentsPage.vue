@@ -129,7 +129,10 @@ function closeSeasonModal() {
           >
             <ChevronRight :size="14" />
           </button>
-          <button class="danger sm icon-btn" @click.stop="store.remove(t.id)">
+          <button
+            class="danger sm icon-btn"
+            @click.stop="confirm('Delete this tournament?') && store.remove(t.id)"
+          >
             <X :size="13" />
           </button>
         </div>

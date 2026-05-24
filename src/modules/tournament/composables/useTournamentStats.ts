@@ -60,6 +60,13 @@ export function useTournamentStats(tournament: () => Tournament | undefined, tea
         away.gf += match.result.away
         away.ga += match.result.home
         away.played++
+        // Leg 2: awayId plays at home, so goals are swapped
+        if (match.leg2Result) {
+          home.gf += match.leg2Result.away
+          home.ga += match.leg2Result.home
+          away.gf += match.leg2Result.home
+          away.ga += match.leg2Result.away
+        }
       }
     }
 
