@@ -55,7 +55,6 @@ export function buildGroupFixture(teamIds: string[], doubleLeg = false): GroupMa
 }
 
 export function recalcStandings(group: Group) {
-  // Reset
   group.standings.forEach((s) => {
     s.played = 0
     s.won = 0
@@ -67,11 +66,13 @@ export function recalcStandings(group: Group) {
     s.pts = 0
   })
 
+  const byId = new Map(group.standings.map((s) => [s.teamId, s]))
+
   for (const match of group.matches) {
     if (!match.result) continue
     const { home, away } = match.result
-    const hRow = group.standings.find((s) => s.teamId === match.homeId)
-    const aRow = group.standings.find((s) => s.teamId === match.awayId)
+    const hRow = byId.get(match.homeId)
+    const aRow = byId.get(match.awayId)
     if (!hRow || !aRow) continue
 
     hRow.played++
@@ -99,7 +100,6 @@ export function recalcStandings(group: Group) {
     }
   }
 
-  // Sort: pts → gd → gf
   group.standings.sort((a, b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf)
 }
 
@@ -121,18 +121,19 @@ export function simulateGroupMatch(
   matchIdx: number,
   teams: Team[]
 ) {
-  const match = tournament.groups![groupIdx].matches[matchIdx]
-  match.result = simulateMatch(match as any, teams)
-  recalcStandings(tournament.groups![groupIdx])
+  const group = tournament.groups![groupIdx]
+  group.matches[matchIdx].result = simulateMatch(group.matches[matchIdx] as any, teams)
+  recalcStandings(group)
 }
 
 export function simulateGroup(tournament: Tournament, groupIdx: number, teams: Team[]) {
   const group = tournament.groups![groupIdx]
   for (let i = 0; i < group.matches.length; i++) {
     if (!group.matches[i].result) {
-      simulateGroupMatch(tournament, groupIdx, i, teams)
+      group.matches[i].result = simulateMatch(group.matches[i] as any, teams)
     }
   }
+  recalcStandings(group)
 }
 
 export function simulateAllGroups(tournament: Tournament, teams: Team[]) {
