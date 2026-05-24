@@ -17,6 +17,7 @@ const tournamentStore = useTournamentStore()
 const themes: { value: Theme; label: string }[] = [
   { value: "light", label: "Light" },
   { value: "dark", label: "Dark" },
+  { value: "worldcup2026", label: "⚽ World Cup 2026" },
 ]
 
 const legOptions = [

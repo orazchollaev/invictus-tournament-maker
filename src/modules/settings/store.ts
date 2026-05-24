@@ -3,7 +3,7 @@ import { ref, watch } from "vue"
 import type { LegMode } from "@/modules/tournament/types"
 import { setSimConfig } from "@/engine"
 
-export type Theme = "light" | "dark"
+export type Theme = "light" | "dark" | "worldcup2026"
 
 export const useSettingsStore = defineStore("settings", () => {
   const theme = ref<Theme>("dark")

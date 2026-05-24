@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import AppLogoWordmark from "./AppLogoWordmark.vue"
-import { Settings, Star, Github } from "lucide-vue-next"
+import { Settings, Star, Github, Trophy } from "lucide-vue-next"
+import { useSettingsStore } from "@/modules/settings/store"
 
 const GITHUB_URL = "https://github.com/orazchollaev/tournament-sim"
+const settings = useSettingsStore()
 </script>
 
 <template>
@@ -11,6 +13,14 @@ const GITHUB_URL = "https://github.com/orazchollaev/tournament-sim"
       <RouterLink to="/" class="brand">
         <AppLogoWordmark class="brand-wordmark" />
       </RouterLink>
+
+      <Transition name="wc-badge">
+        <div v-if="settings.theme === 'worldcup2026'" class="wc-badge">
+          <Trophy :size="12" />
+          <span>FIFA World Cup 2026™</span>
+          <span class="wc-hosts">USA · CAN · MEX</span>
+        </div>
+      </Transition>
 
       <nav class="main-nav">
         <RouterLink to="/teams">Teams</RouterLink>
@@ -164,6 +174,40 @@ const GITHUB_URL = "https://github.com/orazchollaev/tournament-sim"
   color: var(--accent);
 }
 
+/* World Cup 2026 badge */
+.wc-badge {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  border: 1px solid color-mix(in srgb, #c9a227 40%, transparent);
+  background: color-mix(in srgb, #c9a227 8%, transparent);
+  color: #c9a227;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+.wc-hosts {
+  font-size: 10px;
+  opacity: 0.7;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+}
+
+.wc-badge-enter-active,
+.wc-badge-leave-active {
+  transition:
+    opacity 0.25s,
+    transform 0.25s;
+}
+.wc-badge-enter-from,
+.wc-badge-leave-to {
+  opacity: 0;
+  transform: translateY(-4px);
+}
+
 @media (max-width: 600px) {
   .header-inner {
     padding: 0 12px;
@@ -181,6 +225,9 @@ const GITHUB_URL = "https://github.com/orazchollaev/tournament-sim"
   }
   .github-star-btn {
     padding: 5px 8px;
+  }
+  .wc-badge {
+    display: none;
   }
 }
 </style>

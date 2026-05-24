@@ -26,7 +26,7 @@
     <text
       x="245"
       y="135"
-      font-family="IBM Plex Sans, sans-serif"
+      font-family="var(--font, 'IBM Plex Sans', sans-serif)"
       font-weight="700"
       font-size="88"
       fill="var(--text)"
@@ -36,7 +36,7 @@
     <text
       x="746"
       y="135"
-      font-family="IBM Plex Sans, sans-serif"
+      font-family="var(--font, 'IBM Plex Sans', sans-serif)"
       font-weight="400"
       font-size="88"
       letter-spacing="-3"
