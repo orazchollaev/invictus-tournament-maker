@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.1.0](https://github.com/orazchollaev/tournament-sim/compare/v1.0.1...v1.1.0) (2026-05-24)
+
+### Features
+
+- add two leg system for group matches and knockouts ([c8b79ab](https://github.com/orazchollaev/tournament-sim/commit/c8b79abf3f1a4684cc39ef2f87f151ddab1a08b3))
+- **bracket:** add PNG export button to download bracket as image ([0bede40](https://github.com/orazchollaev/tournament-sim/commit/0bede4061f0f891b323c40809323e9904c52b4b1))
+- **bracket:** add zoom controls to bracket and full view modal ([e6fabce](https://github.com/orazchollaev/tournament-sim/commit/e6fabce39392e6ab579a2d9166e2d1b8b9fda856))
+- **groups:** add per-group and global sim-week buttons ([07ae09f](https://github.com/orazchollaev/tournament-sim/commit/07ae09f0246f292b4cee24c468eeda4441edc1e3))
+- **teams:** add per-season W/D/L bar chart to team detail page ([613a335](https://github.com/orazchollaev/tournament-sim/commit/613a3353cecea0032f403d3bb09f5c0e95112bde))
+- **teams:** clamp power rating to 1–99 ([a46f225](https://github.com/orazchollaev/tournament-sim/commit/a46f225ca8ce64f6a7a43f11c5a6b68378f68845))
+- **tournament:** add simulate all button to run full tournament at once ([07914db](https://github.com/orazchollaev/tournament-sim/commit/07914db3717093174f3bd542aef3ac3945b39ffc))
+
+### Bug Fixes
+
+- **groups:** truncate long team names and fix 2-group grid layout ([adbe389](https://github.com/orazchollaev/tournament-sim/commit/adbe389ff5f9cd798e967641c923e428a956d050))
+- **teams:** show penalty score for two-leg matches in team detail page ([4259fac](https://github.com/orazchollaev/tournament-sim/commit/4259facef917084ddeb41ba6af17d8dae7f6d310))
+
 ## [1.0.1](https://github.com/orazchollaev/tournament-sim/compare/v1.0.0...v1.0.1) (2026-05-23)
 
 ### Features
