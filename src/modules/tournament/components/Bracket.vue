@@ -86,7 +86,7 @@ const displayRounds = computed((): DisplayMatch[][] =>
 const CARD_H = 58 // 28 home + 28 away + 2px outer borders
 const CARD_H_DOUBLE = 58 // same: no extra rows
 const CARD_GAP = 20
-const CARD_W = 172
+const CARD_W = 190
 const COL_GAP = 32
 const HEADER_H = 28
 

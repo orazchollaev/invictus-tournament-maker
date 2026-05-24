@@ -3,6 +3,8 @@ import { ref, computed } from "vue"
 import type { Tournament, Match, MatchResult } from "../types"
 import type { Team } from "@/modules/teams/types"
 import { getWinnerId } from "@/engine"
+import { teamAbbr } from "@/composables/useTeamLookup"
+import TeamNameAuto from "@/modules/teams/components/TeamNameAuto.vue"
 import { X, Shuffle } from "lucide-vue-next"
 
 const props = defineProps<{ tournament: Tournament; teams: Team[] }>()
@@ -181,6 +183,11 @@ function getTeam(id: string | null): Team | null {
   return props.teams.find((t) => t.id === id) ?? null
 }
 
+function getAbbr(id: string | null): string {
+  const t = getTeam(id)
+  return t ? teamAbbr(t) : "TBD"
+}
+
 const isSoloLayout = computed(() => {
   const lastRoundIdx = props.tournament.rounds.length - 1
   return selectedRound.value === lastRoundIdx || selectedRound.value === "tp"
@@ -246,7 +253,7 @@ function singleScoreColor(match: FlatMatch): string {
           <div class="fx-agg-row">
             <span class="fx-agg-teams">
               <span class="dot" :style="{ background: getTeam(match.homeId)?.color ?? '#ccc' }" />
-              {{ getTeam(match.homeId)?.name ?? "TBD" }}
+              <span :title="getTeam(match.homeId)?.name">{{ getAbbr(match.homeId) }}</span>
               <span
                 class="fx-agg-score"
                 :class="{
@@ -256,7 +263,7 @@ function singleScoreColor(match: FlatMatch): string {
               >
                 {{ aggLabel(match) }}
               </span>
-              {{ getTeam(match.awayId)?.name ?? "TBD" }}
+              <span :title="getTeam(match.awayId)?.name">{{ getAbbr(match.awayId) }}</span>
               <span class="dot" :style="{ background: getTeam(match.awayId)?.color ?? '#ccc' }" />
             </span>
             <button
@@ -280,7 +287,7 @@ function singleScoreColor(match: FlatMatch): string {
                   loser: !!match.result && !legWinner(match.result, 'home'),
                 }"
               >
-                <span class="fx-name">{{ getTeam(match.homeId)?.name ?? "TBD" }}</span>
+                <TeamNameAuto :team="getTeam(match.homeId)" />
                 <span class="dot" :style="{ background: getTeam(match.homeId)?.color ?? '#ccc' }" />
               </span>
               <div class="fx-center">
@@ -317,7 +324,7 @@ function singleScoreColor(match: FlatMatch): string {
                 }"
               >
                 <span class="dot" :style="{ background: getTeam(match.awayId)?.color ?? '#ccc' }" />
-                <span class="fx-name">{{ getTeam(match.awayId)?.name ?? "TBD" }}</span>
+                <TeamNameAuto :team="getTeam(match.awayId)" />
               </span>
             </div>
           </div>
@@ -333,7 +340,7 @@ function singleScoreColor(match: FlatMatch): string {
                   loser: !!match.leg2Result && !legWinner(match.leg2Result, 'home'),
                 }"
               >
-                <span class="fx-name">{{ getTeam(match.awayId)?.name ?? "TBD" }}</span>
+                <TeamNameAuto :team="getTeam(match.awayId)" />
                 <span class="dot" :style="{ background: getTeam(match.awayId)?.color ?? '#ccc' }" />
               </span>
               <div class="fx-center">
@@ -384,7 +391,7 @@ function singleScoreColor(match: FlatMatch): string {
                 }"
               >
                 <span class="dot" :style="{ background: getTeam(match.homeId)?.color ?? '#ccc' }" />
-                <span class="fx-name">{{ getTeam(match.homeId)?.name ?? "TBD" }}</span>
+                <TeamNameAuto :team="getTeam(match.homeId)" />
               </span>
             </div>
           </div>
@@ -399,7 +406,7 @@ function singleScoreColor(match: FlatMatch): string {
               loser: match.result && getWinnerId(match) !== match.homeId,
             }"
           >
-            <span class="fx-name">{{ getTeam(match.homeId)?.name ?? "TBD" }}</span>
+            <TeamNameAuto :team="getTeam(match.homeId)" />
             <span class="dot" :style="{ background: getTeam(match.homeId)?.color ?? '#ccc' }" />
           </span>
 
@@ -457,7 +464,7 @@ function singleScoreColor(match: FlatMatch): string {
             }"
           >
             <span class="dot" :style="{ background: getTeam(match.awayId)?.color ?? '#ccc' }" />
-            <span class="fx-name">{{ getTeam(match.awayId)?.name ?? "TBD" }}</span>
+            <TeamNameAuto :team="getTeam(match.awayId)" />
           </span>
         </div>
       </template>
@@ -633,20 +640,12 @@ function singleScoreColor(match: FlatMatch): string {
 }
 .fx-team--home {
   justify-content: flex-end;
+  text-align: right;
 }
 .fx-team--away {
   justify-content: flex-start;
 }
-.fx-name {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  min-width: 0;
-}
-.fx-team--home .fx-name {
-  text-align: right;
-}
-.fx-team.winner .fx-name {
+.fx-team.winner {
   font-weight: 700;
 }
 .fx-team.loser {

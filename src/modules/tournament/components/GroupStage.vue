@@ -4,6 +4,7 @@ import type { Team } from "@/modules/teams/types"
 import type { Tournament, GroupMatch } from "@/modules/tournament/types"
 import AppModal from "@/components/AppModal.vue"
 import { useTeamLookup } from "@/composables/useTeamLookup"
+import TeamNameAuto from "@/modules/teams/components/TeamNameAuto.vue"
 import { Lock, Shuffle, Check } from "lucide-vue-next"
 
 const props = defineProps<{
@@ -185,9 +186,7 @@ function scoreAccentColor(match: GroupMatch): string {
                       class="dot"
                       :style="{ background: teamById(row.teamId)?.color ?? '#888' }"
                     />
-                    <span class="team-name-text">
-                      {{ teamById(row.teamId)?.name ?? row.teamId }}
-                    </span>
+                    <TeamNameAuto :team="teamById(row.teamId)" :fallback="row.teamId" />
                   </span>
                 </td>
                 <td>{{ row.played }}</td>
@@ -240,7 +239,7 @@ function scoreAccentColor(match: GroupMatch): string {
             class="gs-match"
           >
             <span class="gs-team gs-team--home">
-              <span class="gs-team-name">{{ teamById(match.homeId)?.name }}</span>
+              <TeamNameAuto :team="teamById(match.homeId)" />
               <span class="dot" :style="{ background: teamById(match.homeId)?.color ?? '#888' }" />
             </span>
 
@@ -258,7 +257,7 @@ function scoreAccentColor(match: GroupMatch): string {
 
             <span class="gs-team gs-team--away">
               <span class="dot" :style="{ background: teamById(match.awayId)?.color ?? '#888' }" />
-              <span class="gs-team-name">{{ teamById(match.awayId)?.name }}</span>
+              <TeamNameAuto :team="teamById(match.awayId)" />
             </span>
 
             <button v-if="!locked" class="btn-xs sim-btn" @click="emit('simMatch', gi, mi)">
@@ -388,13 +387,6 @@ function scoreAccentColor(match: GroupMatch): string {
   min-width: 0;
   max-width: 120px;
 }
-.team-name-text {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  min-width: 0;
-  display: block;
-}
 .col-pts {
   font-weight: 700;
 }
@@ -450,18 +442,10 @@ function scoreAccentColor(match: GroupMatch): string {
 }
 .gs-team--home {
   justify-content: flex-end;
+  text-align: right;
 }
 .gs-team--away {
   justify-content: flex-start;
-}
-.gs-team-name {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  min-width: 0;
-}
-.gs-team--home .gs-team-name {
-  text-align: right;
 }
 
 .gs-score-btn {

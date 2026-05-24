@@ -2,17 +2,20 @@
 import { useRouter } from "vue-router"
 import { useTeamsStore } from "../store"
 import { useTeamForm } from "../composables/useTeamForm"
+import { autoAbbr } from "@/composables/useTeamLookup"
 import { X } from "lucide-vue-next"
 import { MAX_TEAMS } from "@/constants"
 
 const store = useTeamsStore()
 const {
   newName,
+  newAbbr,
   newColor,
   newPower,
   addTeam,
   editing,
   editName,
+  editAbbr,
   editColor,
   editPower,
   startEdit,
@@ -35,6 +38,14 @@ const router = useRouter()
               store.teams.length >= MAX_TEAMS ? `Team limit reached (${MAX_TEAMS})` : 'Team name'
             "
             class="name-input"
+            :disabled="store.teams.length >= MAX_TEAMS"
+            @keyup.enter="addTeam"
+          />
+          <input
+            v-model="newAbbr"
+            :placeholder="newName.trim() ? autoAbbr(newName.trim()) : 'Abbr'"
+            maxlength="7"
+            class="abbr-input"
             :disabled="store.teams.length >= MAX_TEAMS"
             @keyup.enter="addTeam"
           />
@@ -81,6 +92,13 @@ const router = useRouter()
             <span class="color-dot" :style="{ background: team.color }" />
             <template v-if="editing === team.id">
               <input v-model="editName" class="edit-name" @keyup.enter="saveEdit(team.id)" />
+              <input
+                v-model="editAbbr"
+                :placeholder="autoAbbr(editName)"
+                maxlength="7"
+                class="abbr-input"
+                @keyup.enter="saveEdit(team.id)"
+              />
               <input v-model="editColor" type="color" class="color-input-sm" />
               <input v-model.number="editPower" type="number" min="1" max="99" class="edit-power" />
               <button class="primary sm" @click="saveEdit(team.id)">Save</button>
@@ -105,7 +123,10 @@ const router = useRouter()
 
 <style scoped>
 .name-input {
-  width: 320px;
+  width: 260px;
+}
+.abbr-input {
+  width: 70px;
 }
 .power-input {
   width: 60px;

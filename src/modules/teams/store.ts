@@ -31,9 +31,16 @@ export const useTeamsStore = defineStore("teams", () => {
     return Math.min(99, Math.max(1, Math.round(power)))
   }
 
-  function add(name: string, color: string, power: number) {
+  function add(name: string, color: string, power: number, abbr?: string) {
     if (teams.value.length >= MAX_TEAMS) return
-    teams.value.push({ id: Date.now().toString(), name, color, power: clampPower(power) })
+    const entry: import("./types").Team = {
+      id: Date.now().toString(),
+      name,
+      color,
+      power: clampPower(power),
+    }
+    if (abbr?.trim()) entry.abbr = abbr.trim().slice(0, 7)
+    teams.value.push(entry)
   }
 
   function remove(id: string) {
