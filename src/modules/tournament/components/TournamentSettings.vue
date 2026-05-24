@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from "vue"
-import type { Tournament, PlayoffSeedMode } from "@/modules/tournament/types"
+import type { Tournament, PlayoffSeedMode, LegMode } from "@/modules/tournament/types"
 import type { Team } from "@/modules/teams/types"
 import ManualDraw from "@/modules/tournament/components/ManualDraw.vue"
 import GroupDraw from "@/modules/tournament/components/GroupDraw.vue"
@@ -25,10 +25,16 @@ const emit = defineEmits<{
   changeGroupCount: [count: number]
   changeQualifiersPerGroup: [qpg: number]
   toggleThirdPlace: []
+  changeLegMode: [stage: "group" | "knockout" | "final", mode: LegMode]
   reset: []
   delete: []
   close: []
 }>()
+
+const legOptions = [
+  { value: "single", label: "Tek Maç" },
+  { value: "double", label: "Çift Maç" },
+]
 
 useModal(() => {
   if (showManualDraw.value) {
@@ -270,6 +276,43 @@ function handleManualConfirm(orderedIds: string[]) {
           </div>
         </template>
 
+        <!-- ── Maç Sayısı ──────────────────────────────── -->
+        <div class="ts-divider"></div>
+        <div class="ts-section">
+          <div class="ts-section-title">Maç Sayısı</div>
+          <template v-if="!hasAnyResults">
+            <div class="ts-leg-rows">
+              <div v-if="isGroupFormat" class="ts-leg-row">
+                <span class="ts-hint ts-leg-label">Grup Aşaması</span>
+                <BtnGroup
+                  :model-value="tournament.groupLegMode ?? 'single'"
+                  :options="legOptions"
+                  @update:model-value="emit('changeLegMode', 'group', $event as LegMode)"
+                />
+              </div>
+              <div class="ts-leg-row">
+                <span class="ts-hint ts-leg-label">Eleme Turları</span>
+                <BtnGroup
+                  :model-value="tournament.knockoutLegMode ?? 'single'"
+                  :options="legOptions"
+                  @update:model-value="emit('changeLegMode', 'knockout', $event as LegMode)"
+                />
+              </div>
+              <div class="ts-leg-row">
+                <span class="ts-hint ts-leg-label">Final</span>
+                <BtnGroup
+                  :model-value="tournament.finalLegMode ?? 'single'"
+                  :options="legOptions"
+                  @update:model-value="emit('changeLegMode', 'final', $event as LegMode)"
+                />
+              </div>
+            </div>
+          </template>
+          <p v-else class="ts-hint ts-hint--warn">
+            Maç sayısı maçlar başladıktan sonra değiştirilemez.
+          </p>
+        </div>
+
         <!-- ── Danger Zone ──────────────────────────────── -->
         <div class="ts-divider"></div>
         <div class="ts-section">
@@ -490,6 +533,22 @@ function handleManualConfirm(orderedIds: string[]) {
 .ts-toggle-label {
   font-size: 13px;
   font-weight: 500;
+}
+
+.ts-leg-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.ts-leg-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.ts-leg-label {
+  width: 130px;
+  flex-shrink: 0;
 }
 
 /* Playoff seeding wrap variant */

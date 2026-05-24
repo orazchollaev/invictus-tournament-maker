@@ -2,7 +2,7 @@ import { computed, watch } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import { useTeamsStore } from "@/modules/teams/store"
 import { useTournamentStore } from "@/modules/tournament/store"
-import type { PlayoffSeedMode } from "@/modules/tournament/types"
+import type { PlayoffSeedMode, LegMode } from "@/modules/tournament/types"
 import confetti from "canvas-confetti"
 
 export function useTournamentDetail() {
@@ -74,6 +74,10 @@ export function useTournamentDetail() {
     store.changeQualifiersPerGroup(tournamentId.value, qpg)
   }
 
+  function changeLegMode(stage: "group" | "knockout" | "final", mode: LegMode) {
+    store.setLegMode(tournamentId.value, stage, mode)
+  }
+
   function fireTeamConfetti(color: string) {
     const end = Date.now() + 2000
 
@@ -129,5 +133,6 @@ export function useTournamentDetail() {
     setPlayoffSeedMode,
     changeGroupCount,
     changeQualifiersPerGroup,
+    changeLegMode,
   }
 }

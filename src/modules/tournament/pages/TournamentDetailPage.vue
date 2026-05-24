@@ -32,6 +32,7 @@ const {
   setPlayoffSeedMode,
   changeGroupCount,
   changeQualifiersPerGroup,
+  changeLegMode,
 } = useTournamentDetail()
 
 const showSeasonModal = ref(false)
@@ -207,6 +208,7 @@ function closeSeasonModal() {
       @change-qualifiers-per-group="changeQualifiersPerGroup"
       @toggle-third-place="store.toggleThirdPlace(tournament!.id)"
       @set-playoff-seed-mode="setPlayoffSeedMode"
+      @change-leg-mode="changeLegMode"
       @reset="resetTournament"
       @delete="deleteTournament"
       @close="showSettingsModal = false"

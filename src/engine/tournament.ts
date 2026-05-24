@@ -1,6 +1,6 @@
 // engine/tournament.ts
 import type { Team } from "../modules/teams/types"
-import type { Group, Tournament, PlayoffSeedMode } from "../modules/tournament/types"
+import type { Group, Tournament, PlayoffSeedMode, LegMode } from "../modules/tournament/types"
 import { uid, shuffle } from "./utils"
 import {
   buildBracketRounds,
@@ -17,7 +17,10 @@ export function createTournament(
   seeded = false,
   orderedTeams?: Team[],
   groupCount?: number, // if provided → group+bracket format
-  qualifiersPerGroup = 2
+  qualifiersPerGroup = 2,
+  groupLegMode: LegMode = "single",
+  knockoutLegMode: LegMode = "single",
+  finalLegMode: LegMode = "single"
 ): Tournament {
   const format = groupCount && groupCount >= 2 ? "group+bracket" : "bracket"
 
@@ -29,12 +32,29 @@ export function createTournament(
       seeded,
       groupCount!,
       qualifiersPerGroup,
-      orderedTeams
+      orderedTeams,
+      groupLegMode,
+      knockoutLegMode,
+      finalLegMode
     )
   }
 
   // ── Pure bracket ──────────────────────────────────────────────
   const rounds = buildPureBracket(teams, seeded, orderedTeams)
+
+  // Mark knockout rounds as double-leg
+  if (knockoutLegMode === "double") {
+    for (let r = 0; r < rounds.length - 1; r++) {
+      rounds[r].matches.forEach((m) => {
+        m.leg2Result = null
+      })
+    }
+  }
+  if (finalLegMode === "double" && rounds.length > 0) {
+    rounds[rounds.length - 1].matches.forEach((m) => {
+      m.leg2Result = null
+    })
+  }
 
   return {
     id: uid(),
@@ -44,6 +64,9 @@ export function createTournament(
     teamIds: teams.map((t) => t.id),
     rounds,
     winnerId: null,
+    groupLegMode,
+    knockoutLegMode,
+    finalLegMode,
     createdAt: Date.now(),
   }
 }
@@ -55,7 +78,10 @@ function createGroupBracketTournament(
   seeded: boolean,
   groupCount: number,
   qualifiersPerGroup: number,
-  orderedTeams?: Team[]
+  orderedTeams?: Team[],
+  groupLegMode: LegMode = "single",
+  knockoutLegMode: LegMode = "single",
+  finalLegMode: LegMode = "single"
 ): Tournament {
   let teamsToPlace: Team[]
   if (orderedTeams) {
@@ -87,7 +113,7 @@ function createGroupBracketTournament(
 
   for (const group of groups) {
     const ids = group.teamIds
-    group.matches = buildGroupFixture(ids)
+    group.matches = buildGroupFixture(ids, groupLegMode === "double")
     group.standings = ids.map((teamId) => ({
       teamId,
       played: 0,
@@ -109,6 +135,20 @@ function createGroupBracketTournament(
   const bracketSize = Math.pow(2, Math.ceil(Math.log2(Math.max(qualifierCount, 2))))
   const emptyRounds = buildEmptyBracketRounds(bracketSize)
 
+  // Mark knockout rounds as double-leg
+  if (knockoutLegMode === "double") {
+    for (let r = 0; r < emptyRounds.length - 1; r++) {
+      emptyRounds[r].matches.forEach((m) => {
+        m.leg2Result = null
+      })
+    }
+  }
+  if (finalLegMode === "double" && emptyRounds.length > 0) {
+    emptyRounds[emptyRounds.length - 1].matches.forEach((m) => {
+      m.leg2Result = null
+    })
+  }
+
   return {
     id: uid(),
     name,
@@ -120,6 +160,9 @@ function createGroupBracketTournament(
     qualifiersPerGroup: clampedQpg,
     rounds: emptyRounds,
     winnerId: null,
+    groupLegMode,
+    knockoutLegMode,
+    finalLegMode,
     createdAt: Date.now(),
   }
 }

@@ -21,6 +21,24 @@ export function updateThirdPlaceSlots(tournament: Tournament) {
 
 export function getWinnerId(match: Match): string | null {
   if (!match.result) return null
+
+  // Double-leg tie: leg2Result undefined = single-leg
+  if (match.leg2Result !== undefined) {
+    if (match.leg2Result === null) return null // leg 2 not yet played
+    // Aggregate: homeId goals = result.home + leg2Result.away (homeId plays away in leg 2)
+    const aggHome = match.result.home + match.leg2Result.away
+    const aggAway = match.result.away + match.leg2Result.home
+    if (aggHome > aggAway) return match.homeId
+    if (aggAway > aggHome) return match.awayId
+    // Aggregate tied: penalty (penHome = awayId's pens, penAway = homeId's pens in leg 2)
+    if (match.leg2Result.penHome !== undefined && match.leg2Result.penAway !== undefined) {
+      if (match.leg2Result.penAway > match.leg2Result.penHome) return match.homeId
+      if (match.leg2Result.penHome > match.leg2Result.penAway) return match.awayId
+    }
+    return null
+  }
+
+  // Single-leg
   if (match.result.home > match.result.away) return match.homeId
   if (match.result.away > match.result.home) return match.awayId
   if (match.result.penHome !== undefined && match.result.penAway !== undefined) {

@@ -1,5 +1,7 @@
 // modules/tournament/types.ts
 
+export type LegMode = "single" | "double"
+
 export interface MatchResult {
   home: number
   away: number
@@ -12,6 +14,8 @@ export interface Match {
   homeId: string | null
   awayId: string | null
   result: MatchResult | null
+  // undefined = single-leg, null = double-leg leg2 not yet played, object = played
+  leg2Result?: MatchResult | null
 }
 
 export interface Round {
@@ -70,6 +74,10 @@ export interface Tournament {
 
   hasThirdPlace?: boolean
   thirdPlaceMatch?: Match
+
+  groupLegMode?: LegMode
+  knockoutLegMode?: LegMode
+  finalLegMode?: LegMode
 
   createdAt: number
 }

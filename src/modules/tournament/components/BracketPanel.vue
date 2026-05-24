@@ -63,8 +63,20 @@ function setResult(ri: number, mi: number, h: number, a: number, ph?: number, pa
   store.setResult(props.tournament.id, ri, mi, h, a, ph, pa)
 }
 
+function setLeg2Result(ri: number, mi: number, h: number, a: number, ph?: number, pa?: number) {
+  store.setLeg2Result(props.tournament.id, ri, mi, h, a, ph, pa)
+}
+
 function simMatch(ri: number, mi: number) {
   store.simulateBracketMatch(props.tournament.id, ri, mi)
+}
+
+function simLeg1(ri: number, mi: number) {
+  store.simulateLeg1(props.tournament.id, ri, mi)
+}
+
+function simLeg2(ri: number, mi: number) {
+  store.simulateLeg2(props.tournament.id, ri, mi)
 }
 
 function setThirdPlaceResult(h: number, a: number, ph?: number, pa?: number) {
@@ -102,6 +114,15 @@ onUnmounted(() => {
     <h2 class="bracket-heading">
       {{ title ?? "Bracket" }}
       <div class="bracket-heading-right">
+        <button
+          v-if="bracketView === 'bracket'"
+          class="btn-xs"
+          :disabled="isExporting"
+          @click="exportPng"
+        >
+          <Download :size="13" />
+          {{ isExporting ? "Exporting…" : "Export PNG" }}
+        </button>
         <div v-if="bracketView === 'bracket'" class="zoom-controls">
           <button class="btn-xs icon-only" :disabled="zoom <= 0.5" @click="zoomOut">
             <Minus :size="13" />
@@ -127,15 +148,6 @@ onUnmounted(() => {
             Fixtures
           </button>
         </div>
-        <button
-          v-if="bracketView === 'bracket'"
-          class="btn-xs"
-          :disabled="isExporting"
-          @click="exportPng"
-        >
-          <Download :size="13" />
-          {{ isExporting ? "Exporting…" : "Export PNG" }}
-        </button>
         <button class="btn-xs" @click="openFullBracket">
           <Maximize2 :size="13" />
           Full View
@@ -162,7 +174,10 @@ onUnmounted(() => {
           :tournament="tournament"
           :teams="teams"
           @set-result="setResult"
+          @set-leg2-result="setLeg2Result"
           @sim-match="simMatch"
+          @sim-leg1="simLeg1"
+          @sim-leg2="simLeg2"
           @set-third-place-result="setThirdPlaceResult"
           @sim-third-place="simThirdPlace"
         />
@@ -173,7 +188,10 @@ onUnmounted(() => {
         :tournament="tournament"
         :teams="teams"
         @set-result="setResult"
+        @set-leg2-result="setLeg2Result"
         @sim-match="simMatch"
+        @sim-leg1="simLeg1"
+        @sim-leg2="simLeg2"
         @set-third-place-result="setThirdPlaceResult"
         @sim-third-place="simThirdPlace"
       />
@@ -211,7 +229,10 @@ onUnmounted(() => {
             :tournament="tournament"
             :teams="teams"
             @set-result="setResult"
+            @set-leg2-result="setLeg2Result"
             @sim-match="simMatch"
+            @sim-leg1="simLeg1"
+            @sim-leg2="simLeg2"
             @set-third-place-result="setThirdPlaceResult"
             @sim-third-place="simThirdPlace"
           />

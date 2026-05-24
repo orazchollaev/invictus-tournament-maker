@@ -3,11 +3,13 @@ import { ref, computed, watch } from "vue"
 import { useRouter } from "vue-router"
 import { useTeamsStore } from "@/modules/teams/store"
 import { useTournamentStore } from "@/modules/tournament/store"
+import { useSettingsStore } from "@/modules/settings/store"
 import ManualDraw from "./ManualDraw.vue"
 import GroupDraw from "./GroupDraw.vue"
 import BtnGroup from "@/components/BtnGroup.vue"
 import { useModal } from "@/composables/useModal"
 import { X, Trophy, LayoutGrid } from "lucide-vue-next"
+import type { LegMode } from "@/modules/tournament/types"
 
 type DrawType = "random" | "seeded" | "manual"
 type TournamentFormat = "bracket" | "group+bracket"
@@ -17,6 +19,7 @@ const emit = defineEmits<{ close: [] }>()
 const router = useRouter()
 const teamsStore = useTeamsStore()
 const store = useTournamentStore()
+const settingsStore = useSettingsStore()
 
 const name = ref("")
 const selected = ref<string[]>([])
@@ -26,6 +29,14 @@ const groupCount = ref(4)
 const qualifiersPerGroup = ref(2)
 const showManualDraw = ref(false)
 const hasThirdPlace = ref(false)
+const groupLegMode = ref<LegMode>(settingsStore.groupLegMode)
+const knockoutLegMode = ref<LegMode>(settingsStore.knockoutLegMode)
+const finalLegMode = ref<LegMode>(settingsStore.finalLegMode)
+
+const legOptions = [
+  { value: "single", label: "Tek Maç" },
+  { value: "double", label: "Çift Maç" },
+]
 
 useModal(() => {
   if (showManualDraw.value) {
@@ -86,7 +97,22 @@ function doCreate(orderedIds?: string[]) {
   const gc = format.value === "group+bracket" ? groupCount.value : undefined
   const qpg = format.value === "group+bracket" ? qualifiersPerGroup.value : undefined
   const isSeeded = drawType.value === "seeded"
-  const id = store.create(name.value.trim(), selected.value, isSeeded, orderedIds, gc, qpg)
+  const gLeg = format.value === "group+bracket" ? groupLegMode.value : "single"
+  // Persist leg mode defaults to settings
+  settingsStore.groupLegMode = gLeg
+  settingsStore.knockoutLegMode = knockoutLegMode.value
+  settingsStore.finalLegMode = finalLegMode.value
+  const id = store.create(
+    name.value.trim(),
+    selected.value,
+    isSeeded,
+    orderedIds,
+    gc,
+    qpg,
+    gLeg,
+    knockoutLegMode.value,
+    finalLegMode.value
+  )
   if (hasThirdPlace.value) store.toggleThirdPlace(id)
   router.push(`/tournaments/${id}`)
   emit("close")
@@ -263,6 +289,26 @@ const teamsPerGroup = computed(() =>
               </label>
             </div>
           </template>
+
+          <!-- Leg mode -->
+          <div class="ct-divider" />
+          <div class="ct-section">
+            <div class="ct-label">Maç Sayısı</div>
+            <div class="ct-leg-rows">
+              <div v-if="format === 'group+bracket'" class="ct-leg-row">
+                <span class="ct-leg-label">Grup Aşaması</span>
+                <BtnGroup v-model="groupLegMode" :options="legOptions" />
+              </div>
+              <div class="ct-leg-row">
+                <span class="ct-leg-label">Eleme Turları</span>
+                <BtnGroup v-model="knockoutLegMode" :options="legOptions" />
+              </div>
+              <div class="ct-leg-row">
+                <span class="ct-leg-label">Final</span>
+                <BtnGroup v-model="finalLegMode" :options="legOptions" />
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- Footer -->
@@ -536,6 +582,25 @@ const teamsPerGroup = computed(() =>
 .ct-toggle-hint {
   font-size: 11px;
   color: var(--text-muted);
+}
+
+/* Leg mode */
+.ct-leg-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.ct-leg-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.ct-leg-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  width: 130px;
+  flex-shrink: 0;
 }
 
 /* Footer */

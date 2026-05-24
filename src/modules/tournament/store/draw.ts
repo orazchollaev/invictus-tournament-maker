@@ -1,5 +1,5 @@
 import type { Ref } from "vue"
-import type { Tournament, PlayoffSeedMode } from "../types"
+import type { Tournament, PlayoffSeedMode, LegMode } from "../types"
 import type { Team } from "@/modules/teams/types"
 import { createTournament } from "@/engine"
 
@@ -45,7 +45,10 @@ export function useDrawActions(tournaments: Ref<Tournament[]>, getTeams: () => T
       seeded,
       ordered,
       resolvedGroupCount,
-      resolvedQpg
+      resolvedQpg,
+      t.groupLegMode ?? "single",
+      t.knockoutLegMode ?? "single",
+      t.finalLegMode ?? "single"
     )
     t.rounds = fresh.rounds
     t.winnerId = null
@@ -54,6 +57,15 @@ export function useDrawActions(tournaments: Ref<Tournament[]>, getTeams: () => T
       t.groupsDone = false
       t.qualifiersPerGroup = fresh.qualifiersPerGroup
     }
+  }
+
+  function setLegMode(tournamentId: string, stage: "group" | "knockout" | "final", mode: LegMode) {
+    const t = tournaments.value.find((t) => t.id === tournamentId)
+    if (!t || hasAnyResults(tournamentId)) return
+    if (stage === "group") t.groupLegMode = mode
+    else if (stage === "knockout") t.knockoutLegMode = mode
+    else t.finalLegMode = mode
+    rebuildDraw(t)
   }
 
   function changeGroupCount(tournamentId: string, count: number) {
@@ -105,6 +117,7 @@ export function useDrawActions(tournaments: Ref<Tournament[]>, getTeams: () => T
 
   return {
     hasAnyResults,
+    setLegMode,
     changeGroupCount,
     changeQualifiersPerGroup,
     addTeamToTournament,

@@ -7,7 +7,8 @@ import { simulateMatch } from "./simulation"
 // ─── Round-robin fixture builder (circle method) ────────────────
 // Groups matches by round so no team plays twice in the same round.
 // Home/away alternates per pair to balance home games (±1 over the season).
-export function buildGroupFixture(teamIds: string[]): GroupMatch[] {
+// doubleLeg=true adds the reverse fixture so each pair plays home AND away.
+export function buildGroupFixture(teamIds: string[], doubleLeg = false): GroupMatch[] {
   const n = teamIds.length
   if (n < 2) return []
 
@@ -38,6 +39,16 @@ export function buildGroupFixture(teamIds: string[]): GroupMatch[] {
       })
     }
     rotating.unshift(rotating.pop()!)
+  }
+
+  if (doubleLeg) {
+    const reversed: GroupMatch[] = matches.map((m) => ({
+      id: uid(),
+      homeId: m.awayId,
+      awayId: m.homeId,
+      result: null,
+    }))
+    matches.push(...reversed)
   }
 
   return matches

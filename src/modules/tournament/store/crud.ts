@@ -1,5 +1,5 @@
 import type { Ref } from "vue"
-import type { Tournament } from "../types"
+import type { Tournament, LegMode } from "../types"
 import type { Team } from "@/modules/teams/types"
 import { createTournament, uid, updateThirdPlaceSlots, recalcStandings } from "@/engine"
 
@@ -14,7 +14,10 @@ export function useCrudActions(
     seeded = false,
     orderedIds?: string[],
     groupCount?: number,
-    qualifiersPerGroup?: number
+    qualifiersPerGroup?: number,
+    groupLegMode: LegMode = "single",
+    knockoutLegMode: LegMode = "single",
+    finalLegMode: LegMode = "single"
   ): string {
     const allTeams = getTeams()
     const selected = allTeams.filter((t) => teamIds.includes(t.id))
@@ -32,7 +35,10 @@ export function useCrudActions(
       seeded,
       ordered,
       groupCount,
-      qualifiersPerGroup
+      qualifiersPerGroup,
+      groupLegMode,
+      knockoutLegMode,
+      finalLegMode
     )
     tournaments.value.push(t)
     active.value = t.id
@@ -67,7 +73,10 @@ export function useCrudActions(
       seeded,
       ordered,
       effectiveGroupCount,
-      effectiveQpg
+      effectiveQpg,
+      t.groupLegMode ?? "single",
+      t.knockoutLegMode ?? "single",
+      t.finalLegMode ?? "single"
     )
     if (t.playoffSeedMode) newT.playoffSeedMode = t.playoffSeedMode
     if (withThirdPlace && newT.rounds.length >= 2) {
@@ -102,6 +111,7 @@ export function useCrudActions(
     for (let r = 0; r < t.rounds.length; r++) {
       for (const match of t.rounds[r].matches) {
         match.result = null
+        if (match.leg2Result !== undefined) match.leg2Result = null
         if (r > 0 || t.format === "group+bracket") {
           match.homeId = null
           match.awayId = null
@@ -130,13 +140,14 @@ export function useCrudActions(
       for (const match of round.matches) {
         if (!match.homeId || !match.awayId) continue
         if (!match.result) return false
+        if (match.leg2Result !== undefined && match.leg2Result === null) return false
       }
     }
     if (t.thirdPlaceMatch) {
       const m = t.thirdPlaceMatch
       if (m.homeId && m.awayId && !m.result) return false
     }
-    return true
+    return true && !!t.winnerId
   }
 
   return { create, newSeason, remove, getById, resetResults, isTournamentFinished }

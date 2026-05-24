@@ -91,34 +91,74 @@ const allMatches = computed((): MatchRow[] => {
         const isHome = match.homeId === teamId.value
         const isAway = match.awayId === teamId.value
         if (!isHome && !isAway) continue
-        if (!match.result) continue
 
-        const winnerId = getWinnerId(match)
-        const outcome = winnerId === teamId.value ? "W" : "L"
-        const opponentId = isHome ? match.awayId : match.homeId
-        const goalsFor = isHome ? match.result.home : match.result.away
-        const goalsAgainst = isHome ? match.result.away : match.result.home
-        const hasPen = match.result.penHome !== undefined
-        const penGoalsFor = hasPen ? (isHome ? match.result.penHome! : match.result.penAway!) : null
-        const penGoalsAgainst = hasPen
-          ? isHome
-            ? match.result.penAway!
-            : match.result.penHome!
-          : null
+        // Leg 1
+        if (match.result) {
+          const opponentId = isHome ? match.awayId : match.homeId
+          const goalsFor = isHome ? match.result.home : match.result.away
+          const goalsAgainst = isHome ? match.result.away : match.result.home
+          let outcome: "W" | "D" | "L"
+          if (match.leg2Result !== undefined) {
+            // Double-leg: each leg W/D/L based on that leg's result only
+            if (goalsFor > goalsAgainst) outcome = "W"
+            else if (goalsFor < goalsAgainst) outcome = "L"
+            else outcome = "D"
+          } else {
+            const winnerId = getWinnerId(match)
+            outcome = winnerId === teamId.value ? "W" : "L"
+          }
+          const hasPen = match.leg2Result === undefined && match.result.penHome !== undefined
+          const penGoalsFor = hasPen
+            ? isHome
+              ? match.result.penHome!
+              : match.result.penAway!
+            : null
+          const penGoalsAgainst = hasPen
+            ? isHome
+              ? match.result.penAway!
+              : match.result.penHome!
+            : null
+          const roundLabel = match.leg2Result !== undefined ? `${round.name} (L1)` : round.name
+          results.push({
+            tournamentName: t.name,
+            tournamentSeason: t.season,
+            round: roundLabel,
+            roundPhase: "knockout",
+            match,
+            opponentId,
+            goalsFor,
+            goalsAgainst,
+            penGoalsFor,
+            penGoalsAgainst,
+            outcome,
+          })
+        }
 
-        results.push({
-          tournamentName: t.name,
-          tournamentSeason: t.season,
-          round: round.name,
-          roundPhase: "knockout",
-          match,
-          opponentId,
-          goalsFor,
-          goalsAgainst,
-          penGoalsFor,
-          penGoalsAgainst,
-          outcome,
-        })
+        // Leg 2 (double-leg only) — awayId plays at home in leg 2
+        if (match.leg2Result && match.leg2Result !== null) {
+          // In leg 2, homeId is original awayId: if team was homeId, they're now "away"
+          const teamIsLeg2Home = match.awayId === teamId.value
+          const opponentId = teamIsLeg2Home ? match.homeId : match.awayId
+          const goalsFor = teamIsLeg2Home ? match.leg2Result.home : match.leg2Result.away
+          const goalsAgainst = teamIsLeg2Home ? match.leg2Result.away : match.leg2Result.home
+          let outcome: "W" | "D" | "L"
+          if (goalsFor > goalsAgainst) outcome = "W"
+          else if (goalsFor < goalsAgainst) outcome = "L"
+          else outcome = "D"
+          results.push({
+            tournamentName: t.name,
+            tournamentSeason: t.season,
+            round: `${round.name} (L2)`,
+            roundPhase: "knockout",
+            match,
+            opponentId,
+            goalsFor,
+            goalsAgainst,
+            penGoalsFor: null,
+            penGoalsAgainst: null,
+            outcome,
+          })
+        }
       }
     }
 
