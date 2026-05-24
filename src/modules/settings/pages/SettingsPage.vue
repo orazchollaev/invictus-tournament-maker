@@ -19,6 +19,11 @@ const themes: { value: Theme; label: string }[] = [
   { value: "dark", label: "Dark" },
 ]
 
+const legOptions = [
+  { value: "single", label: "Single" },
+  { value: "double", label: "Double" },
+]
+
 const DATA_KEYS = ["teams", "tournament"] as const
 
 interface Dataset {
@@ -109,6 +114,73 @@ function importData() {
 
         <hr class="divider" />
 
+        <div class="setting-section-title">Match defaults</div>
+
+        <div class="setting-group">
+          <div class="setting-row">
+            <span class="setting-label">Group stage</span>
+            <BtnGroup v-model="settings.groupLegMode" :options="legOptions" />
+          </div>
+          <div class="setting-row">
+            <span class="setting-label">Knockout</span>
+            <BtnGroup v-model="settings.knockoutLegMode" :options="legOptions" />
+          </div>
+          <div class="setting-row">
+            <span class="setting-label">Final</span>
+            <BtnGroup v-model="settings.finalLegMode" :options="legOptions" />
+          </div>
+        </div>
+
+        <hr class="divider" />
+
+        <div class="setting-section-title">Simulation</div>
+
+        <div class="setting-row">
+          <span class="setting-label">Surprise factor</span>
+          <div class="surprise-control">
+            <button
+              class="stepper-btn"
+              :disabled="settings.surpriseFactor <= 0"
+              @click="settings.surpriseFactor = Math.max(0, settings.surpriseFactor - 5)"
+            >
+              −
+            </button>
+            <input
+              v-model.number="settings.surpriseFactor"
+              type="number"
+              min="0"
+              max="100"
+              step="5"
+              class="surprise-value"
+              @change="
+                settings.surpriseFactor = Math.max(0, Math.min(100, settings.surpriseFactor))
+              "
+            />
+            <button
+              class="stepper-btn"
+              :disabled="settings.surpriseFactor >= 100"
+              @click="settings.surpriseFactor = Math.min(100, settings.surpriseFactor + 5)"
+            >
+              +
+            </button>
+            <span class="surprise-desc">
+              {{
+                settings.surpriseFactor === 0
+                  ? "Power fully determines results"
+                  : settings.surpriseFactor === 100
+                    ? "Completely random results"
+                    : settings.surpriseFactor < 40
+                      ? "Stronger teams usually win"
+                      : settings.surpriseFactor > 60
+                        ? "Upsets happen often"
+                        : "Balanced"
+              }}
+            </span>
+          </div>
+        </div>
+
+        <hr class="divider" />
+
         <div class="setting-row">
           <span class="setting-label">Sample data</span>
           <div class="dataset-list">
@@ -167,6 +239,55 @@ function importData() {
   border-color: var(--accent);
   color: var(--accent);
 }
+.setting-section-title {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.setting-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.surprise-control {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.surprise-desc {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-left: 4px;
+}
+.stepper-btn {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  font-size: 16px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.surprise-value {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent);
+  width: 44px;
+  text-align: center;
+  padding: 0 4px;
+  -moz-appearance: textfield;
+}
+.surprise-value::-webkit-outer-spin-button,
+.surprise-value::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+
 .divider {
   border: none;
   border-top: 1px solid var(--border-light);

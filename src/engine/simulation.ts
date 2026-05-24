@@ -2,6 +2,14 @@
 import type { Team } from "../modules/teams/types"
 import type { Match, GroupMatch } from "../modules/tournament/types"
 
+let _surpriseFactor = 50 // 0 = power dominates, 100 = pure chaos
+
+export function setSimConfig(config: { surpriseFactor?: number }) {
+  if (config.surpriseFactor !== undefined) {
+    _surpriseFactor = Math.max(0, Math.min(100, config.surpriseFactor))
+  }
+}
+
 function poisson(lambda: number): number {
   const L = Math.exp(-lambda)
   let k = 0,
@@ -28,9 +36,10 @@ export function simulateMatch(
   const strength = Math.tanh(diff)
   const base = 1.45
   const randomFactor = 0.85 + Math.random() * 0.3
+  const strengthMult = 1.8 - (_surpriseFactor / 100) * 1.7
 
-  let hLambda = base * (1 + strength * 0.95) * randomFactor
-  let aLambda = base * (1 - strength * 0.95) * randomFactor
+  let hLambda = base * (1 + strength * strengthMult) * randomFactor
+  let aLambda = base * (1 - strength * strengthMult) * randomFactor
 
   if (strength > 0.55 && Math.random() < 0.008) {
     return Math.random() < 0.5 ? { home: 0, away: 3 } : { home: 3, away: 0 }

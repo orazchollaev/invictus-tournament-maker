@@ -1,6 +1,6 @@
 // engine/index.ts
 export { uid, shuffle, getRoundName } from "./utils"
-export { simulateMatch, simulatePenaltyShootout } from "./simulation"
+export { simulateMatch, simulatePenaltyShootout, setSimConfig } from "./simulation"
 export {
   getWinnerId,
   getLoserId,
