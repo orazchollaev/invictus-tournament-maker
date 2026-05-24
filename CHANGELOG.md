@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.2.0](https://github.com/orazchollaev/tournament-sim/compare/v1.1.0...v1.2.0) (2026-05-24)
+
+### Features
+
+- **header:** add GitHub star button ([3283d44](https://github.com/orazchollaev/tournament-sim/commit/3283d44e2cc6aa5a3c436a84766d80fcba9c34db))
+- **search:** add live search to teams and tournaments list ([a28eb8d](https://github.com/orazchollaev/tournament-sim/commit/a28eb8dc8beaf2df2672b4c2c9a2887fd24450f9))
+- **settings:** add match defaults and surprise factor steppers ([a8a9b21](https://github.com/orazchollaev/tournament-sim/commit/a8a9b21eff746d5916b7f045e92a324cc48e1b45))
+- **teams:** add abbr field with auto-fit display across bracket, fixture, and group stage ([4c8880d](https://github.com/orazchollaev/tournament-sim/commit/4c8880d4d7740dde92eeec557e17a16247840437))
+- **teams:** raise team limit to 128 ([cd103b9](https://github.com/orazchollaev/tournament-sim/commit/cd103b9953ebe6eb9c4124f7b691dde371d7459d))
+- **teams:** replace inline edit with modal form and redesign list UI ([ba39cd9](https://github.com/orazchollaev/tournament-sim/commit/ba39cd9cc75124123cb4e32d5b45e0a6bf0c8273))
+- **teams:** replace native color input with custom color picker ([5f6ae44](https://github.com/orazchollaev/tournament-sim/commit/5f6ae4438e7839fca41ba36a1b7b20fc836a42d0))
+- **tournaments:** clean up list UI ([b6cadde](https://github.com/orazchollaev/tournament-sim/commit/b6cadde2147535e2720f1b9acef0eb3c83a17d56))
+- **ui:** replace Open text buttons with chevron icons in lists ([bed11e4](https://github.com/orazchollaev/tournament-sim/commit/bed11e44ca633de133454cb0cd56804a76fbb973))
+
+### Chores
+
+- **i18n:** translate remaining Turkish strings to English ([59a9435](https://github.com/orazchollaev/tournament-sim/commit/59a943588dace1964f5bd9d71cb8072d4cc7caef))
+
 ## [1.1.0](https://github.com/orazchollaev/tournament-sim/compare/v1.0.1...v1.1.0) (2026-05-24)
 
 ### Features
