@@ -5,7 +5,9 @@ import {
   setGroupMatchResult,
   simulateGroupMatch,
   simulateGroup,
+  simulateGroupWeek,
   simulateAllGroups,
+  simulateWeek,
   allGroupsDone,
   seedBracketFromGroups,
 } from "@/engine"
@@ -41,6 +43,18 @@ export function useGroupActions(tournaments: Ref<Tournament[]>, getTeams: () => 
     simulateAllGroups(t, getTeams())
   }
 
+  function simGroupWeek(tournamentId: string, groupIdx: number): number {
+    const t = tournaments.value.find((t) => t.id === tournamentId)
+    if (!t) return -1
+    return simulateGroupWeek(t, groupIdx, getTeams())
+  }
+
+  function simWeek(tournamentId: string): number {
+    const t = tournaments.value.find((t) => t.id === tournamentId)
+    if (!t) return -1
+    return simulateWeek(t, getTeams())
+  }
+
   function advanceToBracket(tournamentId: string) {
     const t = tournaments.value.find((t) => t.id === tournamentId)
     if (!t || !t.groups) return
@@ -54,5 +68,14 @@ export function useGroupActions(tournaments: Ref<Tournament[]>, getTeams: () => 
     return allGroupsDone(t)
   }
 
-  return { setGroupResult, simGroupMatch, simGroup, simAllGroups, advanceToBracket, isGroupsDone }
+  return {
+    setGroupResult,
+    simGroupMatch,
+    simGroup,
+    simGroupWeek,
+    simAllGroups,
+    simWeek,
+    advanceToBracket,
+    isGroupsDone,
+  }
 }

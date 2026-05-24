@@ -168,6 +168,8 @@ function closeSeasonModal() {
               @set-result="(gi, mi, h, a) => store.setGroupResult(tournament!.id, gi, mi, h, a)"
               @sim-match="(gi, mi) => store.simGroupMatch(tournament!.id, gi, mi)"
               @sim-group="(gi) => store.simGroup(tournament!.id, gi)"
+              @sim-group-week="(gi) => store.simGroupWeek(tournament!.id, gi)"
+              @sim-week="store.simWeek(tournament!.id)"
               @sim-all="store.simAllGroups(tournament!.id)"
               @advance="store.advanceToBracket(tournament!.id)"
             />

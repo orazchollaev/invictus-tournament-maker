@@ -16,8 +16,8 @@ export default defineConfig({
         name: "Tournament Sim",
         short_name: "TournamentSim",
         description: "Tournament Simulator",
-        theme_color: "#3366cc",
-        background_color: "#f8f9fa",
+        theme_color: "#0d9488",
+        background_color: "#d1d6e0",
         display: "standalone",
         orientation: "any",
         icons: [

@@ -34,7 +34,7 @@ import { Settings } from "lucide-vue-next"
 }
 
 .header-inner {
-  max-width: 1080px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 0 20px;
   display: flex;

@@ -143,6 +143,46 @@ export function simulateAllGroups(tournament: Tournament, teams: Team[]) {
   }
 }
 
+export function simulateGroupWeek(tournament: Tournament, groupIdx: number, teams: Team[]): number {
+  const group = tournament.groups![groupIdx]
+  const n = group.teamIds.length
+  const mpr = Math.floor(n / 2)
+  if (mpr < 1) return -1
+  const first = group.matches.findIndex((m) => !m.result)
+  if (first === -1) return -1
+  const roundIdx = Math.floor(first / mpr)
+  const start = roundIdx * mpr
+  const end = Math.min(start + mpr, group.matches.length)
+  for (let i = start; i < end; i++) {
+    if (!group.matches[i].result)
+      group.matches[i].result = simulateMatch(group.matches[i] as any, teams)
+  }
+  recalcStandings(group)
+  return roundIdx
+}
+
+export function simulateWeek(tournament: Tournament, teams: Team[]): number {
+  if (!tournament.groups) return -1
+  let simulatedRound = -1
+  for (const group of tournament.groups) {
+    const n = group.teamIds.length
+    const matchesPerRound = Math.floor(n / 2)
+    if (matchesPerRound < 1) continue
+    const firstUnplayed = group.matches.findIndex((m) => !m.result)
+    if (firstUnplayed === -1) continue
+    const roundIdx = Math.floor(firstUnplayed / matchesPerRound)
+    const start = roundIdx * matchesPerRound
+    const end = start + matchesPerRound
+    for (let i = start; i < Math.min(end, group.matches.length); i++) {
+      if (!group.matches[i].result)
+        group.matches[i].result = simulateMatch(group.matches[i] as any, teams)
+    }
+    recalcStandings(group)
+    simulatedRound = roundIdx
+  }
+  return simulatedRound
+}
+
 export function allGroupsDone(tournament: Tournament): boolean {
   if (!tournament.groups) return true
   return tournament.groups.every((g) => g.matches.every((m) => m.result !== null))
