@@ -140,15 +140,17 @@ function closeSeasonModal() {
         <span class="t-meta">{{ tournament.teamIds.length }} teams · Created {{ dateStr }}</span>
       </div>
 
-      <div
-        v-if="tournament.winnerId"
-        class="winner-banner"
-        :style="{ borderColor: winnerTeam?.color }"
-      >
-        <Trophy :size="18" />
-        <strong>{{ winnerTeam?.name }}</strong>
-        wins the tournament!
-      </div>
+      <Transition name="fade" appear>
+        <div
+          v-if="tournament.winnerId"
+          class="winner-banner"
+          :style="{ borderColor: winnerTeam?.color }"
+        >
+          <Trophy :size="18" />
+          <strong>{{ winnerTeam?.name }}</strong>
+          wins the tournament!
+        </div>
+      </Transition>
 
       <template v-if="isGroupFormat">
         <div class="phase-tabs">
@@ -170,21 +172,23 @@ function closeSeasonModal() {
           </button>
         </div>
 
-        <div v-if="activeTab === 'groups'" class="section-box">
-          <div class="section-body gs-body">
-            <GroupStage
-              :tournament="tournament"
-              :teams="allTeams"
-              @set-result="(gi, mi, h, a) => store.setGroupResult(tournament!.id, gi, mi, h, a)"
-              @sim-match="(gi, mi) => store.simGroupMatch(tournament!.id, gi, mi)"
-              @sim-group="(gi) => store.simGroup(tournament!.id, gi)"
-              @sim-group-week="(gi) => store.simGroupWeek(tournament!.id, gi)"
-              @sim-week="store.simWeek(tournament!.id)"
-              @sim-all="store.simAllGroups(tournament!.id)"
-              @advance="store.advanceToBracket(tournament!.id)"
-            />
+        <Transition name="tab" mode="out-in">
+          <div v-if="activeTab === 'groups'" key="groups" class="section-box">
+            <div class="section-body gs-body">
+              <GroupStage
+                :tournament="tournament"
+                :teams="allTeams"
+                @set-result="(gi, mi, h, a) => store.setGroupResult(tournament!.id, gi, mi, h, a)"
+                @sim-match="(gi, mi) => store.simGroupMatch(tournament!.id, gi, mi)"
+                @sim-group="(gi) => store.simGroup(tournament!.id, gi)"
+                @sim-group-week="(gi) => store.simGroupWeek(tournament!.id, gi)"
+                @sim-week="store.simWeek(tournament!.id)"
+                @sim-all="store.simAllGroups(tournament!.id)"
+                @advance="store.advanceToBracket(tournament!.id)"
+              />
+            </div>
           </div>
-        </div>
+        </Transition>
       </template>
 
       <BracketPanel
@@ -362,6 +366,7 @@ function closeSeasonModal() {
   font-size: 14px;
   border-radius: var(--radius);
   font-weight: 600;
+  animation: banner-slide 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 /* Phase tabs */

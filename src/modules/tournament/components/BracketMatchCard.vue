@@ -385,6 +385,7 @@ const isEditing = computed(() => sMode.value !== "off" || editingLeg.value !== n
   font-size: 12px;
   box-sizing: border-box;
   overflow: hidden;
+  animation: fade-up 0.28s ease both;
 }
 .mc.final {
   border-color: #c9a227;
@@ -477,11 +478,13 @@ const isEditing = computed(() => sMode.value !== "off" || editingLeg.value !== n
   display: inline-flex;
   align-items: baseline;
   gap: 2px;
+  animation: score-pop 0.22s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
 .sc.tbd {
   color: var(--text-muted);
   font-weight: 400;
   background: transparent;
+  animation: none;
 }
 .mc.final .sc {
   background: color-mix(in srgb, #c9a227 16%, var(--surface));

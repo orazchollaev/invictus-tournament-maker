@@ -117,49 +117,51 @@ function closeSeasonModal() {
 
     <div v-if="store.tournaments.length" class="t-list">
       <p v-if="!filtered.length" class="empty-text">No tournaments match "{{ query }}".</p>
-      <div v-for="t in filtered" :key="t.id" class="t-row">
-        <div class="t-body">
-          <div class="t-top">
-            <span class="t-name">{{ t.name }}</span>
-            <span
+      <TransitionGroup name="list" tag="div" class="t-list-inner">
+        <div v-for="(t, i) in filtered" :key="t.id" class="t-row" :style="{ '--i': i }">
+          <div class="t-body">
+            <div class="t-top">
+              <span class="t-name">{{ t.name }}</span>
+              <span
+                v-if="store.isTournamentFinished(t.id)"
+                class="winner-tag"
+                :style="{ '--team-color': winnerColor(t) }"
+              >
+                <Trophy :size="11" />
+                <span class="winner-dot" />
+                {{ winnerName(t) }}
+              </span>
+              <span v-else class="status-live">Live</span>
+            </div>
+            <div class="t-meta-row">
+              <span class="t-badge">S{{ t.season }}</span>
+              <span class="t-badge accent">
+                {{ t.format === "group+bracket" ? "Groups+KO" : "Bracket" }}
+              </span>
+              <span class="t-dot">{{ t.teamIds.length }} teams</span>
+            </div>
+          </div>
+          <div class="t-actions">
+            <button
               v-if="store.isTournamentFinished(t.id)"
-              class="winner-tag"
-              :style="{ '--team-color': winnerColor(t) }"
+              class="sm"
+              @click.stop="openSeasonModal(t)"
             >
-              <Trophy :size="11" />
-              <span class="winner-dot" />
-              {{ winnerName(t) }}
-            </span>
-            <span v-else class="status-live">Live</span>
-          </div>
-          <div class="t-meta-row">
-            <span class="t-badge">S{{ t.season }}</span>
-            <span class="t-badge accent">
-              {{ t.format === "group+bracket" ? "Groups+KO" : "Bracket" }}
-            </span>
-            <span class="t-dot">{{ t.teamIds.length }} teams</span>
+              + Season
+            </button>
+            <button
+              class="sm icon-btn"
+              title="Open"
+              @click.stop="router.push(`/tournaments/${t.id}`)"
+            >
+              <ChevronRight :size="14" />
+            </button>
+            <button class="danger sm icon-btn" @click.stop="deleteTournament(t.id)">
+              <X :size="13" />
+            </button>
           </div>
         </div>
-        <div class="t-actions">
-          <button
-            v-if="store.isTournamentFinished(t.id)"
-            class="sm"
-            @click.stop="openSeasonModal(t)"
-          >
-            + Season
-          </button>
-          <button
-            class="sm icon-btn"
-            title="Open"
-            @click.stop="router.push(`/tournaments/${t.id}`)"
-          >
-            <ChevronRight :size="14" />
-          </button>
-          <button class="danger sm icon-btn" @click.stop="deleteTournament(t.id)">
-            <X :size="13" />
-          </button>
-        </div>
-      </div>
+      </TransitionGroup>
     </div>
 
     <p v-else-if="teamsStore.teams.length >= 2" class="empty-text">
@@ -243,6 +245,12 @@ function closeSeasonModal() {
   display: flex;
   flex-direction: column;
   gap: 6px;
+}
+.t-list-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  position: relative;
 }
 .t-row {
   display: flex;

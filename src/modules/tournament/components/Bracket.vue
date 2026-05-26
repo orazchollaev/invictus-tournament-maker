@@ -158,7 +158,13 @@ function svgPath(p: ConnPath, w: number): string {
               :match="match"
               :teams="teams"
               :is-final="ri === displayRounds.length - 1"
-              :style="{ position: 'absolute', top: cardTop(ri, mi) + 'px', left: 0, right: 0 }"
+              :style="{
+                position: 'absolute',
+                top: cardTop(ri, mi) + 'px',
+                left: 0,
+                right: 0,
+                animationDelay: `${ri * 0.08 + mi * 0.05}s`,
+              }"
               @set-result="(r, m, h, a, ph, pa) => emit('set-result', r, m, h, a, ph, pa)"
               @set-leg2-result="(r, m, h, a, ph, pa) => emit('set-leg2-result', r, m, h, a, ph, pa)"
               @sim-match="(r, m) => emit('sim-match', r, m)"

@@ -5,7 +5,7 @@ import type { Team } from "@/modules/teams/types"
 import ManualDraw from "@/modules/tournament/components/ManualDraw.vue"
 import GroupDraw from "@/modules/tournament/components/GroupDraw.vue"
 import BtnGroup from "@/components/BtnGroup.vue"
-import { useModal } from "@/composables/useModal"
+import AppModal from "@/components/AppModal.vue"
 import { Settings, X, Lock } from "lucide-vue-next"
 
 type DrawType = "random" | "seeded" | "manual"
@@ -36,14 +36,6 @@ const legOptions = [
   { value: "double", label: "Double" },
 ]
 
-useModal(() => {
-  if (showManualDraw.value) {
-    showManualDraw.value = false
-  } else {
-    emit("close")
-  }
-})
-
 const selectedTeamToAdd = ref("")
 const drawType = ref<DrawType>(props.tournament.drawType ?? "random")
 const showManualDraw = ref(false)
@@ -73,6 +65,14 @@ const currentQpg = computed(() => props.tournament.qualifiersPerGroup ?? 2)
 const maxQpg = computed(() => Math.floor(props.tournament.teamIds.length / currentGroupCount.value))
 const minQpg = 1
 
+function handleClose() {
+  if (showManualDraw.value) {
+    showManualDraw.value = false
+  } else {
+    emit("close")
+  }
+}
+
 function handleAddTeam() {
   if (!selectedTeamToAdd.value) return
   emit("addTeam", selectedTeamToAdd.value)
@@ -95,337 +95,299 @@ function handleManualConfirm(orderedIds: string[]) {
 </script>
 
 <template>
-  <div class="ts-backdrop" @click.self="emit('close')">
-    <div class="ts-modal">
-      <!-- Header -->
-      <div class="ts-header">
-        <span class="ts-header-title">
-          <Settings :size="14" />
-          Tournament Settings
-        </span>
-        <button class="btn-xs" @click="emit('close')">
-          <X :size="13" />
-          Close
-        </button>
+  <AppModal :width="'min(520px, calc(100vw - 32px))'" :z-index="250" flush top @close="handleClose">
+    <template #title>
+      <span class="ts-header-title">
+        <Settings :size="14" />
+        Tournament Settings
+      </span>
+    </template>
+
+    <div class="ts-body">
+      <!-- ── Manage Teams ──────────────────────────────── -->
+      <div class="ts-section">
+        <div class="ts-section-title">
+          Manage Teams
+          <span v-if="hasAnyResults" class="ts-lock-tag">
+            <Lock :size="10" />
+            Locked
+          </span>
+        </div>
+        <template v-if="!hasAnyResults">
+          <div class="team-list">
+            <div v-for="team in tournamentTeams" :key="team.id" class="team-row">
+              <span class="team-dot" :style="{ background: team.color }"></span>
+              <span class="team-name">{{ team.name }}</span>
+              <button
+                class="danger team-remove"
+                :disabled="tournament.teamIds.length <= 2"
+                @click="emit('removeTeam', team.id)"
+              >
+                <X :size="13" />
+              </button>
+            </div>
+          </div>
+          <div v-if="availableTeams.length > 0" class="add-team-row">
+            <select v-model="selectedTeamToAdd">
+              <option value="" disabled>Add team…</option>
+              <option v-for="t in availableTeams" :key="t.id" :value="t.id">{{ t.name }}</option>
+            </select>
+            <button class="primary" :disabled="!selectedTeamToAdd" @click="handleAddTeam">
+              Add
+            </button>
+          </div>
+          <p v-else class="ts-hint">All available teams are already in this tournament.</p>
+        </template>
+        <div v-else class="ts-locked-banner">
+          <Lock :size="12" />
+          Team management is disabled once matches have been played.
+        </div>
       </div>
 
-      <!-- Body -->
-      <div class="ts-body">
-        <!-- ── Manage Teams ──────────────────────────────── -->
+      <div class="ts-divider"></div>
+
+      <!-- ── Draw ─────────────────────────────────────── -->
+      <div class="ts-section">
+        <div class="ts-section-title">
+          Draw Method
+          <span v-if="hasAnyResults" class="ts-lock-tag">
+            <Lock :size="10" />
+            Locked
+          </span>
+        </div>
+        <template v-if="!hasAnyResults">
+          <template v-if="showManualDraw">
+            <GroupDraw
+              v-if="isGroupFormat"
+              :teams="tournamentTeams"
+              :group-count="tournament.groups?.length ?? 2"
+              @confirm="handleManualConfirm"
+              @cancel="showManualDraw = false"
+            />
+            <ManualDraw
+              v-else
+              :teams="tournamentTeams"
+              @confirm="handleManualConfirm"
+              @cancel="showManualDraw = false"
+            />
+          </template>
+          <template v-else>
+            <div class="ts-row">
+              <BtnGroup v-model="drawType" :options="drawOptions" />
+              <button @click="handleRedraw">↺ Regenerate</button>
+            </div>
+            <div class="ts-hint-box">
+              <strong>Random</strong>
+              — by chance &nbsp;·&nbsp;
+              <strong>Seeded</strong>
+              — top teams kept apart &nbsp;·&nbsp;
+              <strong>Manual</strong>
+              — you arrange
+            </div>
+          </template>
+        </template>
+        <div v-else class="ts-locked-banner">
+          <Lock :size="12" />
+          Draw cannot be changed once matches have been played.
+        </div>
+      </div>
+
+      <!-- ── Group Count (group+bracket only) ─────── -->
+      <template v-if="isGroupFormat">
+        <div class="ts-divider"></div>
         <div class="ts-section">
           <div class="ts-section-title">
-            Manage Teams
+            Group Structure
             <span v-if="hasAnyResults" class="ts-lock-tag">
               <Lock :size="10" />
               Locked
             </span>
           </div>
           <template v-if="!hasAnyResults">
-            <div class="team-list">
-              <div v-for="team in tournamentTeams" :key="team.id" class="team-row">
-                <span class="team-dot" :style="{ background: team.color }"></span>
-                <span class="team-name">{{ team.name }}</span>
+            <div class="ts-stepper-row">
+              <span class="ts-stepper-label">Number of Groups</span>
+              <div class="gc-stepper">
                 <button
-                  class="danger team-remove"
-                  :disabled="tournament.teamIds.length <= 2"
-                  @click="emit('removeTeam', team.id)"
+                  :disabled="currentGroupCount <= minGroups"
+                  @click="emit('changeGroupCount', currentGroupCount - 1)"
                 >
-                  <X :size="13" />
+                  −
+                </button>
+                <span class="gc-val">{{ currentGroupCount }}</span>
+                <button
+                  :disabled="currentGroupCount >= maxGroups"
+                  @click="emit('changeGroupCount', currentGroupCount + 1)"
+                >
+                  +
                 </button>
               </div>
             </div>
-            <div v-if="availableTeams.length > 0" class="add-team-row">
-              <select v-model="selectedTeamToAdd">
-                <option value="" disabled>Add team…</option>
-                <option v-for="t in availableTeams" :key="t.id" :value="t.id">{{ t.name }}</option>
-              </select>
-              <button class="primary" :disabled="!selectedTeamToAdd" @click="handleAddTeam">
-                Add
-              </button>
+            <div class="ts-stepper-row">
+              <span class="ts-stepper-label">Teams that advance per group</span>
+              <div class="gc-stepper">
+                <button
+                  :disabled="currentQpg <= minQpg"
+                  @click="emit('changeQualifiersPerGroup', currentQpg - 1)"
+                >
+                  −
+                </button>
+                <span class="gc-val">{{ currentQpg }}</span>
+                <button
+                  :disabled="currentQpg >= maxQpg"
+                  @click="emit('changeQualifiersPerGroup', currentQpg + 1)"
+                >
+                  +
+                </button>
+              </div>
+              <span class="ts-hint">→ {{ currentQpg * currentGroupCount }} reach knockout</span>
             </div>
-            <p v-else class="ts-hint">All available teams are already in this tournament.</p>
           </template>
           <div v-else class="ts-locked-banner">
             <Lock :size="12" />
-            Team management is disabled once matches have been played.
+            Group structure cannot be changed once matches have been played.
           </div>
         </div>
+      </template>
 
+      <!-- ── Playoff Seeding (group+bracket only) ──── -->
+      <template v-if="isGroupFormat">
         <div class="ts-divider"></div>
-
-        <!-- ── Draw ─────────────────────────────────────── -->
         <div class="ts-section">
           <div class="ts-section-title">
-            Draw Method
+            Playoff Seeding
+            <span v-if="tournament.groupsDone" class="ts-lock-tag">
+              <Lock :size="10" />
+              Locked
+            </span>
+          </div>
+          <template v-if="!tournament.groupsDone">
+            <BtnGroup
+              :model-value="tournament.playoffSeedMode ?? 'cross'"
+              :options="playoffOptions"
+              class="btn-group--wrap"
+              @update:model-value="emit('setPlayoffSeedMode', $event as PlayoffSeedMode)"
+            />
+            <div class="ts-hint-box">
+              <strong>Cross</strong>
+              — A1 vs B2, B1 vs A2 &nbsp;·&nbsp;
+              <strong>No rematch</strong>
+              — avoids same-group opponents in Round 1 &nbsp;·&nbsp;
+              <strong>Random</strong>
+              — fully random
+            </div>
+          </template>
+          <div v-else class="ts-locked-banner">
+            <Lock :size="12" />
+            Locked — group stage is complete and the bracket has been seeded.
+          </div>
+        </div>
+      </template>
+
+      <!-- ── Format Options ──────────────────────────── -->
+      <template v-if="tournament.rounds.length >= 2">
+        <div class="ts-divider"></div>
+        <div class="ts-section">
+          <div class="ts-section-title">
+            Format Options
             <span v-if="hasAnyResults" class="ts-lock-tag">
               <Lock :size="10" />
               Locked
             </span>
           </div>
           <template v-if="!hasAnyResults">
-            <template v-if="showManualDraw">
-              <GroupDraw
-                v-if="isGroupFormat"
-                :teams="tournamentTeams"
-                :group-count="tournament.groups?.length ?? 2"
-                @confirm="handleManualConfirm"
-                @cancel="showManualDraw = false"
+            <label class="ts-toggle-row">
+              <input
+                type="checkbox"
+                :checked="!!tournament.hasThirdPlace"
+                @change="emit('toggleThirdPlace')"
               />
-              <ManualDraw
-                v-else
-                :teams="tournamentTeams"
-                @confirm="handleManualConfirm"
-                @cancel="showManualDraw = false"
-              />
-            </template>
-            <template v-else>
-              <div class="ts-row">
-                <BtnGroup v-model="drawType" :options="drawOptions" />
-                <button @click="handleRedraw">↺ Regenerate</button>
-              </div>
-              <div class="ts-hint-box">
-                <strong>Random</strong>
-                — by chance &nbsp;·&nbsp;
-                <strong>Seeded</strong>
-                — top teams kept apart &nbsp;·&nbsp;
-                <strong>Manual</strong>
-                — you arrange
-              </div>
-            </template>
+              <span class="ts-toggle-label">3rd Place Match</span>
+              <span class="ts-hint">Semi-final losers play for bronze medal</span>
+            </label>
           </template>
           <div v-else class="ts-locked-banner">
             <Lock :size="12" />
-            Draw cannot be changed once matches have been played.
+            Format cannot be changed once matches have been played.
           </div>
         </div>
+      </template>
 
-        <!-- ── Group Count (group+bracket only) ─────── -->
-        <template v-if="isGroupFormat">
-          <div class="ts-divider"></div>
-          <div class="ts-section">
-            <div class="ts-section-title">
-              Group Structure
-              <span v-if="hasAnyResults" class="ts-lock-tag">
-                <Lock :size="10" />
-                Locked
-              </span>
-            </div>
-            <template v-if="!hasAnyResults">
-              <div class="ts-stepper-row">
-                <span class="ts-stepper-label">Number of Groups</span>
-                <div class="gc-stepper">
-                  <button
-                    :disabled="currentGroupCount <= minGroups"
-                    @click="emit('changeGroupCount', currentGroupCount - 1)"
-                  >
-                    −
-                  </button>
-                  <span class="gc-val">{{ currentGroupCount }}</span>
-                  <button
-                    :disabled="currentGroupCount >= maxGroups"
-                    @click="emit('changeGroupCount', currentGroupCount + 1)"
-                  >
-                    +
-                  </button>
-                </div>
-              </div>
-              <div class="ts-stepper-row">
-                <span class="ts-stepper-label">Teams that advance per group</span>
-                <div class="gc-stepper">
-                  <button
-                    :disabled="currentQpg <= minQpg"
-                    @click="emit('changeQualifiersPerGroup', currentQpg - 1)"
-                  >
-                    −
-                  </button>
-                  <span class="gc-val">{{ currentQpg }}</span>
-                  <button
-                    :disabled="currentQpg >= maxQpg"
-                    @click="emit('changeQualifiersPerGroup', currentQpg + 1)"
-                  >
-                    +
-                  </button>
-                </div>
-                <span class="ts-hint">→ {{ currentQpg * currentGroupCount }} reach knockout</span>
-              </div>
-            </template>
-            <div v-else class="ts-locked-banner">
-              <Lock :size="12" />
-              Group structure cannot be changed once matches have been played.
-            </div>
+      <!-- ── Legs per Match ──────────────────────────── -->
+      <div class="ts-divider"></div>
+      <div class="ts-section">
+        <div class="ts-section-title">
+          Legs per Match
+          <span v-if="hasAnyResults" class="ts-lock-tag">
+            <Lock :size="10" />
+            Locked
+          </span>
+        </div>
+        <template v-if="!hasAnyResults">
+          <div class="ts-hint-box ts-hint-box--top">
+            <strong>Single</strong>
+            — 1 match, winner advances &nbsp;·&nbsp;
+            <strong>Double</strong>
+            — home &amp; away, aggregate score decides
           </div>
-        </template>
-
-        <!-- ── Playoff Seeding (group+bracket only) ──── -->
-        <template v-if="isGroupFormat">
-          <div class="ts-divider"></div>
-          <div class="ts-section">
-            <div class="ts-section-title">
-              Playoff Seeding
-              <span v-if="tournament.groupsDone" class="ts-lock-tag">
-                <Lock :size="10" />
-                Locked
-              </span>
-            </div>
-            <template v-if="!tournament.groupsDone">
+          <div class="ts-leg-rows">
+            <div v-if="isGroupFormat" class="ts-leg-row">
+              <span class="ts-row-label">Group Stage</span>
               <BtnGroup
-                :model-value="tournament.playoffSeedMode ?? 'cross'"
-                :options="playoffOptions"
-                class="btn-group--wrap"
-                @update:model-value="emit('setPlayoffSeedMode', $event as PlayoffSeedMode)"
+                :model-value="tournament.groupLegMode ?? 'single'"
+                :options="legOptions"
+                @update:model-value="emit('changeLegMode', 'group', $event as LegMode)"
               />
-              <div class="ts-hint-box">
-                <strong>Cross</strong>
-                — A1 vs B2, B1 vs A2 &nbsp;·&nbsp;
-                <strong>No rematch</strong>
-                — avoids same-group opponents in Round 1 &nbsp;·&nbsp;
-                <strong>Random</strong>
-                — fully random
-              </div>
-            </template>
-            <div v-else class="ts-locked-banner">
-              <Lock :size="12" />
-              Locked — group stage is complete and the bracket has been seeded.
+            </div>
+            <div class="ts-leg-row">
+              <span class="ts-row-label">Knockout Rounds</span>
+              <BtnGroup
+                :model-value="tournament.knockoutLegMode ?? 'single'"
+                :options="legOptions"
+                @update:model-value="emit('changeLegMode', 'knockout', $event as LegMode)"
+              />
+            </div>
+            <div class="ts-leg-row">
+              <span class="ts-row-label">Final</span>
+              <BtnGroup
+                :model-value="tournament.finalLegMode ?? 'single'"
+                :options="legOptions"
+                @update:model-value="emit('changeLegMode', 'final', $event as LegMode)"
+              />
             </div>
           </div>
         </template>
-
-        <!-- ── Format Options ──────────────────────────── -->
-        <template v-if="tournament.rounds.length >= 2">
-          <div class="ts-divider"></div>
-          <div class="ts-section">
-            <div class="ts-section-title">
-              Format Options
-              <span v-if="hasAnyResults" class="ts-lock-tag">
-                <Lock :size="10" />
-                Locked
-              </span>
-            </div>
-            <template v-if="!hasAnyResults">
-              <label class="ts-toggle-row">
-                <input
-                  type="checkbox"
-                  :checked="!!tournament.hasThirdPlace"
-                  @change="emit('toggleThirdPlace')"
-                />
-                <span class="ts-toggle-label">3rd Place Match</span>
-                <span class="ts-hint">Semi-final losers play for bronze medal</span>
-              </label>
-            </template>
-            <div v-else class="ts-locked-banner">
-              <Lock :size="12" />
-              Format cannot be changed once matches have been played.
-            </div>
-          </div>
-        </template>
-
-        <!-- ── Legs per Match ──────────────────────────── -->
-        <div class="ts-divider"></div>
-        <div class="ts-section">
-          <div class="ts-section-title">
-            Legs per Match
-            <span v-if="hasAnyResults" class="ts-lock-tag">
-              <Lock :size="10" />
-              Locked
-            </span>
-          </div>
-          <template v-if="!hasAnyResults">
-            <div class="ts-hint-box ts-hint-box--top">
-              <strong>Single</strong>
-              — 1 match, winner advances &nbsp;·&nbsp;
-              <strong>Double</strong>
-              — home &amp; away, aggregate score decides
-            </div>
-            <div class="ts-leg-rows">
-              <div v-if="isGroupFormat" class="ts-leg-row">
-                <span class="ts-row-label">Group Stage</span>
-                <BtnGroup
-                  :model-value="tournament.groupLegMode ?? 'single'"
-                  :options="legOptions"
-                  @update:model-value="emit('changeLegMode', 'group', $event as LegMode)"
-                />
-              </div>
-              <div class="ts-leg-row">
-                <span class="ts-row-label">Knockout Rounds</span>
-                <BtnGroup
-                  :model-value="tournament.knockoutLegMode ?? 'single'"
-                  :options="legOptions"
-                  @update:model-value="emit('changeLegMode', 'knockout', $event as LegMode)"
-                />
-              </div>
-              <div class="ts-leg-row">
-                <span class="ts-row-label">Final</span>
-                <BtnGroup
-                  :model-value="tournament.finalLegMode ?? 'single'"
-                  :options="legOptions"
-                  @update:model-value="emit('changeLegMode', 'final', $event as LegMode)"
-                />
-              </div>
-            </div>
-          </template>
-          <div v-else class="ts-locked-banner">
-            <Lock :size="12" />
-            Leg settings cannot be changed after matches have started.
-          </div>
+        <div v-else class="ts-locked-banner">
+          <Lock :size="12" />
+          Leg settings cannot be changed after matches have started.
         </div>
+      </div>
 
-        <!-- ── Danger Zone ──────────────────────────────── -->
-        <div class="ts-divider"></div>
-        <div class="ts-section">
-          <div class="ts-section-title ts-section-title--danger">Danger Zone</div>
-          <div class="danger-list">
-            <div class="danger-item">
-              <div class="danger-info">
-                <div class="danger-label">Reset Tournament</div>
-                <div class="danger-desc">Clears all match results, keeping teams and draw.</div>
-              </div>
-              <button class="danger" @click="emit('reset')">Reset</button>
+      <!-- ── Danger Zone ──────────────────────────────── -->
+      <div class="ts-divider"></div>
+      <div class="ts-section">
+        <div class="ts-section-title ts-section-title--danger">Danger Zone</div>
+        <div class="danger-list">
+          <div class="danger-item">
+            <div class="danger-info">
+              <div class="danger-label">Reset Tournament</div>
+              <div class="danger-desc">Clears all match results, keeping teams and draw.</div>
             </div>
-            <div class="danger-item">
-              <div class="danger-info">
-                <div class="danger-label">Delete Tournament</div>
-                <div class="danger-desc">Permanently removes this tournament and all its data.</div>
-              </div>
-              <button class="danger" @click="emit('delete')">Delete</button>
+            <button class="danger" @click="emit('reset')">Reset</button>
+          </div>
+          <div class="danger-item">
+            <div class="danger-info">
+              <div class="danger-label">Delete Tournament</div>
+              <div class="danger-desc">Permanently removes this tournament and all its data.</div>
             </div>
+            <button class="danger" @click="emit('delete')">Delete</button>
           </div>
         </div>
       </div>
     </div>
-  </div>
+  </AppModal>
 </template>
 
 <style scoped>
-.ts-backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(32, 33, 34, 0.5);
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  z-index: 250;
-  padding: 40px 16px 24px;
-  overflow-y: auto;
-}
-
-.ts-modal {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  width: 100%;
-  max-width: 520px;
-  flex-shrink: 0;
-}
-
-.ts-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 8px 12px;
-  border-bottom: 1px solid var(--border);
-  background: var(--bg);
-  font-family: var(--font);
-  font-size: 15px;
-}
 .ts-header-title {
   display: inline-flex;
   align-items: center;
@@ -433,7 +395,8 @@ function handleManualConfirm(orderedIds: string[]) {
 }
 
 .ts-body {
-  padding: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .ts-section {
@@ -455,7 +418,6 @@ function handleManualConfirm(orderedIds: string[]) {
   color: var(--danger);
 }
 
-/* Lock tag */
 .ts-lock-tag {
   display: inline-flex;
   align-items: center;
@@ -472,7 +434,6 @@ function handleManualConfirm(orderedIds: string[]) {
   margin-left: auto;
 }
 
-/* Locked banner */
 .ts-locked-banner {
   display: flex;
   align-items: center;
@@ -496,7 +457,6 @@ function handleManualConfirm(orderedIds: string[]) {
   margin: 0;
 }
 
-/* Hint box */
 .ts-hint-box {
   margin-top: 8px;
   padding: 6px 8px;
@@ -518,7 +478,6 @@ function handleManualConfirm(orderedIds: string[]) {
   gap: 8px;
 }
 
-/* Team list */
 .team-list {
   display: flex;
   flex-wrap: wrap;
@@ -564,7 +523,6 @@ function handleManualConfirm(orderedIds: string[]) {
   background: color-mix(in srgb, var(--danger) 8%, var(--surface));
 }
 
-/* Stepper rows */
 .ts-stepper-row {
   display: flex;
   align-items: center;
@@ -607,7 +565,6 @@ function handleManualConfirm(orderedIds: string[]) {
   font-weight: 700;
 }
 
-/* Toggle row */
 .ts-toggle-row {
   display: flex;
   align-items: center;
@@ -620,7 +577,6 @@ function handleManualConfirm(orderedIds: string[]) {
   font-weight: 600;
 }
 
-/* Row label */
 .ts-row-label {
   font-size: 12px;
   color: var(--text);
@@ -628,7 +584,6 @@ function handleManualConfirm(orderedIds: string[]) {
   flex-shrink: 0;
 }
 
-/* Leg rows */
 .ts-leg-rows {
   display: flex;
   flex-direction: column;
@@ -641,7 +596,6 @@ function handleManualConfirm(orderedIds: string[]) {
   flex-wrap: wrap;
 }
 
-/* Danger zone */
 .danger-list {
   display: flex;
   flex-direction: column;
@@ -670,7 +624,6 @@ function handleManualConfirm(orderedIds: string[]) {
   margin-top: 1px;
 }
 
-/* Playoff seeding wrap variant */
 :deep(.btn-group--wrap) {
   flex-wrap: wrap;
 }
@@ -682,14 +635,6 @@ function handleManualConfirm(orderedIds: string[]) {
 }
 
 @media (max-width: 560px) {
-  .ts-backdrop {
-    padding: 0;
-    align-items: flex-start;
-  }
-  .ts-modal {
-    max-width: 100%;
-    min-height: 100dvh;
-  }
   .ts-stepper-label {
     width: auto;
     flex: 1 1 100%;

@@ -170,7 +170,7 @@ function scoreAccentColor(match: GroupMatch): string {
                 <th title="Points">Pts</th>
               </tr>
             </thead>
-            <tbody>
+            <TransitionGroup tag="tbody" name="standing-row">
               <tr
                 v-for="(row, ri) in group.standings"
                 :key="row.teamId"
@@ -198,7 +198,7 @@ function scoreAccentColor(match: GroupMatch): string {
                 <td>{{ row.gd >= 0 ? "+" + row.gd : row.gd }}</td>
                 <td class="col-pts">{{ row.pts }}</td>
               </tr>
-            </tbody>
+            </TransitionGroup>
           </table>
         </div>
 
