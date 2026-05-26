@@ -170,11 +170,11 @@ const teamsPerGroup = computed(() =>
         <div class="ct-body">
           <!-- Name -->
           <div class="ct-section">
-            <div class="ct-label">Name</div>
+            <div class="ct-label">Tournament Name</div>
             <input
               v-model="name"
               class="ct-name-input"
-              placeholder="Tournament name…"
+              placeholder="e.g. Spring Championship 2025"
               @keyup.enter="handleCreate"
             />
           </div>
@@ -185,7 +185,7 @@ const teamsPerGroup = computed(() =>
           <div class="ct-section">
             <div class="ct-label-row">
               <div class="ct-label">
-                Teams
+                Participating Teams
                 <span class="ct-count">({{ selected.length }} selected)</span>
               </div>
               <button class="btn-xs" @click="toggleAll">
@@ -212,16 +212,16 @@ const teamsPerGroup = computed(() =>
 
           <!-- Format -->
           <div class="ct-section">
-            <div class="ct-label">Format</div>
+            <div class="ct-label">Tournament Format</div>
             <div class="ct-format-row">
               <button
                 class="ct-format-card"
                 :class="{ 'ct-format-card--on': format === 'bracket' }"
                 @click="setFormat('bracket')"
               >
-                <Trophy :size="28" class="ct-format-icon" />
+                <Trophy :size="26" class="ct-format-icon" />
                 <span class="ct-format-title">Knockout Bracket</span>
-                <span class="ct-format-desc">Single-elimination only</span>
+                <span class="ct-format-desc">Lose once and you're out</span>
               </button>
               <button
                 class="ct-format-card"
@@ -229,16 +229,16 @@ const teamsPerGroup = computed(() =>
                 :disabled="selected.length < 4"
                 @click="setFormat('group+bracket')"
               >
-                <LayoutGrid :size="28" class="ct-format-icon" />
+                <LayoutGrid :size="26" class="ct-format-icon" />
                 <span class="ct-format-title">Groups + Knockout</span>
-                <span class="ct-format-desc">Group stage → top 2 advance</span>
+                <span class="ct-format-desc">Group stage, then top teams advance</span>
               </button>
             </div>
 
-            <!-- Group count + qualifiers per group -->
+            <!-- Group count + qualifiers -->
             <div v-if="format === 'group+bracket'" class="ct-gc-block">
               <div class="ct-gc-row">
-                <span class="ct-gc-label">Groups</span>
+                <span class="ct-gc-label">Number of Groups</span>
                 <div class="ct-gc-stepper">
                   <button
                     :disabled="groupCount <= minGroups"
@@ -254,10 +254,10 @@ const teamsPerGroup = computed(() =>
                     +
                   </button>
                 </div>
-                <span class="ct-gc-hint">~{{ teamsPerGroup }} teams/group</span>
+                <span class="ct-gc-hint">~{{ teamsPerGroup }} teams per group</span>
               </div>
               <div class="ct-gc-row">
-                <span class="ct-gc-label">Qualifiers / group</span>
+                <span class="ct-gc-label">Teams that advance</span>
                 <div class="ct-gc-stepper">
                   <button
                     :disabled="qualifiersPerGroup <= minQpg"
@@ -274,7 +274,9 @@ const teamsPerGroup = computed(() =>
                   </button>
                 </div>
                 <span class="ct-gc-hint">
-                  → {{ qualifiersPerGroup * groupCount }} advance to KO
+                  per group →
+                  <strong>{{ qualifiersPerGroup * groupCount }}</strong>
+                  reach knockout
                 </span>
               </div>
             </div>
@@ -282,29 +284,44 @@ const teamsPerGroup = computed(() =>
 
           <div class="ct-divider" />
 
-          <!-- Draw type -->
+          <!-- Draw -->
           <div class="ct-section">
-            <div class="ct-label">Draw</div>
+            <div class="ct-label">Draw Method</div>
             <div class="ct-draw-rows">
               <div class="ct-draw-row">
-                <span v-if="format === 'group+bracket'" class="ct-leg-label">Group stage</span>
+                <span v-if="format === 'group+bracket'" class="ct-row-label">Group stage</span>
                 <BtnGroup v-model="drawType" :options="drawOptions" />
               </div>
               <div v-if="format === 'group+bracket'" class="ct-draw-row">
-                <span class="ct-leg-label">Playoff seed</span>
+                <span class="ct-row-label">Playoff bracket</span>
                 <BtnGroup
                   v-model="playoffSeedMode"
                   :options="[
                     { value: 'cross', label: 'Cross' },
-                    { value: 'no-same-group', label: 'No same-group' },
+                    { value: 'no-same-group', label: 'No rematch' },
                     { value: 'random', label: 'Random' },
                   ]"
                 />
               </div>
             </div>
+            <div class="ct-hint-box">
+              <div class="ct-hint-line">
+                <strong>Random</strong>
+                — teams placed by chance &nbsp;·&nbsp;
+                <strong>Seeded</strong>
+                — top teams kept apart &nbsp;·&nbsp;
+                <strong>Manual</strong>
+                — you arrange them
+              </div>
+              <div v-if="format === 'group+bracket'" class="ct-hint-line">
+                <strong>Playoff bracket:</strong>
+                Cross — A1 vs B2, B1 vs A2 &nbsp;·&nbsp; No rematch — avoids same-group matchups in
+                Round 1 &nbsp;·&nbsp; Random — fully random
+              </div>
+            </div>
           </div>
 
-          <!-- Format options -->
+          <!-- Options (3rd Place) -->
           <template v-if="selected.length >= 4">
             <div class="ct-divider" />
             <div class="ct-section">
@@ -312,7 +329,7 @@ const teamsPerGroup = computed(() =>
               <label class="ct-toggle-row">
                 <input v-model="hasThirdPlace" type="checkbox" />
                 <span class="ct-toggle-label">3rd Place Match</span>
-                <span class="ct-toggle-hint">Semi-final losers play for bronze</span>
+                <span class="ct-toggle-hint">Semi-final losers play for bronze medal</span>
               </label>
             </div>
           </template>
@@ -321,17 +338,23 @@ const teamsPerGroup = computed(() =>
           <div class="ct-divider" />
           <div class="ct-section">
             <div class="ct-label">Legs per Match</div>
+            <div class="ct-hint-box ct-hint-box--top">
+              <strong>Single</strong>
+              — 1 match, winner advances &nbsp;·&nbsp;
+              <strong>Double</strong>
+              — home &amp; away, aggregate score decides
+            </div>
             <div class="ct-leg-rows">
               <div v-if="format === 'group+bracket'" class="ct-leg-row">
-                <span class="ct-leg-label">Group Stage</span>
+                <span class="ct-row-label">Group Stage</span>
                 <BtnGroup v-model="groupLegMode" :options="legOptions" />
               </div>
               <div class="ct-leg-row">
-                <span class="ct-leg-label">Knockout</span>
+                <span class="ct-row-label">Knockout Rounds</span>
                 <BtnGroup v-model="knockoutLegMode" :options="legOptions" />
               </div>
               <div class="ct-leg-row">
-                <span class="ct-leg-label">Final</span>
+                <span class="ct-row-label">Final</span>
                 <BtnGroup v-model="finalLegMode" :options="legOptions" />
               </div>
             </div>
@@ -341,8 +364,8 @@ const teamsPerGroup = computed(() =>
         <!-- Footer -->
         <div class="ct-footer">
           <button class="primary" :disabled="!canCreate" @click="handleCreate">
-            Create
-            <span v-if="selected.length >= 2" class="ct-badge">{{ selected.length }}</span>
+            Create Tournament
+            <span v-if="selected.length >= 2" class="ct-badge">{{ selected.length }} teams</span>
           </button>
           <button @click="emit('close')">Cancel</button>
         </div>
@@ -396,9 +419,9 @@ const teamsPerGroup = computed(() =>
 }
 
 .ct-label {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.07em;
   text-transform: uppercase;
   color: var(--text-muted);
   margin-bottom: 8px;
@@ -493,7 +516,7 @@ const teamsPerGroup = computed(() =>
   margin: 6px 0 0;
 }
 
-/* Format */
+/* Format cards */
 .ct-format-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -528,11 +551,11 @@ const teamsPerGroup = computed(() =>
   cursor: not-allowed;
 }
 .ct-format-icon {
-  font-size: 22px;
+  color: var(--accent);
 }
 .ct-format-title {
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 700;
 }
 .ct-format-desc {
   font-size: 11px;
@@ -545,7 +568,7 @@ const teamsPerGroup = computed(() =>
   border-top: 1px solid var(--border-light);
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
 }
 .ct-gc-row {
   display: flex;
@@ -556,8 +579,8 @@ const teamsPerGroup = computed(() =>
 
 .ct-gc-label {
   font-size: 12px;
-  color: var(--text-muted);
-  width: 130px;
+  color: var(--text);
+  width: 140px;
   flex-shrink: 0;
 }
 
@@ -594,7 +617,36 @@ const teamsPerGroup = computed(() =>
   color: var(--text-muted);
 }
 
-/* Format options toggle */
+/* Row label (shared between draw and leg rows) */
+.ct-row-label {
+  font-size: 12px;
+  color: var(--text);
+  width: 130px;
+  flex-shrink: 0;
+}
+
+/* Hint box */
+.ct-hint-box {
+  margin-top: 8px;
+  padding: 6px 8px;
+  background: var(--bg);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius);
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.ct-hint-box--top {
+  margin-top: 0;
+  margin-bottom: 8px;
+}
+.ct-hint-line {
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* Options toggle */
 .ct-toggle-row {
   display: flex;
   align-items: center;
@@ -604,7 +656,7 @@ const teamsPerGroup = computed(() =>
 }
 .ct-toggle-label {
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 600;
 }
 .ct-toggle-hint {
   font-size: 11px;
@@ -636,12 +688,6 @@ const teamsPerGroup = computed(() =>
   gap: 10px;
   flex-wrap: wrap;
 }
-.ct-leg-label {
-  font-size: 12px;
-  color: var(--text-muted);
-  width: 130px;
-  flex-shrink: 0;
-}
 
 /* Footer */
 .ct-footer {
@@ -658,7 +704,7 @@ const teamsPerGroup = computed(() =>
   display: inline-block;
   background: rgba(255, 255, 255, 0.25);
   border-radius: 10px;
-  padding: 0 6px;
+  padding: 0 7px;
   font-size: 11px;
   margin-left: 3px;
 }

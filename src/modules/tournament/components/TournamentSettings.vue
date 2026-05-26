@@ -6,7 +6,7 @@ import ManualDraw from "@/modules/tournament/components/ManualDraw.vue"
 import GroupDraw from "@/modules/tournament/components/GroupDraw.vue"
 import BtnGroup from "@/components/BtnGroup.vue"
 import { useModal } from "@/composables/useModal"
-import { Settings, X } from "lucide-vue-next"
+import { Settings, X, Lock } from "lucide-vue-next"
 
 type DrawType = "random" | "seeded" | "manual"
 
@@ -55,9 +55,9 @@ const drawOptions = [
 ]
 
 const playoffOptions = [
-  { value: "cross", label: "Cross-bracket" },
-  { value: "no-same-group", label: "No same-group R1" },
-  { value: "random", label: "Fully random" },
+  { value: "cross", label: "Cross" },
+  { value: "no-same-group", label: "No rematch" },
+  { value: "random", label: "Random" },
 ]
 
 const tournamentTeams = computed(() =>
@@ -99,7 +99,7 @@ function handleManualConfirm(orderedIds: string[]) {
     <div class="ts-modal">
       <!-- Header -->
       <div class="ts-header">
-        <span>
+        <span class="ts-header-title">
           <Settings :size="14" />
           Tournament Settings
         </span>
@@ -113,7 +113,13 @@ function handleManualConfirm(orderedIds: string[]) {
       <div class="ts-body">
         <!-- ── Manage Teams ──────────────────────────────── -->
         <div class="ts-section">
-          <div class="ts-section-title">Manage Teams</div>
+          <div class="ts-section-title">
+            Manage Teams
+            <span v-if="hasAnyResults" class="ts-lock-tag">
+              <Lock :size="10" />
+              Locked
+            </span>
+          </div>
           <template v-if="!hasAnyResults">
             <div class="team-list">
               <div v-for="team in tournamentTeams" :key="team.id" class="team-row">
@@ -139,16 +145,23 @@ function handleManualConfirm(orderedIds: string[]) {
             </div>
             <p v-else class="ts-hint">All available teams are already in this tournament.</p>
           </template>
-          <p v-else class="ts-hint ts-hint--warn">
+          <div v-else class="ts-locked-banner">
+            <Lock :size="12" />
             Team management is disabled once matches have been played.
-          </p>
+          </div>
         </div>
 
         <div class="ts-divider"></div>
 
         <!-- ── Draw ─────────────────────────────────────── -->
         <div class="ts-section">
-          <div class="ts-section-title">Draw</div>
+          <div class="ts-section-title">
+            Draw Method
+            <span v-if="hasAnyResults" class="ts-lock-tag">
+              <Lock :size="10" />
+              Locked
+            </span>
+          </div>
           <template v-if="!hasAnyResults">
             <template v-if="showManualDraw">
               <GroupDraw
@@ -170,25 +183,38 @@ function handleManualConfirm(orderedIds: string[]) {
                 <BtnGroup v-model="drawType" :options="drawOptions" />
                 <button @click="handleRedraw">↺ Regenerate</button>
               </div>
+              <div class="ts-hint-box">
+                <strong>Random</strong>
+                — by chance &nbsp;·&nbsp;
+                <strong>Seeded</strong>
+                — top teams kept apart &nbsp;·&nbsp;
+                <strong>Manual</strong>
+                — you arrange
+              </div>
             </template>
           </template>
-          <p v-else class="ts-hint ts-hint--warn">
+          <div v-else class="ts-locked-banner">
+            <Lock :size="12" />
             Draw cannot be changed once matches have been played.
-          </p>
+          </div>
         </div>
 
         <!-- ── Group Count (group+bracket only) ─────── -->
         <template v-if="isGroupFormat">
           <div class="ts-divider"></div>
           <div class="ts-section">
-            <div class="ts-section-title">Groups</div>
+            <div class="ts-section-title">
+              Group Structure
+              <span v-if="hasAnyResults" class="ts-lock-tag">
+                <Lock :size="10" />
+                Locked
+              </span>
+            </div>
             <template v-if="!hasAnyResults">
-              <div class="ts-row gc-setting-row">
-                <span class="ts-hint gc-setting-label">Groups</span>
+              <div class="ts-stepper-row">
+                <span class="ts-stepper-label">Number of Groups</span>
                 <div class="gc-stepper">
                   <button
-                    class="btn-xs"
-                    style="display: flex; align-items: center; justify-content: center"
                     :disabled="currentGroupCount <= minGroups"
                     @click="emit('changeGroupCount', currentGroupCount - 1)"
                   >
@@ -196,8 +222,6 @@ function handleManualConfirm(orderedIds: string[]) {
                   </button>
                   <span class="gc-val">{{ currentGroupCount }}</span>
                   <button
-                    class="btn-xs"
-                    style="display: flex; align-items: center; justify-content: center"
                     :disabled="currentGroupCount >= maxGroups"
                     @click="emit('changeGroupCount', currentGroupCount + 1)"
                   >
@@ -205,12 +229,10 @@ function handleManualConfirm(orderedIds: string[]) {
                   </button>
                 </div>
               </div>
-              <div class="ts-row gc-setting-row">
-                <span class="ts-hint gc-setting-label">Qualifiers / group</span>
+              <div class="ts-stepper-row">
+                <span class="ts-stepper-label">Teams that advance per group</span>
                 <div class="gc-stepper">
                   <button
-                    class="btn-xs"
-                    style="display: flex; align-items: center; justify-content: center"
                     :disabled="currentQpg <= minQpg"
                     @click="emit('changeQualifiersPerGroup', currentQpg - 1)"
                   >
@@ -218,20 +240,19 @@ function handleManualConfirm(orderedIds: string[]) {
                   </button>
                   <span class="gc-val">{{ currentQpg }}</span>
                   <button
-                    class="btn-xs"
-                    style="display: flex; align-items: center; justify-content: center"
                     :disabled="currentQpg >= maxQpg"
                     @click="emit('changeQualifiersPerGroup', currentQpg + 1)"
                   >
                     +
                   </button>
                 </div>
-                <span class="ts-hint">→ {{ currentQpg * currentGroupCount }} advance</span>
+                <span class="ts-hint">→ {{ currentQpg * currentGroupCount }} reach knockout</span>
               </div>
             </template>
-            <p v-else class="ts-hint ts-hint--warn">
+            <div v-else class="ts-locked-banner">
+              <Lock :size="12" />
               Group structure cannot be changed once matches have been played.
-            </p>
+            </div>
           </div>
         </template>
 
@@ -239,7 +260,13 @@ function handleManualConfirm(orderedIds: string[]) {
         <template v-if="isGroupFormat">
           <div class="ts-divider"></div>
           <div class="ts-section">
-            <div class="ts-section-title">Playoff Seeding</div>
+            <div class="ts-section-title">
+              Playoff Seeding
+              <span v-if="tournament.groupsDone" class="ts-lock-tag">
+                <Lock :size="10" />
+                Locked
+              </span>
+            </div>
             <template v-if="!tournament.groupsDone">
               <BtnGroup
                 :model-value="tournament.playoffSeedMode ?? 'cross'"
@@ -247,10 +274,19 @@ function handleManualConfirm(orderedIds: string[]) {
                 class="btn-group--wrap"
                 @update:model-value="emit('setPlayoffSeedMode', $event as PlayoffSeedMode)"
               />
+              <div class="ts-hint-box">
+                <strong>Cross</strong>
+                — A1 vs B2, B1 vs A2 &nbsp;·&nbsp;
+                <strong>No rematch</strong>
+                — avoids same-group opponents in Round 1 &nbsp;·&nbsp;
+                <strong>Random</strong>
+                — fully random
+              </div>
             </template>
-            <p v-else class="ts-hint ts-hint--warn">
-              Locked — group stage is complete and bracket has been seeded.
-            </p>
+            <div v-else class="ts-locked-banner">
+              <Lock :size="12" />
+              Locked — group stage is complete and the bracket has been seeded.
+            </div>
           </div>
         </template>
 
@@ -258,7 +294,13 @@ function handleManualConfirm(orderedIds: string[]) {
         <template v-if="tournament.rounds.length >= 2">
           <div class="ts-divider"></div>
           <div class="ts-section">
-            <div class="ts-section-title">Format Options</div>
+            <div class="ts-section-title">
+              Format Options
+              <span v-if="hasAnyResults" class="ts-lock-tag">
+                <Lock :size="10" />
+                Locked
+              </span>
+            </div>
             <template v-if="!hasAnyResults">
               <label class="ts-toggle-row">
                 <input
@@ -267,23 +309,36 @@ function handleManualConfirm(orderedIds: string[]) {
                   @change="emit('toggleThirdPlace')"
                 />
                 <span class="ts-toggle-label">3rd Place Match</span>
-                <span class="ts-hint">Semi-final losers play for bronze</span>
+                <span class="ts-hint">Semi-final losers play for bronze medal</span>
               </label>
             </template>
-            <p v-else class="ts-hint ts-hint--warn">
+            <div v-else class="ts-locked-banner">
+              <Lock :size="12" />
               Format cannot be changed once matches have been played.
-            </p>
+            </div>
           </div>
         </template>
 
-        <!-- ── Maç Sayısı ──────────────────────────────── -->
+        <!-- ── Legs per Match ──────────────────────────── -->
         <div class="ts-divider"></div>
         <div class="ts-section">
-          <div class="ts-section-title">Legs per Match</div>
+          <div class="ts-section-title">
+            Legs per Match
+            <span v-if="hasAnyResults" class="ts-lock-tag">
+              <Lock :size="10" />
+              Locked
+            </span>
+          </div>
           <template v-if="!hasAnyResults">
+            <div class="ts-hint-box ts-hint-box--top">
+              <strong>Single</strong>
+              — 1 match, winner advances &nbsp;·&nbsp;
+              <strong>Double</strong>
+              — home &amp; away, aggregate score decides
+            </div>
             <div class="ts-leg-rows">
               <div v-if="isGroupFormat" class="ts-leg-row">
-                <span class="ts-hint ts-leg-label">Group Stage</span>
+                <span class="ts-row-label">Group Stage</span>
                 <BtnGroup
                   :model-value="tournament.groupLegMode ?? 'single'"
                   :options="legOptions"
@@ -291,7 +346,7 @@ function handleManualConfirm(orderedIds: string[]) {
                 />
               </div>
               <div class="ts-leg-row">
-                <span class="ts-hint ts-leg-label">Knockout</span>
+                <span class="ts-row-label">Knockout Rounds</span>
                 <BtnGroup
                   :model-value="tournament.knockoutLegMode ?? 'single'"
                   :options="legOptions"
@@ -299,7 +354,7 @@ function handleManualConfirm(orderedIds: string[]) {
                 />
               </div>
               <div class="ts-leg-row">
-                <span class="ts-hint ts-leg-label">Final</span>
+                <span class="ts-row-label">Final</span>
                 <BtnGroup
                   :model-value="tournament.finalLegMode ?? 'single'"
                   :options="legOptions"
@@ -308,15 +363,16 @@ function handleManualConfirm(orderedIds: string[]) {
               </div>
             </div>
           </template>
-          <p v-else class="ts-hint ts-hint--warn">
+          <div v-else class="ts-locked-banner">
+            <Lock :size="12" />
             Leg settings cannot be changed after matches have started.
-          </p>
+          </div>
         </div>
 
         <!-- ── Danger Zone ──────────────────────────────── -->
         <div class="ts-divider"></div>
         <div class="ts-section">
-          <div class="ts-section-title">Danger Zone</div>
+          <div class="ts-section-title ts-section-title--danger">Danger Zone</div>
           <div class="danger-list">
             <div class="danger-item">
               <div class="danger-info">
@@ -370,6 +426,11 @@ function handleManualConfirm(orderedIds: string[]) {
   font-family: var(--font);
   font-size: 15px;
 }
+.ts-header-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
 
 .ts-body {
   padding: 0;
@@ -380,12 +441,48 @@ function handleManualConfirm(orderedIds: string[]) {
 }
 
 .ts-section-title {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.07em;
   text-transform: uppercase;
   color: var(--text-muted);
   margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.ts-section-title--danger {
+  color: var(--danger);
+}
+
+/* Lock tag */
+.ts-lock-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  background: var(--bg);
+  border: 1px solid var(--border-light);
+  padding: 1px 6px;
+  border-radius: 10px;
+  margin-left: auto;
+}
+
+/* Locked banner */
+.ts-locked-banner {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 10px;
+  font-size: 12px;
+  color: var(--text-muted);
+  background: var(--bg);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius);
 }
 
 .ts-divider {
@@ -398,12 +495,21 @@ function handleManualConfirm(orderedIds: string[]) {
   color: var(--text-muted);
   margin: 0;
 }
-.ts-hint--warn {
-  background: color-mix(in srgb, var(--danger) 8%, var(--surface));
-  border: 1px solid color-mix(in srgb, var(--danger) 25%, transparent);
+
+/* Hint box */
+.ts-hint-box {
+  margin-top: 8px;
   padding: 6px 8px;
-  font-size: 12px;
-  color: var(--danger);
+  background: var(--bg);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius);
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+.ts-hint-box--top {
+  margin-top: 0;
+  margin-bottom: 8px;
 }
 
 .ts-row {
@@ -458,47 +564,24 @@ function handleManualConfirm(orderedIds: string[]) {
   background: color-mix(in srgb, var(--danger) 8%, var(--surface));
 }
 
-/* Danger zone */
-.danger-list {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-.danger-item {
+/* Stepper rows */
+.ts-stepper-row {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 8px 10px;
-  border: 1px solid color-mix(in srgb, var(--danger) 25%, transparent);
-  background: color-mix(in srgb, var(--danger) 4%, var(--surface));
-}
-.danger-info {
-  flex: 1;
-}
-.danger-label {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--danger);
-}
-.danger-desc {
-  font-size: 11px;
-  color: var(--text-muted);
-  margin-top: 1px;
-}
-
-.gc-setting-row {
+  flex-wrap: wrap;
   margin-bottom: 6px;
-  align-items: center;
 }
-.gc-setting-label {
-  width: 130px;
+.ts-stepper-label {
+  font-size: 12px;
+  color: var(--text);
+  width: 180px;
   flex-shrink: 0;
 }
 
 .gc-stepper {
   display: inline-flex;
   align-items: center;
-  gap: 0;
   border: 1px solid var(--border);
 }
 .gc-stepper button {
@@ -521,8 +604,10 @@ function handleManualConfirm(orderedIds: string[]) {
   text-align: center;
   font-size: 13px;
   font-family: var(--font-ui);
+  font-weight: 700;
 }
 
+/* Toggle row */
 .ts-toggle-row {
   display: flex;
   align-items: center;
@@ -532,9 +617,18 @@ function handleManualConfirm(orderedIds: string[]) {
 }
 .ts-toggle-label {
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 600;
 }
 
+/* Row label */
+.ts-row-label {
+  font-size: 12px;
+  color: var(--text);
+  width: 130px;
+  flex-shrink: 0;
+}
+
+/* Leg rows */
 .ts-leg-rows {
   display: flex;
   flex-direction: column;
@@ -546,9 +640,34 @@ function handleManualConfirm(orderedIds: string[]) {
   gap: 10px;
   flex-wrap: wrap;
 }
-.ts-leg-label {
-  width: 130px;
-  flex-shrink: 0;
+
+/* Danger zone */
+.danger-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.danger-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border: 1px solid color-mix(in srgb, var(--danger) 25%, transparent);
+  background: color-mix(in srgb, var(--danger) 4%, var(--surface));
+  border-radius: var(--radius);
+}
+.danger-info {
+  flex: 1;
+}
+.danger-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--danger);
+}
+.danger-desc {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 1px;
 }
 
 /* Playoff seeding wrap variant */
@@ -571,12 +690,11 @@ function handleManualConfirm(orderedIds: string[]) {
     max-width: 100%;
     min-height: 100dvh;
   }
-  .gc-setting-label {
+  .ts-stepper-label {
     width: auto;
-    min-width: 0;
     flex: 1 1 100%;
   }
-  .gc-setting-row {
+  .ts-stepper-row {
     flex-wrap: wrap;
     row-gap: 4px;
   }

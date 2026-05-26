@@ -106,39 +106,78 @@ function importData() {
       </button>
       <h2>Settings</h2>
     </div>
+
+    <!-- ── Appearance ──────────────────────────────────── -->
     <div class="section-box">
+      <h2>Appearance</h2>
       <div class="section-body">
         <div class="setting-row">
-          <span class="setting-label">Theme</span>
+          <div class="setting-info">
+            <div class="setting-label">Theme</div>
+            <div class="setting-desc">Color scheme for the entire app</div>
+          </div>
           <BtnGroup v-model="settings.theme" :options="themes" />
         </div>
+      </div>
+    </div>
 
-        <hr class="divider" />
-
-        <div class="setting-section-title">Match defaults</div>
-
+    <!-- ── Match Defaults ─────────────────────────────── -->
+    <div class="section-box">
+      <h2>Match Defaults</h2>
+      <div class="section-body">
+        <p class="section-intro">
+          Default leg settings applied when creating a new tournament. You can still override these
+          per tournament.
+        </p>
         <div class="setting-group">
           <div class="setting-row">
-            <span class="setting-label">Group stage</span>
+            <div class="setting-info">
+              <div class="setting-label">Group Stage</div>
+              <div class="setting-desc">
+                <strong>Single</strong>
+                — one match per pair ·
+                <strong>Double</strong>
+                — home &amp; away, aggregate score
+              </div>
+            </div>
             <BtnGroup v-model="settings.groupLegMode" :options="legOptions" />
           </div>
           <div class="setting-row">
-            <span class="setting-label">Knockout</span>
+            <div class="setting-info">
+              <div class="setting-label">Knockout Rounds</div>
+              <div class="setting-desc">
+                <strong>Single</strong>
+                — winner advances ·
+                <strong>Double</strong>
+                — 2-legged tie, aggregate decides
+              </div>
+            </div>
             <BtnGroup v-model="settings.knockoutLegMode" :options="legOptions" />
           </div>
           <div class="setting-row">
-            <span class="setting-label">Final</span>
+            <div class="setting-info">
+              <div class="setting-label">Final</div>
+              <div class="setting-desc">Can be set separately from other knockout rounds</div>
+            </div>
             <BtnGroup v-model="settings.finalLegMode" :options="legOptions" />
           </div>
         </div>
+      </div>
+    </div>
 
-        <hr class="divider" />
-
-        <div class="setting-section-title">Season defaults</div>
-
+    <!-- ── New Tournament Defaults ────────────────────── -->
+    <div class="section-box">
+      <h2>New Tournament Defaults</h2>
+      <div class="section-body">
+        <p class="section-intro">
+          Pre-filled values shown in the Create Tournament dialog. Change them there any time.
+        </p>
         <div class="setting-group">
           <div class="setting-row">
-            <span class="setting-label">Bracket draw</span>
+            <div class="setting-info">
+              <div class="setting-label">Knockout Draw</div>
+              <div class="setting-desc">How teams are placed into a Knockout-only bracket</div>
+            </div>
             <BtnGroup
               v-model="settings.newSeasonDrawType"
               :options="[
@@ -149,7 +188,10 @@ function importData() {
             />
           </div>
           <div class="setting-row">
-            <span class="setting-label">Group draw</span>
+            <div class="setting-info">
+              <div class="setting-label">Group Stage Draw</div>
+              <div class="setting-desc">How teams are distributed into groups</div>
+            </div>
             <BtnGroup
               v-model="settings.newSeasonGroupDrawType"
               :options="[
@@ -160,24 +202,50 @@ function importData() {
             />
           </div>
           <div class="setting-row">
-            <span class="setting-label">Playoff seed</span>
+            <div class="setting-info">
+              <div class="setting-label">Playoff Seeding</div>
+              <div class="setting-desc">
+                How group qualifiers are matched up when the knockout bracket is drawn
+              </div>
+            </div>
             <BtnGroup
               v-model="settings.newSeasonPlayoffSeedMode"
               :options="[
                 { value: 'cross', label: 'Cross' },
-                { value: 'no-same-group', label: 'No same-group' },
+                { value: 'no-same-group', label: 'No rematch' },
                 { value: 'random', label: 'Random' },
               ]"
             />
           </div>
         </div>
+        <div class="draw-legend">
+          <div class="draw-legend-row">
+            <strong>Draw options:</strong>
+            Random — by chance &nbsp;·&nbsp; Seeded — best teams separated &nbsp;·&nbsp; Manual —
+            you place teams
+          </div>
+          <div class="draw-legend-row">
+            <strong>Playoff seeding:</strong>
+            Cross — A1 vs B2, B1 vs A2 &nbsp;·&nbsp; No rematch — avoids same-group opponents in
+            Round 1 &nbsp;·&nbsp; Random — fully random
+          </div>
+        </div>
+      </div>
+    </div>
 
-        <hr class="divider" />
-
-        <div class="setting-section-title">Display</div>
-
+    <!-- ── Display ────────────────────────────────────── -->
+    <div class="section-box">
+      <h2>Display</h2>
+      <div class="section-body">
         <div class="setting-row">
-          <span class="setting-label">Team abbreviations</span>
+          <div class="setting-info">
+            <div class="setting-label">Team Abbreviations</div>
+            <div class="setting-desc">
+              Short code (e.g.
+              <strong>BRA</strong>
+              ) shown in bracket slots and tight layouts
+            </div>
+          </div>
           <BtnGroup
             v-model="settings.showTeamAbbr"
             :options="[
@@ -186,13 +254,24 @@ function importData() {
             ]"
           />
         </div>
+      </div>
+    </div>
 
-        <hr class="divider" />
-
-        <div class="setting-section-title">Simulation</div>
-
+    <!-- ── Simulation ─────────────────────────────────── -->
+    <div class="section-box">
+      <h2>Simulation</h2>
+      <div class="section-body">
         <div class="setting-row">
-          <span class="setting-label">Surprise factor</span>
+          <div class="setting-info">
+            <div class="setting-label">Surprise Factor</div>
+            <div class="setting-desc">
+              How much weaker teams can upset stronger ones.
+              <strong>0</strong>
+              = power fully decides ·
+              <strong>100</strong>
+              = pure chance.
+            </div>
+          </div>
           <div class="surprise-control">
             <button
               class="stepper-btn"
@@ -219,48 +298,69 @@ function importData() {
             >
               +
             </button>
-            <span class="surprise-desc">
+            <span class="surprise-badge">
               {{
                 settings.surpriseFactor === 0
-                  ? "Power fully determines results"
+                  ? "Predictable"
                   : settings.surpriseFactor === 100
-                    ? "Completely random results"
+                    ? "Pure luck"
                     : settings.surpriseFactor < 40
-                      ? "Stronger teams usually win"
+                      ? "Mostly skill"
                       : settings.surpriseFactor > 60
-                        ? "Upsets happen often"
+                        ? "Upset-heavy"
                         : "Balanced"
               }}
             </span>
           </div>
         </div>
+      </div>
+    </div>
 
-        <hr class="divider" />
-
-        <div class="setting-row">
-          <span class="setting-label">Sample data</span>
-          <div class="dataset-list">
-            <button
-              v-for="ds in SAMPLE_DATASETS"
-              :key="ds.label"
-              class="dataset-btn"
-              @click="loadDataset(ds)"
-            >
-              <span class="dataset-name">{{ ds.label }}</span>
-              <span class="dataset-desc">{{ ds.description }}</span>
-            </button>
-          </div>
+    <!-- ── Sample Data ────────────────────────────────── -->
+    <div class="section-box">
+      <h2>Sample Data</h2>
+      <div class="section-body">
+        <p class="section-intro">
+          Load a preset team list. This will replace your current teams and clear all tournaments.
+        </p>
+        <div class="dataset-list">
+          <button
+            v-for="ds in SAMPLE_DATASETS"
+            :key="ds.label"
+            class="dataset-btn"
+            @click="loadDataset(ds)"
+          >
+            <span class="dataset-name">{{ ds.label }}</span>
+            <span class="dataset-desc">{{ ds.description }}</span>
+          </button>
         </div>
+      </div>
+    </div>
 
-        <hr class="divider" />
-
+    <!-- ── Data Management ────────────────────────────── -->
+    <div class="section-box">
+      <h2>Data Management</h2>
+      <div class="section-body">
         <div class="setting-row">
-          <span class="setting-label">Data</span>
-          <div class="btn-group">
+          <div class="setting-info">
+            <div class="setting-label">Backup</div>
+            <div class="setting-desc">
+              Save all your teams and tournaments to a file, or restore from one
+            </div>
+          </div>
+          <div class="btn-row">
             <button @click="exportData">Export</button>
             <button @click="importData">Import</button>
-            <button class="danger" @click="clearData">Clear all data</button>
           </div>
+        </div>
+        <div class="danger-setting-row">
+          <div class="setting-info">
+            <div class="setting-label danger-label">Clear All Data</div>
+            <div class="setting-desc">
+              Permanently delete all teams and tournaments — cannot be undone
+            </div>
+          </div>
+          <button class="danger" @click="clearData">Clear All</button>
         </div>
       </div>
     </div>
@@ -274,7 +374,7 @@ function importData() {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
 }
 .page-header h2 {
   margin: 0;
@@ -295,30 +395,80 @@ function importData() {
   border-color: var(--accent);
   color: var(--accent);
 }
-.setting-section-title {
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+
+/* Section intro text */
+.section-intro {
+  font-size: 12px;
   color: var(--text-muted);
-  margin-bottom: 4px;
+  margin-bottom: 12px;
+  line-height: 1.5;
 }
 
+/* Setting rows */
 .setting-group {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 14px;
 }
 
+.setting-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.setting-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.setting-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.4;
+}
+
+.setting-desc {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 2px;
+  line-height: 1.4;
+}
+
+/* Draw legend */
+.draw-legend {
+  margin-top: 12px;
+  padding: 8px 10px;
+  background: var(--bg);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.draw-legend-row {
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* Surprise control */
 .surprise-control {
   display: flex;
   align-items: center;
   gap: 6px;
+  flex-shrink: 0;
 }
-.surprise-desc {
+.surprise-badge {
   font-size: 11px;
-  color: var(--text-muted);
-  margin-left: 4px;
+  font-weight: 600;
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, var(--surface));
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+  padding: 2px 8px;
+  border-radius: 10px;
+  white-space: nowrap;
 }
 .stepper-btn {
   width: 28px;
@@ -344,24 +494,7 @@ function importData() {
   -webkit-appearance: none;
 }
 
-.divider {
-  border: none;
-  border-top: 1px solid var(--border-light);
-  margin: 12px 0;
-}
-.setting-row {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-.setting-label {
-  font-size: 14px;
-  min-width: 80px;
-}
-.btn-group {
-  display: flex;
-  gap: 8px;
-}
+/* Datasets */
 .dataset-list {
   display: flex;
   gap: 8px;
@@ -394,6 +527,25 @@ function importData() {
   font-size: 11px;
   color: var(--text-muted);
 }
+
+/* Data management */
+.btn-row {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.danger-setting-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid color-mix(in srgb, var(--danger) 20%, transparent);
+}
+.danger-label {
+  color: var(--danger);
+}
+
 .version {
   font-size: 12px;
   color: var(--text-muted);
@@ -406,8 +558,13 @@ function importData() {
     align-items: flex-start;
     gap: 8px;
   }
-  .btn-group {
+  .btn-row {
     flex-wrap: wrap;
+  }
+  .danger-setting-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
   }
 }
 </style>
