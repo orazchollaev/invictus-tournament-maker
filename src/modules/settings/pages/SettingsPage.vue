@@ -7,6 +7,7 @@ import { useTournamentStore } from "../../tournament/store"
 import { version } from "../../../../package.json"
 import BtnGroup from "@/components/BtnGroup.vue"
 import { ArrowLeft } from "lucide-vue-next"
+import { computed } from "vue"
 
 const router = useRouter()
 
@@ -38,6 +39,13 @@ const globbed = import.meta.glob<Dataset>("../../../examples/*.json", {
   import: "default",
 })
 const SAMPLE_DATASETS = Object.values(globbed)
+
+const showTeamAbbrVal = computed({
+  get: () => (settings.showTeamAbbr ? "show" : "hide"),
+  set: (v: string) => {
+    settings.showTeamAbbr = v === "show"
+  },
+})
 
 function loadDataset(dataset: Dataset) {
   const isConfirm = confirm(
@@ -247,10 +255,10 @@ function importData() {
             </div>
           </div>
           <BtnGroup
-            v-model="settings.showTeamAbbr"
+            v-model="showTeamAbbrVal"
             :options="[
-              { value: true, label: 'Show' },
-              { value: false, label: 'Hide' },
+              { value: 'show', label: 'Show' },
+              { value: 'hide', label: 'Hide' },
             ]"
           />
         </div>
