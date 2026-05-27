@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.2](https://github.com/orazchollaev/tournament-sim/compare/v1.3.1...v1.3.2) (2026-05-27)
+
+### Features
+
+- add detailed history for tournaments ([f1c7928](https://github.com/orazchollaev/tournament-sim/commit/f1c7928ec3f620727176d4a44b03222dc63da39b))
+- **settings:** add champion confetti on/off toggle ([d64a2ed](https://github.com/orazchollaev/tournament-sim/commit/d64a2ed82a9dce38446d04385078339dcbd913de))
+
 ## [1.3.1](https://github.com/orazchollaev/tournament-sim/compare/v1.3.0...v1.3.1) (2026-05-27)
 
 ### Features
