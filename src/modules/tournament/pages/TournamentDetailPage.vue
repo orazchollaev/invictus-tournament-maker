@@ -56,7 +56,8 @@ function openNewSeason() {
   }
 }
 
-const activeTab = ref<"groups" | "bracket">("groups")
+type MainTab = "groups" | "bracket" | "stats" | "participants"
+const activeTab = ref<MainTab>(tournament.value?.format === "group+bracket" ? "groups" : "bracket")
 const isGroupFormat = computed(() => tournament.value?.format === "group+bracket")
 const isFinished = computed(
   () => !!tournament.value && store.isTournamentFinished(tournament.value.id)
@@ -72,7 +73,7 @@ watch(
 watch(
   () => route.params.id,
   () => {
-    activeTab.value = "groups"
+    activeTab.value = isGroupFormat.value ? "groups" : "bracket"
   }
 )
 
@@ -152,14 +153,14 @@ function closeSeasonModal() {
         </div>
       </Transition>
 
-      <template v-if="isGroupFormat">
-        <div class="phase-tabs">
+      <div class="phase-tabs">
+        <template v-if="isGroupFormat">
           <button
             class="phase-tab"
             :class="{ active: activeTab === 'groups' }"
             @click="activeTab = 'groups'"
           >
-            Group Stage
+            Groups
           </button>
           <button
             class="phase-tab"
@@ -170,45 +171,66 @@ function closeSeasonModal() {
             Knockout
             <Lock v-if="!tournament.groupsDone" :size="13" class="tab-lock" />
           </button>
-        </div>
+        </template>
+        <template v-else>
+          <button
+            class="phase-tab"
+            :class="{ active: activeTab === 'bracket' }"
+            @click="activeTab = 'bracket'"
+          >
+            Bracket
+          </button>
+        </template>
+        <button
+          class="phase-tab"
+          :class="{ active: activeTab === 'stats', disabled: !hasAnyResults }"
+          :disabled="!hasAnyResults"
+          @click="hasAnyResults && (activeTab = 'stats')"
+        >
+          Statistics
+          <Lock v-if="!hasAnyResults" :size="13" class="tab-lock" />
+        </button>
+        <button
+          class="phase-tab"
+          :class="{ active: activeTab === 'participants' }"
+          @click="activeTab = 'participants'"
+        >
+          Participants
+        </button>
+      </div>
 
-        <Transition name="tab" mode="out-in">
-          <div v-if="activeTab === 'groups'" key="groups" class="section-box">
-            <div class="section-body gs-body">
-              <GroupStage
-                :tournament="tournament"
-                :teams="allTeams"
-                @set-result="(gi, mi, h, a) => store.setGroupResult(tournament!.id, gi, mi, h, a)"
-                @sim-match="(gi, mi) => store.simGroupMatch(tournament!.id, gi, mi)"
-                @sim-group="(gi) => store.simGroup(tournament!.id, gi)"
-                @sim-group-week="(gi) => store.simGroupWeek(tournament!.id, gi)"
-                @sim-week="store.simWeek(tournament!.id)"
-                @sim-all="store.simAllGroups(tournament!.id)"
-                @advance="store.advanceToBracket(tournament!.id)"
-              />
-            </div>
+      <Transition name="tab" mode="out-in">
+        <div v-if="activeTab === 'groups'" key="groups" class="section-box">
+          <div class="section-body gs-body">
+            <GroupStage
+              :tournament="tournament"
+              :teams="allTeams"
+              @set-result="(gi, mi, h, a) => store.setGroupResult(tournament!.id, gi, mi, h, a)"
+              @sim-match="(gi, mi) => store.simGroupMatch(tournament!.id, gi, mi)"
+              @sim-group="(gi) => store.simGroup(tournament!.id, gi)"
+              @sim-group-week="(gi) => store.simGroupWeek(tournament!.id, gi)"
+              @sim-week="store.simWeek(tournament!.id)"
+              @sim-all="store.simAllGroups(tournament!.id)"
+              @advance="store.advanceToBracket(tournament!.id)"
+            />
           </div>
-        </Transition>
-      </template>
-
-      <BracketPanel
-        v-if="!isGroupFormat || activeTab === 'bracket'"
-        :tournament="tournament"
-        :teams="allTeams"
-        :title="isGroupFormat ? 'Knockout Stage' : 'Bracket'"
-      />
-
-      <div class="section-box">
-        <h2>Statistics</h2>
-        <TournamentStats :tournament="tournament" :teams="allTeams" />
-      </div>
-
-      <div class="section-box">
-        <h2>Participants</h2>
-        <div class="section-body flush">
-          <ParticipantsTable :teams="allTeams" :tournament="tournament" />
         </div>
-      </div>
+        <div v-else-if="activeTab === 'bracket'" key="bracket">
+          <BracketPanel
+            :tournament="tournament"
+            :teams="allTeams"
+            :title="isGroupFormat ? 'Knockout Stage' : 'Bracket'"
+          />
+        </div>
+        <div v-else-if="activeTab === 'stats'" key="stats" class="section-box">
+          <TournamentStats :tournament="tournament" :teams="allTeams" />
+        </div>
+        <div v-else key="participants" class="section-box">
+          <div class="section-body flush">
+            <ParticipantsTable :teams="allTeams" :tournament="tournament" />
+          </div>
+        </div>
+      </Transition>
     </template>
 
     <TournamentSettings
