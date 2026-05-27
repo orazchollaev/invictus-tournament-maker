@@ -604,7 +604,11 @@ function hasPen(result: MatchResult | null | undefined): boolean {
                 <button
                   class="abt"
                   title="Simulate"
-                  @click="$emit('sim-match', match._origRound, match._origMatch)"
+                  @click="
+                    match._isThirdPlace
+                      ? $emit('sim-third-place')
+                      : $emit('sim-match', match._origRound, match._origMatch)
+                  "
                 >
                   <Shuffle :size="11" />
                 </button>
