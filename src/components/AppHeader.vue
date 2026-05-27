@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import AppLogoWordmark from "./AppLogoWordmark.vue"
-import { Settings, Star, Github, Trophy, History } from "lucide-vue-next"
+import { Settings, Star, Github, Trophy, History, RefreshCw } from "lucide-vue-next"
 import { useSettingsStore } from "@/modules/settings/store"
+import { usePwaUpdate } from "@/composables/usePwaUpdate"
 
 const GITHUB_URL = "https://github.com/orazchollaev/tournament-sim"
 const settings = useSettingsStore()
+const { needRefresh, applyUpdate } = usePwaUpdate()
 </script>
 
 <template>
@@ -32,6 +34,18 @@ const settings = useSettingsStore()
       </nav>
 
       <div class="header-end">
+        <Transition name="update-btn">
+          <button
+            v-if="needRefresh"
+            class="update-btn"
+            title="New version available"
+            @click="applyUpdate"
+          >
+            <RefreshCw :size="13" />
+            <span>Update</span>
+          </button>
+        </Transition>
+
         <a
           :href="GITHUB_URL"
           target="_blank"
@@ -125,6 +139,40 @@ const settings = useSettingsStore()
   display: flex;
   align-items: center;
   gap: 6px;
+}
+
+.update-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  border-radius: 6px;
+  border: 1px solid color-mix(in srgb, var(--accent) 50%, transparent);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    background 0.12s,
+    border-color 0.12s;
+}
+.update-btn:hover {
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
+  border-color: var(--accent);
+}
+
+.update-btn-enter-active,
+.update-btn-leave-active {
+  transition:
+    opacity 0.2s,
+    transform 0.2s;
+}
+.update-btn-enter-from,
+.update-btn-leave-to {
+  opacity: 0;
+  transform: translateY(-4px);
 }
 
 .github-star-btn {
