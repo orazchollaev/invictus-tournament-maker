@@ -47,6 +47,13 @@ const showTeamAbbrVal = computed({
   },
 })
 
+const confettiOnWinVal = computed({
+  get: () => (settings.confettiOnWin ? "on" : "off"),
+  set: (v: string) => {
+    settings.confettiOnWin = v === "on"
+  },
+})
+
 function loadDataset(dataset: Dataset) {
   const isConfirm = confirm(
     `Load "${dataset.label}" dataset? This will replace your teams and clear all tournaments.`
@@ -270,10 +277,10 @@ function importData() {
             </div>
           </div>
           <BtnGroup
-            v-model="settings.confettiOnWin"
+            v-model="confettiOnWinVal"
             :options="[
-              { value: true, label: 'On' },
-              { value: false, label: 'Off' },
+              { value: 'on', label: 'On' },
+              { value: 'off', label: 'Off' },
             ]"
           />
         </div>

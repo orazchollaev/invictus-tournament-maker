@@ -2,12 +2,10 @@
 import { computed } from "vue"
 import { useRouter } from "vue-router"
 import { useTournamentStore } from "@/modules/tournament/store"
-import { useTeamsStore } from "@/modules/teams/store"
 import { ChevronRight } from "lucide-vue-next"
 
 const router = useRouter()
 const store = useTournamentStore()
-const teamsStore = useTeamsStore()
 
 interface SeriesEntry {
   name: string
@@ -44,15 +42,6 @@ const series = computed<SeriesEntry[]>(() => {
   }
   return [...map.values()].sort((a, b) => a.name.localeCompare(b.name))
 })
-
-function teamName(id: string | null) {
-  if (!id) return null
-  return teamsStore.teams.find((t) => t.id === id)?.name ?? null
-}
-function teamColor(id: string | null) {
-  if (!id) return "#888"
-  return teamsStore.teams.find((t) => t.id === id)?.color ?? "#888"
-}
 </script>
 
 <template>
