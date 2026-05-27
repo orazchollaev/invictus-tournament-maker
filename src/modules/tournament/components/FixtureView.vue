@@ -201,7 +201,14 @@ function legWinner(result: MatchResult | null | undefined, side: "home" | "away"
 function aggLabel(match: FlatMatch): string {
   if (!match.result || !match.leg2Result) return null as unknown as string
   const h = match.result.home + match.leg2Result.away
+  const hPen = (match.result?.penHome || 0) + (match.leg2Result?.penHome || 0)
   const a = match.result.away + match.leg2Result.home
+  const aPen = (match.result?.penAway || 0) + (match.leg2Result?.penAway || 0)
+
+  if (hPen || aPen) {
+    return `${h + hPen} – ${a + aPen} with penalties`
+  }
+
   return `${h} – ${a}`
 }
 
@@ -250,9 +257,9 @@ function hasPen(result: MatchResult | null | undefined): boolean {
                 {{ aggLabel(match) }}
               </span>
               <span v-else class="agg agg--tbd">agg</span>
-              <span v-if="aggWinnerId(match)" class="agg-adv">
+              <!-- <span v-if="aggWinnerId(match)" class="agg-adv">
                 {{ getAbbr(aggWinnerId(match)) }} advances
-              </span>
+              </span> -->
             </div>
             <div class="tie-hd-team tie-hd-team--r">
               <span class="tie-hd-name">{{ getAbbr(match.awayId) }}</span>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import AppLogoWordmark from "./AppLogoWordmark.vue"
-import { Settings, Star, Github, Trophy } from "lucide-vue-next"
+import { Settings, Star, Github, Trophy, History } from "lucide-vue-next"
 import { useSettingsStore } from "@/modules/settings/store"
 
 const GITHUB_URL = "https://github.com/orazchollaev/tournament-sim"
@@ -25,6 +25,10 @@ const settings = useSettingsStore()
       <nav class="main-nav">
         <RouterLink to="/teams">Teams</RouterLink>
         <RouterLink to="/tournaments">Tournaments</RouterLink>
+        <RouterLink to="/history">
+          <History :size="13" class="nav-icon" />
+          History
+        </RouterLink>
       </nav>
 
       <div class="header-end">
@@ -88,6 +92,9 @@ const settings = useSettingsStore()
   flex: 1;
 }
 .main-nav a {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
   font-size: 13px;
   font-weight: 500;
   color: var(--text-muted);
@@ -97,6 +104,9 @@ const settings = useSettingsStore()
   transition:
     background 0.12s,
     color 0.12s;
+}
+.nav-icon {
+  flex-shrink: 0;
 }
 .main-nav a:hover {
   background: var(--bg);

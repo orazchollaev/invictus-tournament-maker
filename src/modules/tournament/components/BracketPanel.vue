@@ -268,7 +268,7 @@ onUnmounted(() => {
 }
 
 .bracket-wrapper {
-  max-height: clamp(300px, 60vh, 600px);
+  max-height: clamp(400px, 70vh, 800px);
   padding: 0 10px;
   overflow: auto;
 }
@@ -350,8 +350,8 @@ onUnmounted(() => {
   border: 1px solid var(--border);
   display: flex;
   flex-direction: column;
-  width: 96vw;
-  height: 92vh;
+  width: 100vw;
+  height: 100vh;
 }
 
 .full-bracket-header-right {

@@ -118,13 +118,17 @@ function handleManualConfirm(orderedIds: string[]) {
             <div v-for="team in tournamentTeams" :key="team.id" class="team-row">
               <span class="team-dot" :style="{ background: team.color }"></span>
               <span class="team-name">{{ team.name }}</span>
-              <button
-                class="danger team-remove"
+              <bu5ton
+                clas
+                max-height:
+                150px;
+                overflow-y:
+                auto;s="danger team-remove"
                 :disabled="tournament.teamIds.length <= 2"
                 @click="emit('removeTeam', team.id)"
               >
                 <X :size="13" />
-              </button>
+              </bu5ton>
             </div>
           </div>
           <div v-if="availableTeams.length > 0" class="add-team-row">
@@ -481,8 +485,10 @@ function handleManualConfirm(orderedIds: string[]) {
 .team-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px;
+  gap: 5px;
   margin-bottom: 8px;
+  max-height: 150px;
+  overflow-y: auto;
 }
 .team-row {
   display: inline-flex;
@@ -550,6 +556,8 @@ function handleManualConfirm(orderedIds: string[]) {
   border-radius: 0;
   font-size: 14px;
   line-height: 1;
+  display: flex;
+  justify-content: center;
 }
 .gc-stepper button:first-child {
   border-right: 1px solid var(--border);

@@ -332,10 +332,14 @@ const teamsPerGroup = computed(() =>
       <div class="ct-section">
         <div class="ct-label">Legs per Match</div>
         <div class="ct-hint-box ct-hint-box--top">
-          <strong>Single</strong>
-          — 1 match, winner advances &nbsp;·&nbsp;
-          <strong>Double</strong>
-          — home &amp; away, aggregate score decides
+          <div class="ct-hint-line">
+            <strong>Single</strong>
+            — 1 match, winner advances &nbsp;
+          </div>
+          <div class="ct-hint-line">
+            <strong>Double</strong>
+            — home &amp; away, aggregate score decides
+          </div>
         </div>
         <div class="ct-leg-rows">
           <div v-if="format === 'group+bracket'" class="ct-leg-row">
@@ -547,6 +551,8 @@ const teamsPerGroup = computed(() =>
   font-size: 16px;
   line-height: 1;
   border-radius: 0;
+  display: flex;
+  justify-content: center;
 }
 .ct-gc-stepper button:first-child {
   border-right: 1px solid var(--border);
