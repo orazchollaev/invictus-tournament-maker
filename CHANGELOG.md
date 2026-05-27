@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.3.4](https://github.com/orazchollaev/tournament-sim/compare/v1.3.3...v1.3.4) (2026-05-27)
+
+### Features
+
+- consolidate shared styles into global css and fix radius inconsistencies ([32d56af](https://github.com/orazchollaev/tournament-sim/commit/32d56af3da78f4b550c49bfe4a634bfbd5499cd2))
+- show update button in header when new PWA version is available ([8d69f1c](https://github.com/orazchollaev/tournament-sim/commit/8d69f1c7aafbb28d71a823ab535b1cff15115b07))
+
+### Chores
+
+- **deps:** update dependencies ([b30236c](https://github.com/orazchollaev/tournament-sim/commit/b30236c996a144daae5aa75615cdafdf4bda3600))
+
 ## [1.3.3](https://github.com/orazchollaev/tournament-sim/compare/v1.3.2...v1.3.3) (2026-05-27)
 
 ### Bug Fixes
