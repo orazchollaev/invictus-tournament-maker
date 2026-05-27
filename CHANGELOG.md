@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.3.3](https://github.com/orazchollaev/tournament-sim/compare/v1.3.2...v1.3.3) (2026-05-27)
+
+### Bug Fixes
+
+- remove unused variables and fix some boolean type error ([4270e91](https://github.com/orazchollaev/tournament-sim/commit/4270e91997de66fb49c69baeee108b2590959008))
+
 ## [1.3.2](https://github.com/orazchollaev/tournament-sim/compare/v1.3.1...v1.3.2) (2026-05-27)
 
 ### Features
