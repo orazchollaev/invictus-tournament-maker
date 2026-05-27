@@ -4,12 +4,14 @@ import { useTeamsStore } from "@/modules/teams/store"
 import { useTournamentStore } from "@/modules/tournament/store"
 import type { PlayoffSeedMode, LegMode } from "@/modules/tournament/types"
 import confetti from "canvas-confetti"
+import { useSettingsStore } from "@/modules/settings/store"
 
 export function useTournamentDetail() {
   const route = useRoute()
   const router = useRouter()
   const teamsStore = useTeamsStore()
   const store = useTournamentStore()
+  const settings = useSettingsStore()
 
   const allTeams = computed(() => teamsStore.teams)
   const tournament = computed(() => store.getById(route.params.id as string))
@@ -118,7 +120,7 @@ export function useTournamentDetail() {
     (winnerId) => {
       if (!winnerId) return
       const team = allTeams.value.find((t) => t.id === winnerId)
-      if (team) fireTeamConfetti(team.color)
+      if (team && settings.confettiOnWin) fireTeamConfetti(team.color)
     }
   )
 

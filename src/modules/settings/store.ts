@@ -13,6 +13,7 @@ export const useSettingsStore = defineStore("settings", () => {
   const finalLegMode = ref<LegMode>("single")
   const surpriseFactor = ref(50)
   const showTeamAbbr = ref(true)
+  const confettiOnWin = ref(true)
   const newSeasonDrawType = ref<DrawType>("random")
   const newSeasonGroupDrawType = ref<DrawType>("random")
   const newSeasonPlayoffSeedMode = ref<PlayoffSeedMode>("cross")
@@ -34,6 +35,7 @@ export const useSettingsStore = defineStore("settings", () => {
     finalLegMode,
     surpriseFactor,
     showTeamAbbr,
+    confettiOnWin,
     newSeasonDrawType,
     newSeasonGroupDrawType,
     newSeasonPlayoffSeedMode,

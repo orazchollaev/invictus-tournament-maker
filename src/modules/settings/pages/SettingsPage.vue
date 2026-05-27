@@ -262,6 +262,21 @@ function importData() {
             ]"
           />
         </div>
+        <div class="setting-row">
+          <div class="setting-info">
+            <div class="setting-label">Champion Confetti</div>
+            <div class="setting-desc">
+              Fire confetti in the winner's color when a tournament ends
+            </div>
+          </div>
+          <BtnGroup
+            v-model="settings.confettiOnWin"
+            :options="[
+              { value: true, label: 'On' },
+              { value: false, label: 'Off' },
+            ]"
+          />
+        </div>
       </div>
     </div>
 
