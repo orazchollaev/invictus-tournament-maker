@@ -114,6 +114,16 @@ function closeSeasonModal() {
             Tournaments
           </RouterLink>
           <div class="t-header-actions">
+            <Transition name="fade">
+              <div
+                v-if="tournament.winnerId"
+                class="winner-chip"
+                :style="{ borderColor: winnerTeam?.color, color: winnerTeam?.color }"
+              >
+                <Trophy :size="12" />
+                {{ winnerTeam?.name }}
+              </div>
+            </Transition>
             <button v-if="isFinished" class="primary new-season-btn" @click="openNewSeason">
               New Season
             </button>
@@ -140,18 +150,6 @@ function closeSeasonModal() {
         </h1>
         <span class="t-meta">{{ tournament.teamIds.length }} teams · Created {{ dateStr }}</span>
       </div>
-
-      <Transition name="fade" appear>
-        <div
-          v-if="tournament.winnerId"
-          class="winner-banner"
-          :style="{ borderColor: winnerTeam?.color }"
-        >
-          <Trophy :size="18" />
-          <strong>{{ winnerTeam?.name }}</strong>
-          wins the tournament!
-        </div>
-      </Transition>
 
       <div class="phase-tabs">
         <template v-if="isGroupFormat">
@@ -376,19 +374,17 @@ function closeSeasonModal() {
   border-color: var(--accent);
 }
 
-.winner-banner {
-  display: flex;
+.winner-chip {
+  display: inline-flex;
   align-items: center;
-  gap: 8px;
-  border: 1px solid var(--border-light);
-  border-left: 4px solid var(--team-color, var(--accent-2));
-  background: color-mix(in srgb, var(--accent-2) 8%, var(--surface));
-  padding: 10px 14px;
-  margin-bottom: 16px;
-  font-size: 14px;
-  border-radius: var(--radius);
+  gap: 5px;
+  border: 1px solid;
+  border-radius: 2px;
+  padding: 2px 9px;
+  font-size: 12px;
   font-weight: 600;
-  animation: banner-slide 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+  background: color-mix(in srgb, currentColor 8%, var(--surface));
+  white-space: nowrap;
 }
 
 /* Phase tabs */

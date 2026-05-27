@@ -74,11 +74,11 @@ export function useTournamentStats(tournament: () => Tournament | undefined, tea
   })
 
   const topScorers = computed(() =>
-    [...stats.value].sort((a, b) => b.gf - a.gf || a.ga - b.ga).slice(0, 8)
+    [...stats.value].sort((a, b) => b.gf - a.gf || a.ga - b.ga).slice(0, 20)
   )
 
   const bestDefense = computed(() =>
-    [...stats.value].sort((a, b) => a.ga - b.ga || b.gf - a.gf).slice(0, 8)
+    [...stats.value].sort((a, b) => a.ga - b.ga || b.gf - a.gf).slice(0, 20)
   )
 
   const hasStats = computed(() => stats.value.length > 0)
