@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.3.1](https://github.com/orazchollaev/tournament-sim/compare/v1.3.0...v1.3.1) (2026-05-27)
+
+### Features
+
+- **ui:** add W/D/L, GF/GA/GD, group, and rank columns to participants table ([ea32209](https://github.com/orazchollaev/tournament-sim/commit/ea322097f71bc12eb1139e73f6d9118762a9769f))
+- **ui:** convert AppModal to right-side drawer with enter/exit animations ([02de09d](https://github.com/orazchollaev/tournament-sim/commit/02de09d352dc03edebf4a3ace02813916e8e9f26))
+- **ui:** fully redesigned fixture view in knockout ([b061c08](https://github.com/orazchollaev/tournament-sim/commit/b061c08b1e0dbed9c5a791c5d24857f05ed13372))
+
+### Bug Fixes
+
+- **engine:** don't mark BYE matches as double-leg ([4e9bad5](https://github.com/orazchollaev/tournament-sim/commit/4e9bad57d5082d6ed42315fa686da6f0f1904c29))
+- **engine:** don't mark BYE matches as double-leg ([a4bd31c](https://github.com/orazchollaev/tournament-sim/commit/a4bd31c1eb713e160105d2b1d6c5f440194a3c06))
+- **fixture:** emit sim-third-place for 3rd place match simulation ([c8aa32d](https://github.com/orazchollaev/tournament-sim/commit/c8aa32d0d6580e6b23dfd26ed982001709fca0d3))
+
+### Code Refactoring
+
+- **ui:** merge stats and participants into main tab bar on tournament detail page ([2a7d2bf](https://github.com/orazchollaev/tournament-sim/commit/2a7d2bf5abec934f62f8cd3ca039e87d7263b438))
+- **ui:** replace winner banner with compact chip in header actions ([926ad8b](https://github.com/orazchollaev/tournament-sim/commit/926ad8b8ae4d0f99d452dcd012ff9da660d0fe6f))
+
 ## [1.3.0](https://github.com/orazchollaev/tournament-sim/compare/v1.2.0...v1.3.0) (2026-05-26)
 
 ### Features
