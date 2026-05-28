@@ -1,12 +1,17 @@
 import type { Ref } from "vue"
 import type { Tournament, PlayoffSeedMode, LegMode } from "../types"
 import type { Team } from "@/modules/teams/types"
-import { createTournament } from "@/engine"
+import { createTournament, createLeague } from "@/engine"
 
 export function useDrawActions(tournaments: Ref<Tournament[]>, getTeams: () => Team[]) {
   function hasAnyResults(tournamentId: string): boolean {
     const t = tournaments.value.find((t) => t.id === tournamentId)
     if (!t) return false
+    if (t.league) {
+      for (const md of t.league.matchdays) {
+        if (md.matches.some((m) => m.result !== null)) return true
+      }
+    }
     if (t.groups) {
       for (const g of t.groups) {
         if (g.matches.some((m) => m.result !== null)) return true
@@ -29,6 +34,14 @@ export function useDrawActions(tournaments: Ref<Tournament[]>, getTeams: () => T
   ) {
     const allTeams = getTeams()
     const selected = allTeams.filter((tm) => t.teamIds.includes(tm.id))
+
+    if (t.format === "league" && t.league) {
+      const fresh = createLeague(t.name, selected, t.season, t.league.legMode)
+      t.league = fresh.league
+      t.winnerId = null
+      return
+    }
+
     const resolvedGroupCount =
       t.format === "group+bracket"
         ? Math.min(groupCount ?? t.groups?.length ?? 2, Math.floor(selected.length / 2))
@@ -115,9 +128,17 @@ export function useDrawActions(tournaments: Ref<Tournament[]>, getTeams: () => T
     t.playoffSeedMode = mode
   }
 
+  function setLeagueLegMode(tournamentId: string, mode: LegMode) {
+    const t = tournaments.value.find((t) => t.id === tournamentId)
+    if (!t || t.format !== "league" || !t.league || hasAnyResults(tournamentId)) return
+    t.league.legMode = mode
+    rebuildDraw(t)
+  }
+
   return {
     hasAnyResults,
     setLegMode,
+    setLeagueLegMode,
     changeGroupCount,
     changeQualifiersPerGroup,
     addTeamToTournament,

@@ -8,6 +8,7 @@ import { useBracketActions } from "./store/bracket"
 import { useThirdPlaceActions } from "./store/third-place"
 import { useGroupActions } from "./store/groups"
 import { useDrawActions } from "./store/draw"
+import { useLeagueActions } from "./store/league"
 
 export const useTournamentStore = defineStore("tournament", () => {
   const tournaments = ref<Tournament[]>([])
@@ -22,10 +23,15 @@ export const useTournamentStore = defineStore("tournament", () => {
   const bracket = useBracketActions(tournaments, getTeams, thirdPlace.simulateThirdPlace)
   const groups = useGroupActions(tournaments, getTeams)
   const draw = useDrawActions(tournaments, getTeams)
+  const leagueActions = useLeagueActions(tournaments, getTeams)
 
   function simulateTournament(tournamentId: string) {
     const t = tournaments.value.find((t) => t.id === tournamentId)
     if (!t) return
+    if (t.format === "league") {
+      leagueActions.simAllLeague(tournamentId)
+      return
+    }
     if (t.format === "group+bracket") {
       groups.simAllGroups(tournamentId)
       groups.advanceToBracket(tournamentId)
@@ -41,6 +47,7 @@ export const useTournamentStore = defineStore("tournament", () => {
     ...thirdPlace,
     ...groups,
     ...draw,
+    ...leagueActions,
     simulateTournament,
   }
 })

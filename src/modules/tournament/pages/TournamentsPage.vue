@@ -136,7 +136,13 @@ function closeSeasonModal() {
             <div class="t-meta-row">
               <span class="t-badge">S{{ t.season }}</span>
               <span class="t-badge accent">
-                {{ t.format === "group+bracket" ? "Groups+KO" : "Bracket" }}
+                {{
+                  t.format === "group+bracket"
+                    ? "Groups+KO"
+                    : t.format === "league"
+                      ? "League"
+                      : "Bracket"
+                }}
               </span>
               <span class="t-dot">{{ t.teamIds.length }} teams</span>
             </div>

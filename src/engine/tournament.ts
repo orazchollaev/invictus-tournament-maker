@@ -1,6 +1,12 @@
 // engine/tournament.ts
 import type { Team } from "../modules/teams/types"
-import type { Group, Tournament, PlayoffSeedMode, LegMode } from "../modules/tournament/types"
+import type {
+  Group,
+  GroupStanding,
+  Tournament,
+  PlayoffSeedMode,
+  LegMode,
+} from "../modules/tournament/types"
 import { uid, shuffle } from "./utils"
 import {
   buildBracketRounds,
@@ -9,6 +15,7 @@ import {
   propagateWinners,
 } from "./bracket"
 import { buildGroupFixture, recalcStandings } from "./groups"
+import { buildLeagueMatchdays } from "./league"
 
 export function createTournament(
   name: string,
@@ -281,4 +288,37 @@ export function seedBracketFromGroups(
 
   tournament.rounds = rounds
   tournament.groupsDone = true
+}
+
+// ─── League ──────────────────────────────────────────────────────
+export function createLeague(
+  name: string,
+  teams: Team[],
+  season = 1,
+  legMode: LegMode = "single"
+): Tournament {
+  const teamIds = teams.map((t) => t.id)
+  const matchdays = buildLeagueMatchdays(teamIds, legMode === "double")
+  const standings: GroupStanding[] = teamIds.map((teamId) => ({
+    teamId,
+    played: 0,
+    won: 0,
+    drawn: 0,
+    lost: 0,
+    gf: 0,
+    ga: 0,
+    gd: 0,
+    pts: 0,
+  }))
+  return {
+    id: uid(),
+    name,
+    season,
+    format: "league",
+    teamIds,
+    league: { matchdays, standings, legMode },
+    rounds: [],
+    winnerId: null,
+    createdAt: Date.now(),
+  }
 }

@@ -4,6 +4,7 @@ import { useRoute } from "vue-router"
 
 import BracketPanel from "@/modules/tournament/components/BracketPanel.vue"
 import GroupStage from "@/modules/tournament/components/GroupStage.vue"
+import LeagueView from "@/modules/tournament/components/LeagueView.vue"
 import ParticipantsTable from "@/modules/tournament/components/ParticipantsTable.vue"
 import ManualDraw from "@/modules/tournament/components/ManualDraw.vue"
 import GroupDraw from "@/modules/tournament/components/GroupDraw.vue"
@@ -56,9 +57,18 @@ function openNewSeason() {
   }
 }
 
-type MainTab = "groups" | "bracket" | "stats" | "participants"
-const activeTab = ref<MainTab>(tournament.value?.format === "group+bracket" ? "groups" : "bracket")
+type MainTab = "groups" | "bracket" | "league" | "stats" | "participants"
+
+function defaultTab(): MainTab {
+  const fmt = tournament.value?.format
+  if (fmt === "league") return "league"
+  if (fmt === "group+bracket") return "groups"
+  return "bracket"
+}
+
+const activeTab = ref<MainTab>(defaultTab())
 const isGroupFormat = computed(() => tournament.value?.format === "group+bracket")
+const isLeagueFormat = computed(() => tournament.value?.format === "league")
 const isFinished = computed(
   () => !!tournament.value && store.isTournamentFinished(tournament.value.id)
 )
@@ -73,7 +83,7 @@ watch(
 watch(
   () => route.params.id,
   () => {
-    activeTab.value = isGroupFormat.value ? "groups" : "bracket"
+    activeTab.value = defaultTab()
   }
 )
 
@@ -145,14 +155,31 @@ function closeSeasonModal() {
           {{ tournament.name }}
           <span class="t-season">S{{ tournament.season }}</span>
           <span class="t-format-tag">
-            {{ tournament.format === "group+bracket" ? "Groups + KO" : "Bracket" }}
+            {{
+              tournament.format === "group+bracket"
+                ? "Groups + KO"
+                : tournament.format === "league"
+                  ? "League"
+                  : "Bracket"
+            }}
           </span>
         </h1>
         <span class="t-meta">{{ tournament.teamIds.length }} teams · Created {{ dateStr }}</span>
       </div>
 
       <div class="phase-tabs">
-        <template v-if="isGroupFormat">
+        <!-- League format: tek sekme -->
+        <template v-if="isLeagueFormat">
+          <button
+            class="phase-tab"
+            :class="{ active: activeTab === 'league' }"
+            @click="activeTab = 'league'"
+          >
+            Table
+          </button>
+        </template>
+        <!-- Groups + Bracket format -->
+        <template v-else-if="isGroupFormat">
           <button
             class="phase-tab"
             :class="{ active: activeTab === 'groups' }"
@@ -170,6 +197,7 @@ function closeSeasonModal() {
             <Lock v-if="!tournament.groupsDone" :size="13" class="tab-lock" />
           </button>
         </template>
+        <!-- Pure bracket format -->
         <template v-else>
           <button
             class="phase-tab"
@@ -198,7 +226,19 @@ function closeSeasonModal() {
       </div>
 
       <Transition name="tab" mode="out-in">
-        <div v-if="activeTab === 'groups'" key="groups" class="section-box">
+        <div v-if="activeTab === 'league'" key="league" class="section-box">
+          <div class="section-body">
+            <LeagueView
+              :tournament="tournament"
+              :teams="allTeams"
+              @set-result="(mdi, mi, h, a) => store.setLeagueResult(tournament!.id, mdi, mi, h, a)"
+              @sim-match="(mdi, mi) => store.simLeagueMatch(tournament!.id, mdi, mi)"
+              @sim-matchday="(mdi) => store.simLeagueMatchday(tournament!.id, mdi)"
+              @sim-all="store.simAllLeague(tournament!.id)"
+            />
+          </div>
+        </div>
+        <div v-else-if="activeTab === 'groups'" key="groups" class="section-box">
           <div class="section-body gs-body">
             <GroupStage
               :tournament="tournament"
@@ -245,6 +285,7 @@ function closeSeasonModal() {
       @toggle-third-place="store.toggleThirdPlace(tournament!.id)"
       @set-playoff-seed-mode="setPlayoffSeedMode"
       @change-leg-mode="changeLegMode"
+      @set-league-leg-mode="store.setLeagueLegMode(tournament!.id, $event)"
       @reset="resetTournament"
       @delete="deleteTournament"
       @close="showSettingsModal = false"

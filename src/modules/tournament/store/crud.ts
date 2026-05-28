@@ -1,7 +1,14 @@
 import type { Ref } from "vue"
 import type { Tournament, LegMode, PlayoffSeedMode, DrawType } from "../types"
 import type { Team } from "@/modules/teams/types"
-import { createTournament, uid, updateThirdPlaceSlots, recalcStandings } from "@/engine"
+import {
+  createTournament,
+  createLeague,
+  uid,
+  updateThirdPlaceSlots,
+  recalcStandings,
+  recalcLeagueStandings,
+} from "@/engine"
 
 function deriveDrawType(seeded: boolean, orderedIds?: string[]): DrawType {
   if (orderedIds) return "manual"
@@ -51,6 +58,23 @@ export function useCrudActions(
     return t.id
   }
 
+  function createLeagueTournament(
+    name: string,
+    teamIds: string[],
+    legMode: LegMode = "single"
+  ): string {
+    const allTeams = getTeams()
+    const selected = allTeams.filter((t) => teamIds.includes(t.id))
+    const season =
+      tournaments.value
+        .filter((t) => t.name === name)
+        .reduce((max, t) => Math.max(max, t.season), 0) + 1
+    const t = createLeague(name, selected, season, legMode)
+    tournaments.value.push(t)
+    active.value = t.id
+    return t.id
+  }
+
   function newSeason(
     id: string,
     seeded = false,
@@ -67,6 +91,15 @@ export function useCrudActions(
       tournaments.value
         .filter((tr) => tr.name === t.name)
         .reduce((max, tr) => Math.max(max, tr.season), 0) + 1
+
+    // League new season
+    if (t.format === "league") {
+      const newT = createLeague(t.name, selected, season, t.league?.legMode ?? "single")
+      tournaments.value.push(newT)
+      active.value = newT.id
+      return newT.id
+    }
+
     const ordered = orderedIds
       ? (orderedIds.map((oid) => allTeams.find((tm) => tm.id === oid)).filter(Boolean) as Team[])
       : undefined
@@ -110,6 +143,14 @@ export function useCrudActions(
   function resetResults(tournamentId: string) {
     const t = tournaments.value.find((t) => t.id === tournamentId)
     if (!t) return
+    if (t.format === "league" && t.league) {
+      for (const matchday of t.league.matchdays) {
+        matchday.matches.forEach((m) => (m.result = null))
+      }
+      recalcLeagueStandings(t.league)
+      t.winnerId = null
+      return
+    }
     if (t.groups) {
       for (const group of t.groups) {
         group.matches.forEach((m) => (m.result = null))
@@ -138,6 +179,7 @@ export function useCrudActions(
   function isTournamentFinished(tournamentId: string): boolean {
     const t = tournaments.value.find((t) => t.id === tournamentId)
     if (!t) return false
+    if (t.format === "league") return !!t.winnerId
     if (t.groups) {
       for (const group of t.groups) {
         for (const match of group.matches) {
@@ -159,5 +201,13 @@ export function useCrudActions(
     return true && !!t.winnerId
   }
 
-  return { create, newSeason, remove, getById, resetResults, isTournamentFinished }
+  return {
+    create,
+    createLeagueTournament,
+    newSeason,
+    remove,
+    getById,
+    resetResults,
+    isTournamentFinished,
+  }
 }

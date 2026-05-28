@@ -50,8 +50,20 @@ export interface Group {
   standings: GroupStanding[]
 }
 
+// ─── League ──────────────────────────────────────────────────────
+export interface LeagueMatchday {
+  name: string // "Matchday 1", "Matchday 2", …
+  matches: GroupMatch[]
+}
+
+export interface League {
+  matchdays: LeagueMatchday[]
+  standings: GroupStanding[]
+  legMode: LegMode
+}
+
 // ─── Tournament ──────────────────────────────────────────────────
-export type TournamentFormat = "bracket" | "group+bracket"
+export type TournamentFormat = "bracket" | "group+bracket" | "league"
 
 export type PlayoffSeedMode = "cross" | "no-same-group" | "random"
 export type DrawType = "random" | "seeded" | "manual"
@@ -80,6 +92,9 @@ export interface Tournament {
   groupLegMode?: LegMode
   knockoutLegMode?: LegMode
   finalLegMode?: LegMode
+
+  // league (only when format === "league")
+  league?: League
 
   createdAt: number
 }

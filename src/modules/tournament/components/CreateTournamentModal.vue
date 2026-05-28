@@ -8,11 +8,11 @@ import ManualDraw from "./ManualDraw.vue"
 import GroupDraw from "./GroupDraw.vue"
 import BtnGroup from "@/components/BtnGroup.vue"
 import AppModal from "@/components/AppModal.vue"
-import { Trophy, LayoutGrid } from "lucide-vue-next"
+import { Trophy, LayoutGrid, List } from "lucide-vue-next"
 import type { LegMode, PlayoffSeedMode } from "@/modules/tournament/types"
 
 type DrawType = "random" | "seeded" | "manual"
-type TournamentFormat = "bracket" | "group+bracket"
+type TournamentFormat = "bracket" | "group+bracket" | "league"
 
 const emit = defineEmits<{ close: [] }>()
 
@@ -33,6 +33,7 @@ const playoffSeedMode = ref<PlayoffSeedMode>(settingsStore.newSeasonPlayoffSeedM
 const groupLegMode = ref<LegMode>(settingsStore.groupLegMode)
 const knockoutLegMode = ref<LegMode>(settingsStore.knockoutLegMode)
 const finalLegMode = ref<LegMode>(settingsStore.finalLegMode)
+const leagueLegMode = ref<LegMode>("single")
 
 const legOptions = [
   { value: "single", label: "Single" },
@@ -79,6 +80,7 @@ function toggleAll() {
 
 function setFormat(f: TournamentFormat) {
   format.value = f
+  if (f === "league") return
   drawType.value =
     f === "group+bracket" ? settingsStore.newSeasonGroupDrawType : settingsStore.newSeasonDrawType
   if (f === "group+bracket") {
@@ -90,6 +92,10 @@ function setFormat(f: TournamentFormat) {
 
 function handleCreate() {
   if (!canCreate.value) return
+  if (format.value === "league") {
+    doCreate()
+    return
+  }
   if (drawType.value === "manual") {
     showManualDraw.value = true
     return
@@ -98,6 +104,12 @@ function handleCreate() {
 }
 
 function doCreate(orderedIds?: string[]) {
+  if (format.value === "league") {
+    const id = store.createLeagueTournament(name.value.trim(), selected.value, leagueLegMode.value)
+    router.push(`/tournaments/${id}`)
+    emit("close")
+    return
+  }
   const isGroup = format.value === "group+bracket"
   const gc = isGroup ? groupCount.value : undefined
   const qpg = isGroup ? qualifiersPerGroup.value : undefined
@@ -226,6 +238,16 @@ const teamsPerGroup = computed(() =>
             <span class="ct-format-title">Groups + Knockout</span>
             <span class="ct-format-desc">Group stage, then top teams advance</span>
           </button>
+          <button
+            class="ct-format-card"
+            :class="{ 'ct-format-card--on': format === 'league' }"
+            :disabled="selected.length < 2"
+            @click="setFormat('league')"
+          >
+            <List :size="26" class="ct-format-icon" />
+            <span class="ct-format-title">League</span>
+            <span class="ct-format-desc">Everyone plays everyone, most points wins</span>
+          </button>
         </div>
 
         <!-- Group count + qualifiers -->
@@ -275,47 +297,75 @@ const teamsPerGroup = computed(() =>
         </div>
       </div>
 
-      <div class="ct-divider" />
+      <template v-if="format === 'league'">
+        <div class="ct-divider" />
+        <div class="ct-section">
+          <div class="ct-label">Round Format</div>
+          <div class="ct-leg-rows">
+            <div class="ct-leg-row">
+              <span class="ct-row-label">Schedule</span>
+              <BtnGroup
+                v-model="leagueLegMode"
+                :options="[
+                  { value: 'single', label: 'Single' },
+                  { value: 'double', label: 'Double' },
+                ]"
+              />
+            </div>
+          </div>
+          <div class="ct-hint-box" style="margin-top: 8px">
+            <div class="ct-hint-line">
+              <strong>Single</strong>
+              — each pair plays once (home only) &nbsp;·&nbsp;
+              <strong>Double</strong>
+              — home &amp; away for every pair
+            </div>
+          </div>
+        </div>
+      </template>
 
       <!-- Draw -->
-      <div class="ct-section">
-        <div class="ct-label">Draw Method</div>
-        <div class="ct-draw-rows">
-          <div class="ct-draw-row">
-            <span v-if="format === 'group+bracket'" class="ct-row-label">Group stage</span>
-            <BtnGroup v-model="drawType" :options="drawOptions" />
+      <template v-if="format !== 'league'">
+        <div class="ct-divider" />
+        <div class="ct-section">
+          <div class="ct-label">Draw Method</div>
+          <div class="ct-draw-rows">
+            <div class="ct-draw-row">
+              <span v-if="format === 'group+bracket'" class="ct-row-label">Group stage</span>
+              <BtnGroup v-model="drawType" :options="drawOptions" />
+            </div>
+            <div v-if="format === 'group+bracket'" class="ct-draw-row">
+              <span class="ct-row-label">Playoff bracket</span>
+              <BtnGroup
+                v-model="playoffSeedMode"
+                :options="[
+                  { value: 'cross', label: 'Cross' },
+                  { value: 'no-same-group', label: 'No rematch' },
+                  { value: 'random', label: 'Random' },
+                ]"
+              />
+            </div>
           </div>
-          <div v-if="format === 'group+bracket'" class="ct-draw-row">
-            <span class="ct-row-label">Playoff bracket</span>
-            <BtnGroup
-              v-model="playoffSeedMode"
-              :options="[
-                { value: 'cross', label: 'Cross' },
-                { value: 'no-same-group', label: 'No rematch' },
-                { value: 'random', label: 'Random' },
-              ]"
-            />
+          <div class="ct-hint-box">
+            <div class="ct-hint-line">
+              <strong>Random</strong>
+              — teams placed by chance &nbsp;·&nbsp;
+              <strong>Seeded</strong>
+              — top teams kept apart &nbsp;·&nbsp;
+              <strong>Manual</strong>
+              — you arrange them
+            </div>
+            <div v-if="format === 'group+bracket'" class="ct-hint-line">
+              <strong>Playoff bracket:</strong>
+              Cross — A1 vs B2, B1 vs A2 &nbsp;·&nbsp; No rematch — avoids same-group matchups in
+              Round 1 &nbsp;·&nbsp; Random — fully random
+            </div>
           </div>
         </div>
-        <div class="ct-hint-box">
-          <div class="ct-hint-line">
-            <strong>Random</strong>
-            — teams placed by chance &nbsp;·&nbsp;
-            <strong>Seeded</strong>
-            — top teams kept apart &nbsp;·&nbsp;
-            <strong>Manual</strong>
-            — you arrange them
-          </div>
-          <div v-if="format === 'group+bracket'" class="ct-hint-line">
-            <strong>Playoff bracket:</strong>
-            Cross — A1 vs B2, B1 vs A2 &nbsp;·&nbsp; No rematch — avoids same-group matchups in
-            Round 1 &nbsp;·&nbsp; Random — fully random
-          </div>
-        </div>
-      </div>
+      </template>
 
       <!-- Options (3rd Place) -->
-      <template v-if="selected.length >= 4">
+      <template v-if="selected.length >= 4 && format !== 'league'">
         <div class="ct-divider" />
         <div class="ct-section">
           <div class="ct-label">Options</div>
@@ -327,35 +377,37 @@ const teamsPerGroup = computed(() =>
         </div>
       </template>
 
-      <!-- Leg mode -->
-      <div class="ct-divider" />
-      <div class="ct-section">
-        <div class="ct-label">Legs per Match</div>
-        <div class="ct-hint-box ct-hint-box--top">
-          <div class="ct-hint-line">
-            <strong>Single</strong>
-            — 1 match, winner advances &nbsp;
+      <!-- Leg mode (bracket formats only) -->
+      <template v-if="format !== 'league'">
+        <div class="ct-divider" />
+        <div class="ct-section">
+          <div class="ct-label">Legs per Match</div>
+          <div class="ct-hint-box ct-hint-box--top">
+            <div class="ct-hint-line">
+              <strong>Single</strong>
+              — 1 match, winner advances &nbsp;
+            </div>
+            <div class="ct-hint-line">
+              <strong>Double</strong>
+              — home &amp; away, aggregate score decides
+            </div>
           </div>
-          <div class="ct-hint-line">
-            <strong>Double</strong>
-            — home &amp; away, aggregate score decides
+          <div class="ct-leg-rows">
+            <div v-if="format === 'group+bracket'" class="ct-leg-row">
+              <span class="ct-row-label">Group Stage</span>
+              <BtnGroup v-model="groupLegMode" :options="legOptions" />
+            </div>
+            <div class="ct-leg-row">
+              <span class="ct-row-label">Knockout Rounds</span>
+              <BtnGroup v-model="knockoutLegMode" :options="legOptions" />
+            </div>
+            <div class="ct-leg-row">
+              <span class="ct-row-label">Final</span>
+              <BtnGroup v-model="finalLegMode" :options="legOptions" />
+            </div>
           </div>
         </div>
-        <div class="ct-leg-rows">
-          <div v-if="format === 'group+bracket'" class="ct-leg-row">
-            <span class="ct-row-label">Group Stage</span>
-            <BtnGroup v-model="groupLegMode" :options="legOptions" />
-          </div>
-          <div class="ct-leg-row">
-            <span class="ct-row-label">Knockout Rounds</span>
-            <BtnGroup v-model="knockoutLegMode" :options="legOptions" />
-          </div>
-          <div class="ct-leg-row">
-            <span class="ct-row-label">Final</span>
-            <BtnGroup v-model="finalLegMode" :options="legOptions" />
-          </div>
-        </div>
-      </div>
+      </template>
     </div>
 
     <template v-if="!showManualDraw" #footer>

@@ -26,6 +26,7 @@ const emit = defineEmits<{
   changeQualifiersPerGroup: [qpg: number]
   toggleThirdPlace: []
   changeLegMode: [stage: "group" | "knockout" | "final", mode: LegMode]
+  setLeagueLegMode: [mode: LegMode]
   reset: []
   delete: []
   close: []
@@ -49,6 +50,8 @@ const localHasThirdPlace = ref(!!props.tournament.hasThirdPlace)
 const localGroupLegMode = ref<LegMode>(props.tournament.groupLegMode ?? "single")
 const localKnockoutLegMode = ref<LegMode>(props.tournament.knockoutLegMode ?? "single")
 const localFinalLegMode = ref<LegMode>(props.tournament.finalLegMode ?? "single")
+const localLeagueLegMode = ref<LegMode>(props.tournament.league?.legMode ?? "single")
+const isLeagueFormat = computed(() => props.tournament.format === "league")
 
 const drawOptions = [
   { value: "random", label: "Random" },
@@ -90,6 +93,8 @@ const hasChanges = computed(() => {
   if (localGroupLegMode.value !== (orig.groupLegMode ?? "single")) return true
   if (localKnockoutLegMode.value !== (orig.knockoutLegMode ?? "single")) return true
   if (localFinalLegMode.value !== (orig.finalLegMode ?? "single")) return true
+  if (isLeagueFormat.value && localLeagueLegMode.value !== (orig.league?.legMode ?? "single"))
+    return true
   return false
 })
 
@@ -170,6 +175,11 @@ function handleSave() {
     emit("changeLegMode", "final", localFinalLegMode.value)
   }
 
+  // League leg mode
+  if (isLeagueFormat.value && localLeagueLegMode.value !== (orig.league?.legMode ?? "single")) {
+    emit("setLeagueLegMode", localLeagueLegMode.value)
+  }
+
   emit("close")
 }
 </script>
@@ -228,51 +238,54 @@ function handleSave() {
 
       <div class="ts-divider"></div>
 
-      <!-- ── Draw ─────────────────────────────────────── -->
-      <div class="ts-section">
-        <div class="ts-section-title">
-          Draw Method
-          <span v-if="hasAnyResults" class="ts-lock-tag">
-            <Lock :size="10" />
-            Locked
-          </span>
-        </div>
-        <template v-if="!hasAnyResults">
-          <template v-if="showManualDraw">
-            <GroupDraw
-              v-if="isGroupFormat"
-              :teams="localTeams"
-              :group-count="localGroupCount"
-              @confirm="handleManualConfirm"
-              @cancel="showManualDraw = false"
-            />
-            <ManualDraw
-              v-else
-              :teams="localTeams"
-              @confirm="handleManualConfirm"
-              @cancel="showManualDraw = false"
-            />
+      <!-- ── Draw (bracket / group+bracket only) ────── -->
+      <template v-if="!isLeagueFormat">
+        <div class="ts-section">
+          <div class="ts-section-title">
+            Draw Method
+            <span v-if="hasAnyResults" class="ts-lock-tag">
+              <Lock :size="10" />
+              Locked
+            </span>
+          </div>
+          <template v-if="!hasAnyResults">
+            <template v-if="showManualDraw">
+              <GroupDraw
+                v-if="isGroupFormat"
+                :teams="localTeams"
+                :group-count="localGroupCount"
+                @confirm="handleManualConfirm"
+                @cancel="showManualDraw = false"
+              />
+              <ManualDraw
+                v-else
+                :teams="localTeams"
+                @confirm="handleManualConfirm"
+                @cancel="showManualDraw = false"
+              />
+            </template>
+            <template v-else>
+              <div class="ts-row">
+                <BtnGroup v-model="drawType" :options="drawOptions" />
+                <button @click="handleRedraw">↺ Regenerate</button>
+              </div>
+              <div class="ts-hint-box">
+                <strong>Random</strong>
+                — by chance &nbsp;·&nbsp;
+                <strong>Seeded</strong>
+                — top teams kept apart &nbsp;·&nbsp;
+                <strong>Manual</strong>
+                — you arrange
+              </div>
+            </template>
           </template>
-          <template v-else>
-            <div class="ts-row">
-              <BtnGroup v-model="drawType" :options="drawOptions" />
-              <button @click="handleRedraw">↺ Regenerate</button>
-            </div>
-            <div class="ts-hint-box">
-              <strong>Random</strong>
-              — by chance &nbsp;·&nbsp;
-              <strong>Seeded</strong>
-              — top teams kept apart &nbsp;·&nbsp;
-              <strong>Manual</strong>
-              — you arrange
-            </div>
-          </template>
-        </template>
-        <div v-else class="ts-locked-banner">
-          <Lock :size="12" />
-          Draw cannot be changed once matches have been played.
+          <div v-else class="ts-locked-banner">
+            <Lock :size="12" />
+            Draw cannot be changed once matches have been played.
+          </div>
         </div>
-      </div>
+      </template>
+      <!-- end !isLeagueFormat (Draw) -->
 
       <!-- ── Group Count (group+bracket only) ─────── -->
       <template v-if="isGroupFormat">
@@ -358,8 +371,8 @@ function handleSave() {
         </div>
       </template>
 
-      <!-- ── Format Options ──────────────────────────── -->
-      <template v-if="tournament.rounds.length >= 2">
+      <!-- ── Format Options (bracket only) ────────────── -->
+      <template v-if="!isLeagueFormat && tournament.rounds.length >= 2">
         <div class="ts-divider"></div>
         <div class="ts-section">
           <div class="ts-section-title">
@@ -383,43 +396,75 @@ function handleSave() {
         </div>
       </template>
 
-      <!-- ── Legs per Match ──────────────────────────── -->
-      <div class="ts-divider"></div>
-      <div class="ts-section">
-        <div class="ts-section-title">
-          Legs per Match
-          <span v-if="hasAnyResults" class="ts-lock-tag">
-            <Lock :size="10" />
-            Locked
-          </span>
-        </div>
-        <template v-if="!hasAnyResults">
-          <div class="ts-hint-box ts-hint-box--top">
-            <strong>Single</strong>
-            — 1 match, winner advances &nbsp;·&nbsp;
-            <strong>Double</strong>
-            — home &amp; away, aggregate score decides
+      <!-- ── Legs per Match (bracket / group+bracket) ─── -->
+      <template v-if="!isLeagueFormat">
+        <div class="ts-divider"></div>
+        <div class="ts-section">
+          <div class="ts-section-title">
+            Legs per Match
+            <span v-if="hasAnyResults" class="ts-lock-tag">
+              <Lock :size="10" />
+              Locked
+            </span>
           </div>
-          <div class="ts-leg-rows">
-            <div v-if="isGroupFormat" class="ts-leg-row">
-              <span class="ts-row-label">Group Stage</span>
-              <BtnGroup v-model="localGroupLegMode" :options="legOptions" />
+          <template v-if="!hasAnyResults">
+            <div class="ts-hint-box ts-hint-box--top">
+              <strong>Single</strong>
+              — 1 match, winner advances &nbsp;·&nbsp;
+              <strong>Double</strong>
+              — home &amp; away, aggregate score decides
             </div>
-            <div class="ts-leg-row">
-              <span class="ts-row-label">Knockout Rounds</span>
-              <BtnGroup v-model="localKnockoutLegMode" :options="legOptions" />
+            <div class="ts-leg-rows">
+              <div v-if="isGroupFormat" class="ts-leg-row">
+                <span class="ts-row-label">Group Stage</span>
+                <BtnGroup v-model="localGroupLegMode" :options="legOptions" />
+              </div>
+              <div class="ts-leg-row">
+                <span class="ts-row-label">Knockout Rounds</span>
+                <BtnGroup v-model="localKnockoutLegMode" :options="legOptions" />
+              </div>
+              <div class="ts-leg-row">
+                <span class="ts-row-label">Final</span>
+                <BtnGroup v-model="localFinalLegMode" :options="legOptions" />
+              </div>
             </div>
-            <div class="ts-leg-row">
-              <span class="ts-row-label">Final</span>
-              <BtnGroup v-model="localFinalLegMode" :options="legOptions" />
-            </div>
+          </template>
+          <div v-else class="ts-locked-banner">
+            <Lock :size="12" />
+            Leg settings cannot be changed after matches have started.
           </div>
-        </template>
-        <div v-else class="ts-locked-banner">
-          <Lock :size="12" />
-          Leg settings cannot be changed after matches have started.
         </div>
-      </div>
+      </template>
+
+      <!-- ── League Format (league only) ──────────────── -->
+      <template v-if="isLeagueFormat">
+        <div class="ts-divider"></div>
+        <div class="ts-section">
+          <div class="ts-section-title">
+            League Format
+            <span v-if="hasAnyResults" class="ts-lock-tag">
+              <Lock :size="10" />
+              Locked
+            </span>
+          </div>
+          <template v-if="!hasAnyResults">
+            <div class="ts-leg-row">
+              <span class="ts-row-label">Round Format</span>
+              <BtnGroup v-model="localLeagueLegMode" :options="legOptions" />
+            </div>
+            <div class="ts-hint-box" style="margin-top: 8px">
+              <strong>Single</strong>
+              — each pair plays once &nbsp;·&nbsp;
+              <strong>Double</strong>
+              — home &amp; away for each pair
+            </div>
+          </template>
+          <div v-else class="ts-locked-banner">
+            <Lock :size="12" />
+            Format cannot be changed after matches have started.
+          </div>
+        </div>
+      </template>
 
       <!-- ── Danger Zone ──────────────────────────────── -->
       <div class="ts-divider"></div>
