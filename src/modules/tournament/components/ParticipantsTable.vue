@@ -66,6 +66,13 @@ const teamStatsMap = computed(() => {
     }
   }
 
+  for (const matchday of props.tournament.league?.matchdays ?? []) {
+    for (const match of matchday.matches) {
+      if (!match.result) continue
+      addResult(match.homeId, match.awayId, match.result.home, match.result.away)
+    }
+  }
+
   for (const group of props.tournament.groups ?? []) {
     for (const match of group.matches) {
       if (!match.result) continue
@@ -96,9 +103,11 @@ interface Row {
   eliminatedRoundIdx: number
   groupName: string | null
   stats: TeamStats
+  leaguePosition: number | null
 }
 
 const isGroupFormat = computed(() => props.tournament.format === "group+bracket")
+const isLeagueFormat = computed(() => props.tournament.format === "league")
 
 const rows = computed<Row[]>(() => {
   const tpMatch = props.tournament.thirdPlaceMatch
@@ -110,6 +119,24 @@ const rows = computed<Row[]>(() => {
   const secondPlaceId = finalMatch ? getLoserId(finalMatch) : null
 
   const emptyStats: TeamStats = { played: 0, wins: 0, draws: 0, losses: 0, gf: 0, ga: 0 }
+  const nil: Pick<
+    Row,
+    | "isWinner"
+    | "isSecondPlace"
+    | "isThirdPlace"
+    | "isFourthPlace"
+    | "eliminatedRound"
+    | "eliminatedRoundIdx"
+    | "leaguePosition"
+  > = {
+    isWinner: false,
+    isSecondPlace: false,
+    isThirdPlace: false,
+    isFourthPlace: false,
+    eliminatedRound: null,
+    eliminatedRoundIdx: -1,
+    leaguePosition: null,
+  }
 
   return props.teams
     .filter((t) => props.tournament.teamIds.includes(t.id))
@@ -120,49 +147,28 @@ const rows = computed<Row[]>(() => {
 
       const base = { team, groupName, stats }
 
-      if (props.tournament.winnerId === team.id)
+      // ── League format ────────────────────────────────────────────
+      if (props.tournament.format === "league" && props.tournament.league) {
+        const posIdx = props.tournament.league.standings.findIndex((s) => s.teamId === team.id)
+        const leaguePosition = posIdx !== -1 ? posIdx + 1 : null
         return {
           ...base,
-          isWinner: true,
-          isSecondPlace: false,
-          isThirdPlace: false,
-          isFourthPlace: false,
-          eliminatedRound: null,
-          eliminatedRoundIdx: -1,
+          ...nil,
+          isWinner: props.tournament.winnerId === team.id,
+          leaguePosition,
+          eliminatedRoundIdx: leaguePosition ?? 9999,
         }
+      }
 
-      if (secondPlaceId === team.id)
-        return {
-          ...base,
-          isWinner: false,
-          isSecondPlace: true,
-          isThirdPlace: false,
-          isFourthPlace: false,
-          eliminatedRound: null,
-          eliminatedRoundIdx: -1,
-        }
+      if (props.tournament.winnerId === team.id) return { ...base, ...nil, isWinner: true }
+
+      if (secondPlaceId === team.id) return { ...base, ...nil, isSecondPlace: true }
 
       if (tpWinnerId === team.id)
-        return {
-          ...base,
-          isWinner: false,
-          isSecondPlace: false,
-          isThirdPlace: true,
-          isFourthPlace: false,
-          eliminatedRound: null,
-          eliminatedRoundIdx: -2,
-        }
+        return { ...base, ...nil, isThirdPlace: true, eliminatedRoundIdx: -2 }
 
       if (tpLoserId === team.id)
-        return {
-          ...base,
-          isWinner: false,
-          isSecondPlace: false,
-          isThirdPlace: false,
-          isFourthPlace: true,
-          eliminatedRound: null,
-          eliminatedRoundIdx: -2,
-        }
+        return { ...base, ...nil, isFourthPlace: true, eliminatedRoundIdx: -2 }
 
       if (props.tournament.format === "group+bracket") {
         if (props.tournament.groupsDone) {
@@ -174,10 +180,7 @@ const rows = computed<Row[]>(() => {
                 if (winnerId && winnerId !== team.id)
                   return {
                     ...base,
-                    isWinner: false,
-                    isSecondPlace: false,
-                    isThirdPlace: false,
-                    isFourthPlace: false,
+                    ...nil,
                     eliminatedRound: round.name,
                     eliminatedRoundIdx: 1000 + ri,
                   }
@@ -195,37 +198,10 @@ const rows = computed<Row[]>(() => {
         const group = props.tournament.groups?.find((g) => g.teamIds.includes(team.id))
         if (group) {
           const allDone = group.matches.every((m) => m.result !== null)
-          if (allDone && !qualified && props.tournament.groupsDone)
-            return {
-              ...base,
-              isWinner: false,
-              isSecondPlace: false,
-              isThirdPlace: false,
-              isFourthPlace: false,
-              eliminatedRound: group.name,
-              eliminatedRoundIdx: -1,
-            }
-          if (allDone && !qualified && !props.tournament.groupsDone)
-            return {
-              ...base,
-              isWinner: false,
-              isSecondPlace: false,
-              isThirdPlace: false,
-              isFourthPlace: false,
-              eliminatedRound: group.name,
-              eliminatedRoundIdx: -1,
-            }
+          if (allDone && !qualified) return { ...base, ...nil, eliminatedRound: group.name }
         }
 
-        return {
-          ...base,
-          isWinner: false,
-          isSecondPlace: false,
-          isThirdPlace: false,
-          isFourthPlace: false,
-          eliminatedRound: null,
-          eliminatedRoundIdx: -1,
-        }
+        return { ...base, ...nil }
       }
 
       for (let ri = 0; ri < props.tournament.rounds.length; ri++) {
@@ -234,33 +210,18 @@ const rows = computed<Row[]>(() => {
           if ((match.homeId === team.id || match.awayId === team.id) && match.result) {
             const winnerId = getWinnerId(match)
             if (winnerId && winnerId !== team.id)
-              return {
-                ...base,
-                isWinner: false,
-                isSecondPlace: false,
-                isThirdPlace: false,
-                isFourthPlace: false,
-                eliminatedRound: round.name,
-                eliminatedRoundIdx: ri,
-              }
+              return { ...base, ...nil, eliminatedRound: round.name, eliminatedRoundIdx: ri }
           }
         }
       }
 
-      return {
-        ...base,
-        isWinner: false,
-        isSecondPlace: false,
-        isThirdPlace: false,
-        isFourthPlace: false,
-        eliminatedRound: null,
-        eliminatedRoundIdx: -1,
-      }
+      return { ...base, ...nil }
     })
 })
 
 function resultScore(r: Row): number {
   if (r.isWinner) return 0
+  if (r.leaguePosition !== null) return r.leaguePosition
   if (r.isSecondPlace) return 1
   if (r.isThirdPlace) return 2
   if (r.isFourthPlace) return 3
@@ -299,10 +260,26 @@ const sorted = computed(() => {
 
 function finishRank(row: Row): number | null {
   if (row.isWinner) return 1
+  if (row.leaguePosition !== null) return row.leaguePosition
   if (row.isSecondPlace) return 2
   if (row.isThirdPlace) return 3
   if (row.isFourthPlace) return 4
   return null
+}
+
+function ordinalSuffix(n: number): string {
+  const mod10 = n % 10
+  const mod100 = n % 100
+  if (mod100 >= 11 && mod100 <= 13) return `${n}th`
+  if (mod10 === 1) return `${n}st`
+  if (mod10 === 2) return `${n}nd`
+  if (mod10 === 3) return `${n}rd`
+  return `${n}th`
+}
+
+function leaguePlaceTag(pos: number): { label: string; color: string } {
+  const colors: Record<number, string> = { 1: "#f59e0b", 2: "#3b82f6", 3: "#8b5cf6", 4: "#22c55e" }
+  return { label: `${ordinalSuffix(pos)} Place`, color: colors[pos] ?? "var(--text-muted)" }
 }
 
 function eliminationLabel(row: Row): string {
@@ -414,6 +391,19 @@ function sortIcon(key: SortKey): string {
             <span v-if="row.isWinner" class="tag" :style="{ background: row.team.color }">
               1st Place
             </span>
+            <template v-else-if="row.leaguePosition !== null && row.leaguePosition > 1">
+              <span
+                v-if="row.leaguePosition <= 4"
+                class="tag tag--place"
+                :style="{
+                  borderColor: leaguePlaceTag(row.leaguePosition).color,
+                  color: leaguePlaceTag(row.leaguePosition).color,
+                }"
+              >
+                {{ leaguePlaceTag(row.leaguePosition).label }}
+              </span>
+              <span v-else class="pending">{{ ordinalSuffix(row.leaguePosition) }} Place</span>
+            </template>
             <span
               v-else-if="row.isSecondPlace"
               class="tag tag--place"

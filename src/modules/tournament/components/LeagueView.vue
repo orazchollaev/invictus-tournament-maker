@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { ref, computed } from "vue"
+import { ref, computed, watch, nextTick } from "vue"
 import type { Tournament } from "@/modules/tournament/types"
 import type { Team } from "@/modules/teams/types"
-import { Trophy, Zap, ChevronLeft, ChevronRight } from "lucide-vue-next"
+import { Zap, ChevronLeft, ChevronRight } from "lucide-vue-next"
 
 const props = defineProps<{
   tournament: Tournament
@@ -20,17 +20,18 @@ const league = computed(() => props.tournament.league!)
 const matchdays = computed(() => league.value.matchdays)
 const standings = computed(() => league.value.standings)
 
-const currentMatchdayIdx = ref(() => {
+function firstUnplayedIdx() {
   const idx = matchdays.value.findIndex((md) => md.matches.some((m) => !m.result))
   return idx === -1 ? Math.max(0, matchdays.value.length - 1) : idx
-})
+}
 
-// Flatten to a plain ref
-const activeIdx = ref(
-  (() => {
-    const idx = matchdays.value.findIndex((md) => md.matches.some((m) => !m.result))
-    return idx === -1 ? Math.max(0, matchdays.value.length - 1) : idx
-  })()
+const activeIdx = ref(firstUnplayedIdx())
+
+watch(
+  () => props.tournament.id,
+  () => {
+    activeIdx.value = firstUnplayedIdx()
+  }
 )
 
 const activeMatchday = computed(() => matchdays.value[activeIdx.value])
@@ -46,8 +47,20 @@ function matchdayDone(idx: number) {
   return matchdays.value[idx]?.matches.every((m) => m.result !== null) ?? false
 }
 
+const totalMatchdays = computed(() => matchdays.value.length)
+const playedMatchdays = computed(() => matchdays.value.filter((_, i) => matchdayDone(i)).length)
+
 // Result input state
 const editing = ref<{ mdIdx: number; mIdx: number; home: string; away: string } | null>(null)
+
+watch(editing, (val) => {
+  if (!val) return
+  nextTick(() => {
+    const input = document.querySelector<HTMLInputElement>(".lv-score-input")
+    input?.focus()
+    input?.select()
+  })
+})
 
 function startEdit(mdIdx: number, mIdx: number, curHome: number | null, curAway: number | null) {
   editing.value = {
@@ -74,27 +87,17 @@ function cancelEdit() {
   editing.value = null
 }
 
-const totalMatchdays = computed(() => matchdays.value.length)
-const playedMatchdays = computed(
-  () => matchdays.value.filter((md) => matchdayDone(matchdays.value.indexOf(md))).length
-)
+function handleSimMatchday(idx: number) {
+  emit("simMatchday", idx)
+  nextTick(() => {
+    const next = matchdays.value.findIndex((md, i) => i > idx && md.matches.some((m) => !m.result))
+    if (next !== -1) activeIdx.value = next
+  })
+}
 </script>
 
 <template>
   <div class="lv-root">
-    <!-- Champion banner -->
-    <Transition name="fade">
-      <div
-        v-if="isFinished && tournament.winnerId"
-        class="lv-champion"
-        :style="{ '--c': teamById(tournament.winnerId)?.color ?? '#888' }"
-      >
-        <Trophy :size="16" />
-        <span class="lv-champion-name">{{ teamById(tournament.winnerId)?.name }}</span>
-        <span class="lv-champion-label">Champion</span>
-      </div>
-    </Transition>
-
     <!-- Two-column layout -->
     <div class="lv-layout">
       <!-- LEFT: Standings table -->
@@ -119,11 +122,17 @@ const playedMatchdays = computed(
                 <th title="Points" class="col-pts">Pts</th>
               </tr>
             </thead>
-            <tbody>
+            <TransitionGroup tag="tbody" name="standing-row">
               <tr
                 v-for="(row, rank) in standings"
                 :key="row.teamId"
-                :class="{ 'lv-row--champion': rank === 0 && isFinished }"
+                :class="{
+                  'lv-row--champion': rank === 0 && isFinished,
+                  'lv-pos--1': rank === 0,
+                  'lv-pos--2': rank === 1,
+                  'lv-pos--3': rank === 2,
+                  'lv-pos--4': rank === 3,
+                }"
               >
                 <td class="col-rank">
                   <span v-if="rank === 0 && isFinished" class="lv-crown">🏆</span>
@@ -149,7 +158,7 @@ const playedMatchdays = computed(
                   <strong>{{ row.pts }}</strong>
                 </td>
               </tr>
-            </tbody>
+            </TransitionGroup>
           </table>
         </div>
       </div>
@@ -171,7 +180,7 @@ const playedMatchdays = computed(
           <button
             v-if="!matchdayDone(activeIdx)"
             class="lv-sim-md-btn"
-            @click="emit('simMatchday', activeIdx)"
+            @click="handleSimMatchday(activeIdx)"
           >
             <Zap :size="12" />
             Simulate
@@ -188,9 +197,21 @@ const playedMatchdays = computed(
             <!-- Editing mode -->
             <template v-if="editing?.mdIdx === activeIdx && editing?.mIdx === mIdx">
               <span class="lv-match-team lv-match-team--home">
-                {{ teamById(match.homeId)?.name }}
+                <span
+                  class="lv-match-dot"
+                  :style="{ background: teamById(match.homeId)?.color ?? '#888' }"
+                />
+                <span class="lv-match-team-name">{{ teamById(match.homeId)?.name }}</span>
               </span>
-              <input v-model="editing.home" class="lv-score-input" type="number" min="0" max="20" />
+              <input
+                v-model="editing.home"
+                class="lv-score-input"
+                type="number"
+                min="0"
+                max="20"
+                @keyup.enter="commitEdit"
+                @keyup.escape="cancelEdit"
+              />
               <span class="lv-match-sep">–</span>
               <input
                 v-model="editing.away"
@@ -202,7 +223,11 @@ const playedMatchdays = computed(
                 @keyup.escape="cancelEdit"
               />
               <span class="lv-match-team lv-match-team--away">
-                {{ teamById(match.awayId)?.name }}
+                <span
+                  class="lv-match-dot"
+                  :style="{ background: teamById(match.awayId)?.color ?? '#888' }"
+                />
+                <span class="lv-match-team-name">{{ teamById(match.awayId)?.name }}</span>
               </span>
               <div class="lv-match-actions">
                 <button class="primary lv-btn-xs" @click="commitEdit">✓</button>
@@ -216,7 +241,11 @@ const playedMatchdays = computed(
                 class="lv-match-team lv-match-team--home"
                 :class="{ 'lv-winner': match.result && match.result.home > match.result.away }"
               >
-                {{ teamById(match.homeId)?.name }}
+                <span
+                  class="lv-match-dot"
+                  :style="{ background: teamById(match.homeId)?.color ?? '#888' }"
+                />
+                <span class="lv-match-team-name">{{ teamById(match.homeId)?.name }}</span>
               </span>
               <button
                 class="lv-score-btn"
@@ -234,7 +263,11 @@ const playedMatchdays = computed(
                 class="lv-match-team lv-match-team--away"
                 :class="{ 'lv-winner': match.result && match.result.away > match.result.home }"
               >
-                {{ teamById(match.awayId)?.name }}
+                <span
+                  class="lv-match-dot"
+                  :style="{ background: teamById(match.awayId)?.color ?? '#888' }"
+                />
+                <span class="lv-match-team-name">{{ teamById(match.awayId)?.name }}</span>
               </span>
               <div class="lv-match-actions">
                 <button
@@ -253,7 +286,7 @@ const playedMatchdays = computed(
         <!-- Matchday pills -->
         <div class="lv-md-pills">
           <button
-            v-for="(md, idx) in matchdays"
+            v-for="(_, idx) in matchdays"
             :key="idx"
             class="lv-pill"
             :class="{ active: idx === activeIdx, done: matchdayDone(idx) }"
@@ -302,6 +335,10 @@ const playedMatchdays = computed(
   grid-template-columns: 1fr 1fr;
   gap: 16px;
   align-items: start;
+}
+.lv-left,
+.lv-right {
+  min-width: 0;
 }
 
 .lv-section-title {
@@ -368,6 +405,7 @@ const playedMatchdays = computed(
   border-radius: 50%;
   margin-right: 5px;
   flex-shrink: 0;
+  vertical-align: middle;
 }
 .lv-team-name {
   font-size: 12px;
@@ -377,6 +415,36 @@ const playedMatchdays = computed(
 }
 .lv-crown {
   font-size: 11px;
+}
+
+/* ─── Position zone colors ─── */
+.lv-pos--1 td:first-child {
+  border-left: 3px solid #f59e0b;
+}
+.lv-pos--2 td:first-child {
+  border-left: 3px solid #3b82f6;
+}
+.lv-pos--3 td:first-child {
+  border-left: 3px solid #8b5cf6;
+}
+.lv-pos--4 td:first-child {
+  border-left: 3px solid #22c55e;
+}
+.lv-pos--1 .col-rank {
+  color: #f59e0b !important;
+  font-weight: 700;
+}
+.lv-pos--2 .col-rank {
+  color: #3b82f6 !important;
+  font-weight: 600;
+}
+.lv-pos--3 .col-rank {
+  color: #8b5cf6 !important;
+  font-weight: 600;
+}
+.lv-pos--4 .col-rank {
+  color: #22c55e !important;
+  font-weight: 600;
 }
 .gd-pos {
   color: color-mix(in srgb, var(--accent) 80%, var(--text));
@@ -444,19 +512,39 @@ const playedMatchdays = computed(
   border-radius: var(--radius);
   font-size: 12px;
   min-height: 34px;
+  min-width: 0;
+  overflow: hidden;
 }
+
+/* ─── Match team cells ─── */
 .lv-match-team {
   flex: 1;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
   color: var(--text-muted);
 }
 .lv-match-team--home {
-  text-align: right;
+  flex-direction: row-reverse;
+  justify-content: flex-start;
 }
 .lv-match-team--away {
-  text-align: left;
+  flex-direction: row;
+  justify-content: flex-start;
+}
+.lv-match-team-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.lv-match-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
 }
 .lv-winner {
   color: var(--text);
@@ -471,6 +559,7 @@ const playedMatchdays = computed(
   border-color: var(--border-light);
   color: var(--text-muted);
   font-family: var(--font-ui);
+  flex-shrink: 0;
 }
 .lv-score-btn--played {
   color: var(--text);
@@ -483,6 +572,7 @@ const playedMatchdays = computed(
 .lv-match-sep {
   font-weight: 700;
   color: var(--text-muted);
+  flex-shrink: 0;
 }
 .lv-score-input {
   width: 36px;
@@ -490,6 +580,7 @@ const playedMatchdays = computed(
   padding: 2px 4px;
   font-size: 12px;
   font-weight: 700;
+  flex-shrink: 0;
 }
 .lv-match-actions {
   display: flex;
@@ -515,8 +606,12 @@ const playedMatchdays = computed(
 /* ─── Matchday pills ─── */
 .lv-md-pills {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 4px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-light) transparent;
 }
 .lv-pill {
   min-width: 26px;
@@ -526,6 +621,7 @@ const playedMatchdays = computed(
   border-color: var(--border-light);
   color: var(--text-muted);
   border-radius: var(--radius);
+  flex-shrink: 0;
 }
 .lv-pill.done {
   color: var(--accent);

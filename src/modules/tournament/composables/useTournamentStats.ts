@@ -33,6 +33,21 @@ export function useTournamentStats(tournament: () => Tournament | undefined, tea
       return map.get(id)!
     }
 
+    // League matchday matches
+    for (const matchday of t.league?.matchdays ?? []) {
+      for (const match of matchday.matches) {
+        if (!match.result) continue
+        const home = getOrCreate(match.homeId)
+        const away = getOrCreate(match.awayId)
+        home.gf += match.result.home
+        home.ga += match.result.away
+        home.played++
+        away.gf += match.result.away
+        away.ga += match.result.home
+        away.played++
+      }
+    }
+
     // Group stage matches
     for (const group of t.groups ?? []) {
       for (const match of group.matches) {
