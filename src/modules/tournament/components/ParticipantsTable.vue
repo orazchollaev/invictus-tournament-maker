@@ -107,7 +107,7 @@ interface Row {
 }
 
 const isGroupFormat = computed(() => props.tournament.format === "group+bracket")
-const isLeagueFormat = computed(() => props.tournament.format === "league")
+// const isLeagueFormat = computed(() => props.tournament.format === "league")
 
 const rows = computed<Row[]>(() => {
   const tpMatch = props.tournament.thirdPlaceMatch
