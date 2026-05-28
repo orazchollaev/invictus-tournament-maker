@@ -25,7 +25,8 @@
     "pinia": "^3.0.4",
     "pinia-plugin-persistedstate-2": "^2.0.32",
     "vue": "^3.5.35",
-    "vue-router": "^5.0.7"
+    "vue-router": "^5.0.7",
+    "workbox-window": "^7.4.1"
   },
   "devDependencies": {
     "@commitlint/cli": "^21.0.1",
