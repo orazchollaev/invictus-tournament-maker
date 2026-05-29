@@ -9,7 +9,7 @@ export interface ChampEntry {
   finals: number
 }
 
-defineProps<{ champions: ChampEntry[] }>()
+defineProps<{ champions: ChampEntry[]; finalsLabel?: string }>()
 </script>
 
 <template>
@@ -20,7 +20,7 @@ defineProps<{ champions: ChampEntry[] }>()
           <th class="col-rank">#</th>
           <th>Team</th>
           <th class="col-num">Titles</th>
-          <th class="col-num">Finals</th>
+          <th class="col-num">{{ finalsLabel ?? "Finals" }}</th>
         </tr>
       </thead>
       <tbody>

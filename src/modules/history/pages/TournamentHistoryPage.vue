@@ -43,13 +43,15 @@ const champions = computed<ChampEntry[]>(() => {
     if (!t.winnerId) continue
     const wId = t.winnerId
 
+    const isLeague = t.format === "league" && !!t.league
+
     const w = map.get(wId)
     if (w) {
       w.wins++
-      w.finals++
-    } else map.set(wId, { wins: 1, finals: 1 })
+      if (!isLeague) w.finals++
+    } else map.set(wId, { wins: 1, finals: isLeague ? 0 : 1 })
 
-    if (t.format === "league" && t.league) {
+    if (isLeague && t.league) {
       const rId = t.league.standings[1]?.teamId
       if (rId && rId !== wId) {
         const r = map.get(rId)
@@ -294,7 +296,12 @@ const stats = computed<HistoryStats>(() => {
       </div>
 
       <Transition name="tab" mode="out-in">
-        <ChampionsTab v-if="tab === 'champions'" key="champions" :champions="champions" />
+        <ChampionsTab
+          v-if="tab === 'champions'"
+          key="champions"
+          :champions="champions"
+          :finals-label="isLeagueSeries ? 'Runner-up' : undefined"
+        />
         <LeagueSeasonsTab
           v-else-if="tab === 'finals' && isLeagueSeries"
           key="league-seasons"
