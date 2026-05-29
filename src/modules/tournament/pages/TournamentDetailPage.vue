@@ -286,6 +286,7 @@ function closeSeasonModal() {
       @set-playoff-seed-mode="setPlayoffSeedMode"
       @change-leg-mode="changeLegMode"
       @set-league-leg-mode="store.setLeagueLegMode(tournament!.id, $event)"
+      @change-tiebreaker="store.setTiebreaker(tournament!.id, $event)"
       @reset="resetTournament"
       @delete="deleteTournament"
       @close="showSettingsModal = false"

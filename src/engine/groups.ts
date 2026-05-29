@@ -1,8 +1,65 @@
 // engine/groups.ts
 import type { Team } from "../modules/teams/types"
-import type { Group, GroupMatch, Tournament } from "../modules/tournament/types"
+import type {
+  Group,
+  GroupMatch,
+  GroupStanding,
+  Tiebreaker,
+  Tournament,
+} from "../modules/tournament/types"
 import { uid } from "./utils"
 import { simulateMatch } from "./simulation"
+import { getTiebreaker } from "./tableConfig"
+
+function h2hStats(
+  ids: Set<string>,
+  matches: GroupMatch[]
+): Map<string, { pts: number; gd: number; gf: number }> {
+  const stats = new Map<string, { pts: number; gd: number; gf: number }>()
+  for (const id of ids) stats.set(id, { pts: 0, gd: 0, gf: 0 })
+  for (const m of matches) {
+    if (!m.result || !ids.has(m.homeId) || !ids.has(m.awayId)) continue
+    const { home, away } = m.result
+    const h = stats.get(m.homeId)!
+    const a = stats.get(m.awayId)!
+    h.gf += home
+    h.gd += home - away
+    a.gf += away
+    a.gd += away - home
+    if (home > away) h.pts += 3
+    else if (away > home) a.pts += 3
+    else {
+      h.pts += 1
+      a.pts += 1
+    }
+  }
+  return stats
+}
+
+function sortStandings(standings: GroupStanding[], matches: GroupMatch[], tiebreaker?: Tiebreaker) {
+  standings.sort((a, b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf)
+
+  if ((tiebreaker ?? getTiebreaker()) !== "head-to-head") return
+
+  // Re-sort within tied-points groups using H2H
+  let i = 0
+  while (i < standings.length) {
+    let j = i + 1
+    while (j < standings.length && standings[j].pts === standings[i].pts) j++
+    if (j - i > 1) {
+      const group = standings.slice(i, j)
+      const ids = new Set(group.map((s) => s.teamId))
+      const h2h = h2hStats(ids, matches)
+      group.sort((a, b) => {
+        const ha = h2h.get(a.teamId)!
+        const hb = h2h.get(b.teamId)!
+        return hb.pts - ha.pts || hb.gd - ha.gd || hb.gf - ha.gf || b.gd - a.gd || b.gf - a.gf
+      })
+      standings.splice(i, j - i, ...group)
+    }
+    i = j
+  }
+}
 
 // ─── Round-robin fixture builder (circle method) ────────────────
 // Groups matches by round so no team plays twice in the same round.
@@ -54,7 +111,7 @@ export function buildGroupFixture(teamIds: string[], doubleLeg = false): GroupMa
   return matches
 }
 
-export function recalcStandings(group: Group) {
+export function recalcStandings(group: Group, tiebreaker?: Tiebreaker) {
   group.standings.forEach((s) => {
     s.played = 0
     s.won = 0
@@ -100,7 +157,7 @@ export function recalcStandings(group: Group) {
     }
   }
 
-  group.standings.sort((a, b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf)
+  sortStandings(group.standings, group.matches, tiebreaker)
 }
 
 export function setGroupMatchResult(
@@ -112,7 +169,7 @@ export function setGroupMatchResult(
 ) {
   const group = tournament.groups![groupIdx]
   group.matches[matchIdx].result = { home, away }
-  recalcStandings(group)
+  recalcStandings(group, tournament.tiebreaker)
 }
 
 export function simulateGroupMatch(
@@ -123,7 +180,7 @@ export function simulateGroupMatch(
 ) {
   const group = tournament.groups![groupIdx]
   group.matches[matchIdx].result = simulateMatch(group.matches[matchIdx] as any, teams)
-  recalcStandings(group)
+  recalcStandings(group, tournament.tiebreaker)
 }
 
 export function simulateGroup(tournament: Tournament, groupIdx: number, teams: Team[]) {
@@ -133,7 +190,7 @@ export function simulateGroup(tournament: Tournament, groupIdx: number, teams: T
       group.matches[i].result = simulateMatch(group.matches[i] as any, teams)
     }
   }
-  recalcStandings(group)
+  recalcStandings(group, tournament.tiebreaker)
 }
 
 export function simulateAllGroups(tournament: Tournament, teams: Team[]) {
@@ -157,7 +214,7 @@ export function simulateGroupWeek(tournament: Tournament, groupIdx: number, team
     if (!group.matches[i].result)
       group.matches[i].result = simulateMatch(group.matches[i] as any, teams)
   }
-  recalcStandings(group)
+  recalcStandings(group, tournament.tiebreaker)
   return roundIdx
 }
 
@@ -177,7 +234,7 @@ export function simulateWeek(tournament: Tournament, teams: Team[]): number {
       if (!group.matches[i].result)
         group.matches[i].result = simulateMatch(group.matches[i] as any, teams)
     }
-    recalcStandings(group)
+    recalcStandings(group, tournament.tiebreaker)
     simulatedRound = roundIdx
   }
   return simulatedRound

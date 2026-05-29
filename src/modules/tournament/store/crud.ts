@@ -1,5 +1,5 @@
 import type { Ref } from "vue"
-import type { Tournament, LegMode, PlayoffSeedMode, DrawType } from "../types"
+import type { Tournament, LegMode, PlayoffSeedMode, DrawType, Tiebreaker } from "../types"
 import type { Team } from "@/modules/teams/types"
 import {
   createTournament,
@@ -29,7 +29,8 @@ export function useCrudActions(
     qualifiersPerGroup?: number,
     groupLegMode: LegMode = "single",
     knockoutLegMode: LegMode = "single",
-    finalLegMode: LegMode = "single"
+    finalLegMode: LegMode = "single",
+    tiebreaker?: Tiebreaker
   ): string {
     const allTeams = getTeams()
     const selected = allTeams.filter((t) => teamIds.includes(t.id))
@@ -53,6 +54,7 @@ export function useCrudActions(
       finalLegMode
     )
     t.drawType = deriveDrawType(seeded, orderedIds)
+    if (tiebreaker) t.tiebreaker = tiebreaker
     tournaments.value.push(t)
     active.value = t.id
     return t.id
@@ -61,7 +63,8 @@ export function useCrudActions(
   function createLeagueTournament(
     name: string,
     teamIds: string[],
-    legMode: LegMode = "single"
+    legMode: LegMode = "single",
+    tiebreaker?: Tiebreaker
   ): string {
     const allTeams = getTeams()
     const selected = allTeams.filter((t) => teamIds.includes(t.id))
@@ -70,6 +73,7 @@ export function useCrudActions(
         .filter((t) => t.name === name)
         .reduce((max, t) => Math.max(max, t.season), 0) + 1
     const t = createLeague(name, selected, season, legMode)
+    if (tiebreaker) t.tiebreaker = tiebreaker
     tournaments.value.push(t)
     active.value = t.id
     return t.id
@@ -147,14 +151,14 @@ export function useCrudActions(
       for (const matchday of t.league.matchdays) {
         matchday.matches.forEach((m) => (m.result = null))
       }
-      recalcLeagueStandings(t.league)
+      recalcLeagueStandings(t.league, t.tiebreaker)
       t.winnerId = null
       return
     }
     if (t.groups) {
       for (const group of t.groups) {
         group.matches.forEach((m) => (m.result = null))
-        recalcStandings(group)
+        recalcStandings(group, t.tiebreaker)
       }
       t.groupsDone = false
     }

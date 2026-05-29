@@ -186,7 +186,7 @@ export function seedBracketFromGroups(
   const qpg = tournament.qualifiersPerGroup ?? 2
   const gc = tournament.groups.length
 
-  tournament.groups.forEach((g) => recalcStandings(g))
+  tournament.groups.forEach((g) => recalcStandings(g, tournament.tiebreaker))
 
   // byGroup[g][p]: team finishing at rank p (0-based) in group g
   const byGroup: (Team | null)[][] = tournament.groups.map((g) =>

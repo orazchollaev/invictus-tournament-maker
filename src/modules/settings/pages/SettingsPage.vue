@@ -136,6 +136,32 @@ function importData() {
       </div>
     </div>
 
+    <!-- ── Table Rules ───────────────────────────────── -->
+    <div class="section-box">
+      <h2>Table Rules</h2>
+      <div class="section-body">
+        <div class="setting-row">
+          <div class="setting-info">
+            <div class="setting-label">Tiebreaker</div>
+            <div class="setting-desc">
+              What separates teams level on points — applies to both group stage and league tables.
+              <strong>Head-to-head</strong>
+              — results between tied teams first ·
+              <strong>Goal difference</strong>
+              — overall GD first
+            </div>
+          </div>
+          <BtnGroup
+            v-model="settings.tiebreaker"
+            :options="[
+              { value: 'head-to-head', label: 'H2H' },
+              { value: 'goal-diff', label: 'Goal diff' },
+            ]"
+          />
+        </div>
+      </div>
+    </div>
+
     <!-- ── Match Defaults ─────────────────────────────── -->
     <div class="section-box">
       <h2>Match Defaults</h2>

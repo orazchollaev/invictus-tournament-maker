@@ -1,6 +1,7 @@
 // modules/tournament/types.ts
 
 export type LegMode = "single" | "double"
+export type Tiebreaker = "head-to-head" | "goal-diff"
 
 export interface MatchResult {
   home: number
@@ -92,6 +93,8 @@ export interface Tournament {
   groupLegMode?: LegMode
   knockoutLegMode?: LegMode
   finalLegMode?: LegMode
+
+  tiebreaker?: Tiebreaker
 
   // league (only when format === "league")
   league?: League

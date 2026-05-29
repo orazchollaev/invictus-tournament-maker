@@ -1,8 +1,64 @@
 // engine/league.ts
 import type { Team } from "../modules/teams/types"
-import type { League, Tournament } from "../modules/tournament/types"
+import type { GroupStanding, League, Tiebreaker, Tournament } from "../modules/tournament/types"
 import { buildGroupFixture } from "./groups"
 import { simulateMatch } from "./simulation"
+import { getTiebreaker } from "./tableConfig"
+
+function h2hLeagueStats(
+  ids: Set<string>,
+  matchdays: League["matchdays"]
+): Map<string, { pts: number; gd: number; gf: number }> {
+  const stats = new Map<string, { pts: number; gd: number; gf: number }>()
+  for (const id of ids) stats.set(id, { pts: 0, gd: 0, gf: 0 })
+  for (const md of matchdays) {
+    for (const m of md.matches) {
+      if (!m.result || !ids.has(m.homeId) || !ids.has(m.awayId)) continue
+      const { home, away } = m.result
+      const h = stats.get(m.homeId)!
+      const a = stats.get(m.awayId)!
+      h.gf += home
+      h.gd += home - away
+      a.gf += away
+      a.gd += away - home
+      if (home > away) h.pts += 3
+      else if (away > home) a.pts += 3
+      else {
+        h.pts += 1
+        a.pts += 1
+      }
+    }
+  }
+  return stats
+}
+
+function sortLeagueStandings(
+  standings: GroupStanding[],
+  matchdays: League["matchdays"],
+  tiebreaker?: Tiebreaker
+) {
+  standings.sort((a, b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf)
+
+  if ((tiebreaker ?? getTiebreaker()) !== "head-to-head") return
+
+  let i = 0
+  while (i < standings.length) {
+    let j = i + 1
+    while (j < standings.length && standings[j].pts === standings[i].pts) j++
+    if (j - i > 1) {
+      const group = standings.slice(i, j)
+      const ids = new Set(group.map((s) => s.teamId))
+      const h2h = h2hLeagueStats(ids, matchdays)
+      group.sort((a, b) => {
+        const ha = h2h.get(a.teamId)!
+        const hb = h2h.get(b.teamId)!
+        return hb.pts - ha.pts || hb.gd - ha.gd || hb.gf - ha.gf || b.gd - a.gd || b.gf - a.gf
+      })
+      standings.splice(i, j - i, ...group)
+    }
+    i = j
+  }
+}
 
 export function buildLeagueMatchdays(teamIds: string[], doubleLeg = false): League["matchdays"] {
   const allMatches = buildGroupFixture(teamIds, doubleLeg)
@@ -19,7 +75,7 @@ export function buildLeagueMatchdays(teamIds: string[], doubleLeg = false): Leag
   return matchdays
 }
 
-export function recalcLeagueStandings(league: League) {
+export function recalcLeagueStandings(league: League, tiebreaker?: Tiebreaker) {
   league.standings.forEach((s) => {
     s.played = s.won = s.drawn = s.lost = s.gf = s.ga = s.gd = s.pts = 0
   })
@@ -55,7 +111,7 @@ export function recalcLeagueStandings(league: League) {
       }
     }
   }
-  league.standings.sort((a, b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf)
+  sortLeagueStandings(league.standings, league.matchdays, tiebreaker)
 }
 
 export function setLeagueMatchResult(
@@ -67,7 +123,7 @@ export function setLeagueMatchResult(
 ) {
   if (!tournament.league) return
   tournament.league.matchdays[matchdayIdx].matches[matchIdx].result = { home, away }
-  recalcLeagueStandings(tournament.league)
+  recalcLeagueStandings(tournament.league, tournament.tiebreaker)
 }
 
 export function simulateLeagueMatch(
@@ -79,7 +135,7 @@ export function simulateLeagueMatch(
   if (!tournament.league) return
   const match = tournament.league.matchdays[matchdayIdx].matches[matchIdx]
   match.result = simulateMatch(match as any, teams)
-  recalcLeagueStandings(tournament.league)
+  recalcLeagueStandings(tournament.league, tournament.tiebreaker)
 }
 
 export function simulateLeagueMatchday(tournament: Tournament, matchdayIdx: number, teams: Team[]) {
@@ -87,7 +143,7 @@ export function simulateLeagueMatchday(tournament: Tournament, matchdayIdx: numb
   for (const match of tournament.league.matchdays[matchdayIdx].matches) {
     if (!match.result) match.result = simulateMatch(match as any, teams)
   }
-  recalcLeagueStandings(tournament.league)
+  recalcLeagueStandings(tournament.league, tournament.tiebreaker)
 }
 
 export function simulateAllLeague(tournament: Tournament, teams: Team[]) {

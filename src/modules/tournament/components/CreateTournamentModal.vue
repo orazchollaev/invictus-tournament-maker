@@ -10,7 +10,7 @@ import BtnGroup from "@/components/BtnGroup.vue"
 import AppModal from "@/components/AppModal.vue"
 import { Trophy, LayoutGrid, List, Shuffle } from "lucide-vue-next"
 import { randomTournamentName } from "@/composables/useRandomNames"
-import type { LegMode, PlayoffSeedMode } from "@/modules/tournament/types"
+import type { LegMode, PlayoffSeedMode, Tiebreaker } from "@/modules/tournament/types"
 
 type DrawType = "random" | "seeded" | "manual"
 type TournamentFormat = "bracket" | "group+bracket" | "league"
@@ -35,6 +35,7 @@ const groupLegMode = ref<LegMode>(settingsStore.groupLegMode)
 const knockoutLegMode = ref<LegMode>(settingsStore.knockoutLegMode)
 const finalLegMode = ref<LegMode>(settingsStore.finalLegMode)
 const leagueLegMode = ref<LegMode>("single")
+const tiebreaker = ref<Tiebreaker>(settingsStore.tiebreaker)
 
 const legOptions = [
   { value: "single", label: "Single" },
@@ -106,7 +107,12 @@ function handleCreate() {
 
 function doCreate(orderedIds?: string[]) {
   if (format.value === "league") {
-    const id = store.createLeagueTournament(name.value.trim(), selected.value, leagueLegMode.value)
+    const id = store.createLeagueTournament(
+      name.value.trim(),
+      selected.value,
+      leagueLegMode.value,
+      tiebreaker.value
+    )
     router.push(`/tournaments/${id}`)
     emit("close")
     return
@@ -134,7 +140,8 @@ function doCreate(orderedIds?: string[]) {
     qpg,
     gLeg,
     knockoutLegMode.value,
-    finalLegMode.value
+    finalLegMode.value,
+    tiebreaker.value
   )
   if (isGroup) store.setPlayoffSeedMode(id, playoffSeedMode.value)
   if (hasThirdPlace.value) store.toggleThirdPlace(id)
@@ -383,21 +390,27 @@ const teamsPerGroup = computed(() =>
         </div>
       </template>
 
+      <!-- Tiebreaker (group+bracket and league only) -->
+      <template v-if="format !== 'bracket'">
+        <div class="ct-divider" />
+        <div class="ct-section">
+          <div class="ct-leg-row">
+            <span class="ct-row-label">Tiebreaker</span>
+            <BtnGroup
+              v-model="tiebreaker"
+              :options="[
+                { value: 'head-to-head', label: 'H2H' },
+                { value: 'goal-diff', label: 'Goal diff' },
+              ]"
+            />
+          </div>
+        </div>
+      </template>
+
       <!-- Leg mode (bracket formats only) -->
       <template v-if="format !== 'league'">
         <div class="ct-divider" />
         <div class="ct-section">
-          <div class="ct-label">Legs per Match</div>
-          <div class="ct-hint-box ct-hint-box--top">
-            <div class="ct-hint-line">
-              <strong>Single</strong>
-              — 1 match, winner advances &nbsp;
-            </div>
-            <div class="ct-hint-line">
-              <strong>Double</strong>
-              — home &amp; away, aggregate score decides
-            </div>
-          </div>
           <div class="ct-leg-rows">
             <div v-if="format === 'group+bracket'" class="ct-leg-row">
               <span class="ct-row-label">Group Stage</span>

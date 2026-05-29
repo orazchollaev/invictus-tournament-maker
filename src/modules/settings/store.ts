@@ -1,7 +1,8 @@
 import { defineStore } from "pinia"
 import { ref, watch } from "vue"
 import type { LegMode, PlayoffSeedMode } from "@/modules/tournament/types"
-import { setSimConfig } from "@/engine"
+import { setSimConfig, setTableConfig } from "@/engine"
+import type { Tiebreaker } from "@/modules/tournament/types"
 
 export type Theme = "light" | "dark" | "worldcup2026"
 export type DrawType = "random" | "seeded" | "manual"
@@ -17,6 +18,7 @@ export const useSettingsStore = defineStore("settings", () => {
   const newSeasonDrawType = ref<DrawType>("random")
   const newSeasonGroupDrawType = ref<DrawType>("random")
   const newSeasonPlayoffSeedMode = ref<PlayoffSeedMode>("cross")
+  const tiebreaker = ref<Tiebreaker>("goal-diff")
 
   watch(
     theme,
@@ -27,6 +29,7 @@ export const useSettingsStore = defineStore("settings", () => {
   )
 
   watch(surpriseFactor, (val) => setSimConfig({ surpriseFactor: val }), { immediate: true })
+  watch(tiebreaker, (val) => setTableConfig({ tiebreaker: val }), { immediate: true })
 
   return {
     theme,
@@ -39,5 +42,6 @@ export const useSettingsStore = defineStore("settings", () => {
     newSeasonDrawType,
     newSeasonGroupDrawType,
     newSeasonPlayoffSeedMode,
+    tiebreaker,
   }
 })

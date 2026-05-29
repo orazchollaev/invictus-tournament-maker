@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from "vue"
-import type { Tournament, PlayoffSeedMode, LegMode } from "@/modules/tournament/types"
+import type { Tournament, PlayoffSeedMode, LegMode, Tiebreaker } from "@/modules/tournament/types"
 import type { Team } from "@/modules/teams/types"
 import ManualDraw from "@/modules/tournament/components/ManualDraw.vue"
 import GroupDraw from "@/modules/tournament/components/GroupDraw.vue"
@@ -27,6 +27,7 @@ const emit = defineEmits<{
   toggleThirdPlace: []
   changeLegMode: [stage: "group" | "knockout" | "final", mode: LegMode]
   setLeagueLegMode: [mode: LegMode]
+  changeTiebreaker: [tiebreaker: Tiebreaker]
   reset: []
   delete: []
   close: []
@@ -51,6 +52,7 @@ const localGroupLegMode = ref<LegMode>(props.tournament.groupLegMode ?? "single"
 const localKnockoutLegMode = ref<LegMode>(props.tournament.knockoutLegMode ?? "single")
 const localFinalLegMode = ref<LegMode>(props.tournament.finalLegMode ?? "single")
 const localLeagueLegMode = ref<LegMode>(props.tournament.league?.legMode ?? "single")
+const localTiebreaker = ref<Tiebreaker>(props.tournament.tiebreaker ?? "goal-diff")
 const isLeagueFormat = computed(() => props.tournament.format === "league")
 
 const drawOptions = [
@@ -95,6 +97,7 @@ const hasChanges = computed(() => {
   if (localFinalLegMode.value !== (orig.finalLegMode ?? "single")) return true
   if (isLeagueFormat.value && localLeagueLegMode.value !== (orig.league?.legMode ?? "single"))
     return true
+  if (localTiebreaker.value !== (orig.tiebreaker ?? "goal-diff")) return true
   return false
 })
 
@@ -178,6 +181,11 @@ function handleSave() {
   // League leg mode
   if (isLeagueFormat.value && localLeagueLegMode.value !== (orig.league?.legMode ?? "single")) {
     emit("setLeagueLegMode", localLeagueLegMode.value)
+  }
+
+  // Tiebreaker
+  if (localTiebreaker.value !== (orig.tiebreaker ?? "goal-diff")) {
+    emit("changeTiebreaker", localTiebreaker.value)
   }
 
   emit("close")
@@ -462,6 +470,24 @@ function handleSave() {
           <div v-else class="ts-locked-banner">
             <Lock :size="12" />
             Format cannot be changed after matches have started.
+          </div>
+        </div>
+      </template>
+
+      <!-- ── Tiebreaker (group+bracket and league only) ── -->
+      <template v-if="isLeagueFormat || tournament.format === 'group+bracket'">
+        <div class="ts-divider"></div>
+        <div class="ts-section">
+          <div class="ts-section-title">Tiebreaker</div>
+          <div class="ts-leg-row">
+            <span class="ts-row-label">Tiebreaker</span>
+            <BtnGroup
+              v-model="localTiebreaker"
+              :options="[
+                { value: 'head-to-head', label: 'H2H' },
+                { value: 'goal-diff', label: 'Goal diff' },
+              ]"
+            />
           </div>
         </div>
       </template>

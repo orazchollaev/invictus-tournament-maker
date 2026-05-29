@@ -1,7 +1,8 @@
 // modules/tournament/store.ts
 import { defineStore } from "pinia"
 import { ref } from "vue"
-import type { Tournament } from "./types"
+import type { Tournament, Tiebreaker } from "./types"
+import { recalcStandings, recalcLeagueStandings } from "@/engine"
 import { useTeamsStore } from "../teams/store"
 import { useCrudActions } from "./store/crud"
 import { useBracketActions } from "./store/bracket"
@@ -24,6 +25,17 @@ export const useTournamentStore = defineStore("tournament", () => {
   const groups = useGroupActions(tournaments, getTeams)
   const draw = useDrawActions(tournaments, getTeams)
   const leagueActions = useLeagueActions(tournaments, getTeams)
+
+  function setTiebreaker(tournamentId: string, tiebreaker: Tiebreaker) {
+    const t = tournaments.value.find((t) => t.id === tournamentId)
+    if (!t) return
+    t.tiebreaker = tiebreaker
+    if (t.format === "league" && t.league) {
+      recalcLeagueStandings(t.league, tiebreaker)
+    } else if (t.groups) {
+      t.groups.forEach((g) => recalcStandings(g, tiebreaker))
+    }
+  }
 
   function simulateTournament(tournamentId: string) {
     const t = tournaments.value.find((t) => t.id === tournamentId)
@@ -49,5 +61,6 @@ export const useTournamentStore = defineStore("tournament", () => {
     ...draw,
     ...leagueActions,
     simulateTournament,
+    setTiebreaker,
   }
 })

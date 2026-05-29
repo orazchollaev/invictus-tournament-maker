@@ -228,7 +228,7 @@ th {
   border-left: 3px solid var(--accent);
   padding: 9px 12px;
   background: var(--bg);
-  border-radius: 8px 8px 0 0;
+  border-radius: 0px 8px 0 0;
 }
 .section-body {
   padding: 14px;
