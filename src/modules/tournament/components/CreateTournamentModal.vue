@@ -122,15 +122,6 @@ function doCreate(orderedIds?: string[]) {
   const qpg = isGroup ? qualifiersPerGroup.value : undefined
   const isSeeded = drawType.value === "seeded"
   const gLeg = isGroup ? groupLegMode.value : "single"
-  settingsStore.groupLegMode = gLeg
-  settingsStore.knockoutLegMode = knockoutLegMode.value
-  settingsStore.finalLegMode = finalLegMode.value
-  if (isGroup) {
-    settingsStore.newSeasonGroupDrawType = drawType.value
-    settingsStore.newSeasonPlayoffSeedMode = playoffSeedMode.value
-  } else {
-    settingsStore.newSeasonDrawType = drawType.value
-  }
   const id = store.create(
     name.value.trim(),
     selected.value,
