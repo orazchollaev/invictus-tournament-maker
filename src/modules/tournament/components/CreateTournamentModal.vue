@@ -8,7 +8,8 @@ import ManualDraw from "./ManualDraw.vue"
 import GroupDraw from "./GroupDraw.vue"
 import BtnGroup from "@/components/BtnGroup.vue"
 import AppModal from "@/components/AppModal.vue"
-import { Trophy, LayoutGrid, List } from "lucide-vue-next"
+import { Trophy, LayoutGrid, List, Shuffle } from "lucide-vue-next"
+import { randomTournamentName } from "@/composables/useRandomNames"
 import type { LegMode, PlayoffSeedMode } from "@/modules/tournament/types"
 
 type DrawType = "random" | "seeded" | "manual"
@@ -176,12 +177,17 @@ const teamsPerGroup = computed(() =>
       <!-- Name -->
       <div class="ct-section">
         <div class="ct-label">Tournament Name</div>
-        <input
-          v-model="name"
-          class="ct-name-input"
-          placeholder="e.g. Spring Championship 2025"
-          @keyup.enter="handleCreate"
-        />
+        <div class="ct-name-wrap">
+          <input
+            v-model="name"
+            class="ct-name-input"
+            placeholder="e.g. Spring Championship 2025"
+            @keyup.enter="handleCreate"
+          />
+          <button class="btn-random" title="Random name" @click="name = randomTournamentName()">
+            <Shuffle :size="14" />
+          </button>
+        </div>
       </div>
 
       <div class="ct-divider" />
@@ -460,11 +466,40 @@ const teamsPerGroup = computed(() =>
   background: var(--border-light);
 }
 
+.ct-name-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
 .ct-name-input {
   width: 100%;
   box-sizing: border-box;
   font-size: 14px;
-  padding: 6px 8px;
+  padding: 6px 32px 6px 8px;
+}
+
+.btn-random {
+  position: absolute;
+  right: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  color: var(--text-muted);
+  transition:
+    color 0.15s,
+    background 0.15s;
+}
+.btn-random:hover {
+  color: var(--text);
+  background: var(--bg-hover, rgba(255, 255, 255, 0.08));
 }
 
 .ct-team-grid {
