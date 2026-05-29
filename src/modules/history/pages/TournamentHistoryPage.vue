@@ -4,9 +4,11 @@ import { useRoute, RouterLink } from "vue-router"
 import { useTournamentStore } from "@/modules/tournament/store"
 import { useTeamsStore } from "@/modules/teams/store"
 import type { Match, GroupMatch } from "@/modules/tournament/types"
-import { ArrowLeft, Trophy, Medal, BarChart3 } from "lucide-vue-next"
+import { ArrowLeft, Trophy, Medal, BarChart3, Table2 } from "lucide-vue-next"
 import ChampionsTab, { type ChampEntry } from "../components/ChampionsTab.vue"
 import AllFinalsTab, { type FinalEntry } from "../components/AllFinalsTab.vue"
+import LeagueSeasonsTab, { type LeagueSeasonEntry } from "../components/LeagueSeasonsTab.vue"
+import LeagueAllTimeTab, { type AllTimeRow } from "../components/LeagueAllTimeTab.vue"
 import StatisticsTab, { type HistoryStats } from "../components/StatisticsTab.vue"
 
 const route = useRoute()
@@ -23,7 +25,9 @@ const completedSeasons = computed(() =>
   allSeasons.value.filter((t) => store.isTournamentFinished(t.id))
 )
 
-type TabId = "champions" | "finals" | "stats"
+const isLeagueSeries = computed(() => allSeasons.value[0]?.format === "league")
+
+type TabId = "champions" | "finals" | "alltime" | "stats"
 const tab = ref<TabId>("champions")
 
 function teamById(id: string | null | undefined) {
@@ -45,13 +49,22 @@ const champions = computed<ChampEntry[]>(() => {
       w.finals++
     } else map.set(wId, { wins: 1, finals: 1 })
 
-    const fm = t.rounds[t.rounds.length - 1]?.matches[0]
-    if (fm) {
-      const rId = fm.homeId === wId ? fm.awayId : fm.homeId
+    if (t.format === "league" && t.league) {
+      const rId = t.league.standings[1]?.teamId
       if (rId && rId !== wId) {
         const r = map.get(rId)
         if (r) r.finals++
         else map.set(rId, { wins: 0, finals: 1 })
+      }
+    } else {
+      const fm = t.rounds[t.rounds.length - 1]?.matches[0]
+      if (fm) {
+        const rId = fm.homeId === wId ? fm.awayId : fm.homeId
+        if (rId && rId !== wId) {
+          const r = map.get(rId)
+          if (r) r.finals++
+          else map.set(rId, { wins: 0, finals: 1 })
+        }
       }
     }
   }
@@ -115,6 +128,61 @@ const finals = computed<FinalEntry[]>(() =>
   })
 )
 
+// ─── League Seasons ──────────────────────────────────────────────
+const leagueSeasons = computed<LeagueSeasonEntry[]>(() =>
+  completedSeasons.value.map((t) => {
+    const getAt = (pos: number) => {
+      if (!t.league) return null
+      const s = t.league.standings[pos]
+      if (!s) return null
+      const team = teamById(s.teamId)
+      return { name: team?.name ?? "?", color: team?.color ?? "#888", pts: s.pts }
+    }
+    return { season: t.season, first: getAt(0), second: getAt(1), third: getAt(2) }
+  })
+)
+
+// ─── League All-Time Table ────────────────────────────────────────
+const allTimeRows = computed<AllTimeRow[]>(() => {
+  const map = new Map<string, AllTimeRow>()
+  for (const t of completedSeasons.value) {
+    if (!t.league) continue
+    for (const s of t.league.standings) {
+      const team = teamById(s.teamId)
+      const existing = map.get(s.teamId)
+      if (existing) {
+        existing.seasons++
+        existing.played += s.played
+        existing.won += s.won
+        existing.drawn += s.drawn
+        existing.lost += s.lost
+        existing.gf += s.gf
+        existing.ga += s.ga
+        existing.gd += s.gd
+        existing.pts += s.pts
+        if (t.winnerId === s.teamId) existing.titles++
+      } else {
+        map.set(s.teamId, {
+          teamId: s.teamId,
+          name: team?.name ?? "?",
+          color: team?.color ?? "#888",
+          seasons: 1,
+          titles: t.winnerId === s.teamId ? 1 : 0,
+          played: s.played,
+          won: s.won,
+          drawn: s.drawn,
+          lost: s.lost,
+          gf: s.gf,
+          ga: s.ga,
+          gd: s.gd,
+          pts: s.pts,
+        })
+      }
+    }
+  }
+  return [...map.values()].sort((a, b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf)
+})
+
 // ─── Stats ───────────────────────────────────────────────────────
 function knockoutGoals(m: Match): number {
   if (!m.result) return 0
@@ -153,6 +221,16 @@ const stats = computed<HistoryStats>(() => {
     if (t.thirdPlaceMatch?.result) {
       totalMatches++
       totalGoals += knockoutGoals(t.thirdPlaceMatch)
+    }
+    if (t.league) {
+      for (const matchday of t.league.matchdays) {
+        for (const m of matchday.matches) {
+          if (m.result) {
+            totalMatches++
+            totalGoals += groupGoals(m)
+          }
+        }
+      }
     }
   }
 
@@ -198,7 +276,16 @@ const stats = computed<HistoryStats>(() => {
         </button>
         <button class="phase-tab" :class="{ active: tab === 'finals' }" @click="tab = 'finals'">
           <Medal :size="13" />
-          All Finals
+          {{ isLeagueSeries ? "All Seasons" : "All Finals" }}
+        </button>
+        <button
+          v-if="isLeagueSeries"
+          class="phase-tab"
+          :class="{ active: tab === 'alltime' }"
+          @click="tab = 'alltime'"
+        >
+          <Table2 :size="13" />
+          All-Time Table
         </button>
         <button class="phase-tab" :class="{ active: tab === 'stats' }" @click="tab = 'stats'">
           <BarChart3 :size="13" />
@@ -208,7 +295,13 @@ const stats = computed<HistoryStats>(() => {
 
       <Transition name="tab" mode="out-in">
         <ChampionsTab v-if="tab === 'champions'" key="champions" :champions="champions" />
+        <LeagueSeasonsTab
+          v-else-if="tab === 'finals' && isLeagueSeries"
+          key="league-seasons"
+          :seasons="leagueSeasons"
+        />
         <AllFinalsTab v-else-if="tab === 'finals'" key="finals" :finals="finals" />
+        <LeagueAllTimeTab v-else-if="tab === 'alltime'" key="alltime" :rows="allTimeRows" />
         <StatisticsTab v-else key="stats" :stats="stats" />
       </Transition>
     </template>

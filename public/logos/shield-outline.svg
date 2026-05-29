@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+
+<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+<svg 
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="30"
+   height="30"
+   viewBox="0 0 30 30"
+   version="1.1"
+   id="svg822"
+   inkscape:version="0.92.4 (f8dce91, 2019-08-02)"
+   sodipodi:docname="shield.svg">
+  <defs
+     id="defs816" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="17.833333"
+     inkscape:cx="4.4579437"
+     inkscape:cy="15"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="true"
+     units="px"
+     inkscape:window-width="1366"
+     inkscape:window-height="713"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:snap-global="true"
+     inkscape:snap-bbox="true"
+     showguides="false">
+    <inkscape:grid
+       type="xygrid"
+       id="grid816" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata819">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-289.0625)">
+    <path
+       style="opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.99999976;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 15 3 C 11.40989 3 5 7 5 7 C 5.2265121 16.53033 9.0110856 27.0751 15 27 C 15.00658 26.99994 15.012946 27.000084 15.019531 27 C 16.702782 26.9785 18.192726 26.102895 19.408203 24.828125 C 20.62368 23.553365 21.621509 21.857275 22.441406 19.953125 C 24.081201 16.144845 25 11.496596 25 7.6660156 L 25 7.1171875 L 24.537109 6.8222656 C 24.537109 6.8222656 23.055006 5.88001 21.158203 4.9375 C 19.261401 3.99499 16.998759 3 15.005859 3 C 15.00394 3 15.00192 2.9999982 15 3 z M 15 5 C 15.001777 4.9999966 15.004086 5 15.005859 5 C 16.241678 5 18.47683 5.8377256 20.269531 6.7285156 C 21.768611 7.4733956 22.578212 7.99473 22.939453 8.21875 C 22.858993 11.63855 22.04125 15.823099 20.603516 19.162109 C 19.848328 20.915969 18.936659 22.423946 17.960938 23.447266 C 16.987081 24.468619 16.007734 24.985193 15 25 L 15 5 z "
+       id="rect1083"
+       transform="translate(0,289.0625)" />
+  </g>
+</svg>

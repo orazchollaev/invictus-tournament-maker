@@ -560,6 +560,8 @@ function handleSimMatchday(idx: number) {
   color: var(--text-muted);
   font-family: var(--font-ui);
   flex-shrink: 0;
+  display: flex;
+  justify-content: center;
 }
 .lv-score-btn--played {
   color: var(--text);
@@ -622,6 +624,9 @@ function handleSimMatchday(idx: number) {
   color: var(--text-muted);
   border-radius: var(--radius);
   flex-shrink: 0;
+
+  display: flex;
+  justify-content: center;
 }
 .lv-pill.done {
   color: var(--accent);

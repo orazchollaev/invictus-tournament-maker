@@ -63,7 +63,13 @@ const series = computed<SeriesEntry[]>(() => {
               {{ s.seasons }} {{ s.seasons === 1 ? "season" : "seasons" }}
             </span>
             <span class="t-badge accent">
-              {{ s.format === "group+bracket" ? "Groups+KO" : "Bracket" }}
+              {{
+                s.format === "group+bracket"
+                  ? "Groups+KO"
+                  : s.format === "league"
+                    ? "League"
+                    : "Bracket"
+              }}
             </span>
             <span class="t-dot">{{ s.teamCount }} teams</span>
           </div>
