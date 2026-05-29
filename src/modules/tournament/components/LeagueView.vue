@@ -168,22 +168,22 @@ function handleSimMatchday(idx: number) {
         <!-- Matchday nav -->
         <div class="lv-md-nav">
           <button :disabled="isFirstMatchday" class="lv-nav-btn" @click="activeIdx--">
-            <ChevronLeft :size="14" />
+            <ChevronLeft :size="13" />
           </button>
           <span class="lv-md-title">
             {{ activeMatchday?.name ?? "" }}
             <span v-if="matchdayDone(activeIdx)" class="lv-done-badge">✓</span>
           </span>
           <button :disabled="isLastMatchday" class="lv-nav-btn" @click="activeIdx++">
-            <ChevronRight :size="14" />
+            <ChevronRight :size="13" />
           </button>
           <button
             v-if="!matchdayDone(activeIdx)"
             class="lv-sim-md-btn"
+            title="Simulate matchday"
             @click="handleSimMatchday(activeIdx)"
           >
             <Zap :size="12" />
-            Simulate
           </button>
         </div>
 
@@ -229,10 +229,8 @@ function handleSimMatchday(idx: number) {
                 />
                 <span class="lv-match-team-name">{{ teamById(match.awayId)?.name }}</span>
               </span>
-              <div class="lv-match-actions">
-                <button class="primary lv-btn-xs" @click="commitEdit">✓</button>
-                <button class="lv-btn-xs" @click="cancelEdit">✕</button>
-              </div>
+              <button class="primary lv-btn-xs" @click="commitEdit">✓</button>
+              <button class="lv-btn-xs" @click="cancelEdit">✕</button>
             </template>
 
             <!-- Result / unplayed -->
@@ -269,16 +267,14 @@ function handleSimMatchday(idx: number) {
                 />
                 <span class="lv-match-team-name">{{ teamById(match.awayId)?.name }}</span>
               </span>
-              <div class="lv-match-actions">
-                <button
-                  v-if="!match.result"
-                  class="lv-btn-xs lv-sim-btn"
-                  title="Simulate"
-                  @click="emit('simMatch', activeIdx, mIdx)"
-                >
-                  <Zap :size="11" />
-                </button>
-              </div>
+              <button
+                v-if="!match.result"
+                class="lv-sim-btn"
+                title="Simulate"
+                @click="emit('simMatch', activeIdx, mIdx)"
+              >
+                <Zap :size="10" />
+              </button>
             </template>
           </div>
         </div>
@@ -457,38 +453,38 @@ function handleSimMatchday(idx: number) {
 .lv-md-nav {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 10px;
+  gap: 6px;
+  margin-bottom: 8px;
 }
 .lv-nav-btn {
   display: flex;
   align-items: center;
-  padding: 3px 5px;
+  padding: 2px 4px;
   border-color: var(--border-light);
   color: var(--text-muted);
+  flex-shrink: 0;
 }
 .lv-nav-btn:not(:disabled):hover {
   color: var(--text);
   border-color: var(--border);
 }
 .lv-md-title {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
   flex: 1;
   text-align: center;
 }
 .lv-done-badge {
-  font-size: 11px;
+  font-size: 10px;
   color: var(--accent);
-  margin-left: 4px;
+  margin-left: 3px;
 }
 .lv-sim-md-btn {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  font-size: 11px;
-  padding: 3px 8px;
-  border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+  justify-content: center;
+  padding: 3px 6px;
+  border-color: color-mix(in srgb, var(--accent) 35%, transparent);
   color: var(--accent);
   background: color-mix(in srgb, var(--accent) 8%, var(--surface));
 }
@@ -499,19 +495,19 @@ function handleSimMatchday(idx: number) {
 .lv-matches {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  margin-bottom: 12px;
+  gap: 2px;
+  margin-bottom: 10px;
 }
 .lv-match {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 5px 8px;
+  gap: 5px;
+  padding: 3px 8px;
   background: var(--bg);
   border: 1px solid var(--border-light);
   border-radius: var(--radius);
-  font-size: 12px;
-  min-height: 34px;
+  font-size: 11px;
+  min-height: 28px;
   min-width: 0;
   overflow: hidden;
 }
@@ -521,7 +517,7 @@ function handleSimMatchday(idx: number) {
   flex: 1;
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 4px;
   min-width: 0;
   color: var(--text-muted);
 }
@@ -541,8 +537,8 @@ function handleSimMatchday(idx: number) {
 }
 .lv-match-dot {
   display: inline-block;
-  width: 7px;
-  height: 7px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   flex-shrink: 0;
 }
@@ -551,10 +547,10 @@ function handleSimMatchday(idx: number) {
   font-weight: 600;
 }
 .lv-score-btn {
-  min-width: 44px;
-  padding: 2px 6px;
+  min-width: 40px;
+  padding: 1px 5px;
   text-align: center;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
   border-color: var(--border-light);
   color: var(--text-muted);
@@ -577,65 +573,66 @@ function handleSimMatchday(idx: number) {
   flex-shrink: 0;
 }
 .lv-score-input {
-  width: 36px;
+  width: 32px;
   text-align: center;
-  padding: 2px 4px;
-  font-size: 12px;
+  padding: 1px 3px;
+  font-size: 11px;
   font-weight: 700;
   flex-shrink: 0;
 }
-.lv-match-actions {
-  display: flex;
-  gap: 3px;
-  flex-shrink: 0;
-}
 .lv-btn-xs {
-  padding: 2px 5px;
+  padding: 1px 5px;
   font-size: 11px;
   line-height: 1.4;
+  flex-shrink: 0;
 }
 .lv-sim-btn {
   color: var(--text-muted);
   border-color: transparent;
+  background: transparent;
   display: inline-flex;
   align-items: center;
+  padding: 2px 3px;
+  flex-shrink: 0;
+  opacity: 0.5;
 }
 .lv-sim-btn:hover {
   color: var(--accent);
-  border-color: var(--accent);
+  border-color: transparent;
+  opacity: 1;
 }
 
 /* ─── Matchday pills ─── */
 .lv-md-pills {
   display: flex;
-  flex-wrap: nowrap;
-  gap: 4px;
-  overflow-x: auto;
+  flex-wrap: wrap;
+  gap: 3px;
+  /* overflow-x: auto; */
   padding-bottom: 2px;
-  scrollbar-width: thin;
-  scrollbar-color: var(--border-light) transparent;
+  /* scrollbar-width: thin; */
+  /* scrollbar-color: var(--border-light) transparent; */
 }
 .lv-pill {
-  min-width: 26px;
-  height: 26px;
-  padding: 0 4px;
-  font-size: 11px;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 3px;
+  font-size: 10px;
   border-color: var(--border-light);
   color: var(--text-muted);
   border-radius: var(--radius);
   flex-shrink: 0;
-
   display: flex;
   justify-content: center;
+  align-items: center;
 }
 .lv-pill.done {
   color: var(--accent);
-  border-color: color-mix(in srgb, var(--accent) 40%, transparent);
-  background: color-mix(in srgb, var(--accent) 6%, var(--surface));
+  border-color: color-mix(in srgb, var(--accent) 35%, transparent);
+  background: color-mix(in srgb, var(--accent) 5%, var(--surface));
 }
 .lv-pill.active {
   border-color: var(--accent);
-  background: color-mix(in srgb, var(--accent) 15%, var(--surface));
+  background: color-mix(in srgb, var(--accent) 14%, var(--surface));
   color: var(--accent);
   font-weight: 700;
 }
