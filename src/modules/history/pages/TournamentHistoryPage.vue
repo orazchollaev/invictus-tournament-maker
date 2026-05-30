@@ -44,7 +44,7 @@ const champions = computed<ChampEntry[]>(() => {
     if (!t.winnerId) continue
     const wId = t.winnerId
 
-    const isLeague = t.format === "league" && !!t.league
+    const isLeague = t.format === "league" && (!!t.league || !!t.tiers?.length)
 
     const w = map.get(wId)
     if (w) {
@@ -52,8 +52,9 @@ const champions = computed<ChampEntry[]>(() => {
       if (!isLeague) w.finals++
     } else map.set(wId, { wins: 1, finals: isLeague ? 0 : 1 })
 
-    if (isLeague && t.league) {
-      const rId = t.league.standings[1]?.teamId
+    if (isLeague) {
+      const topStandings = t.tiers?.length ? t.tiers[0].league.standings : t.league?.standings
+      const rId = topStandings?.[1]?.teamId
       if (rId && rId !== wId) {
         const r = map.get(rId)
         if (r) r.finals++
@@ -135,8 +136,9 @@ const finals = computed<FinalEntry[]>(() =>
 const leagueSeasons = computed<LeagueSeasonEntry[]>(() =>
   completedSeasons.value.map((t) => {
     const getAt = (pos: number) => {
-      if (!t.league) return null
-      const s = t.league.standings[pos]
+      const standings = t.tiers?.length ? t.tiers[0].league.standings : t.league?.standings
+      if (!standings) return null
+      const s = standings[pos]
       if (!s) return null
       const team = teamById(s.teamId)
       return { name: team?.name ?? "?", color: team?.color ?? "#888", pts: s.pts }
@@ -149,8 +151,11 @@ const leagueSeasons = computed<LeagueSeasonEntry[]>(() =>
 const allTimeRows = computed<AllTimeRow[]>(() => {
   const map = new Map<string, AllTimeRow>()
   for (const t of completedSeasons.value) {
-    if (!t.league) continue
-    for (const s of t.league.standings) {
+    const allStandings = t.tiers?.length
+      ? t.tiers.flatMap((tier) => tier.league.standings)
+      : t.league?.standings
+    if (!allStandings) continue
+    for (const s of allStandings) {
       const team = teamById(s.teamId)
       const existing = map.get(s.teamId)
       if (existing) {
@@ -264,6 +269,16 @@ const stats = computed<HistoryStats>(() => {
     }
     if (t.league) {
       for (const matchday of t.league.matchdays) {
+        for (const m of matchday.matches) {
+          if (!m.result) continue
+          totalMatches++
+          totalGoals += m.result.home + m.result.away
+          trackLeg(m.homeId, m.awayId, m.result.home, m.result.away)
+        }
+      }
+    }
+    for (const tier of t.tiers ?? []) {
+      for (const matchday of tier.league.matchdays) {
         for (const m of matchday.matches) {
           if (!m.result) continue
           totalMatches++
@@ -443,6 +458,15 @@ const teamStats = computed<TeamStatEntry[]>(() => {
     }
     if (t.league) {
       for (const md of t.league.matchdays) {
+        for (const m of md.matches) {
+          if (!m.result) continue
+          addResult(m.homeId, t.season, m.result.home, m.result.away)
+          addResult(m.awayId, t.season, m.result.away, m.result.home)
+        }
+      }
+    }
+    for (const tier of t.tiers ?? []) {
+      for (const md of tier.league.matchdays) {
         for (const m of md.matches) {
           if (!m.result) continue
           addResult(m.homeId, t.season, m.result.home, m.result.away)

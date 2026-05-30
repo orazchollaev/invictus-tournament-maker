@@ -126,22 +126,33 @@ function handleMultiTierSeasonConfirm() {
   showMultiTierModal.value = false
   const t = tournament.value
   if (!t?.tiers) return
-  const promotionCount = t.promotionCount ?? 1
-  // Compute new tier team IDs after swaps between adjacent tiers
-  const newTierTeamIds: string[][] = t.tiers.map((tier) => [...tier.teamIds])
-  for (let i = 0; i < t.tiers.length - 1; i++) {
-    const upper = t.tiers[i].league.standings
-    const lower = t.tiers[i + 1].league.standings
-    const relegated = upper.slice(upper.length - promotionCount).map((s) => s.teamId)
-    const promoted = lower.slice(0, promotionCount).map((s) => s.teamId)
-    // Upper tier: remove relegated, add promoted
-    newTierTeamIds[i] = [
-      ...upper.slice(0, upper.length - promotionCount).map((s) => s.teamId),
-      ...promoted,
-    ]
-    // Lower tier: remove promoted, add relegated
-    newTierTeamIds[i + 1] = [...lower.slice(promotionCount).map((s) => s.teamId), ...relegated]
+  const tiers = t.tiers
+  const n = tiers.length
+  const pc = t.promotionCount ?? 1
+
+  // relegated[i] = bottom pc teams of tier i  → move DOWN to tier i+1
+  // promoted[i]  = top    pc teams of tier i+1 → move UP   to tier i
+  const relegated: string[][] = []
+  const promoted: string[][] = []
+  for (let i = 0; i < n - 1; i++) {
+    const upper = tiers[i].league.standings
+    const lower = tiers[i + 1].league.standings
+    relegated[i] = upper.slice(upper.length - pc).map((s) => s.teamId)
+    promoted[i] = lower.slice(0, pc).map((s) => s.teamId)
   }
+
+  // Build each tier independently — no overwriting
+  const newTierTeamIds: string[][] = tiers.map((tier, i) => {
+    const leavingUp = i > 0 ? promoted[i - 1] : []
+    const leavingDown = i < n - 1 ? relegated[i] : []
+    const staying = tier.league.standings
+      .filter((s) => !leavingUp.includes(s.teamId) && !leavingDown.includes(s.teamId))
+      .map((s) => s.teamId)
+    const arrivingFromAbove = i > 0 ? relegated[i - 1] : []
+    const arrivingFromBelow = i < n - 1 ? promoted[i] : []
+    return [...staying, ...arrivingFromAbove, ...arrivingFromBelow]
+  })
+
   const id = store.newMultiTierSeason(t.id, newTierTeamIds)
   if (id) router.push(`/tournaments/${id}`)
 }
@@ -191,6 +202,13 @@ function handleManualSeasonConfirm(orderedIds: string[]) {
 function closeSeasonModal() {
   showSeasonModal.value = false
   showManualSeason.value = false
+}
+
+function changeTab(tab: MainTab, tierIdx?: number) {
+  activeTab.value = tab
+  if (tab === "league" && tierIdx !== undefined) {
+    activeTierIdx.value = tierIdx
+  }
 }
 </script>
 
@@ -266,10 +284,7 @@ function closeSeasonModal() {
               :key="ti"
               class="phase-tab"
               :class="{ active: activeTab === 'league' && activeTierIdx === ti }"
-              @click="
-                activeTab = 'league'
-                activeTierIdx = ti
-              "
+              @click="changeTab('league', ti)"
             >
               {{ tier.name }}
             </button>

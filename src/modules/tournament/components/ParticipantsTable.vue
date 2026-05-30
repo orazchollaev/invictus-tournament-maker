@@ -73,6 +73,15 @@ const teamStatsMap = computed(() => {
     }
   }
 
+  for (const tier of props.tournament.tiers ?? []) {
+    for (const matchday of tier.league.matchdays) {
+      for (const match of matchday.matches) {
+        if (!match.result) continue
+        addResult(match.homeId, match.awayId, match.result.home, match.result.away)
+      }
+    }
+  }
+
   for (const group of props.tournament.groups ?? []) {
     for (const match of group.matches) {
       if (!match.result) continue
@@ -104,6 +113,8 @@ interface Row {
   groupName: string | null
   stats: TeamStats
   leaguePosition: number | null
+  tierLabel: string | null
+  posInTier: number | null
 }
 
 const isGroupFormat = computed(() => props.tournament.format === "group+bracket")
@@ -128,6 +139,8 @@ const rows = computed<Row[]>(() => {
     | "eliminatedRound"
     | "eliminatedRoundIdx"
     | "leaguePosition"
+    | "tierLabel"
+    | "posInTier"
   > = {
     isWinner: false,
     isSecondPlace: false,
@@ -136,6 +149,8 @@ const rows = computed<Row[]>(() => {
     eliminatedRound: null,
     eliminatedRoundIdx: -1,
     leaguePosition: null,
+    tierLabel: null,
+    posInTier: null,
   }
 
   return props.teams
@@ -147,7 +162,36 @@ const rows = computed<Row[]>(() => {
 
       const base = { team, groupName, stats }
 
-      // ── League format ────────────────────────────────────────────
+      // ── Multi-tier league format ─────────────────────────────────
+      if (props.tournament.format === "league" && props.tournament.tiers?.length) {
+        const tiers = props.tournament.tiers
+        let leaguePosition: number | null = null
+        let posInTier: number | null = null
+        let tierLabel: string | null = null
+        let globalOffset = 0
+        for (let ti = 0; ti < tiers.length; ti++) {
+          const tier = tiers[ti]
+          const posIdx = tier.league.standings.findIndex((s) => s.teamId === team.id)
+          if (posIdx !== -1) {
+            leaguePosition = globalOffset + posIdx + 1
+            posInTier = posIdx + 1
+            tierLabel = tier.name
+            break
+          }
+          globalOffset += tier.teamIds.length
+        }
+        return {
+          ...base,
+          ...nil,
+          isWinner: props.tournament.winnerId === team.id,
+          leaguePosition,
+          tierLabel,
+          posInTier,
+          eliminatedRoundIdx: leaguePosition ?? 9999,
+        }
+      }
+
+      // ── Single-tier league format ─────────────────────────────────
       if (props.tournament.format === "league" && props.tournament.league) {
         const posIdx = props.tournament.league.standings.findIndex((s) => s.teamId === team.id)
         const leaguePosition = posIdx !== -1 ? posIdx + 1 : null
@@ -392,17 +436,25 @@ function sortIcon(key: SortKey): string {
               1st Place
             </span>
             <template v-else-if="row.leaguePosition !== null && row.leaguePosition > 1">
-              <span
-                v-if="row.leaguePosition <= 4"
-                class="tag tag--place"
-                :style="{
-                  borderColor: leaguePlaceTag(row.leaguePosition).color,
-                  color: leaguePlaceTag(row.leaguePosition).color,
-                }"
-              >
-                {{ leaguePlaceTag(row.leaguePosition).label }}
-              </span>
-              <span v-else class="pending">{{ ordinalSuffix(row.leaguePosition) }} Place</span>
+              <template v-if="row.tierLabel && row.posInTier !== null">
+                <span class="tier-pos">
+                  <span class="tier-name-tag">{{ row.tierLabel }}</span>
+                  {{ ordinalSuffix(row.posInTier) }} Place
+                </span>
+              </template>
+              <template v-else>
+                <span
+                  v-if="row.leaguePosition <= 4"
+                  class="tag tag--place"
+                  :style="{
+                    borderColor: leaguePlaceTag(row.leaguePosition).color,
+                    color: leaguePlaceTag(row.leaguePosition).color,
+                  }"
+                >
+                  {{ leaguePlaceTag(row.leaguePosition).label }}
+                </span>
+                <span v-else class="pending">{{ ordinalSuffix(row.leaguePosition) }} Place</span>
+              </template>
             </template>
             <span
               v-else-if="row.isSecondPlace"
@@ -623,5 +675,23 @@ function sortIcon(key: SortKey): string {
   background: transparent;
   border: 1px solid;
   font-weight: 600;
+}
+
+.tier-pos {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.tier-name-tag {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 1px 5px;
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--border-light) 80%, transparent);
+  color: var(--text-muted);
+  border: 1px solid var(--border-light);
 }
 </style>

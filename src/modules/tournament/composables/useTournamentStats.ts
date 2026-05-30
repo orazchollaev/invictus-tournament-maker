@@ -33,7 +33,7 @@ export function useTournamentStats(tournament: () => Tournament | undefined, tea
       return map.get(id)!
     }
 
-    // League matchday matches
+    // League matchday matches (single-tier)
     for (const matchday of t.league?.matchdays ?? []) {
       for (const match of matchday.matches) {
         if (!match.result) continue
@@ -45,6 +45,23 @@ export function useTournamentStats(tournament: () => Tournament | undefined, tea
         away.gf += match.result.away
         away.ga += match.result.home
         away.played++
+      }
+    }
+
+    // Multi-tier league matchdays
+    for (const tier of t.tiers ?? []) {
+      for (const matchday of tier.league.matchdays) {
+        for (const match of matchday.matches) {
+          if (!match.result) continue
+          const home = getOrCreate(match.homeId)
+          const away = getOrCreate(match.awayId)
+          home.gf += match.result.home
+          home.ga += match.result.away
+          home.played++
+          away.gf += match.result.away
+          away.ga += match.result.home
+          away.played++
+        }
       }
     }
 
