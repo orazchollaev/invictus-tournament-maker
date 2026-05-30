@@ -352,22 +352,29 @@ function changeTab(tab: MainTab, tierIdx?: number) {
           <div class="section-body">
             <!-- Multi-tier mode -->
             <template v-if="isMultiTier && tournament.tiers">
-              <LeagueView
-                :tournament="tournament"
-                :teams="allTeams"
-                :league-override="tournament.tiers[activeTierIdx]?.league"
-                :relegation-count-override="
-                  activeTierIdx < tournament.tiers.length - 1 ? (tournament.promotionCount ?? 0) : 0
-                "
-                :promotion-count="activeTierIdx > 0 ? (tournament.promotionCount ?? 0) : 0"
-                @set-result="
-                  (mdi, mi, h, a) =>
-                    store.setTierResult(tournament!.id, activeTierIdx, mdi, mi, h, a)
-                "
-                @sim-match="(mdi, mi) => store.simTierMatch(tournament!.id, activeTierIdx, mdi, mi)"
-                @sim-matchday="(mdi) => store.simTierMatchday(tournament!.id, activeTierIdx, mdi)"
-                @sim-all="store.simAllTier(tournament!.id, activeTierIdx)"
-              />
+              <Transition name="tab" mode="out-in">
+                <LeagueView
+                  :key="activeTierIdx"
+                  :tournament="tournament"
+                  :teams="allTeams"
+                  :league-override="tournament.tiers[activeTierIdx]?.league"
+                  :relegation-count-override="
+                    activeTierIdx < tournament.tiers.length - 1
+                      ? (tournament.promotionCount ?? 0)
+                      : 0
+                  "
+                  :promotion-count="activeTierIdx > 0 ? (tournament.promotionCount ?? 0) : 0"
+                  @set-result="
+                    (mdi, mi, h, a) =>
+                      store.setTierResult(tournament!.id, activeTierIdx, mdi, mi, h, a)
+                  "
+                  @sim-match="
+                    (mdi, mi) => store.simTierMatch(tournament!.id, activeTierIdx, mdi, mi)
+                  "
+                  @sim-matchday="(mdi) => store.simTierMatchday(tournament!.id, activeTierIdx, mdi)"
+                  @sim-all="store.simAllTier(tournament!.id, activeTierIdx)"
+                />
+              </Transition>
             </template>
             <!-- Single-tier mode -->
             <template v-else>
