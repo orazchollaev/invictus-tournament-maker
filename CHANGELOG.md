@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.5.0](https://github.com/orazchollaev/tournament-sim/compare/v1.4.0...v1.5.0) (2026-05-30)
+
+### Features
+
+- **groups, tournament:** add wildcard slots — best N runner-up teams advance to knockout ([1abde21](https://github.com/orazchollaev/tournament-sim/commit/1abde212d7be6c611e8c4bd1a5251c37a1dff51b))
+- **history:** enrich stats tab and add per-team all-time stats ([cd07898](https://github.com/orazchollaev/tournament-sim/commit/cd07898a4853b37232ddcfd4ff8dd5e969960e27))
+- **league:** add multi-tier league system with automatic promotion/relegation between divisions ([399b444](https://github.com/orazchollaev/tournament-sim/commit/399b444b0240a9193e58393302b30b58b9cf5d2a))
+- **league:** add promotion/relegation zones ([1d43bca](https://github.com/orazchollaev/tournament-sim/commit/1d43bcab17a3ba15d071049d3b0f92edc919c42f))
+- **settings:** allow changing division count and promotion slots before season starts ([89accba](https://github.com/orazchollaev/tournament-sim/commit/89accbaf40ae8fa7108990ab142a62b88a95696d))
+
+### Bug Fixes
+
+- **league:** correct multi-tier promotion/relegation swap for 3+ divisions ([0251a6d](https://github.com/orazchollaev/tournament-sim/commit/0251a6d8ffae636449d6b3b76d219a293cbac6f7))
+- **league:** smooth tier tab transition by remounting LeagueView on tier change ([7d10dc5](https://github.com/orazchollaev/tournament-sim/commit/7d10dc54b316bbea6569c52e030f5fd02d6e2743))
+
 ## [1.4.0](https://github.com/orazchollaev/tournament-sim/compare/v1.3.4...v1.4.0) (2026-05-29)
 
 ### Features
