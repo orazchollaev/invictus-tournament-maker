@@ -60,6 +60,11 @@ function doNewSeason(
 }
 
 function openSeasonModal(t: Tournament) {
+  // Multi-tier leagues need the promotion/relegation modal in TournamentDetailPage
+  if (t.tiers?.length) {
+    router.push(`/tournaments/${t.id}`)
+    return
+  }
   seasonModal.value = t
   const isGroup = t.format === "group+bracket"
   const drawType = isGroup ? settings.newSeasonGroupDrawType : settings.newSeasonDrawType

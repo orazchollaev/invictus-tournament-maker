@@ -51,6 +51,13 @@ const showMultiTierModal = ref(false)
 const isMultiTier = computed(() => (tournament.value?.tiers?.length ?? 0) > 1)
 const activeTierIdx = ref(0)
 
+watch(
+  () => tournament.value?.tiers?.length,
+  (len) => {
+    if (len !== undefined && activeTierIdx.value >= len) activeTierIdx.value = 0
+  }
+)
+
 const linkedLeague = computed(() => {
   const t = tournament.value
   if (!t?.linkedLeagueId) return undefined
@@ -184,6 +191,7 @@ watch(
   () => route.params.id,
   () => {
     activeTab.value = defaultTab()
+    activeTierIdx.value = 0
   }
 )
 
