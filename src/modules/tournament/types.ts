@@ -99,5 +99,8 @@ export interface Tournament {
   // league (only when format === "league")
   league?: League
 
+  // wildcard slots: best N teams at rank `qualifiersPerGroup` across all groups
+  wildcardCount?: number
+
   createdAt: number
 }

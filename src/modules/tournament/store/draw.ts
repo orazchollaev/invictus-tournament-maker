@@ -59,6 +59,7 @@ export function useDrawActions(tournaments: Ref<Tournament[]>, getTeams: () => T
       ordered,
       resolvedGroupCount,
       resolvedQpg,
+      t.wildcardCount ?? 0,
       t.groupLegMode ?? "single",
       t.knockoutLegMode ?? "single",
       t.finalLegMode ?? "single"
@@ -69,7 +70,16 @@ export function useDrawActions(tournaments: Ref<Tournament[]>, getTeams: () => T
       t.groups = fresh.groups
       t.groupsDone = false
       t.qualifiersPerGroup = fresh.qualifiersPerGroup
+      t.wildcardCount = fresh.wildcardCount
     }
+  }
+
+  function changeWildcardCount(tournamentId: string, count: number) {
+    const t = tournaments.value.find((t) => t.id === tournamentId)
+    if (!t || t.format !== "group+bracket" || hasAnyResults(tournamentId)) return
+    const max = t.groups?.length ?? 0
+    t.wildcardCount = Math.max(0, Math.min(count, max)) || undefined
+    rebuildDraw(t)
   }
 
   function setLegMode(tournamentId: string, stage: "group" | "knockout" | "final", mode: LegMode) {
@@ -141,6 +151,7 @@ export function useDrawActions(tournaments: Ref<Tournament[]>, getTeams: () => T
     setLeagueLegMode,
     changeGroupCount,
     changeQualifiersPerGroup,
+    changeWildcardCount,
     addTeamToTournament,
     removeTeamFromTournament,
     redrawTournament,

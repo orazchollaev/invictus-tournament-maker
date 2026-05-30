@@ -28,6 +28,7 @@ const format = ref<TournamentFormat>("bracket")
 const drawType = ref<DrawType>(settingsStore.newSeasonDrawType)
 const groupCount = ref(4)
 const qualifiersPerGroup = ref(2)
+const wildcardCount = ref(0)
 const showManualDraw = ref(false)
 const hasThirdPlace = ref(false)
 const playoffSeedMode = ref<PlayoffSeedMode>(settingsStore.newSeasonPlayoffSeedMode)
@@ -61,6 +62,10 @@ const minQpg = 1
 const maxQpg = computed(() =>
   groupCount.value > 0 ? Math.floor(selected.value.length / groupCount.value) : 2
 )
+const maxWildcards = computed(() => {
+  const minGroupSize = Math.floor(selected.value.length / groupCount.value)
+  return qualifiersPerGroup.value < minGroupSize ? groupCount.value : 0
+})
 const canCreate = computed(() => !!name.value.trim() && selected.value.length >= 2)
 
 const drawOptions = [
@@ -74,6 +79,9 @@ watch(maxGroups, (max) => {
 })
 watch(maxQpg, (max) => {
   qualifiersPerGroup.value = Math.max(minQpg, Math.min(qualifiersPerGroup.value, max))
+})
+watch(maxWildcards, (max) => {
+  wildcardCount.value = Math.min(wildcardCount.value, max)
 })
 
 function toggleAll() {
@@ -129,6 +137,7 @@ function doCreate(orderedIds?: string[]) {
     orderedIds,
     gc,
     qpg,
+    isGroup ? wildcardCount.value : 0,
     gLeg,
     knockoutLegMode.value,
     finalLegMode.value,
@@ -296,6 +305,29 @@ const teamsPerGroup = computed(() =>
               per group →
               <strong>{{ qualifiersPerGroup * groupCount }}</strong>
               reach knockout
+            </span>
+          </div>
+          <div v-if="maxWildcards > 0" class="ct-gc-row">
+            <span class="ct-gc-label">Best runner-up wildcards</span>
+            <div class="ct-gc-stepper">
+              <button
+                :disabled="wildcardCount <= 0"
+                @click="wildcardCount = Math.max(0, wildcardCount - 1)"
+              >
+                −
+              </button>
+              <span class="ct-gc-val">{{ wildcardCount }}</span>
+              <button
+                :disabled="wildcardCount >= maxWildcards"
+                @click="wildcardCount = Math.min(maxWildcards, wildcardCount + 1)"
+              >
+                +
+              </button>
+            </div>
+            <span class="ct-gc-hint">
+              →
+              <strong>{{ qualifiersPerGroup * groupCount + wildcardCount }}</strong>
+              total
             </span>
           </div>
         </div>

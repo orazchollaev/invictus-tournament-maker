@@ -14,7 +14,7 @@ import {
   buildPureBracket,
   propagateWinners,
 } from "./bracket"
-import { buildGroupFixture, recalcStandings } from "./groups"
+import { buildGroupFixture, recalcStandings, selectWildcards } from "./groups"
 import { buildLeagueMatchdays } from "./league"
 
 export function createTournament(
@@ -25,6 +25,7 @@ export function createTournament(
   orderedTeams?: Team[],
   groupCount?: number, // if provided → group+bracket format
   qualifiersPerGroup = 2,
+  wildcardCount = 0,
   groupLegMode: LegMode = "single",
   knockoutLegMode: LegMode = "single",
   finalLegMode: LegMode = "single"
@@ -40,6 +41,7 @@ export function createTournament(
       groupCount!,
       qualifiersPerGroup,
       orderedTeams,
+      wildcardCount,
       groupLegMode,
       knockoutLegMode,
       finalLegMode
@@ -88,6 +90,7 @@ function createGroupBracketTournament(
   groupCount: number,
   qualifiersPerGroup: number,
   orderedTeams?: Team[],
+  wildcardCount = 0,
   groupLegMode: LegMode = "single",
   knockoutLegMode: LegMode = "single",
   finalLegMode: LegMode = "single"
@@ -140,7 +143,8 @@ function createGroupBracketTournament(
   const minGroupSize = Math.floor(teams.length / groupCount)
   const clampedQpg = Math.max(1, Math.min(qualifiersPerGroup, minGroupSize))
 
-  const qualifierCount = groupCount * clampedQpg
+  const clampedWildcards = Math.min(wildcardCount, groupCount)
+  const qualifierCount = groupCount * clampedQpg + clampedWildcards
   const bracketSize = Math.pow(2, Math.ceil(Math.log2(Math.max(qualifierCount, 2))))
   const emptyRounds = buildEmptyBracketRounds(bracketSize)
 
@@ -167,6 +171,7 @@ function createGroupBracketTournament(
     groups,
     groupsDone: false,
     qualifiersPerGroup: clampedQpg,
+    wildcardCount: clampedWildcards > 0 ? clampedWildcards : undefined,
     rounds: emptyRounds,
     winnerId: null,
     groupLegMode,
@@ -185,6 +190,7 @@ export function seedBracketFromGroups(
   if (!tournament.groups) return
   const qpg = tournament.qualifiersPerGroup ?? 2
   const gc = tournament.groups.length
+  const wcCount = tournament.wildcardCount ?? 0
 
   tournament.groups.forEach((g) => recalcStandings(g, tournament.tiebreaker))
 
@@ -196,25 +202,54 @@ export function seedBracketFromGroups(
     )
   )
 
-  const realCount = byGroup.flat().filter(Boolean).length || 2
+  // Wildcards: best wcCount teams at rank qpg across all groups
+  const wildcards = wcCount > 0 ? selectWildcards(tournament.groups, qpg, wcCount, teams) : []
+
+  const realCount = byGroup.flat().filter(Boolean).length + wildcards.length || 2
   const size = Math.pow(2, Math.ceil(Math.log2(realCount)))
   const half = size / 2
 
   // Slots helper: packs realTeams into targetSize with byes at the front
   function buildHalfSlots(halfTeams: (Team | null)[], targetSize: number): (Team | null)[] {
     const realTeams = halfTeams.filter(Boolean) as Team[]
-    const byes = targetSize - realTeams.length
+    const byes = Math.max(0, targetSize - realTeams.length)
     const slots: (Team | null)[] = []
     for (let i = 0; i < byes; i++) slots.push(realTeams[i] ?? null, null)
     for (let i = byes; i < realTeams.length; i++) slots.push(realTeams[i])
     return slots
   }
 
+  // Returns which group index a team belongs to (-1 if not found)
+  function groupIdxOf(team: Team | null): number {
+    if (!team) return -1
+    return tournament.groups!.findIndex((g) => g.teamIds.includes(team.id))
+  }
+
+  // Distribute wildcards into the half opposite their group's regular qualifiers.
+  // Respects half capacity (max = half) to prevent buildHalfSlots overflow.
+  function distributeWildcards(fh: (Team | null)[], sh: (Team | null)[]) {
+    for (const wc of wildcards) {
+      const fhFull = fh.filter(Boolean).length >= half
+      const shFull = sh.filter(Boolean).length >= half
+      const inFirst = fh.some((t) => groupIdxOf(t) === wc.fromGroupIdx)
+      const inSecond = sh.some((t) => groupIdxOf(t) === wc.fromGroupIdx)
+      if (shFull || (!fhFull && inSecond && !inFirst)) {
+        fh.push(wc.team)
+      } else if (fhFull || (inFirst && !inSecond)) {
+        sh.push(wc.team)
+      } else {
+        // Both halves have same-group teams or neither does — balance
+        if (fh.filter(Boolean).length <= sh.filter(Boolean).length) fh.push(wc.team)
+        else sh.push(wc.team)
+      }
+    }
+  }
+
   let firstHalf: (Team | null)[]
   let secondHalf: (Team | null)[]
 
   if (mode === "random") {
-    const all = shuffle(byGroup.flat())
+    const all = shuffle([...byGroup.flat(), ...wildcards.map((w) => w.team)])
     const mid = Math.ceil(all.length / 2)
     firstHalf = all.slice(0, mid)
     secondHalf = all.slice(mid)
@@ -232,6 +267,7 @@ export function seedBracketFromGroups(
     const mid = Math.ceil(ordered.length / 2)
     firstHalf = ordered.slice(0, mid)
     secondHalf = ordered.slice(mid)
+    distributeWildcards(firstHalf, secondHalf)
   } else {
     // "cross" — rank k from group i meets rank (qpg-1-k) from group j.
     // Adjacent groups are paired: (0,1), (2,3), ...
@@ -262,6 +298,7 @@ export function seedBracketFromGroups(
         secondHalf.push(byGroup[gj][mid] ?? null)
       }
     }
+    distributeWildcards(firstHalf, secondHalf)
   }
 
   const rounds = buildBracketRounds([

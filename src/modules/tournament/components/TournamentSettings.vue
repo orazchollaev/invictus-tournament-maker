@@ -24,6 +24,7 @@ const emit = defineEmits<{
   setPlayoffSeedMode: [mode: PlayoffSeedMode]
   changeGroupCount: [count: number]
   changeQualifiersPerGroup: [qpg: number]
+  changeWildcardCount: [count: number]
   toggleThirdPlace: []
   changeLegMode: [stage: "group" | "knockout" | "final", mode: LegMode]
   setLeagueLegMode: [mode: LegMode]
@@ -47,6 +48,7 @@ const showManualDraw = ref(false)
 const localPlayoffSeedMode = ref<PlayoffSeedMode>(props.tournament.playoffSeedMode ?? "cross")
 const localGroupCount = ref(props.tournament.groups?.length ?? 2)
 const localQpg = ref(props.tournament.qualifiersPerGroup ?? 2)
+const localWildcardCount = ref(props.tournament.wildcardCount ?? 0)
 const localHasThirdPlace = ref(!!props.tournament.hasThirdPlace)
 const localGroupLegMode = ref<LegMode>(props.tournament.groupLegMode ?? "single")
 const localKnockoutLegMode = ref<LegMode>(props.tournament.knockoutLegMode ?? "single")
@@ -91,6 +93,7 @@ const hasChanges = computed(() => {
   if (localPlayoffSeedMode.value !== (orig.playoffSeedMode ?? "cross")) return true
   if (localGroupCount.value !== (orig.groups?.length ?? 2)) return true
   if (localQpg.value !== (orig.qualifiersPerGroup ?? 2)) return true
+  if (localWildcardCount.value !== (orig.wildcardCount ?? 0)) return true
   if (localHasThirdPlace.value !== !!orig.hasThirdPlace) return true
   if (localGroupLegMode.value !== (orig.groupLegMode ?? "single")) return true
   if (localKnockoutLegMode.value !== (orig.knockoutLegMode ?? "single")) return true
@@ -160,6 +163,11 @@ function handleSave() {
   // Qualifiers per group
   if (localQpg.value !== (orig.qualifiersPerGroup ?? 2)) {
     emit("changeQualifiersPerGroup", localQpg.value)
+  }
+
+  // Wildcard count
+  if (localWildcardCount.value !== (orig.wildcardCount ?? 0)) {
+    emit("changeWildcardCount", localWildcardCount.value)
   }
 
   // Third place toggle
@@ -337,6 +345,27 @@ function handleSave() {
                 </button>
               </div>
               <span class="ts-hint">→ {{ currentQpg * currentGroupCount }} reach knockout</span>
+            </div>
+            <div v-if="currentQpg < maxQpg" class="ts-stepper-row">
+              <span class="ts-stepper-label">Best runner-up wildcards</span>
+              <div class="gc-stepper">
+                <button
+                  :disabled="localWildcardCount <= 0"
+                  @click="localWildcardCount = Math.max(0, localWildcardCount - 1)"
+                >
+                  −
+                </button>
+                <span class="gc-val">{{ localWildcardCount }}</span>
+                <button
+                  :disabled="localWildcardCount >= currentGroupCount"
+                  @click="localWildcardCount = Math.min(currentGroupCount, localWildcardCount + 1)"
+                >
+                  +
+                </button>
+              </div>
+              <span class="ts-hint">
+                → {{ currentQpg * currentGroupCount + localWildcardCount }} total
+              </span>
             </div>
           </template>
           <div v-else class="ts-locked-banner">

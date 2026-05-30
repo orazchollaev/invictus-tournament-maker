@@ -244,3 +244,23 @@ export function allGroupsDone(tournament: Tournament): boolean {
   if (!tournament.groups) return true
   return tournament.groups.every((g) => g.matches.every((m) => m.result !== null))
 }
+
+// Returns the best `count` teams at rank `rankIdx` (0-based) across all groups,
+// sorted by pts → gd → gf. Used for wildcard / best-runner-up advancement.
+export function selectWildcards(
+  groups: Group[],
+  rankIdx: number,
+  count: number,
+  teams: Team[]
+): { team: Team; fromGroupIdx: number }[] {
+  const candidates: { team: Team; pts: number; gd: number; gf: number; fromGroupIdx: number }[] = []
+  for (let g = 0; g < groups.length; g++) {
+    const s = groups[g].standings[rankIdx]
+    if (!s) continue
+    const team = teams.find((t) => t.id === s.teamId)
+    if (!team) continue
+    candidates.push({ team, pts: s.pts, gd: s.gd, gf: s.gf, fromGroupIdx: g })
+  }
+  candidates.sort((a, b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf)
+  return candidates.slice(0, count).map((c) => ({ team: c.team, fromGroupIdx: c.fromGroupIdx }))
+}

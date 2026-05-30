@@ -27,6 +27,7 @@ export function useCrudActions(
     orderedIds?: string[],
     groupCount?: number,
     qualifiersPerGroup?: number,
+    wildcardCount?: number,
     groupLegMode: LegMode = "single",
     knockoutLegMode: LegMode = "single",
     finalLegMode: LegMode = "single",
@@ -49,6 +50,7 @@ export function useCrudActions(
       ordered,
       groupCount,
       qualifiersPerGroup,
+      wildcardCount ?? 0,
       groupLegMode,
       knockoutLegMode,
       finalLegMode
@@ -118,6 +120,7 @@ export function useCrudActions(
       ordered,
       effectiveGroupCount,
       effectiveQpg,
+      t.wildcardCount ?? 0,
       t.groupLegMode ?? "single",
       t.knockoutLegMode ?? "single",
       t.finalLegMode ?? "single"

@@ -176,7 +176,13 @@ function scoreAccentColor(match: GroupMatch): string {
                 :key="row.teamId"
                 :class="{
                   'row-qualify': ri < (tournament.qualifiersPerGroup ?? 2),
-                  'row-out': ri >= (tournament.qualifiersPerGroup ?? 2),
+                  'row-wildcard':
+                    ri === (tournament.qualifiersPerGroup ?? 2) &&
+                    (tournament.wildcardCount ?? 0) > 0,
+                  'row-out':
+                    ri > (tournament.qualifiersPerGroup ?? 2) ||
+                    (ri === (tournament.qualifiersPerGroup ?? 2) &&
+                      !(tournament.wildcardCount ?? 0)),
                 }"
               >
                 <td class="col-rank">{{ ri + 1 }}</td>
@@ -271,7 +277,13 @@ function scoreAccentColor(match: GroupMatch): string {
     <!-- Legend -->
     <div class="gs-legend">
       <span class="legend-qualify">■</span>
-      Qualifies &nbsp;
+      Qualifies
+      <template v-if="(tournament.wildcardCount ?? 0) > 0">
+        &nbsp;
+        <span class="legend-wildcard">╌</span>
+        Wildcard (best {{ tournament.wildcardCount }})
+      </template>
+      &nbsp;
       <span class="legend-out">■</span>
       Eliminated
     </div>
@@ -396,6 +408,12 @@ function scoreAccentColor(match: GroupMatch): string {
 .row-qualify td:first-child {
   border-left: 3px solid var(--accent);
 }
+.row-wildcard {
+  background: color-mix(in srgb, var(--accent) 3%, transparent);
+}
+.row-wildcard td:first-child {
+  border-left: 3px dashed var(--accent);
+}
 .row-out {
   opacity: 0.65;
 }
@@ -484,6 +502,11 @@ function scoreAccentColor(match: GroupMatch): string {
 }
 .legend-qualify {
   color: var(--accent);
+}
+.legend-wildcard {
+  color: var(--accent);
+  opacity: 0.6;
+  letter-spacing: -1px;
 }
 
 .score-row {

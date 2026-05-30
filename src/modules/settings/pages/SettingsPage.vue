@@ -138,7 +138,7 @@ function importData() {
 
     <!-- ── Table Rules ───────────────────────────────── -->
     <div class="section-box">
-      <h2>Table Rules</h2>
+      <h2>Default Table Rules</h2>
       <div class="section-body">
         <div class="setting-row">
           <div class="setting-info">

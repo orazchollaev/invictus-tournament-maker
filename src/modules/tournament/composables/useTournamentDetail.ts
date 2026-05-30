@@ -82,6 +82,10 @@ export function useTournamentDetail() {
     store.changeQualifiersPerGroup(tournamentId.value, qpg)
   }
 
+  function changeWildcardCount(count: number) {
+    store.changeWildcardCount(tournamentId.value, count)
+  }
+
   function changeLegMode(stage: "group" | "knockout" | "final", mode: LegMode) {
     store.setLegMode(tournamentId.value, stage, mode)
   }
@@ -141,6 +145,7 @@ export function useTournamentDetail() {
     setPlayoffSeedMode,
     changeGroupCount,
     changeQualifiersPerGroup,
+    changeWildcardCount,
     changeLegMode,
   }
 }
