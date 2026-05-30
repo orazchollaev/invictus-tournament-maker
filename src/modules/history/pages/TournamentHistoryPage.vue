@@ -3,13 +3,14 @@ import { computed, ref } from "vue"
 import { useRoute, RouterLink } from "vue-router"
 import { useTournamentStore } from "@/modules/tournament/store"
 import { useTeamsStore } from "@/modules/teams/store"
-import type { Match, GroupMatch } from "@/modules/tournament/types"
-import { ArrowLeft, Trophy, Medal, BarChart3, Table2 } from "lucide-vue-next"
+import type { Match } from "@/modules/tournament/types"
+import { ArrowLeft, Trophy, Medal, BarChart3, Table2, Users } from "lucide-vue-next"
 import ChampionsTab, { type ChampEntry } from "../components/ChampionsTab.vue"
 import AllFinalsTab, { type FinalEntry } from "../components/AllFinalsTab.vue"
 import LeagueSeasonsTab, { type LeagueSeasonEntry } from "../components/LeagueSeasonsTab.vue"
 import LeagueAllTimeTab, { type AllTimeRow } from "../components/LeagueAllTimeTab.vue"
 import StatisticsTab, { type HistoryStats } from "../components/StatisticsTab.vue"
+import TeamStatsTab, { type TeamStatEntry } from "../components/TeamStatsTab.vue"
 
 const route = useRoute()
 const store = useTournamentStore()
@@ -27,7 +28,7 @@ const completedSeasons = computed(() =>
 
 const isLeagueSeries = computed(() => allSeasons.value[0]?.format === "league")
 
-type TabId = "champions" | "finals" | "alltime" | "stats"
+type TabId = "champions" | "finals" | "alltime" | "stats" | "teams"
 const tab = ref<TabId>("champions")
 
 function teamById(id: string | null | undefined) {
@@ -193,46 +194,139 @@ function knockoutGoals(m: Match): number {
   return g
 }
 
-function groupGoals(m: GroupMatch): number {
-  return m.result ? m.result.home + m.result.away : 0
-}
-
 const stats = computed<HistoryStats>(() => {
   let totalMatches = 0
   let totalGoals = 0
+
+  const teamGoals = new Map<string, number>()
+  const teamCS = new Map<string, number>()
+  let biggestWinDiff = 0
+  let biggestWinEntry: HistoryStats["biggestWin"] = null
+
+  function trackLeg(
+    homeId: string | null | undefined,
+    awayId: string | null | undefined,
+    homeG: number,
+    awayG: number
+  ) {
+    if (!homeId || !awayId) return
+    teamGoals.set(homeId, (teamGoals.get(homeId) ?? 0) + homeG)
+    teamGoals.set(awayId, (teamGoals.get(awayId) ?? 0) + awayG)
+    if (awayG === 0) teamCS.set(homeId, (teamCS.get(homeId) ?? 0) + 1)
+    if (homeG === 0) teamCS.set(awayId, (teamCS.get(awayId) ?? 0) + 1)
+    const diff = Math.abs(homeG - awayG)
+    if (diff > biggestWinDiff) {
+      biggestWinDiff = diff
+      const [wId, lId, wG, lG] =
+        homeG > awayG ? [homeId, awayId, homeG, awayG] : [awayId, homeId, awayG, homeG]
+      const w = teamById(wId)
+      const l = teamById(lId)
+      biggestWinEntry = {
+        score: `${wG}–${lG}`,
+        winnerName: w?.name ?? "?",
+        winnerColor: w?.color ?? "#888",
+        loserName: l?.name ?? "?",
+        loserColor: l?.color ?? "#888",
+      }
+    }
+  }
 
   for (const t of completedSeasons.value) {
     if (t.groups) {
       for (const group of t.groups) {
         for (const m of group.matches) {
-          if (m.result) {
-            totalMatches++
-            totalGoals += groupGoals(m)
-          }
+          if (!m.result) continue
+          totalMatches++
+          totalGoals += m.result.home + m.result.away
+          trackLeg(m.homeId, m.awayId, m.result.home, m.result.away)
         }
       }
     }
     for (const round of t.rounds) {
       for (const m of round.matches) {
-        if (m.result) {
-          totalMatches++
-          totalGoals += knockoutGoals(m)
+        if (!m.result) continue
+        totalMatches++
+        totalGoals += knockoutGoals(m)
+        trackLeg(m.homeId, m.awayId, m.result.home, m.result.away)
+        if (m.leg2Result) {
+          trackLeg(m.awayId, m.homeId, m.leg2Result.home, m.leg2Result.away)
         }
       }
     }
-    if (t.thirdPlaceMatch?.result) {
+    const tp = t.thirdPlaceMatch
+    if (tp?.result) {
       totalMatches++
-      totalGoals += knockoutGoals(t.thirdPlaceMatch)
+      totalGoals += knockoutGoals(tp)
+      trackLeg(tp.homeId, tp.awayId, tp.result.home, tp.result.away)
+      if (tp.leg2Result) {
+        trackLeg(tp.awayId, tp.homeId, tp.leg2Result.home, tp.leg2Result.away)
+      }
     }
     if (t.league) {
       for (const matchday of t.league.matchdays) {
         for (const m of matchday.matches) {
-          if (m.result) {
-            totalMatches++
-            totalGoals += groupGoals(m)
-          }
+          if (!m.result) continue
+          totalMatches++
+          totalGoals += m.result.home + m.result.away
+          trackLeg(m.homeId, m.awayId, m.result.home, m.result.away)
         }
       }
+    }
+  }
+
+  // Top scoring team
+  let topScoringTeam: HistoryStats["topScoringTeam"] = null
+  if (teamGoals.size) {
+    const [topId, topG] = [...teamGoals.entries()].reduce((a, b) => (b[1] > a[1] ? b : a))
+    const t = teamById(topId)
+    topScoringTeam = { name: t?.name ?? "?", color: t?.color ?? "#888", goals: topG }
+  }
+
+  // Most clean sheets
+  let mostCleanSheets: HistoryStats["mostCleanSheets"] = null
+  if (teamCS.size) {
+    const [csId, csCount] = [...teamCS.entries()].reduce((a, b) => (b[1] > a[1] ? b : a))
+    const t = teamById(csId)
+    mostCleanSheets = { name: t?.name ?? "?", color: t?.color ?? "#888", count: csCount }
+  }
+
+  // Champion streak analysis
+  let firstChampion: HistoryStats["firstChampion"] = null
+  let longestStreak: HistoryStats["longestStreak"] = null
+  let currentStreak: HistoryStats["currentStreak"] = null
+
+  const sorted = [...completedSeasons.value].sort((a, b) => a.season - b.season)
+  if (sorted.length) {
+    const first = sorted[0]
+    if (first.winnerId) {
+      const t = teamById(first.winnerId)
+      firstChampion = { name: t?.name ?? "?", color: t?.color ?? "#888", season: first.season }
+    }
+
+    let streak = 0
+    let streakId: string | null = null
+    let maxStreak = 0
+    let maxStreakId: string | null = null
+    for (const t of sorted) {
+      if (!t.winnerId) continue
+      if (t.winnerId === streakId) streak++
+      else {
+        streakId = t.winnerId
+        streak = 1
+      }
+      if (streak > maxStreak) {
+        maxStreak = streak
+        maxStreakId = streakId
+      }
+    }
+
+    if (maxStreak >= 2 && maxStreakId) {
+      const t = teamById(maxStreakId)
+      longestStreak = { name: t?.name ?? "?", color: t?.color ?? "#888", count: maxStreak }
+    }
+    if (streak >= 2 && streakId) {
+      const t = teamById(streakId)
+      currentStreak = { name: t?.name ?? "?", color: t?.color ?? "#888", count: streak }
     }
   }
 
@@ -241,7 +335,161 @@ const stats = computed<HistoryStats>(() => {
     totalMatches,
     totalGoals,
     avgGoals: totalMatches > 0 ? (totalGoals / totalMatches).toFixed(2) : "—",
+    topScoringTeam,
+    biggestWin: biggestWinEntry,
+    mostCleanSheets,
+    firstChampion,
+    longestStreak,
+    currentStreak,
   }
+})
+
+// ─── Team Stats ──────────────────────────────────────────────────
+const teamStats = computed<TeamStatEntry[]>(() => {
+  interface MatchTally {
+    played: number
+    won: number
+    drawn: number
+    lost: number
+    gf: number
+    ga: number
+    cleanSheets: number
+    title: boolean
+  }
+
+  function emptyTally(): MatchTally {
+    return { played: 0, won: 0, drawn: 0, lost: 0, gf: 0, ga: 0, cleanSheets: 0, title: false }
+  }
+
+  const allTime = new Map<
+    string,
+    {
+      titles: number
+      seasonNums: Set<number>
+      perSeason: Map<number, MatchTally>
+      all: Omit<MatchTally, "title">
+    }
+  >()
+
+  function getTeam(id: string) {
+    let e = allTime.get(id)
+    if (!e) {
+      e = {
+        titles: 0,
+        seasonNums: new Set(),
+        perSeason: new Map(),
+        all: { played: 0, won: 0, drawn: 0, lost: 0, gf: 0, ga: 0, cleanSheets: 0 },
+      }
+      allTime.set(id, e)
+    }
+    return e
+  }
+
+  function getSeasonTally(teamId: string, season: number): MatchTally {
+    const e = getTeam(teamId)
+    e.seasonNums.add(season)
+    let s = e.perSeason.get(season)
+    if (!s) {
+      s = emptyTally()
+      e.perSeason.set(season, s)
+    }
+    return s
+  }
+
+  function addResult(teamId: string, season: number, goalsFor: number, goalsAgainst: number) {
+    const e = getTeam(teamId)
+    const s = getSeasonTally(teamId, season)
+    for (const tally of [e.all, s] as MatchTally[]) {
+      tally.played++
+      tally.gf += goalsFor
+      tally.ga += goalsAgainst
+      if (goalsFor > goalsAgainst) tally.won++
+      else if (goalsFor === goalsAgainst) tally.drawn++
+      else tally.lost++
+      if (goalsAgainst === 0) tally.cleanSheets++
+    }
+  }
+
+  for (const t of completedSeasons.value) {
+    for (const id of t.teamIds) getSeasonTally(id, t.season)
+    if (t.groups) {
+      for (const g of t.groups) {
+        for (const m of g.matches) {
+          if (!m.result) continue
+          addResult(m.homeId, t.season, m.result.home, m.result.away)
+          addResult(m.awayId, t.season, m.result.away, m.result.home)
+        }
+      }
+    }
+    for (const round of t.rounds) {
+      for (const m of round.matches) {
+        if (!m.homeId || !m.awayId || !m.result) continue
+        addResult(m.homeId, t.season, m.result.home, m.result.away)
+        addResult(m.awayId, t.season, m.result.away, m.result.home)
+        if (m.leg2Result) {
+          addResult(m.awayId, t.season, m.leg2Result.home, m.leg2Result.away)
+          addResult(m.homeId, t.season, m.leg2Result.away, m.leg2Result.home)
+        }
+      }
+    }
+    const tp = t.thirdPlaceMatch
+    if (tp?.homeId && tp.awayId && tp.result) {
+      addResult(tp.homeId, t.season, tp.result.home, tp.result.away)
+      addResult(tp.awayId, t.season, tp.result.away, tp.result.home)
+      if (tp.leg2Result) {
+        addResult(tp.awayId, t.season, tp.leg2Result.home, tp.leg2Result.away)
+        addResult(tp.homeId, t.season, tp.leg2Result.away, tp.leg2Result.home)
+      }
+    }
+    if (t.league) {
+      for (const md of t.league.matchdays) {
+        for (const m of md.matches) {
+          if (!m.result) continue
+          addResult(m.homeId, t.season, m.result.home, m.result.away)
+          addResult(m.awayId, t.season, m.result.away, m.result.home)
+        }
+      }
+    }
+    if (t.winnerId) {
+      getTeam(t.winnerId).titles++
+      getSeasonTally(t.winnerId, t.season).title = true
+    }
+  }
+
+  return [...allTime.entries()]
+    .map(([teamId, data]) => {
+      const team = teamById(teamId)
+      return {
+        teamId,
+        name: team?.name ?? "?",
+        color: team?.color ?? "#888",
+        seasons: data.seasonNums.size,
+        titles: data.titles,
+        played: data.all.played,
+        won: data.all.won,
+        drawn: data.all.drawn,
+        lost: data.all.lost,
+        gf: data.all.gf,
+        ga: data.all.ga,
+        gd: data.all.gf - data.all.ga,
+        cleanSheets: data.all.cleanSheets,
+        seasonBreakdown: [...data.perSeason.entries()]
+          .sort(([a], [b]) => a - b)
+          .map(([season, ss]) => ({
+            season,
+            played: ss.played,
+            won: ss.won,
+            drawn: ss.drawn,
+            lost: ss.lost,
+            gf: ss.gf,
+            ga: ss.ga,
+            gd: ss.gf - ss.ga,
+            cleanSheets: ss.cleanSheets,
+            title: ss.title,
+          })),
+      }
+    })
+    .sort((a, b) => b.titles - a.titles || b.won - a.won || b.gf - a.gf)
 })
 </script>
 
@@ -293,6 +541,10 @@ const stats = computed<HistoryStats>(() => {
           <BarChart3 :size="13" />
           Statistics
         </button>
+        <button class="phase-tab" :class="{ active: tab === 'teams' }" @click="tab = 'teams'">
+          <Users :size="13" />
+          Teams
+        </button>
       </div>
 
       <Transition name="tab" mode="out-in">
@@ -309,7 +561,8 @@ const stats = computed<HistoryStats>(() => {
         />
         <AllFinalsTab v-else-if="tab === 'finals'" key="finals" :finals="finals" />
         <LeagueAllTimeTab v-else-if="tab === 'alltime'" key="alltime" :rows="allTimeRows" />
-        <StatisticsTab v-else key="stats" :stats="stats" />
+        <StatisticsTab v-else-if="tab === 'stats'" key="stats" :stats="stats" />
+        <TeamStatsTab v-else key="teams" :teams="teamStats" />
       </Transition>
     </template>
   </div>
