@@ -442,6 +442,8 @@ function changeTab(tab: MainTab, tierIdx?: number) {
       @change-leg-mode="changeLegMode"
       @set-league-leg-mode="store.setLeagueLegMode(tournament!.id, $event)"
       @change-relegation-count="store.setRelegationCount(tournament!.id, $event)"
+      @change-promotion-count="store.setPromotionCount(tournament!.id, $event)"
+      @change-tier-count="store.rebuildTiers(tournament!.id, $event)"
       @set-linked-league="store.setLinkedLeague(tournament!.id, $event)"
       @change-tiebreaker="store.setTiebreaker(tournament!.id, $event)"
       @reset="resetTournament"

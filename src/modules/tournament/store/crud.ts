@@ -144,6 +144,38 @@ export function useCrudActions(
     return newT.id
   }
 
+  function setPromotionCount(tournamentId: string, count: number) {
+    const t = tournaments.value.find((t) => t.id === tournamentId)
+    if (!t || !t.tiers?.length) return
+    t.promotionCount = Math.max(1, count)
+  }
+
+  function rebuildTiers(tournamentId: string, newTierCount: number) {
+    const t = tournaments.value.find((t) => t.id === tournamentId)
+    if (!t || !t.tiers?.length) return
+    const allTeams = getTeams()
+    const legMode = t.tiers[0].league.legMode
+    // Sort all teams by power descending — strongest go to Division 1
+    const sorted = t.teamIds
+      .map((id) => allTeams.find((tm) => tm.id === id))
+      .filter(Boolean) as Team[]
+    sorted.sort((a, b) => b.power - a.power)
+    const n = sorted.length
+    const base = Math.floor(n / newTierCount)
+    const extra = n % newTierCount
+    const tierDefs: Array<{ name: string; teams: Team[] }> = []
+    let offset = 0
+    for (let i = 0; i < newTierCount; i++) {
+      const size = base + (i < extra ? 1 : 0)
+      tierDefs.push({ name: `Division ${i + 1}`, teams: sorted.slice(offset, offset + size) })
+      offset += size
+    }
+    const newT = createMultiTierLeague(t.name, tierDefs, t.season, legMode, t.promotionCount ?? 1)
+    t.tiers = newT.tiers
+    t.teamIds = newT.teamIds
+    t.winnerId = null
+  }
+
   function newMultiTierSeason(id: string, newTierTeamIds: string[][]): string | undefined {
     const t = tournaments.value.find((t) => t.id === id)
     if (!t || !t.winnerId || !t.tiers?.length) return
@@ -270,6 +302,8 @@ export function useCrudActions(
     createLeagueTournament,
     newSeason,
     newMultiTierSeason,
+    setPromotionCount,
+    rebuildTiers,
     remove,
     getById,
     resetResults,

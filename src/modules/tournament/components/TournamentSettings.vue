@@ -30,6 +30,8 @@ const emit = defineEmits<{
   changeLegMode: [stage: "group" | "knockout" | "final", mode: LegMode]
   setLeagueLegMode: [mode: LegMode]
   changeRelegationCount: [count: number]
+  changePromotionCount: [count: number]
+  changeTierCount: [count: number]
   setLinkedLeague: [linkedId: string | null]
   changeTiebreaker: [tiebreaker: Tiebreaker]
   reset: []
@@ -60,7 +62,15 @@ const localLeagueLegMode = ref<LegMode>(props.tournament.league?.legMode ?? "sin
 const localRelegationCount = ref(props.tournament.relegationCount ?? 0)
 const localLinkedLeagueId = ref<string>(props.tournament.linkedLeagueId ?? "")
 const localTiebreaker = ref<Tiebreaker>(props.tournament.tiebreaker ?? "goal-diff")
+const localPromotionCount = ref(props.tournament.promotionCount ?? 1)
+const localTierCount = ref(props.tournament.tiers?.length ?? 1)
 const isLeagueFormat = computed(() => props.tournament.format === "league")
+const isMultiTier = computed(() => (props.tournament.tiers?.length ?? 0) > 1)
+
+const totalTeams = computed(() => props.tournament.teamIds.length)
+const maxTierCount = computed(() => Math.floor(totalTeams.value / 2))
+const minTierSize = computed(() => Math.floor(totalTeams.value / localTierCount.value))
+const maxPromotionCount = computed(() => Math.max(1, minTierSize.value - 1))
 
 const drawOptions = [
   { value: "random", label: "Random" },
@@ -108,6 +118,8 @@ const hasChanges = computed(() => {
   if (isLeagueFormat.value && localRelegationCount.value !== (orig.relegationCount ?? 0))
     return true
   if (isLeagueFormat.value && localLinkedLeagueId.value !== (orig.linkedLeagueId ?? "")) return true
+  if (isMultiTier.value && localTierCount.value !== (orig.tiers?.length ?? 1)) return true
+  if (isMultiTier.value && localPromotionCount.value !== (orig.promotionCount ?? 1)) return true
   if (localTiebreaker.value !== (orig.tiebreaker ?? "goal-diff")) return true
   return false
 })
@@ -207,6 +219,14 @@ function handleSave() {
   // Linked league
   if (isLeagueFormat.value && localLinkedLeagueId.value !== (orig.linkedLeagueId ?? "")) {
     emit("setLinkedLeague", localLinkedLeagueId.value || null)
+  }
+
+  // Multi-tier: tier count (rebuild first, then update promotion count)
+  if (isMultiTier.value && localTierCount.value !== (orig.tiers?.length ?? 1)) {
+    emit("changeTierCount", localTierCount.value)
+  }
+  if (isMultiTier.value && localPromotionCount.value !== (orig.promotionCount ?? 1)) {
+    emit("changePromotionCount", localPromotionCount.value)
   }
 
   // Tiebreaker
@@ -543,6 +563,50 @@ function handleSave() {
               }}
             </span>
           </div>
+
+          <!-- Multi-tier: tier count + promotion slots -->
+          <template v-if="isMultiTier">
+            <div class="ts-stepper-row" style="margin-top: 10px">
+              <span class="ts-stepper-label">Number of Divisions</span>
+              <div class="gc-stepper">
+                <button
+                  :disabled="localTierCount <= 2"
+                  @click="localTierCount = Math.max(2, localTierCount - 1)"
+                >
+                  −
+                </button>
+                <span class="gc-val">{{ localTierCount }}</span>
+                <button
+                  :disabled="localTierCount >= maxTierCount"
+                  @click="localTierCount = Math.min(maxTierCount, localTierCount + 1)"
+                >
+                  +
+                </button>
+              </div>
+              <span class="ts-hint">min 2 teams per division</span>
+            </div>
+            <div class="ts-stepper-row">
+              <span class="ts-stepper-label">Promotion / Relegation</span>
+              <div class="gc-stepper">
+                <button
+                  :disabled="localPromotionCount <= 1"
+                  @click="localPromotionCount = Math.max(1, localPromotionCount - 1)"
+                >
+                  −
+                </button>
+                <span class="gc-val">{{ localPromotionCount }}</span>
+                <button
+                  :disabled="localPromotionCount >= maxPromotionCount"
+                  @click="
+                    localPromotionCount = Math.min(maxPromotionCount, localPromotionCount + 1)
+                  "
+                >
+                  +
+                </button>
+              </div>
+              <span class="ts-hint">slots swapped between adjacent divisions</span>
+            </div>
+          </template>
 
           <template v-if="localRelegationCount > 0 && (otherLeagues?.length ?? 0) > 0">
             <div class="ts-stepper-row" style="margin-top: 6px">
