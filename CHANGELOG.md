@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.5.1](https://github.com/orazchollaev/tournament-sim/compare/v1.5.0...v1.5.1) (2026-05-30)
+
+### Bug Fixes
+
+- resolce vercel deployment issue ([20436df](https://github.com/orazchollaev/tournament-sim/commit/20436df3f802f12c96117bf3bad8db111a074cdf))
+
 ## [1.5.0](https://github.com/orazchollaev/tournament-sim/compare/v1.4.0...v1.5.0) (2026-05-30)
 
 ### Features
