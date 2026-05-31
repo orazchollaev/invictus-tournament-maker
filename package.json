@@ -21,6 +21,7 @@
   "dependencies": {
     "@lucide/vue": "^1.17.0",
     "canvas-confetti": "^1.9.4",
+    "chart.js": "^4.5.1",
     "html-to-image": "^1.11.13",
     "pinia": "^3.0.4",
     "pinia-plugin-persistedstate-2": "^2.0.32",

@@ -14,6 +14,9 @@ importers:
       canvas-confetti:
         specifier: ^1.9.4
         version: 1.9.4
+      chart.js:
+        specifier: ^4.5.1
+        version: 4.5.1
       html-to-image:
         specifier: ^1.11.13
         version: 1.11.13
@@ -927,6 +930,9 @@ packages:
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
 
+  '@kurkle/color@0.3.4':
+    resolution: {integrity: sha512-M5UknZPHRu3DEDWoipU6sE8PdkZ6Z/S+v4dD+Ke8IaNlpdSQah50lz1KtcFBa2vsdOnwbbnxJwVM4wty6udA5w==}
+
   '@lucide/vue@1.17.0':
     resolution: {integrity: sha512-6Q1ZHgr5FbmJzKWe5BxlNdjLj2lbmuH1zwDtVzUJofX0w9UREwKgq4F4jwKqFYyyIS4Rj3FiJvDi2k6djukmmw==}
     peerDependencies:
@@ -1645,6 +1651,10 @@ packages:
 
   chardet@2.1.1:
     resolution: {integrity: sha512-PsezH1rqdV9VvyNhxxOW32/d75r01NY7TQCmOqomRo15ZSOKbpTFVsfjghxo6JloQUCGnH4k1LGu0R4yCLlWQQ==}
+
+  chart.js@4.5.1:
+    resolution: {integrity: sha512-GIjfiT9dbmHRiYi6Nl2yFCq7kkwdkp1W/lp2J99rX0yo9tgJGn3lKQATztIjb5tVtevcBtIdICNWqlq5+E8/Pw==}
+    engines: {pnpm: '>=8'}
 
   chokidar@5.0.0:
     resolution: {integrity: sha512-TQMmc3w+5AxjpL8iIiwebF73dRDF4fBIieAqGn9RGCWaEVwQ6Fb2cGe31Yns0RRIzii5goJ1Y7xbMwo1TxMplw==}
@@ -4646,6 +4656,8 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
 
+  '@kurkle/color@0.3.4': {}
+
   '@lucide/vue@1.17.0(vue@3.5.35(typescript@6.0.3))':
     dependencies:
       vue: 3.5.35(typescript@6.0.3)
@@ -5355,6 +5367,10 @@ snapshots:
   chalk@5.6.2: {}
 
   chardet@2.1.1: {}
+
+  chart.js@4.5.1:
+    dependencies:
+      '@kurkle/color': 0.3.4
 
   chokidar@5.0.0:
     dependencies:
