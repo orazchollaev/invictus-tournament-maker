@@ -46,6 +46,13 @@ const legOptions = [
   { value: "double", label: "Double" },
 ]
 
+const multiLegOptions = [
+  { value: "single", label: "Single" },
+  { value: "double", label: "Double" },
+  { value: "triple", label: "3×" },
+  { value: "quadruple", label: "4×" },
+]
+
 function handleClose() {
   if (showManualDraw.value) {
     showManualDraw.value = false
@@ -411,21 +418,19 @@ const teamsPerGroup = computed(() =>
           <div class="ct-leg-rows">
             <div class="ct-leg-row">
               <span class="ct-row-label">Schedule</span>
-              <BtnGroup
-                v-model="leagueLegMode"
-                :options="[
-                  { value: 'single', label: 'Single' },
-                  { value: 'double', label: 'Double' },
-                ]"
-              />
+              <BtnGroup v-model="leagueLegMode" :options="multiLegOptions" />
             </div>
           </div>
           <div class="ct-hint-box" style="margin-top: 8px">
             <div class="ct-hint-line">
               <strong>Single</strong>
-              — each pair plays once (home only) &nbsp;·&nbsp;
+              — once &nbsp;·&nbsp;
               <strong>Double</strong>
-              — home &amp; away for every pair
+              — home &amp; away &nbsp;·&nbsp;
+              <strong>3×</strong>
+              — 3 maç &nbsp;·&nbsp;
+              <strong>4×</strong>
+              — 4 maç (2H &amp; 2A)
             </div>
           </div>
         </div>
@@ -590,7 +595,7 @@ const teamsPerGroup = computed(() =>
           <div class="ct-leg-rows">
             <div v-if="format === 'group+bracket'" class="ct-leg-row">
               <span class="ct-row-label">Group Stage</span>
-              <BtnGroup v-model="groupLegMode" :options="legOptions" />
+              <BtnGroup v-model="groupLegMode" :options="multiLegOptions" />
             </div>
             <div class="ct-leg-row">
               <span class="ct-row-label">Knockout Rounds</span>
