@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useRouter } from "vue-router"
 import { useSettingsStore } from "../store"
-import type { Theme } from "../store"
+import type { Theme, BracketStyle } from "../store"
 import { useTeamsStore } from "../../teams/store"
 import { useTournamentStore } from "../../tournament/store"
 import { version } from "../../../../package.json"
@@ -25,6 +25,12 @@ const themes: { value: Theme; label: string }[] = [
 const legOptions = [
   { value: "single", label: "Single" },
   { value: "double", label: "Double" },
+]
+
+const bracketStyleOptions: { value: BracketStyle; label: string }[] = [
+  { value: "double-sided", label: "Double-Sided" },
+  { value: "classic", label: "Classic" },
+  { value: "auto", label: "Auto" },
 ]
 
 const DATA_KEYS = ["teams", "tournament"] as const
@@ -305,6 +311,20 @@ function importData() {
               { value: 'hide', label: 'Hide' },
             ]"
           />
+        </div>
+        <div class="setting-row">
+          <div class="setting-info">
+            <div class="setting-label">Bracket Style</div>
+            <div class="setting-desc">
+              <strong>Double-Sided</strong>
+              — teams on both sides of the bracket ·
+              <strong>Classic</strong>
+              — single left-to-right bracket ·
+              <strong>Auto</strong>
+              — Double-Sided for 17+ knockout teams, Classic otherwise
+            </div>
+          </div>
+          <BtnGroup v-model="settings.bracketStyle" :options="bracketStyleOptions" />
         </div>
         <div class="setting-row">
           <div class="setting-info">

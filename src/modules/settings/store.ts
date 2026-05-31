@@ -6,6 +6,7 @@ import type { Tiebreaker } from "@/modules/tournament/types"
 
 export type Theme = "light" | "dark" | "worldcup2026"
 export type DrawType = "random" | "seeded" | "manual"
+export type BracketStyle = "double-sided" | "classic" | "auto"
 
 export const useSettingsStore = defineStore("settings", () => {
   const theme = ref<Theme>("dark")
@@ -21,6 +22,7 @@ export const useSettingsStore = defineStore("settings", () => {
   const tiebreaker = ref<Tiebreaker>("goal-diff")
   const formFactorEnabled = ref(false)
   const homeAdvantage = ref(6)
+  const bracketStyle = ref<BracketStyle>("auto")
 
   watch(
     theme,
@@ -49,6 +51,7 @@ export const useSettingsStore = defineStore("settings", () => {
     tiebreaker.value = "goal-diff"
     formFactorEnabled.value = false
     homeAdvantage.value = 6
+    bracketStyle.value = "auto"
   }
 
   return {
@@ -65,6 +68,7 @@ export const useSettingsStore = defineStore("settings", () => {
     tiebreaker,
     formFactorEnabled,
     homeAdvantage,
+    bracketStyle,
     resetAll,
   }
 })

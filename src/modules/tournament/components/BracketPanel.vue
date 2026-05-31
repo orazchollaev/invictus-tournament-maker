@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { ref, onUnmounted, nextTick } from "vue"
+import { ref, computed, onUnmounted, nextTick } from "vue"
 import type { Tournament } from "../types"
 import type { Team } from "@/modules/teams/types"
 import Bracket from "./Bracket.vue"
+import BracketOld from "./BracketOld.vue"
 import FixtureView from "./FixtureView.vue"
 import { useTournamentStore } from "../store"
+import { useSettingsStore } from "@/modules/settings/store"
 import { Maximize2, Minus, Plus, Shuffle, X, Download } from "@lucide/vue"
 import { toPng } from "html-to-image"
 
@@ -15,6 +17,16 @@ const props = defineProps<{
 }>()
 
 const store = useTournamentStore()
+const settings = useSettingsStore()
+
+const activeBracket = computed(() => {
+  const style = settings.bracketStyle
+  if (style === "double-sided") return Bracket
+  if (style === "classic") return BracketOld
+  const knockoutTeams = (props.tournament.rounds[0]?.matches.length ?? 0) * 2
+  return knockoutTeams >= 17 ? Bracket : BracketOld
+})
+
 const bracketView = ref<"bracket" | "fixtures">("bracket")
 const showFullBracket = ref(false)
 const zoom = ref(1)
@@ -165,7 +177,8 @@ onUnmounted(() => {
         </button>
       </div>
       <div v-if="bracketView === 'bracket'" ref="bracketWrapperRef" class="bracket-wrapper">
-        <Bracket
+        <component
+          :is="activeBracket"
           :style="{ zoom }"
           :tournament="tournament"
           :teams="teams"
@@ -220,7 +233,8 @@ onUnmounted(() => {
           </div>
         </div>
         <div class="full-bracket-body">
-          <Bracket
+          <component
+            :is="activeBracket"
             :style="{ zoom: fullZoom }"
             :tournament="tournament"
             :teams="teams"
