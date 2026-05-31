@@ -3,19 +3,14 @@ import { ref, computed } from "vue"
 import { useRouter } from "vue-router"
 import { useTeamsStore } from "@/modules/teams/store"
 import { useTournamentStore } from "@/modules/tournament/store"
-import ManualDraw from "../components/ManualDraw.vue"
-import GroupDraw from "../components/GroupDraw.vue"
-import AppModal from "@/components/AppModal.vue"
 import CreateTournamentModal from "../components/CreateTournamentModal.vue"
-import type { Tournament, PlayoffSeedMode } from "../types"
-import { useSettingsStore } from "@/modules/settings/store"
+import type { Tournament } from "../types"
 import { Trophy, X, Search, ChevronRight } from "lucide-vue-next"
 import { showConfirm } from "@/composables/useDialog"
 
 const router = useRouter()
 const teamsStore = useTeamsStore()
 const store = useTournamentStore()
-const settings = useSettingsStore()
 
 function winnerName(t: Tournament) {
   return teamsStore.teams.find((tm) => tm.id === t.winnerId)?.name ?? "?"
@@ -31,67 +26,11 @@ const filtered = computed(() => {
   return store.tournaments.filter((t) => t.name.toLowerCase().includes(q))
 })
 
-// ─── Create modal ──────────────────────────────────────────────
 const showCreateModal = ref(false)
-
-// ─── Season modal ──────────────────────────────────────────────
-const seasonModal = ref<Tournament | null>(null)
-const showSeasonManual = ref(false)
-const showSeasonGroupDraw = ref(false)
-
-function doNewSeason(
-  isSeeded: boolean,
-  orderedIds?: string[],
-  isHaveThirdPlace?: boolean,
-  playoffSeedMode?: PlayoffSeedMode
-) {
-  if (!seasonModal.value) return
-  const id = store.newSeason(
-    seasonModal.value.id,
-    isSeeded,
-    orderedIds,
-    undefined,
-    isHaveThirdPlace,
-    playoffSeedMode
-  )
-  seasonModal.value = null
-  showSeasonManual.value = false
-  showSeasonGroupDraw.value = false
-  if (id) router.push(`/tournaments/${id}`)
-}
-
-function openSeasonModal(t: Tournament) {
-  // Multi-tier leagues need the promotion/relegation modal in TournamentDetailPage
-  if (t.tiers?.length) {
-    router.push(`/tournaments/${t.id}`)
-    return
-  }
-  seasonModal.value = t
-  const isGroup = t.format === "group+bracket"
-  const drawType = isGroup ? settings.newSeasonGroupDrawType : settings.newSeasonDrawType
-  const playoffSeedMode = isGroup ? settings.newSeasonPlayoffSeedMode : undefined
-  if (drawType === "random") {
-    doNewSeason(false, undefined, t.hasThirdPlace ?? false, playoffSeedMode)
-  } else if (drawType === "seeded") {
-    doNewSeason(true, undefined, t.hasThirdPlace ?? false, playoffSeedMode)
-  } else {
-    if (isGroup) {
-      showSeasonGroupDraw.value = true
-    } else {
-      showSeasonManual.value = true
-    }
-  }
-}
 
 async function deleteTournament(id: string) {
   if (await showConfirm("Delete this tournament?", { confirmLabel: "Delete", dangerous: true }))
     store.remove(id)
-}
-
-function closeSeasonModal() {
-  seasonModal.value = null
-  showSeasonManual.value = false
-  showSeasonGroupDraw.value = false
 }
 </script>
 
@@ -156,13 +95,6 @@ function closeSeasonModal() {
           </div>
           <div class="t-actions">
             <button
-              v-if="store.isTournamentFinished(t.id)"
-              class="sm"
-              @click.stop="openSeasonModal(t)"
-            >
-              + Season
-            </button>
-            <button
               class="sm icon-btn"
               title="Open"
               @click.stop="router.push(`/tournaments/${t.id}`)"
@@ -185,37 +117,5 @@ function closeSeasonModal() {
 
     <!-- Create modal -->
     <CreateTournamentModal v-if="showCreateModal" @close="showCreateModal = false" />
-
-    <!-- New Season modal -->
-    <AppModal
-      v-if="seasonModal"
-      :title="`New Season — ${seasonModal.name}`"
-      :width="showSeasonGroupDraw ? 'min(680px, calc(100vw - 32px))' : undefined"
-      @close="closeSeasonModal"
-    >
-      <template v-if="showSeasonManual">
-        <ManualDraw
-          :teams="teamsStore.teams.filter((t) => seasonModal!.teamIds.includes(t.id))"
-          @confirm="(ids) => doNewSeason(false, ids, seasonModal?.hasThirdPlace ?? false)"
-          @cancel="showSeasonManual = false"
-        />
-      </template>
-      <template v-else-if="showSeasonGroupDraw">
-        <GroupDraw
-          :teams="teamsStore.teams.filter((t) => seasonModal!.teamIds.includes(t.id))"
-          :group-count="seasonModal.groups?.length ?? 2"
-          @confirm="
-            (ids) =>
-              doNewSeason(
-                false,
-                ids,
-                seasonModal?.hasThirdPlace ?? false,
-                settings.newSeasonPlayoffSeedMode
-              )
-          "
-          @cancel="showSeasonGroupDraw = false"
-        />
-      </template>
-    </AppModal>
   </div>
 </template>
