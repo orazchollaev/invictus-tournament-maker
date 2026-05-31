@@ -83,7 +83,6 @@ export function randomTeamName(): string {
 }
 
 export function randomTournamentName(): string {
-  const year = new Date().getFullYear()
   const base = pickRandom(TOURNAMENT_NAMES)
-  return Math.random() < 0.5 ? `${base} ${year}` : base
+  return base
 }
