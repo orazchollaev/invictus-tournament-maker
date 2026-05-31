@@ -175,6 +175,17 @@ onUnmounted(() => {
         >
           Sim {{ round.name }}
         </button>
+        <button
+          v-if="tournament.hasThirdPlace && tournament.thirdPlaceMatch"
+          :disabled="
+            !tournament.thirdPlaceMatch.homeId ||
+            !tournament.thirdPlaceMatch.awayId ||
+            !!tournament.thirdPlaceMatch.result
+          "
+          @click="simThirdPlace"
+        >
+          Sim 3rd Place
+        </button>
       </div>
       <div v-if="bracketView === 'bracket'" ref="bracketWrapperRef" class="bracket-wrapper">
         <component
