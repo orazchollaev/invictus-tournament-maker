@@ -1,6 +1,6 @@
 // modules/tournament/types.ts
 
-export type LegMode = "single" | "double"
+export type LegMode = "single" | "double" | "triple" | "quadruple"
 export type Tiebreaker = "head-to-head" | "goal-diff"
 
 export interface MatchResult {

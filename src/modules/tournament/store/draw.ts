@@ -1,7 +1,7 @@
 import type { Ref } from "vue"
 import type { Tournament, PlayoffSeedMode, LegMode } from "../types"
 import type { Team } from "@/modules/teams/types"
-import { createTournament, createLeague } from "@/engine"
+import { createTournament, createLeague, buildLeagueMatchdays, legModeToCount } from "@/engine"
 
 export function useDrawActions(tournaments: Ref<Tournament[]>, getTeams: () => Team[]) {
   function hasAnyResults(tournamentId: string): boolean {
@@ -41,6 +41,20 @@ export function useDrawActions(tournaments: Ref<Tournament[]>, getTeams: () => T
   ) {
     const allTeams = getTeams()
     const selected = allTeams.filter((tm) => t.teamIds.includes(tm.id))
+
+    if (t.format === "league" && t.tiers?.length) {
+      for (const tier of t.tiers) {
+        tier.league.matchdays = buildLeagueMatchdays(
+          tier.teamIds,
+          legModeToCount(tier.league.legMode)
+        )
+        for (const s of tier.league.standings) {
+          s.played = s.won = s.drawn = s.lost = s.gf = s.ga = s.gd = s.pts = 0
+        }
+      }
+      t.winnerId = null
+      return
+    }
 
     if (t.format === "league" && t.league) {
       const fresh = createLeague(t.name, selected, t.season, t.league.legMode)
@@ -147,7 +161,15 @@ export function useDrawActions(tournaments: Ref<Tournament[]>, getTeams: () => T
 
   function setLeagueLegMode(tournamentId: string, mode: LegMode) {
     const t = tournaments.value.find((t) => t.id === tournamentId)
-    if (!t || t.format !== "league" || !t.league || hasAnyResults(tournamentId)) return
+    if (!t || t.format !== "league" || hasAnyResults(tournamentId)) return
+    if (t.tiers?.length) {
+      for (const tier of t.tiers) {
+        tier.league.legMode = mode
+      }
+      rebuildDraw(t)
+      return
+    }
+    if (!t.league) return
     t.league.legMode = mode
     rebuildDraw(t)
   }

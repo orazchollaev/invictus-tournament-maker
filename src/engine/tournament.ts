@@ -18,6 +18,13 @@ import {
 import { buildGroupFixture, recalcStandings, selectWildcards } from "./groups"
 import { buildLeagueMatchdays } from "./league"
 
+export function legModeToCount(mode: LegMode): number {
+  if (mode === "double") return 2
+  if (mode === "triple") return 3
+  if (mode === "quadruple") return 4
+  return 1
+}
+
 export function createTournament(
   name: string,
   teams: Team[],
@@ -126,7 +133,7 @@ function createGroupBracketTournament(
 
   for (const group of groups) {
     const ids = group.teamIds
-    group.matches = buildGroupFixture(ids, groupLegMode === "double")
+    group.matches = buildGroupFixture(ids, legModeToCount(groupLegMode))
     group.standings = ids.map((teamId) => ({
       teamId,
       played: 0,
@@ -338,7 +345,7 @@ export function createMultiTierLeague(
 ): Tournament {
   const tiers: LeagueTier[] = tierDefs.map(({ name: tierName, teams }) => {
     const teamIds = teams.map((t) => t.id)
-    const matchdays = buildLeagueMatchdays(teamIds, legMode === "double")
+    const matchdays = buildLeagueMatchdays(teamIds, legModeToCount(legMode))
     const standings: GroupStanding[] = teamIds.map((teamId) => ({
       teamId,
       played: 0,
@@ -374,7 +381,7 @@ export function createLeague(
   legMode: LegMode = "single"
 ): Tournament {
   const teamIds = teams.map((t) => t.id)
-  const matchdays = buildLeagueMatchdays(teamIds, legMode === "double")
+  const matchdays = buildLeagueMatchdays(teamIds, legModeToCount(legMode))
   const standings: GroupStanding[] = teamIds.map((teamId) => ({
     teamId,
     played: 0,

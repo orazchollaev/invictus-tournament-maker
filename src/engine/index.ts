@@ -28,6 +28,7 @@ export {
   seedBracketFromGroups,
   createLeague,
   createMultiTierLeague,
+  legModeToCount,
 } from "./tournament"
 export {
   buildLeagueMatchdays,

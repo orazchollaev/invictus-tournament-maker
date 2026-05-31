@@ -44,6 +44,13 @@ const legOptions = [
   { value: "double", label: "Double" },
 ]
 
+const multiLegOptions = [
+  { value: "single", label: "Single" },
+  { value: "double", label: "Double" },
+  { value: "triple", label: "3×" },
+  { value: "quadruple", label: "4×" },
+]
+
 // ── Draft (local) state ──────────────────────────────────────────────────────
 const localTeamIds = ref<string[]>([...props.tournament.teamIds])
 const selectedTeamToAdd = ref("")
@@ -58,7 +65,9 @@ const localHasThirdPlace = ref(!!props.tournament.hasThirdPlace)
 const localGroupLegMode = ref<LegMode>(props.tournament.groupLegMode ?? "single")
 const localKnockoutLegMode = ref<LegMode>(props.tournament.knockoutLegMode ?? "single")
 const localFinalLegMode = ref<LegMode>(props.tournament.finalLegMode ?? "single")
-const localLeagueLegMode = ref<LegMode>(props.tournament.league?.legMode ?? "single")
+const localLeagueLegMode = ref<LegMode>(
+  props.tournament.league?.legMode ?? props.tournament.tiers?.[0]?.league.legMode ?? "single"
+)
 const localRelegationCount = ref(props.tournament.relegationCount ?? 0)
 const localLinkedLeagueId = ref<string>(props.tournament.linkedLeagueId ?? "")
 const localTiebreaker = ref<Tiebreaker>(props.tournament.tiebreaker ?? "goal-diff")
@@ -113,7 +122,11 @@ const hasChanges = computed(() => {
   if (localGroupLegMode.value !== (orig.groupLegMode ?? "single")) return true
   if (localKnockoutLegMode.value !== (orig.knockoutLegMode ?? "single")) return true
   if (localFinalLegMode.value !== (orig.finalLegMode ?? "single")) return true
-  if (isLeagueFormat.value && localLeagueLegMode.value !== (orig.league?.legMode ?? "single"))
+  if (
+    isLeagueFormat.value &&
+    localLeagueLegMode.value !==
+      (orig.league?.legMode ?? orig.tiers?.[0]?.league.legMode ?? "single")
+  )
     return true
   if (isLeagueFormat.value && localRelegationCount.value !== (orig.relegationCount ?? 0))
     return true
@@ -207,7 +220,11 @@ function handleSave() {
   }
 
   // League leg mode
-  if (isLeagueFormat.value && localLeagueLegMode.value !== (orig.league?.legMode ?? "single")) {
+  if (
+    isLeagueFormat.value &&
+    localLeagueLegMode.value !==
+      (orig.league?.legMode ?? orig.tiers?.[0]?.league.legMode ?? "single")
+  ) {
     emit("setLeagueLegMode", localLeagueLegMode.value)
   }
 
@@ -492,7 +509,7 @@ function handleSave() {
             <div class="ts-leg-rows">
               <div v-if="isGroupFormat" class="ts-leg-row">
                 <span class="ts-row-label">Group Stage</span>
-                <BtnGroup v-model="localGroupLegMode" :options="legOptions" />
+                <BtnGroup v-model="localGroupLegMode" :options="multiLegOptions" />
               </div>
               <div class="ts-leg-row">
                 <span class="ts-row-label">Knockout Rounds</span>
@@ -525,13 +542,17 @@ function handleSave() {
           <template v-if="!hasAnyResults">
             <div class="ts-leg-row">
               <span class="ts-row-label">Round Format</span>
-              <BtnGroup v-model="localLeagueLegMode" :options="legOptions" />
+              <BtnGroup v-model="localLeagueLegMode" :options="multiLegOptions" />
             </div>
             <div class="ts-hint-box" style="margin-top: 8px">
               <strong>Single</strong>
-              — each pair plays once &nbsp;·&nbsp;
+              — once &nbsp;·&nbsp;
               <strong>Double</strong>
-              — home &amp; away for each pair
+              — home &amp; away &nbsp;·&nbsp;
+              <strong>3×</strong>
+              — 3 meetings &nbsp;·&nbsp;
+              <strong>4×</strong>
+              — 4 meetings (2H &amp; 2A)
             </div>
           </template>
           <div v-else class="ts-locked-banner">

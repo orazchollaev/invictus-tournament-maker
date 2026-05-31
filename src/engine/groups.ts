@@ -64,8 +64,8 @@ function sortStandings(standings: GroupStanding[], matches: GroupMatch[], tiebre
 // ─── Round-robin fixture builder (circle method) ────────────────
 // Groups matches by round so no team plays twice in the same round.
 // Home/away alternates per pair to balance home games (±1 over the season).
-// doubleLeg=true adds the reverse fixture so each pair plays home AND away.
-export function buildGroupFixture(teamIds: string[], doubleLeg = false): GroupMatch[] {
+// legs=N repeats the fixture N times, alternating direction each leg.
+export function buildGroupFixture(teamIds: string[], legs = 1): GroupMatch[] {
   const n = teamIds.length
   if (n < 2) return []
 
@@ -75,8 +75,9 @@ export function buildGroupFixture(teamIds: string[], doubleLeg = false): GroupMa
   const fixed = teams[0]
   const rotating = teams.slice(1)
   const posMap = new Map(teamIds.map((id, i) => [id, i]))
-  const matches: GroupMatch[] = []
 
+  // Build one set of round-robin pairs with home/away assigned
+  const basePairs: Array<[string, string]> = []
   for (let r = 0; r < size - 1; r++) {
     const circle = [fixed, ...rotating]
     for (let i = 0; i < size / 2; i++) {
@@ -88,26 +89,19 @@ export function buildGroupFixture(teamIds: string[], doubleLeg = false): GroupMa
       const sum = posA + posB
       // Even sum → lower index is home; odd sum → higher index is home
       const aIsHome = sum % 2 === 0 ? posA < posB : posA > posB
-      matches.push({
-        id: uid(),
-        homeId: aIsHome ? a : b,
-        awayId: aIsHome ? b : a,
-        result: null,
-      })
+      basePairs.push([aIsHome ? a : b, aIsHome ? b : a])
     }
     rotating.unshift(rotating.pop()!)
   }
 
-  if (doubleLeg) {
-    const reversed: GroupMatch[] = matches.map((m) => ({
-      id: uid(),
-      homeId: m.awayId,
-      awayId: m.homeId,
-      result: null,
-    }))
-    matches.push(...reversed)
+  const matches: GroupMatch[] = []
+  for (let leg = 0; leg < legs; leg++) {
+    for (const [home, away] of basePairs) {
+      // Even legs: original direction; odd legs: reversed
+      const [h, a] = leg % 2 === 0 ? [home, away] : [away, home]
+      matches.push({ id: uid(), homeId: h, awayId: a, result: null })
+    }
   }
-
   return matches
 }
 

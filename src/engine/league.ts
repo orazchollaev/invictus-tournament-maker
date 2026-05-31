@@ -66,8 +66,8 @@ function sortLeagueStandings(
   }
 }
 
-export function buildLeagueMatchdays(teamIds: string[], doubleLeg = false): League["matchdays"] {
-  const allMatches = buildGroupFixture(teamIds, doubleLeg)
+export function buildLeagueMatchdays(teamIds: string[], legs = 1): League["matchdays"] {
+  const allMatches = buildGroupFixture(teamIds, legs)
   const mpr = Math.floor(teamIds.length / 2)
   if (mpr < 1) return []
 
