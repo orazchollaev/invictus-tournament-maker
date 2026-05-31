@@ -718,7 +718,7 @@ function importData() {
 .version-row {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 8.1px;
   margin-top: 8px;
 }
 
