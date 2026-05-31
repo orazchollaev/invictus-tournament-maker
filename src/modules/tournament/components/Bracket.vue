@@ -32,7 +32,7 @@ const emit = defineEmits<{
   "sim-third-place": []
 }>()
 
-// ── 3rd place edit state (single-leg only) ────────────────────
+// ── 3rd place edit state ──────────────────────────────────────
 const tpMode = ref<"off" | "score" | "penalty">("off")
 const tpH = ref(0)
 const tpA = ref(0)
@@ -65,7 +65,6 @@ function tpPenSave() {
   emit("set-third-place-result", tpH.value, tpA.value, tpPH.value, tpPA.value)
   tpMode.value = "off"
 }
-
 function isWinnerTp(teamId: string | null) {
   const m = thirdPlaceMatch.value
   if (!m?.result || !teamId) return false
@@ -74,7 +73,6 @@ function isWinnerTp(teamId: string | null) {
 
 // ── Bracket data ──────────────────────────────────────────────
 type DisplayMatch = Match & { _origRound: number; _origMatch: number }
-
 const allRounds = computed(() => props.tournament.rounds)
 const displayRounds = computed((): DisplayMatch[][] =>
   allRounds.value.map((r, ri) =>
@@ -82,49 +80,78 @@ const displayRounds = computed((): DisplayMatch[][] =>
   )
 )
 
+const numRounds = computed(() => displayRounds.value.length)
+// Number of non-final rounds (each has a left and right column)
+const nonFinalCount = computed(() => Math.max(0, numRounds.value - 1))
+const finalRi = computed(() => numRounds.value - 1)
+
+// Left side uses the first half of each non-final round's matches
+function lCount(ri: number): number {
+  return Math.floor((displayRounds.value[ri]?.length ?? 0) / 2)
+}
+// Right side starts at the second half
+function rStart(ri: number): number {
+  return lCount(ri)
+}
+
 // ── Layout constants ──────────────────────────────────────────
-const CARD_H = 58 // 28 home + 28 away + 2px outer borders
-const CARD_H_DOUBLE = 58 // same: no extra rows
+const CARD_H = 58
 const CARD_GAP = 20
 const CARD_W = 190
-const COL_GAP = 32
+const COL_GAP = 36
 const HEADER_H = 28
+const TP_GAP = 28
 
-function isDoubleLegRound(ri: number): boolean {
-  return displayRounds.value[ri]?.[0]?.leg2Result !== undefined
-}
-
-function cardH(ri: number): number {
-  return isDoubleLegRound(ri) ? CARD_H_DOUBLE : CARD_H
-}
-
-const totalBracketH = computed(() => {
-  const n = displayRounds.value[0]?.length ?? 1
-  const h = cardH(0)
-  return n * h + (n - 1) * CARD_GAP
+// Bracket height is determined by left side of first round
+const bracketH = computed(() => {
+  if (nonFinalCount.value === 0) return CARD_H
+  const n = lCount(0)
+  return n <= 0 ? CARD_H : n * CARD_H + (n - 1) * CARD_GAP
 })
 
-function matchCenterY(ri: number, mi: number): number {
-  const n = displayRounds.value[0]?.length ?? 1
-  const h0 = cardH(0)
-  const totalH = n * h0 + (n - 1) * CARD_GAP
-  const slot = totalH / (displayRounds.value[ri]?.length ?? 1)
-  return slot * mi + slot / 2
+// Vertical center of a match card (local index within one side)
+function matchCenterY(ri: number, miLocal: number): number {
+  const count = ri === finalRi.value ? 1 : lCount(ri) || 1
+  const slot = bracketH.value / count
+  return slot * miLocal + slot / 2
 }
 
-function cardTop(ri: number, mi: number): number {
-  return matchCenterY(ri, mi) - cardH(ri) / 2
+// Total pixel width of the bracket
+const totalW = computed(() =>
+  nonFinalCount.value === 0 ? CARD_W : 2 * nonFinalCount.value * (CARD_W + COL_GAP) + CARD_W
+)
+
+// X of left column ri (0 = outermost)
+function lColX(ri: number): number {
+  return ri * (CARD_W + COL_GAP)
 }
+// X of final column (center)
+const finalX = computed(() => nonFinalCount.value * (CARD_W + COL_GAP))
+// X of right column ri (0 = outermost, rightmost)
+function rColX(ri: number): number {
+  return totalW.value - CARD_W - ri * (CARD_W + COL_GAP)
+}
+
+const finalCardTop = computed(() => HEADER_H + bracketH.value / 2 - CARD_H / 2 + 25)
+
+const containerH = computed(() => {
+  let h = HEADER_H + bracketH.value
+  if (props.tournament.hasThirdPlace && thirdPlaceMatch.value) {
+    h += TP_GAP + HEADER_H + CARD_H
+  }
+  return h
+})
 
 // ── SVG connectors ────────────────────────────────────────────
-interface ConnPath {
+interface CP {
   ay: number
   by: number
   dy: number
 }
 
-function connectorPaths(ri: number): ConnPath[] {
-  const nextCount = displayRounds.value[ri + 1]?.length ?? 0
+// Connector paths between round ri and ri+1 (using left-side Y positions)
+function connPaths(ri: number): CP[] {
+  const nextCount = lCount(ri + 1)
   return Array.from({ length: nextCount }, (_, ci) => ({
     ay: matchCenterY(ri, ci * 2),
     by: matchCenterY(ri, ci * 2 + 1),
@@ -132,202 +159,330 @@ function connectorPaths(ri: number): ConnPath[] {
   }))
 }
 
-function svgPath(p: ConnPath, w: number): string {
-  const mid = w / 2
-  return [
-    `M0,${p.ay} H${mid}`,
-    `M0,${p.by} H${mid}`,
-    `M${mid},${p.ay} V${p.by}`,
-    `M${mid},${(p.ay + p.by) / 2} H${w}`,
-  ].join(" ")
+// Left-side path: sources at x=0, destination at x=w
+function pathL(p: CP, w: number): string {
+  const m = w / 2
+  return `M0,${p.ay} H${m} M0,${p.by} H${m} M${m},${p.ay} V${p.by} M${m},${(p.ay + p.by) / 2} H${w}`
+}
+
+// Right-side path (mirror): sources at x=w, destination at x=0
+function pathR(p: CP, w: number): string {
+  const m = w / 2
+  return `M${w},${p.ay} H${m} M${w},${p.by} H${m} M${m},${p.ay} V${p.by} M${m},${(p.ay + p.by) / 2} H0`
 }
 </script>
 
 <template>
   <div class="bracket-wrap">
-    <div class="bracket" :style="{ height: totalBracketH + HEADER_H + 'px' }">
-      <template v-for="(roundMatches, ri) in displayRounds" :key="'round-' + ri">
-        <div class="round-col" :style="{ width: CARD_W + 'px' }">
-          <div class="round-title" :class="{ 'final-title': ri === displayRounds.length - 1 }">
-            {{ allRounds[ri].name }}
-          </div>
-          <div class="matches-area" :style="{ height: totalBracketH + 'px' }">
-            <BracketMatchCard
-              v-for="(match, mi) in roundMatches"
-              :key="match.id"
-              :match="match"
-              :teams="teams"
-              :is-final="ri === displayRounds.length - 1"
-              :style="{
-                position: 'absolute',
-                top: cardTop(ri, mi) + 'px',
-                left: 0,
-                right: 0,
-                animationDelay: `${ri * 0.08 + mi * 0.05}s`,
-              }"
-              @set-result="(r, m, h, a, ph, pa) => emit('set-result', r, m, h, a, ph, pa)"
-              @set-leg2-result="(r, m, h, a, ph, pa) => emit('set-leg2-result', r, m, h, a, ph, pa)"
-              @sim-match="(r, m) => emit('sim-match', r, m)"
-              @sim-leg1="(r, m) => emit('sim-leg1', r, m)"
-              @sim-leg2="(r, m) => emit('sim-leg2', r, m)"
-            />
-          </div>
+    <div class="bracket" :style="{ width: totalW + 'px', height: containerH + 'px' }">
+      <!-- ═══════════════════════════════════════════════════
+           LEFT SIDE  (rounds 0 → nonFinalCount-1, first-half matches)
+           Columns go left → right, converging toward the final
+      ════════════════════════════════════════════════════════ -->
+      <template v-for="n in nonFinalCount" :key="'L' + n">
+        <!-- Round header -->
+        <div
+          class="round-title"
+          :style="{ position: 'absolute', top: 0, left: lColX(n - 1) + 'px', width: CARD_W + 'px' }"
+        >
+          {{ allRounds[n - 1].name }}
         </div>
 
-        <div
-          v-if="ri < displayRounds.length - 1"
-          class="conn-col"
+        <!-- Match cards (first half of round) -->
+        <BracketMatchCard
+          v-for="(match, mi) in displayRounds[n - 1].slice(0, lCount(n - 1))"
+          :key="match.id"
+          :match="match"
+          :teams="teams"
+          :is-final="false"
           :style="{
-            width: COL_GAP + 'px',
-            marginTop: HEADER_H + 'px',
-            height: totalBracketH + 'px',
+            position: 'absolute',
+            top: HEADER_H + matchCenterY(n - 1, mi) - CARD_H / 2 + 'px',
+            left: lColX(n - 1) + 'px',
+            width: CARD_W + 'px',
+            animationDelay: `${(n - 1) * 0.08 + mi * 0.05}s`,
           }"
+          @set-result="(r, m, h, a, ph, pa) => emit('set-result', r, m, h, a, ph, pa)"
+          @set-leg2-result="(r, m, h, a, ph, pa) => emit('set-leg2-result', r, m, h, a, ph, pa)"
+          @sim-match="(r, m) => emit('sim-match', r, m)"
+          @sim-leg1="(r, m) => emit('sim-leg1', r, m)"
+          @sim-leg2="(r, m) => emit('sim-leg2', r, m)"
+        />
+
+        <!-- Connector SVG to next inner left column -->
+        <svg
+          v-if="n < nonFinalCount"
+          :style="{
+            position: 'absolute',
+            top: HEADER_H + 'px',
+            left: lColX(n - 1) + CARD_W + 'px',
+            width: COL_GAP + 'px',
+            height: bracketH + 'px',
+          }"
+          overflow="visible"
+          style="display: block"
         >
-          <svg width="100%" height="100%" style="display: block; overflow: visible">
-            <path
-              v-for="(p, pi) in connectorPaths(ri)"
-              :key="pi"
-              :d="svgPath(p, COL_GAP)"
-              fill="none"
-              stroke="var(--border-light)"
-              stroke-width="1.5"
-            />
-          </svg>
-        </div>
+          <path
+            v-for="(p, pi) in connPaths(n - 1)"
+            :key="pi"
+            :d="pathL(p, COL_GAP)"
+            fill="none"
+            stroke="var(--border-light)"
+            stroke-width="1.5"
+          />
+        </svg>
       </template>
 
-      <!-- ── 3rd place ── -->
+      <!-- Left innermost column → final connector -->
+      <svg
+        v-if="nonFinalCount > 0"
+        :style="{
+          position: 'absolute',
+          top: HEADER_H + 'px',
+          left: lColX(nonFinalCount - 1) + CARD_W + 'px',
+          width: COL_GAP + 'px',
+          height: bracketH + 'px',
+        }"
+        overflow="visible"
+        style="display: block"
+      >
+        <line
+          x1="0"
+          :y1="matchCenterY(nonFinalCount - 1, 0)"
+          :x2="COL_GAP"
+          :y2="bracketH / 2"
+          stroke="var(--border-light)"
+          stroke-width="1.5"
+        />
+      </svg>
+
+      <!-- ═══════════════════════════════════════════════════
+           FINAL  (center column)
+      ════════════════════════════════════════════════════════ -->
+      <div
+        class="round-title final-title"
+        :style="{ position: 'absolute', top: 0, left: finalX + 'px', width: CARD_W + 'px' }"
+      >
+        {{ allRounds[finalRi].name }}
+      </div>
+      <BracketMatchCard
+        v-if="displayRounds[finalRi]?.[0]"
+        :match="displayRounds[finalRi][0]"
+        :teams="teams"
+        :is-final="true"
+        :style="{
+          position: 'absolute',
+          top: HEADER_H + bracketH / 2 - CARD_H / 2 + 'px',
+          left: finalX + 'px',
+          width: CARD_W + 'px',
+          animationDelay: `${(numRounds - 1) * 0.08}s`,
+        }"
+        @set-result="(r, m, h, a, ph, pa) => emit('set-result', r, m, h, a, ph, pa)"
+        @set-leg2-result="(r, m, h, a, ph, pa) => emit('set-leg2-result', r, m, h, a, ph, pa)"
+        @sim-match="(r, m) => emit('sim-match', r, m)"
+        @sim-leg1="(r, m) => emit('sim-leg1', r, m)"
+        @sim-leg2="(r, m) => emit('sim-leg2', r, m)"
+      />
+
+      <!-- ═══════════════════════════════════════════════════
+           RIGHT SIDE  (rounds 0 → nonFinalCount-1, second-half matches)
+           Columns go right → left, converging toward the final
+      ════════════════════════════════════════════════════════ -->
+
+      <!-- Final → right innermost column connector -->
+      <svg
+        v-if="nonFinalCount > 0"
+        :style="{
+          position: 'absolute',
+          top: HEADER_H + 'px',
+          left: finalX + CARD_W + 'px',
+          width: COL_GAP + 'px',
+          height: bracketH + 'px',
+        }"
+        overflow="visible"
+        style="display: block"
+      >
+        <line
+          :x1="COL_GAP"
+          :y1="matchCenterY(nonFinalCount - 1, 0)"
+          x2="0"
+          :y2="bracketH / 2"
+          stroke="var(--border-light)"
+          stroke-width="1.5"
+        />
+      </svg>
+
+      <template v-for="n in nonFinalCount" :key="'R' + n">
+        <!-- Round header -->
+        <div
+          class="round-title"
+          :style="{ position: 'absolute', top: 0, left: rColX(n - 1) + 'px', width: CARD_W + 'px' }"
+        >
+          {{ allRounds[n - 1].name }}
+        </div>
+
+        <!-- Match cards (second half of round) -->
+        <BracketMatchCard
+          v-for="(match, mi) in displayRounds[n - 1].slice(rStart(n - 1))"
+          :key="match.id"
+          :match="match"
+          :teams="teams"
+          :is-final="false"
+          :style="{
+            position: 'absolute',
+            top: HEADER_H + matchCenterY(n - 1, mi) - CARD_H / 2 + 'px',
+            left: rColX(n - 1) + 'px',
+            width: CARD_W + 'px',
+            animationDelay: `${(n - 1) * 0.08 + mi * 0.05}s`,
+          }"
+          @set-result="(r, m, h, a, ph, pa) => emit('set-result', r, m, h, a, ph, pa)"
+          @set-leg2-result="(r, m, h, a, ph, pa) => emit('set-leg2-result', r, m, h, a, ph, pa)"
+          @sim-match="(r, m) => emit('sim-match', r, m)"
+          @sim-leg1="(r, m) => emit('sim-leg1', r, m)"
+          @sim-leg2="(r, m) => emit('sim-leg2', r, m)"
+        />
+
+        <!-- Connector SVG to next inner right column -->
+        <svg
+          v-if="n < nonFinalCount"
+          :style="{
+            position: 'absolute',
+            top: HEADER_H + 'px',
+            left: rColX(n) + CARD_W + 'px',
+            width: COL_GAP + 'px',
+            height: bracketH + 'px',
+          }"
+          overflow="visible"
+          style="display: block"
+        >
+          <path
+            v-for="(p, pi) in connPaths(n - 1)"
+            :key="pi"
+            :d="pathR(p, COL_GAP)"
+            fill="none"
+            stroke="var(--border-light)"
+            stroke-width="1.5"
+          />
+        </svg>
+      </template>
+
+      <!-- ═══════════════════════════════════════════════════
+           3RD PLACE  (below the final, centered)
+      ════════════════════════════════════════════════════════ -->
       <template v-if="tournament.hasThirdPlace && thirdPlaceMatch">
         <div
-          class="tp-divider"
-          :style="{ marginTop: HEADER_H + 'px', height: totalBracketH + 'px' }"
-        />
-        <div class="round-col" :style="{ width: CARD_W + 'px' }">
-          <div class="round-title tp-title">3rd Place</div>
-          <div class="matches-area" :style="{ height: totalBracketH + 'px' }">
-            <div
-              class="tp-card"
-              :style="{
-                position: 'absolute',
-                top: totalBracketH / 2 - CARD_H / 2 + 'px',
-                left: 0,
-                right: 0,
-              }"
-            >
-              <template v-if="!thirdPlaceMatch.homeId || !thirdPlaceMatch.awayId">
-                <div class="tp-waiting">Waiting for semi-finals…</div>
+          class="round-title tp-title"
+          :style="{
+            position: 'absolute',
+            top: finalCardTop + CARD_H + 'px',
+            left: finalX + 'px',
+            width: CARD_W + 'px',
+          }"
+        >
+          3rd Place
+        </div>
+        <div
+          class="tp-card"
+          :style="{
+            position: 'absolute',
+            top: finalCardTop + CARD_H + 30 + 'px',
+            left: finalX + 'px',
+            width: CARD_W + 'px',
+          }"
+        >
+          <template v-if="!thirdPlaceMatch.homeId || !thirdPlaceMatch.awayId">
+            <div class="tp-waiting">Waiting for semi-finals…</div>
+          </template>
+          <template v-else>
+            <div class="tp-teams">
+              <div
+                class="tp-row"
+                :class="{
+                  winner: isWinnerTp(thirdPlaceMatch.homeId),
+                  loser: thirdPlaceMatch.result && !isWinnerTp(thirdPlaceMatch.homeId),
+                }"
+              >
+                <TeamBadge :team-id="thirdPlaceMatch.homeId" :teams="teams" />
+              </div>
+              <div
+                class="tp-row tp-row--away"
+                :class="{
+                  winner: isWinnerTp(thirdPlaceMatch.awayId),
+                  loser: thirdPlaceMatch.result && !isWinnerTp(thirdPlaceMatch.awayId),
+                }"
+              >
+                <TeamBadge :team-id="thirdPlaceMatch.awayId" :teams="teams" />
+              </div>
+            </div>
+            <div class="tp-scores">
+              <div
+                class="tp-scell"
+                :class="{
+                  winner: isWinnerTp(thirdPlaceMatch.homeId),
+                  loser: thirdPlaceMatch.result && !isWinnerTp(thirdPlaceMatch.homeId),
+                }"
+              >
+                <template v-if="tpMode === 'score'">
+                  <input v-model.number="tpH" type="number" min="0" class="tp-inp" />
+                </template>
+                <template v-else-if="tpMode === 'penalty'">
+                  <span class="tp-pen-base">{{ tpH }}</span>
+                  <input v-model.number="tpPH" type="number" min="0" class="tp-inp tp-inp--pen" />
+                </template>
+                <template v-else>
+                  <span v-if="thirdPlaceMatch.result" class="tp-sc">
+                    {{ thirdPlaceMatch.result.home }}
+                    <span v-if="thirdPlaceMatch.result.penHome !== undefined" class="tp-pen-sup">
+                      [{{ thirdPlaceMatch.result.penHome }}p]
+                    </span>
+                  </span>
+                  <span v-else class="tp-sc tbd">–</span>
+                </template>
+              </div>
+              <div
+                class="tp-scell tp-scell--away"
+                :class="{
+                  winner: isWinnerTp(thirdPlaceMatch.awayId),
+                  loser: thirdPlaceMatch.result && !isWinnerTp(thirdPlaceMatch.awayId),
+                }"
+              >
+                <template v-if="tpMode === 'score'">
+                  <input v-model.number="tpA" type="number" min="0" class="tp-inp" />
+                </template>
+                <template v-else-if="tpMode === 'penalty'">
+                  <span class="tp-pen-base">{{ tpA }}</span>
+                  <input v-model.number="tpPA" type="number" min="0" class="tp-inp tp-inp--pen" />
+                </template>
+                <template v-else>
+                  <span v-if="thirdPlaceMatch.result" class="tp-sc">
+                    {{ thirdPlaceMatch.result.away }}
+                    <span v-if="thirdPlaceMatch.result.penAway !== undefined" class="tp-pen-sup">
+                      [{{ thirdPlaceMatch.result.penAway }}p]
+                    </span>
+                  </span>
+                  <span v-else class="tp-sc tbd">–</span>
+                </template>
+              </div>
+            </div>
+            <div class="tp-actions">
+              <template v-if="tpMode !== 'off'">
+                <button
+                  class="icon-btn ok"
+                  :disabled="tpMode === 'penalty' && tpPH === tpPA"
+                  @click="tpMode === 'penalty' ? tpPenSave() : tpSave()"
+                >
+                  <Check :size="11" />
+                </button>
+                <button class="icon-btn" @click="tpCancel"><X :size="11" /></button>
               </template>
               <template v-else>
-                <!-- Teams column -->
-                <div class="tp-teams">
-                  <div
-                    class="tp-row"
-                    :class="{
-                      winner: isWinnerTp(thirdPlaceMatch.homeId),
-                      loser: thirdPlaceMatch.result && !isWinnerTp(thirdPlaceMatch.homeId),
-                    }"
-                  >
-                    <TeamBadge :team-id="thirdPlaceMatch.homeId" :teams="teams" />
-                  </div>
-                  <div
-                    class="tp-row tp-row--away"
-                    :class="{
-                      winner: isWinnerTp(thirdPlaceMatch.awayId),
-                      loser: thirdPlaceMatch.result && !isWinnerTp(thirdPlaceMatch.awayId),
-                    }"
-                  >
-                    <TeamBadge :team-id="thirdPlaceMatch.awayId" :teams="teams" />
-                  </div>
-                </div>
-                <!-- Score column -->
-                <div class="tp-scores">
-                  <div
-                    class="tp-scell"
-                    :class="{
-                      winner: isWinnerTp(thirdPlaceMatch.homeId),
-                      loser: thirdPlaceMatch.result && !isWinnerTp(thirdPlaceMatch.homeId),
-                    }"
-                  >
-                    <template v-if="tpMode === 'score'">
-                      <input v-model.number="tpH" type="number" min="0" class="tp-inp" />
-                    </template>
-                    <template v-else-if="tpMode === 'penalty'">
-                      <span class="tp-pen-base">{{ tpH }}</span>
-                      <input
-                        v-model.number="tpPH"
-                        type="number"
-                        min="0"
-                        class="tp-inp tp-inp--pen"
-                      />
-                    </template>
-                    <template v-else>
-                      <span v-if="thirdPlaceMatch.result" class="tp-sc">
-                        {{ thirdPlaceMatch.result.home }}
-                        <span
-                          v-if="thirdPlaceMatch.result.penHome !== undefined"
-                          class="tp-pen-sup"
-                        >
-                          [{{ thirdPlaceMatch.result.penHome }}p]
-                        </span>
-                      </span>
-                      <span v-else class="tp-sc tbd">–</span>
-                    </template>
-                  </div>
-                  <div
-                    class="tp-scell tp-scell--away"
-                    :class="{
-                      winner: isWinnerTp(thirdPlaceMatch.awayId),
-                      loser: thirdPlaceMatch.result && !isWinnerTp(thirdPlaceMatch.awayId),
-                    }"
-                  >
-                    <template v-if="tpMode === 'score'">
-                      <input v-model.number="tpA" type="number" min="0" class="tp-inp" />
-                    </template>
-                    <template v-else-if="tpMode === 'penalty'">
-                      <span class="tp-pen-base">{{ tpA }}</span>
-                      <input
-                        v-model.number="tpPA"
-                        type="number"
-                        min="0"
-                        class="tp-inp tp-inp--pen"
-                      />
-                    </template>
-                    <template v-else>
-                      <span v-if="thirdPlaceMatch.result" class="tp-sc">
-                        {{ thirdPlaceMatch.result.away }}
-                        <span
-                          v-if="thirdPlaceMatch.result.penAway !== undefined"
-                          class="tp-pen-sup"
-                        >
-                          [{{ thirdPlaceMatch.result.penAway }}p]
-                        </span>
-                      </span>
-                      <span v-else class="tp-sc tbd">–</span>
-                    </template>
-                  </div>
-                </div>
-                <!-- Action column -->
-                <div class="tp-actions">
-                  <template v-if="tpMode !== 'off'">
-                    <button
-                      class="icon-btn ok"
-                      :disabled="tpMode === 'penalty' && tpPH === tpPA"
-                      @click="tpMode === 'penalty' ? tpPenSave() : tpSave()"
-                    >
-                      <Check :size="11" />
-                    </button>
-                    <button class="icon-btn" @click="tpCancel"><X :size="11" /></button>
-                  </template>
-                  <template v-else>
-                    <button class="icon-btn" @click="tpEdit"><Pencil :size="11" /></button>
-                    <button class="icon-btn" @click="emit('sim-third-place')">
-                      <Shuffle :size="11" />
-                    </button>
-                  </template>
-                </div>
+                <button class="icon-btn" @click="tpEdit"><Pencil :size="11" /></button>
+                <button class="icon-btn" @click="emit('sim-third-place')">
+                  <Shuffle :size="11" />
+                </button>
               </template>
             </div>
-          </div>
+          </template>
         </div>
       </template>
     </div>
@@ -336,23 +491,18 @@ function svgPath(p: ConnPath, w: number): string {
 
 <style scoped>
 .bracket-wrap {
-  width: fit-content;
-  max-width: 100%;
+  width: 100%;
   overflow-x: auto;
   padding-bottom: 8px;
 }
+
 .bracket {
-  display: flex;
-  align-items: flex-start;
   position: relative;
+  flex-shrink: 0;
+  min-width: fit-content;
 }
 
-/* ── Round column ── */
-.round-col {
-  display: flex;
-  flex-direction: column;
-  flex-shrink: 0;
-}
+/* ── Round title ── */
 .round-title {
   font-size: 10px;
   font-weight: 700;
@@ -363,23 +513,12 @@ function svgPath(p: ConnPath, w: number): string {
   text-align: center;
   height: 28px;
   box-sizing: border-box;
-  flex-shrink: 0;
 }
 .final-title {
   color: #c9a227 !important;
 }
 .tp-title {
   color: var(--accent-2);
-}
-
-.matches-area {
-  position: relative;
-  width: 100%;
-}
-
-/* ── Connector ── */
-.conn-col {
-  flex-shrink: 0;
 }
 
 /* ── 3rd place card ── */
@@ -393,14 +532,6 @@ function svgPath(p: ConnPath, w: number): string {
   overflow: hidden;
   box-sizing: border-box;
 }
-.tp-divider {
-  width: 1px;
-  background: var(--border-light);
-  flex-shrink: 0;
-  margin-left: 16px;
-  margin-right: 16px;
-  opacity: 0.5;
-}
 .tp-waiting {
   font-size: 11px;
   color: var(--text-muted);
@@ -408,7 +539,6 @@ function svgPath(p: ConnPath, w: number): string {
   padding: 10px 8px;
 }
 
-/* ── 3rd place card columns ── */
 .tp-teams {
   flex: 1;
   min-width: 0;
