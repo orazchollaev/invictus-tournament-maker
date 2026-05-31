@@ -76,8 +76,11 @@ async function openNewSeason() {
   }
 
   const isGroup = t.format === "group+bracket"
-  const drawType = isGroup ? settings.newSeasonGroupDrawType : settings.newSeasonDrawType
-  const playoffSeedMode = isGroup ? settings.newSeasonPlayoffSeedMode : undefined
+  const drawType =
+    t.drawType ?? (isGroup ? settings.newSeasonGroupDrawType : settings.newSeasonDrawType)
+  const playoffSeedMode = isGroup
+    ? (t.playoffSeedMode ?? settings.newSeasonPlayoffSeedMode)
+    : undefined
   const thirdPlace = t.hasThirdPlace ?? false
   if (drawType === "random") {
     startNewSeason(false, undefined, thirdPlace, playoffSeedMode)

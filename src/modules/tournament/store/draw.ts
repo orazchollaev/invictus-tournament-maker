@@ -151,6 +151,13 @@ export function useDrawActions(tournaments: Ref<Tournament[]>, getTeams: () => T
     const t = tournaments.value.find((t) => t.id === tournamentId)
     if (!t || hasAnyResults(tournamentId)) return
     rebuildDraw(t, seeded, orderedIds)
+    t.drawType = orderedIds ? "manual" : seeded ? "seeded" : "random"
+  }
+
+  function setDrawType(tournamentId: string, type: "random" | "seeded" | "manual") {
+    const t = tournaments.value.find((t) => t.id === tournamentId)
+    if (!t) return
+    t.drawType = type
   }
 
   function setPlayoffSeedMode(tournamentId: string, mode: PlayoffSeedMode) {
@@ -184,6 +191,7 @@ export function useDrawActions(tournaments: Ref<Tournament[]>, getTeams: () => T
     addTeamToTournament,
     removeTeamFromTournament,
     redrawTournament,
+    setDrawType,
     setPlayoffSeedMode,
   }
 }

@@ -176,6 +176,8 @@ function handleSave() {
     if (!localSet.has(id)) store.removeTeamFromTournament(tournamentId.value, id)
   }
 
+  if (drawType.value !== (orig.drawType ?? "random"))
+    store.setDrawType(tournamentId.value, drawType.value)
   if (localPlayoffSeedMode.value !== (orig.playoffSeedMode ?? "cross"))
     store.setPlayoffSeedMode(tournamentId.value, localPlayoffSeedMode.value)
   if (localGroupCount.value !== (orig.groups?.length ?? 2))
