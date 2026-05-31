@@ -1,5 +1,40 @@
 # Changelog
 
+## [1.6.0](https://github.com/orazchollaev/tournament-sim/compare/v1.5.1...v1.6.0) (2026-05-31)
+
+### Features
+
+- **bracket:** rewrite to left-right layout with final in center and 3rd place below ([424d2af](https://github.com/orazchollaev/tournament-sim/commit/424d2afec8d115845ae60ae51c43ab4010caf4ce))
+- **league:** add 3x/4x leg modes and fix multi-tier leg mode change ([0a2bf4f](https://github.com/orazchollaev/tournament-sim/commit/0a2bf4ff0fa1d1b8b00b0c51828f25b1408390f3))
+- **settings:** add changelog button next to version ([aeaa01b](https://github.com/orazchollaev/tournament-sim/commit/aeaa01bea2855fe67834aeb5b9bf871dea7d1c98))
+- **settings:** add configurable home advantage (0–20 power bonus) ([abd00fb](https://github.com/orazchollaev/tournament-sim/commit/abd00fbc1ced1ce2d2cb290a0923d06759c2b6e9))
+- **settings:** add form factor — last-5-match power adjustment ([c0095c1](https://github.com/orazchollaev/tournament-sim/commit/c0095c1514a03dca054ca3e2b7063aa0838e0e84))
+- **settings:** add reset all settings button ([91a7120](https://github.com/orazchollaev/tournament-sim/commit/91a7120541af71e1d1fd0c7dcb468a9225c8b34f))
+- **teams:** add tournament filter dropdown to match history on team detail page ([d8bf416](https://github.com/orazchollaev/tournament-sim/commit/d8bf416990a076891a8286b6b12a69e811571f70))
+- **tournament:** add 3x/4x leg modes to create tournament modal ([0635843](https://github.com/orazchollaev/tournament-sim/commit/06358436267adf3b4532a2aa84e3b09ea04a3f5b))
+- **tournament:** add dedicated create and settings pages for tournaments ([39c85ae](https://github.com/orazchollaev/tournament-sim/commit/39c85ae6951253b84064cdb5809d716239d5be62))
+- **tournaments:** add group standings progress line chart ([0f6c47c](https://github.com/orazchollaev/tournament-sim/commit/0f6c47cddab0c9aba0437678171302b59a685fe1))
+- **tournaments:** add league standings progress line chart ([860a81b](https://github.com/orazchollaev/tournament-sim/commit/860a81b33764be919b41a834a7d621409e938022))
+- **ui:** replace native alert/confirm with custom AppDialog modal ([f7ee64a](https://github.com/orazchollaev/tournament-sim/commit/f7ee64acd8aae9db83a00c69e877af9822eb04c5))
+
+### Bug Fixes
+
+- **bracket:** export PNG captures inner .bracket element to avoid scrollbar and clipping ([1f8dfed](https://github.com/orazchollaev/tournament-sim/commit/1f8dfede61b737c985cca96fdd45d46f89b734de))
+- **league:** reset activeTierIdx on navigation and redirect multi-tier new season to detail page ([6d2960d](https://github.com/orazchollaev/tournament-sim/commit/6d2960d425e4b52394809440171acd700ebb65ee))
+- random tournament name year function removed ([732f238](https://github.com/orazchollaev/tournament-sim/commit/732f238731904a1a58dc60c588bd943577e0609e))
+- **styles:** replace hardcoded colors with CSS vars and fix Chart.js types ([b59103e](https://github.com/orazchollaev/tournament-sim/commit/b59103e820d88abc299f475ce3c7318403afa71f))
+- **teams:** show league and tiered-league matches on team detail page ([66c4169](https://github.com/orazchollaev/tournament-sim/commit/66c4169b1b31cb8e9a55a50bc1ec21fd26f996d2))
+
+### Code Refactoring
+
+- remove new season button from tournaments list ([36c715f](https://github.com/orazchollaev/tournament-sim/commit/36c715f6d1d09d4f682be88a4a72f3e382f659d2))
+- **ui:** redesign SeasonChart with CSS rows replacing SVG bar chart ([87ccae0](https://github.com/orazchollaev/tournament-sim/commit/87ccae0016e98ba239d93a1da11197e3f73d2427))
+
+### Chores
+
+- **deps:** update minor dependencies ([8074af9](https://github.com/orazchollaev/tournament-sim/commit/8074af9dca37862d4bd32f4c3e03e3e4b00775bd))
+- migrate from lucide-vue-next to @lucide/vue ([7698bd9](https://github.com/orazchollaev/tournament-sim/commit/7698bd9434c2b25b6babd6e9f0801f738d2745a0))
+
 ## [1.5.1](https://github.com/orazchollaev/tournament-sim/compare/v1.5.0...v1.5.1) (2026-05-30)
 
 ### Bug Fixes
