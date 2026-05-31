@@ -4,13 +4,21 @@ import type { Match, GroupMatch } from "../modules/tournament/types"
 
 let _surpriseFactor = 50 // 0 = power dominates, 100 = pure chaos
 let _formFactorEnabled = false
+let _homeAdvantage = 6 // power bonus for home team (0-20)
 
-export function setSimConfig(config: { surpriseFactor?: number; formFactor?: boolean }) {
+export function setSimConfig(config: {
+  surpriseFactor?: number
+  formFactor?: boolean
+  homeAdvantage?: number
+}) {
   if (config.surpriseFactor !== undefined) {
     _surpriseFactor = Math.max(0, Math.min(100, config.surpriseFactor))
   }
   if (config.formFactor !== undefined) {
     _formFactorEnabled = config.formFactor
+  }
+  if (config.homeAdvantage !== undefined) {
+    _homeAdvantage = Math.max(0, Math.min(20, config.homeAdvantage))
   }
 }
 
@@ -77,8 +85,7 @@ export function simulateMatch(
     1,
     Math.min(100, baseAp + (formAdjustments?.get(match.awayId as string) ?? 0))
   )
-  const homeAdvantage = 6
-  const hpAdjusted = hp + homeAdvantage
+  const hpAdjusted = hp + _homeAdvantage
   const diff = (hpAdjusted - ap) / 40
   const strength = Math.tanh(diff)
   const base = 1.45

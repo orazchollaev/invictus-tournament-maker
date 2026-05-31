@@ -20,6 +20,7 @@ export const useSettingsStore = defineStore("settings", () => {
   const newSeasonPlayoffSeedMode = ref<PlayoffSeedMode>("cross")
   const tiebreaker = ref<Tiebreaker>("goal-diff")
   const formFactorEnabled = ref(false)
+  const homeAdvantage = ref(6)
 
   watch(
     theme,
@@ -32,6 +33,7 @@ export const useSettingsStore = defineStore("settings", () => {
   watch(surpriseFactor, (val) => setSimConfig({ surpriseFactor: val }), { immediate: true })
   watch(tiebreaker, (val) => setTableConfig({ tiebreaker: val }), { immediate: true })
   watch(formFactorEnabled, (val) => setSimConfig({ formFactor: val }), { immediate: true })
+  watch(homeAdvantage, (val) => setSimConfig({ homeAdvantage: val }), { immediate: true })
 
   return {
     theme,
@@ -46,5 +48,6 @@ export const useSettingsStore = defineStore("settings", () => {
     newSeasonPlayoffSeedMode,
     tiebreaker,
     formFactorEnabled,
+    homeAdvantage,
   }
 })

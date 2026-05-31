@@ -326,6 +326,58 @@ function importData() {
       <div class="section-body">
         <div class="setting-row">
           <div class="setting-info">
+            <div class="setting-label">Home Advantage</div>
+            <div class="setting-desc">
+              Power bonus given to the home team.
+              <strong>0</strong>
+              = no advantage ·
+              <strong>6</strong>
+              = default ·
+              <strong>20</strong>
+              = very strong home edge.
+            </div>
+          </div>
+          <div class="surprise-control">
+            <button
+              class="stepper-btn"
+              :disabled="settings.homeAdvantage <= 0"
+              @click="settings.homeAdvantage = Math.max(0, settings.homeAdvantage - 1)"
+            >
+              −
+            </button>
+            <input
+              v-model.number="settings.homeAdvantage"
+              type="number"
+              min="0"
+              max="20"
+              step="1"
+              class="surprise-value"
+              @change="settings.homeAdvantage = Math.max(0, Math.min(20, settings.homeAdvantage))"
+            />
+            <button
+              class="stepper-btn"
+              :disabled="settings.homeAdvantage >= 20"
+              @click="settings.homeAdvantage = Math.min(20, settings.homeAdvantage + 1)"
+            >
+              +
+            </button>
+            <span class="surprise-badge">
+              {{
+                settings.homeAdvantage === 0
+                  ? "Neutral"
+                  : settings.homeAdvantage <= 4
+                    ? "Slight"
+                    : settings.homeAdvantage <= 8
+                      ? "Moderate"
+                      : settings.homeAdvantage <= 14
+                        ? "Strong"
+                        : "Dominant"
+              }}
+            </span>
+          </div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info">
             <div class="setting-label">Surprise Factor</div>
             <div class="setting-desc">
               How much weaker teams can upset stronger ones.
