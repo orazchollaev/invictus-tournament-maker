@@ -3,7 +3,6 @@ import { ref, computed } from "vue"
 import { useRouter } from "vue-router"
 import { useTeamsStore } from "@/modules/teams/store"
 import { useTournamentStore } from "@/modules/tournament/store"
-import CreateTournamentModal from "../components/CreateTournamentModal.vue"
 import type { Tournament } from "../types"
 import { Trophy, X, Search, ChevronRight } from "@lucide/vue"
 import { showConfirm } from "@/composables/useDialog"
@@ -26,8 +25,6 @@ const filtered = computed(() => {
   return store.tournaments.filter((t) => t.name.toLowerCase().includes(q))
 })
 
-const showCreateModal = ref(false)
-
 async function deleteTournament(id: string) {
   if (await showConfirm("Delete this tournament?", { confirmLabel: "Delete", dangerous: true }))
     store.remove(id)
@@ -43,7 +40,7 @@ async function deleteTournament(id: string) {
         class="primary"
         :disabled="teamsStore.teams.length < 2"
         :title="teamsStore.teams.length < 2 ? 'Add at least 2 teams first' : ''"
-        @click="showCreateModal = true"
+        @click="router.push('/tournaments/new')"
       >
         + New Tournament
       </button>
@@ -114,8 +111,5 @@ async function deleteTournament(id: string) {
       <strong>+ New Tournament</strong>
       to get started.
     </p>
-
-    <!-- Create modal -->
-    <CreateTournamentModal v-if="showCreateModal" @close="showCreateModal = false" />
   </div>
 </template>

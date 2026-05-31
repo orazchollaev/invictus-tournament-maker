@@ -8,7 +8,6 @@ import LeagueView from "@/modules/tournament/components/LeagueView.vue"
 import ParticipantsTable from "@/modules/tournament/components/ParticipantsTable.vue"
 import ManualDraw from "@/modules/tournament/components/ManualDraw.vue"
 import GroupDraw from "@/modules/tournament/components/GroupDraw.vue"
-import TournamentSettings from "@/modules/tournament/components/TournamentSettings.vue"
 import TournamentStats from "@/modules/tournament/components/TournamentStats.vue"
 import PromotionModal from "@/modules/tournament/components/PromotionModal.vue"
 import AppModal from "@/components/AppModal.vue"
@@ -27,25 +26,14 @@ const {
   tournament,
   winnerTeam,
   dateStr,
-  deleteTournament,
-  resetTournament,
   startNewSeason,
   startNewLeagueSeason,
   hasAnyResults,
   availableTeams,
-  addTeam,
-  removeTeam,
-  redrawTournament,
-  setPlayoffSeedMode,
-  changeGroupCount,
-  changeQualifiersPerGroup,
-  changeWildcardCount,
-  changeLegMode,
 } = useTournamentDetail()
 
 const showSeasonModal = ref(false)
 const showManualSeason = ref(false)
-const showSettingsModal = ref(false)
 const showPromotionModal = ref(false)
 const showMultiTierModal = ref(false)
 
@@ -64,12 +52,6 @@ const linkedLeague = computed(() => {
   if (!t?.linkedLeagueId) return undefined
   return store.getById(t.linkedLeagueId)
 })
-
-const otherLeagues = computed(() =>
-  store.tournaments
-    .filter((t) => t.format === "league" && t.id !== tournament.value?.id)
-    .map((t) => ({ id: t.id, name: t.name, season: t.season }))
-)
 
 async function openNewSeason() {
   const t = tournament.value
@@ -261,7 +243,10 @@ function changeTab(tab: MainTab, tierIdx?: number) {
               <Zap :size="13" />
               Simulate All
             </button>
-            <button class="settings-btn" @click="showSettingsModal = true">
+            <button
+              class="settings-btn"
+              @click="router.push(`/tournaments/${tournament!.id}/settings`)"
+            >
               <Settings :size="14" />
               Settings
             </button>
@@ -432,33 +417,6 @@ function changeTab(tab: MainTab, tierIdx?: number) {
         </div>
       </Transition>
     </template>
-
-    <TournamentSettings
-      v-if="showSettingsModal && tournament"
-      :tournament="tournament"
-      :all-teams="allTeams"
-      :has-any-results="hasAnyResults"
-      :available-teams="availableTeams"
-      :other-leagues="otherLeagues"
-      @add-team="addTeam"
-      @remove-team="removeTeam"
-      @redraw="redrawTournament"
-      @change-group-count="changeGroupCount"
-      @change-qualifiers-per-group="changeQualifiersPerGroup"
-      @change-wildcard-count="changeWildcardCount"
-      @toggle-third-place="store.toggleThirdPlace(tournament!.id)"
-      @set-playoff-seed-mode="setPlayoffSeedMode"
-      @change-leg-mode="changeLegMode"
-      @set-league-leg-mode="store.setLeagueLegMode(tournament!.id, $event)"
-      @change-relegation-count="store.setRelegationCount(tournament!.id, $event)"
-      @change-promotion-count="store.setPromotionCount(tournament!.id, $event)"
-      @change-tier-count="store.rebuildTiers(tournament!.id, $event)"
-      @set-linked-league="store.setLinkedLeague(tournament!.id, $event)"
-      @change-tiebreaker="store.setTiebreaker(tournament!.id, $event)"
-      @reset="resetTournament"
-      @delete="deleteTournament"
-      @close="showSettingsModal = false"
-    />
 
     <PromotionModal
       v-if="showPromotionModal && tournament"
