@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from "vue"
+import { computed, ref } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import { useTeamsStore } from "../../teams/store"
 import { useTournamentStore } from "@/modules/tournament/store"
@@ -272,6 +272,31 @@ const allMatches = computed((): MatchRow[] => {
   return results.reverse()
 })
 
+// ─── Tournament filter ────────────────────────────────────────
+const selectedTournamentKey = ref<string>("all")
+
+// Unique "name|season" keys for tournaments this team participated in
+const tournamentOptions = computed(() => {
+  const seen = new Set<string>()
+  const opts: { key: string; label: string }[] = []
+  for (const m of allMatches.value) {
+    const key = `${m.tournamentName}|${m.tournamentSeason}`
+    if (!seen.has(key)) {
+      seen.add(key)
+      opts.push({ key, label: `${m.tournamentName} S${m.tournamentSeason}` })
+    }
+  }
+  return opts
+})
+
+const filteredMatches = computed(() => {
+  if (selectedTournamentKey.value === "all") return allMatches.value
+  const [name, season] = selectedTournamentKey.value.split("|")
+  return allMatches.value.filter(
+    (m) => m.tournamentName === name && m.tournamentSeason === Number(season)
+  )
+})
+
 const stats = computed(() => {
   const played = allMatches.value.length
   const wins = allMatches.value.filter((m) => m.outcome === "W").length
@@ -443,11 +468,21 @@ const seasonStats = computed(() =>
       <div class="section-box">
         <h2>
           Match History
-          <span class="count">{{ allMatches.length }} matches</span>
+          <span class="count">{{ filteredMatches.length }} matches</span>
+          <select
+            v-if="tournamentOptions.length > 1"
+            v-model="selectedTournamentKey"
+            class="tour-select"
+          >
+            <option value="all">All tournaments</option>
+            <option v-for="opt in tournamentOptions" :key="opt.key" :value="opt.key">
+              {{ opt.label }}
+            </option>
+          </select>
         </h2>
         <div class="section-body flush">
-          <div v-if="allMatches.length" class="match-list">
-            <div v-for="(m, i) in allMatches" :key="i" class="match-row">
+          <div v-if="filteredMatches.length" class="match-list">
+            <div v-for="(m, i) in filteredMatches" :key="i" class="match-row">
               <!-- Outcome badge -->
               <span
                 class="outcome-badge"
@@ -489,7 +524,13 @@ const seasonStats = computed(() =>
               <span class="match-tournament">{{ m.tournamentName }} S{{ m.tournamentSeason }}</span>
             </div>
           </div>
-          <p v-else class="empty-text" style="padding: 12px">No matches played yet.</p>
+          <p v-else class="empty-text" style="padding: 12px">
+            {{
+              selectedTournamentKey === "all"
+                ? "No matches played yet."
+                : "No matches for this tournament."
+            }}
+          </p>
         </div>
       </div>
     </template>
@@ -497,6 +538,29 @@ const seasonStats = computed(() =>
 </template>
 
 <style scoped>
+/* Tournament filter */
+h2:has(.tour-select) {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tour-select {
+  margin-left: auto;
+  font-size: 12px;
+  font-family: var(--font-ui);
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 2px 6px;
+  cursor: pointer;
+  outline: none;
+}
+.tour-select:focus {
+  border-color: var(--accent);
+}
+
 /* Header */
 .team-header {
   display: flex;
