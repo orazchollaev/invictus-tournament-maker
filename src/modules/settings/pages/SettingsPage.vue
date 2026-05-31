@@ -54,6 +54,13 @@ const confettiOnWinVal = computed({
   },
 })
 
+const formFactorVal = computed({
+  get: () => (settings.formFactorEnabled ? "on" : "off"),
+  set: (v: string) => {
+    settings.formFactorEnabled = v === "on"
+  },
+})
+
 function loadDataset(dataset: Dataset) {
   const isConfirm = confirm(
     `Load "${dataset.label}" dataset? This will replace your teams and clear all tournaments.`
@@ -369,6 +376,26 @@ function importData() {
             </span>
           </div>
         </div>
+        <div class="setting-row">
+          <div class="setting-info">
+            <div class="setting-label">Form Factor</div>
+            <div class="setting-desc">
+              Dynamically adjusts team strength based on last 5 match results. A team on a winning
+              streak gains up to
+              <strong>+10</strong>
+              power, a team losing consistently drops up to
+              <strong>−10</strong>
+              .
+            </div>
+          </div>
+          <BtnGroup
+            v-model="formFactorVal"
+            :options="[
+              { value: 'on', label: 'On' },
+              { value: 'off', label: 'Off' },
+            ]"
+          />
+        </div>
       </div>
     </div>
 
@@ -464,13 +491,17 @@ function importData() {
 .setting-group {
   display: flex;
   flex-direction: column;
-  gap: 14px;
 }
 
 .setting-row {
   display: flex;
   align-items: center;
   gap: 16px;
+  margin-bottom: 10px;
+}
+
+.setting-row:last-child {
+  margin-bottom: 0;
 }
 
 .setting-info {

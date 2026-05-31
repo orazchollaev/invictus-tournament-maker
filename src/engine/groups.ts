@@ -8,7 +8,7 @@ import type {
   Tournament,
 } from "../modules/tournament/types"
 import { uid } from "./utils"
-import { simulateMatch } from "./simulation"
+import { simulateMatch, isFormFactorEnabled, computeFormAdjustments } from "./simulation"
 import { getTiebreaker } from "./tableConfig"
 
 function h2hStats(
@@ -173,7 +173,10 @@ export function simulateGroupMatch(
   teams: Team[]
 ) {
   const group = tournament.groups![groupIdx]
-  group.matches[matchIdx].result = simulateMatch(group.matches[matchIdx] as any, teams)
+  const form = isFormFactorEnabled()
+    ? computeFormAdjustments(group.teamIds, group.matches)
+    : undefined
+  group.matches[matchIdx].result = simulateMatch(group.matches[matchIdx] as any, teams, form)
   recalcStandings(group, tournament.tiebreaker)
 }
 
@@ -181,7 +184,10 @@ export function simulateGroup(tournament: Tournament, groupIdx: number, teams: T
   const group = tournament.groups![groupIdx]
   for (let i = 0; i < group.matches.length; i++) {
     if (!group.matches[i].result) {
-      group.matches[i].result = simulateMatch(group.matches[i] as any, teams)
+      const form = isFormFactorEnabled()
+        ? computeFormAdjustments(group.teamIds, group.matches)
+        : undefined
+      group.matches[i].result = simulateMatch(group.matches[i] as any, teams, form)
     }
   }
   recalcStandings(group, tournament.tiebreaker)
@@ -204,9 +210,12 @@ export function simulateGroupWeek(tournament: Tournament, groupIdx: number, team
   const roundIdx = Math.floor(first / mpr)
   const start = roundIdx * mpr
   const end = Math.min(start + mpr, group.matches.length)
+  const form = isFormFactorEnabled()
+    ? computeFormAdjustments(group.teamIds, group.matches)
+    : undefined
   for (let i = start; i < end; i++) {
     if (!group.matches[i].result)
-      group.matches[i].result = simulateMatch(group.matches[i] as any, teams)
+      group.matches[i].result = simulateMatch(group.matches[i] as any, teams, form)
   }
   recalcStandings(group, tournament.tiebreaker)
   return roundIdx
@@ -224,9 +233,12 @@ export function simulateWeek(tournament: Tournament, teams: Team[]): number {
     const roundIdx = Math.floor(firstUnplayed / matchesPerRound)
     const start = roundIdx * matchesPerRound
     const end = start + matchesPerRound
+    const form = isFormFactorEnabled()
+      ? computeFormAdjustments(group.teamIds, group.matches)
+      : undefined
     for (let i = start; i < Math.min(end, group.matches.length); i++) {
       if (!group.matches[i].result)
-        group.matches[i].result = simulateMatch(group.matches[i] as any, teams)
+        group.matches[i].result = simulateMatch(group.matches[i] as any, teams, form)
     }
     recalcStandings(group, tournament.tiebreaker)
     simulatedRound = roundIdx

@@ -19,6 +19,7 @@ export const useSettingsStore = defineStore("settings", () => {
   const newSeasonGroupDrawType = ref<DrawType>("random")
   const newSeasonPlayoffSeedMode = ref<PlayoffSeedMode>("cross")
   const tiebreaker = ref<Tiebreaker>("goal-diff")
+  const formFactorEnabled = ref(false)
 
   watch(
     theme,
@@ -30,6 +31,7 @@ export const useSettingsStore = defineStore("settings", () => {
 
   watch(surpriseFactor, (val) => setSimConfig({ surpriseFactor: val }), { immediate: true })
   watch(tiebreaker, (val) => setTableConfig({ tiebreaker: val }), { immediate: true })
+  watch(formFactorEnabled, (val) => setSimConfig({ formFactor: val }), { immediate: true })
 
   return {
     theme,
@@ -43,5 +45,6 @@ export const useSettingsStore = defineStore("settings", () => {
     newSeasonGroupDrawType,
     newSeasonPlayoffSeedMode,
     tiebreaker,
+    formFactorEnabled,
   }
 })

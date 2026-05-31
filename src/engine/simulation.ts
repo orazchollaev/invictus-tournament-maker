@@ -3,11 +3,49 @@ import type { Team } from "../modules/teams/types"
 import type { Match, GroupMatch } from "../modules/tournament/types"
 
 let _surpriseFactor = 50 // 0 = power dominates, 100 = pure chaos
+let _formFactorEnabled = false
 
-export function setSimConfig(config: { surpriseFactor?: number }) {
+export function setSimConfig(config: { surpriseFactor?: number; formFactor?: boolean }) {
   if (config.surpriseFactor !== undefined) {
     _surpriseFactor = Math.max(0, Math.min(100, config.surpriseFactor))
   }
+  if (config.formFactor !== undefined) {
+    _formFactorEnabled = config.formFactor
+  }
+}
+
+export function isFormFactorEnabled(): boolean {
+  return _formFactorEnabled
+}
+
+type PlayedMatch = { homeId: string; awayId: string; result: { home: number; away: number } | null }
+
+export function computeFormAdjustments(
+  teamIds: string[],
+  playedMatches: PlayedMatch[]
+): Map<string, number> {
+  const map = new Map<string, number>()
+  for (const id of teamIds) {
+    const relevant = playedMatches.filter(
+      (m) => m.result != null && (m.homeId === id || m.awayId === id)
+    )
+    const last5 = relevant.slice(-5)
+    if (last5.length === 0) {
+      map.set(id, 0)
+      continue
+    }
+    let pts = 0
+    for (const m of last5) {
+      const isHome = m.homeId === id
+      const tg = isHome ? m.result!.home : m.result!.away
+      const og = isHome ? m.result!.away : m.result!.home
+      if (tg > og) pts += 3
+      else if (tg === og) pts += 1
+    }
+    // Map 0..maxPts to -10..+10 power adjustment
+    map.set(id, ((pts / (last5.length * 3)) * 2 - 1) * 10)
+  }
+  return map
 }
 
 function poisson(lambda: number): number {
@@ -23,13 +61,22 @@ function poisson(lambda: number): number {
 
 export function simulateMatch(
   match: Match | GroupMatch,
-  teams: Team[]
+  teams: Team[],
+  formAdjustments?: Map<string, number>
 ): { home: number; away: number } {
   const homeTeam = teams.find((t) => t.id === match.homeId)
   const awayTeam = teams.find((t) => t.id === match.awayId)
 
-  const hp = homeTeam?.power ?? 50
-  const ap = awayTeam?.power ?? 50
+  const baseHp = homeTeam?.power ?? 50
+  const baseAp = awayTeam?.power ?? 50
+  const hp = Math.max(
+    1,
+    Math.min(100, baseHp + (formAdjustments?.get(match.homeId as string) ?? 0))
+  )
+  const ap = Math.max(
+    1,
+    Math.min(100, baseAp + (formAdjustments?.get(match.awayId as string) ?? 0))
+  )
   const homeAdvantage = 6
   const hpAdjusted = hp + homeAdvantage
   const diff = (hpAdjusted - ap) / 40
