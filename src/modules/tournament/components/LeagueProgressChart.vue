@@ -10,6 +10,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js"
+import type { ChartData, ChartOptions } from "chart.js"
 import type { League } from "../types"
 import type { Team } from "@/modules/teams/types"
 import { useLeagueProgress, type ProgressMode } from "../composables/useLeagueProgress"
@@ -56,7 +57,9 @@ function getVisibilityMap(): Map<string, boolean> {
   return map
 }
 
-function buildChartData(hiddenMap?: Map<string, boolean>) {
+function buildChartData(
+  hiddenMap?: Map<string, boolean>
+): ChartData<"line", (number | null)[], string> {
   return {
     labels: labels.value,
     datasets: datasets.value.map((ds, i) => ({
@@ -69,13 +72,13 @@ function buildChartData(hiddenMap?: Map<string, boolean>) {
       pointHoverRadius: 5,
       tension: 0.3,
       spanGaps: true,
-      clip: false,
+      clip: false as const,
       hidden: hiddenMap ? (hiddenMap.get(ds.name) ?? i >= 2) : i >= 2,
     })),
   }
 }
 
-function buildChartOptions() {
+function buildChartOptions(): ChartOptions<"line"> {
   const isPosition = mode.value === "position"
   const maxPos = teamCount.value
   const textMuted = cssVar("--text-muted", "#888")
@@ -125,7 +128,7 @@ function buildChartOptions() {
           stepSize: isPosition ? 1 : undefined,
           font: { size: 10 },
           color: textMuted,
-          callback: (v: number) => (isPosition ? (Number.isInteger(v) ? `#${v}` : "") : v),
+          callback: (v: string | number) => (isPosition ? (Number.isInteger(v) ? `#${v}` : "") : v),
         },
         grid: { color: gridColor },
       },
@@ -138,7 +141,7 @@ function createChart() {
   chart = new Chart(canvasRef.value, {
     type: "line",
     data: buildChartData(),
-    options: buildChartOptions() as Parameters<(typeof Chart)["prototype"]["update"]>[0],
+    options: buildChartOptions(),
   })
 }
 
@@ -148,7 +151,7 @@ function updateChart() {
   const newData = buildChartData(hiddenMap)
   chart.data.labels = newData.labels
   chart.data.datasets = newData.datasets
-  chart.options = buildChartOptions() as typeof chart.options
+  chart.options = buildChartOptions()
   chart.update()
 }
 

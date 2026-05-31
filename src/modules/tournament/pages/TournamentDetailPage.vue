@@ -618,8 +618,8 @@ function changeTab(tab: MainTab, tierIdx?: number) {
   border: 1px solid var(--border-light);
 }
 .mt-row--promoted {
-  border-color: color-mix(in srgb, #22c55e 35%, transparent);
-  background: color-mix(in srgb, #22c55e 4%, var(--surface));
+  border-color: color-mix(in srgb, var(--success) 35%, transparent);
+  background: color-mix(in srgb, var(--success) 4%, var(--surface));
 }
 .mt-row--relegated {
   border-color: color-mix(in srgb, var(--danger) 35%, transparent);
@@ -658,8 +658,8 @@ function changeTab(tab: MainTab, tierIdx?: number) {
   flex-shrink: 0;
 }
 .mt-badge--up {
-  color: #22c55e;
-  background: color-mix(in srgb, #22c55e 12%, transparent);
+  color: var(--success);
+  background: color-mix(in srgb, var(--success) 12%, transparent);
 }
 .mt-badge--down {
   color: var(--danger);

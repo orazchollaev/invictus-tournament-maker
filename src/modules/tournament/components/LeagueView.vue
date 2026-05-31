@@ -442,7 +442,7 @@ function handleSimMatchday(idx: number) {
 
 /* ─── Position zone colors ─── */
 .lv-pos--1 td:first-child {
-  border-left: 3px solid #f59e0b;
+  border-left: 3px solid var(--accent-2);
 }
 .lv-pos--2 td:first-child {
   border-left: 3px solid #3b82f6;
@@ -451,10 +451,10 @@ function handleSimMatchday(idx: number) {
   border-left: 3px solid #8b5cf6;
 }
 .lv-pos--4 td:first-child {
-  border-left: 3px solid #22c55e;
+  border-left: 3px solid var(--success);
 }
 .lv-pos--1 .col-rank {
-  color: #f59e0b !important;
+  color: var(--accent-2) !important;
   font-weight: 700;
 }
 .lv-pos--2 .col-rank {
@@ -466,18 +466,18 @@ function handleSimMatchday(idx: number) {
   font-weight: 600;
 }
 .lv-pos--4 .col-rank {
-  color: #22c55e !important;
+  color: var(--success) !important;
   font-weight: 600;
 }
 .lv-pos--promoted td:first-child {
-  border-left: 3px solid #22c55e;
+  border-left: 3px solid var(--success);
 }
 .lv-pos--promoted .col-rank {
-  color: #22c55e !important;
+  color: var(--success) !important;
   font-weight: 600;
 }
 .lv-pos--promoted-last td {
-  border-bottom: 1px dashed color-mix(in srgb, #22c55e 40%, transparent);
+  border-bottom: 1px dashed color-mix(in srgb, var(--success) 40%, transparent);
 }
 .lv-pos--relegated td:first-child {
   border-left: 3px solid var(--danger);

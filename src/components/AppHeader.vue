@@ -114,7 +114,7 @@ const { needRefresh, applyUpdate } = usePwaUpdate()
   color: var(--text-muted);
   text-decoration: none;
   padding: 5px 12px;
-  border-radius: 6px;
+  border-radius: var(--radius);
   transition:
     background 0.12s,
     color 0.12s;
@@ -146,7 +146,7 @@ const { needRefresh, applyUpdate } = usePwaUpdate()
   align-items: center;
   gap: 5px;
   padding: 5px 10px;
-  border-radius: 6px;
+  border-radius: var(--radius);
   border: 1px solid color-mix(in srgb, var(--accent) 50%, transparent);
   background: color-mix(in srgb, var(--accent) 10%, transparent);
   color: var(--accent);
@@ -180,7 +180,7 @@ const { needRefresh, applyUpdate } = usePwaUpdate()
   align-items: center;
   gap: 5px;
   padding: 5px 10px;
-  border-radius: 6px;
+  border-radius: var(--radius);
   border: 1px solid var(--border-light);
   background: var(--surface);
   color: var(--text-muted);
@@ -215,7 +215,7 @@ const { needRefresh, applyUpdate } = usePwaUpdate()
   justify-content: center;
   width: 32px;
   height: 32px;
-  border-radius: 6px;
+  border-radius: var(--radius);
   color: var(--text-muted);
   text-decoration: none;
   transition:

@@ -21,9 +21,7 @@ const tournamentId = computed(() => route.params.id as string)
 const tournament = computed(() => store.getById(tournamentId.value))
 const allTeams = computed(() => teamsStore.teams)
 const hasAnyResults = computed(() => store.hasAnyResults(tournamentId.value))
-const availableTeams = computed(() =>
-  teamsStore.teams.filter((t) => !tournament.value?.teamIds.includes(t.id))
-)
+
 const otherLeagues = computed(() =>
   store.tournaments
     .filter((t) => t.format === "league" && t.id !== tournamentId.value)

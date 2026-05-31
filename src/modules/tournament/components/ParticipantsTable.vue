@@ -589,7 +589,7 @@ function sortIcon(key: SortKey): string {
 }
 
 .rank-badge--1 {
-  background: #f59e0b;
+  background: var(--accent-2);
   color: #fff;
 }
 
@@ -632,7 +632,7 @@ function sortIcon(key: SortKey): string {
 }
 
 .stat-wins {
-  color: color-mix(in srgb, #22c55e 80%, var(--text));
+  color: color-mix(in srgb, var(--success) 80%, var(--text));
   font-weight: 600;
 }
 
@@ -641,16 +641,16 @@ function sortIcon(key: SortKey): string {
 }
 
 .stat-losses {
-  color: color-mix(in srgb, #ef4444 80%, var(--text));
+  color: color-mix(in srgb, var(--danger) 80%, var(--text));
 }
 
 .gd--pos {
-  color: color-mix(in srgb, #22c55e 80%, var(--text));
+  color: color-mix(in srgb, var(--success) 80%, var(--text));
   font-weight: 600;
 }
 
 .gd--neg {
-  color: color-mix(in srgb, #ef4444 80%, var(--text));
+  color: color-mix(in srgb, var(--danger) 80%, var(--text));
 }
 
 .elim {

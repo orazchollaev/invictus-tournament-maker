@@ -134,7 +134,7 @@ defineProps<{ rows: AllTimeRow[] }>()
   color: var(--accent);
 }
 .at-pos--1 td:first-child {
-  border-left: 3px solid #f59e0b;
+  border-left: 3px solid var(--accent-2);
 }
 .at-pos--2 td:first-child {
   border-left: 3px solid #3b82f6;
@@ -143,10 +143,10 @@ defineProps<{ rows: AllTimeRow[] }>()
   border-left: 3px solid #8b5cf6;
 }
 .at-pos--4 td:first-child {
-  border-left: 3px solid #22c55e;
+  border-left: 3px solid var(--success);
 }
 .at-pos--1 .col-rank {
-  color: #f59e0b !important;
+  color: var(--accent-2) !important;
   font-weight: 700;
 }
 .at-pos--2 .col-rank {
@@ -158,7 +158,7 @@ defineProps<{ rows: AllTimeRow[] }>()
   font-weight: 600;
 }
 .at-pos--4 .col-rank {
-  color: #22c55e !important;
+  color: var(--success) !important;
   font-weight: 600;
 }
 .gd-pos {

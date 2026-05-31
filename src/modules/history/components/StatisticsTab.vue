@@ -254,10 +254,10 @@ defineProps<{ stats: HistoryStats }>()
   margin-bottom: 2px;
 }
 .badge-star {
-  color: #f59e0b;
+  color: var(--accent-2);
 }
 .badge-flame {
-  color: #ef4444;
+  color: var(--danger);
 }
 .badge-trophy {
   color: var(--accent);
