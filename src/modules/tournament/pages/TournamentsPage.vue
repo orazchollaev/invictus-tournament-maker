@@ -10,6 +10,7 @@ import CreateTournamentModal from "../components/CreateTournamentModal.vue"
 import type { Tournament, PlayoffSeedMode } from "../types"
 import { useSettingsStore } from "@/modules/settings/store"
 import { Trophy, X, Search, ChevronRight } from "lucide-vue-next"
+import { showConfirm } from "@/composables/useDialog"
 
 const router = useRouter()
 const teamsStore = useTeamsStore()
@@ -82,8 +83,9 @@ function openSeasonModal(t: Tournament) {
   }
 }
 
-function deleteTournament(id: string) {
-  if (confirm("Delete this tournament?")) store.remove(id)
+async function deleteTournament(id: string) {
+  if (await showConfirm("Delete this tournament?", { confirmLabel: "Delete", dangerous: true }))
+    store.remove(id)
 }
 
 function closeSeasonModal() {

@@ -7,6 +7,7 @@ import GroupDraw from "@/modules/tournament/components/GroupDraw.vue"
 import BtnGroup from "@/components/BtnGroup.vue"
 import AppModal from "@/components/AppModal.vue"
 import { Settings, X, Lock, Save } from "lucide-vue-next"
+import { showConfirm } from "@/composables/useDialog"
 
 type DrawType = "random" | "seeded" | "manual"
 
@@ -156,12 +157,12 @@ function handleRemoveTeam(teamId: string) {
   localTeamIds.value = localTeamIds.value.filter((id) => id !== teamId)
 }
 
-function handleRedraw() {
+async function handleRedraw() {
   if (drawType.value === "manual") {
     showManualDraw.value = true
     return
   }
-  if (!confirm("Reset the draw and regenerate?")) return
+  if (!(await showConfirm("Reset the draw and regenerate?", { confirmLabel: "Regenerate" }))) return
   emit("redraw", drawType.value === "seeded")
 }
 

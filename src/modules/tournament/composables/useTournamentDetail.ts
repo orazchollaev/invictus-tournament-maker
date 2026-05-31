@@ -5,6 +5,7 @@ import { useTournamentStore } from "@/modules/tournament/store"
 import type { PlayoffSeedMode, LegMode } from "@/modules/tournament/types"
 import confetti from "canvas-confetti"
 import { useSettingsStore } from "@/modules/settings/store"
+import { showConfirm } from "@/composables/useDialog"
 
 export function useTournamentDetail() {
   const route = useRoute()
@@ -22,14 +23,18 @@ export function useTournamentDetail() {
     return new Date(tournament.value.createdAt).toLocaleDateString()
   })
 
-  function deleteTournament() {
-    if (!confirm("Delete this tournament?")) return
+  async function deleteTournament() {
+    if (
+      !(await showConfirm("Delete this tournament?", { confirmLabel: "Delete", dangerous: true }))
+    )
+      return
     store.remove(route.params.id as string)
     router.push("/tournaments")
   }
 
-  function resetTournament() {
-    if (!confirm("Reset this tournament?")) return
+  async function resetTournament() {
+    if (!(await showConfirm("Reset this tournament?", { confirmLabel: "Reset", dangerous: true })))
+      return
     store.resetResults(route.params.id as string)
   }
 

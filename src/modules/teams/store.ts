@@ -3,6 +3,7 @@ import { ref } from "vue"
 import type { Team } from "./types"
 import { useTournamentStore } from "@/modules/tournament/store"
 import { MAX_TEAMS } from "@/constants"
+import { showAlert } from "@/composables/useDialog"
 
 const COLORS = [
   "#e63946",
@@ -45,7 +46,7 @@ export const useTeamsStore = defineStore("teams", () => {
 
   function remove(id: string) {
     if (isTeamInTournament(id)) {
-      alert("This team cannot be deleted because it is used in a tournament")
+      showAlert("This team cannot be deleted because it is used in a tournament")
       return
     }
 

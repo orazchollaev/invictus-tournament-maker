@@ -15,6 +15,7 @@ import AppModal from "@/components/AppModal.vue"
 import { useTournamentDetail } from "../composables/useTournamentDetail"
 import { useSettingsStore } from "@/modules/settings/store"
 import { Settings, Trophy, Lock, ArrowLeft, Zap } from "lucide-vue-next"
+import { showAlert } from "@/composables/useDialog"
 
 const route = useRoute()
 const router = useRouter()
@@ -70,7 +71,7 @@ const otherLeagues = computed(() =>
     .map((t) => ({ id: t.id, name: t.name, season: t.season }))
 )
 
-function openNewSeason() {
+async function openNewSeason() {
   const t = tournament.value
   if (!t) return
 
@@ -83,7 +84,7 @@ function openNewSeason() {
   // Single-tier league with relegation: show promotion/relegation modal
   if (t.format === "league" && (t.relegationCount ?? 0) > 0) {
     if (t.linkedLeagueId && !linkedLeague.value?.winnerId) {
-      alert(
+      await showAlert(
         `"${linkedLeague.value?.name ?? "Linked league"}" must finish before starting a new season.`
       )
       return

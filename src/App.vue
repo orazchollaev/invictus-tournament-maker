@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import AppHeader from "@/components/AppHeader.vue"
+import AppDialog from "@/components/AppDialog.vue"
 import { useSettingsStore } from "@/modules/settings/store"
 
 useSettingsStore()
@@ -15,5 +16,6 @@ useSettingsStore()
         </Transition>
       </RouterView>
     </main>
+    <AppDialog />
   </div>
 </template>

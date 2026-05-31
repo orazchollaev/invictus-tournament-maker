@@ -8,6 +8,7 @@ import { version } from "../../../../package.json"
 import BtnGroup from "@/components/BtnGroup.vue"
 import { ArrowLeft } from "lucide-vue-next"
 import { computed } from "vue"
+import { showAlert, showConfirm } from "@/composables/useDialog"
 
 const router = useRouter()
 
@@ -61,22 +62,25 @@ const formFactorVal = computed({
   },
 })
 
-function loadDataset(dataset: Dataset) {
-  const isConfirm = confirm(
-    `Load "${dataset.label}" dataset? This will replace your teams and clear all tournaments.`
+async function loadDataset(dataset: Dataset) {
+  const ok = await showConfirm(
+    `Load "${dataset.label}" dataset? This will replace your teams and clear all tournaments.`,
+    { confirmLabel: "Load", dangerous: true }
   )
-  if (!isConfirm) return
+  if (!ok) return
   localStorage.setItem("teams", JSON.stringify({ teams: dataset.teams }))
   localStorage.setItem("tournament", JSON.stringify({ tournaments: [], active: null }))
   location.reload()
 }
 
-function clearData() {
-  const isConfirm = confirm("Are you sure you want to clear all data? This cannot be undone.")
-  if (isConfirm) {
-    DATA_KEYS.forEach((k) => localStorage.removeItem(k))
-    location.reload()
-  }
+async function clearData() {
+  const ok = await showConfirm("Are you sure you want to clear all data? This cannot be undone.", {
+    confirmLabel: "Clear All",
+    dangerous: true,
+  })
+  if (!ok) return
+  DATA_KEYS.forEach((k) => localStorage.removeItem(k))
+  location.reload()
 }
 
 function exportData() {
@@ -110,7 +114,7 @@ function importData() {
         })
         location.reload()
       } catch {
-        alert("Invalid backup file.")
+        showAlert("Invalid backup file.")
       }
     }
     reader.readAsText(file)
