@@ -35,6 +35,22 @@ export const useSettingsStore = defineStore("settings", () => {
   watch(formFactorEnabled, (val) => setSimConfig({ formFactor: val }), { immediate: true })
   watch(homeAdvantage, (val) => setSimConfig({ homeAdvantage: val }), { immediate: true })
 
+  function resetAll() {
+    theme.value = "dark"
+    groupLegMode.value = "single"
+    knockoutLegMode.value = "single"
+    finalLegMode.value = "single"
+    surpriseFactor.value = 50
+    showTeamAbbr.value = true
+    confettiOnWin.value = true
+    newSeasonDrawType.value = "random"
+    newSeasonGroupDrawType.value = "random"
+    newSeasonPlayoffSeedMode.value = "cross"
+    tiebreaker.value = "goal-diff"
+    formFactorEnabled.value = false
+    homeAdvantage.value = 6
+  }
+
   return {
     theme,
     groupLegMode,
@@ -49,5 +65,6 @@ export const useSettingsStore = defineStore("settings", () => {
     tiebreaker,
     formFactorEnabled,
     homeAdvantage,
+    resetAll,
   }
 })

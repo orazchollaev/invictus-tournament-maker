@@ -500,6 +500,22 @@ function importData() {
       </div>
     </div>
 
+    <!-- ── Reset Settings ───────────────────────────── -->
+    <div class="section-box">
+      <h2>Reset Settings</h2>
+      <div class="section-body">
+        <div class="danger-setting-row" style="margin-top: 0; padding-top: 0; border-top: none">
+          <div class="setting-info">
+            <div class="setting-label">Reset to Defaults</div>
+            <div class="setting-desc">
+              Restore all settings to their original values. Teams and tournaments are not affected.
+            </div>
+          </div>
+          <button @click="settings.resetAll()">Reset</button>
+        </div>
+      </div>
+    </div>
+
     <p class="version">v{{ version }}</p>
   </div>
 </template>
