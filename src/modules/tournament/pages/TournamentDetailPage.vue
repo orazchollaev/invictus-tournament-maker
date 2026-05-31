@@ -151,6 +151,7 @@ function handleMultiTierSeasonConfirm() {
 }
 
 type MainTab = "groups" | "bracket" | "league" | "stats" | "participants"
+const VALID_TABS: MainTab[] = ["groups", "bracket", "league", "stats", "participants"]
 
 function defaultTab(): MainTab {
   const fmt = tournament.value?.format
@@ -159,7 +160,12 @@ function defaultTab(): MainTab {
   return "bracket"
 }
 
-const activeTab = ref<MainTab>(defaultTab())
+function tabFromQuery(): MainTab {
+  const q = route.query.tab as string
+  return (VALID_TABS.includes(q as MainTab) ? q : defaultTab()) as MainTab
+}
+
+const activeTab = ref<MainTab>(tabFromQuery())
 const isGroupFormat = computed(() => tournament.value?.format === "group+bracket")
 const isLeagueFormat = computed(() => tournament.value?.format === "league")
 const isFinished = computed(
@@ -169,15 +175,22 @@ const isFinished = computed(
 watch(
   () => tournament.value?.groupsDone,
   (done) => {
-    if (done) activeTab.value = "bracket"
+    if (done) changeTab("bracket")
   }
 )
 
 watch(
   () => route.params.id,
   () => {
-    activeTab.value = defaultTab()
+    activeTab.value = tabFromQuery()
     activeTierIdx.value = 0
+  }
+)
+
+watch(
+  () => route.query.tab,
+  () => {
+    activeTab.value = tabFromQuery()
   }
 )
 
@@ -203,6 +216,7 @@ function changeTab(tab: MainTab, tierIdx?: number) {
   if (tab === "league" && tierIdx !== undefined) {
     activeTierIdx.value = tierIdx
   }
+  router.replace({ query: { tab } })
 }
 </script>
 
@@ -291,7 +305,7 @@ function changeTab(tab: MainTab, tierIdx?: number) {
             <button
               class="phase-tab"
               :class="{ active: activeTab === 'league' }"
-              @click="activeTab = 'league'"
+              @click="changeTab('league')"
             >
               Table
             </button>
@@ -302,7 +316,7 @@ function changeTab(tab: MainTab, tierIdx?: number) {
           <button
             class="phase-tab"
             :class="{ active: activeTab === 'groups' }"
-            @click="activeTab = 'groups'"
+            @click="changeTab('groups')"
           >
             Groups
           </button>
@@ -310,7 +324,7 @@ function changeTab(tab: MainTab, tierIdx?: number) {
             class="phase-tab"
             :class="{ active: activeTab === 'bracket', disabled: !tournament.groupsDone }"
             :disabled="!tournament.groupsDone"
-            @click="tournament.groupsDone && (activeTab = 'bracket')"
+            @click="tournament.groupsDone && changeTab('bracket')"
           >
             Knockout
             <Lock v-if="!tournament.groupsDone" :size="13" class="tab-lock" />
@@ -321,7 +335,7 @@ function changeTab(tab: MainTab, tierIdx?: number) {
           <button
             class="phase-tab"
             :class="{ active: activeTab === 'bracket' }"
-            @click="activeTab = 'bracket'"
+            @click="changeTab('bracket')"
           >
             Bracket
           </button>
@@ -330,7 +344,7 @@ function changeTab(tab: MainTab, tierIdx?: number) {
           class="phase-tab"
           :class="{ active: activeTab === 'stats', disabled: !hasAnyResults }"
           :disabled="!hasAnyResults"
-          @click="hasAnyResults && (activeTab = 'stats')"
+          @click="hasAnyResults && changeTab('stats')"
         >
           Statistics
           <Lock v-if="!hasAnyResults" :size="13" class="tab-lock" />
@@ -338,7 +352,7 @@ function changeTab(tab: MainTab, tierIdx?: number) {
         <button
           class="phase-tab"
           :class="{ active: activeTab === 'participants' }"
-          @click="activeTab = 'participants'"
+          @click="changeTab('participants')"
         >
           Participants
         </button>
