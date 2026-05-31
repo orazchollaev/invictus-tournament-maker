@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from "vue"
-import type { Tournament } from "../types"
+import type { Tournament, League } from "../types"
 import type { Team } from "@/modules/teams/types"
 import { useTournamentStats } from "../composables/useTournamentStats"
 import LeagueProgressChart from "./LeagueProgressChart.vue"
@@ -16,45 +16,76 @@ const { topScorers, bestDefense, hasStats } = useTournamentStats(
 )
 
 const isLeague = computed(() => props.tournament.format === "league")
+const isGroupBracket = computed(() => props.tournament.format === "group+bracket")
 const isMultiTier = computed(() => (props.tournament.tiers?.length ?? 0) > 1)
-const activeTierIdx = ref(0)
 
-const activeLeague = computed(() => {
-  if (!isLeague.value) return undefined
-  if (isMultiTier.value && props.tournament.tiers) {
-    return props.tournament.tiers[activeTierIdx.value]?.league
+const activeIdx = ref(0)
+
+// Convert a flat group matches array into League-like matchdays for the chart
+function groupToLeague(groupIdx: number): League | undefined {
+  const group = props.tournament.groups?.[groupIdx]
+  if (!group) return undefined
+  const n = group.teamIds.length
+  const mpr = Math.max(1, Math.floor(n / 2))
+  const matchdays = []
+  for (let i = 0; i < group.matches.length; i += mpr) {
+    matchdays.push({
+      name: `Round ${Math.floor(i / mpr) + 1}`,
+      matches: group.matches.slice(i, i + mpr),
+    })
   }
-  return props.tournament.league
+  return { matchdays, standings: group.standings, legMode: "single" }
+}
+
+const activeLeague = computed<League | undefined>(() => {
+  if (isLeague.value) {
+    if (isMultiTier.value && props.tournament.tiers)
+      return props.tournament.tiers[activeIdx.value]?.league
+    return props.tournament.league
+  }
+  if (isGroupBracket.value) return groupToLeague(activeIdx.value)
+  return undefined
 })
 
-const activeTierTitle = computed(() => {
-  if (isMultiTier.value && props.tournament.tiers) {
-    return props.tournament.tiers[activeTierIdx.value]?.name ?? "League"
-  }
-  return "League"
+const showChart = computed(() => isLeague.value || isGroupBracket.value)
+
+const tabs = computed(() => {
+  if (isLeague.value && isMultiTier.value && props.tournament.tiers)
+    return props.tournament.tiers.map((t) => t.name)
+  if (isGroupBracket.value && props.tournament.groups)
+    return props.tournament.groups.map((g) => g.name)
+  return []
+})
+
+const chartTitle = computed(() => {
+  if (isLeague.value && isMultiTier.value && props.tournament.tiers)
+    return (props.tournament.tiers[activeIdx.value]?.name ?? "League") + " — Standings Progress"
+  if (isGroupBracket.value && props.tournament.groups)
+    return (props.tournament.groups[activeIdx.value]?.name ?? "Group") + " — Standings Progress"
+  return "Standings Progress"
 })
 </script>
 
 <template>
   <div v-if="hasStats" class="stats-wrap">
-    <!-- League progress chart -->
-    <template v-if="isLeague && activeLeague">
-      <div v-if="isMultiTier && tournament.tiers" class="tier-tabs">
+    <!-- League / Group progress chart -->
+    <template v-if="showChart && activeLeague">
+      <div v-if="tabs.length > 1" class="tier-tabs">
         <button
-          v-for="(tier, ti) in tournament.tiers"
+          v-for="(tab, ti) in tabs"
           :key="ti"
           class="tier-tab"
-          :class="{ active: activeTierIdx === ti }"
-          @click="activeTierIdx = ti"
+          :class="{ active: activeIdx === ti }"
+          @click="activeIdx = ti"
         >
-          {{ tier.name }}
+          {{ tab }}
         </button>
       </div>
       <LeagueProgressChart
-        :key="activeTierIdx"
+        :key="activeIdx"
         :league="activeLeague"
         :teams="teams"
-        :title="activeTierTitle + ' — Standings Progress'"
+        :title="chartTitle"
       />
     </template>
 

@@ -520,7 +520,17 @@ function importData() {
       </div>
     </div>
 
-    <p class="version">v{{ version }}</p>
+    <div class="version-row">
+      <span class="version">v{{ version }}</span>
+      <a
+        class="changelog-btn"
+        href="https://github.com/orazchollaev/tournament-sim/blob/main/CHANGELOG.md"
+        target="_blank"
+        rel="noopener"
+      >
+        Changelog
+      </a>
+    </div>
   </div>
 </template>
 
@@ -705,10 +715,31 @@ function importData() {
   color: var(--danger);
 }
 
+.version-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
 .version {
   font-size: 12px;
   color: var(--text-muted);
-  margin-top: 8px;
+}
+
+.changelog-btn {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 2px;
+  border: 1px solid var(--border-light);
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: all 0.15s;
+}
+
+.changelog-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
 }
 
 @media (max-width: 600px) {
