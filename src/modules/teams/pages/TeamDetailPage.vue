@@ -23,7 +23,7 @@ interface MatchRow {
   tournamentName: string
   tournamentSeason: number
   round: string
-  roundPhase: "group" | "knockout"
+  roundPhase: "group" | "knockout" | "league"
   match:
     | Match
     | { id: string; homeId: string; awayId: string; result: { home: number; away: number } }
@@ -79,6 +79,58 @@ const allMatches = computed((): MatchRow[] => {
             penGoalsAgainst: null,
             outcome,
           })
+        }
+      }
+    }
+
+    // ── League matches (single league or multi-tier) ─────────
+    if (t.format === "league") {
+      const sources: {
+        matchdays: import("../../../modules/tournament/types").LeagueMatchday[]
+        tierName?: string
+      }[] = []
+      if (t.tiers) {
+        for (const tier of t.tiers) {
+          if (tier.teamIds.includes(teamId.value)) {
+            sources.push({ matchdays: tier.league.matchdays, tierName: tier.name })
+          }
+        }
+      } else if (t.league) {
+        sources.push({ matchdays: t.league.matchdays })
+      }
+
+      for (const { matchdays, tierName } of sources) {
+        for (const matchday of matchdays) {
+          for (const match of matchday.matches) {
+            const isHome = match.homeId === teamId.value
+            const isAway = match.awayId === teamId.value
+            if (!isHome && !isAway) continue
+            if (!match.result) continue
+
+            const { home, away } = match.result
+            const goalsFor = isHome ? home : away
+            const goalsAgainst = isHome ? away : home
+            const opponentId = isHome ? match.awayId : match.homeId
+
+            let outcome: "W" | "D" | "L"
+            if (goalsFor > goalsAgainst) outcome = "W"
+            else if (goalsFor < goalsAgainst) outcome = "L"
+            else outcome = "D"
+
+            results.push({
+              tournamentName: t.name,
+              tournamentSeason: t.season,
+              round: tierName ? `${tierName} · ${matchday.name}` : matchday.name,
+              roundPhase: "league",
+              match: match as any,
+              opponentId,
+              goalsFor,
+              goalsAgainst,
+              penGoalsFor: null,
+              penGoalsAgainst: null,
+              outcome,
+            })
+          }
         }
       }
     }
@@ -421,9 +473,15 @@ const seasonStats = computed(() =>
               <span class="match-round">
                 <span
                   class="phase-chip"
-                  :class="m.roundPhase === 'group' ? 'chip-group' : 'chip-ko'"
+                  :class="
+                    m.roundPhase === 'group'
+                      ? 'chip-group'
+                      : m.roundPhase === 'league'
+                        ? 'chip-league'
+                        : 'chip-ko'
+                  "
                 >
-                  {{ m.roundPhase === "group" ? "GS" : "KO" }}
+                  {{ m.roundPhase === "group" ? "GS" : m.roundPhase === "league" ? "LG" : "KO" }}
                 </span>
                 {{ m.round }}
               </span>
@@ -665,6 +723,11 @@ const seasonStats = computed(() =>
   background: color-mix(in srgb, var(--danger) 12%, transparent);
   color: var(--danger);
   border: 1px solid color-mix(in srgb, var(--danger) 25%, transparent);
+}
+.chip-league {
+  background: color-mix(in srgb, var(--success) 12%, transparent);
+  color: var(--success);
+  border: 1px solid color-mix(in srgb, var(--success) 25%, transparent);
 }
 
 @media (max-width: 600px) {
