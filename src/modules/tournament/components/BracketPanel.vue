@@ -23,19 +23,15 @@ const bracketWrapperRef = ref<HTMLElement | null>(null)
 const isExporting = ref(false)
 
 async function exportPng() {
-  const el = bracketWrapperRef.value
-  if (!el || isExporting.value) return
+  const wrapper = bracketWrapperRef.value
+  if (!wrapper || isExporting.value) return
   isExporting.value = true
   const prevZoom = zoom.value
   zoom.value = 1
   await nextTick()
   try {
-    const dataUrl = await toPng(el, {
-      pixelRatio: 2,
-      width: el.scrollWidth,
-      height: el.scrollHeight,
-      style: { overflow: "visible", maxHeight: "none" },
-    })
+    const el = (wrapper.querySelector(".bracket") as HTMLElement) ?? wrapper
+    const dataUrl = await toPng(el, { pixelRatio: 2 })
     const link = document.createElement("a")
     link.download = `${props.tournament.name}-S${props.tournament.season}.png`
     link.href = dataUrl
@@ -269,6 +265,7 @@ onUnmounted(() => {
 
 .bracket-wrapper {
   max-height: clamp(400px, 70vh, 800px);
+  min-height: 300px;
   padding: 0 10px;
   overflow: auto;
 }
