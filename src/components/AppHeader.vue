@@ -90,7 +90,6 @@ const { needRefresh, applyUpdate } = usePwaUpdate()
   align-items: center;
   gap: 8px;
   text-decoration: none;
-  margin-right: 12px;
 }
 .brand-wordmark {
   height: 30px;

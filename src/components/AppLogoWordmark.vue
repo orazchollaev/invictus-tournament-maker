@@ -1,7 +1,7 @@
 <template>
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 900 190"
+    viewBox="0 0 650 190"
     fill="none"
     aria-label="Invictus - Tournament Maker"
   >
