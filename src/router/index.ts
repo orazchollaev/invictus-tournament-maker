@@ -14,7 +14,7 @@ import NotFoundPage from "../modules/core/pages/NotFoundPage.vue"
 export default createRouter({
   history: createWebHashHistory(),
   routes: [
-    { path: "/", redirect: "/teams" },
+    { path: "/", redirect: "/tournaments" },
     { path: "/teams", component: TeamsPage },
     { path: "/teams/:id", component: TeamDetailPage },
     { path: "/tournaments", component: TournamentsPage },

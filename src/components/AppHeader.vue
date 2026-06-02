@@ -25,8 +25,8 @@ const { needRefresh, applyUpdate } = usePwaUpdate()
       </Transition>
 
       <nav class="main-nav">
-        <RouterLink to="/teams">Teams</RouterLink>
         <RouterLink to="/tournaments">Tournaments</RouterLink>
+        <RouterLink to="/teams">Teams</RouterLink>
         <RouterLink to="/history">
           <History :size="13" class="nav-icon" />
           History
