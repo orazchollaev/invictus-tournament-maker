@@ -9,6 +9,7 @@
 html {
   scrollbar-width: thin;
   scrollbar-color: var(--border) var(--bg);
+  scrollbar-gutter: stable;
 }
 
 body {
