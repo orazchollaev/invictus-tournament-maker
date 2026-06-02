@@ -1,0 +1,95 @@
+button {
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  padding: 5px 13px;
+  border-radius: var(--radius);
+  color: var(--text);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition:
+    background 0.12s,
+    border-color 0.12s,
+    color 0.12s;
+}
+
+button:hover {
+  background: var(--border-light);
+  border-color: var(--border);
+}
+
+button.primary {
+  background: var(--accent);
+  background-image: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.08));
+  color: #fff;
+  border-color: var(--accent-hover);
+}
+
+button.primary:hover {
+  background: var(--accent-hover);
+  background-image: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.1));
+}
+
+button.danger {
+  color: var(--danger);
+  border-color: var(--danger);
+}
+
+button.danger:hover {
+  background: color-mix(in srgb, var(--danger) 10%, var(--surface));
+}
+
+button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+input,
+select {
+  font-family: var(--font-ui);
+  font-size: 13px;
+  border: 1px solid var(--border);
+  padding: 5px 9px;
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--text);
+  transition: border-color 0.12s;
+}
+
+input:focus,
+select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-subtle);
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th,
+td {
+  border: 1px solid var(--border-light);
+  padding: 7px 10px;
+  text-align: left;
+}
+
+th {
+  background: var(--bg);
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+}
