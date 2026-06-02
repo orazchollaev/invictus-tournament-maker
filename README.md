@@ -2,7 +2,7 @@
 
 <img src="./public/favicon.svg" width="60" />
 
-# Tournament Sim
+# Invictus - Tournament Maker
 
 A browser-based tournament bracket simulator built with Vue 3 and TypeScript.
 

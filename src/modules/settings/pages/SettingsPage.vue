@@ -98,7 +98,7 @@ function exportData() {
   const url = URL.createObjectURL(blob)
   const a = document.createElement("a")
   a.href = url
-  a.download = `tournament-sim-v${version}-${new Date().toISOString().slice(0, 10)}.json`
+  a.download = `invictus-v${version}-${new Date().toISOString().slice(0, 10)}.json`
   a.click()
   URL.revokeObjectURL(url)
 }
@@ -544,7 +544,7 @@ function importData() {
       <span class="version">v{{ version }}</span>
       <a
         class="changelog-btn"
-        href="https://github.com/orazchollaev/tournament-sim/blob/main/CHANGELOG.md"
+        href="https://github.com/orazchollaev/invictus-tournament-maker/blob/main/CHANGELOG.md"
         target="_blank"
         rel="noopener"
       >

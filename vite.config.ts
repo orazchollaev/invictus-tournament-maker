@@ -13,9 +13,9 @@ export default defineConfig({
         navigateFallback: "index.html",
       },
       manifest: {
-        name: "Tournament Sim",
-        short_name: "TournamentSim",
-        description: "Tournament Simulator",
+        name: "Invictus - Tournament Maker",
+        short_name: "Invictus",
+        description: "Tournament simulator and manager for football",
         theme_color: "#0d9488",
         background_color: "#d1d6e0",
         display: "standalone",

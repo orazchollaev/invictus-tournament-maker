@@ -4,7 +4,7 @@ import { Settings, Star, Trophy, History, RefreshCw, FolderGit2 } from "@lucide/
 import { useSettingsStore } from "@/modules/settings/store"
 import { usePwaUpdate } from "@/composables/usePwaUpdate"
 
-const GITHUB_URL = "https://github.com/orazchollaev/tournament-sim"
+const GITHUB_URL = "https://github.com/orazchollaev/invictus-tournament-maker"
 const settings = useSettingsStore()
 const { needRefresh, applyUpdate } = usePwaUpdate()
 </script>
