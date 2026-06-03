@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, watch } from "vue"
 import { useRoute, useRouter } from "vue-router"
+import { useI18n } from "vue-i18n"
 
 import BracketPanel from "@/modules/tournament/components/BracketPanel.vue"
 import GroupStage from "@/modules/tournament/components/GroupStage.vue"
@@ -16,9 +17,8 @@ import { useTournamentDetail } from "../composables/useTournamentDetail"
 import { useSettingsStore } from "@/modules/settings/store"
 import { Settings, Trophy, Lock, ArrowLeft, Zap, RefreshCw } from "@lucide/vue"
 import { showAlert } from "@/composables/useDialog"
-import { useI18n } from "vue-i18n"
 
-const { t } = useI18n()
+const { t: trns } = useI18n()
 const route = useRoute()
 const router = useRouter()
 const settings = useSettingsStore()
@@ -70,7 +70,7 @@ async function openNewSeason() {
   if (t.format === "league" && (t.relegationCount ?? 0) > 0) {
     if (t.linkedLeagueId && !linkedLeague.value?.winnerId) {
       await showAlert(
-        t("tournament.linkedLeagueNotFinished", {
+        trns("tournament.linkedLeagueNotFinished", {
           name: linkedLeague.value?.name ?? "Linked league",
         })
       )
@@ -234,10 +234,10 @@ function changeTab(tab: MainTab, tierIdx?: number) {
   <div class="page">
     <div v-if="!tournament">
       <p class="not-found">
-        {{ t("tournament.notFound") }}
+        {{ trns("tournament.notFound") }}
         <RouterLink to="/tournaments">
           <ArrowLeft :size="14" />
-          {{ t("common.back") }}
+          {{ trns("common.back") }}
         </RouterLink>
       </p>
     </div>
@@ -246,7 +246,7 @@ function changeTab(tab: MainTab, tierIdx?: number) {
         <div class="t-header-top">
           <RouterLink to="/tournaments" class="back-link">
             <ArrowLeft :size="14" />
-            {{ t("nav.tournaments") }}
+            {{ trns("nav.tournaments") }}
           </RouterLink>
           <div class="t-header-actions">
             <Transition name="fade">
@@ -261,7 +261,7 @@ function changeTab(tab: MainTab, tierIdx?: number) {
             </Transition>
             <button v-if="isFinished" class="primary new-season-btn" @click="openNewSeason">
               <RefreshCw :size="13" />
-              <span class="btn-label">{{ t("tournament.newSeason") }}</span>
+              <span class="btn-label">{{ trns("tournament.newSeason") }}</span>
             </button>
             <button
               v-if="!isFinished"
@@ -269,14 +269,14 @@ function changeTab(tab: MainTab, tierIdx?: number) {
               @click="store.simulateTournament(tournament!.id)"
             >
               <Zap :size="13" />
-              <span class="btn-label">{{ t("tournament.simulateAll") }}</span>
+              <span class="btn-label">{{ trns("tournament.simulateAll") }}</span>
             </button>
             <button
               class="settings-btn"
               @click="router.push(`/tournaments/${tournament!.id}/settings`)"
             >
               <Settings :size="14" />
-              <span class="btn-label">{{ t("tournament.settings") }}</span>
+              <span class="btn-label">{{ trns("tournament.settings") }}</span>
             </button>
           </div>
         </div>
@@ -286,16 +286,16 @@ function changeTab(tab: MainTab, tierIdx?: number) {
           <span class="t-format-tag">
             {{
               tournament.format === "group+bracket"
-                ? t("tournaments.format.groupsKoLong")
+                ? trns("tournaments.format.groupsKoLong")
                 : tournament.format === "league"
-                  ? t("tournaments.format.league")
-                  : t("tournaments.format.bracket")
+                  ? trns("tournaments.format.league")
+                  : trns("tournaments.format.bracket")
             }}
           </span>
         </h1>
         <span class="t-meta">
-          {{ t("common.teams", { n: tournament.teamIds.length }) }} ·
-          {{ t("tournament.header.created", { date: dateStr }) }}
+          {{ trns("common.teams", { n: tournament.teamIds.length }) }} ·
+          {{ trns("tournament.header.created", { date: dateStr }) }}
         </span>
       </div>
 
@@ -321,7 +321,7 @@ function changeTab(tab: MainTab, tierIdx?: number) {
               :class="{ active: activeTab === 'league' }"
               @click="changeTab('league')"
             >
-              {{ t("tournament.tabs.league") }}
+              {{ trns("tournament.tabs.league") }}
             </button>
           </template>
         </template>
@@ -332,7 +332,7 @@ function changeTab(tab: MainTab, tierIdx?: number) {
             :class="{ active: activeTab === 'groups' }"
             @click="changeTab('groups')"
           >
-            {{ t("tournament.tabs.groups") }}
+            {{ trns("tournament.tabs.groups") }}
           </button>
 
           <button
@@ -341,7 +341,7 @@ function changeTab(tab: MainTab, tierIdx?: number) {
             :disabled="!tournament.groupsDone"
             @click="tournament.groupsDone && changeTab('bracket')"
           >
-            {{ t("tournament.tabs.bracket") }}
+            {{ trns("tournament.tabs.bracket") }}
             <Lock v-if="!tournament.groupsDone" :size="13" class="tab-lock" />
           </button>
         </template>
@@ -352,7 +352,7 @@ function changeTab(tab: MainTab, tierIdx?: number) {
             :class="{ active: activeTab === 'bracket' }"
             @click="changeTab('bracket')"
           >
-            {{ t("tournament.tabs.bracket") }}
+            {{ trns("tournament.tabs.bracket") }}
           </button>
         </template>
         <button
@@ -361,7 +361,7 @@ function changeTab(tab: MainTab, tierIdx?: number) {
           :disabled="!hasAnyResults"
           @click="hasAnyResults && changeTab('stats')"
         >
-          {{ t("tournament.tabs.stats") }}
+          {{ trns("tournament.tabs.stats") }}
           <Lock v-if="!hasAnyResults" :size="13" class="tab-lock" />
         </button>
         <button
@@ -369,7 +369,7 @@ function changeTab(tab: MainTab, tierIdx?: number) {
           :class="{ active: activeTab === 'participants' }"
           @click="changeTab('participants')"
         >
-          {{ t("tournament.tabs.participants") }}
+          {{ trns("tournament.tabs.participants") }}
         </button>
       </div>
 
@@ -424,14 +424,14 @@ function changeTab(tab: MainTab, tierIdx?: number) {
               :class="{ active: groupSubTab === 'groups' }"
               @click="groupSubTab = 'groups'"
             >
-              {{ t("tournament.tabs.groups") }}
+              {{ trns("tournament.tabs.groups") }}
             </button>
             <button
               class="gs-subtab"
               :class="{ active: groupSubTab === 'wildcards' }"
               @click="groupSubTab = 'wildcards'"
             >
-              {{ t("tournament.tabs.wildcards") }}
+              {{ trns("tournament.tabs.wildcards") }}
             </button>
           </div>
           <div class="section-body gs-body">
@@ -454,7 +454,9 @@ function changeTab(tab: MainTab, tierIdx?: number) {
           <BracketPanel
             :tournament="tournament"
             :teams="allTeams"
-            :title="isGroupFormat ? t('tournament.tabs.bracket') : t('tournament.tabs.bracket')"
+            :title="
+              isGroupFormat ? trns('tournament.tabs.bracket') : trns('tournament.tabs.bracket')
+            "
           />
         </div>
         <div v-else-if="activeTab === 'stats'" key="stats" class="section-box">
@@ -537,9 +539,9 @@ function changeTab(tab: MainTab, tierIdx?: number) {
       </div>
       <template #footer>
         <button class="primary" @click="handleMultiTierSeasonConfirm">
-          {{ t("tournament.newSeason") }} →
+          {{ trns("tournament.newSeason") }} →
         </button>
-        <button @click="showMultiTierModal = false">{{ t("common.cancel") }}</button>
+        <button @click="showMultiTierModal = false">{{ trns("common.cancel") }}</button>
       </template>
     </AppModal>
 
