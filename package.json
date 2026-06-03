@@ -29,11 +29,13 @@
     "html-to-image": "^1.11.13",
     "pinia": "^3.0.4",
     "pinia-plugin-persistedstate-2": "^2.0.32",
+    "sharp": "^0.34.5",
     "vue": "^3.5.35",
     "vue-router": "^5.1.0",
     "workbox-window": "^7.4.1"
   },
   "devDependencies": {
+    "@capacitor/assets": "^3.0.5",
     "@commitlint/cli": "^21.0.2",
     "@commitlint/config-conventional": "^21.0.2",
     "@release-it/conventional-changelog": "^11.0.1",
