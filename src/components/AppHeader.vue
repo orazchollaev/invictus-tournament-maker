@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import AppLogoWordmark from "./AppLogoWordmark.vue"
 import { Settings, Star, Trophy, History, RefreshCw, FolderGit2 } from "@lucide/vue"
 import { useSettingsStore } from "@/modules/settings/store"
 import { usePwaUpdate } from "@/composables/usePwaUpdate"
+import AppLogo from "./AppLogo.vue"
 
 const GITHUB_URL = "https://github.com/orazchollaev/invictus-tournament-maker"
 const settings = useSettingsStore()
@@ -13,7 +13,8 @@ const { needRefresh, applyUpdate } = usePwaUpdate()
   <header class="site-header">
     <div class="header-inner">
       <RouterLink to="/" class="brand">
-        <AppLogoWordmark class="brand-wordmark" />
+        <AppLogo class="brand-logo" />
+        <span class="brand-name">Invictus</span>
       </RouterLink>
 
       <Transition name="wc-badge">
@@ -88,13 +89,19 @@ const { needRefresh, applyUpdate } = usePwaUpdate()
 .brand {
   display: flex;
   align-items: center;
-  gap: 8px;
   text-decoration: none;
 }
-.brand-wordmark {
-  height: 30px;
-  width: auto;
+.brand-logo {
+  height: 50px;
+  width: 50px;
   flex-shrink: 0;
+  color: var(--accent);
+}
+.brand-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.01em;
 }
 
 /* Main nav */
@@ -270,8 +277,9 @@ const { needRefresh, applyUpdate } = usePwaUpdate()
     padding: 0 12px;
     height: 48px;
   }
-  .brand-wordmark {
-    height: 24px;
+  .brand-logo {
+    height: 42px;
+    width: 42px;
   }
   .main-nav {
     display: none;

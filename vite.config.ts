@@ -22,14 +22,14 @@ export default defineConfig({
         orientation: "any",
         icons: [
           {
-            src: "pwa-192x192.png",
+            src: "icon-192.webp",
             sizes: "192x192",
-            type: "image/png",
+            type: "image/webp",
           },
           {
-            src: "pwa-512x512.png",
+            src: "icon-512.webp",
             sizes: "512x512",
-            type: "image/png",
+            type: "image/webp",
             purpose: "any maskable",
           },
         ],

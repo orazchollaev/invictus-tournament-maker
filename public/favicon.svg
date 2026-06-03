@@ -1,20 +1,21 @@
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="240"
-    height="240"
-    viewBox="0 0 240 240"
-    fill="none"
-  >
-    <g stroke="#94a3b8" stroke-width="20" stroke-linecap="round" stroke-linejoin="round">
-      <line x1="60" y1="30" x2="60" y2="210" />
-      <line x1="30" y1="50" x2="60" y2="50" />
-      <line x1="30" y1="90" x2="60" y2="90" />
-      <line x1="30" y1="150" x2="60" y2="150" />
-      <line x1="30" y1="190" x2="60" y2="190" />
-      <line x1="60" y1="70" x2="100" y2="70" />
-      <line x1="60" y1="170" x2="100" y2="170" />
-      <line x1="100" y1="70" x2="100" y2="170" />
-      <line x1="100" y1="120" x2="200" y2="120" />
-    </g>
-    <circle cx="210" cy="120" r="13" fill="#14b8a6" />
-  </svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="Invectus tournament simulator app icon">
+  <defs>
+    <linearGradient id="inv-bg" x1="0" y1="0" x2="0.85" y2="1">
+      <stop offset="0" stop-color="#15bda9"></stop>
+      <stop offset="0.55" stop-color="#0d9488"></stop>
+      <stop offset="1" stop-color="#0a6b62"></stop>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="100" height="100" rx="23" fill="url(#inv-bg)"></rect>
+  
+  <g fill="none" stroke="#ffffff" stroke-opacity="0.42" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M22 28 H36 M22 44 H36 M22 56 H36 M22 72 H36"></path>
+    <path d="M36 28 V44 M36 56 V72"></path>
+    <path d="M36 36 H52 M36 64 H52"></path>
+    <path d="M52 36 V64"></path>
+    <path d="M52 50 H68"></path>
+  </g>
+  
+  <path d="M22 28 H36 V36 H52 V50 H68" fill="none" stroke="#ffffff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"></path>
+  <circle cx="74" cy="50" r="6.5" fill="#ffffff"></circle>
+</svg>
