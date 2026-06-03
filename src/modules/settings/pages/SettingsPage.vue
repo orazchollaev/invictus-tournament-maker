@@ -762,7 +762,7 @@ function importData() {
   color: var(--accent);
 }
 
-@media (max-width: 600px) {
+@media (max-width: 640px) {
   .setting-row {
     flex-direction: column;
     align-items: flex-start;

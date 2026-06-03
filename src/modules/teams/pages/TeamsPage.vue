@@ -109,7 +109,7 @@ const filtered = computed(() => {
   flex-shrink: 0;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 640px) {
   .t-body {
     flex: 1;
   }

@@ -1000,7 +1000,7 @@ function doCreate(orderedIds?: string[]) {
   border-color: var(--border);
 }
 
-@media (max-width: 600px) {
+@media (max-width: 640px) {
   .ctp-format-row {
     grid-template-columns: 1fr;
   }

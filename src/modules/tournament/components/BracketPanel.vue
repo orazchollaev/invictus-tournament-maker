@@ -427,7 +427,7 @@ onUnmounted(() => {
   .bracket-mobile-tabs {
     display: flex;
     position: fixed;
-    bottom: 56px; /* above main bottom nav */
+    bottom: var(--bottom-nav-height); /* above main bottom nav */
     left: 0;
     right: 0;
     z-index: 90;
@@ -474,9 +474,9 @@ onUnmounted(() => {
     display: none;
   }
 
-  /* Extra padding so content isn't hidden behind the bracket tab bar */
+  /* Extra padding so content isn't hidden behind the bracket tab bar + bottom nav safe area */
   .bracket-body {
-    padding-bottom: 52px;
+    padding-bottom: calc(52px + env(safe-area-inset-bottom));
   }
 
   .full-bracket-modal {

@@ -38,7 +38,7 @@ import { Trophy, Users, History, Settings } from "@lucide/vue"
     z-index: 100;
     background: var(--surface);
     border-top: 1px solid var(--border-light);
-    height: 56px;
+    height: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom));
     padding-bottom: env(safe-area-inset-bottom);
   }
 
