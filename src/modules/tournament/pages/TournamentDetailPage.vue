@@ -5,6 +5,7 @@ import { useRoute, useRouter } from "vue-router"
 import BracketPanel from "@/modules/tournament/components/BracketPanel.vue"
 import GroupStage from "@/modules/tournament/components/GroupStage.vue"
 import LeagueView from "@/modules/tournament/components/LeagueView.vue"
+import WildcardRankings from "@/modules/tournament/components/WildcardRankings.vue"
 import ParticipantsTable from "@/modules/tournament/components/ParticipantsTable.vue"
 import ManualDraw from "@/modules/tournament/components/ManualDraw.vue"
 import GroupDraw from "@/modules/tournament/components/GroupDraw.vue"
@@ -166,7 +167,11 @@ function tabFromQuery(): MainTab {
 }
 
 const activeTab = ref<MainTab>(tabFromQuery())
+const groupSubTab = ref<"groups" | "wildcards">("groups")
 const isGroupFormat = computed(() => tournament.value?.format === "group+bracket")
+const hasWildcards = computed(
+  () => isGroupFormat.value && (tournament.value?.wildcardCount ?? 0) > 0
+)
 const isLeagueFormat = computed(() => tournament.value?.format === "league")
 const isFinished = computed(
   () => !!tournament.value && store.isTournamentFinished(tournament.value.id)
@@ -184,6 +189,7 @@ watch(
   () => {
     activeTab.value = tabFromQuery()
     activeTierIdx.value = 0
+    groupSubTab.value = "groups"
   }
 )
 
@@ -321,6 +327,7 @@ function changeTab(tab: MainTab, tierIdx?: number) {
           >
             Groups
           </button>
+
           <button
             class="phase-tab"
             :class="{ active: activeTab === 'bracket', disabled: !tournament.groupsDone }"
@@ -404,8 +411,25 @@ function changeTab(tab: MainTab, tierIdx?: number) {
           </div>
         </div>
         <div v-else-if="activeTab === 'groups'" key="groups" class="section-box">
+          <div v-if="hasWildcards" class="gs-subtab-row">
+            <button
+              class="gs-subtab"
+              :class="{ active: groupSubTab === 'groups' }"
+              @click="groupSubTab = 'groups'"
+            >
+              Groups
+            </button>
+            <button
+              class="gs-subtab"
+              :class="{ active: groupSubTab === 'wildcards' }"
+              @click="groupSubTab = 'wildcards'"
+            >
+              Wildcards
+            </button>
+          </div>
           <div class="section-body gs-body">
             <GroupStage
+              v-if="!hasWildcards || groupSubTab === 'groups'"
               :tournament="tournament"
               :teams="allTeams"
               @set-result="(gi, mi, h, a) => store.setGroupResult(tournament!.id, gi, mi, h, a)"
@@ -416,6 +440,7 @@ function changeTab(tab: MainTab, tierIdx?: number) {
               @sim-all="store.simAllGroups(tournament!.id)"
               @advance="store.advanceToBracket(tournament!.id)"
             />
+            <WildcardRankings v-else :tournament="tournament" :teams="allTeams" />
           </div>
         </div>
         <div v-else-if="activeTab === 'bracket'" key="bracket">
@@ -535,6 +560,32 @@ function changeTab(tab: MainTab, tierIdx?: number) {
 </template>
 
 <style scoped>
+.gs-subtab-row {
+  display: flex;
+  gap: 2px;
+  padding: 6px 8px 0;
+  border-bottom: 1px solid var(--border-light);
+}
+.gs-subtab {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px 5px;
+  border: none;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-radius: 0;
+  margin-bottom: -1px;
+}
+.gs-subtab:hover {
+  color: var(--text);
+}
+.gs-subtab.active {
+  color: var(--text);
+  border-bottom-color: var(--accent);
+}
+
 .not-found {
   color: var(--text-muted);
 }
