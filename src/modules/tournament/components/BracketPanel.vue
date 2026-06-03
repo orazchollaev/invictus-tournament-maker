@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onUnmounted, nextTick } from "vue"
+import { ref, computed, reactive, onMounted, onUnmounted, nextTick } from "vue"
 import type { Tournament } from "../types"
 import type { Team } from "@/modules/teams/types"
 import Bracket from "./Bracket.vue"
@@ -7,7 +7,7 @@ import BracketOld from "./BracketOld.vue"
 import FixtureView from "./FixtureView.vue"
 import { useTournamentStore } from "../store"
 import { useSettingsStore } from "@/modules/settings/store"
-import { Maximize2, Minus, Plus, Shuffle, X, Download } from "@lucide/vue"
+import { Maximize2, Minus, Plus, Shuffle, X, Download, Expand } from "@lucide/vue"
 import { toPng } from "html-to-image"
 
 const props = defineProps<{
@@ -29,20 +29,172 @@ const activeBracket = computed(() => {
 
 const bracketView = ref<"bracket" | "fixtures">("bracket")
 const showFullBracket = ref(false)
-const zoom = ref(1)
-const fullZoom = ref(1)
-const bracketWrapperRef = ref<HTMLElement | null>(null)
 const isExporting = ref(false)
 
-async function exportPng() {
+// Viewport / inner refs for normal bracket
+const bracketWrapperRef = ref<HTMLElement | null>(null)
+const bracketInnerRef = ref<HTMLElement | null>(null)
+
+// Viewport / inner refs for full-screen bracket
+const fullWrapperRef = ref<HTMLElement | null>(null)
+const fullInnerRef = ref<HTMLElement | null>(null)
+
+// ── Normal bracket pan + zoom ─────────────────────────────────
+const zoom = ref(1)
+const pan = reactive({ x: 0, y: 0 })
+const isDragging = ref(false)
+const dragStart = ref({ x: 0, y: 0, px: 0, py: 0 })
+
+// ── Full-screen bracket pan + zoom ────────────────────────────
+const fullZoom = ref(1)
+const fullPan = reactive({ x: 0, y: 0 })
+const fullIsDragging = ref(false)
+const fullDragStart = ref({ x: 0, y: 0, px: 0, py: 0 })
+
+// Pinch-to-zoom touch state
+let touchDist0 = 0
+let touchZoom0 = 1
+let touchCtx: "normal" | "full" = "normal"
+
+// ── Computed transforms ───────────────────────────────────────
+const bracketTransform = computed(() => `translate(${pan.x}px, ${pan.y}px) scale(${zoom.value})`)
+const fullTransform = computed(
+  () => `translate(${fullPan.x}px, ${fullPan.y}px) scale(${fullZoom.value})`
+)
+
+// ── Drag handlers ─────────────────────────────────────────────
+function startDrag(e: MouseEvent) {
+  if ((e.target as HTMLElement).closest("button, input, a")) return
+  isDragging.value = true
+  dragStart.value = { x: e.clientX, y: e.clientY, px: pan.x, py: pan.y }
+  e.preventDefault()
+}
+
+function startFullDrag(e: MouseEvent) {
+  if ((e.target as HTMLElement).closest("button, input, a")) return
+  fullIsDragging.value = true
+  fullDragStart.value = { x: e.clientX, y: e.clientY, px: fullPan.x, py: fullPan.y }
+  e.preventDefault()
+}
+
+function onWindowMouseMove(e: MouseEvent) {
+  if (isDragging.value) {
+    pan.x = dragStart.value.px + e.clientX - dragStart.value.x
+    pan.y = dragStart.value.py + e.clientY - dragStart.value.y
+  }
+  if (fullIsDragging.value) {
+    fullPan.x = fullDragStart.value.px + e.clientX - fullDragStart.value.x
+    fullPan.y = fullDragStart.value.py + e.clientY - fullDragStart.value.y
+  }
+}
+
+function stopDrag() {
+  isDragging.value = false
+  fullIsDragging.value = false
+}
+
+// ── Touch handlers ────────────────────────────────────────────
+function onTouchStart(e: TouchEvent, ctx: "normal" | "full") {
+  touchCtx = ctx
+  const z = ctx === "full" ? fullZoom : zoom
+  const p = ctx === "full" ? fullPan : pan
+  const ds = ctx === "full" ? fullDragStart : dragStart
+  const dragging = ctx === "full" ? fullIsDragging : isDragging
+
+  if (e.touches.length === 2) {
+    touchDist0 = Math.hypot(
+      e.touches[0].clientX - e.touches[1].clientX,
+      e.touches[0].clientY - e.touches[1].clientY
+    )
+    touchZoom0 = z.value
+  } else if (e.touches.length === 1) {
+    dragging.value = true
+    ds.value = { x: e.touches[0].clientX, y: e.touches[0].clientY, px: p.x, py: p.y }
+  }
+}
+
+function onTouchMove(e: TouchEvent) {
+  const ctx = touchCtx
+  const z = ctx === "full" ? fullZoom : zoom
+  const p = ctx === "full" ? fullPan : pan
+  const ds = ctx === "full" ? fullDragStart : dragStart
+  const dragging = ctx === "full" ? fullIsDragging : isDragging
+
+  if (e.touches.length === 2) {
+    const dist = Math.hypot(
+      e.touches[0].clientX - e.touches[1].clientX,
+      e.touches[0].clientY - e.touches[1].clientY
+    )
+    z.value = +Math.min(2.5, Math.max(0.25, touchZoom0 * (dist / touchDist0))).toFixed(2)
+  } else if (dragging.value && e.touches.length === 1) {
+    p.x = ds.value.px + e.touches[0].clientX - ds.value.x
+    p.y = ds.value.py + e.touches[0].clientY - ds.value.y
+  }
+}
+
+function onTouchEnd() {
+  isDragging.value = false
+  fullIsDragging.value = false
+}
+
+// ── Zoom buttons ──────────────────────────────────────────────
+function zoomIn() {
+  zoom.value = Math.min(2.5, +(zoom.value + 0.1).toFixed(1))
+}
+function zoomOut() {
+  zoom.value = Math.max(0.25, +(zoom.value - 0.1).toFixed(1))
+}
+function fullZoomIn() {
+  fullZoom.value = Math.min(2.5, +(fullZoom.value + 0.1).toFixed(1))
+}
+function fullZoomOut() {
+  fullZoom.value = Math.max(0.25, +(fullZoom.value - 0.1).toFixed(1))
+}
+
+// ── Fit to screen ─────────────────────────────────────────────
+function fitScreen() {
   const wrapper = bracketWrapperRef.value
-  if (!wrapper || isExporting.value) return
+  const inner = bracketInnerRef.value
+  if (!wrapper || !inner) return
+  const wW = wrapper.clientWidth
+  const wH = wrapper.clientHeight
+  const iW = inner.scrollWidth
+  const iH = inner.scrollHeight
+  if (iW && iH) {
+    zoom.value = +Math.min(1, Math.max(0.25, Math.min(wW / iW, wH / iH) * 0.9)).toFixed(2)
+  }
+  pan.x = 0
+  pan.y = 0
+}
+
+function fullFitScreen() {
+  const wrapper = fullWrapperRef.value
+  const inner = fullInnerRef.value
+  if (!wrapper || !inner) return
+  const wW = wrapper.clientWidth
+  const wH = wrapper.clientHeight
+  const iW = inner.scrollWidth
+  const iH = inner.scrollHeight
+  if (iW && iH) {
+    fullZoom.value = +Math.min(1.5, Math.max(0.25, Math.min(wW / iW, wH / iH) * 0.9)).toFixed(2)
+  }
+  fullPan.x = 0
+  fullPan.y = 0
+}
+
+// ── Export ────────────────────────────────────────────────────
+async function exportPng() {
+  const inner = bracketInnerRef.value
+  if (!inner || isExporting.value) return
   isExporting.value = true
   const prevZoom = zoom.value
+  const prevPan = { x: pan.x, y: pan.y }
   zoom.value = 1
+  pan.x = 0
+  pan.y = 0
   await nextTick()
   try {
-    const el = (wrapper.querySelector(".bracket") as HTMLElement) ?? wrapper
+    const el = (inner.querySelector(".bracket") as HTMLElement) ?? inner
     const dataUrl = await toPng(el, { pixelRatio: 2 })
     const link = document.createElement("a")
     link.download = `${props.tournament.name}-S${props.tournament.season}.png`
@@ -50,59 +202,48 @@ async function exportPng() {
     link.click()
   } finally {
     zoom.value = prevZoom
+    pan.x = prevPan.x
+    pan.y = prevPan.y
     isExporting.value = false
   }
 }
 
-function zoomIn() {
-  zoom.value = Math.min(2, +(zoom.value + 0.1).toFixed(1))
-}
-function zoomOut() {
-  zoom.value = Math.max(0.5, +(zoom.value - 0.1).toFixed(1))
-}
-function fullZoomIn() {
-  fullZoom.value = Math.min(2, +(fullZoom.value + 0.1).toFixed(1))
-}
-function fullZoomOut() {
-  fullZoom.value = Math.max(0.5, +(fullZoom.value - 0.1).toFixed(1))
-}
-
+// ── Match actions ─────────────────────────────────────────────
 function setResult(ri: number, mi: number, h: number, a: number, ph?: number, pa?: number) {
   store.setResult(props.tournament.id, ri, mi, h, a, ph, pa)
 }
-
 function setLeg2Result(ri: number, mi: number, h: number, a: number, ph?: number, pa?: number) {
   store.setLeg2Result(props.tournament.id, ri, mi, h, a, ph, pa)
 }
-
 function simMatch(ri: number, mi: number) {
   store.simulateBracketMatch(props.tournament.id, ri, mi)
 }
-
 function simLeg1(ri: number, mi: number) {
   store.simulateLeg1(props.tournament.id, ri, mi)
 }
-
 function simLeg2(ri: number, mi: number) {
   store.simulateLeg2(props.tournament.id, ri, mi)
 }
-
 function setThirdPlaceResult(h: number, a: number, ph?: number, pa?: number) {
   store.setThirdPlaceResult(props.tournament.id, h, a, ph, pa)
 }
-
 function simThirdPlace() {
   store.simulateThirdPlace(props.tournament.id)
 }
 
+// ── Modal ─────────────────────────────────────────────────────
 function onEscKey(e: KeyboardEvent) {
   if (e.key === "Escape") closeFullBracket()
 }
 
 function openFullBracket() {
   showFullBracket.value = true
+  fullZoom.value = 1
+  fullPan.x = 0
+  fullPan.y = 0
   document.body.style.overflow = "hidden"
   document.addEventListener("keydown", onEscKey)
+  nextTick(() => fullFitScreen())
 }
 
 function closeFullBracket() {
@@ -111,7 +252,14 @@ function closeFullBracket() {
   document.removeEventListener("keydown", onEscKey)
 }
 
+onMounted(() => {
+  window.addEventListener("mousemove", onWindowMouseMove)
+  window.addEventListener("mouseup", stopDrag)
+})
+
 onUnmounted(() => {
+  window.removeEventListener("mousemove", onWindowMouseMove)
+  window.removeEventListener("mouseup", stopDrag)
   document.removeEventListener("keydown", onEscKey)
   document.body.style.overflow = ""
 })
@@ -132,12 +280,15 @@ onUnmounted(() => {
           <span class="btn-label">{{ isExporting ? "Exporting…" : "Export PNG" }}</span>
         </button>
         <div v-if="bracketView === 'bracket'" class="zoom-controls">
-          <button class="btn-xs icon-only" :disabled="zoom <= 0.5" @click="zoomOut">
+          <button class="btn-xs icon-only" :disabled="zoom <= 0.25" @click="zoomOut">
             <Minus :size="13" />
           </button>
           <span class="zoom-label">{{ Math.round(zoom * 100) }}%</span>
-          <button class="btn-xs icon-only" :disabled="zoom >= 2" @click="zoomIn">
+          <button class="btn-xs icon-only" :disabled="zoom >= 2.5" @click="zoomIn">
             <Plus :size="13" />
+          </button>
+          <button class="btn-xs icon-only fit-btn" title="Fit to screen" @click="fitScreen">
+            <Expand :size="13" />
           </button>
         </div>
         <div class="view-toggle">
@@ -187,21 +338,38 @@ onUnmounted(() => {
           Sim 3rd Place
         </button>
       </div>
-      <div v-if="bracketView === 'bracket'" ref="bracketWrapperRef" class="bracket-wrapper">
-        <component
-          :is="activeBracket"
-          :style="{ zoom }"
-          :tournament="tournament"
-          :teams="teams"
-          @set-result="setResult"
-          @set-leg2-result="setLeg2Result"
-          @sim-match="simMatch"
-          @sim-leg1="simLeg1"
-          @sim-leg2="simLeg2"
-          @set-third-place-result="setThirdPlaceResult"
-          @sim-third-place="simThirdPlace"
-        />
+
+      <!-- Bracket viewport: overflow hidden, drag-to-pan -->
+      <div
+        v-if="bracketView === 'bracket'"
+        ref="bracketWrapperRef"
+        class="bracket-wrapper"
+        :class="{ dragging: isDragging }"
+        @mousedown="startDrag"
+        @touchstart.passive="onTouchStart($event, 'normal')"
+        @touchmove.prevent="onTouchMove"
+        @touchend="onTouchEnd"
+      >
+        <div
+          ref="bracketInnerRef"
+          class="bracket-pan-layer"
+          :style="{ transform: bracketTransform }"
+        >
+          <component
+            :is="activeBracket"
+            :tournament="tournament"
+            :teams="teams"
+            @set-result="setResult"
+            @set-leg2-result="setLeg2Result"
+            @sim-match="simMatch"
+            @sim-leg1="simLeg1"
+            @sim-leg2="simLeg2"
+            @set-third-place-result="setThirdPlaceResult"
+            @sim-third-place="simThirdPlace"
+          />
+        </div>
       </div>
+
       <FixtureView
         v-else
         class="fixture-wrapper"
@@ -218,7 +386,7 @@ onUnmounted(() => {
     </div>
   </div>
 
-  <!-- Mobile: sticky bottom view switcher (above main bottom nav) -->
+  <!-- Mobile: sticky bottom view switcher -->
   <div class="bracket-mobile-tabs">
     <button
       class="bracket-mobile-tab"
@@ -247,12 +415,15 @@ onUnmounted(() => {
           <span>{{ tournament.name }} — Knockout</span>
           <div class="full-bracket-header-right">
             <div class="zoom-controls">
-              <button class="btn-xs icon-only" :disabled="fullZoom <= 0.5" @click="fullZoomOut">
+              <button class="btn-xs icon-only" :disabled="fullZoom <= 0.25" @click="fullZoomOut">
                 <Minus :size="13" />
               </button>
               <span class="zoom-label">{{ Math.round(fullZoom * 100) }}%</span>
-              <button class="btn-xs icon-only" :disabled="fullZoom >= 2" @click="fullZoomIn">
+              <button class="btn-xs icon-only" :disabled="fullZoom >= 2.5" @click="fullZoomIn">
                 <Plus :size="13" />
+              </button>
+              <button class="btn-xs icon-only fit-btn" title="Fit to screen" @click="fullFitScreen">
+                <Expand :size="13" />
               </button>
             </div>
             <button class="btn-xs" @click="closeFullBracket">
@@ -261,20 +432,29 @@ onUnmounted(() => {
             </button>
           </div>
         </div>
-        <div class="full-bracket-body">
-          <component
-            :is="activeBracket"
-            :style="{ zoom: fullZoom }"
-            :tournament="tournament"
-            :teams="teams"
-            @set-result="setResult"
-            @set-leg2-result="setLeg2Result"
-            @sim-match="simMatch"
-            @sim-leg1="simLeg1"
-            @sim-leg2="simLeg2"
-            @set-third-place-result="setThirdPlaceResult"
-            @sim-third-place="simThirdPlace"
-          />
+        <div
+          ref="fullWrapperRef"
+          class="full-bracket-body"
+          :class="{ dragging: fullIsDragging }"
+          @mousedown="startFullDrag"
+          @touchstart.passive="onTouchStart($event, 'full')"
+          @touchmove.prevent="onTouchMove"
+          @touchend="onTouchEnd"
+        >
+          <div ref="fullInnerRef" class="bracket-pan-layer" :style="{ transform: fullTransform }">
+            <component
+              :is="activeBracket"
+              :tournament="tournament"
+              :teams="teams"
+              @set-result="setResult"
+              @set-leg2-result="setLeg2Result"
+              @sim-match="simMatch"
+              @sim-leg1="simLeg1"
+              @sim-leg2="simLeg2"
+              @set-third-place-result="setThirdPlaceResult"
+              @sim-third-place="simThirdPlace"
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -306,11 +486,42 @@ onUnmounted(() => {
   gap: 6px;
 }
 
+/* ── Pan / zoom viewport ── */
 .bracket-wrapper {
-  max-height: clamp(400px, 70vh, 800px);
-  min-height: 300px;
-  padding: 0 10px;
-  overflow: auto;
+  height: clamp(360px, 68vh, 780px);
+  min-height: 280px;
+  overflow: hidden;
+  position: relative;
+  cursor: grab;
+  user-select: none;
+}
+
+.bracket-wrapper.dragging {
+  cursor: grabbing;
+}
+
+.full-bracket-body {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+  cursor: grab;
+  user-select: none;
+}
+
+.full-bracket-body.dragging {
+  cursor: grabbing;
+}
+
+/* The transformed layer — centered so scale grows outward from center */
+.bracket-pan-layer {
+  display: inline-block;
+  transform-origin: 50% 50%;
+  will-change: transform;
+  /* Position at center of wrapper via absolute centering */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
 }
 
 .fixture-wrapper {
@@ -333,6 +544,10 @@ onUnmounted(() => {
 
 .btn-xs.icon-only {
   padding: 3px 5px;
+}
+
+.fit-btn {
+  margin-left: 2px;
 }
 
 .view-toggle {
@@ -412,12 +627,6 @@ onUnmounted(() => {
   flex-shrink: 0;
 }
 
-.full-bracket-body {
-  flex: 1;
-  overflow: auto;
-  padding: 16px;
-}
-
 /* ── Mobile bracket bottom tabs ── */
 .bracket-mobile-tabs {
   display: none;
@@ -427,7 +636,7 @@ onUnmounted(() => {
   .bracket-mobile-tabs {
     display: flex;
     position: fixed;
-    bottom: var(--bottom-nav-height); /* above main bottom nav */
+    bottom: var(--bottom-nav-height);
     left: 0;
     right: 0;
     z-index: 90;
@@ -460,7 +669,7 @@ onUnmounted(() => {
     background: color-mix(in srgb, var(--accent) 5%, transparent);
   }
 
-  /* Hide desktop toggle & extra controls */
+  /* Hide desktop controls */
   .view-toggle {
     display: none;
   }
@@ -474,9 +683,12 @@ onUnmounted(() => {
     display: none;
   }
 
-  /* Extra padding so content isn't hidden behind the bracket tab bar + bottom nav safe area */
   .bracket-body {
     padding-bottom: calc(52px + env(safe-area-inset-bottom));
+  }
+
+  .bracket-wrapper {
+    height: clamp(300px, 60vh, 600px);
   }
 
   .full-bracket-modal {

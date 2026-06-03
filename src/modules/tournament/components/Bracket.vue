@@ -95,12 +95,13 @@ function rStart(ri: number): number {
 }
 
 // ── Layout constants ──────────────────────────────────────────
-const CARD_H = 58
-const CARD_GAP = 20
-const CARD_W = 190
-const COL_GAP = 36
+const CARD_H = 62
+const CARD_GAP = 22
+const CARD_W = 220
+const COL_GAP = 48
 const HEADER_H = 28
-const TP_GAP = 28
+const TP_GAP = 32
+const CHAMP_H = 52
 
 // Bracket height is determined by left side of first round
 const bracketH = computed(() => {
@@ -134,10 +135,20 @@ function rColX(ri: number): number {
 
 const finalCardTop = computed(() => HEADER_H + bracketH.value / 2 - CARD_H / 2 + 25)
 
+const champion = computed(() => {
+  const finalMatch = allRounds.value[finalRi.value]?.matches[0]
+  if (!finalMatch?.result) return null
+  const winnerId = getWinnerId(finalMatch)
+  return props.teams.find((t) => t.id === winnerId) ?? null
+})
+
 const containerH = computed(() => {
   let h = HEADER_H + bracketH.value
   if (props.tournament.hasThirdPlace && thirdPlaceMatch.value) {
     h += TP_GAP + HEADER_H + CARD_H
+  }
+  if (champion.value) {
+    h += CHAMP_H
   }
   return h
 })
@@ -147,16 +158,21 @@ interface CP {
   ay: number
   by: number
   dy: number
+  active: boolean
 }
 
-// Connector paths between round ri and ri+1 (using left-side Y positions)
+// Connector is "active" when the destination match already has both teams (winners advanced)
 function connPaths(ri: number): CP[] {
   const nextCount = lCount(ri + 1)
-  return Array.from({ length: nextCount }, (_, ci) => ({
-    ay: matchCenterY(ri, ci * 2),
-    by: matchCenterY(ri, ci * 2 + 1),
-    dy: matchCenterY(ri + 1, ci),
-  }))
+  return Array.from({ length: nextCount }, (_, ci) => {
+    const destMatch = displayRounds.value[ri + 1]?.[ci]
+    return {
+      ay: matchCenterY(ri, ci * 2),
+      by: matchCenterY(ri, ci * 2 + 1),
+      dy: matchCenterY(ri + 1, ci),
+      active: !!(destMatch?.homeId && destMatch?.awayId),
+    }
+  })
 }
 
 // Left-side path: sources at x=0, destination at x=w
@@ -169,6 +185,13 @@ function pathL(p: CP, w: number): string {
 function pathR(p: CP, w: number): string {
   const m = w / 2
   return `M${w},${p.ay} H${m} M${w},${p.by} H${m} M${m},${p.ay} V${p.by} M${m},${(p.ay + p.by) / 2} H0`
+}
+
+function connStroke(active: boolean) {
+  return active ? "var(--accent)" : "var(--border)"
+}
+function connOpacity(active: boolean) {
+  return active ? 0.55 : 0.4
 }
 </script>
 
@@ -227,8 +250,9 @@ function pathR(p: CP, w: number): string {
             :key="pi"
             :d="pathL(p, COL_GAP)"
             fill="none"
-            stroke="var(--border-light)"
-            stroke-width="1.5"
+            :stroke="connStroke(p.active)"
+            :stroke-opacity="connOpacity(p.active)"
+            stroke-width="2"
           />
         </svg>
       </template>
@@ -251,8 +275,9 @@ function pathR(p: CP, w: number): string {
           :y1="matchCenterY(nonFinalCount - 1, 0)"
           :x2="COL_GAP"
           :y2="bracketH / 2"
-          stroke="var(--border-light)"
-          stroke-width="1.5"
+          :stroke="connStroke(!!displayRounds[finalRi]?.[0]?.homeId)"
+          :stroke-opacity="connOpacity(!!displayRounds[finalRi]?.[0]?.homeId)"
+          stroke-width="2"
         />
       </svg>
 
@@ -307,8 +332,9 @@ function pathR(p: CP, w: number): string {
           :y1="matchCenterY(nonFinalCount - 1, 0)"
           x2="0"
           :y2="bracketH / 2"
-          stroke="var(--border-light)"
-          stroke-width="1.5"
+          :stroke="connStroke(!!displayRounds[finalRi]?.[0]?.awayId)"
+          :stroke-opacity="connOpacity(!!displayRounds[finalRi]?.[0]?.awayId)"
+          stroke-width="2"
         />
       </svg>
 
@@ -360,8 +386,9 @@ function pathR(p: CP, w: number): string {
             :key="pi"
             :d="pathR(p, COL_GAP)"
             fill="none"
-            stroke="var(--border-light)"
-            stroke-width="1.5"
+            :stroke="connStroke(p.active)"
+            :stroke-opacity="connOpacity(p.active)"
+            stroke-width="2"
           />
         </svg>
       </template>
@@ -485,26 +512,34 @@ function pathR(p: CP, w: number): string {
           </template>
         </div>
       </template>
+
+      <!-- ═══════════════════════════════════════════════════
+           CHAMPION BANNER
+      ════════════════════════════════════════════════════════ -->
+      <template v-if="champion">
+        <div
+          class="champ-banner"
+          :style="{
+            position: 'absolute',
+            top: containerH - CHAMP_H + 8 + 'px',
+            left: finalX + 'px',
+            width: CARD_W + 'px',
+          }"
+        >
+          <span class="champ-trophy">🏆</span>
+          <span class="champ-label">Champion</span>
+          <TeamBadge :team-id="champion.id" :teams="teams" class="champ-badge" />
+        </div>
+      </template>
     </div>
   </div>
 </template>
 
 <style scoped>
 .bracket-wrap {
-  width: 100%;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  padding-bottom: 8px;
-  scrollbar-width: thin;
-}
-
-@media (max-width: 640px) {
-  .bracket-wrap {
-    padding-bottom: 12px;
-    /* subtle scroll hint shadow on right edge */
-    background-image: linear-gradient(to right, transparent calc(100% - 24px), var(--bg) 100%);
-    background-attachment: local, scroll;
-  }
+  /* overflow handled by BracketPanel pan/zoom layer */
+  width: max-content;
+  padding: 8px 16px 16px;
 }
 
 .bracket {
@@ -714,5 +749,59 @@ function pathR(p: CP, w: number): string {
 .icon-btn:disabled {
   opacity: 0.35;
   cursor: default;
+}
+
+/* ── Champion banner ── */
+.champ-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, #c9a227 14%, var(--surface)),
+    color-mix(in srgb, #c9a227 6%, var(--surface))
+  );
+  border: 1px solid color-mix(in srgb, #c9a227 45%, var(--border-light));
+  border-radius: var(--radius);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, #c9a227 20%, transparent),
+    0 2px 12px color-mix(in srgb, #c9a227 18%, transparent);
+  animation: champ-appear 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  box-sizing: border-box;
+}
+
+.champ-trophy {
+  font-size: 18px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.champ-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #c9a227;
+  flex-shrink: 0;
+}
+
+.champ-badge {
+  font-weight: 700;
+  font-size: 13px;
+  min-width: 0;
+  flex: 1;
+}
+
+@keyframes champ-appear {
+  from {
+    opacity: 0;
+    transform: scale(0.85) translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }
 </style>
