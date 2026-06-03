@@ -93,3 +93,16 @@ th {
   letter-spacing: 0.04em;
   color: var(--text-muted);
 }
+
+@media (max-width: 640px) {
+  input,
+  select {
+    font-size: 16px; /* prevents iOS zoom on focus */
+  }
+
+  th,
+  td {
+    padding: 6px 8px;
+    font-size: 12px;
+  }
+}

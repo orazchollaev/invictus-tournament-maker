@@ -373,22 +373,45 @@
 }
 
 /* ── Component Responsive ── */
-@media (max-width: 600px) {
+@media (max-width: 640px) {
   .page {
-    padding: 14px 10px;
+    padding: 12px 10px;
   }
+
+  .page-top {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .page-title {
+    font-size: 18px;
+  }
+
   .t-header h1 {
     font-size: 18px;
   }
+
+  .t-header-top {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
   .phase-tabs {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
   }
+  .phase-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
   .phase-tab {
     padding: 7px 12px;
     font-size: 12px;
     white-space: nowrap;
+    flex-shrink: 0;
   }
+
   .t-row {
     flex-wrap: wrap;
     row-gap: 8px;
@@ -399,5 +422,26 @@
   }
   .t-actions {
     flex: 1 1 100%;
+  }
+
+  .section-body {
+    padding: 10px;
+  }
+
+  .data-table th,
+  .data-table td {
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+
+  .modal-actions {
+    flex-direction: column;
+  }
+  .modal-actions > * {
+    width: 100%;
+  }
+
+  .btn-group {
+    flex-wrap: wrap;
   }
 }

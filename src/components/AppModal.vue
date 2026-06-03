@@ -198,9 +198,13 @@ onUnmounted(() => {
   flex-shrink: 0;
 }
 
-@media (max-width: 480px) {
+@media (max-width: 640px) {
   .drawer {
     width: 100vw;
+    max-width: 100vw;
+  }
+  .drawer-body {
+    padding: 12px;
   }
 }
 </style>

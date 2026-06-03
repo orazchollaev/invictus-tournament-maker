@@ -265,7 +265,7 @@ const { needRefresh, applyUpdate } = usePwaUpdate()
   transform: translateY(-4px);
 }
 
-@media (max-width: 600px) {
+@media (max-width: 640px) {
   .header-inner {
     padding: 0 12px;
     height: 48px;
@@ -273,15 +273,14 @@ const { needRefresh, applyUpdate } = usePwaUpdate()
   .brand-wordmark {
     height: 24px;
   }
-  .main-nav a {
-    padding: 5px 10px;
-    font-size: 12px;
-  }
-  .github-star-label {
+  .main-nav {
     display: none;
   }
   .github-star-btn {
-    padding: 5px 8px;
+    display: none;
+  }
+  .settings-btn {
+    display: none;
   }
   .wc-badge {
     display: none;

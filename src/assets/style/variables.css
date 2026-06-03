@@ -1,4 +1,9 @@
+/* Breakpoints: use in JS as window.innerWidth <= 640 */
+/* --bp-mobile: 640px */
+/* --bp-xs: 340px */
+
 :root {
+  --bottom-nav-height: 56px;
   --bg: #d1d6e0;
   --surface: #dde1eb;
   --border: #8a97ad;

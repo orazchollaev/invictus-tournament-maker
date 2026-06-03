@@ -13,7 +13,7 @@ import PromotionModal from "@/modules/tournament/components/PromotionModal.vue"
 import AppModal from "@/components/AppModal.vue"
 import { useTournamentDetail } from "../composables/useTournamentDetail"
 import { useSettingsStore } from "@/modules/settings/store"
-import { Settings, Trophy, Lock, ArrowLeft, Zap } from "@lucide/vue"
+import { Settings, Trophy, Lock, ArrowLeft, Zap, RefreshCw } from "@lucide/vue"
 import { showAlert } from "@/composables/useDialog"
 
 const route = useRoute()
@@ -250,7 +250,8 @@ function changeTab(tab: MainTab, tierIdx?: number) {
               </div>
             </Transition>
             <button v-if="isFinished" class="primary new-season-btn" @click="openNewSeason">
-              New Season
+              <RefreshCw :size="13" />
+              <span class="btn-label">New Season</span>
             </button>
             <button
               v-if="!isFinished"
@@ -258,14 +259,14 @@ function changeTab(tab: MainTab, tierIdx?: number) {
               @click="store.simulateTournament(tournament!.id)"
             >
               <Zap :size="13" />
-              Simulate All
+              <span class="btn-label">Simulate All</span>
             </button>
             <button
               class="settings-btn"
               @click="router.push(`/tournaments/${tournament!.id}/settings`)"
             >
               <Settings :size="14" />
-              Settings
+              <span class="btn-label">Settings</span>
             </button>
           </div>
         </div>
@@ -683,13 +684,35 @@ function changeTab(tab: MainTab, tierIdx?: number) {
   background: color-mix(in srgb, var(--danger) 12%, transparent);
 }
 
-@media (max-width: 600px) {
+@media (max-width: 640px) {
+  .page {
+    padding-bottom: 40px;
+  }
+
   .t-header-top {
     flex-wrap: wrap;
     gap: 6px;
   }
   .t-header-actions {
-    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .t-header-actions .btn-label {
+    display: none;
+  }
+  .winner-chip {
+    font-size: 11px;
+    padding: 2px 6px;
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .new-season-btn,
+  .simulate-all-btn,
+  .settings-btn {
+    padding: 5px 8px;
+    min-width: 32px;
+    justify-content: center;
   }
 }
 </style>

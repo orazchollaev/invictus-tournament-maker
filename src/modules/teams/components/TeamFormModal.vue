@@ -106,6 +106,8 @@ function submit() {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .field {
@@ -170,5 +172,21 @@ function submit() {
   display: flex;
   gap: 8px;
   padding-top: 4px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 640px) {
+  .field-row {
+    flex-wrap: wrap;
+  }
+  .input-abbr {
+    width: 100%;
+  }
+  .input-power {
+    width: 100%;
+  }
+  .form-actions > button {
+    flex: 1;
+  }
 }
 </style>

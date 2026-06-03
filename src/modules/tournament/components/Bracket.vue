@@ -493,7 +493,18 @@ function pathR(p: CP, w: number): string {
 .bracket-wrap {
   width: 100%;
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
   padding-bottom: 8px;
+  scrollbar-width: thin;
+}
+
+@media (max-width: 640px) {
+  .bracket-wrap {
+    padding-bottom: 12px;
+    /* subtle scroll hint shadow on right edge */
+    background-image: linear-gradient(to right, transparent calc(100% - 24px), var(--bg) 100%);
+    background-attachment: local, scroll;
+  }
 }
 
 .bracket {

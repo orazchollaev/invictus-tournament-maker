@@ -83,6 +83,7 @@ function buildChartOptions(): ChartOptions<"line"> {
   const maxPos = teamCount.value
   const textMuted = cssVar("--text-muted", "#888")
   const gridColor = cssVar("--border-light", "rgba(128,128,128,0.15)")
+  const isMobile = typeof window !== "undefined" && window.innerWidth <= 640
 
   return {
     responsive: true,
@@ -93,12 +94,12 @@ function buildChartOptions(): ChartOptions<"line"> {
     },
     plugins: {
       legend: {
-        position: "right" as const,
+        position: isMobile ? ("bottom" as const) : ("right" as const),
         labels: {
           boxWidth: 10,
           boxHeight: 10,
-          padding: 8,
-          font: { size: 11 },
+          padding: isMobile ? 6 : 8,
+          font: { size: 10 },
           color: textMuted,
         },
       },
@@ -236,5 +237,12 @@ watch([labels, datasets, mode], () => {
 .canvas-wrap {
   padding: 12px;
   height: 320px;
+}
+
+@media (max-width: 640px) {
+  .canvas-wrap {
+    height: 260px;
+    padding: 8px;
+  }
 }
 </style>

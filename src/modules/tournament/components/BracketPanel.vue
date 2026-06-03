@@ -124,12 +124,12 @@ onUnmounted(() => {
       <div class="bracket-heading-right">
         <button
           v-if="bracketView === 'bracket'"
-          class="btn-xs"
+          class="btn-xs export-btn"
           :disabled="isExporting"
           @click="exportPng"
         >
           <Download :size="13" />
-          {{ isExporting ? "Exporting…" : "Export PNG" }}
+          <span class="btn-label">{{ isExporting ? "Exporting…" : "Export PNG" }}</span>
         </button>
         <div v-if="bracketView === 'bracket'" class="zoom-controls">
           <button class="btn-xs icon-only" :disabled="zoom <= 0.5" @click="zoomOut">
@@ -158,7 +158,7 @@ onUnmounted(() => {
         </div>
         <button class="btn-xs" @click="openFullBracket">
           <Maximize2 :size="13" />
-          Full View
+          <span class="btn-label">Full View</span>
         </button>
       </div>
     </h2>
@@ -216,6 +216,24 @@ onUnmounted(() => {
         @sim-third-place="simThirdPlace"
       />
     </div>
+  </div>
+
+  <!-- Mobile: sticky bottom view switcher (above main bottom nav) -->
+  <div class="bracket-mobile-tabs">
+    <button
+      class="bracket-mobile-tab"
+      :class="{ active: bracketView === 'bracket' }"
+      @click="bracketView = 'bracket'"
+    >
+      Bracket
+    </button>
+    <button
+      class="bracket-mobile-tab"
+      :class="{ active: bracketView === 'fixtures' }"
+      @click="bracketView = 'fixtures'"
+    >
+      Fixtures
+    </button>
   </div>
 
   <Teleport to="body">
@@ -400,10 +418,80 @@ onUnmounted(() => {
   padding: 16px;
 }
 
-@media (max-width: 600px) {
+/* ── Mobile bracket bottom tabs ── */
+.bracket-mobile-tabs {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  .bracket-mobile-tabs {
+    display: flex;
+    position: fixed;
+    bottom: 56px; /* above main bottom nav */
+    left: 0;
+    right: 0;
+    z-index: 90;
+    background: var(--surface);
+    border-top: 1px solid var(--border-light);
+    height: 44px;
+  }
+
+  .bracket-mobile-tab {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 500;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    color: var(--text-muted);
+    transition:
+      color 0.12s,
+      background 0.12s;
+    border-top: 2px solid transparent;
+    margin-top: -1px;
+  }
+
+  .bracket-mobile-tab.active {
+    color: var(--accent);
+    border-top-color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 5%, transparent);
+  }
+
+  /* Hide desktop toggle & extra controls */
+  .view-toggle {
+    display: none;
+  }
+  .zoom-controls {
+    display: none;
+  }
+  .export-btn {
+    display: none;
+  }
+  .btn-label {
+    display: none;
+  }
+
+  /* Extra padding so content isn't hidden behind the bracket tab bar */
+  .bracket-body {
+    padding-bottom: 52px;
+  }
+
   .full-bracket-modal {
     width: 100vw;
     height: 100dvh;
+  }
+
+  .sim-toolbar {
+    gap: 5px;
+    padding: 0 4px;
+
+    button {
+      padding: 4px 8px;
+      font-size: 12px;
+    }
   }
 }
 </style>
