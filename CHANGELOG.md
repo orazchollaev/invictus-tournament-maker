@@ -1,5 +1,32 @@
 # Changelog
 
+## [1.7.0](https://github.com/orazchollaev/invictus-tournament-maker/compare/v1.6.0...v1.7.0) (2026-06-03)
+
+### Features
+
+- add Android platform with Capacitor ([75caffd](https://github.com/orazchollaev/invictus-tournament-maker/commit/75caffd286bcad44e9708c3b22facae6bd121de2))
+- **bracket:** add bracket style setting (Double-Sided / Classic / Auto) ([1e1f3f8](https://github.com/orazchollaev/invictus-tournament-maker/commit/1e1f3f8262d480a28945bff77b73bc96ee1ce639))
+- full mobile responsive layout for Play Store release ([22b3c78](https://github.com/orazchollaev/invictus-tournament-maker/commit/22b3c7859ff17bb5a5262583c2b5cf175bab16a6))
+- **tournament:** add Sim 3rd Place button to bracket toolbar ([e2e450b](https://github.com/orazchollaev/invictus-tournament-maker/commit/e2e450b36c3ef4cb92462933cf77158a1878252e))
+- **tournament:** persist active tab in URL query across page reloads ([7cfd537](https://github.com/orazchollaev/invictus-tournament-maker/commit/7cfd537e8910d4d072769daa39d99ea927bc994b))
+
+### Bug Fixes
+
+- resolve header logo and menu position issue ([c8ee0df](https://github.com/orazchollaev/invictus-tournament-maker/commit/c8ee0dfacc37ea3c9cf25132a3be36fe3770fd0f))
+- stop layout jump from scrollbar changes ([2964b3e](https://github.com/orazchollaev/invictus-tournament-maker/commit/2964b3ef4eb7a5d27aa84281807df70d23719cf8))
+- **tournament:** persist draw type per tournament across seasons ([e646383](https://github.com/orazchollaev/invictus-tournament-maker/commit/e6463838af78fbaccea69f0e879f746d4cdbf3ce))
+
+### Code Refactoring
+
+- **css:** split monolithic index.css into modular structure ([4641177](https://github.com/orazchollaev/invictus-tournament-maker/commit/46411773622a05405c01ddfdbd29db13404dc386))
+- new main page set to tournaments ([6af7e87](https://github.com/orazchollaev/invictus-tournament-maker/commit/6af7e876211bc4355d21e3dd7f5f5a8f2151a338))
+
+### Chores
+
+- add capacitor ([7b979e0](https://github.com/orazchollaev/invictus-tournament-maker/commit/7b979e05c927671c4b148d25d9b3df7ee95d8c3f))
+- rebrand project as Invictus ([0ea589d](https://github.com/orazchollaev/invictus-tournament-maker/commit/0ea589dc963bee028e352664c211ac5ecfe2ba73))
+- resolve tsconfig.tsbuildinfo ([c5bb0ad](https://github.com/orazchollaev/invictus-tournament-maker/commit/c5bb0adc915389c20bfaa6d13075fc1d4f2e234a))
+
 ## [1.6.0](https://github.com/orazchollaev/invictus-tournament-maker/compare/v1.5.1...v1.6.0) (2026-05-31)
 
 ### Features
