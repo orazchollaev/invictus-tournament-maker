@@ -142,7 +142,12 @@ function scoreAccentColor(match: GroupMatch): string {
           Sim {{ g.name }}
         </button>
       </template>
-      <button v-if="allDone" class="primary" style="margin-left: auto" @click="emit('advance')">
+      <button
+        v-if="allDone"
+        class="primary advance-btn"
+        style="margin-left: auto"
+        @click="emit('advance')"
+      >
         <Check :size="14" />
         Advance to Knockout →
       </button>
@@ -576,6 +581,10 @@ function scoreAccentColor(match: GroupMatch): string {
 
     button:nth-child(1),
     button:nth-child(2) {
+      display: inline-flex;
+    }
+
+    button.advance-btn {
       display: inline-flex;
     }
   }
