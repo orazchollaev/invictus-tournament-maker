@@ -11,7 +11,7 @@ export type DrawType = "random" | "seeded" | "manual"
 export type BracketStyle = "double-sided" | "classic" | "auto"
 
 export const useSettingsStore = defineStore("settings", () => {
-  const theme = ref<Theme>("dark")
+  const theme = ref<Theme>("light")
   const locale = ref<Locale>("en")
   const groupLegMode = ref<LegMode>("single")
   const knockoutLegMode = ref<LegMode>("single")
