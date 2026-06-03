@@ -148,6 +148,19 @@ function scoreAccentColor(match: GroupMatch): string {
       </button>
     </div>
 
+    <div class="gs-legend">
+      <span class="legend-qualify">■</span>
+      Qualifies
+      <template v-if="(tournament.wildcardCount ?? 0) > 0">
+        &nbsp;
+        <span class="legend-wildcard">╌</span>
+        Wildcard (best {{ tournament.wildcardCount }})
+      </template>
+      &nbsp;
+      <span class="legend-out">■</span>
+      Eliminated
+    </div>
+
     <!-- Groups grid -->
     <div class="gs-groups">
       <div v-for="(group, gi) in tournament.groups" :key="gi" class="gs-group">
@@ -275,18 +288,6 @@ function scoreAccentColor(match: GroupMatch): string {
     </div>
 
     <!-- Legend -->
-    <div class="gs-legend">
-      <span class="legend-qualify">■</span>
-      Qualifies
-      <template v-if="(tournament.wildcardCount ?? 0) > 0">
-        &nbsp;
-        <span class="legend-wildcard">╌</span>
-        Wildcard (best {{ tournament.wildcardCount }})
-      </template>
-      &nbsp;
-      <span class="legend-out">■</span>
-      Eliminated
-    </div>
   </div>
 
   <!-- Score edit modal -->
@@ -561,6 +562,22 @@ function scoreAccentColor(match: GroupMatch): string {
   }
   .gs-table .col-team {
     min-width: 90px;
+  }
+
+  .gs-toolbar {
+    gap: 5px;
+    padding: 0 4px;
+
+    button {
+      padding: 4px 8px;
+      font-size: 12px;
+      display: none;
+    }
+
+    button:nth-child(1),
+    button:nth-child(2) {
+      display: inline-flex;
+    }
   }
 }
 </style>
