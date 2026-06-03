@@ -4,6 +4,8 @@ import { ref, watch } from "vue"
 const props = defineProps<{ modelValue: string }>()
 const emit = defineEmits<{ "update:modelValue": [string] }>()
 
+const nativeInput = ref<HTMLInputElement | null>(null)
+
 const PRESETS = [
   "#e63946",
   "#f4722b",
@@ -58,6 +60,16 @@ function onHexBlur() {
     hexInput.value = props.modelValue
   }
 }
+
+function openNativePicker() {
+  nativeInput.value?.click()
+}
+
+function onNativePick(e: Event) {
+  const val = (e.target as HTMLInputElement).value
+  hexInput.value = val
+  emit("update:modelValue", val)
+}
 </script>
 
 <template>
@@ -75,7 +87,20 @@ function onHexBlur() {
       />
     </div>
     <div class="hex-row">
-      <span class="preview" :style="{ background: modelValue }" />
+      <span
+        class="preview"
+        :style="{ background: modelValue }"
+        title="Open color picker"
+        @click="openNativePicker"
+      />
+      <input
+        ref="nativeInput"
+        type="color"
+        :value="modelValue"
+        class="native-picker"
+        tabindex="-1"
+        @input="onNativePick"
+      />
       <input
         :value="hexInput"
         class="hex-input"
@@ -127,6 +152,7 @@ function onHexBlur() {
   display: flex;
   align-items: center;
   gap: 8px;
+  position: relative;
 }
 .preview {
   width: 28px;
@@ -135,6 +161,18 @@ function onHexBlur() {
   border: 1px solid var(--border);
   flex-shrink: 0;
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1) inset;
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+.preview:hover {
+  transform: scale(1.1);
+}
+.native-picker {
+  position: absolute;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  pointer-events: none;
 }
 .hex-input {
   flex: 1;
