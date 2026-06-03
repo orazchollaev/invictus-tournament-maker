@@ -3,7 +3,9 @@ import { Settings, Star, Trophy, History, RefreshCw, FolderGit2 } from "@lucide/
 import { useSettingsStore } from "@/modules/settings/store"
 import { usePwaUpdate } from "@/composables/usePwaUpdate"
 import AppLogo from "./AppLogo.vue"
+import { useI18n } from "vue-i18n"
 
+const { t } = useI18n()
 const GITHUB_URL = "https://github.com/orazchollaev/invictus-tournament-maker"
 const settings = useSettingsStore()
 const { needRefresh, applyUpdate } = usePwaUpdate()
@@ -26,11 +28,11 @@ const { needRefresh, applyUpdate } = usePwaUpdate()
       </Transition>
 
       <nav class="main-nav">
-        <RouterLink to="/tournaments">Tournaments</RouterLink>
-        <RouterLink to="/teams">Teams</RouterLink>
+        <RouterLink to="/tournaments">{{ t("nav.tournaments") }}</RouterLink>
+        <RouterLink to="/teams">{{ t("nav.teams") }}</RouterLink>
         <RouterLink to="/history">
           <History :size="13" class="nav-icon" />
-          History
+          {{ t("nav.history") }}
         </RouterLink>
       </nav>
 
@@ -58,7 +60,7 @@ const { needRefresh, applyUpdate } = usePwaUpdate()
           <span class="github-star-label">Star</span>
           <Star :size="12" class="github-star-icon" />
         </a>
-        <RouterLink to="/settings" class="settings-btn" title="Settings">
+        <RouterLink to="/settings" class="settings-btn" :title="t('nav.settings')">
           <Settings :size="16" />
         </RouterLink>
       </div>

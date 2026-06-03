@@ -1,24 +1,27 @@
 <script setup lang="ts">
 import { Trophy, Users, History, Settings } from "@lucide/vue"
+import { useI18n } from "vue-i18n"
+
+const { t } = useI18n()
 </script>
 
 <template>
   <nav class="bottom-nav">
     <RouterLink to="/tournaments" class="bottom-nav-item">
       <Trophy :size="22" />
-      <span>Tournaments</span>
+      <span>{{ t("nav.tournaments") }}</span>
     </RouterLink>
     <RouterLink to="/teams" class="bottom-nav-item">
       <Users :size="22" />
-      <span>Teams</span>
+      <span>{{ t("nav.teams") }}</span>
     </RouterLink>
     <RouterLink to="/history" class="bottom-nav-item">
       <History :size="22" />
-      <span>History</span>
+      <span>{{ t("nav.history") }}</span>
     </RouterLink>
     <RouterLink to="/settings" class="bottom-nav-item">
       <Settings :size="22" />
-      <span>Settings</span>
+      <span>{{ t("nav.settings") }}</span>
     </RouterLink>
   </nav>
 </template>

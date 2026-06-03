@@ -4,6 +4,7 @@ import { createPersistedStatePlugin } from "pinia-plugin-persistedstate-2"
 
 import router from "./router"
 import App from "./App.vue"
+import i18n from "./i18n"
 
 import "./assets/style/index.css"
 
@@ -17,4 +18,5 @@ const app = createApp(App)
 
 app.use(pinia)
 app.use(router)
+app.use(i18n)
 app.mount("#app")

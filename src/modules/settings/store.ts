@@ -3,6 +3,8 @@ import { ref, watch } from "vue"
 import type { LegMode, PlayoffSeedMode } from "@/modules/tournament/types"
 import { setSimConfig, setTableConfig } from "@/engine"
 import type { Tiebreaker } from "@/modules/tournament/types"
+import { i18n } from "@/i18n"
+import type { Locale } from "@/i18n"
 
 export type Theme = "light" | "dark" | "worldcup2026"
 export type DrawType = "random" | "seeded" | "manual"
@@ -10,6 +12,7 @@ export type BracketStyle = "double-sided" | "classic" | "auto"
 
 export const useSettingsStore = defineStore("settings", () => {
   const theme = ref<Theme>("dark")
+  const locale = ref<Locale>("en")
   const groupLegMode = ref<LegMode>("single")
   const knockoutLegMode = ref<LegMode>("single")
   const finalLegMode = ref<LegMode>("single")
@@ -32,6 +35,14 @@ export const useSettingsStore = defineStore("settings", () => {
     { immediate: true }
   )
 
+  watch(
+    locale,
+    (val) => {
+      i18n.global.locale.value = val
+    },
+    { immediate: true }
+  )
+
   watch(surpriseFactor, (val) => setSimConfig({ surpriseFactor: val }), { immediate: true })
   watch(tiebreaker, (val) => setTableConfig({ tiebreaker: val }), { immediate: true })
   watch(formFactorEnabled, (val) => setSimConfig({ formFactor: val }), { immediate: true })
@@ -39,6 +50,7 @@ export const useSettingsStore = defineStore("settings", () => {
 
   function resetAll() {
     theme.value = "dark"
+    locale.value = "en"
     groupLegMode.value = "single"
     knockoutLegMode.value = "single"
     finalLegMode.value = "single"
@@ -56,6 +68,7 @@ export const useSettingsStore = defineStore("settings", () => {
 
   return {
     theme,
+    locale,
     groupLegMode,
     knockoutLegMode,
     finalLegMode,

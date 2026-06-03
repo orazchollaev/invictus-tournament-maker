@@ -16,7 +16,9 @@ import { useTournamentDetail } from "../composables/useTournamentDetail"
 import { useSettingsStore } from "@/modules/settings/store"
 import { Settings, Trophy, Lock, ArrowLeft, Zap, RefreshCw } from "@lucide/vue"
 import { showAlert } from "@/composables/useDialog"
+import { useI18n } from "vue-i18n"
 
+const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
 const settings = useSettingsStore()
@@ -68,7 +70,9 @@ async function openNewSeason() {
   if (t.format === "league" && (t.relegationCount ?? 0) > 0) {
     if (t.linkedLeagueId && !linkedLeague.value?.winnerId) {
       await showAlert(
-        `"${linkedLeague.value?.name ?? "Linked league"}" must finish before starting a new season.`
+        t("tournament.linkedLeagueNotFinished", {
+          name: linkedLeague.value?.name ?? "Linked league",
+        })
       )
       return
     }
@@ -230,10 +234,10 @@ function changeTab(tab: MainTab, tierIdx?: number) {
   <div class="page">
     <div v-if="!tournament">
       <p class="not-found">
-        Tournament not found.
+        {{ t("tournament.notFound") }}
         <RouterLink to="/tournaments">
           <ArrowLeft :size="14" />
-          Back
+          {{ t("common.back") }}
         </RouterLink>
       </p>
     </div>
@@ -242,7 +246,7 @@ function changeTab(tab: MainTab, tierIdx?: number) {
         <div class="t-header-top">
           <RouterLink to="/tournaments" class="back-link">
             <ArrowLeft :size="14" />
-            Tournaments
+            {{ t("nav.tournaments") }}
           </RouterLink>
           <div class="t-header-actions">
             <Transition name="fade">
@@ -257,7 +261,7 @@ function changeTab(tab: MainTab, tierIdx?: number) {
             </Transition>
             <button v-if="isFinished" class="primary new-season-btn" @click="openNewSeason">
               <RefreshCw :size="13" />
-              <span class="btn-label">New Season</span>
+              <span class="btn-label">{{ t("tournament.newSeason") }}</span>
             </button>
             <button
               v-if="!isFinished"
@@ -265,14 +269,14 @@ function changeTab(tab: MainTab, tierIdx?: number) {
               @click="store.simulateTournament(tournament!.id)"
             >
               <Zap :size="13" />
-              <span class="btn-label">Simulate All</span>
+              <span class="btn-label">{{ t("tournament.simulateAll") }}</span>
             </button>
             <button
               class="settings-btn"
               @click="router.push(`/tournaments/${tournament!.id}/settings`)"
             >
               <Settings :size="14" />
-              <span class="btn-label">Settings</span>
+              <span class="btn-label">{{ t("tournament.settings") }}</span>
             </button>
           </div>
         </div>
@@ -282,14 +286,17 @@ function changeTab(tab: MainTab, tierIdx?: number) {
           <span class="t-format-tag">
             {{
               tournament.format === "group+bracket"
-                ? "Groups + KO"
+                ? t("tournaments.format.groupsKoLong")
                 : tournament.format === "league"
-                  ? "League"
-                  : "Bracket"
+                  ? t("tournaments.format.league")
+                  : t("tournaments.format.bracket")
             }}
           </span>
         </h1>
-        <span class="t-meta">{{ tournament.teamIds.length }} teams · Created {{ dateStr }}</span>
+        <span class="t-meta">
+          {{ t("common.teams", { n: tournament.teamIds.length }) }} ·
+          {{ t("tournament.header.created", { date: dateStr }) }}
+        </span>
       </div>
 
       <div class="phase-tabs">
@@ -314,7 +321,7 @@ function changeTab(tab: MainTab, tierIdx?: number) {
               :class="{ active: activeTab === 'league' }"
               @click="changeTab('league')"
             >
-              Table
+              {{ t("tournament.tabs.league") }}
             </button>
           </template>
         </template>
@@ -325,7 +332,7 @@ function changeTab(tab: MainTab, tierIdx?: number) {
             :class="{ active: activeTab === 'groups' }"
             @click="changeTab('groups')"
           >
-            Groups
+            {{ t("tournament.tabs.groups") }}
           </button>
 
           <button
@@ -334,7 +341,7 @@ function changeTab(tab: MainTab, tierIdx?: number) {
             :disabled="!tournament.groupsDone"
             @click="tournament.groupsDone && changeTab('bracket')"
           >
-            Knockout
+            {{ t("tournament.tabs.bracket") }}
             <Lock v-if="!tournament.groupsDone" :size="13" class="tab-lock" />
           </button>
         </template>
@@ -345,7 +352,7 @@ function changeTab(tab: MainTab, tierIdx?: number) {
             :class="{ active: activeTab === 'bracket' }"
             @click="changeTab('bracket')"
           >
-            Bracket
+            {{ t("tournament.tabs.bracket") }}
           </button>
         </template>
         <button
@@ -354,7 +361,7 @@ function changeTab(tab: MainTab, tierIdx?: number) {
           :disabled="!hasAnyResults"
           @click="hasAnyResults && changeTab('stats')"
         >
-          Statistics
+          {{ t("tournament.tabs.stats") }}
           <Lock v-if="!hasAnyResults" :size="13" class="tab-lock" />
         </button>
         <button
@@ -362,7 +369,7 @@ function changeTab(tab: MainTab, tierIdx?: number) {
           :class="{ active: activeTab === 'participants' }"
           @click="changeTab('participants')"
         >
-          Participants
+          {{ t("tournament.tabs.participants") }}
         </button>
       </div>
 
@@ -417,14 +424,14 @@ function changeTab(tab: MainTab, tierIdx?: number) {
               :class="{ active: groupSubTab === 'groups' }"
               @click="groupSubTab = 'groups'"
             >
-              Groups
+              {{ t("tournament.tabs.groups") }}
             </button>
             <button
               class="gs-subtab"
               :class="{ active: groupSubTab === 'wildcards' }"
               @click="groupSubTab = 'wildcards'"
             >
-              Wildcards
+              {{ t("tournament.tabs.wildcards") }}
             </button>
           </div>
           <div class="section-body gs-body">
@@ -447,7 +454,7 @@ function changeTab(tab: MainTab, tierIdx?: number) {
           <BracketPanel
             :tournament="tournament"
             :teams="allTeams"
-            :title="isGroupFormat ? 'Knockout Stage' : 'Bracket'"
+            :title="isGroupFormat ? t('tournament.tabs.bracket') : t('tournament.tabs.bracket')"
           />
         </div>
         <div v-else-if="activeTab === 'stats'" key="stats" class="section-box">
@@ -529,8 +536,10 @@ function changeTab(tab: MainTab, tierIdx?: number) {
         </div>
       </div>
       <template #footer>
-        <button class="primary" @click="handleMultiTierSeasonConfirm">Start New Season →</button>
-        <button @click="showMultiTierModal = false">Cancel</button>
+        <button class="primary" @click="handleMultiTierSeasonConfirm">
+          {{ t("tournament.newSeason") }} →
+        </button>
+        <button @click="showMultiTierModal = false">{{ t("common.cancel") }}</button>
       </template>
     </AppModal>
 

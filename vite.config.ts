@@ -15,7 +15,7 @@ export default defineConfig({
       manifest: {
         name: "Invictus - Tournament Maker",
         short_name: "Invictus",
-        description: "Tournament simulator and manager for football",
+        description: "Tournament maker for football, EAFC, pes and etc.",
         theme_color: "#0d9488",
         background_color: "#d1d6e0",
         display: "standalone",

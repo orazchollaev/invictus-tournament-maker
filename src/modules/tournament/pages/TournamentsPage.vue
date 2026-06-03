@@ -6,7 +6,9 @@ import { useTournamentStore } from "@/modules/tournament/store"
 import type { Tournament } from "../types"
 import { Trophy, X, Search, ChevronRight } from "@lucide/vue"
 import { showConfirm } from "@/composables/useDialog"
+import { useI18n } from "vue-i18n"
 
+const { t } = useI18n()
 const router = useRouter()
 const teamsStore = useTeamsStore()
 const store = useTournamentStore()
@@ -25,8 +27,19 @@ const filtered = computed(() => {
   return store.tournaments.filter((t) => t.name.toLowerCase().includes(q))
 })
 
+function formatLabel(format: string) {
+  if (format === "group+bracket") return t("tournaments.format.groupsKo")
+  if (format === "league") return t("tournaments.format.league")
+  return t("tournaments.format.bracket")
+}
+
 async function deleteTournament(id: string) {
-  if (await showConfirm("Delete this tournament?", { confirmLabel: "Delete", dangerous: true }))
+  if (
+    await showConfirm(t("tournaments.deleteConfirm"), {
+      confirmLabel: t("tournaments.deleteLabel"),
+      dangerous: true,
+    })
+  )
     store.remove(id)
 }
 </script>
@@ -35,70 +48,66 @@ async function deleteTournament(id: string) {
   <div class="page">
     <!-- Header row -->
     <div class="page-top">
-      <h2 class="page-title">Tournaments</h2>
+      <h2 class="page-title">{{ t("tournaments.title") }}</h2>
       <button
         class="primary"
         :disabled="teamsStore.teams.length < 2"
-        :title="teamsStore.teams.length < 2 ? 'Add at least 2 teams first' : ''"
+        :title="teamsStore.teams.length < 2 ? t('tournaments.needTeamsTitle') : ''"
         @click="router.push('/tournaments/new')"
       >
-        + New Tournament
+        {{ t("tournaments.newBtn") }}
       </button>
     </div>
 
     <div v-if="teamsStore.teams.length < 2" class="notice">
-      Add at least 2 teams on the Teams tab first.
+      {{ t("tournaments.needTeamsNotice") }}
     </div>
 
     <!-- Tournament list -->
     <div v-if="store.tournaments.length" class="search-row">
       <div class="search-wrap">
         <Search :size="14" class="search-icon" />
-        <input v-model="query" class="search-input" placeholder="Search tournaments…" />
+        <input
+          v-model="query"
+          class="search-input"
+          :placeholder="t('tournaments.searchPlaceholder')"
+        />
       </div>
     </div>
 
     <div v-if="store.tournaments.length" class="t-list">
-      <p v-if="!filtered.length" class="empty-text">No tournaments match "{{ query }}".</p>
+      <p v-if="!filtered.length" class="empty-text">{{ t("tournaments.noMatch", { query }) }}</p>
       <TransitionGroup name="list" tag="div" class="t-list-inner">
-        <div v-for="(t, i) in filtered" :key="t.id" class="t-row" :style="{ '--i': i }">
+        <div v-for="(tour, i) in filtered" :key="tour.id" class="t-row" :style="{ '--i': i }">
           <div class="t-body">
             <div class="t-top">
-              <span class="t-name">{{ t.name }}</span>
+              <span class="t-name">{{ tour.name }}</span>
               <span
-                v-if="store.isTournamentFinished(t.id)"
+                v-if="store.isTournamentFinished(tour.id)"
                 class="winner-badge"
-                :style="{ '--team-color': winnerColor(t) }"
+                :style="{ '--team-color': winnerColor(tour) }"
               >
                 <Trophy :size="11" />
                 <span class="winner-dot" />
-                {{ winnerName(t) }}
+                {{ winnerName(tour) }}
               </span>
-              <span v-else class="status-live">Live</span>
+              <span v-else class="status-live">{{ t("tournaments.live") }}</span>
             </div>
             <div class="t-meta-row">
-              <span class="t-badge">S{{ t.season }}</span>
-              <span class="t-badge accent">
-                {{
-                  t.format === "group+bracket"
-                    ? "Groups+KO"
-                    : t.format === "league"
-                      ? "League"
-                      : "Bracket"
-                }}
-              </span>
-              <span class="t-dot">{{ t.teamIds.length }} teams</span>
+              <span class="t-badge">S{{ tour.season }}</span>
+              <span class="t-badge accent">{{ formatLabel(tour.format) }}</span>
+              <span class="t-dot">{{ t("common.teams", { n: tour.teamIds.length }) }}</span>
             </div>
           </div>
           <div class="t-actions">
             <button
               class="sm icon-btn"
-              title="Open"
-              @click.stop="router.push(`/tournaments/${t.id}`)"
+              :title="t('common.open')"
+              @click.stop="router.push(`/tournaments/${tour.id}`)"
             >
               <ChevronRight :size="14" />
             </button>
-            <button class="danger sm icon-btn" @click.stop="deleteTournament(t.id)">
+            <button class="danger sm icon-btn" @click.stop="deleteTournament(tour.id)">
               <X :size="13" />
             </button>
           </div>
@@ -107,9 +116,7 @@ async function deleteTournament(id: string) {
     </div>
 
     <p v-else-if="teamsStore.teams.length >= 2" class="empty-text">
-      No tournaments yet. Click
-      <strong>+ New Tournament</strong>
-      to get started.
+      {{ t("tournaments.empty", { action: t("tournaments.newBtn") }) }}
     </p>
   </div>
 </template>

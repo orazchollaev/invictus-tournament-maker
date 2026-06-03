@@ -6,7 +6,9 @@ import TeamFormModal from "../components/TeamFormModal.vue"
 import type { Team } from "../types"
 import { X, Pencil, Search, ChevronRight } from "@lucide/vue"
 import { MAX_TEAMS } from "@/constants"
+import { useI18n } from "vue-i18n"
 
+const { t } = useI18n()
 const store = useTeamsStore()
 const router = useRouter()
 
@@ -25,28 +27,28 @@ const filtered = computed(() => {
   <div class="page">
     <div class="page-top">
       <h2 class="page-title">
-        Teams
+        {{ t("teams.title") }}
         <span class="count">{{ store.teams.length }}/{{ MAX_TEAMS }}</span>
       </h2>
       <button
         class="primary"
         :disabled="store.teams.length >= MAX_TEAMS"
-        :title="store.teams.length >= MAX_TEAMS ? `Team limit reached (${MAX_TEAMS})` : ''"
+        :title="store.teams.length >= MAX_TEAMS ? t('teams.limitReached', { max: MAX_TEAMS }) : ''"
         @click="showAddModal = true"
       >
-        + Add Team
+        {{ t("teams.addBtn") }}
       </button>
     </div>
 
     <div v-if="store.teams.length" class="search-row">
       <div class="search-wrap">
         <Search :size="14" class="search-icon" />
-        <input v-model="query" class="search-input" placeholder="Search teams…" />
+        <input v-model="query" class="search-input" :placeholder="t('teams.searchPlaceholder')" />
       </div>
     </div>
 
     <div v-if="store.teams.length" class="t-list">
-      <p v-if="!filtered.length" class="empty-text">No teams match "{{ query }}".</p>
+      <p v-if="!filtered.length" class="empty-text">{{ t("teams.noMatch", { query }) }}</p>
       <div v-for="team in filtered" :key="team.id" class="t-row">
         <span class="color-dot" :style="{ background: team.color }" />
         <div class="t-body">
@@ -55,10 +57,14 @@ const filtered = computed(() => {
         </div>
         <span class="t-power">{{ team.power }}</span>
         <div class="t-actions">
-          <button class="sm icon-btn" title="Open" @click="router.push(`/teams/${team.id}`)">
+          <button
+            class="sm icon-btn"
+            :title="t('common.open')"
+            @click="router.push(`/teams/${team.id}`)"
+          >
             <ChevronRight :size="14" />
           </button>
-          <button class="sm icon-btn" title="Edit" @click="editingTeam = team">
+          <button class="sm icon-btn" :title="t('common.edit')" @click="editingTeam = team">
             <Pencil :size="13" />
           </button>
           <button class="danger sm icon-btn" @click="store.remove(team.id)">
@@ -68,9 +74,7 @@ const filtered = computed(() => {
       </div>
     </div>
     <p v-else class="empty-text">
-      No teams yet. Click
-      <strong>+ Add Team</strong>
-      to get started.
+      {{ t("teams.empty", { action: t("teams.addBtn") }) }}
     </p>
 
     <TeamFormModal v-if="showAddModal" @close="showAddModal = false" />
