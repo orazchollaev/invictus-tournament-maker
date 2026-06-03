@@ -544,8 +544,7 @@ onUnmounted(() => {
 .bracket-pan-layer {
   display: inline-block;
   transform-origin: 50% 50%;
-  will-change: transform;
-  /* Position at center of wrapper via absolute centering */
+  /* No will-change: transform — avoids premature rasterization that blurs on zoom */
   position: absolute;
   top: 50%;
   left: 50%;

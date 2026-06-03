@@ -142,13 +142,17 @@ const champion = computed(() => {
   return props.teams.find((t) => t.id === winnerId) ?? null
 })
 
+// Banner sits 12px below the final card (right under the golden card)
+const champBannerTop = computed(() => HEADER_H + bracketH.value / 2 + CARD_H / 2 + -120)
+
 const containerH = computed(() => {
   let h = HEADER_H + bracketH.value
   if (props.tournament.hasThirdPlace && thirdPlaceMatch.value) {
     h += TP_GAP + HEADER_H + CARD_H
   }
   if (champion.value) {
-    h += CHAMP_H
+    // Ensure container is tall enough to show the banner below the final card
+    h = Math.max(h + 8, champBannerTop.value + CHAMP_H + 8)
   }
   return h
 })
@@ -521,7 +525,7 @@ function connOpacity(active: boolean) {
           class="champ-banner"
           :style="{
             position: 'absolute',
-            top: containerH - CHAMP_H + 8 + 'px',
+            top: champBannerTop + 'px',
             left: finalX + 'px',
             width: CARD_W + 'px',
           }"
