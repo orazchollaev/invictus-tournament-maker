@@ -137,6 +137,32 @@ function onTouchEnd() {
   fullIsDragging.value = false
 }
 
+// ── Wheel zoom (mouse scroll + touchpad pinch) ────────────────
+function onWheel(e: WheelEvent, ctx: "normal" | "full") {
+  e.preventDefault()
+  const wrapper = ctx === "full" ? fullWrapperRef.value : bracketWrapperRef.value
+  if (!wrapper) return
+
+  const z = ctx === "full" ? fullZoom : zoom
+  const p = ctx === "full" ? fullPan : pan
+
+  const rect = wrapper.getBoundingClientRect()
+  // Cursor position relative to wrapper center (where transform-origin is)
+  const cx = e.clientX - rect.left - rect.width / 2
+  const cy = e.clientY - rect.top - rect.height / 2
+
+  // Normalize delta: deltaMode 1 = lines, 0 = pixels
+  const rawDelta = e.deltaMode === 1 ? e.deltaY * 20 : e.deltaY
+  const factor = Math.exp(-rawDelta * 0.0015)
+  const newZoom = +Math.min(2.5, Math.max(0.25, z.value * factor)).toFixed(3)
+  const ratio = newZoom / z.value
+
+  // Shift pan so the content point under cursor stays fixed
+  p.x = cx - (cx - p.x) * ratio
+  p.y = cy - (cy - p.y) * ratio
+  z.value = newZoom
+}
+
 // ── Zoom buttons ──────────────────────────────────────────────
 function zoomIn() {
   zoom.value = Math.min(2.5, +(zoom.value + 0.1).toFixed(1))
@@ -346,6 +372,7 @@ onUnmounted(() => {
         class="bracket-wrapper"
         :class="{ dragging: isDragging }"
         @mousedown="startDrag"
+        @wheel.prevent="onWheel($event, 'normal')"
         @touchstart.passive="onTouchStart($event, 'normal')"
         @touchmove.prevent="onTouchMove"
         @touchend="onTouchEnd"
@@ -437,6 +464,7 @@ onUnmounted(() => {
           class="full-bracket-body"
           :class="{ dragging: fullIsDragging }"
           @mousedown="startFullDrag"
+          @wheel.prevent="onWheel($event, 'full')"
           @touchstart.passive="onTouchStart($event, 'full')"
           @touchmove.prevent="onTouchMove"
           @touchend="onTouchEnd"
