@@ -34,6 +34,6 @@ jobs:
         uses: remarkablegames/setup-butler@v3
 
       - name: itch.io'ya Yükle
-        run: butler push dist orazchollaev/invictus-tournament-maker:html5
+        run: butler push dist oraz-chollaev/invictus-tournament-maker:html5
         env:
           BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
