@@ -9,8 +9,8 @@ export default defineConfig({
     VitePWA({
       registerType: "prompt",
       workbox: {
-        globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
-        navigateFallback: "index.html",
+        globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2,webp,mp3,wav,ogg}"], // ses formatları eklendi
+        navigateFallback: null, // itch.io gibi SPA olmayan siteler için fallback devre dışı bırakıldı
       },
       manifest: {
         name: "Invictus - Tournament Maker",
