@@ -144,10 +144,12 @@ export function useTournamentDetail() {
   }
 
   watch(
-    () => tournament.value?.winnerId,
-    (winnerId) => {
-      if (!winnerId) return
-      const team = allTeams.value.find((t) => t.id === winnerId)
+    [() => route.params.id as string, () => tournament.value?.winnerId],
+    ([newId, newWinnerId], [oldId, oldWinnerId]) => {
+      if (!newWinnerId) return
+      if (newId !== oldId) return
+      if (newWinnerId === oldWinnerId) return
+      const team = allTeams.value.find((t) => t.id === newWinnerId)
       if (team && settings.confettiOnWin) fireTeamConfetti(team.color)
       if (team && settings.soundOnWin) playWinnerSound()
     }
