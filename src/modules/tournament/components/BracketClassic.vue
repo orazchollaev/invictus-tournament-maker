@@ -1,0 +1,246 @@
+<script setup lang="ts">
+import { computed } from "vue"
+import type { Tournament } from "../types"
+import type { Team } from "@/modules/teams/types"
+import BracketMatchCard from "./BracketMatchCard.vue"
+import BracketThirdPlaceCard from "./BracketThirdPlaceCard.vue"
+import { type DisplayMatch, connStroke, connOpacity } from "./bracketUtils"
+
+const props = defineProps<{ tournament: Tournament; teams: Team[] }>()
+const emit = defineEmits<{
+  "set-result": [
+    round: number,
+    match: number,
+    home: number,
+    away: number,
+    penHome?: number,
+    penAway?: number,
+  ]
+  "set-leg2-result": [
+    round: number,
+    match: number,
+    home: number,
+    away: number,
+    penHome?: number,
+    penAway?: number,
+  ]
+  "sim-match": [round: number, match: number]
+  "sim-leg1": [round: number, match: number]
+  "sim-leg2": [round: number, match: number]
+  "set-third-place-result": [home: number, away: number, penHome?: number, penAway?: number]
+  "sim-third-place": []
+}>()
+
+const thirdPlaceMatch = computed(() => props.tournament.thirdPlaceMatch ?? null)
+
+// ── Bracket data ──────────────────────────────────────────────
+const allRounds = computed(() => props.tournament.rounds)
+const displayRounds = computed((): DisplayMatch[][] =>
+  allRounds.value.map((r, ri) =>
+    r.matches.map((m, mi) => ({ ...m, _origRound: ri, _origMatch: mi }))
+  )
+)
+
+// ── Layout constants ──────────────────────────────────────────
+const CARD_H = 58 // 28 home + 28 away + 2px outer borders
+const CARD_H_DOUBLE = 58 // same: no extra rows
+const CARD_GAP = 20
+const CARD_W = 190
+const COL_GAP = 32
+const HEADER_H = 28
+
+function isDoubleLegRound(ri: number): boolean {
+  return displayRounds.value[ri]?.[0]?.leg2Result !== undefined
+}
+
+function cardH(ri: number): number {
+  return isDoubleLegRound(ri) ? CARD_H_DOUBLE : CARD_H
+}
+
+const totalBracketH = computed(() => {
+  const n = displayRounds.value[0]?.length ?? 1
+  const h = cardH(0)
+  return n * h + (n - 1) * CARD_GAP
+})
+
+function matchCenterY(ri: number, mi: number): number {
+  const n = displayRounds.value[0]?.length ?? 1
+  const h0 = cardH(0)
+  const totalH = n * h0 + (n - 1) * CARD_GAP
+  const slot = totalH / (displayRounds.value[ri]?.length ?? 1)
+  return slot * mi + slot / 2
+}
+
+function cardTop(ri: number, mi: number): number {
+  return matchCenterY(ri, mi) - cardH(ri) / 2
+}
+
+// ── SVG connectors ────────────────────────────────────────────
+interface ConnPath {
+  ay: number
+  by: number
+  dy: number
+  active: boolean
+}
+
+function connectorPaths(ri: number): ConnPath[] {
+  const nextCount = displayRounds.value[ri + 1]?.length ?? 0
+  return Array.from({ length: nextCount }, (_, ci) => {
+    const destMatch = displayRounds.value[ri + 1]?.[ci]
+    return {
+      ay: matchCenterY(ri, ci * 2),
+      by: matchCenterY(ri, ci * 2 + 1),
+      dy: matchCenterY(ri + 1, ci),
+      active: !!(destMatch?.homeId && destMatch?.awayId),
+    }
+  })
+}
+
+function svgPath(p: ConnPath, w: number): string {
+  const mid = w / 2
+  return [
+    `M0,${p.ay} H${mid}`,
+    `M0,${p.by} H${mid}`,
+    `M${mid},${p.ay} V${p.by}`,
+    `M${mid},${(p.ay + p.by) / 2} H${w}`,
+  ].join(" ")
+}
+</script>
+
+<template>
+  <div class="bracket-wrap">
+    <div class="bracket" :style="{ height: totalBracketH + HEADER_H + 'px' }">
+      <template v-for="(roundMatches, ri) in displayRounds" :key="'round-' + ri">
+        <div class="round-col" :style="{ width: CARD_W + 'px' }">
+          <div class="round-title" :class="{ 'final-title': ri === displayRounds.length - 1 }">
+            {{ allRounds[ri].name }}
+          </div>
+          <div class="matches-area" :style="{ height: totalBracketH + 'px' }">
+            <BracketMatchCard
+              v-for="(match, mi) in roundMatches"
+              :key="match.id"
+              :match="match"
+              :teams="teams"
+              :is-final="ri === displayRounds.length - 1"
+              :style="{
+                position: 'absolute',
+                top: cardTop(ri, mi) + 'px',
+                left: 0,
+                right: 0,
+                animationDelay: `${ri * 0.08 + mi * 0.05}s`,
+              }"
+              @set-result="(r, m, h, a, ph, pa) => emit('set-result', r, m, h, a, ph, pa)"
+              @set-leg2-result="(r, m, h, a, ph, pa) => emit('set-leg2-result', r, m, h, a, ph, pa)"
+              @sim-match="(r, m) => emit('sim-match', r, m)"
+              @sim-leg1="(r, m) => emit('sim-leg1', r, m)"
+              @sim-leg2="(r, m) => emit('sim-leg2', r, m)"
+            />
+          </div>
+        </div>
+
+        <div
+          v-if="ri < displayRounds.length - 1"
+          class="conn-col"
+          :style="{
+            width: COL_GAP + 'px',
+            marginTop: HEADER_H + 'px',
+            height: totalBracketH + 'px',
+          }"
+        >
+          <svg width="100%" height="100%" style="display: block; overflow: visible">
+            <path
+              v-for="(p, pi) in connectorPaths(ri)"
+              :key="pi"
+              :d="svgPath(p, COL_GAP)"
+              fill="none"
+              :stroke="connStroke(p.active)"
+              :stroke-opacity="connOpacity(p.active)"
+              stroke-width="2"
+            />
+          </svg>
+        </div>
+      </template>
+
+      <!-- ── 3rd place ── -->
+      <template v-if="tournament.hasThirdPlace && thirdPlaceMatch">
+        <div
+          class="tp-divider"
+          :style="{ marginTop: HEADER_H + 'px', height: totalBracketH + 'px' }"
+        />
+        <div class="round-col" :style="{ width: CARD_W + 'px' }">
+          <div class="round-title tp-title">3rd Place</div>
+          <div class="matches-area" :style="{ height: totalBracketH + 'px' }">
+            <BracketThirdPlaceCard
+              :match="thirdPlaceMatch!"
+              :teams="teams"
+              :style="{
+                position: 'absolute',
+                top: totalBracketH / 2 - CARD_H / 2 + 'px',
+                left: 0,
+                right: 0,
+              }"
+              @set-result="(h, a, ph, pa) => emit('set-third-place-result', h, a, ph, pa)"
+              @sim="emit('sim-third-place')"
+            />
+          </div>
+        </div>
+      </template>
+    </div>
+  </div>
+</template>
+
+<style scoped>
+.bracket-wrap {
+  width: fit-content;
+  max-width: 100%;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+.bracket {
+  display: flex;
+  align-items: flex-start;
+  position: relative;
+}
+
+.round-col {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+.round-title {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  padding: 4px 8px 8px;
+  text-align: center;
+  height: 28px;
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+.final-title {
+  color: #c9a227 !important;
+}
+.tp-title {
+  color: var(--accent-2);
+}
+
+.matches-area {
+  position: relative;
+  width: 100%;
+}
+
+.conn-col {
+  flex-shrink: 0;
+}
+
+.tp-divider {
+  width: 1px;
+  background: var(--border-light);
+  flex-shrink: 0;
+  margin-left: 16px;
+  margin-right: 16px;
+  opacity: 0.5;
+}
+</style>

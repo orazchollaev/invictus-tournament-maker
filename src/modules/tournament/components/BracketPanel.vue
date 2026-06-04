@@ -2,8 +2,8 @@
 import { ref, computed, reactive, onMounted, onUnmounted, nextTick } from "vue"
 import type { Tournament } from "../types"
 import type { Team } from "@/modules/teams/types"
-import Bracket from "./Bracket.vue"
-import BracketOld from "./BracketOld.vue"
+import BracketDoubleSide from "./BracketDoubleSide.vue"
+import BracketClassic from "./BracketClassic.vue"
 import FixtureView from "./FixtureView.vue"
 import { useTournamentStore } from "../store"
 import { useSettingsStore } from "@/modules/settings/store"
@@ -21,10 +21,10 @@ const settings = useSettingsStore()
 
 const activeBracket = computed(() => {
   const style = settings.bracketStyle
-  if (style === "double-sided") return Bracket
-  if (style === "classic") return BracketOld
+  if (style === "double-sided") return BracketDoubleSide
+  if (style === "classic") return BracketClassic
   const knockoutTeams = (props.tournament.rounds[0]?.matches.length ?? 0) * 2
-  return knockoutTeams >= 17 ? Bracket : BracketOld
+  return knockoutTeams >= 17 ? BracketDoubleSide : BracketClassic
 })
 
 const bracketView = ref<"bracket" | "fixtures">("bracket")
