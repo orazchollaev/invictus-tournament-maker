@@ -120,6 +120,17 @@ export function buildEmptyBracketRounds(size: number): Round[] {
   return rounds
 }
 
+function bracketOrder(n: number): number[] {
+  if (n === 1) return [0]
+  const half = bracketOrder(n / 2)
+  const result: number[] = []
+  for (const pos of half) {
+    result.push(pos)
+    result.push(n - 1 - pos)
+  }
+  return result
+}
+
 export function buildPureBracket(teams: Team[], seeded: boolean, orderedTeams?: Team[]): Round[] {
   const count = teams.length
   const size = Math.pow(2, Math.ceil(Math.log2(count)))
@@ -137,14 +148,22 @@ export function buildPureBracket(teams: Team[], seeded: boolean, orderedTeams?: 
     }
   } else if (seeded) {
     const sorted = [...teams].sort((a, b) => b.power - a.power)
+    const r2Size = size / 2
+    const r2Slots = bracketOrder(r2Size)
     const byeTeams = sorted.slice(0, byes)
     const rest = sorted.slice(byes)
     const half = rest.length / 2
     const pot1 = shuffle(rest.slice(0, half))
     const pot2 = shuffle(rest.slice(half))
-    seededOrder = []
-    for (const t of byeTeams) seededOrder.push(t, null)
-    for (let i = 0; i < pot1.length; i++) seededOrder.push(pot1[i], pot2[i])
+    seededOrder = new Array(size).fill(null) as (Team | null)[]
+    for (let i = 0; i < byeTeams.length; i++) {
+      seededOrder[r2Slots[i] * 2] = byeTeams[i]
+    }
+    for (let i = 0; i < pot1.length; i++) {
+      const r2pos = r2Slots[byes + i]
+      seededOrder[r2pos * 2] = pot1[i]
+      seededOrder[r2pos * 2 + 1] = pot2[i]
+    }
   } else {
     const shuffled = shuffle(teams)
     seededOrder = []
