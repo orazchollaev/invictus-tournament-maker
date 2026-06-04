@@ -21,7 +21,7 @@ jobs:
       - name: Node.js Kur
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
           cache: "pnpm"
 
       - name: Bağımlılıkları Yükle
@@ -34,6 +34,6 @@ jobs:
         uses: remarkablegames/setup-butler@v3
 
       - name: itch.io'ya Yükle
-        run: butler push dist KULLANICI_ADIN/turnuva-maker:html5
+        run: butler push dist orazchollaev/invictus-tournament-maker:html5
         env:
           BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
