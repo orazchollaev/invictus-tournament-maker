@@ -194,7 +194,7 @@ function importData() {
               :class="{ 'lang-btn--active': settings.locale === loc.value }"
               @click="settings.locale = loc.value"
             >
-              <span class="lang-flag">{{ loc.flag }}</span>
+              <img :src="`/flags/${loc.flag}`" :alt="loc.label" class="lang-flag" />
               <span class="lang-name">{{ loc.label }}</span>
             </button>
           </div>
@@ -645,8 +645,8 @@ function importData() {
   font-weight: 600;
 }
 .lang-flag {
-  font-size: 15px;
-  line-height: 1;
+  width: 18px;
+  height: auto;
 }
 .lang-name {
   line-height: 1;
