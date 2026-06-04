@@ -372,6 +372,68 @@
   margin-bottom: 12px;
 }
 
+/* ── Settings Layout ── */
+.setting-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.setting-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 10px;
+}
+
+.setting-row:last-child {
+  margin-bottom: 0;
+}
+
+.setting-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.setting-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.4;
+}
+
+.setting-desc {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 2px;
+  line-height: 1.4;
+}
+
+.section-intro {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+
+.btn-row {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.danger-setting-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid color-mix(in srgb, var(--danger) 20%, transparent);
+}
+
+.danger-label {
+  color: var(--danger);
+}
+
 /* ── Component Responsive ── */
 @media (max-width: 640px) {
   .page {
@@ -443,5 +505,19 @@
 
   .btn-group {
     flex-wrap: wrap;
+  }
+
+  .setting-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .btn-row {
+    flex-wrap: wrap;
+  }
+  .danger-setting-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
   }
 }
