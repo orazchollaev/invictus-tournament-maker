@@ -1,5 +1,45 @@
 # Changelog
 
+## [1.8.0](https://github.com/orazchollaev/invictus-tournament-maker/compare/v1.7.0...v1.8.0) (2026-06-04)
+
+### 🚀 New Features
+
+- add wildcard standings sub-tab inside groups view ([99b1fa8](https://github.com/orazchollaev/invictus-tournament-maker/commit/99b1fa8423cfa3b7b39b64b2e1803cee0b9a4dd9))
+- **bracket:** add mouse wheel + touchpad pinch-to-zoom toward cursor ([c6bd8ed](https://github.com/orazchollaev/invictus-tournament-maker/commit/c6bd8ed86863ac634b6b0c5ea0955e6177a146d3))
+- **bracket:** add smooth zoom animation to bracket viewer ([43d3072](https://github.com/orazchollaev/invictus-tournament-maker/commit/43d30725149ad7e9cc14eaac02152e4f59d8351e))
+- **bracket:** transform pan/zoom, champion banner, wider cards, stronger connectors ([a1adedc](https://github.com/orazchollaev/invictus-tournament-maker/commit/a1adedcae743fbd685233c75500349b8df8ed829))
+- **color-picker:** open native browser color picker on preview swatch click ([16980f0](https://github.com/orazchollaev/invictus-tournament-maker/commit/16980f0964dcf9c49f77d83f8492acfd561fd692))
+- **i18n:** add vue-i18n with EN/TR/RU/ES/PT support, language picker in settings (WIP) ([74dcf45](https://github.com/orazchollaev/invictus-tournament-maker/commit/74dcf45141ff494c8d491ff2468295efcb3262dc))
+- **settings:** add bracket quality setting with GPU acceleration toggle ([bc28a4b](https://github.com/orazchollaev/invictus-tournament-maker/commit/bc28a4b9e2b16a75723fe507fbe7fc954a0b4e12))
+- **settings:** add flags to language selector ([1b05f08](https://github.com/orazchollaev/invictus-tournament-maker/commit/1b05f08be7c9bd394f470a743956207449bbf746))
+- **tournament:** add winner celebration sound effect ([3cad105](https://github.com/orazchollaev/invictus-tournament-maker/commit/3cad105ba99af73a8e8392b0f3708c45480ac96d))
+
+### 🐛 Bug Fixes
+
+- **bracket:** correct seeded bracket distribution using standard bracket ordering ([e340f2e](https://github.com/orazchollaev/invictus-tournament-maker/commit/e340f2e37cbaee2d67296e60e6da11c97e8aec90))
+- **bracket:** crisp zoom rendering and champion banner below final card ([0a5d1db](https://github.com/orazchollaev/invictus-tournament-maker/commit/0a5d1db74c9aecdfb67dcdeb473359b01284bc53))
+- **bracket:** hide match action buttons during PNG export ([990d0ae](https://github.com/orazchollaev/invictus-tournament-maker/commit/990d0aed7d716de6b2a85712205727c524a19335))
+- **header:** add safe-area-inset-top padding for Android status bar overlap ([c9bee13](https://github.com/orazchollaev/invictus-tournament-maker/commit/c9bee13552e49efb74d645c51147ce919c3af6f3))
+- **settings:** fix theme settings translations ([4dc4c09](https://github.com/orazchollaev/invictus-tournament-maker/commit/4dc4c092ec6ec978bfde7e65c17f94cc79f3e43f))
+- show advance to knockout button on mobile ([ab4ffa4](https://github.com/orazchollaev/invictus-tournament-maker/commit/ab4ffa45dabaeb7e1bcc0dc785766dbdd6b7cb10))
+- **tournament:** only fire confetti/sound on new winner, not on navigation ([8cf67ac](https://github.com/orazchollaev/invictus-tournament-maker/commit/8cf67ac1fd19f8baf5eadca2a48cf369ad3ae217))
+
+### ♻️ Refactoring
+
+- **settings:** split SettingsPage into section components and useDataManagement composable ([6e0f69d](https://github.com/orazchollaev/invictus-tournament-maker/commit/6e0f69dea9dd1c8ed0c8f2b6d2127b70aa757d42))
+- **ui:** default color theme transform from dark to light ([b07f6ac](https://github.com/orazchollaev/invictus-tournament-maker/commit/b07f6ac979ddd6d97b65fd2e9a85cb1d219b38ca))
+
+### 🔧 Maintenance
+
+- **changelog:** add emojis to changelog section titles ([5cd1972](https://github.com/orazchollaev/invictus-tournament-maker/commit/5cd1972eeab0a6166a09fbdccd3e3cca9ec665bc))
+- **i18n:** transform t key with trns in tournament detail page ([ecdc739](https://github.com/orazchollaev/invictus-tournament-maker/commit/ecdc739666b5786cd330ca6c8fa4bff163df3b38))
+- improve application icon quality ([0a3ee0a](https://github.com/orazchollaev/invictus-tournament-maker/commit/0a3ee0a42f5369024764ee57d6240dba4e7288ed))
+- new logo for Invictus ([0bdcfd0](https://github.com/orazchollaev/invictus-tournament-maker/commit/0bdcfd03ae1d6c4a3b4ad904842a08c138f23bee))
+
+### 📚 Documentation
+
+- readme.md is fully rewrited ([caa28c6](https://github.com/orazchollaev/invictus-tournament-maker/commit/caa28c6795fd77fbfe990f5298b52a8707ee4bf3))
+
 ## [1.7.0](https://github.com/orazchollaev/invictus-tournament-maker/compare/v1.6.0...v1.7.0) (2026-06-03)
 
 ### Features
