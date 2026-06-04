@@ -75,6 +75,9 @@ export default {
       theme: {
         label: "Tema",
         desc: "Uygulamanın renk şeması",
+        light: "Açık",
+        dark: "Koyu",
+        worldcup2026: "2026 Dünya Kupası",
       },
     },
     tableRules: {

@@ -75,6 +75,9 @@ export default {
       theme: {
         label: "Theme",
         desc: "Color scheme for the entire app",
+        light: "Light",
+        dark: "Dark",
+        worldcup2026: "World Cup 2026",
       },
     },
     tableRules: {

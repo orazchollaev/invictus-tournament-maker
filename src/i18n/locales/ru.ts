@@ -75,6 +75,9 @@ export default {
       theme: {
         label: "Тема",
         desc: "Цветовая схема приложения",
+        light: "Светлая",
+        dark: "Темная",
+        worldcup2026: "Чемпионат мира 2026",
       },
     },
     tableRules: {

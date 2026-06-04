@@ -20,9 +20,9 @@ const teamsStore = useTeamsStore()
 const tournamentStore = useTournamentStore()
 
 const themes = computed<{ value: Theme; label: string }[]>(() => [
-  { value: "light", label: "Light" },
-  { value: "dark", label: "Dark" },
-  { value: "worldcup2026", label: "⚽ World Cup 2026" },
+  { value: "light", label: t("settings.appearance.theme.light") },
+  { value: "dark", label: t("settings.appearance.theme.dark") },
+  { value: "worldcup2026", label: t("settings.appearance.theme.worldcup2026") },
 ])
 
 const legOptions = computed(() => [
