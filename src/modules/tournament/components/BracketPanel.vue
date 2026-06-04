@@ -44,6 +44,8 @@ const zoom = ref(1)
 const pan = reactive({ x: 0, y: 0 })
 const isDragging = ref(false)
 const dragStart = ref({ x: 0, y: 0, px: 0, py: 0 })
+const isZooming = ref(false)
+let zoomTimeout: number
 
 // ── Full-screen bracket pan + zoom ────────────────────────────
 const fullZoom = ref(1)
@@ -145,6 +147,12 @@ function onWheel(e: WheelEvent, ctx: "normal" | "full") {
   e.preventDefault()
   const wrapper = ctx === "full" ? fullWrapperRef.value : bracketWrapperRef.value
   if (!wrapper) return
+
+  isZooming.value = true
+  clearTimeout(zoomTimeout)
+  zoomTimeout = window.setTimeout(() => {
+    isZooming.value = false
+  }, 150)
 
   const z = ctx === "full" ? fullZoom : zoom
   const p = ctx === "full" ? fullPan : pan
@@ -382,7 +390,7 @@ onUnmounted(() => {
       >
         <div
           ref="bracketInnerRef"
-          class="bracket-pan-layer"
+          :class="['bracket-pan-layer', { zooming: isZooming }]"
           :style="{ transform: bracketTransform, ...panLayerStyle }"
         >
           <component
@@ -473,11 +481,7 @@ onUnmounted(() => {
           @touchmove.prevent="onTouchMove"
           @touchend="onTouchEnd"
         >
-          <div
-            ref="fullInnerRef"
-            class="bracket-pan-layer"
-            :style="{ transform: fullTransform, ...panLayerStyle }"
-          >
+          <div ref="fullInnerRef" class="bracket-pan-layer" :style="{ transform: fullTransform }">
             <component
               :is="activeBracket"
               :tournament="tournament"
@@ -557,6 +561,10 @@ onUnmounted(() => {
   top: 50%;
   left: 50%;
   translate: -50% -50%;
+}
+
+.bracket-pan-layer.zooming {
+  transition: transform 0.15s ease-out;
 }
 
 .fixture-wrapper {
