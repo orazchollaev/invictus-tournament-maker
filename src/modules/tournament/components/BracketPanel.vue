@@ -481,7 +481,11 @@ onUnmounted(() => {
           @touchmove.prevent="onTouchMove"
           @touchend="onTouchEnd"
         >
-          <div ref="fullInnerRef" class="bracket-pan-layer" :style="{ transform: fullTransform }">
+          <div
+            ref="fullInnerRef"
+            :class="['bracket-pan-layer', { zooming: isZooming }]"
+            :style="{ transform: fullTransform }"
+          >
             <component
               :is="activeBracket"
               :tournament="tournament"
@@ -663,6 +667,7 @@ onUnmounted(() => {
   align-items: center;
   justify-content: space-between;
   padding: 10px 14px;
+  padding-top: calc(10px + env(safe-area-inset-top));
   border-bottom: 1px solid var(--border-light);
   background: var(--bg);
   font-family: var(--font);
