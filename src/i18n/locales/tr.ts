@@ -132,6 +132,15 @@ export default {
         noRematch: "Tekrar yok",
       },
     },
+    graphics: {
+      title: "Grafik",
+      bracketQuality: {
+        label: "Bracket Kalitesi",
+        desc: "Yüksek — tüm yakınlaştırma seviyelerinde keskin görüntü · Düşük — GPU hızlandırmasını etkinleştirir, yakınlaştırmada netliği azaltabilir",
+        high: "Yüksek",
+        low: "Düşük",
+      },
+    },
     display: {
       title: "Görüntü",
       teamAbbr: {

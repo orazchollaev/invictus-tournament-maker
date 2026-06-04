@@ -9,6 +9,7 @@ import type { Locale } from "@/i18n"
 export type Theme = "light" | "dark" | "worldcup2026"
 export type DrawType = "random" | "seeded" | "manual"
 export type BracketStyle = "double-sided" | "classic" | "auto"
+export type BracketQuality = "high" | "low"
 
 export const useSettingsStore = defineStore("settings", () => {
   const theme = ref<Theme>("light")
@@ -27,6 +28,7 @@ export const useSettingsStore = defineStore("settings", () => {
   const formFactorEnabled = ref(false)
   const homeAdvantage = ref(6)
   const bracketStyle = ref<BracketStyle>("auto")
+  const bracketQuality = ref<BracketQuality>("high")
 
   watch(
     theme,
@@ -66,6 +68,7 @@ export const useSettingsStore = defineStore("settings", () => {
     formFactorEnabled.value = false
     homeAdvantage.value = 6
     bracketStyle.value = "auto"
+    bracketQuality.value = "high"
   }
 
   return {
@@ -85,6 +88,7 @@ export const useSettingsStore = defineStore("settings", () => {
     formFactorEnabled,
     homeAdvantage,
     bracketStyle,
+    bracketQuality,
     resetAll,
   }
 })

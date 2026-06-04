@@ -30,6 +30,11 @@ const legOptions = computed(() => [
   { value: "double", label: t("common.double") },
 ])
 
+const bracketQualityOptions = computed(() => [
+  { value: "high", label: t("settings.graphics.bracketQuality.high") },
+  { value: "low", label: t("settings.graphics.bracketQuality.low") },
+])
+
 const bracketStyleOptions = computed<{ value: BracketStyle; label: string }[]>(() => [
   { value: "double-sided", label: t("settings.display.bracketStyle.doubleSided") },
   { value: "classic", label: t("settings.display.bracketStyle.classic") },
@@ -372,6 +377,20 @@ function importData() {
             {{ t("settings.newTournament.drawLegend.noRematch") }} — avoids same-group opponents in
             Round 1 &nbsp;·&nbsp; {{ t("common.random") }} — fully random
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Graphics ─────────────────────────────────────── -->
+    <div class="section-box">
+      <h2>{{ t("settings.graphics.title") }}</h2>
+      <div class="section-body">
+        <div class="setting-row">
+          <div class="setting-info">
+            <div class="setting-label">{{ t("settings.graphics.bracketQuality.label") }}</div>
+            <div class="setting-desc">{{ t("settings.graphics.bracketQuality.desc") }}</div>
+          </div>
+          <BtnGroup v-model="settings.bracketQuality" :options="bracketQualityOptions" />
         </div>
       </div>
     </div>

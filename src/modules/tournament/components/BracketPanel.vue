@@ -61,6 +61,9 @@ const bracketTransform = computed(() => `translate(${pan.x}px, ${pan.y}px) scale
 const fullTransform = computed(
   () => `translate(${fullPan.x}px, ${fullPan.y}px) scale(${fullZoom.value})`
 )
+const panLayerStyle = computed(() => ({
+  willChange: settings.bracketQuality === "low" ? "transform" : "auto",
+}))
 
 // ── Drag handlers ─────────────────────────────────────────────
 function startDrag(e: MouseEvent) {
@@ -380,7 +383,7 @@ onUnmounted(() => {
         <div
           ref="bracketInnerRef"
           class="bracket-pan-layer"
-          :style="{ transform: bracketTransform }"
+          :style="{ transform: bracketTransform, ...panLayerStyle }"
         >
           <component
             :is="activeBracket"
@@ -470,7 +473,11 @@ onUnmounted(() => {
           @touchmove.prevent="onTouchMove"
           @touchend="onTouchEnd"
         >
-          <div ref="fullInnerRef" class="bracket-pan-layer" :style="{ transform: fullTransform }">
+          <div
+            ref="fullInnerRef"
+            class="bracket-pan-layer"
+            :style="{ transform: fullTransform, ...panLayerStyle }"
+          >
             <component
               :is="activeBracket"
               :tournament="tournament"

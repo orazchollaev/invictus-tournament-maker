@@ -131,6 +131,15 @@ export default {
         noRematch: "No rematch",
       },
     },
+    graphics: {
+      title: "Graphics",
+      bracketQuality: {
+        label: "Bracket Quality",
+        desc: "High — sharp rendering at all zoom levels · Low — enables GPU acceleration, may reduce sharpness when zooming",
+        high: "High",
+        low: "Low",
+      },
+    },
     display: {
       title: "Display",
       teamAbbr: {

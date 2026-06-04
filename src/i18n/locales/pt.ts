@@ -132,6 +132,15 @@ export default {
         noRematch: "Sem revanche",
       },
     },
+    graphics: {
+      title: "Gráficos",
+      bracketQuality: {
+        label: "Qualidade do chave",
+        desc: "Alta — renderização nítida em todos os níveis de zoom · Baixa — ativa aceleração de GPU, pode reduzir a nitidez ao ampliar",
+        high: "Alta",
+        low: "Baixa",
+      },
+    },
     display: {
       title: "Exibição",
       teamAbbr: {
