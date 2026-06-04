@@ -24,7 +24,7 @@ const settings = useSettingsStore()
             :class="{ 'lang-btn--active': settings.locale === loc.value }"
             @click="settings.locale = loc.value"
           >
-            <img :src="`/flags/${loc.flag}`" :alt="loc.label" class="lang-flag" />
+            <img :src="`./flags/${loc.flag}`" :alt="loc.label" class="lang-flag" />
             <span class="lang-name">{{ loc.label }}</span>
           </button>
         </div>
