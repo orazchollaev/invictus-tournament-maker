@@ -64,6 +64,13 @@ const confettiOnWinVal = computed({
   },
 })
 
+const soundOnWinVal = computed({
+  get: () => (settings.soundOnWin ? "on" : "off"),
+  set: (v: string) => {
+    settings.soundOnWin = v === "on"
+  },
+})
+
 const formFactorVal = computed({
   get: () => (settings.formFactorEnabled ? "on" : "off"),
   set: (v: string) => {
@@ -402,6 +409,14 @@ function importData() {
             <div class="setting-desc">{{ t("settings.display.confetti.desc") }}</div>
           </div>
           <BtnGroup v-model="confettiOnWinVal" :options="onOffOptions" />
+        </div>
+
+        <div class="setting-row">
+          <div class="setting-info">
+            <div class="setting-label">{{ t("settings.display.sound.label") }}</div>
+            <div class="setting-desc">{{ t("settings.display.sound.desc") }}</div>
+          </div>
+          <BtnGroup v-model="soundOnWinVal" :options="onOffOptions" />
         </div>
       </div>
     </div>

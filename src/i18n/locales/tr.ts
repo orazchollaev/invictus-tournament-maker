@@ -146,6 +146,10 @@ export default {
         label: "Şampiyon Konfetisi",
         desc: "Turnuva bittiğinde kazananın rengiyle konfeti fırlat",
       },
+      sound: {
+        label: "Kazanan Sesi",
+        desc: "Turnuva bittiğinde bir ses çal",
+      },
     },
     simulation: {
       title: "Simülasyon",

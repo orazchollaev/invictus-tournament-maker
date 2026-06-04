@@ -109,7 +109,7 @@ export function useTournamentDetail() {
   }
 
   function fireTeamConfetti(color: string) {
-    const end = Date.now() + 2000
+    const end = Date.now() + 2500
 
     const frame = () => {
       // Left
@@ -137,12 +137,19 @@ export function useTournamentDetail() {
     frame()
   }
 
+  function playWinnerSound() {
+    const audio = new Audio("/sfx/winning-sfx.mp3")
+    audio.volume = 0.2
+    audio.play().catch(() => {})
+  }
+
   watch(
     () => tournament.value?.winnerId,
     (winnerId) => {
       if (!winnerId) return
       const team = allTeams.value.find((t) => t.id === winnerId)
       if (team && settings.confettiOnWin) fireTeamConfetti(team.color)
+      if (team && settings.soundOnWin) playWinnerSound()
     }
   )
 

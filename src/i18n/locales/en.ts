@@ -145,6 +145,10 @@ export default {
         label: "Champion Confetti",
         desc: "Fire confetti in the winner's color when a tournament ends",
       },
+      sound: {
+        label: "Winning Sound",
+        desc: "Play a sound when a tournament ends",
+      },
     },
     simulation: {
       title: "Simulation",

@@ -19,6 +19,7 @@ export const useSettingsStore = defineStore("settings", () => {
   const surpriseFactor = ref(50)
   const showTeamAbbr = ref(true)
   const confettiOnWin = ref(true)
+  const soundOnWin = ref(true)
   const newSeasonDrawType = ref<DrawType>("random")
   const newSeasonGroupDrawType = ref<DrawType>("random")
   const newSeasonPlayoffSeedMode = ref<PlayoffSeedMode>("cross")
@@ -57,6 +58,7 @@ export const useSettingsStore = defineStore("settings", () => {
     surpriseFactor.value = 50
     showTeamAbbr.value = true
     confettiOnWin.value = true
+    soundOnWin.value = true
     newSeasonDrawType.value = "random"
     newSeasonGroupDrawType.value = "random"
     newSeasonPlayoffSeedMode.value = "cross"
@@ -75,6 +77,7 @@ export const useSettingsStore = defineStore("settings", () => {
     surpriseFactor,
     showTeamAbbr,
     confettiOnWin,
+    soundOnWin,
     newSeasonDrawType,
     newSeasonGroupDrawType,
     newSeasonPlayoffSeedMode,
