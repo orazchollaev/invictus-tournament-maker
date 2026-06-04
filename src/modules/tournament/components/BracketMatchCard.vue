@@ -10,6 +10,7 @@ const props = defineProps<{
   match: Match & { _origRound: number; _origMatch: number }
   teams: Team[]
   isFinal?: boolean
+  isExporting?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -311,7 +312,7 @@ const isEditing = computed(() => sMode.value !== "off" || editingLeg.value !== n
       </div>
 
       <!-- Action column -->
-      <div class="mc-actions">
+      <div v-if="!isExporting" class="mc-actions">
         <!-- Editing: ✓ ✗ -->
         <template v-if="isEditing">
           <button

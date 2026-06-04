@@ -7,7 +7,7 @@ import BracketMatchCard from "./BracketMatchCard.vue"
 import { getWinnerId } from "@/engine"
 import { Shuffle, X, Check, Pencil } from "@lucide/vue"
 
-const props = defineProps<{ tournament: Tournament; teams: Team[] }>()
+const props = defineProps<{ tournament: Tournament; teams: Team[]; isExporting?: boolean }>()
 const emit = defineEmits<{
   "set-result": [
     round: number,
@@ -222,6 +222,7 @@ function connOpacity(active: boolean) {
           :match="match"
           :teams="teams"
           :is-final="false"
+          :is-exporting="isExporting"
           :style="{
             position: 'absolute',
             top: HEADER_H + matchCenterY(n - 1, mi) - CARD_H / 2 + 'px',
@@ -299,6 +300,7 @@ function connOpacity(active: boolean) {
         :match="displayRounds[finalRi][0]"
         :teams="teams"
         :is-final="true"
+        :is-exporting="isExporting"
         :style="{
           position: 'absolute',
           top: HEADER_H + bracketH / 2 - CARD_H / 2 + 'px',
@@ -358,6 +360,7 @@ function connOpacity(active: boolean) {
           :match="match"
           :teams="teams"
           :is-final="false"
+          :is-exporting="isExporting"
           :style="{
             position: 'absolute',
             top: HEADER_H + matchCenterY(n - 1, mi) - CARD_H / 2 + 'px',

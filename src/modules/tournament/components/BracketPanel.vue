@@ -386,6 +386,7 @@ onUnmounted(() => {
             :is="activeBracket"
             :tournament="tournament"
             :teams="teams"
+            :is-exporting="isExporting"
             @set-result="setResult"
             @set-leg2-result="setLeg2Result"
             @sim-match="simMatch"
