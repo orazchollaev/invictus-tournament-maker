@@ -75,6 +75,7 @@ const { needRefresh, applyUpdate } = usePwaUpdate()
   position: sticky;
   top: 0;
   z-index: 10;
+  padding-top: env(safe-area-inset-top);
 }
 
 .header-inner {
