@@ -6,7 +6,7 @@
   },
   "github": {
     "release": true,
-    "repostory": "orazchollaev/invictus-tournament-maker"
+    "repository": "orazchollaev/invictus-tournament-maker"
   },
   "plugins": {
     "@release-it/conventional-changelog": {
@@ -14,34 +14,13 @@
       "preset": {
         "name": "conventionalcommits",
         "types": [
-          {
-            "type": "feat",
-            "section": "Features"
-          },
-          {
-            "type": "fix",
-            "section": "Bug Fixes"
-          },
-          {
-            "type": "refactor",
-            "section": "Code Refactoring"
-          },
-          {
-            "type": "chore",
-            "section": "Chores"
-          },
-          {
-            "type": "docs",
-            "section": "Documentation"
-          },
-          {
-            "type": "style",
-            "section": "Styles"
-          },
-          {
-            "type": "test",
-            "section": "Tests"
-          }
+          { "type": "feat", "section": "🚀 New Features" },
+          { "type": "fix", "section": "🐛 Bug Fixes" },
+          { "type": "refactor", "section": "♻️ Refactoring" },
+          { "type": "chore", "section": "🔧 Maintenance" },
+          { "type": "docs", "section": "📚 Documentation" },
+          { "type": "style", "section": "🎨 Styles" },
+          { "type": "test", "section": "✅ Tests" }
         ]
       }
     }
