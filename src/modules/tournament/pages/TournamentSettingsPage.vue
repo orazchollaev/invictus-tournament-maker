@@ -7,8 +7,10 @@ import type { PlayoffSeedMode, LegMode, Tiebreaker } from "@/modules/tournament/
 import ManualDraw from "@/modules/tournament/components/ManualDraw.vue"
 import GroupDraw from "@/modules/tournament/components/GroupDraw.vue"
 import BtnGroup from "@/components/BtnGroup.vue"
-import { Settings, X, Lock, Save, ArrowLeft } from "@lucide/vue"
+import { Settings, X, Lock, Save, ArrowLeft, Play, BarChart2 } from "@lucide/vue"
 import { showConfirm } from "@/composables/useDialog"
+import { useMonteCarlo } from "@/modules/tournament/composables/useMonteCarlo"
+import { cacheSimResult } from "@/modules/tournament/composables/simulationCache"
 
 type DrawType = "random" | "seeded" | "manual"
 
@@ -53,6 +55,39 @@ const localTierCount = ref(tournament.value?.tiers?.length ?? 1)
 const isLeagueFormat = computed(() => tournament.value?.format === "league")
 const isGroupFormat = computed(() => tournament.value?.format === "group+bracket")
 const isMultiTier = computed(() => (tournament.value?.tiers?.length ?? 0) > 1)
+
+// Monte Carlo simulation
+const {
+  isRunning: simRunning,
+  progress: simProgress,
+  run: runSim,
+  cancel: cancelSim,
+} = useMonteCarlo()
+const showSimModal = ref(false)
+const simDone = ref(false)
+
+async function handleSimulate() {
+  if (!tournament.value) return
+  showSimModal.value = true
+  simDone.value = false
+  const teams = teamsStore.teams
+  const result = await runSim(tournament.value, teams, 10_000)
+  if (result) {
+    cacheSimResult(tournamentId.value, result)
+    simDone.value = true
+  }
+}
+
+function handleCancelSim() {
+  cancelSim()
+  showSimModal.value = false
+  simDone.value = false
+}
+
+function goToSimResults() {
+  showSimModal.value = false
+  router.push(`/tournaments/${tournamentId.value}/simulation`)
+}
 
 const totalTeams = computed(() => tournament.value?.teamIds.length ?? 0)
 const maxTierCount = computed(() => Math.floor(totalTeams.value / 2))
@@ -637,6 +672,23 @@ function handleSave() {
           </div>
         </template>
 
+        <!-- Monte Carlo Simulation -->
+        <div class="tsp-card tsp-card--sim">
+          <div class="tsp-card-header">
+            <div class="tsp-section-title tsp-section-title--sim">Monte Carlo Simulation</div>
+          </div>
+          <div class="tsp-sim-row">
+            <div class="tsp-sim-desc">
+              Simulate this tournament 10,000 times and get win probabilities and statistics for
+              each team.
+            </div>
+            <button class="primary tsp-sim-btn" @click="handleSimulate">
+              <Play :size="13" />
+              Simulate 10,000×
+            </button>
+          </div>
+        </div>
+
         <!-- Danger Zone -->
         <div class="tsp-card tsp-card--danger">
           <div class="tsp-section-title tsp-section-title--danger">Danger Zone</div>
@@ -670,6 +722,38 @@ function handleSave() {
         </div>
       </template>
     </template>
+
+    <!-- Simulation modal -->
+    <Teleport to="body">
+      <div v-if="showSimModal" class="sim-overlay" @click.self="!simRunning && handleCancelSim()">
+        <div class="sim-modal">
+          <div class="sim-modal-header">
+            <BarChart2 :size="18" class="sim-modal-icon" />
+            <span class="sim-modal-title">Monte Carlo Simulation</span>
+          </div>
+
+          <template v-if="!simDone">
+            <p class="sim-modal-sub">Simulating {{ tournament?.name }}…</p>
+            <div class="sim-progress-track">
+              <div class="sim-progress-fill" :style="{ width: simProgress + '%' }" />
+            </div>
+            <div class="sim-progress-label">{{ simProgress }}%</div>
+            <button class="sim-cancel-btn" @click="handleCancelSim">Cancel</button>
+          </template>
+
+          <template v-else>
+            <p class="sim-modal-sub sim-done-msg">Simulation complete — 10,000 runs finished.</p>
+            <div class="sim-done-actions">
+              <button class="primary" @click="goToSimResults">
+                <BarChart2 :size="14" />
+                View Results
+              </button>
+              <button @click="handleCancelSim">Close</button>
+            </div>
+          </template>
+        </div>
+      </div>
+    </Teleport>
   </div>
 </template>
 
@@ -1014,5 +1098,117 @@ function handleSave() {
   .tsp-stepper-row {
     row-gap: 6px;
   }
+}
+
+/* Simulation card */
+.tsp-card--sim {
+  border-color: color-mix(in srgb, var(--accent) 30%, var(--border-light));
+  background: color-mix(in srgb, var(--accent) 4%, var(--surface));
+}
+.tsp-section-title--sim {
+  color: var(--accent);
+}
+.tsp-sim-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.tsp-sim-desc {
+  flex: 1;
+  font-size: 12px;
+  color: var(--text-muted);
+  min-width: 160px;
+}
+.tsp-sim-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  white-space: nowrap;
+  padding: 8px 16px;
+  flex-shrink: 0;
+}
+
+/* Simulation modal overlay */
+.sim-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(2px);
+}
+.sim-modal {
+  background: var(--surface);
+  border: 1px solid var(--border-light);
+  border-radius: calc(var(--radius) * 1.5);
+  padding: 28px 28px 24px;
+  width: min(380px, calc(100vw - 32px));
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+.sim-modal-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.sim-modal-icon {
+  color: var(--accent);
+}
+.sim-modal-title {
+  font-size: 16px;
+  font-weight: 700;
+}
+.sim-modal-sub {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 0 0 16px;
+}
+.sim-progress-track {
+  width: 100%;
+  height: 8px;
+  background: var(--bg);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+.sim-progress-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 4px;
+  transition: width 0.15s ease;
+}
+.sim-progress-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent);
+  text-align: right;
+  margin-bottom: 16px;
+  font-variant-numeric: tabular-nums;
+}
+.sim-cancel-btn {
+  font-size: 13px;
+  color: var(--text-muted);
+  padding: 6px 14px;
+}
+.sim-done-msg {
+  font-size: 14px;
+  color: var(--text);
+  font-weight: 500;
+}
+.sim-done-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.sim-done-actions button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  font-size: 13px;
 }
 </style>

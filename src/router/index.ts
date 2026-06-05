@@ -6,6 +6,7 @@ import TournamentsPage from "../modules/tournament/pages/TournamentsPage.vue"
 import TournamentDetailPage from "../modules/tournament/pages/TournamentDetailPage.vue"
 import CreateTournamentPage from "../modules/tournament/pages/CreateTournamentPage.vue"
 import TournamentSettingsPage from "../modules/tournament/pages/TournamentSettingsPage.vue"
+import SimulationResultsPage from "../modules/tournament/pages/SimulationResultsPage.vue"
 import HistoryPage from "../modules/history/pages/HistoryPage.vue"
 import TournamentHistoryPage from "../modules/history/pages/TournamentHistoryPage.vue"
 import SettingsPage from "../modules/settings/pages/SettingsPage.vue"
@@ -21,6 +22,7 @@ export default createRouter({
     { path: "/tournaments/new", component: CreateTournamentPage },
     { path: "/tournaments/:id", component: TournamentDetailPage },
     { path: "/tournaments/:id/settings", component: TournamentSettingsPage },
+    { path: "/tournaments/:id/simulation", component: SimulationResultsPage },
     { path: "/history", component: HistoryPage },
     { path: "/history/:name", component: TournamentHistoryPage },
     { path: "/settings", component: SettingsPage },
