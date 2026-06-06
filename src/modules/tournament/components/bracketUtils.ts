@@ -73,22 +73,27 @@ export function buildConnInfo(
   const forwardColor = connColorsEnabled && advancingId ? teamColor(advancingId, teams) : null
 
   const hoverActive = highlightEnabled && hoveredTeamId != null
-  const topHovered =
-    hoverActive && !!(topMatch?.homeId === hoveredTeamId || topMatch?.awayId === hoveredTeamId)
-  const bottomHovered =
+
+  // "advancing" = team is in the match AND (no result yet OR team won — not eliminated)
+  const topAdvancing =
     hoverActive &&
-    !!(bottomMatch?.homeId === hoveredTeamId || bottomMatch?.awayId === hoveredTeamId)
+    topMatch != null &&
+    (topMatch.homeId === hoveredTeamId || topMatch.awayId === hoveredTeamId) &&
+    (!topMatch.result || getWinnerId(topMatch) === hoveredTeamId)
+
+  const bottomAdvancing =
+    hoverActive &&
+    bottomMatch != null &&
+    (bottomMatch.homeId === hoveredTeamId || bottomMatch.awayId === hoveredTeamId) &&
+    (!bottomMatch.result || getWinnerId(bottomMatch) === hoveredTeamId)
+
+  const topHovered = topAdvancing
+  const bottomHovered = bottomAdvancing
 
   let dimmed = false
   if (hoverActive) {
-    const onPath =
-      destMatch?.homeId === hoveredTeamId ||
-      destMatch?.awayId === hoveredTeamId ||
-      topMatch?.homeId === hoveredTeamId ||
-      topMatch?.awayId === hoveredTeamId ||
-      bottomMatch?.homeId === hoveredTeamId ||
-      bottomMatch?.awayId === hoveredTeamId
-    dimmed = !onPath
+    const teamInDest = destMatch?.homeId === hoveredTeamId || destMatch?.awayId === hoveredTeamId
+    dimmed = !topAdvancing && !bottomAdvancing && !teamInDest
   }
 
   return {
