@@ -194,12 +194,21 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 10px 14px;
+  padding: 11px 14px 11px 12px;
   background: var(--surface);
   border: 1px solid var(--border-light);
+  border-left: 3px solid transparent;
   border-radius: 8px;
   min-width: 0;
-  transition: border-color 0.12s;
+  transition:
+    border-color 0.15s,
+    background 0.15s;
+}
+
+.t-row:hover {
+  border-color: var(--border);
+  border-left-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 4%, var(--surface));
 }
 
 .t-body {
@@ -475,15 +484,15 @@
   }
 
   .t-row {
-    flex-wrap: wrap;
-    row-gap: 8px;
-    padding: 10px 12px;
+    padding: 10px 10px 10px 10px;
+    gap: 8px;
   }
   .t-body {
-    flex: 1 1 100%;
+    flex: 1;
+    min-width: 0;
   }
   .t-actions {
-    flex: 1 1 100%;
+    flex-shrink: 0;
   }
 
   .section-body {
