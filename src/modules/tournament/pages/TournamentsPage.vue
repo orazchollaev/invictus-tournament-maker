@@ -89,7 +89,7 @@ async function deleteTournament(id: string) {
               <span class="t-season-tag">S{{ tour.season }}</span>
             </div>
             <div class="t-meta-row">
-              <span class="t-badge accent">{{ formatLabel(tour.format) }}</span>
+              <span class="format-tag">{{ formatLabel(tour.format) }}</span>
               <span class="t-dot">{{ t("common.teams", { n: tour.teamIds.length }) }}</span>
             </div>
           </div>
@@ -154,13 +154,19 @@ async function deleteTournament(id: string) {
   background: color-mix(in srgb, var(--team-color, var(--border)) 8%, var(--bg));
 }
 
-.del-btn {
+.format-tag {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  border-radius: 99px;
+  padding: 2px 9px;
   flex-shrink: 0;
 }
 
-@media (max-width: 480px) {
-  .t-status {
-    display: none;
-  }
+.del-btn {
+  flex-shrink: 0;
 }
 </style>
