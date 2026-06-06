@@ -1,14 +1,17 @@
 <script setup lang="ts">
-import { computed } from "vue"
+import { computed, ref } from "vue"
 import type { Tournament } from "../types"
 import type { Team } from "@/modules/teams/types"
 import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
 import BracketMatchCard from "./BracketMatchCard.vue"
 import BracketThirdPlaceCard from "./BracketThirdPlaceCard.vue"
 import { getWinnerId } from "@/engine"
-import { type DisplayMatch, connStroke, connOpacity } from "./bracketUtils"
+import { type DisplayMatch, type ConnInfo, buildConnInfo, teamColor } from "./bracketUtils"
+import { useSettingsStore } from "@/modules/settings/store"
 
 const props = defineProps<{ tournament: Tournament; teams: Team[]; isExporting?: boolean }>()
+const settings = useSettingsStore()
+const hoveredTeamId = ref<string | null>(null)
 const emit = defineEmits<{
   "set-result": [
     round: number,
@@ -109,35 +112,150 @@ const containerH = computed(() => {
   return h
 })
 
+// ── Hover helpers ─────────────────────────────────────────────
+function isMatchDimmed(ri: number, mi: number): boolean {
+  if (!settings.bracketHighlightOnHover || !hoveredTeamId.value) return false
+  const m = displayRounds.value[ri]?.[mi]
+  return m?.homeId !== hoveredTeamId.value && m?.awayId !== hoveredTeamId.value
+}
+
+function isFinalDimmed(): boolean {
+  if (!settings.bracketHighlightOnHover || !hoveredTeamId.value) return false
+  const m = displayRounds.value[finalRi.value]?.[0]
+  return m?.homeId !== hoveredTeamId.value && m?.awayId !== hoveredTeamId.value
+}
+
 // ── SVG connectors ────────────────────────────────────────────
-interface CP {
-  ay: number
-  by: number
-  dy: number
-  active: boolean
-}
-
-function connPaths(ri: number): CP[] {
+// Left-side connectors (matches 0..lCount-1)
+function connInfosL(ri: number): ConnInfo[] {
   const nextCount = lCount(ri + 1)
-  return Array.from({ length: nextCount }, (_, ci) => {
-    const destMatch = displayRounds.value[ri + 1]?.[ci]
-    return {
-      ay: matchCenterY(ri, ci * 2),
-      by: matchCenterY(ri, ci * 2 + 1),
-      dy: matchCenterY(ri + 1, ci),
-      active: !!(destMatch?.homeId && destMatch?.awayId),
-    }
-  })
+  return Array.from({ length: nextCount }, (_, ci) =>
+    buildConnInfo(
+      ri,
+      ci,
+      displayRounds.value,
+      props.teams,
+      matchCenterY,
+      hoveredTeamId.value,
+      settings.bracketHighlightOnHover,
+      0,
+      settings.bracketConnectorColors
+    )
+  )
 }
 
-function pathL(p: CP, w: number): string {
-  const m = w / 2
-  return `M0,${p.ay} H${m} M0,${p.by} H${m} M${m},${p.ay} V${p.by} M${m},${(p.ay + p.by) / 2} H${w}`
+// Right-side connectors (matches rStart..end)
+function connInfosR(ri: number): ConnInfo[] {
+  const nextCount = lCount(ri + 1)
+  const offset = rStart(ri)
+  return Array.from({ length: nextCount }, (_, ci) =>
+    buildConnInfo(
+      ri,
+      ci,
+      displayRounds.value,
+      props.teams,
+      matchCenterY,
+      hoveredTeamId.value,
+      settings.bracketHighlightOnHover,
+      offset,
+      settings.bracketConnectorColors
+    )
+  )
 }
 
-function pathR(p: CP, w: number): string {
+// Segment builder for left-side connectors (arms go right → center)
+function segsL(p: ConnInfo, w: number) {
   const m = w / 2
-  return `M${w},${p.ay} H${m} M${w},${p.by} H${m} M${m},${p.ay} V${p.by} M${m},${(p.ay + p.by) / 2} H0`
+  const yMid = (p.ay + p.by) / 2
+  const base = p.active ? "var(--accent)" : "var(--border)"
+  const baseOp = p.active ? 0.55 : 0.4
+  const dimOp = 0.08
+  const topOp = p.dimmed
+    ? dimOp
+    : p.hoverActive
+      ? p.topHovered
+        ? 0.9
+        : dimOp
+      : p.topColor
+        ? 0.85
+        : baseOp
+  const botOp = p.dimmed
+    ? dimOp
+    : p.hoverActive
+      ? p.bottomHovered
+        ? 0.9
+        : dimOp
+      : p.bottomColor
+        ? 0.85
+        : baseOp
+  return [
+    { d: `M0,${p.ay} H${m}`, stroke: p.topColor ?? base, opacity: topOp, w: 2 },
+    { d: `M0,${p.by} H${m}`, stroke: p.bottomColor ?? base, opacity: botOp, w: 2 },
+    { d: `M${m},${p.ay} V${yMid}`, stroke: p.topColor ?? base, opacity: topOp, w: 2 },
+    { d: `M${m},${yMid} V${p.by}`, stroke: p.bottomColor ?? base, opacity: botOp, w: 2 },
+    { d: `M${m},${yMid - 1} H${w}`, stroke: p.topColor ?? base, opacity: topOp, w: 1.5 },
+    { d: `M${m},${yMid + 1} H${w}`, stroke: p.bottomColor ?? base, opacity: botOp, w: 1.5 },
+  ]
+}
+
+// Segment builder for right-side connectors (arms go left → center)
+function segsR(p: ConnInfo, w: number) {
+  const m = w / 2
+  const yMid = (p.ay + p.by) / 2
+  const base = p.active ? "var(--accent)" : "var(--border)"
+  const baseOp = p.active ? 0.55 : 0.4
+  const dimOp = 0.08
+  const topOp = p.dimmed
+    ? dimOp
+    : p.hoverActive
+      ? p.topHovered
+        ? 0.9
+        : dimOp
+      : p.topColor
+        ? 0.85
+        : baseOp
+  const botOp = p.dimmed
+    ? dimOp
+    : p.hoverActive
+      ? p.bottomHovered
+        ? 0.9
+        : dimOp
+      : p.bottomColor
+        ? 0.85
+        : baseOp
+  return [
+    { d: `M${w},${p.ay} H${m}`, stroke: p.topColor ?? base, opacity: topOp, w: 2 },
+    { d: `M${w},${p.by} H${m}`, stroke: p.bottomColor ?? base, opacity: botOp, w: 2 },
+    { d: `M${m},${p.ay} V${yMid}`, stroke: p.topColor ?? base, opacity: topOp, w: 2 },
+    { d: `M${m},${yMid} V${p.by}`, stroke: p.bottomColor ?? base, opacity: botOp, w: 2 },
+    { d: `M${m},${yMid - 1} H0`, stroke: p.topColor ?? base, opacity: topOp, w: 1.5 },
+    { d: `M${m},${yMid + 1} H0`, stroke: p.bottomColor ?? base, opacity: botOp, w: 1.5 },
+  ]
+}
+
+// Final connector line color (left/right innermost → final)
+function finalLineColor(side: "home" | "away"): string {
+  if (!settings.bracketConnectorColors)
+    return side === "home"
+      ? displayRounds.value[finalRi.value]?.[0]?.homeId
+        ? "var(--accent)"
+        : "var(--border)"
+      : displayRounds.value[finalRi.value]?.[0]?.awayId
+        ? "var(--accent)"
+        : "var(--border)"
+  const finalMatch = displayRounds.value[finalRi.value]?.[0]
+  const teamId = side === "home" ? finalMatch?.homeId : finalMatch?.awayId
+  return teamColor(teamId, props.teams) ?? (teamId ? "var(--accent)" : "var(--border)")
+}
+
+function finalLineOpacity(side: "home" | "away"): number {
+  const finalMatch = displayRounds.value[finalRi.value]?.[0]
+  const teamId = side === "home" ? finalMatch?.homeId : finalMatch?.awayId
+  if (!teamId) return 0.4
+  if (settings.bracketHighlightOnHover && hoveredTeamId.value) {
+    return hoveredTeamId.value === teamId ? 0.9 : 0.1
+  }
+  return teamColor(teamId, props.teams) ? 0.85 : 0.55
 }
 </script>
 
@@ -162,6 +280,7 @@ function pathR(p: CP, w: number): string {
           :teams="teams"
           :is-final="false"
           :is-exporting="isExporting"
+          :dimmed="isMatchDimmed(n - 1, mi)"
           :style="{
             position: 'absolute',
             top: HEADER_H + matchCenterY(n - 1, mi) - CARD_H / 2 + 'px',
@@ -174,6 +293,11 @@ function pathR(p: CP, w: number): string {
           @sim-match="(r, m) => emit('sim-match', r, m)"
           @sim-leg1="(r, m) => emit('sim-leg1', r, m)"
           @sim-leg2="(r, m) => emit('sim-leg2', r, m)"
+          @hover-team="
+            (id) => {
+              hoveredTeamId = id
+            }
+          "
         />
 
         <svg
@@ -188,15 +312,20 @@ function pathR(p: CP, w: number): string {
           overflow="visible"
           style="display: block"
         >
-          <path
-            v-for="(p, pi) in connPaths(n - 1)"
-            :key="pi"
-            :d="pathL(p, COL_GAP)"
-            fill="none"
-            :stroke="connStroke(p.active)"
-            :stroke-opacity="connOpacity(p.active)"
-            stroke-width="2"
-          />
+          <template v-for="(p, pi) in connInfosL(n - 1)" :key="pi">
+            <path
+              v-for="(seg, si) in segsL(p, COL_GAP)"
+              :key="si"
+              :d="seg.d"
+              fill="none"
+              :stroke-width="seg.w"
+              :style="{
+                stroke: seg.stroke,
+                strokeOpacity: seg.opacity,
+                transition: 'stroke-opacity 0.2s ease, stroke 0.2s ease',
+              }"
+            />
+          </template>
         </svg>
       </template>
 
@@ -218,9 +347,13 @@ function pathR(p: CP, w: number): string {
           :y1="matchCenterY(nonFinalCount - 1, 0)"
           :x2="COL_GAP"
           :y2="bracketH / 2"
-          :stroke="connStroke(!!displayRounds[finalRi]?.[0]?.homeId)"
-          :stroke-opacity="connOpacity(!!displayRounds[finalRi]?.[0]?.homeId)"
+          fill="none"
           stroke-width="2"
+          :style="{
+            stroke: finalLineColor('home'),
+            strokeOpacity: finalLineOpacity('home'),
+            transition: 'stroke-opacity 0.2s ease, stroke 0.2s ease',
+          }"
         />
       </svg>
 
@@ -239,6 +372,7 @@ function pathR(p: CP, w: number): string {
         :teams="teams"
         :is-final="true"
         :is-exporting="isExporting"
+        :dimmed="isFinalDimmed()"
         :style="{
           position: 'absolute',
           top: HEADER_H + bracketH / 2 - CARD_H / 2 + 'px',
@@ -251,6 +385,11 @@ function pathR(p: CP, w: number): string {
         @sim-match="(r, m) => emit('sim-match', r, m)"
         @sim-leg1="(r, m) => emit('sim-leg1', r, m)"
         @sim-leg2="(r, m) => emit('sim-leg2', r, m)"
+        @hover-team="
+          (id) => {
+            hoveredTeamId = id
+          }
+        "
       />
 
       <!-- ═══════════════════════════════════════════════════
@@ -275,9 +414,13 @@ function pathR(p: CP, w: number): string {
           :y1="matchCenterY(nonFinalCount - 1, 0)"
           x2="0"
           :y2="bracketH / 2"
-          :stroke="connStroke(!!displayRounds[finalRi]?.[0]?.awayId)"
-          :stroke-opacity="connOpacity(!!displayRounds[finalRi]?.[0]?.awayId)"
+          fill="none"
           stroke-width="2"
+          :style="{
+            stroke: finalLineColor('away'),
+            strokeOpacity: finalLineOpacity('away'),
+            transition: 'stroke-opacity 0.2s ease, stroke 0.2s ease',
+          }"
         />
       </svg>
 
@@ -296,6 +439,7 @@ function pathR(p: CP, w: number): string {
           :teams="teams"
           :is-final="false"
           :is-exporting="isExporting"
+          :dimmed="isMatchDimmed(n - 1, rStart(n - 1) + mi)"
           :style="{
             position: 'absolute',
             top: HEADER_H + matchCenterY(n - 1, mi) - CARD_H / 2 + 'px',
@@ -308,6 +452,11 @@ function pathR(p: CP, w: number): string {
           @sim-match="(r, m) => emit('sim-match', r, m)"
           @sim-leg1="(r, m) => emit('sim-leg1', r, m)"
           @sim-leg2="(r, m) => emit('sim-leg2', r, m)"
+          @hover-team="
+            (id) => {
+              hoveredTeamId = id
+            }
+          "
         />
 
         <svg
@@ -322,15 +471,20 @@ function pathR(p: CP, w: number): string {
           overflow="visible"
           style="display: block"
         >
-          <path
-            v-for="(p, pi) in connPaths(n - 1)"
-            :key="pi"
-            :d="pathR(p, COL_GAP)"
-            fill="none"
-            :stroke="connStroke(p.active)"
-            :stroke-opacity="connOpacity(p.active)"
-            stroke-width="2"
-          />
+          <template v-for="(p, pi) in connInfosR(n - 1)" :key="pi">
+            <path
+              v-for="(seg, si) in segsR(p, COL_GAP)"
+              :key="si"
+              :d="seg.d"
+              fill="none"
+              :stroke-width="seg.w"
+              :style="{
+                stroke: seg.stroke,
+                strokeOpacity: seg.opacity,
+                transition: 'stroke-opacity 0.2s ease, stroke 0.2s ease',
+              }"
+            />
+          </template>
         </svg>
       </template>
 

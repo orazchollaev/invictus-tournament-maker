@@ -1,12 +1,15 @@
 <script setup lang="ts">
-import { computed } from "vue"
+import { computed, ref } from "vue"
 import type { Tournament } from "../types"
 import type { Team } from "@/modules/teams/types"
 import BracketMatchCard from "./BracketMatchCard.vue"
 import BracketThirdPlaceCard from "./BracketThirdPlaceCard.vue"
-import { type DisplayMatch, connStroke, connOpacity } from "./bracketUtils"
+import { type DisplayMatch, type ConnInfo, buildConnInfo } from "./bracketUtils"
+import { useSettingsStore } from "@/modules/settings/store"
 
 const props = defineProps<{ tournament: Tournament; teams: Team[] }>()
+const settings = useSettingsStore()
+const hoveredTeamId = ref<string | null>(null)
 const emit = defineEmits<{
   "set-result": [
     round: number,
@@ -75,35 +78,66 @@ function cardTop(ri: number, mi: number): number {
   return matchCenterY(ri, mi) - cardH(ri) / 2
 }
 
+// ── Hover helpers ─────────────────────────────────────────────
+function isMatchDimmed(ri: number, mi: number): boolean {
+  if (!settings.bracketHighlightOnHover || !hoveredTeamId.value) return false
+  const m = displayRounds.value[ri]?.[mi]
+  return m?.homeId !== hoveredTeamId.value && m?.awayId !== hoveredTeamId.value
+}
+
 // ── SVG connectors ────────────────────────────────────────────
-interface ConnPath {
-  ay: number
-  by: number
-  dy: number
-  active: boolean
-}
-
-function connectorPaths(ri: number): ConnPath[] {
+function connectorInfos(ri: number): ConnInfo[] {
   const nextCount = displayRounds.value[ri + 1]?.length ?? 0
-  return Array.from({ length: nextCount }, (_, ci) => {
-    const destMatch = displayRounds.value[ri + 1]?.[ci]
-    return {
-      ay: matchCenterY(ri, ci * 2),
-      by: matchCenterY(ri, ci * 2 + 1),
-      dy: matchCenterY(ri + 1, ci),
-      active: !!(destMatch?.homeId && destMatch?.awayId),
-    }
-  })
+  return Array.from({ length: nextCount }, (_, ci) =>
+    buildConnInfo(
+      ri,
+      ci,
+      displayRounds.value,
+      props.teams,
+      matchCenterY,
+      hoveredTeamId.value,
+      settings.bracketHighlightOnHover,
+      0,
+      settings.bracketConnectorColors
+    )
+  )
 }
 
-function svgPath(p: ConnPath, w: number): string {
+function svgSegments(p: ConnInfo, w: number) {
   const mid = w / 2
+  const yMid = (p.ay + p.by) / 2
+  const base = p.active ? "var(--accent)" : "var(--border)"
+  const baseOp = p.active ? 0.55 : 0.4
+  const dimOp = 0.08
+
+  // Per-strand opacity: dimmed connector → both dim; hover active → only the hovered side shows
+  const topOp = p.dimmed
+    ? dimOp
+    : p.hoverActive
+      ? p.topHovered
+        ? 0.9
+        : dimOp
+      : p.topColor
+        ? 0.85
+        : baseOp
+  const botOp = p.dimmed
+    ? dimOp
+    : p.hoverActive
+      ? p.bottomHovered
+        ? 0.9
+        : dimOp
+      : p.bottomColor
+        ? 0.85
+        : baseOp
+
   return [
-    `M0,${p.ay} H${mid}`,
-    `M0,${p.by} H${mid}`,
-    `M${mid},${p.ay} V${p.by}`,
-    `M${mid},${(p.ay + p.by) / 2} H${w}`,
-  ].join(" ")
+    { d: `M0,${p.ay} H${mid}`, stroke: p.topColor ?? base, opacity: topOp, w: 2 },
+    { d: `M0,${p.by} H${mid}`, stroke: p.bottomColor ?? base, opacity: botOp, w: 2 },
+    { d: `M${mid},${p.ay} V${yMid}`, stroke: p.topColor ?? base, opacity: topOp, w: 2 },
+    { d: `M${mid},${yMid} V${p.by}`, stroke: p.bottomColor ?? base, opacity: botOp, w: 2 },
+    { d: `M${mid},${yMid - 1} H${w}`, stroke: p.topColor ?? base, opacity: topOp, w: 1.5 },
+    { d: `M${mid},${yMid + 1} H${w}`, stroke: p.bottomColor ?? base, opacity: botOp, w: 1.5 },
+  ]
 }
 </script>
 
@@ -122,6 +156,7 @@ function svgPath(p: ConnPath, w: number): string {
               :match="match"
               :teams="teams"
               :is-final="ri === displayRounds.length - 1"
+              :dimmed="isMatchDimmed(ri, mi)"
               :style="{
                 position: 'absolute',
                 top: cardTop(ri, mi) + 'px',
@@ -134,6 +169,11 @@ function svgPath(p: ConnPath, w: number): string {
               @sim-match="(r, m) => emit('sim-match', r, m)"
               @sim-leg1="(r, m) => emit('sim-leg1', r, m)"
               @sim-leg2="(r, m) => emit('sim-leg2', r, m)"
+              @hover-team="
+                (id) => {
+                  hoveredTeamId = id
+                }
+              "
             />
           </div>
         </div>
@@ -148,15 +188,20 @@ function svgPath(p: ConnPath, w: number): string {
           }"
         >
           <svg width="100%" height="100%" style="display: block; overflow: visible">
-            <path
-              v-for="(p, pi) in connectorPaths(ri)"
-              :key="pi"
-              :d="svgPath(p, COL_GAP)"
-              fill="none"
-              :stroke="connStroke(p.active)"
-              :stroke-opacity="connOpacity(p.active)"
-              stroke-width="2"
-            />
+            <template v-for="(p, pi) in connectorInfos(ri)" :key="pi">
+              <path
+                v-for="(seg, si) in svgSegments(p, COL_GAP)"
+                :key="si"
+                :d="seg.d"
+                fill="none"
+                :stroke-width="seg.w"
+                :style="{
+                  stroke: seg.stroke,
+                  strokeOpacity: seg.opacity,
+                  transition: 'stroke-opacity 0.2s ease, stroke 0.2s ease',
+                }"
+              />
+            </template>
           </svg>
         </div>
       </template>

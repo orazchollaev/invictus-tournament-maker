@@ -162,6 +162,14 @@ export default {
         label: "Sonido del ganador",
         desc: "Reproducir un sonido cuando termina un torneo",
       },
+      bracketHover: {
+        label: "Resaltar ruta en el cuadro",
+        desc: "Pasa el cursor sobre un equipo para resaltar su camino y atenuar los demás",
+      },
+      bracketConnectorColors: {
+        label: "Colores de conectores",
+        desc: "Colorea las líneas del cuadro con el color de cada equipo a medida que avanzan",
+      },
     },
     simulation: {
       title: "Simulación",

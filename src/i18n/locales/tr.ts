@@ -162,6 +162,14 @@ export default {
         label: "Kazanan Sesi",
         desc: "Turnuva bittiğinde bir ses çal",
       },
+      bracketHover: {
+        label: "Bracket Yol Vurgusu",
+        desc: "Brackette bir takımın üzerine gelince yolu aydınlansın, diğerleri soluklaşsın",
+      },
+      bracketConnectorColors: {
+        label: "Bracket Bağlantı Renkleri",
+        desc: "Bracket bağlantı çizgilerini ilerleyen takımların renkleriyle boyar",
+      },
     },
     simulation: {
       title: "Simülasyon",

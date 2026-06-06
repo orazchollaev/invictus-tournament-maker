@@ -11,6 +11,7 @@ const props = defineProps<{
   teams: Team[]
   isFinal?: boolean
   isExporting?: boolean
+  dimmed?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -33,6 +34,7 @@ const emit = defineEmits<{
   "sim-match": [round: number, match: number]
   "sim-leg1": [round: number, match: number]
   "sim-leg2": [round: number, match: number]
+  "hover-team": [teamId: string | null]
 }>()
 
 const isDouble = computed(() => props.match.leg2Result !== undefined)
@@ -170,18 +172,20 @@ const isEditing = computed(() => sMode.value !== "off" || editingLeg.value !== n
 </script>
 
 <template>
-  <div class="mc" :class="{ final: isFinal }">
+  <div class="mc" :class="{ final: isFinal, dimmed }" @mouseleave="$emit('hover-team', null)">
     <!-- ── Left: team names ── -->
     <div class="mc-teams">
       <div
         class="mc-row"
         :class="{ winner: isWinner(match.homeId), loser: match.result && !isWinner(match.homeId) }"
+        @mouseenter="match.homeId && $emit('hover-team', match.homeId)"
       >
         <TeamBadge :team-id="match.homeId" :teams="teams" />
       </div>
       <div
         class="mc-row mc-row--away"
         :class="{ winner: isWinner(match.awayId), loser: match.result && !isWinner(match.awayId) }"
+        @mouseenter="match.awayId && $emit('hover-team', match.awayId)"
       >
         <TeamBadge :team-id="match.awayId" :teams="teams" />
       </div>
@@ -387,12 +391,19 @@ const isEditing = computed(() => sMode.value !== "off" || editingLeg.value !== n
   box-sizing: border-box;
   overflow: hidden;
   animation: fade-up 0.28s ease both;
+  transition:
+    opacity 0.2s ease,
+    filter 0.2s ease;
 }
 .mc.final {
   border-color: #c9a227;
   box-shadow:
     0 0 0 1px #c9a22733,
     0 2px 10px #c9a22720;
+}
+.mc.dimmed {
+  opacity: 0.22;
+  filter: saturate(0.15);
 }
 
 /* ── Teams column (left, fills remaining width) ── */

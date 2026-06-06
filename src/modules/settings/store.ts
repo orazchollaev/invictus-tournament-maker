@@ -29,6 +29,8 @@ export const useSettingsStore = defineStore("settings", () => {
   const homeAdvantage = ref(6)
   const bracketStyle = ref<BracketStyle>("auto")
   const bracketQuality = ref<BracketQuality>("high")
+  const bracketHighlightOnHover = ref(true)
+  const bracketConnectorColors = ref(true)
 
   watch(
     theme,
@@ -69,6 +71,8 @@ export const useSettingsStore = defineStore("settings", () => {
     homeAdvantage.value = 6
     bracketStyle.value = "auto"
     bracketQuality.value = "high"
+    bracketHighlightOnHover.value = true
+    bracketConnectorColors.value = true
   }
 
   return {
@@ -89,6 +93,8 @@ export const useSettingsStore = defineStore("settings", () => {
     homeAdvantage,
     bracketStyle,
     bracketQuality,
+    bracketHighlightOnHover,
+    bracketConnectorColors,
     resetAll,
   }
 })

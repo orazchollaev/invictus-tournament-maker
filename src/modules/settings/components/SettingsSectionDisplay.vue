@@ -44,6 +44,20 @@ const soundOnWinVal = computed({
     settings.soundOnWin = v === "on"
   },
 })
+
+const bracketHoverVal = computed({
+  get: () => (settings.bracketHighlightOnHover ? "on" : "off"),
+  set: (v: string) => {
+    settings.bracketHighlightOnHover = v === "on"
+  },
+})
+
+const bracketConnectorColorsVal = computed({
+  get: () => (settings.bracketConnectorColors ? "on" : "off"),
+  set: (v: string) => {
+    settings.bracketConnectorColors = v === "on"
+  },
+})
 </script>
 
 <template>
@@ -86,6 +100,20 @@ const soundOnWinVal = computed({
           <div class="setting-desc">{{ t("settings.display.sound.desc") }}</div>
         </div>
         <BtnGroup v-model="soundOnWinVal" :options="onOffOptions" />
+      </div>
+      <div class="setting-row">
+        <div class="setting-info">
+          <div class="setting-label">{{ t("settings.display.bracketHover.label") }}</div>
+          <div class="setting-desc">{{ t("settings.display.bracketHover.desc") }}</div>
+        </div>
+        <BtnGroup v-model="bracketHoverVal" :options="onOffOptions" />
+      </div>
+      <div class="setting-row">
+        <div class="setting-info">
+          <div class="setting-label">{{ t("settings.display.bracketConnectorColors.label") }}</div>
+          <div class="setting-desc">{{ t("settings.display.bracketConnectorColors.desc") }}</div>
+        </div>
+        <BtnGroup v-model="bracketConnectorColorsVal" :options="onOffOptions" />
       </div>
     </div>
   </div>

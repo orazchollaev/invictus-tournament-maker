@@ -161,6 +161,14 @@ export default {
         label: "Winning Sound",
         desc: "Play a sound when a tournament ends",
       },
+      bracketHover: {
+        label: "Bracket Path Highlight",
+        desc: "Hover a team in the bracket to highlight their path and dim all others",
+      },
+      bracketConnectorColors: {
+        label: "Bracket Connector Colors",
+        desc: "Color the bracket connector lines with each team's color as they advance",
+      },
     },
     simulation: {
       title: "Simulation",

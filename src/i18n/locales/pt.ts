@@ -162,6 +162,14 @@ export default {
         label: "Som do vencedor",
         desc: "Reproduzir um som quando um torneio terminar",
       },
+      bracketHover: {
+        label: "Destaque de caminho no chave",
+        desc: "Passe o cursor sobre um time para destacar seu caminho e atenuar os outros",
+      },
+      bracketConnectorColors: {
+        label: "Cores dos conectores",
+        desc: "Colore as linhas do chave com a cor de cada time à medida que avançam",
+      },
     },
     simulation: {
       title: "Simulação",
