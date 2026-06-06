@@ -225,6 +225,13 @@ export default {
       desc: "Restaura todas as configurações para seus valores originais. Times e torneios não são afetados.",
       btn: "Redefinir",
     },
+    nav: {
+      general: "Geral",
+      display: "Exibição",
+      tournament: "Torneio",
+      simulation: "Simulação",
+      data: "Dados",
+    },
     changelog: "Registro de alterações",
   },
   tournament: {

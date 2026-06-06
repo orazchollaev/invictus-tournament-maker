@@ -225,6 +225,13 @@ export default {
       desc: "Restaura todos los ajustes a sus valores originales. Los equipos y torneos no se ven afectados.",
       btn: "Restablecer",
     },
+    nav: {
+      general: "General",
+      display: "Pantalla",
+      tournament: "Torneo",
+      simulation: "Simulación",
+      data: "Datos",
+    },
     changelog: "Registro de cambios",
   },
   tournament: {

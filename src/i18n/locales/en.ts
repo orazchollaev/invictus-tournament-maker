@@ -223,6 +223,13 @@ export default {
       desc: "Restore all settings to their original values. Teams and tournaments are not affected.",
       btn: "Reset",
     },
+    nav: {
+      general: "General",
+      display: "Display",
+      tournament: "Tournament",
+      simulation: "Simulation",
+      data: "Data",
+    },
     changelog: "Changelog",
   },
   tournament: {

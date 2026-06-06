@@ -225,6 +225,13 @@ export default {
       desc: "Tüm ayarları orijinal değerlerine geri yükleyin. Takımlar ve turnuvalar etkilenmez.",
       btn: "Sıfırla",
     },
+    nav: {
+      general: "Genel",
+      display: "Görünüm",
+      tournament: "Turnuva",
+      simulation: "Simülasyon",
+      data: "Veriler",
+    },
     changelog: "Değişiklik Günlüğü",
   },
   tournament: {
