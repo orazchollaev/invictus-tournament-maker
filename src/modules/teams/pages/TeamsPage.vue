@@ -4,7 +4,7 @@ import { useRouter } from "vue-router"
 import { useTeamsStore } from "../store"
 import TeamFormModal from "../components/TeamFormModal.vue"
 import type { Team } from "../types"
-import { X, Pencil, Search, ChevronRight } from "@lucide/vue"
+import { X, Pencil, Search } from "@lucide/vue"
 import { MAX_TEAMS } from "@/constants"
 import { useI18n } from "vue-i18n"
 
@@ -49,25 +49,23 @@ const filtered = computed(() => {
 
     <div v-if="store.teams.length" class="t-list">
       <p v-if="!filtered.length" class="empty-text">{{ t("teams.noMatch", { query }) }}</p>
-      <div v-for="team in filtered" :key="team.id" class="t-row">
-        <span class="color-dot" :style="{ background: team.color }" />
+      <div
+        v-for="team in filtered"
+        :key="team.id"
+        class="t-row"
+        :style="{ '--team-color': team.color }"
+        @click="router.push(`/teams/${team.id}`)"
+      >
         <div class="t-body">
           <span class="t-name">{{ team.name }}</span>
           <span v-if="team.abbr" class="t-abbr">{{ team.abbr }}</span>
         </div>
         <span class="t-power">{{ team.power }}</span>
         <div class="t-actions">
-          <button
-            class="sm icon-btn"
-            :title="t('common.open')"
-            @click="router.push(`/teams/${team.id}`)"
-          >
-            <ChevronRight :size="14" />
-          </button>
-          <button class="sm icon-btn" :title="t('common.edit')" @click="editingTeam = team">
+          <button class="sm icon-btn" :title="t('common.edit')" @click.stop="editingTeam = team">
             <Pencil :size="13" />
           </button>
-          <button class="danger sm icon-btn" @click="store.remove(team.id)">
+          <button class="danger sm icon-btn" @click.stop="store.remove(team.id)">
             <X :size="13" />
           </button>
         </div>
@@ -90,7 +88,17 @@ const filtered = computed(() => {
   margin-left: 6px;
 }
 
-/* Row layout overrides — Teams uses horizontal body (name + abbr inline) */
+/* Team-colored left border + clickable */
+.t-row {
+  cursor: pointer;
+  border-left-color: var(--team-color, var(--border-light));
+}
+.t-row:hover {
+  border-left-color: var(--team-color, var(--accent));
+  background: color-mix(in srgb, var(--team-color, var(--accent)) 6%, var(--surface));
+}
+
+/* Row layout — Teams uses horizontal body (name + abbr inline) */
 .t-body {
   flex-direction: row;
   align-items: center;
@@ -106,19 +114,23 @@ const filtered = computed(() => {
   flex-shrink: 0;
 }
 .t-power {
-  font-size: 12px;
+  font-size: 11px;
+  font-weight: 700;
   color: var(--text-muted);
-  width: 24px;
-  text-align: right;
+  background: var(--bg);
+  border: 1px solid var(--border-light);
+  border-radius: 4px;
+  padding: 2px 8px;
+  min-width: 34px;
+  text-align: center;
   flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
 }
 
 @media (max-width: 640px) {
   .t-body {
     flex: 1;
-  }
-  .t-power {
-    margin-left: auto;
+    min-width: 0;
   }
 }
 </style>
