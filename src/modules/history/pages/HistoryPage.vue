@@ -2,7 +2,6 @@
 import { computed } from "vue"
 import { useRouter } from "vue-router"
 import { useTournamentStore } from "@/modules/tournament/store"
-import { ChevronRight } from "@lucide/vue"
 import { useI18n } from "vue-i18n"
 
 const { t } = useI18n()
@@ -61,11 +60,14 @@ function formatLabel(format: string) {
     <p v-if="!series.length" class="empty-text">{{ t("history.empty") }}</p>
 
     <div v-else class="t-list">
-      <div v-for="s in series" :key="s.name" class="t-row">
+      <div
+        v-for="s in series"
+        :key="s.name"
+        class="t-row"
+        @click="router.push('/history/' + encodeURIComponent(s.name))"
+      >
         <div class="t-body">
-          <div class="t-top">
-            <span class="t-name">{{ s.name }}</span>
-          </div>
+          <span class="t-name">{{ s.name }}</span>
           <div class="t-meta-row">
             <span class="t-badge">
               {{ s.seasons }} {{ s.seasons === 1 ? t("common.season", 1) : t("common.season", 2) }}
@@ -74,15 +76,13 @@ function formatLabel(format: string) {
             <span class="t-dot">{{ t("common.teams", { n: s.teamCount }) }}</span>
           </div>
         </div>
-        <div class="t-actions">
-          <button
-            class="sm icon-btn"
-            @click.stop="router.push('/history/' + encodeURIComponent(s.name))"
-          >
-            <ChevronRight :size="14" />
-          </button>
-        </div>
       </div>
     </div>
   </div>
 </template>
+
+<style scoped>
+.t-row {
+  cursor: pointer;
+}
+</style>
