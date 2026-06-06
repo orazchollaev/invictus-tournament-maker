@@ -1,5 +1,28 @@
 # Changelog
 
+## [1.9.0](https://github.com/orazchollaev/invictus-tournament-maker/compare/v1.8.0...v1.9.0) (2026-06-06)
+
+### 🚀 New Features
+
+- **simulation:** add Monte Carlo 10k simulation with stats page ([39328e7](https://github.com/orazchollaev/invictus-tournament-maker/commit/39328e7053f91b8f4947fdca9977614b3fc678ad))
+
+### 🐛 Bug Fixes
+
+- **android:** handle back gesture with capacitor app plugin to navigate instead of exit ([98e2dc9](https://github.com/orazchollaev/invictus-tournament-maker/commit/98e2dc9267e337fba3c0cfe19f754c9e3103cae5))
+- **bracket:** add safe-area-inset-top to full-view header and fix zoom transition on Android ([4d12916](https://github.com/orazchollaev/invictus-tournament-maker/commit/4d1291692076e1e2667b8a56cf90d375195953df))
+- **modal:** add safe-area-inset-top padding to drawer for Android notch ([0121ce0](https://github.com/orazchollaev/invictus-tournament-maker/commit/0121ce0c6655c263b95173692ad6c1d7834a5159))
+
+### ♻️ Refactoring
+
+- **bracket:** split into DoubleSide/Classic, extract shared utils and ThirdPlaceCard ([d39f70b](https://github.com/orazchollaev/invictus-tournament-maker/commit/d39f70bc90a754ec5f907344087761a0397a7f6d))
+
+### 🔧 Maintenance
+
+- allow sharp native build scripts via pnpm config ([d9b1fb0](https://github.com/orazchollaev/invictus-tournament-maker/commit/d9b1fb0e880fb95a776565205fa0a43dcb1b9f89))
+- **android:** project sync with Android ([139b523](https://github.com/orazchollaev/invictus-tournament-maker/commit/139b5235a7a1f3efaac83a663f440a77e9b8849b))
+- **fix:** disable PWA navigateFallback and add audio/image types to workbox cache ([034223a](https://github.com/orazchollaev/invictus-tournament-maker/commit/034223a354563c05dfabcd200b40cac4ab4ecf1c))
+- **fix:** use relative path for flag images ([f4f628b](https://github.com/orazchollaev/invictus-tournament-maker/commit/f4f628bfa623d9e977c43c5bf4e2c0b6979c89bb))
+
 ## [1.8.0](https://github.com/orazchollaev/invictus-tournament-maker/compare/v1.7.0...v1.8.0) (2026-06-04)
 
 ### 🚀 New Features
