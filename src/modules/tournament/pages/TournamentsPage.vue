@@ -4,7 +4,7 @@ import { useRouter } from "vue-router"
 import { useTeamsStore } from "@/modules/teams/store"
 import { useTournamentStore } from "@/modules/tournament/store"
 import type { Tournament } from "../types"
-import { Trophy, X, Search, ChevronRight } from "@lucide/vue"
+import { Trophy, X, Search } from "@lucide/vue"
 import { showConfirm } from "@/composables/useDialog"
 import { useI18n } from "vue-i18n"
 
@@ -13,11 +13,11 @@ const router = useRouter()
 const teamsStore = useTeamsStore()
 const store = useTournamentStore()
 
-function winnerName(t: Tournament) {
-  return teamsStore.teams.find((tm) => tm.id === t.winnerId)?.name ?? "?"
+function winnerName(tour: Tournament) {
+  return teamsStore.teams.find((tm) => tm.id === tour.winnerId)?.name ?? "?"
 }
-function winnerColor(t: Tournament) {
-  return teamsStore.teams.find((tm) => tm.id === t.winnerId)?.color ?? "#888"
+function winnerColor(tour: Tournament) {
+  return teamsStore.teams.find((tm) => tm.id === tour.winnerId)?.color ?? "#888"
 }
 
 const query = ref("")
@@ -46,7 +46,6 @@ async function deleteTournament(id: string) {
 
 <template>
   <div class="page">
-    <!-- Header row -->
     <div class="page-top">
       <h2 class="page-title">{{ t("tournaments.title") }}</h2>
       <button
@@ -63,7 +62,6 @@ async function deleteTournament(id: string) {
       {{ t("tournaments.needTeamsNotice") }}
     </div>
 
-    <!-- Tournament list -->
     <div v-if="store.tournaments.length" class="search-row">
       <div class="search-wrap">
         <Search :size="14" class="search-icon" />
@@ -78,39 +76,40 @@ async function deleteTournament(id: string) {
     <div v-if="store.tournaments.length" class="t-list">
       <p v-if="!filtered.length" class="empty-text">{{ t("tournaments.noMatch", { query }) }}</p>
       <TransitionGroup name="list" tag="div" class="t-list-inner">
-        <div v-for="(tour, i) in filtered" :key="tour.id" class="t-row" :style="{ '--i': i }">
+        <div
+          v-for="(tour, i) in filtered"
+          :key="tour.id"
+          class="t-row"
+          :style="{ '--i': i }"
+          @click="router.push(`/tournaments/${tour.id}`)"
+        >
           <div class="t-body">
-            <div class="t-top">
+            <div class="t-name-row">
               <span class="t-name">{{ tour.name }}</span>
-              <span
-                v-if="store.isTournamentFinished(tour.id)"
-                class="winner-badge"
-                :style="{ '--team-color': winnerColor(tour) }"
-              >
-                <Trophy :size="11" />
-                <span class="winner-dot" />
-                {{ winnerName(tour) }}
-              </span>
-              <span v-else class="status-live">{{ t("tournaments.live") }}</span>
+              <span class="t-season-tag">S{{ tour.season }}</span>
             </div>
             <div class="t-meta-row">
-              <span class="t-badge">S{{ tour.season }}</span>
               <span class="t-badge accent">{{ formatLabel(tour.format) }}</span>
               <span class="t-dot">{{ t("common.teams", { n: tour.teamIds.length }) }}</span>
             </div>
           </div>
-          <div class="t-actions">
-            <button
-              class="sm icon-btn"
-              :title="t('common.open')"
-              @click.stop="router.push(`/tournaments/${tour.id}`)"
+
+          <div class="t-status">
+            <span
+              v-if="store.isTournamentFinished(tour.id)"
+              class="winner-badge"
+              :style="{ '--team-color': winnerColor(tour) }"
             >
-              <ChevronRight :size="14" />
-            </button>
-            <button class="danger sm icon-btn" @click.stop="deleteTournament(tour.id)">
-              <X :size="13" />
-            </button>
+              <Trophy :size="11" />
+              <span class="winner-dot" />
+              {{ winnerName(tour) }}
+            </span>
+            <span v-else class="status-live">{{ t("tournaments.live") }}</span>
           </div>
+
+          <button class="danger sm icon-btn del-btn" @click.stop="deleteTournament(tour.id)">
+            <X :size="13" />
+          </button>
         </div>
       </TransitionGroup>
     </div>
@@ -120,3 +119,48 @@ async function deleteTournament(id: string) {
     </p>
   </div>
 </template>
+
+<style scoped>
+.t-row {
+  cursor: pointer;
+}
+
+.t-name-row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+}
+
+.t-season-tag {
+  font-size: 11px;
+  color: var(--text-muted);
+  background: var(--bg);
+  border: 1px solid var(--border-light);
+  border-radius: 4px;
+  padding: 1px 5px;
+  flex-shrink: 0;
+}
+
+.t-status {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+.winner-badge {
+  border-left: 2px solid var(--team-color, var(--accent));
+  padding-left: 6px;
+  background: color-mix(in srgb, var(--team-color, var(--border)) 8%, var(--bg));
+}
+
+.del-btn {
+  flex-shrink: 0;
+}
+
+@media (max-width: 480px) {
+  .t-status {
+    display: none;
+  }
+}
+</style>
