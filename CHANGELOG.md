@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.10.1](https://github.com/orazchollaev/invictus-tournament-maker/compare/v1.10.0...v1.10.1) (2026-06-07)
+
+### 🐛 Bug Fixes
+
+- resolve sample data doesn't load tournament wc26 issue ([6e0fdde](https://github.com/orazchollaev/invictus-tournament-maker/commit/6e0fddee1c0ef8943b21c904144a0f2cea81fbb4))
+
 ## [1.10.0](https://github.com/orazchollaev/invictus-tournament-maker/compare/v1.9.0...v1.10.0) (2026-06-07)
 
 ### 🚀 New Features
