@@ -215,7 +215,7 @@ function deselectAll() {
   display: flex;
   flex-direction: column;
   border: 1px solid var(--border-light);
-  border-radius: 6px;
+  border-radius: var(--radius);
   background: var(--surface);
   overflow: hidden;
 }
@@ -245,7 +245,7 @@ function deselectAll() {
   background: color-mix(in srgb, var(--accent) 10%, transparent);
   border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
   padding: 0 5px;
-  border-radius: 3px;
+  border-radius: var(--radius);
   line-height: 1.7;
 }
 
@@ -265,7 +265,7 @@ function deselectAll() {
   padding: 6px 8px;
   border: 1px solid var(--border-light);
   border-left: 2px solid transparent;
-  border-radius: 4px;
+  border-radius: var(--radius);
   background: var(--bg);
   cursor: pointer;
   transition:
@@ -332,7 +332,7 @@ function deselectAll() {
   background: transparent;
   color: var(--text-muted);
   cursor: pointer;
-  border-radius: 3px;
+  border-radius: var(--radius);
   transition:
     color 0.12s,
     background 0.12s;

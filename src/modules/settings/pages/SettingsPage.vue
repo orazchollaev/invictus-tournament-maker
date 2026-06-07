@@ -218,7 +218,7 @@ onUnmounted(() => observer?.disconnect())
 .changelog-btn {
   font-size: 11px;
   padding: 2px 8px;
-  border-radius: 2px;
+  border-radius: var(--radius);
   border: 1px solid var(--border-light);
   color: var(--text-muted);
   text-decoration: none;

@@ -165,7 +165,7 @@ onUnmounted(() => {
   border: none;
   background: transparent;
   color: var(--text-muted);
-  border-radius: 4px;
+  border-radius: var(--radius);
   cursor: pointer;
   margin-left: auto;
   flex-shrink: 0;

@@ -482,7 +482,7 @@ const isEditing = computed(() => sMode.value !== "off" || editingLeg.value !== n
   font-weight: 700;
   font-size: 12px;
   background: color-mix(in srgb, var(--text-muted) 10%, var(--surface));
-  border-radius: 3px;
+  border-radius: var(--radius);
   padding: 1px 5px;
   min-width: 18px;
   text-align: center;
@@ -543,7 +543,7 @@ const isEditing = computed(() => sMode.value !== "off" || editingLeg.value !== n
   text-align: center;
   background: var(--bg);
   border: 1px solid var(--accent);
-  border-radius: 3px;
+  border-radius: var(--radius);
   padding: 1px 2px;
   font-size: 12px;
   font-weight: 700;
@@ -594,7 +594,7 @@ const isEditing = computed(() => sMode.value !== "off" || editingLeg.value !== n
   width: 18px;
   height: 18px;
   border: 1px solid var(--border-light);
-  border-radius: 3px;
+  border-radius: var(--radius);
   background: transparent;
   color: var(--text-muted);
   cursor: pointer;

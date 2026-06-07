@@ -627,7 +627,7 @@ function sortIcon(key: SortKey): string {
   color: var(--text-muted);
   background: var(--bg);
   border: 1px solid var(--border-light);
-  border-radius: 2px;
+  border-radius: var(--radius);
   padding: 1px 5px;
 }
 
@@ -666,7 +666,7 @@ function sortIcon(key: SortKey): string {
 .tag {
   display: inline-block;
   padding: 1px 8px;
-  border-radius: 2px;
+  border-radius: var(--radius);
   font-size: 12px;
   color: #fff;
 }
@@ -689,7 +689,7 @@ function sortIcon(key: SortKey): string {
   font-size: 10px;
   font-weight: 600;
   padding: 1px 5px;
-  border-radius: 2px;
+  border-radius: var(--radius);
   background: color-mix(in srgb, var(--border-light) 80%, transparent);
   color: var(--text-muted);
   border: 1px solid var(--border-light);

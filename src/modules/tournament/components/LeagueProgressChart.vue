@@ -220,7 +220,7 @@ watch([labels, datasets, mode], () => {
 .mode-toggle button {
   font-size: 10px;
   padding: 2px 8px;
-  border-radius: 2px;
+  border-radius: var(--radius);
   border: 1px solid var(--border-light);
   background: transparent;
   color: var(--text-muted);

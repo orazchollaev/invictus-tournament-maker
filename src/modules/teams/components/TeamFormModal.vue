@@ -158,7 +158,7 @@ function submit() {
   padding: 0;
   background: transparent;
   border: none;
-  border-radius: 4px;
+  border-radius: var(--radius);
   cursor: pointer;
   color: var(--text-muted);
   transition:

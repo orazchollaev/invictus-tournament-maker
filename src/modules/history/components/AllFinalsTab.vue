@@ -68,7 +68,7 @@ const { t } = useI18n()
   color: var(--text-muted);
   background: var(--bg);
   border: 1px solid var(--border-light);
-  border-radius: 2px;
+  border-radius: var(--radius);
   padding: 1px 6px;
   font-family: var(--font-ui);
 }

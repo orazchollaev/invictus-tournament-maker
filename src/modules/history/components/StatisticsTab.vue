@@ -179,7 +179,7 @@ const { t } = useI18n()
 .stat-card {
   background: var(--bg);
   border: 1px solid var(--border-light);
-  border-radius: 8px;
+  border-radius: var(--radius);
   padding: 18px 16px;
   display: flex;
   flex-direction: column;
@@ -232,7 +232,7 @@ const { t } = useI18n()
 .score-chip {
   background: var(--bg);
   border: 1px solid var(--border-light);
-  border-radius: 4px;
+  border-radius: var(--radius);
   padding: 1px 6px;
   font-weight: 700;
   font-size: 11px;
@@ -252,7 +252,7 @@ const { t } = useI18n()
 .badge-card {
   background: var(--bg);
   border: 1px solid var(--border-light);
-  border-radius: 8px;
+  border-radius: var(--radius);
   padding: 12px;
   display: flex;
   flex-direction: column;

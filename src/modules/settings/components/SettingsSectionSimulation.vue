@@ -139,7 +139,7 @@ const surpriseFactorLabel = computed(() => {
   background: color-mix(in srgb, var(--accent) 12%, var(--surface));
   border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
   padding: 2px 8px;
-  border-radius: 10px;
+  border-radius: var(--radius);
   white-space: nowrap;
 }
 .stepper-btn {

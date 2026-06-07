@@ -170,7 +170,7 @@ const chartTitle = computed(() => {
 .tier-tab {
   font-size: 11px;
   padding: 3px 10px;
-  border-radius: 2px;
+  border-radius: var(--radius);
   border: 1px solid var(--border-light);
   background: transparent;
   color: var(--text-muted);

@@ -130,7 +130,7 @@ function onNativePick(e: Event) {
 .swatch {
   width: 100%;
   aspect-ratio: 1;
-  border-radius: 5px;
+  border-radius: var(--radius);
   border: 2px solid transparent;
   cursor: pointer;
   padding: 0;
@@ -157,7 +157,7 @@ function onNativePick(e: Event) {
 .preview {
   width: 28px;
   height: 28px;
-  border-radius: 6px;
+  border-radius: var(--radius);
   border: 1px solid var(--border);
   flex-shrink: 0;
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1) inset;

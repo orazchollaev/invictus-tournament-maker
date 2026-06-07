@@ -606,7 +606,7 @@ function changeTab(tab: MainTab, tierIdx?: number) {
   color: var(--text-muted);
   background: color-mix(in srgb, var(--accent) 12%, var(--surface));
   border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
-  border-radius: 2px;
+  border-radius: var(--radius);
   padding: 1px 7px;
   font-family: var(--font-ui);
 }
@@ -652,7 +652,7 @@ function changeTab(tab: MainTab, tierIdx?: number) {
   align-items: center;
   gap: 5px;
   border: 1px solid;
-  border-radius: 2px;
+  border-radius: var(--radius);
   padding: 2px 9px;
   font-size: 12px;
   font-weight: 600;
@@ -734,7 +734,7 @@ function changeTab(tab: MainTab, tierIdx?: number) {
   font-size: 10px;
   font-weight: 700;
   padding: 1px 5px;
-  border-radius: 8px;
+  border-radius: var(--radius);
   flex-shrink: 0;
 }
 .mt-badge--up {

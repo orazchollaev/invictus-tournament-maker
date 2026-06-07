@@ -251,7 +251,7 @@ function handleConfirm() {
   font-size: 10px;
   font-weight: 600;
   padding: 1px 6px;
-  border-radius: 10px;
+  border-radius: var(--radius);
   flex-shrink: 0;
 }
 .pm-badge--out {

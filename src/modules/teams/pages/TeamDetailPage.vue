@@ -706,7 +706,7 @@ h2:has(.tour-select) {
   font-weight: 700;
   width: 20px;
   height: 20px;
-  border-radius: 2px;
+  border-radius: var(--radius);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -782,7 +782,7 @@ h2:has(.tour-select) {
   font-size: 9px;
   font-weight: 700;
   padding: 1px 4px;
-  border-radius: 2px;
+  border-radius: var(--radius);
   letter-spacing: 0.03em;
 }
 .chip-group {

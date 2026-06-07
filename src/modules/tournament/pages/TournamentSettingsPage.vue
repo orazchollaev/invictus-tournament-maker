@@ -899,7 +899,7 @@ function handleSave() {
   background: var(--bg);
   border: 1px solid var(--border-light);
   padding: 2px 7px;
-  border-radius: 10px;
+  border-radius: var(--radius);
 }
 
 .tsp-locked-banner {
@@ -1194,7 +1194,7 @@ function handleSave() {
 .sim-modal {
   background: var(--surface);
   border: 1px solid var(--border-light);
-  border-radius: calc(var(--radius) * 1.5);
+  border-radius: var(--radius);
   padding: 28px 28px 24px;
   width: min(380px, calc(100vw - 32px));
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
@@ -1221,14 +1221,14 @@ function handleSave() {
   width: 100%;
   height: 8px;
   background: var(--bg);
-  border-radius: 4px;
+  border-radius: var(--radius);
   overflow: hidden;
   margin-bottom: 8px;
 }
 .sim-progress-fill {
   height: 100%;
   background: var(--accent);
-  border-radius: 4px;
+  border-radius: var(--radius);
   transition: width 0.15s ease;
 }
 .sim-progress-label {

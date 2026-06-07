@@ -64,7 +64,7 @@ onUnmounted(() => window.removeEventListener("keydown", onKeydown))
 .dialog-card {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: var(--radius);
   padding: 24px 24px 20px;
   min-width: 280px;
   max-width: 420px;

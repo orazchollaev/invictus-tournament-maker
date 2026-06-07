@@ -83,7 +83,7 @@ function pct(n: number, s: SeasonStat) {
 }
 
 .chart-row {
-  border-radius: 4px;
+  border-radius: var(--radius);
   transition: background 0.1s;
 }
 
@@ -118,7 +118,7 @@ function pct(n: number, s: SeasonStat) {
 .bar-track {
   display: flex;
   height: 8px;
-  border-radius: 4px;
+  border-radius: var(--radius);
   overflow: hidden;
   background: var(--border-light);
   width: 100%;

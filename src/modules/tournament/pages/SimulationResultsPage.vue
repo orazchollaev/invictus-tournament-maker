@@ -410,7 +410,7 @@ function handleSaveCSV() {
   color: var(--accent);
   background: color-mix(in srgb, var(--accent) 12%, var(--surface));
   border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
-  border-radius: 10px;
+  border-radius: var(--radius);
   padding: 2px 9px;
 }
 .srp-subtitle {
@@ -553,12 +553,12 @@ function handleSaveCSV() {
   width: 100%;
   height: 7px;
   background: var(--bg);
-  border-radius: 4px;
+  border-radius: var(--radius);
   overflow: hidden;
 }
 .srp-bar-fill {
   height: 100%;
-  border-radius: 4px;
+  border-radius: var(--radius);
   transition: width 0.3s ease;
   opacity: 0.85;
 }

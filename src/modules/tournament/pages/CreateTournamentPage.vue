@@ -643,7 +643,7 @@ function doCreate(orderedIds?: string[]) {
   padding: 0;
   background: transparent;
   border: none;
-  border-radius: 4px;
+  border-radius: var(--radius);
   cursor: pointer;
   color: var(--text-muted);
   transition:
@@ -931,7 +931,7 @@ function doCreate(orderedIds?: string[]) {
   background: transparent;
   color: var(--text-muted);
   cursor: pointer;
-  border-radius: 2px;
+  border-radius: var(--radius);
 }
 .ctp-tier-mv-btn:hover {
   color: var(--accent);
@@ -959,7 +959,7 @@ function doCreate(orderedIds?: string[]) {
 .ctp-badge {
   display: inline-block;
   background: rgba(255, 255, 255, 0.25);
-  border-radius: 10px;
+  border-radius: var(--radius);
   padding: 0 8px;
   font-size: 12px;
 }

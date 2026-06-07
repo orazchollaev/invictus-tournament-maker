@@ -109,7 +109,7 @@ const filtered = computed(() => {
   color: var(--text-muted);
   background: var(--bg);
   border: 1px solid var(--border-light);
-  border-radius: 4px;
+  border-radius: var(--radius);
   padding: 1px 5px;
   flex-shrink: 0;
 }
@@ -119,7 +119,7 @@ const filtered = computed(() => {
   color: var(--text-muted);
   background: var(--bg);
   border: 1px solid var(--border-light);
-  border-radius: 4px;
+  border-radius: var(--radius);
   padding: 2px 8px;
   min-width: 34px;
   text-align: center;

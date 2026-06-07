@@ -255,7 +255,7 @@ const { needRefresh, applyUpdate } = usePwaUpdate()
   align-items: center;
   gap: 5px;
   padding: 3px 10px;
-  border-radius: 20px;
+  border-radius: var(--radius);
   border: 1px solid color-mix(in srgb, #c9a227 40%, transparent);
   background: color-mix(in srgb, #c9a227 8%, transparent);
   color: #c9a227;

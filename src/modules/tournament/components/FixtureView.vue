@@ -872,7 +872,7 @@ function hasPen(result: MatchResult | null | undefined): boolean {
   width: 22px;
   height: 22px;
   border: 1px solid var(--border-light);
-  border-radius: 3px;
+  border-radius: var(--radius);
   background: transparent;
   color: var(--text-muted);
   cursor: pointer;
@@ -1002,7 +1002,7 @@ function hasPen(result: MatchResult | null | undefined): boolean {
   font-weight: 700;
   font-size: 12px;
   background: color-mix(in srgb, var(--text-muted) 10%, var(--surface));
-  border-radius: 3px;
+  border-radius: var(--radius);
   padding: 1px 5px;
   min-width: 18px;
   text-align: center;
@@ -1048,7 +1048,7 @@ function hasPen(result: MatchResult | null | undefined): boolean {
   text-align: center;
   background: var(--bg);
   border: 1px solid var(--accent);
-  border-radius: 3px;
+  border-radius: var(--radius);
   padding: 1px 2px;
   font-size: 12px;
   font-weight: 700;
@@ -1080,7 +1080,7 @@ function hasPen(result: MatchResult | null | undefined): boolean {
   width: 18px;
   height: 18px;
   border: 1px solid var(--border-light);
-  border-radius: 3px;
+  border-radius: var(--radius);
   background: transparent;
   color: var(--text-muted);
   cursor: pointer;
