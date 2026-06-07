@@ -8,6 +8,7 @@ interface Dataset {
   label: string
   description: string
   teams: { id: string; name: string; color: string; power: number }[]
+  tournaments?: any[]
 }
 
 const globbed = import.meta.glob<Dataset>("../../../examples/*.json", {
@@ -30,7 +31,9 @@ export function useDataManagement() {
     })
     if (!ok) return
     localStorage.setItem("teams", JSON.stringify({ teams: dataset.teams }))
-    localStorage.setItem("tournament", JSON.stringify({ tournaments: [], active: null }))
+    if (dataset.tournaments)
+      localStorage.setItem("tournament", JSON.stringify({ tournaments: dataset.tournaments }))
+    else localStorage.setItem("tournament", JSON.stringify({ tournaments: [], active: null }))
     location.reload()
   }
 
