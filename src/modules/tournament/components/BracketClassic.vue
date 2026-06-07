@@ -7,7 +7,7 @@ import BracketThirdPlaceCard from "./BracketThirdPlaceCard.vue"
 import { type DisplayMatch, type ConnInfo, buildConnInfo } from "./bracketUtils"
 import { useSettingsStore } from "@/modules/settings/store"
 
-const props = defineProps<{ tournament: Tournament; teams: Team[] }>()
+const props = defineProps<{ tournament: Tournament; teams: Team[]; isExporting?: boolean }>()
 const settings = useSettingsStore()
 const hoveredTeamId = ref<string | null>(null)
 const emit = defineEmits<{
@@ -156,6 +156,7 @@ function svgSegments(p: ConnInfo, w: number) {
               :match="match"
               :teams="teams"
               :is-final="ri === displayRounds.length - 1"
+              :is-exporting="isExporting"
               :dimmed="isMatchDimmed(ri, mi)"
               :style="{
                 position: 'absolute',
