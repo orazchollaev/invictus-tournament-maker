@@ -6,6 +6,7 @@ import { useTournamentStore } from "@/modules/tournament/store"
 import { useSettingsStore } from "@/modules/settings/store"
 import ManualDraw from "../components/ManualDraw.vue"
 import GroupDraw from "../components/GroupDraw.vue"
+import TeamSelector from "../components/TeamSelector.vue"
 import BtnGroup from "@/components/BtnGroup.vue"
 import { Trophy, LayoutGrid, List, Shuffle, ArrowLeft } from "@lucide/vue"
 import { randomTournamentName } from "@/composables/useRandomNames"
@@ -259,29 +260,8 @@ function doCreate(orderedIds?: string[]) {
 
       <!-- Teams -->
       <div class="ctp-card">
-        <div class="ctp-section-header">
-          <div class="ctp-section-title">
-            Participating Teams
-            <span class="ctp-count">({{ selected.length }} selected)</span>
-          </div>
-          <button class="btn-xs" @click="toggleAll">
-            {{ allSelected ? "Deselect All" : "Select All" }}
-          </button>
-        </div>
-        <div class="ctp-team-grid">
-          <label
-            v-for="team in allTeams"
-            :key="team.id"
-            class="ctp-chip"
-            :class="{ 'ctp-chip--on': selected.includes(team.id) }"
-          >
-            <input v-model="selected" type="checkbox" :value="team.id" class="ctp-check" />
-            <span class="ctp-dot" :style="{ background: team.color }" />
-            {{ team.name }}
-            <span class="ctp-power">{{ team.power }}</span>
-          </label>
-        </div>
-        <p v-if="selected.length === 1" class="ctp-warn">Select at least 2 teams.</p>
+        <div class="ctp-section-title">Participating Teams</div>
+        <TeamSelector :teams="allTeams" :selected="selected" @update:selected="selected = $event" />
       </div>
 
       <!-- Format -->

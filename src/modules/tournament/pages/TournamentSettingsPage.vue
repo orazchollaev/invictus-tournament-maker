@@ -6,8 +6,9 @@ import { useTournamentStore } from "@/modules/tournament/store"
 import type { PlayoffSeedMode, LegMode, Tiebreaker } from "@/modules/tournament/types"
 import ManualDraw from "@/modules/tournament/components/ManualDraw.vue"
 import GroupDraw from "@/modules/tournament/components/GroupDraw.vue"
+import TeamSelector from "@/modules/tournament/components/TeamSelector.vue"
 import BtnGroup from "@/components/BtnGroup.vue"
-import { Settings, X, Lock, Save, ArrowLeft, Play, BarChart2 } from "@lucide/vue"
+import { Settings, Lock, Save, ArrowLeft, Play, BarChart2 } from "@lucide/vue"
 import { showConfirm } from "@/composables/useDialog"
 import { useMonteCarlo } from "@/modules/tournament/composables/useMonteCarlo"
 import { cacheSimResult } from "@/modules/tournament/composables/simulationCache"
@@ -33,7 +34,6 @@ const otherLeagues = computed(() =>
 )
 
 const localTeamIds = ref<string[]>([...(tournament.value?.teamIds ?? [])])
-const selectedTeamToAdd = ref("")
 const drawType = ref<DrawType>(tournament.value?.drawType ?? "random")
 const showManualDraw = ref(false)
 
@@ -118,9 +118,6 @@ const playoffOptions = computed(() => [
 ])
 
 const localTeams = computed(() => allTeams.value.filter((t) => localTeamIds.value.includes(t.id)))
-const localAvailableTeams = computed(() =>
-  allTeams.value.filter((t) => !localTeamIds.value.includes(t.id))
-)
 
 const currentGroupCount = computed(() => localGroupCount.value)
 const maxGroups = computed(() => Math.floor(localTeamIds.value.length / 2))
@@ -161,16 +158,6 @@ const hasChanges = computed(() => {
 
 function goBack() {
   router.push(`/tournaments/${tournamentId.value}`)
-}
-
-function handleAddTeam() {
-  if (!selectedTeamToAdd.value) return
-  localTeamIds.value.push(selectedTeamToAdd.value)
-  selectedTeamToAdd.value = ""
-}
-
-function handleRemoveTeam(teamId: string) {
-  localTeamIds.value = localTeamIds.value.filter((id) => id !== teamId)
 }
 
 async function handleRedraw() {
@@ -324,33 +311,11 @@ function handleSave() {
             </span>
           </div>
           <template v-if="!hasAnyResults">
-            <div class="team-list">
-              <div v-for="team in localTeams" :key="team.id" class="team-row">
-                <span class="team-dot" :style="{ background: team.color }" />
-                <span class="team-name">{{ team.name }}</span>
-                <button
-                  class="danger team-remove"
-                  :disabled="localTeamIds.length <= 2"
-                  @click="handleRemoveTeam(team.id)"
-                >
-                  <X :size="13" />
-                </button>
-              </div>
-            </div>
-            <div v-if="localAvailableTeams.length > 0" class="add-team-row">
-              <select v-model="selectedTeamToAdd">
-                <option value="" disabled>
-                  {{ t("tournament.settingsPage.manageTeams.addPlaceholder") }}
-                </option>
-                <option v-for="tw in localAvailableTeams" :key="tw.id" :value="tw.id">
-                  {{ tw.name }}
-                </option>
-              </select>
-              <button class="primary" :disabled="!selectedTeamToAdd" @click="handleAddTeam">
-                {{ t("tournament.settingsPage.manageTeams.add") }}
-              </button>
-            </div>
-            <p v-else class="tsp-hint">{{ t("tournament.settingsPage.manageTeams.allAdded") }}</p>
+            <TeamSelector
+              :teams="allTeams"
+              :selected="localTeamIds"
+              @update:selected="localTeamIds = $event"
+            />
           </template>
           <div v-else class="tsp-locked-banner">
             <Lock :size="12" />
