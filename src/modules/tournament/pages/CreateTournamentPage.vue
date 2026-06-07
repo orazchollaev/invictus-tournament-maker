@@ -57,9 +57,7 @@ const drawOptions = [
 
 const allTeams = computed(() => teamsStore.teams)
 const selectedTeams = computed(() => allTeams.value.filter((t) => selected.value.includes(t.id)))
-const allSelected = computed(
-  () => selected.value.length === allTeams.value.length && allTeams.value.length > 0
-)
+
 const minGroups = 2
 const maxGroups = computed(() => Math.floor(selected.value.length / 2))
 const minQpg = 1
@@ -131,10 +129,6 @@ watch(selectedTeams, (teams) => {
   }
   tierAssignments.value = newAssignments
 })
-
-function toggleAll() {
-  selected.value = allSelected.value ? [] : allTeams.value.map((t) => t.id)
-}
 
 function setFormat(f: TournamentFormat) {
   format.value = f
