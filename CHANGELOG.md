@@ -1,5 +1,35 @@
 # Changelog
 
+## [1.10.0](https://github.com/orazchollaev/invictus-tournament-maker/compare/v1.9.0...v1.10.0) (2026-06-07)
+
+### 🚀 New Features
+
+- **bracket:** team-colored connectors with hover path highlight ([2e462e6](https://github.com/orazchollaev/invictus-tournament-maker/commit/2e462e66fff153262e98d54ac7b82e6e69f2a7fa))
+- **history:** clickable row, remove chevron button and t-actions ([a07ca4e](https://github.com/orazchollaev/invictus-tournament-maker/commit/a07ca4e66b73f1fe5a0ebbe1d4f31e25912935a3))
+- **i18n:** some pages translate all hardcoded UI text across 5 locales (en/tr/ru/es/pt) ([e70b3a5](https://github.com/orazchollaev/invictus-tournament-maker/commit/e70b3a55502815a258656c5dc61602c34d4ed613))
+- new FIFA World Cup 2026 sample data with groups ([cef1f86](https://github.com/orazchollaev/invictus-tournament-maker/commit/cef1f866d628f7d64c1640f0481c02db7831e207))
+- **settings:** organize settings into categorized sections with sticky nav ([5d49e1f](https://github.com/orazchollaev/invictus-tournament-maker/commit/5d49e1ff8bdb3eb10af0bc6ef40ba3dc63b85a1c))
+- **team-selector:** add reusable TeamSelector component with i18n support ([e728fee](https://github.com/orazchollaev/invictus-tournament-maker/commit/e728feeeb69c15627e76545ef246ddf305ae669e))
+- **teams:** team-colored left border, clickable row, remove chevron ([f04235c](https://github.com/orazchollaev/invictus-tournament-maker/commit/f04235cb184894c3edd7c7ab5596e283dabe5365))
+- **tournaments:** redesign list row, clickable row, remove chevron ([09a7868](https://github.com/orazchollaev/invictus-tournament-maker/commit/09a78685397f68b5da91502ce16b4d0b46895734))
+
+### 🐛 Bug Fixes
+
+- **bracket:** hide connector path beyond eliminated team on hover ([64cd384](https://github.com/orazchollaev/invictus-tournament-maker/commit/64cd38492a334ec04784b5e8512ca44d36d642d1))
+- **bracket:** pass isExporting to BracketMatchCard in BracketClassic ([a422a6e](https://github.com/orazchollaev/invictus-tournament-maker/commit/a422a6e2e17049f99d9d26b25706f3d8079edacb))
+- **header:** center nav links ([5a61f36](https://github.com/orazchollaev/invictus-tournament-maker/commit/5a61f360e33ed1b383641921f647f078204d9639))
+- **tournaments:** show status on mobile, restyle format label ([35560f2](https://github.com/orazchollaev/invictus-tournament-maker/commit/35560f291a19dbefdb9ae196d6727fdd519d412d))
+
+### 🔧 Maintenance
+
+- **build:** resolve some build warning issues ([9154396](https://github.com/orazchollaev/invictus-tournament-maker/commit/91543967dcbf77bb9f3df0885ded8c6b9147ce8c))
+- **deps:** update all non-major dependencies ([2494f50](https://github.com/orazchollaev/invictus-tournament-maker/commit/2494f505dc323f113388f730b42c04afeef53bc0))
+
+### 🎨 Styles
+
+- **list:** add left-border accent hover state and fix mobile row layout ([a09f86a](https://github.com/orazchollaev/invictus-tournament-maker/commit/a09f86ad1cc05ed1b61a63590d7d936b3f9ed8be))
+- standardize all border-radius to 4px via --radius variable ([fc61483](https://github.com/orazchollaev/invictus-tournament-maker/commit/fc61483e82549a052b0b808eceb0fa54195b0997))
+
 ## [1.9.0](https://github.com/orazchollaev/invictus-tournament-maker/compare/v1.8.0...v1.9.0) (2026-06-06)
 
 ### 🚀 New Features
