@@ -76,6 +76,8 @@ const { needRefresh, applyUpdate } = usePwaUpdate()
   top: 0;
   z-index: 10;
   padding-top: env(safe-area-inset-top);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
 }
 
 .header-inner {
@@ -86,6 +88,8 @@ const { needRefresh, applyUpdate } = usePwaUpdate()
   align-items: center;
   gap: 8px;
   height: 52px;
+  justify-content: center;
+  position: relative;
 }
 
 /* Brand */
@@ -93,6 +97,8 @@ const { needRefresh, applyUpdate } = usePwaUpdate()
   display: flex;
   align-items: center;
   text-decoration: none;
+  position: absolute;
+  left: 20px;
 }
 .brand-logo {
   height: 50px;
@@ -112,7 +118,8 @@ const { needRefresh, applyUpdate } = usePwaUpdate()
   display: flex;
   align-items: center;
   gap: 2px;
-  flex: 1;
+  margin-left: 120px;
+  margin-right: 120px;
 }
 .main-nav a {
   display: inline-flex;
@@ -144,7 +151,8 @@ const { needRefresh, applyUpdate } = usePwaUpdate()
 
 /* Right side */
 .header-end {
-  margin-left: auto;
+  position: absolute;
+  right: 20px;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -280,9 +288,15 @@ const { needRefresh, applyUpdate } = usePwaUpdate()
     padding: 0 12px;
     height: 48px;
   }
+  .brand {
+    left: 12px;
+  }
+  .header-end {
+    right: 12px;
+  }
   .brand-logo {
-    height: 42px;
-    width: 42px;
+    height: 44px;
+    width: 44px;
   }
   .main-nav {
     display: none;
