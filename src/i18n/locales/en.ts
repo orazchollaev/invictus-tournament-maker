@@ -511,4 +511,14 @@ export default {
       },
     },
   },
+  teamSelector: {
+    searchPlaceholder: "Search teams…",
+    selected: "Selected",
+    available: "Available",
+    selectAll: "Select all",
+    deselectAll: "Deselect all",
+    emptySelected: "No teams selected",
+    emptyAvailable: "No teams found",
+    minTeams: "Select at least 2 teams",
+  },
 } as const

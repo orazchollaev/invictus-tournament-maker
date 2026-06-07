@@ -512,4 +512,14 @@ export default {
       },
     },
   },
+  teamSelector: {
+    searchPlaceholder: "Поиск команд…",
+    selected: "Выбрано",
+    available: "Доступно",
+    selectAll: "Выбрать все",
+    deselectAll: "Снять все",
+    emptySelected: "Нет выбранных команд",
+    emptyAvailable: "Команды не найдены",
+    minTeams: "Выберите не менее 2 команд",
+  },
 } as const

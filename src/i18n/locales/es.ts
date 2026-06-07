@@ -515,4 +515,14 @@ export default {
       },
     },
   },
+  teamSelector: {
+    searchPlaceholder: "Buscar equipos…",
+    selected: "Seleccionados",
+    available: "Disponibles",
+    selectAll: "Seleccionar todo",
+    deselectAll: "Deseleccionar todo",
+    emptySelected: "Sin equipos seleccionados",
+    emptyAvailable: "No se encontraron equipos",
+    minTeams: "Selecciona al menos 2 equipos",
+  },
 } as const

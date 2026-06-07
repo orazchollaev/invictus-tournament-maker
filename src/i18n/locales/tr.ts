@@ -513,4 +513,14 @@ export default {
       },
     },
   },
+  teamSelector: {
+    searchPlaceholder: "Takım ara…",
+    selected: "Seçilen",
+    available: "Seçilebilecek",
+    selectAll: "Tümünü seç",
+    deselectAll: "Tümünü kaldır",
+    emptySelected: "Takım seçilmedi",
+    emptyAvailable: "Takım bulunamadı",
+    minTeams: "En az 2 takım seçin",
+  },
 } as const
