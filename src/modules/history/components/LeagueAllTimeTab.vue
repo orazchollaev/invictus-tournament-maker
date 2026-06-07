@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useI18n } from "vue-i18n"
+
 export interface AllTimeRow {
   teamId: string
   name: string
@@ -16,6 +18,8 @@ export interface AllTimeRow {
 }
 
 defineProps<{ rows: AllTimeRow[] }>()
+
+const { t } = useI18n()
 </script>
 
 <template>
@@ -25,17 +29,17 @@ defineProps<{ rows: AllTimeRow[] }>()
         <thead>
           <tr>
             <th class="col-rank">#</th>
-            <th class="col-team">Team</th>
-            <th title="Seasons Played">Sns</th>
-            <th title="Titles">Ttl</th>
-            <th title="Matches Played">P</th>
-            <th title="Won">W</th>
-            <th title="Drawn">D</th>
-            <th title="Lost">L</th>
-            <th title="Goals For">GF</th>
-            <th title="Goals Against">GA</th>
-            <th title="Goal Difference">GD</th>
-            <th title="Points" class="col-pts">Pts</th>
+            <th class="col-team">{{ t("history.table.team") }}</th>
+            <th :title="t('history.table.seasonsPlayed')">Sns</th>
+            <th :title="t('history.table.titles')">Ttl</th>
+            <th :title="t('history.table.matchesPlayed')">P</th>
+            <th :title="t('history.table.won')">W</th>
+            <th :title="t('history.table.drawn')">D</th>
+            <th :title="t('history.table.lost')">L</th>
+            <th :title="t('history.table.goalsFor')">GF</th>
+            <th :title="t('history.table.goalsAgainst')">GA</th>
+            <th :title="t('history.table.goalDiff')">GD</th>
+            <th :title="t('history.table.points')" class="col-pts">Pts</th>
           </tr>
         </thead>
         <tbody>

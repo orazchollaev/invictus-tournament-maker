@@ -5,9 +5,11 @@ import { useTournamentStore } from "@/modules/tournament/store"
 import { useTeamsStore } from "@/modules/teams/store"
 import { getCachedSimResult } from "@/modules/tournament/composables/simulationCache"
 import { ArrowLeft, Download, BarChart2, Trophy, Medal, Users, TrendingDown } from "@lucide/vue"
+import { useI18n } from "vue-i18n"
 
 const route = useRoute()
 const router = useRouter()
+const { t } = useI18n()
 const store = useTournamentStore()
 const teamsStore = useTeamsStore()
 
@@ -169,9 +171,9 @@ function handleSaveCSV() {
     <template v-if="!result || !tournament">
       <div class="srp-empty">
         <BarChart2 :size="32" class="srp-empty-icon" />
-        <p>No simulation results found.</p>
+        <p>{{ t("tournament.simulationResults.noResults") }}</p>
         <button @click="router.push(`/tournaments/${tournamentId}/settings`)">
-          Run a simulation first
+          {{ t("tournament.simulationResults.runFirst") }}
         </button>
       </div>
     </template>
@@ -181,30 +183,35 @@ function handleSaveCSV() {
       <div class="srp-header">
         <RouterLink :to="`/tournaments/${tournamentId}/settings`" class="back-link">
           <ArrowLeft :size="14" />
-          Settings
+          {{ t("tournament.settings") }}
         </RouterLink>
         <div class="srp-title-row">
           <h2 class="srp-title">
             <BarChart2 :size="18" class="srp-title-icon" />
-            Simulation Results
+            {{ t("tournament.simulationResults.title") }}
           </h2>
-          <span class="srp-badge">{{ runs.toLocaleString() }} runs</span>
+          <span class="srp-badge">
+            {{ t("tournament.simulationResults.runs", { n: runs.toLocaleString() }) }}
+          </span>
         </div>
-        <div class="srp-subtitle">{{ tournament.name }} — Season {{ tournament.season }}</div>
+        <div class="srp-subtitle">
+          {{ tournament.name }} —
+          {{ t("tournament.simulationResults.season", { n: tournament.season }) }}
+        </div>
       </div>
 
       <!-- Format summary -->
       <div class="srp-summary-row">
         <div class="srp-stat-chip">
-          <span class="srp-chip-label">Format</span>
+          <span class="srp-chip-label">{{ t("tournament.simulationResults.format") }}</span>
           <span class="srp-chip-val">{{ result.format }}</span>
         </div>
         <div class="srp-stat-chip">
-          <span class="srp-chip-label">Teams</span>
+          <span class="srp-chip-label">{{ t("tournament.simulationResults.teams") }}</span>
           <span class="srp-chip-val">{{ result.teamStats.length }}</span>
         </div>
         <div class="srp-stat-chip">
-          <span class="srp-chip-label">Simulations</span>
+          <span class="srp-chip-label">{{ t("tournament.simulationResults.simulations") }}</span>
           <span class="srp-chip-val">{{ runs.toLocaleString() }}</span>
         </div>
       </div>
@@ -214,32 +221,32 @@ function handleSaveCSV() {
         <div class="srp-card">
           <div class="srp-card-title">
             <Trophy :size="14" />
-            Championship Odds
+            {{ t("tournament.simulationResults.championshipOdds") }}
           </div>
           <div class="srp-table-wrap">
             <table class="srp-table">
               <thead>
                 <tr>
                   <th class="col-rank">#</th>
-                  <th class="col-team">Team</th>
+                  <th class="col-team">{{ t("common.team") }}</th>
                   <th class="col-pwr">PWR</th>
                   <th class="col-stat">
                     <Trophy :size="12" />
-                    Win
+                    {{ t("tournament.simulationResults.win") }}
                   </th>
                   <th class="col-stat">
                     <Medal :size="12" />
-                    Final
+                    {{ t("tournament.simulationResults.final") }}
                   </th>
                   <th v-if="showTop4" class="col-stat">
                     <Users :size="12" />
-                    Top 4
+                    {{ t("tournament.simulationResults.top4") }}
                   </th>
                   <th v-if="hasGroups" class="col-stat">
                     <Users :size="12" />
-                    Adv.
+                    {{ t("tournament.simulationResults.adv") }}
                   </th>
-                  <th class="col-bar">Win probability</th>
+                  <th class="col-bar">{{ t("tournament.simulationResults.winProbability") }}</th>
                 </tr>
               </thead>
               <tbody>
@@ -280,28 +287,28 @@ function handleSaveCSV() {
         <div class="srp-card">
           <div class="srp-card-title">
             <Trophy :size="14" />
-            League Simulation Odds
+            {{ t("tournament.simulationResults.leagueOdds") }}
           </div>
           <div class="srp-table-wrap">
             <table class="srp-table">
               <thead>
                 <tr>
                   <th class="col-rank">#</th>
-                  <th class="col-team">Team</th>
+                  <th class="col-team">{{ t("common.team") }}</th>
                   <th class="col-pwr">PWR</th>
                   <th class="col-stat">
                     <Trophy :size="12" />
-                    Title
+                    {{ t("tournament.simulationResults.titleCol") }}
                   </th>
-                  <th class="col-stat">Top 3</th>
-                  <th class="col-stat">Avg Pts</th>
-                  <th class="col-stat">Avg GF</th>
-                  <th class="col-stat">Avg GA</th>
+                  <th class="col-stat">{{ t("tournament.simulationResults.top3") }}</th>
+                  <th class="col-stat">{{ t("tournament.simulationResults.avgPts") }}</th>
+                  <th class="col-stat">{{ t("tournament.simulationResults.avgGF") }}</th>
+                  <th class="col-stat">{{ t("tournament.simulationResults.avgGA") }}</th>
                   <th v-if="showRelegate" class="col-stat">
                     <TrendingDown :size="12" />
-                    Rele.
+                    {{ t("tournament.simulationResults.relegate") }}
                   </th>
-                  <th class="col-bar">Title probability</th>
+                  <th class="col-bar">{{ t("tournament.simulationResults.titleProbability") }}</th>
                 </tr>
               </thead>
               <tbody>
@@ -345,11 +352,11 @@ function handleSaveCSV() {
       <div class="srp-actions">
         <button class="primary srp-save-btn" @click="handleSaveJSON">
           <Download :size="14" />
-          Save as JSON
+          {{ t("tournament.simulationResults.saveJson") }}
         </button>
         <button class="srp-save-btn" @click="handleSaveCSV">
           <Download :size="14" />
-          Save as CSV
+          {{ t("tournament.simulationResults.saveCsv") }}
         </button>
       </div>
     </template>

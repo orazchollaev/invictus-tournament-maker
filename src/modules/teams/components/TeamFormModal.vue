@@ -8,10 +8,12 @@ import { autoAbbr } from "@/composables/useTeamLookup"
 import { randomTeamName } from "@/composables/useRandomNames"
 import { Shuffle } from "@lucide/vue"
 import type { Team } from "../types"
+import { useI18n } from "vue-i18n"
 
 const props = defineProps<{ team?: Team }>()
 const emit = defineEmits<{ close: [] }>()
 
+const { t } = useI18n()
 const store = useTeamsStore()
 useModal(() => emit("close"))
 
@@ -44,19 +46,26 @@ function submit() {
 </script>
 
 <template>
-  <AppModal :title="isEdit ? 'Edit Team' : 'Add Team'" @close="emit('close')">
+  <AppModal
+    :title="isEdit ? t('teams.form.editTitle') : t('teams.form.addTitle')"
+    @close="emit('close')"
+  >
     <div class="form">
       <div class="field">
-        <label>Name</label>
+        <label>{{ t("teams.form.name") }}</label>
         <div class="input-wrap">
           <input
             v-model="name"
             class="input-full"
-            placeholder="Team name"
+            :placeholder="t('teams.form.namePlaceholder')"
             autofocus
             @keyup.enter="submit"
           />
-          <button class="btn-random" title="Random name" @click="name = randomTeamName()">
+          <button
+            class="btn-random"
+            :title="t('teams.form.randomName')"
+            @click="name = randomTeamName()"
+          >
             <Shuffle :size="14" />
           </button>
         </div>
@@ -64,7 +73,7 @@ function submit() {
 
       <div class="field-row">
         <div class="field">
-          <label>Abbreviation</label>
+          <label>{{ t("teams.form.abbreviation") }}</label>
           <input
             v-model="abbr"
             class="input-abbr"
@@ -74,7 +83,7 @@ function submit() {
           />
         </div>
         <div class="field">
-          <label>Power</label>
+          <label>{{ t("teams.form.power") }}</label>
           <input
             v-model.number="power"
             type="number"
@@ -87,15 +96,15 @@ function submit() {
       </div>
 
       <div class="field">
-        <label>Color</label>
+        <label>{{ t("teams.form.color") }}</label>
         <ColorPicker v-model="color" />
       </div>
 
       <div class="form-actions">
         <button class="primary" :disabled="!name.trim()" @click="submit">
-          {{ isEdit ? "Save" : "Add Team" }}
+          {{ isEdit ? t("common.save") : t("teams.form.addTitle") }}
         </button>
-        <button @click="emit('close')">Cancel</button>
+        <button @click="emit('close')">{{ t("common.cancel") }}</button>
       </div>
     </div>
   </AppModal>

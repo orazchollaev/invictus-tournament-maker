@@ -60,15 +60,24 @@ const settings = useSettingsStore()
       </div>
       <div class="draw-legend">
         <div class="draw-legend-row">
-          <strong>Draw options:</strong>
-          {{ t("common.random") }} — by chance &nbsp;·&nbsp; {{ t("common.seeded") }} — best teams
-          separated &nbsp;·&nbsp; {{ t("common.manual") }} — you place teams
+          <strong>{{ t("settings.newTournament.drawLegend.drawOptions") }}</strong>
+          {{
+            t("settings.newTournament.drawLegend.draw", {
+              random: t("common.random"),
+              seeded: t("common.seeded"),
+              manual: t("common.manual"),
+            })
+          }}
         </div>
         <div class="draw-legend-row">
-          <strong>Playoff seeding:</strong>
-          {{ t("settings.newTournament.drawLegend.cross") }} — A1 vs B2, B1 vs A2 &nbsp;·&nbsp;
-          {{ t("settings.newTournament.drawLegend.noRematch") }} — avoids same-group opponents in
-          Round 1 &nbsp;·&nbsp; {{ t("common.random") }} — fully random
+          <strong>{{ t("settings.newTournament.drawLegend.playoffSeeding") }}</strong>
+          {{
+            t("settings.newTournament.drawLegend.playoff", {
+              cross: t("settings.newTournament.drawLegend.cross"),
+              noRematch: t("settings.newTournament.drawLegend.noRematch"),
+              random: t("common.random"),
+            })
+          }}
         </div>
       </div>
     </div>

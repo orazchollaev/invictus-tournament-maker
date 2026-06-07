@@ -11,9 +11,11 @@ import { Settings, X, Lock, Save, ArrowLeft, Play, BarChart2 } from "@lucide/vue
 import { showConfirm } from "@/composables/useDialog"
 import { useMonteCarlo } from "@/modules/tournament/composables/useMonteCarlo"
 import { cacheSimResult } from "@/modules/tournament/composables/simulationCache"
+import { useI18n } from "vue-i18n"
 
 type DrawType = "random" | "seeded" | "manual"
 
+const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
 const teamsStore = useTeamsStore()
@@ -26,8 +28,8 @@ const hasAnyResults = computed(() => store.hasAnyResults(tournamentId.value))
 
 const otherLeagues = computed(() =>
   store.tournaments
-    .filter((t) => t.format === "league" && t.id !== tournamentId.value)
-    .map((t) => ({ id: t.id, name: t.name, season: t.season }))
+    .filter((tn) => tn.format === "league" && tn.id !== tournamentId.value)
+    .map((tn) => ({ id: tn.id, name: tn.name, season: tn.season }))
 )
 
 const localTeamIds = ref<string[]>([...(tournament.value?.teamIds ?? [])])
@@ -94,26 +96,26 @@ const maxTierCount = computed(() => Math.floor(totalTeams.value / 2))
 const minTierSize = computed(() => Math.floor(totalTeams.value / localTierCount.value))
 const maxPromotionCount = computed(() => Math.max(1, minTierSize.value - 1))
 
-const legOptions = [
-  { value: "single", label: "Single" },
-  { value: "double", label: "Double" },
-]
-const multiLegOptions = [
-  { value: "single", label: "Single" },
-  { value: "double", label: "Double" },
-  { value: "triple", label: "3×" },
-  { value: "quadruple", label: "4×" },
-]
-const drawOptions = [
-  { value: "random", label: "Random" },
-  { value: "seeded", label: "Seeded" },
-  { value: "manual", label: "Manual" },
-]
-const playoffOptions = [
-  { value: "cross", label: "Cross" },
-  { value: "no-same-group", label: "No rematch" },
-  { value: "random", label: "Random" },
-]
+const legOptions = computed(() => [
+  { value: "single", label: t("common.single") },
+  { value: "double", label: t("common.double") },
+])
+const multiLegOptions = computed(() => [
+  { value: "single", label: t("common.single") },
+  { value: "double", label: t("common.double") },
+  { value: "triple", label: t("common.triple") },
+  { value: "quadruple", label: t("common.quadruple") },
+])
+const drawOptions = computed(() => [
+  { value: "random", label: t("common.random") },
+  { value: "seeded", label: t("common.seeded") },
+  { value: "manual", label: t("common.manual") },
+])
+const playoffOptions = computed(() => [
+  { value: "cross", label: t("tournament.create.cross") },
+  { value: "no-same-group", label: t("tournament.create.noRematch") },
+  { value: "random", label: t("common.random") },
+])
 
 const localTeams = computed(() => allTeams.value.filter((t) => localTeamIds.value.includes(t.id)))
 const localAvailableTeams = computed(() =>
@@ -176,7 +178,12 @@ async function handleRedraw() {
     showManualDraw.value = true
     return
   }
-  if (!(await showConfirm("Reset the draw and regenerate?", { confirmLabel: "Regenerate" }))) return
+  if (
+    !(await showConfirm(t("tournament.settingsPage.drawMethod.redrawConfirm"), {
+      confirmLabel: t("tournament.settingsPage.drawMethod.redrawConfirmLabel"),
+    }))
+  )
+    return
   store.redrawTournament(tournamentId.value, drawType.value === "seeded")
 }
 
@@ -186,13 +193,23 @@ function handleManualConfirm(orderedIds: string[]) {
 }
 
 async function handleReset() {
-  if (!(await showConfirm("Reset this tournament?", { confirmLabel: "Reset", dangerous: true })))
+  if (
+    !(await showConfirm(t("tournament.settingsPage.dangerZone.resetConfirm"), {
+      confirmLabel: t("tournament.settingsPage.dangerZone.resetConfirmLabel"),
+      dangerous: true,
+    }))
+  )
     return
   store.resetResults(tournamentId.value)
 }
 
 async function handleDelete() {
-  if (!(await showConfirm("Delete this tournament?", { confirmLabel: "Delete", dangerous: true })))
+  if (
+    !(await showConfirm(t("tournament.settingsPage.dangerZone.deleteConfirm"), {
+      confirmLabel: t("tournament.settingsPage.dangerZone.deleteConfirmLabel"),
+      dangerous: true,
+    }))
+  )
     return
   store.remove(tournamentId.value)
   router.push("/tournaments")
@@ -252,10 +269,10 @@ function handleSave() {
 <template>
   <div class="page">
     <div v-if="!tournament" class="tsp-not-found">
-      <p>Tournament not found.</p>
+      <p>{{ t("tournament.settingsPage.notFound") }}</p>
       <RouterLink to="/tournaments">
         <ArrowLeft :size="14" />
-        Back to Tournaments
+        {{ t("tournament.settingsPage.backToTournaments") }}
       </RouterLink>
     </div>
 
@@ -269,7 +286,7 @@ function handleSave() {
         <div class="tsp-title-row">
           <h2 class="tsp-title">
             <Settings :size="18" class="tsp-title-icon" />
-            Tournament Settings
+            {{ t("tournament.settingsPage.title") }}
           </h2>
           <span class="tsp-season-badge">S{{ tournament.season }}</span>
         </div>
@@ -298,10 +315,12 @@ function handleSave() {
         <!-- Manage Teams -->
         <div class="tsp-card">
           <div class="tsp-card-header">
-            <div class="tsp-section-title">Manage Teams</div>
+            <div class="tsp-section-title">
+              {{ t("tournament.settingsPage.manageTeams.title") }}
+            </div>
             <span v-if="hasAnyResults" class="tsp-lock-tag">
               <Lock :size="10" />
-              Locked
+              {{ t("tournament.settingsPage.locked") }}
             </span>
           </div>
           <template v-if="!hasAnyResults">
@@ -320,20 +339,22 @@ function handleSave() {
             </div>
             <div v-if="localAvailableTeams.length > 0" class="add-team-row">
               <select v-model="selectedTeamToAdd">
-                <option value="" disabled>Add team…</option>
-                <option v-for="t in localAvailableTeams" :key="t.id" :value="t.id">
-                  {{ t.name }}
+                <option value="" disabled>
+                  {{ t("tournament.settingsPage.manageTeams.addPlaceholder") }}
+                </option>
+                <option v-for="tw in localAvailableTeams" :key="tw.id" :value="tw.id">
+                  {{ tw.name }}
                 </option>
               </select>
               <button class="primary" :disabled="!selectedTeamToAdd" @click="handleAddTeam">
-                Add
+                {{ t("tournament.settingsPage.manageTeams.add") }}
               </button>
             </div>
-            <p v-else class="tsp-hint">All available teams are already in this tournament.</p>
+            <p v-else class="tsp-hint">{{ t("tournament.settingsPage.manageTeams.allAdded") }}</p>
           </template>
           <div v-else class="tsp-locked-banner">
             <Lock :size="12" />
-            Team management is disabled once matches have been played.
+            {{ t("tournament.settingsPage.manageTeams.lockedBanner") }}
           </div>
         </div>
 
@@ -341,29 +362,32 @@ function handleSave() {
         <template v-if="!isLeagueFormat">
           <div class="tsp-card">
             <div class="tsp-card-header">
-              <div class="tsp-section-title">Draw Method</div>
+              <div class="tsp-section-title">{{ t("tournament.create.drawMethod") }}</div>
               <span v-if="hasAnyResults" class="tsp-lock-tag">
                 <Lock :size="10" />
-                Locked
+                {{ t("tournament.settingsPage.locked") }}
               </span>
             </div>
             <template v-if="!hasAnyResults">
               <div class="tsp-row">
                 <BtnGroup v-model="drawType" :options="drawOptions" />
-                <button @click="handleRedraw">↺ Regenerate</button>
+                <button @click="handleRedraw">
+                  {{ t("tournament.settingsPage.drawMethod.regenerate") }}
+                </button>
               </div>
               <div class="tsp-hint-box">
-                <strong>Random</strong>
-                — by chance &nbsp;·&nbsp;
-                <strong>Seeded</strong>
-                — top teams kept apart &nbsp;·&nbsp;
-                <strong>Manual</strong>
-                — you arrange
+                {{
+                  t("tournament.create.drawHint", {
+                    random: t("common.random"),
+                    seeded: t("common.seeded"),
+                    manual: t("common.manual"),
+                  })
+                }}
               </div>
             </template>
             <div v-else class="tsp-locked-banner">
               <Lock :size="12" />
-              Draw cannot be changed once matches have been played.
+              {{ t("tournament.settingsPage.drawMethod.lockedBanner") }}
             </div>
           </div>
         </template>
@@ -372,15 +396,17 @@ function handleSave() {
         <template v-if="isGroupFormat">
           <div class="tsp-card">
             <div class="tsp-card-header">
-              <div class="tsp-section-title">Group Structure</div>
+              <div class="tsp-section-title">
+                {{ t("tournament.settingsPage.groupStructure.title") }}
+              </div>
               <span v-if="hasAnyResults" class="tsp-lock-tag">
                 <Lock :size="10" />
-                Locked
+                {{ t("tournament.settingsPage.locked") }}
               </span>
             </div>
             <template v-if="!hasAnyResults">
               <div class="tsp-stepper-row">
-                <span class="tsp-stepper-label">Number of Groups</span>
+                <span class="tsp-stepper-label">{{ t("tournament.create.groups") }}</span>
                 <div class="tsp-stepper">
                   <button
                     :disabled="currentGroupCount <= minGroups"
@@ -398,7 +424,9 @@ function handleSave() {
                 </div>
               </div>
               <div class="tsp-stepper-row">
-                <span class="tsp-stepper-label">Teams that advance per group</span>
+                <span class="tsp-stepper-label">
+                  {{ t("tournament.settingsPage.groupStructure.teamsAdvance") }}
+                </span>
                 <div class="tsp-stepper">
                   <button :disabled="currentQpg <= minQpg" @click="localQpg = currentQpg - 1">
                     −
@@ -408,10 +436,16 @@ function handleSave() {
                     +
                   </button>
                 </div>
-                <span class="tsp-hint">→ {{ currentQpg * currentGroupCount }} reach knockout</span>
+                <span class="tsp-hint">
+                  {{
+                    t("tournament.settingsPage.groupStructure.reachKnockout", {
+                      n: currentQpg * currentGroupCount,
+                    })
+                  }}
+                </span>
               </div>
               <div v-if="currentQpg < maxQpg" class="tsp-stepper-row">
-                <span class="tsp-stepper-label">Best runner-up wildcards</span>
+                <span class="tsp-stepper-label">{{ t("tournament.create.wildcards") }}</span>
                 <div class="tsp-stepper">
                   <button
                     :disabled="localWildcardCount <= 0"
@@ -430,13 +464,17 @@ function handleSave() {
                   </button>
                 </div>
                 <span class="tsp-hint">
-                  → {{ currentQpg * currentGroupCount + localWildcardCount }} total
+                  {{
+                    t("tournament.settingsPage.groupStructure.total", {
+                      n: currentQpg * currentGroupCount + localWildcardCount,
+                    })
+                  }}
                 </span>
               </div>
             </template>
             <div v-else class="tsp-locked-banner">
               <Lock :size="12" />
-              Group structure cannot be changed once matches have been played.
+              {{ t("tournament.settingsPage.groupStructure.lockedBanner") }}
             </div>
           </div>
         </template>
@@ -445,26 +483,29 @@ function handleSave() {
         <template v-if="isGroupFormat">
           <div class="tsp-card">
             <div class="tsp-card-header">
-              <div class="tsp-section-title">Playoff Seeding</div>
+              <div class="tsp-section-title">
+                {{ t("tournament.settingsPage.playoffSeeding.title") }}
+              </div>
               <span v-if="tournament.groupsDone" class="tsp-lock-tag">
                 <Lock :size="10" />
-                Locked
+                {{ t("tournament.settingsPage.locked") }}
               </span>
             </div>
             <template v-if="!tournament.groupsDone">
               <BtnGroup v-model="localPlayoffSeedMode" :options="playoffOptions" />
               <div class="tsp-hint-box">
-                <strong>Cross</strong>
-                — A1 vs B2, B1 vs A2 &nbsp;·&nbsp;
-                <strong>No rematch</strong>
-                — avoids same-group opponents in Round 1 &nbsp;·&nbsp;
-                <strong>Random</strong>
-                — fully random
+                {{
+                  t("tournament.create.playoffHint", {
+                    cross: t("tournament.create.cross"),
+                    noRematch: t("tournament.create.noRematch"),
+                    random: t("common.random"),
+                  })
+                }}
               </div>
             </template>
             <div v-else class="tsp-locked-banner">
               <Lock :size="12" />
-              Locked — group stage is complete and the bracket has been seeded.
+              {{ t("tournament.settingsPage.playoffSeeding.lockedBanner") }}
             </div>
           </div>
         </template>
@@ -473,22 +514,24 @@ function handleSave() {
         <template v-if="!isLeagueFormat && tournament.rounds.length >= 2">
           <div class="tsp-card">
             <div class="tsp-card-header">
-              <div class="tsp-section-title">Format Options</div>
+              <div class="tsp-section-title">
+                {{ t("tournament.settingsPage.formatOptions.title") }}
+              </div>
               <span v-if="hasAnyResults" class="tsp-lock-tag">
                 <Lock :size="10" />
-                Locked
+                {{ t("tournament.settingsPage.locked") }}
               </span>
             </div>
             <template v-if="!hasAnyResults">
               <label class="tsp-toggle-row">
                 <input v-model="localHasThirdPlace" type="checkbox" />
-                <span class="tsp-toggle-label">3rd Place Match</span>
-                <span class="tsp-hint">Semi-final losers play for bronze medal</span>
+                <span class="tsp-toggle-label">{{ t("tournament.create.thirdPlace") }}</span>
+                <span class="tsp-hint">{{ t("tournament.create.thirdPlaceHint") }}</span>
               </label>
             </template>
             <div v-else class="tsp-locked-banner">
               <Lock :size="12" />
-              Format cannot be changed once matches have been played.
+              {{ t("tournament.settingsPage.formatOptions.lockedBanner") }}
             </div>
           </div>
         </template>
@@ -497,37 +540,43 @@ function handleSave() {
         <template v-if="!isLeagueFormat">
           <div class="tsp-card">
             <div class="tsp-card-header">
-              <div class="tsp-section-title">Legs per Match</div>
+              <div class="tsp-section-title">
+                {{ t("tournament.settingsPage.legsPerMatch.title") }}
+              </div>
               <span v-if="hasAnyResults" class="tsp-lock-tag">
                 <Lock :size="10" />
-                Locked
+                {{ t("tournament.settingsPage.locked") }}
               </span>
             </div>
             <template v-if="!hasAnyResults">
               <div class="tsp-hint-box tsp-hint-box--top">
-                <strong>Single</strong>
-                — 1 match, winner advances &nbsp;·&nbsp;
-                <strong>Double</strong>
-                — home &amp; away, aggregate score decides
+                <strong>{{ t("common.single") }}</strong>
+                — {{ t("tournament.settingsPage.legsPerMatch.hintSingle") }} &nbsp;·&nbsp;
+                <strong>{{ t("common.double") }}</strong>
+                — {{ t("tournament.settingsPage.legsPerMatch.hintDouble") }}
               </div>
               <div class="tsp-leg-rows">
                 <div v-if="isGroupFormat" class="tsp-leg-row">
-                  <span class="tsp-row-label">Group Stage</span>
+                  <span class="tsp-row-label">{{ t("tournament.create.groupStage") }}</span>
                   <BtnGroup v-model="localGroupLegMode" :options="multiLegOptions" />
                 </div>
                 <div class="tsp-leg-row">
-                  <span class="tsp-row-label">Knockout Rounds</span>
+                  <span class="tsp-row-label">
+                    {{ t("tournament.settingsPage.legsPerMatch.knockoutRounds") }}
+                  </span>
                   <BtnGroup v-model="localKnockoutLegMode" :options="legOptions" />
                 </div>
                 <div class="tsp-leg-row">
-                  <span class="tsp-row-label">Final</span>
+                  <span class="tsp-row-label">
+                    {{ t("tournament.settingsPage.legsPerMatch.final") }}
+                  </span>
                   <BtnGroup v-model="localFinalLegMode" :options="legOptions" />
                 </div>
               </div>
             </template>
             <div v-else class="tsp-locked-banner">
               <Lock :size="12" />
-              Leg settings cannot be changed after matches have started.
+              {{ t("tournament.settingsPage.legsPerMatch.lockedBanner") }}
             </div>
           </div>
         </template>
@@ -536,35 +585,39 @@ function handleSave() {
         <template v-if="isLeagueFormat">
           <div class="tsp-card">
             <div class="tsp-card-header">
-              <div class="tsp-section-title">League Format</div>
+              <div class="tsp-section-title">
+                {{ t("tournament.settingsPage.leagueFormat.title") }}
+              </div>
               <span v-if="hasAnyResults" class="tsp-lock-tag">
                 <Lock :size="10" />
-                Locked
+                {{ t("tournament.settingsPage.locked") }}
               </span>
             </div>
             <template v-if="!hasAnyResults">
               <div class="tsp-leg-row" style="margin-bottom: 8px">
-                <span class="tsp-row-label">Round Format</span>
+                <span class="tsp-row-label">{{ t("tournament.create.roundFormat") }}</span>
                 <BtnGroup v-model="localLeagueLegMode" :options="multiLegOptions" />
               </div>
               <div class="tsp-hint-box">
-                <strong>Single</strong>
-                — once &nbsp;·&nbsp;
-                <strong>Double</strong>
-                — home &amp; away &nbsp;·&nbsp;
-                <strong>3×</strong>
-                — 3 meetings &nbsp;·&nbsp;
-                <strong>4×</strong>
-                — 4 meetings (2H &amp; 2A)
+                <strong>{{ t("common.single") }}</strong>
+                — {{ t("tournament.settingsPage.leagueFormat.hintSingle") }} &nbsp;·&nbsp;
+                <strong>{{ t("common.double") }}</strong>
+                — {{ t("tournament.settingsPage.leagueFormat.hintDouble") }} &nbsp;·&nbsp;
+                <strong>{{ t("common.triple") }}</strong>
+                — {{ t("tournament.settingsPage.leagueFormat.hintTriple") }} &nbsp;·&nbsp;
+                <strong>{{ t("common.quadruple") }}</strong>
+                — {{ t("tournament.settingsPage.leagueFormat.hintQuad") }}
               </div>
             </template>
             <div v-else class="tsp-locked-banner">
               <Lock :size="12" />
-              Format cannot be changed after matches have started.
+              {{ t("tournament.settingsPage.leagueFormat.lockedBanner") }}
             </div>
 
             <div class="tsp-stepper-row" style="margin-top: 14px">
-              <span class="tsp-stepper-label">Relegation Zone</span>
+              <span class="tsp-stepper-label">
+                {{ t("tournament.settingsPage.leagueFormat.relegationZone") }}
+              </span>
               <div class="tsp-stepper">
                 <button
                   :disabled="localRelegationCount <= 0"
@@ -588,15 +641,19 @@ function handleSave() {
               <span class="tsp-hint">
                 {{
                   localRelegationCount === 0
-                    ? "disabled"
-                    : `bottom ${localRelegationCount} relegated`
+                    ? t("tournament.settingsPage.leagueFormat.relegationDisabled")
+                    : t("tournament.settingsPage.leagueFormat.relegated", {
+                        n: localRelegationCount,
+                      })
                 }}
               </span>
             </div>
 
             <template v-if="isMultiTier">
               <div class="tsp-stepper-row" style="margin-top: 8px">
-                <span class="tsp-stepper-label">Number of Divisions</span>
+                <span class="tsp-stepper-label">
+                  {{ t("tournament.settingsPage.leagueFormat.numberOfDivisions") }}
+                </span>
                 <div class="tsp-stepper">
                   <button
                     :disabled="localTierCount <= 2"
@@ -612,10 +669,14 @@ function handleSave() {
                     +
                   </button>
                 </div>
-                <span class="tsp-hint">min 2 teams per division</span>
+                <span class="tsp-hint">
+                  {{ t("tournament.settingsPage.leagueFormat.minTeams") }}
+                </span>
               </div>
               <div class="tsp-stepper-row">
-                <span class="tsp-stepper-label">Promotion / Relegation</span>
+                <span class="tsp-stepper-label">
+                  {{ t("tournament.create.promotionRelegation") }}
+                </span>
                 <div class="tsp-stepper">
                   <button
                     :disabled="localPromotionCount <= 1"
@@ -633,23 +694,30 @@ function handleSave() {
                     +
                   </button>
                 </div>
-                <span class="tsp-hint">slots swapped between adjacent divisions</span>
+                <span class="tsp-hint">
+                  {{ t("tournament.settingsPage.leagueFormat.slotsSwapped") }}
+                </span>
               </div>
             </template>
 
             <template v-if="localRelegationCount > 0 && (otherLeagues?.length ?? 0) > 0">
               <div class="tsp-stepper-row" style="margin-top: 8px">
-                <span class="tsp-stepper-label">Linked League (2nd tier)</span>
+                <span class="tsp-stepper-label">
+                  {{ t("tournament.settingsPage.leagueFormat.linkedLeague") }}
+                </span>
                 <select v-model="localLinkedLeagueId" class="tsp-linked-select">
-                  <option value="">— None —</option>
+                  <option value="">{{ t("tournament.settingsPage.leagueFormat.none") }}</option>
                   <option v-for="l in otherLeagues" :key="l.id" :value="l.id">
                     {{ l.name }} S{{ l.season }}
                   </option>
                 </select>
               </div>
               <div v-if="localLinkedLeagueId" class="tsp-hint-box" style="margin-top: 6px">
-                At season end, bottom {{ localRelegationCount }} of this league swap with top
-                {{ localRelegationCount }} of the linked league.
+                {{
+                  t("tournament.settingsPage.leagueFormat.linkedLeagueHint", {
+                    n: localRelegationCount,
+                  })
+                }}
               </div>
             </template>
           </div>
@@ -658,14 +726,16 @@ function handleSave() {
         <!-- Tiebreaker -->
         <template v-if="isLeagueFormat || isGroupFormat">
           <div class="tsp-card">
-            <div class="tsp-section-title">Tiebreaker</div>
+            <div class="tsp-section-title">{{ t("tournament.create.tiebreaker") }}</div>
             <div class="tsp-leg-row">
-              <span class="tsp-row-label">Method</span>
+              <span class="tsp-row-label">
+                {{ t("tournament.settingsPage.tiebreaker.method") }}
+              </span>
               <BtnGroup
                 v-model="localTiebreaker"
                 :options="[
-                  { value: 'head-to-head', label: 'H2H' },
-                  { value: 'goal-diff', label: 'Goal diff' },
+                  { value: 'head-to-head', label: t('tournament.settingsPage.tiebreaker.h2h') },
+                  { value: 'goal-diff', label: t('tournament.settingsPage.tiebreaker.goalDiff') },
                 ]"
               />
             </div>
@@ -675,37 +745,46 @@ function handleSave() {
         <!-- Monte Carlo Simulation -->
         <div class="tsp-card tsp-card--sim">
           <div class="tsp-card-header">
-            <div class="tsp-section-title tsp-section-title--sim">Monte Carlo Simulation</div>
+            <div class="tsp-section-title tsp-section-title--sim">
+              {{ t("tournament.settingsPage.simulation.title") }}
+            </div>
           </div>
           <div class="tsp-sim-row">
-            <div class="tsp-sim-desc">
-              Simulate this tournament 10,000 times and get win probabilities and statistics for
-              each team.
-            </div>
+            <div class="tsp-sim-desc">{{ t("tournament.settingsPage.simulation.desc") }}</div>
             <button class="primary tsp-sim-btn" @click="handleSimulate">
               <Play :size="13" />
-              Simulate 10,000×
+              {{ t("tournament.settingsPage.simulation.run") }}
             </button>
           </div>
         </div>
 
         <!-- Danger Zone -->
         <div class="tsp-card tsp-card--danger">
-          <div class="tsp-section-title tsp-section-title--danger">Danger Zone</div>
+          <div class="tsp-section-title tsp-section-title--danger">
+            {{ t("tournament.settingsPage.dangerZone.title") }}
+          </div>
           <div class="danger-list">
             <div class="danger-item">
               <div class="danger-info">
-                <div class="danger-label">Reset Tournament</div>
-                <div class="danger-desc">Clears all match results, keeping teams and draw.</div>
+                <div class="danger-label">
+                  {{ t("tournament.settingsPage.dangerZone.resetLabel") }}
+                </div>
+                <div class="danger-desc">
+                  {{ t("tournament.settingsPage.dangerZone.resetDesc") }}
+                </div>
               </div>
-              <button class="danger" @click="handleReset">Reset</button>
+              <button class="danger" @click="handleReset">{{ t("common.reset") }}</button>
             </div>
             <div class="danger-item">
               <div class="danger-info">
-                <div class="danger-label">Delete Tournament</div>
-                <div class="danger-desc">Permanently removes this tournament and all its data.</div>
+                <div class="danger-label">
+                  {{ t("tournament.settingsPage.dangerZone.deleteLabel") }}
+                </div>
+                <div class="danger-desc">
+                  {{ t("tournament.settingsPage.dangerZone.deleteDesc") }}
+                </div>
               </div>
-              <button class="danger" @click="handleDelete">Delete</button>
+              <button class="danger" @click="handleDelete">{{ t("common.delete") }}</button>
             </div>
           </div>
         </div>
@@ -714,10 +793,10 @@ function handleSave() {
         <div class="tsp-footer">
           <button class="primary tsp-save-btn" :disabled="!hasChanges" @click="handleSave">
             <Save :size="14" />
-            Save Changes
+            {{ t("tournament.settingsPage.saveChanges") }}
           </button>
           <RouterLink :to="`/tournaments/${tournamentId}`" class="tsp-cancel-link">
-            Cancel
+            {{ t("common.cancel") }}
           </RouterLink>
         </div>
       </template>
@@ -729,26 +808,32 @@ function handleSave() {
         <div class="sim-modal">
           <div class="sim-modal-header">
             <BarChart2 :size="18" class="sim-modal-icon" />
-            <span class="sim-modal-title">Monte Carlo Simulation</span>
+            <span class="sim-modal-title">{{ t("tournament.settingsPage.simulation.title") }}</span>
           </div>
 
           <template v-if="!simDone">
-            <p class="sim-modal-sub">Simulating {{ tournament?.name }}…</p>
+            <p class="sim-modal-sub">
+              {{ t("tournament.settingsPage.simulation.simulating", { name: tournament?.name }) }}
+            </p>
             <div class="sim-progress-track">
               <div class="sim-progress-fill" :style="{ width: simProgress + '%' }" />
             </div>
             <div class="sim-progress-label">{{ simProgress }}%</div>
-            <button class="sim-cancel-btn" @click="handleCancelSim">Cancel</button>
+            <button class="sim-cancel-btn" @click="handleCancelSim">
+              {{ t("common.cancel") }}
+            </button>
           </template>
 
           <template v-else>
-            <p class="sim-modal-sub sim-done-msg">Simulation complete — 10,000 runs finished.</p>
+            <p class="sim-modal-sub sim-done-msg">
+              {{ t("tournament.settingsPage.simulation.done") }}
+            </p>
             <div class="sim-done-actions">
               <button class="primary" @click="goToSimResults">
                 <BarChart2 :size="14" />
-                View Results
+                {{ t("tournament.settingsPage.simulation.viewResults") }}
               </button>
-              <button @click="handleCancelSim">Close</button>
+              <button @click="handleCancelSim">{{ t("common.close") }}</button>
             </div>
           </template>
         </div>

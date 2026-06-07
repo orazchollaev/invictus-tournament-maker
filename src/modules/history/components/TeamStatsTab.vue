@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue"
 import { ChevronDown, ChevronRight, Trophy } from "@lucide/vue"
+import { useI18n } from "vue-i18n"
 
 export interface TeamSeasonRow {
   season: number
@@ -34,6 +35,7 @@ export interface TeamStatEntry {
 
 defineProps<{ teams: TeamStatEntry[] }>()
 
+const { t } = useI18n()
 const expanded = ref<string | null>(null)
 
 function toggle(teamId: string) {
@@ -48,17 +50,17 @@ function toggle(teamId: string) {
         <thead>
           <tr>
             <th class="col-rank">#</th>
-            <th class="col-team">Team</th>
-            <th title="Seasons">Sns</th>
-            <th title="Titles">Ttl</th>
-            <th title="Matches Played">P</th>
-            <th title="Won">W</th>
-            <th title="Drawn">D</th>
-            <th title="Lost">L</th>
-            <th title="Goals For">GF</th>
-            <th title="Goals Against">GA</th>
-            <th title="Goal Difference">GD</th>
-            <th title="Clean Sheets">CS</th>
+            <th class="col-team">{{ t("history.table.team") }}</th>
+            <th :title="t('history.table.seasons')">Sns</th>
+            <th :title="t('history.table.titles')">Ttl</th>
+            <th :title="t('history.table.matchesPlayed')">P</th>
+            <th :title="t('history.table.won')">W</th>
+            <th :title="t('history.table.drawn')">D</th>
+            <th :title="t('history.table.lost')">L</th>
+            <th :title="t('history.table.goalsFor')">GF</th>
+            <th :title="t('history.table.goalsAgainst')">GA</th>
+            <th :title="t('history.table.goalDiff')">GD</th>
+            <th :title="t('history.table.cleanSheets')">CS</th>
             <th class="col-expand"></th>
           </tr>
         </thead>
@@ -102,7 +104,7 @@ function toggle(teamId: string) {
                 <table class="ts-sub-table">
                   <thead>
                     <tr>
-                      <th>Season</th>
+                      <th>{{ t("history.table.season") }}</th>
                       <th>P</th>
                       <th>W</th>
                       <th>D</th>

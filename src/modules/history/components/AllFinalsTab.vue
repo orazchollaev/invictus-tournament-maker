@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useI18n } from "vue-i18n"
+
 export interface FinalEntry {
   season: number
   champName: string
@@ -9,6 +11,8 @@ export interface FinalEntry {
 }
 
 defineProps<{ finals: FinalEntry[] }>()
+
+const { t } = useI18n()
 </script>
 
 <template>
@@ -16,10 +20,10 @@ defineProps<{ finals: FinalEntry[] }>()
     <table class="data-table">
       <thead>
         <tr>
-          <th class="col-season">Season</th>
-          <th>Champion</th>
-          <th class="col-score">Result</th>
-          <th>Runner-up</th>
+          <th class="col-season">{{ t("history.table.season") }}</th>
+          <th>{{ t("history.table.champion") }}</th>
+          <th class="col-score">{{ t("history.table.result") }}</th>
+          <th>{{ t("history.table.runnerUp") }}</th>
         </tr>
       </thead>
       <tbody>

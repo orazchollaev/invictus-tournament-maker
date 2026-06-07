@@ -41,11 +41,11 @@ const { needRefresh, applyUpdate } = usePwaUpdate()
           <button
             v-if="needRefresh"
             class="update-btn"
-            title="New version available"
+            :title="t('common.newVersionAvailable')"
             @click="applyUpdate"
           >
             <RefreshCw :size="13" />
-            <span>Update</span>
+            <span>{{ t("common.update") }}</span>
           </button>
         </Transition>
 
@@ -54,10 +54,10 @@ const { needRefresh, applyUpdate } = usePwaUpdate()
           target="_blank"
           rel="noopener noreferrer"
           class="github-star-btn"
-          title="Star on GitHub"
+          :title="t('common.starOnGithub')"
         >
           <FolderGit2 :size="15" />
-          <span class="github-star-label">Star</span>
+          <span class="github-star-label">{{ t("common.star") }}</span>
           <Star :size="12" class="github-star-icon" />
         </a>
         <RouterLink to="/settings" class="settings-btn" :title="t('nav.settings')">

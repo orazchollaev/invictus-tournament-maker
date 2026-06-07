@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Trophy } from "@lucide/vue"
+import { useI18n } from "vue-i18n"
 
 export interface ChampEntry {
   teamId: string
@@ -10,6 +11,8 @@ export interface ChampEntry {
 }
 
 defineProps<{ champions: ChampEntry[]; finalsLabel?: string }>()
+
+const { t } = useI18n()
 </script>
 
 <template>
@@ -18,9 +21,9 @@ defineProps<{ champions: ChampEntry[]; finalsLabel?: string }>()
       <thead>
         <tr>
           <th class="col-rank">#</th>
-          <th>Team</th>
-          <th class="col-num">Titles</th>
-          <th class="col-num">{{ finalsLabel ?? "Finals" }}</th>
+          <th>{{ t("history.table.team") }}</th>
+          <th class="col-num">{{ t("history.table.titles") }}</th>
+          <th class="col-num">{{ finalsLabel ?? t("history.table.finals") }}</th>
         </tr>
       </thead>
       <tbody>

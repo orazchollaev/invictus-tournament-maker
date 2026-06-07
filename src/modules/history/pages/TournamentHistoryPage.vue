@@ -5,6 +5,7 @@ import { useTournamentStore } from "@/modules/tournament/store"
 import { useTeamsStore } from "@/modules/teams/store"
 import type { Match } from "@/modules/tournament/types"
 import { ArrowLeft, Trophy, Medal, BarChart3, Table2, Users } from "@lucide/vue"
+import { useI18n } from "vue-i18n"
 import ChampionsTab, { type ChampEntry } from "../components/ChampionsTab.vue"
 import AllFinalsTab, { type FinalEntry } from "../components/AllFinalsTab.vue"
 import LeagueSeasonsTab, { type LeagueSeasonEntry } from "../components/LeagueSeasonsTab.vue"
@@ -15,6 +16,7 @@ import TeamStatsTab, { type TeamStatEntry } from "../components/TeamStatsTab.vue
 const route = useRoute()
 const store = useTournamentStore()
 const teamsStore = useTeamsStore()
+const { t } = useI18n()
 
 const name = computed(() => decodeURIComponent(route.params.name as string))
 
@@ -523,19 +525,20 @@ const teamStats = computed<TeamStatEntry[]>(() => {
     <div class="t-header">
       <RouterLink to="/history" class="back-link">
         <ArrowLeft :size="13" />
-        History
+        {{ t("history.title") }}
       </RouterLink>
       <div class="t-header-top">
         <h1>
           {{ name }}
           <span class="t-season">
-            {{ allSeasons.length }} {{ allSeasons.length === 1 ? "season" : "seasons" }}
+            {{ allSeasons.length }}
+            {{ allSeasons.length === 1 ? t("common.season", 1) : t("common.season", 2) }}
           </span>
         </h1>
       </div>
     </div>
 
-    <p v-if="!completedSeasons.length" class="empty-text">No completed seasons yet.</p>
+    <p v-if="!completedSeasons.length" class="empty-text">{{ t("history.noCompletedSeasons") }}</p>
 
     <template v-else>
       <!-- Phase tabs -->
@@ -546,11 +549,11 @@ const teamStats = computed<TeamStatEntry[]>(() => {
           @click="tab = 'champions'"
         >
           <Trophy :size="13" />
-          Champions
+          {{ t("history.tabs.champions") }}
         </button>
         <button class="phase-tab" :class="{ active: tab === 'finals' }" @click="tab = 'finals'">
           <Medal :size="13" />
-          {{ isLeagueSeries ? "All Seasons" : "All Finals" }}
+          {{ isLeagueSeries ? t("history.tabs.allSeasons") : t("history.tabs.allFinals") }}
         </button>
         <button
           v-if="isLeagueSeries"
@@ -559,15 +562,15 @@ const teamStats = computed<TeamStatEntry[]>(() => {
           @click="tab = 'alltime'"
         >
           <Table2 :size="13" />
-          All-Time Table
+          {{ t("history.tabs.allTimeTable") }}
         </button>
         <button class="phase-tab" :class="{ active: tab === 'stats' }" @click="tab = 'stats'">
           <BarChart3 :size="13" />
-          Statistics
+          {{ t("history.tabs.statistics") }}
         </button>
         <button class="phase-tab" :class="{ active: tab === 'teams' }" @click="tab = 'teams'">
           <Users :size="13" />
-          Teams
+          {{ t("history.tabs.teams") }}
         </button>
       </div>
 

@@ -8,9 +8,11 @@ import { useTeamLookup } from "@/composables/useTeamLookup"
 import type { Match } from "@/modules/tournament/types"
 import { Trophy, ArrowLeft } from "@lucide/vue"
 import SeasonChart from "../components/SeasonChart.vue"
+import { useI18n } from "vue-i18n"
 
 const route = useRoute()
 const router = useRouter()
+const { t } = useI18n()
 const teamsStore = useTeamsStore()
 const tournamentStore = useTournamentStore()
 const { getTeamName, getTeamColor } = useTeamLookup(() => teamsStore.teams)
@@ -358,7 +360,7 @@ const seasonStats = computed(() =>
             <div>
               <h1 class="team-title">{{ team.name }}</h1>
               <span class="team-meta">
-                Power rating:
+                {{ t("teams.detail.powerRating") }}:
                 <strong>{{ team.power }}</strong>
               </span>
             </div>
@@ -368,36 +370,36 @@ const seasonStats = computed(() =>
 
       <!-- Stats -->
       <div class="section-box">
-        <h2>All Statistics</h2>
+        <h2>{{ t("teams.detail.allStats") }}</h2>
         <div class="section-body">
           <div class="stats-grid">
             <div class="stat-cell">
               <span class="stat-value">{{ stats.played }}</span>
-              <span class="stat-label">Played</span>
+              <span class="stat-label">{{ t("teams.detail.played") }}</span>
             </div>
             <div class="stat-cell">
               <span class="stat-value win">{{ stats.wins }}</span>
-              <span class="stat-label">Wins</span>
+              <span class="stat-label">{{ t("teams.detail.wins") }}</span>
             </div>
             <div class="stat-cell">
               <span class="stat-value draw">{{ stats.draws }}</span>
-              <span class="stat-label">Draws</span>
+              <span class="stat-label">{{ t("teams.detail.draws") }}</span>
             </div>
             <div class="stat-cell">
               <span class="stat-value loss">{{ stats.losses }}</span>
-              <span class="stat-label">Losses</span>
+              <span class="stat-label">{{ t("teams.detail.losses") }}</span>
             </div>
             <div class="stat-cell">
               <span class="stat-value">{{ stats.winRate }}%</span>
-              <span class="stat-label">Win Rate</span>
+              <span class="stat-label">{{ t("teams.detail.winRate") }}</span>
             </div>
             <div class="stat-cell">
               <span class="stat-value">{{ stats.gf }}</span>
-              <span class="stat-label">Goals For</span>
+              <span class="stat-label">{{ t("teams.detail.goalsFor") }}</span>
             </div>
             <div class="stat-cell">
               <span class="stat-value">{{ stats.ga }}</span>
-              <span class="stat-label">Goals Against</span>
+              <span class="stat-label">{{ t("teams.detail.goalsAgainst") }}</span>
             </div>
             <div class="stat-cell">
               <span v-if="tournamentWins.length > 0" class="stat-value trophy">
@@ -405,7 +407,7 @@ const seasonStats = computed(() =>
                 {{ tournamentWins.length }}
               </span>
               <span v-else class="stat-value">—</span>
-              <span class="stat-label">Titles</span>
+              <span class="stat-label">{{ t("teams.detail.titles") }}</span>
             </div>
           </div>
         </div>
@@ -414,8 +416,8 @@ const seasonStats = computed(() =>
       <!-- Recent Form -->
       <div v-if="allMatches.length" class="section-box">
         <h2>
-          Recent Form
-          <span class="count">(last 5)</span>
+          {{ t("teams.detail.recentForm") }}
+          <span class="count">({{ t("teams.detail.last5") }})</span>
         </h2>
         <div class="section-body">
           <div class="form-row">
@@ -444,8 +446,11 @@ const seasonStats = computed(() =>
       <!-- Season History Chart -->
       <div v-if="seasonStats.length >= 1" class="section-box">
         <h2>
-          Season History
-          <span class="count">({{ seasonStats.length }} seasons)</span>
+          {{ t("teams.detail.seasonHistory") }}
+          <span class="count">
+            ({{ seasonStats.length }}
+            {{ seasonStats.length === 1 ? t("common.season", 1) : t("common.season", 2) }})
+          </span>
         </h2>
         <div class="section-body">
           <SeasonChart :stats="seasonStats" />
@@ -454,12 +459,12 @@ const seasonStats = computed(() =>
 
       <!-- Titles -->
       <div v-if="tournamentWins.length" class="section-box">
-        <h2>Tournament Titles</h2>
+        <h2>{{ t("teams.detail.tournamentTitles") }}</h2>
         <div class="section-body flush">
-          <div v-for="t in tournamentWins" :key="t.id" class="match-row">
+          <div v-for="tw in tournamentWins" :key="tw.id" class="match-row">
             <Trophy :size="16" class="trophy-icon" />
-            <span class="match-tournament">{{ t.name }}</span>
-            <span class="match-round">Season {{ t.season }}</span>
+            <span class="match-tournament">{{ tw.name }}</span>
+            <span class="match-round">{{ t("teams.detail.seasonN", { n: tw.season }) }}</span>
           </div>
         </div>
       </div>
@@ -467,14 +472,16 @@ const seasonStats = computed(() =>
       <!-- Match History -->
       <div class="section-box">
         <h2>
-          Match History
-          <span class="count">{{ filteredMatches.length }} matches</span>
+          {{ t("teams.detail.matchHistory") }}
+          <span class="count">
+            {{ t("teams.detail.matchCount", { n: filteredMatches.length }) }}
+          </span>
           <select
             v-if="tournamentOptions.length > 1"
             v-model="selectedTournamentKey"
             class="tour-select"
           >
-            <option value="all">All tournaments</option>
+            <option value="all">{{ t("teams.detail.allTournaments") }}</option>
             <option v-for="opt in tournamentOptions" :key="opt.key" :value="opt.key">
               {{ opt.label }}
             </option>
@@ -527,8 +534,8 @@ const seasonStats = computed(() =>
           <p v-else class="empty-text" style="padding: 12px">
             {{
               selectedTournamentKey === "all"
-                ? "No matches played yet."
-                : "No matches for this tournament."
+                ? t("teams.detail.noMatchesPlayed")
+                : t("teams.detail.noMatchesTournament")
             }}
           </p>
         </div>

@@ -6,6 +6,7 @@ import AppModal from "@/components/AppModal.vue"
 import { useTeamLookup } from "@/composables/useTeamLookup"
 import TeamNameAuto from "@/modules/teams/components/TeamNameAuto.vue"
 import { Lock, Shuffle, Check } from "@lucide/vue"
+import { useI18n } from "vue-i18n"
 
 const props = defineProps<{
   tournament: Tournament
@@ -22,6 +23,7 @@ const emit = defineEmits<{
   advance: []
 }>()
 
+const { t } = useI18n()
 const locked = computed(() => !!props.tournament.groupsDone)
 
 const editingMatch = ref<{ gi: number; mi: number } | null>(null)
@@ -177,15 +179,15 @@ function scoreAccentColor(match: GroupMatch): string {
             <thead>
               <tr>
                 <th class="col-rank">#</th>
-                <th class="col-team">Team</th>
-                <th title="Played">P</th>
-                <th title="Won">W</th>
-                <th title="Drawn">D</th>
-                <th title="Lost">L</th>
-                <th title="Goals For">GF</th>
-                <th title="Goals Against">GA</th>
-                <th title="Goal Difference">GD</th>
-                <th title="Points">Pts</th>
+                <th class="col-team">{{ t("common.team") }}</th>
+                <th :title="t('history.table.played')">P</th>
+                <th :title="t('history.table.won')">W</th>
+                <th :title="t('history.table.drawn')">D</th>
+                <th :title="t('history.table.lost')">L</th>
+                <th :title="t('history.table.goalsFor')">GF</th>
+                <th :title="t('history.table.goalsAgainst')">GA</th>
+                <th :title="t('history.table.goalDiff')">GD</th>
+                <th :title="t('history.table.points')">Pts</th>
               </tr>
             </thead>
             <TransitionGroup tag="tbody" name="standing-row">
@@ -297,7 +299,12 @@ function scoreAccentColor(match: GroupMatch): string {
 
   <!-- Score edit modal -->
   <Teleport to="body">
-    <AppModal v-if="editingMatch && !locked" title="Set Result" width="360px" @close="cancelEdit">
+    <AppModal
+      v-if="editingMatch && !locked"
+      :title="t('tournament.setResult')"
+      width="360px"
+      @close="cancelEdit"
+    >
       <div class="score-row">
         <span class="score-team">
           {{ teamById(tournament.groups![editingMatch.gi].matches[editingMatch.mi].homeId)?.name }}
@@ -310,8 +317,8 @@ function scoreAccentColor(match: GroupMatch): string {
         </span>
       </div>
       <div class="modal-actions mt">
-        <button class="primary" @click="confirmEdit">Save</button>
-        <button @click="cancelEdit">Cancel</button>
+        <button class="primary" @click="confirmEdit">{{ t("common.save") }}</button>
+        <button @click="cancelEdit">{{ t("common.cancel") }}</button>
       </div>
     </AppModal>
   </Teleport>

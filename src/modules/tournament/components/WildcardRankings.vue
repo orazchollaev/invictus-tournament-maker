@@ -4,12 +4,14 @@ import type { Team } from "@/modules/teams/types"
 import type { Tournament } from "@/modules/tournament/types"
 import TeamNameAuto from "@/modules/teams/components/TeamNameAuto.vue"
 import { useTeamLookup } from "@/composables/useTeamLookup"
+import { useI18n } from "vue-i18n"
 
 const props = defineProps<{
   tournament: Tournament
   teams: Team[]
 }>()
 
+const { t } = useI18n()
 const { teamById } = useTeamLookup(() => props.teams)
 
 const rankIdx = computed(() => props.tournament.qualifiersPerGroup ?? 2)
@@ -67,15 +69,15 @@ const candidates = computed(() => {
           <tr>
             <th class="col-rank">#</th>
             <th class="col-group">Group</th>
-            <th class="col-team">Team</th>
-            <th title="Played">P</th>
-            <th title="Won">W</th>
-            <th title="Drawn">D</th>
-            <th title="Lost">L</th>
-            <th title="Goals For">GF</th>
-            <th title="Goals Against">GA</th>
-            <th title="Goal Difference">GD</th>
-            <th title="Points">Pts</th>
+            <th class="col-team">{{ t("common.team") }}</th>
+            <th :title="t('history.table.played')">P</th>
+            <th :title="t('history.table.won')">W</th>
+            <th :title="t('history.table.drawn')">D</th>
+            <th :title="t('history.table.lost')">L</th>
+            <th :title="t('history.table.goalsFor')">GF</th>
+            <th :title="t('history.table.goalsAgainst')">GA</th>
+            <th :title="t('history.table.goalDiff')">GD</th>
+            <th :title="t('history.table.points')">Pts</th>
           </tr>
         </thead>
         <tbody>

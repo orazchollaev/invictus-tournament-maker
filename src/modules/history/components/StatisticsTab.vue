@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Zap, Shield, Flame, Star, Trophy } from "@lucide/vue"
+import { useI18n } from "vue-i18n"
 
 export interface BiggestWin {
   score: string
@@ -29,6 +30,8 @@ export interface HistoryStats {
 }
 
 defineProps<{ stats: HistoryStats }>()
+
+const { t } = useI18n()
 </script>
 
 <template>
@@ -38,19 +41,19 @@ defineProps<{ stats: HistoryStats }>()
       <div class="stats-grid">
         <div class="stat-card">
           <div class="stat-value">{{ stats.totalSeasons }}</div>
-          <div class="stat-label">Completed Seasons</div>
+          <div class="stat-label">{{ t("history.stats.completedSeasons") }}</div>
         </div>
         <div class="stat-card">
           <div class="stat-value">{{ stats.totalMatches }}</div>
-          <div class="stat-label">Total Matches</div>
+          <div class="stat-label">{{ t("history.stats.totalMatches") }}</div>
         </div>
         <div class="stat-card">
           <div class="stat-value">{{ stats.totalGoals }}</div>
-          <div class="stat-label">Total Goals</div>
+          <div class="stat-label">{{ t("history.stats.totalGoals") }}</div>
         </div>
         <div class="stat-card">
           <div class="stat-value">{{ stats.avgGoals }}</div>
-          <div class="stat-label">Goals per Match</div>
+          <div class="stat-label">{{ t("history.stats.goalsPerMatch") }}</div>
         </div>
       </div>
     </div>
@@ -60,11 +63,11 @@ defineProps<{ stats: HistoryStats }>()
       v-if="stats.biggestWin || stats.topScoringTeam || stats.mostCleanSheets"
       class="section-box records-section"
     >
-      <div class="section-label">Records</div>
+      <div class="section-label">{{ t("history.stats.records") }}</div>
       <div class="record-list">
         <div v-if="stats.biggestWin" class="record-row">
           <Zap :size="12" class="record-icon" />
-          <div class="record-key">Biggest Win</div>
+          <div class="record-key">{{ t("history.stats.biggestWin") }}</div>
           <div class="record-val">
             <span class="color-dot" :style="{ background: stats.biggestWin.winnerColor }" />
             {{ stats.biggestWin.winnerName }}
@@ -75,16 +78,18 @@ defineProps<{ stats: HistoryStats }>()
         </div>
         <div v-if="stats.topScoringTeam" class="record-row">
           <Trophy :size="12" class="record-icon" />
-          <div class="record-key">Top Scorer</div>
+          <div class="record-key">{{ t("history.stats.topScorer") }}</div>
           <div class="record-val">
             <span class="color-dot" :style="{ background: stats.topScoringTeam.color }" />
             {{ stats.topScoringTeam.name }}
-            <span class="record-num">{{ stats.topScoringTeam.goals }} goals</span>
+            <span class="record-num">
+              {{ t("history.stats.goals", { n: stats.topScoringTeam.goals }) }}
+            </span>
           </div>
         </div>
         <div v-if="stats.mostCleanSheets" class="record-row">
           <Shield :size="12" class="record-icon" />
-          <div class="record-key">Clean Sheets</div>
+          <div class="record-key">{{ t("history.stats.cleanSheets") }}</div>
           <div class="record-val">
             <span class="color-dot" :style="{ background: stats.mostCleanSheets.color }" />
             {{ stats.mostCleanSheets.name }}
@@ -99,34 +104,40 @@ defineProps<{ stats: HistoryStats }>()
       v-if="stats.firstChampion || stats.longestStreak || stats.currentStreak"
       class="section-box badges-section"
     >
-      <div class="section-label">Achievements</div>
+      <div class="section-label">{{ t("history.stats.achievements") }}</div>
       <div class="badge-grid">
         <div v-if="stats.firstChampion" class="badge-card">
           <Star :size="14" class="badge-icon badge-star" />
-          <div class="badge-title">First Champion</div>
+          <div class="badge-title">{{ t("history.stats.firstChampion") }}</div>
           <div class="badge-team">
             <span class="color-dot" :style="{ background: stats.firstChampion.color }" />
             {{ stats.firstChampion.name }}
           </div>
-          <div class="badge-meta">Season {{ stats.firstChampion.season }}</div>
+          <div class="badge-meta">
+            {{ t("history.stats.season", { n: stats.firstChampion.season }) }}
+          </div>
         </div>
         <div v-if="stats.longestStreak" class="badge-card">
           <Flame :size="14" class="badge-icon badge-flame" />
-          <div class="badge-title">Longest Streak</div>
+          <div class="badge-title">{{ t("history.stats.longestStreak") }}</div>
           <div class="badge-team">
             <span class="color-dot" :style="{ background: stats.longestStreak.color }" />
             {{ stats.longestStreak.name }}
           </div>
-          <div class="badge-meta">{{ stats.longestStreak.count }} in a row</div>
+          <div class="badge-meta">
+            {{ t("history.stats.inARow", { n: stats.longestStreak.count }) }}
+          </div>
         </div>
         <div v-if="stats.currentStreak" class="badge-card badge-card--current">
           <Trophy :size="14" class="badge-icon badge-trophy" />
-          <div class="badge-title">Defending</div>
+          <div class="badge-title">{{ t("history.stats.defending") }}</div>
           <div class="badge-team">
             <span class="color-dot" :style="{ background: stats.currentStreak.color }" />
             {{ stats.currentStreak.name }}
           </div>
-          <div class="badge-meta">{{ stats.currentStreak.count }} consecutive</div>
+          <div class="badge-meta">
+            {{ t("history.stats.consecutive", { n: stats.currentStreak.count }) }}
+          </div>
         </div>
       </div>
     </div>

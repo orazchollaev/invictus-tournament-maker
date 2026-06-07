@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Trophy } from "@lucide/vue"
+import { useI18n } from "vue-i18n"
 
 export interface LeagueSeasonEntry {
   season: number
@@ -9,6 +10,8 @@ export interface LeagueSeasonEntry {
 }
 
 defineProps<{ seasons: LeagueSeasonEntry[] }>()
+
+const { t } = useI18n()
 </script>
 
 <template>
@@ -16,10 +19,10 @@ defineProps<{ seasons: LeagueSeasonEntry[] }>()
     <table class="data-table">
       <thead>
         <tr>
-          <th class="col-season">Season</th>
-          <th>Champion</th>
-          <th>Runner-up</th>
-          <th>3rd Place</th>
+          <th class="col-season">{{ t("history.table.season") }}</th>
+          <th>{{ t("history.table.champion") }}</th>
+          <th>{{ t("history.table.runnerUp") }}</th>
+          <th>{{ t("history.table.thirdPlace") }}</th>
         </tr>
       </thead>
       <tbody>
