@@ -149,14 +149,14 @@ onUnmounted(() => observer?.disconnect())
   scrollbar-width: none;
   margin-bottom: 20px;
   position: sticky;
-  top: 52px;
+  top: calc(52px + env(safe-area-inset-top));
   z-index: 9;
   background: var(--bg);
   border-bottom: 1px solid var(--border-light);
 }
 @media (max-width: 640px) {
   .settings-nav {
-    top: 48px;
+    top: calc(48px + env(safe-area-inset-top));
   }
 }
 .settings-nav::-webkit-scrollbar {
@@ -193,7 +193,7 @@ onUnmounted(() => observer?.disconnect())
   flex-direction: column;
   gap: 12px;
   margin-bottom: 28px;
-  scroll-margin-top: 60px;
+  scroll-margin-top: calc(104px + env(safe-area-inset-top));
 }
 .category-label {
   font-size: 11px;
