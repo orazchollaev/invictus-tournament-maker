@@ -72,7 +72,7 @@ export interface LeagueTier {
 // ─── Tournament ──────────────────────────────────────────────────
 export type TournamentFormat = "bracket" | "group+bracket" | "league"
 
-export type PlayoffSeedMode = "cross" | "no-same-group" | "random"
+export type PlayoffSeedMode = "cross" | "no-same-group" | "random" | "manual"
 export type DrawType = "random" | "seeded" | "manual"
 
 export interface Tournament {

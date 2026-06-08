@@ -482,6 +482,7 @@ function doCreate(orderedIds?: string[]) {
                   { value: 'cross', label: 'Cross' },
                   { value: 'no-same-group', label: 'No rematch' },
                   { value: 'random', label: 'Random' },
+                  { value: 'manual', label: 'Manual' },
                 ]"
               />
             </div>
@@ -982,6 +983,12 @@ function doCreate(orderedIds?: string[]) {
   .ctp-row-label {
     width: auto;
     flex: 1 1 100%;
+  }
+
+  .ctp-toggle-label {
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
   }
 }
 </style>

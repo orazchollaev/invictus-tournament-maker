@@ -9,6 +9,7 @@ import LeagueView from "@/modules/tournament/components/LeagueView.vue"
 import WildcardRankings from "@/modules/tournament/components/WildcardRankings.vue"
 import ParticipantsTable from "@/modules/tournament/components/ParticipantsTable.vue"
 import ManualDraw from "@/modules/tournament/components/ManualDraw.vue"
+import PlayoffManualDraw from "@/modules/tournament/components/PlayoffManualDraw.vue"
 import GroupDraw from "@/modules/tournament/components/GroupDraw.vue"
 import TournamentStats from "@/modules/tournament/components/TournamentStats.vue"
 import PromotionModal from "@/modules/tournament/components/PromotionModal.vue"
@@ -39,6 +40,7 @@ const showSeasonModal = ref(false)
 const showManualSeason = ref(false)
 const showPromotionModal = ref(false)
 const showMultiTierModal = ref(false)
+const showPlayoffManualDraw = ref(false)
 
 const isMultiTier = computed(() => (tournament.value?.tiers?.length ?? 0) > 1)
 const activeTierIdx = ref(0)
@@ -219,6 +221,23 @@ function handleManualSeasonConfirm(orderedIds: string[]) {
 function closeSeasonModal() {
   showSeasonModal.value = false
   showManualSeason.value = false
+}
+
+function onAdvance() {
+  const t = tournament.value
+  if (!t) return
+  const mode = t.playoffSeedMode ?? settings.newSeasonPlayoffSeedMode
+  if (mode === "manual") {
+    showPlayoffManualDraw.value = true
+  } else {
+    store.advanceToBracket(t.id)
+  }
+}
+
+function handlePlayoffManualConfirm(orderedIds: string[]) {
+  if (!tournament.value) return
+  store.advanceToBracketManual(tournament.value.id, orderedIds)
+  showPlayoffManualDraw.value = false
 }
 
 function changeTab(tab: MainTab, tierIdx?: number) {
@@ -445,7 +464,7 @@ function changeTab(tab: MainTab, tierIdx?: number) {
               @sim-group-week="(gi) => store.simGroupWeek(tournament!.id, gi)"
               @sim-week="store.simWeek(tournament!.id)"
               @sim-all="store.simAllGroups(tournament!.id)"
-              @advance="store.advanceToBracket(tournament!.id)"
+              @advance="onAdvance"
             />
             <WildcardRankings v-else :tournament="tournament" :teams="allTeams" />
           </div>
@@ -543,6 +562,20 @@ function changeTab(tab: MainTab, tierIdx?: number) {
         </button>
         <button @click="showMultiTierModal = false">{{ trns("common.cancel") }}</button>
       </template>
+    </AppModal>
+
+    <AppModal
+      v-if="showPlayoffManualDraw && tournament"
+      title="Playoff Draw"
+      :width="'min(680px, calc(100vw - 32px))'"
+      @close="showPlayoffManualDraw = false"
+    >
+      <PlayoffManualDraw
+        :tournament="tournament"
+        :teams="allTeams"
+        @confirm="handlePlayoffManualConfirm"
+        @cancel="showPlayoffManualDraw = false"
+      />
     </AppModal>
 
     <AppModal

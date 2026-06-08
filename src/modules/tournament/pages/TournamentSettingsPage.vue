@@ -115,6 +115,7 @@ const playoffOptions = computed(() => [
   { value: "cross", label: t("tournament.create.cross") },
   { value: "no-same-group", label: t("tournament.create.noRematch") },
   { value: "random", label: t("common.random") },
+  { value: "manual", label: t("common.manual") },
 ])
 
 const localTeams = computed(() => allTeams.value.filter((t) => localTeamIds.value.includes(t.id)))

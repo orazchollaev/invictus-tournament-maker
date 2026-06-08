@@ -54,6 +54,7 @@ const settings = useSettingsStore()
               { value: 'cross', label: t('settings.newTournament.drawLegend.cross') },
               { value: 'no-same-group', label: t('settings.newTournament.drawLegend.noRematch') },
               { value: 'random', label: t('common.random') },
+              { value: 'manual', label: t('common.manual') },
             ]"
           />
         </div>

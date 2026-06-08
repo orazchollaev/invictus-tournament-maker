@@ -193,7 +193,8 @@ function createGroupBracketTournament(
 export function seedBracketFromGroups(
   tournament: Tournament,
   teams: Team[],
-  mode: PlayoffSeedMode = "cross"
+  mode: PlayoffSeedMode = "cross",
+  orderedTeamIds?: string[]
 ) {
   if (!tournament.groups) return
   const qpg = tournament.qualifiersPerGroup ?? 2
@@ -255,8 +256,22 @@ export function seedBracketFromGroups(
 
   let firstHalf: (Team | null)[]
   let secondHalf: (Team | null)[]
+  let directSlots: (Team | null)[] | null = null
 
-  if (mode === "random") {
+  if (mode === "manual" && orderedTeamIds) {
+    const byeCount = size - realCount
+    directSlots = []
+    for (let i = 0; i < byeCount; i++) {
+      const id = orderedTeamIds[i]
+      directSlots.push(id ? (teams.find((t) => t.id === id) ?? null) : null, null)
+    }
+    for (let i = byeCount; i < realCount; i++) {
+      const id = orderedTeamIds[i]
+      directSlots.push(id ? (teams.find((t) => t.id === id) ?? null) : null)
+    }
+    firstHalf = []
+    secondHalf = []
+  } else if (mode === "random") {
     const all = shuffle([...byGroup.flat(), ...wildcards.map((w) => w.team)])
     const mid = Math.ceil(all.length / 2)
     firstHalf = all.slice(0, mid)
@@ -309,10 +324,9 @@ export function seedBracketFromGroups(
     distributeWildcards(firstHalf, secondHalf)
   }
 
-  const rounds = buildBracketRounds([
-    ...buildHalfSlots(firstHalf, half),
-    ...buildHalfSlots(secondHalf, half),
-  ])
+  const rounds = buildBracketRounds(
+    directSlots ?? [...buildHalfSlots(firstHalf, half), ...buildHalfSlots(secondHalf, half)]
+  )
 
   if (tournament.knockoutLegMode === "double") {
     for (let r = 0; r < rounds.length - 1; r++) {

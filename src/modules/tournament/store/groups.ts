@@ -62,6 +62,13 @@ export function useGroupActions(tournaments: Ref<Tournament[]>, getTeams: () => 
     seedBracketFromGroups(t, getTeams(), t.playoffSeedMode ?? "cross")
   }
 
+  function advanceToBracketManual(tournamentId: string, orderedIds: string[]) {
+    const t = tournaments.value.find((t) => t.id === tournamentId)
+    if (!t || !t.groups) return
+    if (!allGroupsDone(t)) return
+    seedBracketFromGroups(t, getTeams(), "manual", orderedIds)
+  }
+
   function isGroupsDone(tournamentId: string): boolean {
     const t = tournaments.value.find((t) => t.id === tournamentId)
     if (!t) return false
@@ -76,6 +83,7 @@ export function useGroupActions(tournaments: Ref<Tournament[]>, getTeams: () => 
     simAllGroups,
     simWeek,
     advanceToBracket,
+    advanceToBracketManual,
     isGroupsDone,
   }
 }
