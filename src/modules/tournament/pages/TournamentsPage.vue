@@ -21,10 +21,14 @@ function winnerColor(tour: Tournament) {
 }
 
 const query = ref("")
+const sortedTournaments = computed(() =>
+  [...store.tournaments].sort((a, b) => b.createdAt - a.createdAt)
+)
+
 const filtered = computed(() => {
   const q = query.value.trim().toLowerCase()
-  if (!q) return store.tournaments
-  return store.tournaments.filter((t) => t.name.toLowerCase().includes(q))
+  if (!q) return sortedTournaments.value
+  return sortedTournaments.value.filter((t) => t.name.toLowerCase().includes(q))
 })
 
 function formatLabel(format: string) {
