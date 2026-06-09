@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from "vue"
+import { computed, ref, watchEffect, onUnmounted } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import { useTeamsStore } from "../../teams/store"
 import { useTournamentStore } from "@/modules/tournament/store"
@@ -19,6 +19,37 @@ const { getTeamName, getTeamColor } = useTeamLookup(() => teamsStore.teams)
 
 const teamId = computed(() => route.params.id as string)
 const team = computed(() => teamsStore.teams.find((t) => t.id === teamId.value))
+
+let _overlay: HTMLDivElement | null = null
+
+function getOrCreateOverlay() {
+  if (!_overlay) {
+    _overlay = document.createElement("div")
+    _overlay.style.cssText =
+      "position:fixed;inset:0;pointer-events:none;z-index:-1;opacity:0;transition:opacity 0.5s ease;"
+    document.body.appendChild(_overlay)
+  }
+  return _overlay
+}
+
+watchEffect(() => {
+  if (team.value) {
+    const el = getOrCreateOverlay()
+    el.style.backgroundImage = `linear-gradient(45deg, color-mix(in srgb, ${team.value.color} 12%, transparent), transparent)`
+    requestAnimationFrame(() => {
+      if (_overlay) _overlay.style.opacity = "1"
+    })
+  }
+})
+
+onUnmounted(() => {
+  if (_overlay) {
+    _overlay.style.opacity = "0"
+    const el = _overlay
+    _overlay = null
+    setTimeout(() => el.remove(), 500)
+  }
+})
 
 // ─── Bracket match history ────────────────────────────────────
 interface MatchRow {
@@ -347,16 +378,22 @@ const seasonStats = computed(() =>
       </div>
     </div>
 
-    <template v-else>
+    <div v-else class="team-page-content" :style="{ '--team-color': team.color }">
       <!-- Header -->
-      <div class="section-box">
+      <div class="section-box team-header-box">
         <div class="section-body">
           <div class="team-header">
             <button class="back-btn" @click="router.back()">
               <ArrowLeft :size="14" />
               Back
             </button>
-            <span class="team-badge" :style="{ background: team.color }" />
+            <span
+              class="team-badge"
+              :style="{
+                background: team.color,
+                boxShadow: `0 0 10px color-mix(in srgb, ${team.color} 55%, transparent)`,
+              }"
+            />
             <div>
               <h1 class="team-title">{{ team.name }}</h1>
               <span class="team-meta">
@@ -540,11 +577,17 @@ const seasonStats = computed(() =>
           </p>
         </div>
       </div>
-    </template>
+    </div>
   </div>
 </template>
 
 <style scoped>
+/* Header section accent */
+.team-header-box {
+  border-left: 3px solid var(--team-color, var(--border));
+  background: color-mix(in srgb, var(--team-color, transparent) 5%, var(--surface));
+}
+
 /* Tournament filter */
 h2:has(.tour-select) {
   display: flex;
@@ -799,6 +842,12 @@ h2:has(.tour-select) {
   background: color-mix(in srgb, var(--success) 12%, transparent);
   color: var(--success);
   border: 1px solid color-mix(in srgb, var(--success) 25%, transparent);
+}
+
+.section-box {
+  h2 {
+    border-left-color: var(--team-color);
+  }
 }
 
 @media (max-width: 600px) {
