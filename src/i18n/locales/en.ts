@@ -431,6 +431,10 @@ export default {
       backToTournaments: "Back to Tournaments",
       locked: "Locked",
       saveChanges: "Save Changes",
+      tournamentName: {
+        title: "Tournament Name",
+        hint: "Renaming will update all {n} seasons sharing this name.",
+      },
       manageTeams: {
         title: "Manage Teams",
         addPlaceholder: "Add team…",

@@ -205,6 +205,15 @@ export function useCrudActions(
     return newT.id
   }
 
+  function renameTournament(tournamentId: string, newName: string) {
+    const trimmed = newName.trim()
+    if (!trimmed) return
+    const t = tournaments.value.find((t) => t.id === tournamentId)
+    if (!t) return
+    const oldName = t.name
+    tournaments.value.filter((tr) => tr.name === oldName).forEach((tr) => (tr.name = trimmed))
+  }
+
   function remove(id: string) {
     tournaments.value = tournaments.value.filter((t) => t.id !== id)
     if (active.value === id) active.value = tournaments.value[0]?.id ?? null
@@ -304,6 +313,7 @@ export function useCrudActions(
     newMultiTierSeason,
     setPromotionCount,
     rebuildTiers,
+    renameTournament,
     remove,
     getById,
     resetResults,

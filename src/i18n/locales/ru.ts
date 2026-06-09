@@ -432,6 +432,10 @@ export default {
       backToTournaments: "Назад к турнирам",
       locked: "Заблокировано",
       saveChanges: "Сохранить изменения",
+      tournamentName: {
+        title: "Название турнира",
+        hint: "Переименование обновит все {n} сезона с этим названием.",
+      },
       manageTeams: {
         title: "Управление командами",
         addPlaceholder: "Добавить команду…",

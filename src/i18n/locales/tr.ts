@@ -433,6 +433,10 @@ export default {
       backToTournaments: "Turnuvalara Geri Dön",
       locked: "Kilitli",
       saveChanges: "Değişiklikleri Kaydet",
+      tournamentName: {
+        title: "Turnuva Adı",
+        hint: "Yeniden adlandırma bu ismi paylaşan {n} sezonu da güncelleyecek.",
+      },
       manageTeams: {
         title: "Takımları Yönet",
         addPlaceholder: "Takım ekle…",

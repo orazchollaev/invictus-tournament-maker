@@ -33,6 +33,11 @@ const otherLeagues = computed(() =>
     .map((tn) => ({ id: tn.id, name: tn.name, season: tn.season }))
 )
 
+const localName = ref(tournament.value?.name ?? "")
+const seasonCount = computed(
+  () => store.tournaments.filter((tn) => tn.name === tournament.value?.name).length
+)
+
 const localTeamIds = ref<string[]>([...(tournament.value?.teamIds ?? [])])
 const drawType = ref<DrawType>(tournament.value?.drawType ?? "random")
 const showManualDraw = ref(false)
@@ -130,6 +135,7 @@ const minQpg = 1
 const hasChanges = computed(() => {
   const orig = tournament.value
   if (!orig) return false
+  if (localName.value.trim() && localName.value.trim() !== orig.name) return true
   const origSet = new Set(orig.teamIds)
   const localSet = new Set(localTeamIds.value)
   if (origSet.size !== localSet.size || [...origSet].some((id) => !localSet.has(id))) return true
@@ -206,6 +212,9 @@ async function handleDelete() {
 function handleSave() {
   const orig = tournament.value
   if (!orig) return
+
+  if (localName.value.trim() && localName.value.trim() !== orig.name)
+    store.renameTournament(tournamentId.value, localName.value.trim())
 
   const origSet = new Set(orig.teamIds)
   const localSet = new Set(localTeamIds.value)
@@ -300,6 +309,22 @@ function handleSave() {
       </template>
 
       <template v-else>
+        <!-- Tournament Name -->
+        <div class="tsp-card">
+          <div class="tsp-section-title">
+            {{ t("tournament.settingsPage.tournamentName.title") }}
+          </div>
+          <input
+            v-model="localName"
+            class="tsp-name-input"
+            type="text"
+            :placeholder="tournament.name"
+          />
+          <div v-if="seasonCount > 1" class="tsp-hint-box" style="margin-top: 8px">
+            {{ t("tournament.settingsPage.tournamentName.hint", { n: seasonCount }) }}
+          </div>
+        </div>
+
         <!-- Manage Teams -->
         <div class="tsp-card">
           <div class="tsp-card-header">
@@ -1031,6 +1056,22 @@ function handleSave() {
   font-size: 15px;
   font-family: var(--font-ui);
   font-weight: 700;
+}
+
+.tsp-name-input {
+  width: 100%;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 7px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg);
+  color: var(--text);
+  box-sizing: border-box;
+}
+.tsp-name-input:focus {
+  outline: none;
+  border-color: var(--accent);
 }
 
 .tsp-linked-select {

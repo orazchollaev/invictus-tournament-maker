@@ -433,6 +433,10 @@ export default {
       backToTournaments: "Volver a torneos",
       locked: "Bloqueado",
       saveChanges: "Guardar cambios",
+      tournamentName: {
+        title: "Nombre del torneo",
+        hint: "Renombrar actualizará las {n} temporadas que comparten este nombre.",
+      },
       manageTeams: {
         title: "Gestionar equipos",
         addPlaceholder: "Añadir equipo…",
