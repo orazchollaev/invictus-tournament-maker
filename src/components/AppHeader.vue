@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Settings, Star, Trophy, History, RefreshCw, FolderGit2 } from "@lucide/vue"
+import { Settings, Star, Trophy, History, RefreshCw, FolderGit2, Users } from "@lucide/vue"
 import { useSettingsStore } from "@/modules/settings/store"
 import { usePwaUpdate } from "@/composables/usePwaUpdate"
 import AppLogo from "./AppLogo.vue"
@@ -28,10 +28,16 @@ const { needRefresh, applyUpdate } = usePwaUpdate()
       </Transition>
 
       <nav class="main-nav">
-        <RouterLink to="/tournaments">{{ t("nav.tournaments") }}</RouterLink>
-        <RouterLink to="/teams">{{ t("nav.teams") }}</RouterLink>
+        <RouterLink to="/tournaments">
+          <Trophy :size="16" />
+          {{ t("nav.tournaments") }}
+        </RouterLink>
+        <RouterLink to="/teams">
+          <Users :size="16" />
+          {{ t("nav.teams") }}
+        </RouterLink>
         <RouterLink to="/history">
-          <History :size="13" class="nav-icon" />
+          <History :size="16" class="nav-icon" />
           {{ t("nav.history") }}
         </RouterLink>
       </nav>
