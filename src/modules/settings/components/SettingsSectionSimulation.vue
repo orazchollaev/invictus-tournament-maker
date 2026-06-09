@@ -52,6 +52,7 @@ const surpriseFactorLabel = computed(() => {
           </div>
         </div>
         <div class="stepper-control">
+          <span class="stepper-badge">{{ homeAdvantageLabel }}</span>
           <button
             class="stepper-btn"
             :disabled="settings.homeAdvantage <= 0"
@@ -75,7 +76,6 @@ const surpriseFactorLabel = computed(() => {
           >
             +
           </button>
-          <span class="stepper-badge">{{ homeAdvantageLabel }}</span>
         </div>
       </div>
       <div class="setting-row">
@@ -86,6 +86,7 @@ const surpriseFactorLabel = computed(() => {
           </div>
         </div>
         <div class="stepper-control">
+          <span class="stepper-badge">{{ surpriseFactorLabel }}</span>
           <button
             class="stepper-btn"
             :disabled="settings.surpriseFactor <= 0"
@@ -109,7 +110,6 @@ const surpriseFactorLabel = computed(() => {
           >
             +
           </button>
-          <span class="stepper-badge">{{ surpriseFactorLabel }}</span>
         </div>
       </div>
       <div class="setting-row">

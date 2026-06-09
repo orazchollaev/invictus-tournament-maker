@@ -54,7 +54,7 @@ export const useSettingsStore = defineStore("settings", () => {
   watch(homeAdvantage, (val) => setSimConfig({ homeAdvantage: val }), { immediate: true })
 
   function resetAll() {
-    theme.value = "dark"
+    theme.value = "light"
     locale.value = "en"
     groupLegMode.value = "single"
     knockoutLegMode.value = "single"
