@@ -515,6 +515,13 @@ export default {
         deleteConfirm: "Bu turnuva silinsin mi?",
         deleteConfirmLabel: "Sil",
       },
+      unsavedChanges: {
+        title: "Kaydedilmemiş Değişiklikler",
+        message: "Kaydedilmemiş değişiklikleriniz var. Ne yapmak istersiniz?",
+        leave: "Çık",
+        saveAndLeave: "Kaydet ve Çık",
+        close: "Kapat",
+      },
     },
   },
   teamSelector: {

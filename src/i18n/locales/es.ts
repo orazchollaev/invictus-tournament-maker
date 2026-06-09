@@ -517,6 +517,13 @@ export default {
         deleteConfirm: "¿Eliminar este torneo?",
         deleteConfirmLabel: "Eliminar",
       },
+      unsavedChanges: {
+        title: "Cambios sin guardar",
+        message: "Tienes cambios sin guardar. ¿Qué deseas hacer?",
+        leave: "Salir",
+        saveAndLeave: "Guardar y salir",
+        close: "Cerrar",
+      },
     },
   },
   teamSelector: {

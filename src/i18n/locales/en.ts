@@ -513,6 +513,13 @@ export default {
         deleteConfirm: "Delete this tournament?",
         deleteConfirmLabel: "Delete",
       },
+      unsavedChanges: {
+        title: "Unsaved Changes",
+        message: "You have unsaved changes. What would you like to do?",
+        leave: "Leave",
+        saveAndLeave: "Save & Leave",
+        close: "Close",
+      },
     },
   },
   teamSelector: {

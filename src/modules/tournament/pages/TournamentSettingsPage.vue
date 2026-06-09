@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from "vue"
-import { useRoute, useRouter } from "vue-router"
+import { useRoute, useRouter, onBeforeRouteLeave } from "vue-router"
 import { useTeamsStore } from "@/modules/teams/store"
 import { useTournamentStore } from "@/modules/tournament/store"
 import type { PlayoffSeedMode, LegMode, Tiebreaker } from "@/modules/tournament/types"
@@ -62,6 +62,36 @@ const localTierCount = ref(tournament.value?.tiers?.length ?? 1)
 const isLeagueFormat = computed(() => tournament.value?.format === "league")
 const isGroupFormat = computed(() => tournament.value?.format === "group+bracket")
 const isMultiTier = computed(() => (tournament.value?.tiers?.length ?? 0) > 1)
+
+// Unsaved changes guard
+type LeaveChoice = "leave" | "save-leave" | "stay"
+const showLeaveModal = ref(false)
+let resolveLeave: ((choice: LeaveChoice) => void) | null = null
+
+onBeforeRouteLeave(async (_to, _from, next) => {
+  if (!hasChanges.value) {
+    next()
+    return
+  }
+  showLeaveModal.value = true
+  const choice = await new Promise<LeaveChoice>((resolve) => {
+    resolveLeave = resolve
+  })
+  showLeaveModal.value = false
+  if (choice === "stay") {
+    next(false)
+  } else if (choice === "save-leave") {
+    saveOnly()
+    next()
+  } else {
+    next()
+  }
+})
+
+function handleLeaveChoice(choice: LeaveChoice) {
+  resolveLeave?.(choice)
+  resolveLeave = null
+}
 
 // Monte Carlo simulation
 const {
@@ -209,7 +239,7 @@ async function handleDelete() {
   router.push("/tournaments")
 }
 
-function handleSave() {
+function saveOnly() {
   const orig = tournament.value
   if (!orig) return
 
@@ -258,7 +288,10 @@ function handleSave() {
     store.setPromotionCount(tournamentId.value, localPromotionCount.value)
   if (localTiebreaker.value !== (orig.tiebreaker ?? "goal-diff"))
     store.setTiebreaker(tournamentId.value, localTiebreaker.value)
+}
 
+function handleSave() {
+  saveOnly()
   goBack()
 }
 </script>
@@ -793,6 +826,35 @@ function handleSave() {
       </template>
     </template>
 
+    <!-- Unsaved changes modal -->
+    <Teleport to="body">
+      <Transition name="dialog-fade">
+        <div v-if="showLeaveModal" class="sim-overlay" @click.self="handleLeaveChoice('stay')">
+          <Transition name="dialog-scale" appear>
+            <div v-if="showLeaveModal" class="leave-modal" role="dialog" aria-modal="true">
+              <p class="leave-modal-title">
+                {{ t("tournament.settingsPage.unsavedChanges.title") }}
+              </p>
+              <p class="leave-modal-msg">
+                {{ t("tournament.settingsPage.unsavedChanges.message") }}
+              </p>
+              <div class="leave-modal-actions">
+                <button @click="handleLeaveChoice('leave')">
+                  {{ t("tournament.settingsPage.unsavedChanges.leave") }}
+                </button>
+                <button class="primary" @click="handleLeaveChoice('save-leave')">
+                  {{ t("tournament.settingsPage.unsavedChanges.saveAndLeave") }}
+                </button>
+                <button @click="handleLeaveChoice('stay')">
+                  {{ t("tournament.settingsPage.unsavedChanges.close") }}
+                </button>
+              </div>
+            </div>
+          </Transition>
+        </div>
+      </Transition>
+    </Teleport>
+
     <!-- Simulation modal -->
     <Teleport to="body">
       <div v-if="showSimModal" class="sim-overlay" @click.self="!simRunning && handleCancelSim()">
@@ -1302,5 +1364,65 @@ function handleSave() {
   gap: 6px;
   padding: 8px 16px;
   font-size: 13px;
+}
+
+/* Leave guard modal */
+.leave-modal {
+  background: var(--surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius);
+  padding: 24px 24px 20px;
+  width: min(360px, calc(100vw - 32px));
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+.leave-modal-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0 0 8px;
+}
+.leave-modal-msg {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 0 0 20px;
+  line-height: 1.5;
+}
+.leave-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.leave-modal-actions button {
+  font-size: 13px;
+  padding: 7px 14px;
+}
+
+/* Reuse sim-overlay transitions */
+.dialog-fade-enter-active,
+.dialog-fade-leave-active {
+  transition: opacity 0.18s ease;
+}
+.dialog-fade-enter-from,
+.dialog-fade-leave-to {
+  opacity: 0;
+}
+.dialog-scale-enter-active {
+  transition:
+    opacity 0.18s ease,
+    transform 0.18s cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+.dialog-scale-leave-active {
+  transition:
+    opacity 0.14s ease,
+    transform 0.14s ease;
+}
+.dialog-scale-enter-from {
+  opacity: 0;
+  transform: scale(0.9);
+}
+.dialog-scale-leave-to {
+  opacity: 0;
+  transform: scale(0.95);
 }
 </style>

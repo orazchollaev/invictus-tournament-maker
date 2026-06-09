@@ -516,6 +516,13 @@ export default {
         deleteConfirm: "Excluir este torneio?",
         deleteConfirmLabel: "Excluir",
       },
+      unsavedChanges: {
+        title: "Alterações não salvas",
+        message: "Você tem alterações não salvas. O que deseja fazer?",
+        leave: "Sair",
+        saveAndLeave: "Salvar e sair",
+        close: "Fechar",
+      },
     },
   },
   teamSelector: {

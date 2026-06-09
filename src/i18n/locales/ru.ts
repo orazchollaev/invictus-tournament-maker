@@ -514,6 +514,13 @@ export default {
         deleteConfirm: "Удалить этот турнир?",
         deleteConfirmLabel: "Удалить",
       },
+      unsavedChanges: {
+        title: "Несохранённые изменения",
+        message: "У вас есть несохранённые изменения. Что хотите сделать?",
+        leave: "Выйти",
+        saveAndLeave: "Сохранить и выйти",
+        close: "Закрыть",
+      },
     },
   },
   teamSelector: {
