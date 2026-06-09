@@ -31,6 +31,9 @@ export const useSettingsStore = defineStore("settings", () => {
   const bracketQuality = ref<BracketQuality>("high")
   const bracketHighlightOnHover = ref(true)
   const bracketConnectorColors = ref(true)
+  const winPoints = ref(3)
+  const drawPoints = ref(1)
+  const lossPoints = ref(0)
 
   watch(
     theme,
@@ -73,6 +76,9 @@ export const useSettingsStore = defineStore("settings", () => {
     bracketQuality.value = "high"
     bracketHighlightOnHover.value = true
     bracketConnectorColors.value = true
+    winPoints.value = 3
+    drawPoints.value = 1
+    lossPoints.value = 0
   }
 
   return {
@@ -95,6 +101,9 @@ export const useSettingsStore = defineStore("settings", () => {
     bracketQuality,
     bracketHighlightOnHover,
     bracketConnectorColors,
+    winPoints,
+    drawPoints,
+    lossPoints,
     resetAll,
   }
 })

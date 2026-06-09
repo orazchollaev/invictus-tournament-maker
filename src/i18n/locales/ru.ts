@@ -222,6 +222,13 @@ export default {
         drawOptions: "Варианты жеребьёвки:",
         playoffSeeding: "Посев плей-офф:",
       },
+      scoring: {
+        title: "Очки по умолчанию",
+        desc: "Начальные значения при создании группового/лигового турнира",
+        winPoints: "Победа",
+        drawPoints: "Ничья",
+        lossPoints: "Поражение",
+      },
     },
     graphics: {
       title: "Графика",
@@ -494,6 +501,12 @@ export default {
         method: "Метод",
         h2h: "Личные встречи",
         goalDiff: "Разница мячей",
+      },
+      scoring: {
+        title: "Начисление очков",
+        winPoints: "Очки за победу",
+        drawPoints: "Очки за ничью",
+        lossPoints: "Очки за поражение",
       },
       simulation: {
         title: "Симуляция Монте-Карло",

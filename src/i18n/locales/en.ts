@@ -221,6 +221,13 @@ export default {
         drawOptions: "Draw options:",
         playoffSeeding: "Playoff seeding:",
       },
+      scoring: {
+        title: "Default Scoring",
+        desc: "Used as starting values when creating a group/league tournament",
+        winPoints: "Win",
+        drawPoints: "Draw",
+        lossPoints: "Loss",
+      },
     },
     graphics: {
       title: "Graphics",
@@ -493,6 +500,12 @@ export default {
         method: "Method",
         h2h: "H2H",
         goalDiff: "Goal diff",
+      },
+      scoring: {
+        title: "Scoring",
+        winPoints: "Points for a Win",
+        drawPoints: "Points for a Draw",
+        lossPoints: "Points for a Loss",
       },
       simulation: {
         title: "Monte Carlo Simulation",

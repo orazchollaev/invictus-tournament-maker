@@ -42,10 +42,43 @@ export const useTournamentStore = defineStore("tournament", () => {
     const t = tournaments.value.find((t) => t.id === tournamentId)
     if (!t) return
     t.tiebreaker = tiebreaker
-    if (t.format === "league" && t.league) {
-      recalcLeagueStandings(t.league, tiebreaker)
+    const winPts = t.winPoints ?? 3
+    const drawPts = t.drawPoints ?? 1
+    const lossPts = t.lossPoints ?? 0
+    if (t.format === "league") {
+      if (t.tiers?.length) {
+        t.tiers.forEach((tier) =>
+          recalcLeagueStandings(tier.league, tiebreaker, winPts, drawPts, lossPts)
+        )
+      } else if (t.league) {
+        recalcLeagueStandings(t.league, tiebreaker, winPts, drawPts, lossPts)
+      }
     } else if (t.groups) {
-      t.groups.forEach((g) => recalcStandings(g, tiebreaker))
+      t.groups.forEach((g) => recalcStandings(g, tiebreaker, winPts, drawPts, lossPts))
+    }
+  }
+
+  function setPointsConfig(
+    tournamentId: string,
+    winPoints: number,
+    drawPoints: number,
+    lossPoints: number
+  ) {
+    const t = tournaments.value.find((t) => t.id === tournamentId)
+    if (!t) return
+    t.winPoints = winPoints
+    t.drawPoints = drawPoints
+    t.lossPoints = lossPoints
+    if (t.format === "league") {
+      if (t.tiers?.length) {
+        t.tiers.forEach((tier) =>
+          recalcLeagueStandings(tier.league, t.tiebreaker, winPoints, drawPoints, lossPoints)
+        )
+      } else if (t.league) {
+        recalcLeagueStandings(t.league, t.tiebreaker, winPoints, drawPoints, lossPoints)
+      }
+    } else if (t.groups) {
+      t.groups.forEach((g) => recalcStandings(g, t.tiebreaker, winPoints, drawPoints, lossPoints))
     }
   }
 
@@ -54,7 +87,10 @@ export const useTournamentStore = defineStore("tournament", () => {
     tierDefs: Array<{ name: string; teamIds: string[] }>,
     legMode: LegMode = "single",
     promotionCount = 1,
-    tiebreaker?: Tiebreaker
+    tiebreaker?: Tiebreaker,
+    winPoints?: number,
+    drawPoints?: number,
+    lossPoints?: number
   ): string {
     const allTeams = useTeamsStore().teams
     const season =
@@ -67,6 +103,9 @@ export const useTournamentStore = defineStore("tournament", () => {
     }))
     const newT = createMultiTierLeague(name, resolvedTiers, season, legMode, promotionCount)
     if (tiebreaker) newT.tiebreaker = tiebreaker
+    if (winPoints !== undefined) newT.winPoints = winPoints
+    if (drawPoints !== undefined) newT.drawPoints = drawPoints
+    if (lossPoints !== undefined) newT.lossPoints = lossPoints
     tournaments.value.push(newT)
     active.value = newT.id
     return newT.id
@@ -101,6 +140,7 @@ export const useTournamentStore = defineStore("tournament", () => {
     ...leagueActions,
     simulateTournament,
     setTiebreaker,
+    setPointsConfig,
     setRelegationCount,
     setLinkedLeague,
     createMultiTierLeagueTournament,

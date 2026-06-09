@@ -32,7 +32,10 @@ export function useCrudActions(
     groupLegMode: LegMode = "single",
     knockoutLegMode: LegMode = "single",
     finalLegMode: LegMode = "single",
-    tiebreaker?: Tiebreaker
+    tiebreaker?: Tiebreaker,
+    winPoints?: number,
+    drawPoints?: number,
+    lossPoints?: number
   ): string {
     const allTeams = getTeams()
     const selected = allTeams.filter((t) => teamIds.includes(t.id))
@@ -58,6 +61,9 @@ export function useCrudActions(
     )
     t.drawType = deriveDrawType(seeded, orderedIds)
     if (tiebreaker) t.tiebreaker = tiebreaker
+    if (winPoints !== undefined) t.winPoints = winPoints
+    if (drawPoints !== undefined) t.drawPoints = drawPoints
+    if (lossPoints !== undefined) t.lossPoints = lossPoints
     tournaments.value.push(t)
     active.value = t.id
     return t.id
@@ -67,7 +73,10 @@ export function useCrudActions(
     name: string,
     teamIds: string[],
     legMode: LegMode = "single",
-    tiebreaker?: Tiebreaker
+    tiebreaker?: Tiebreaker,
+    winPoints?: number,
+    drawPoints?: number,
+    lossPoints?: number
   ): string {
     const allTeams = getTeams()
     const selected = allTeams.filter((t) => teamIds.includes(t.id))
@@ -77,6 +86,9 @@ export function useCrudActions(
         .reduce((max, t) => Math.max(max, t.season), 0) + 1
     const t = createLeague(name, selected, season, legMode)
     if (tiebreaker) t.tiebreaker = tiebreaker
+    if (winPoints !== undefined) t.winPoints = winPoints
+    if (drawPoints !== undefined) t.drawPoints = drawPoints
+    if (lossPoints !== undefined) t.lossPoints = lossPoints
     tournaments.value.push(t)
     active.value = t.id
     return t.id
@@ -107,6 +119,9 @@ export function useCrudActions(
       const newT = createLeague(t.name, leagueTeams, season, t.league?.legMode ?? "single")
       if (t.tiebreaker) newT.tiebreaker = t.tiebreaker
       if (t.relegationCount) newT.relegationCount = t.relegationCount
+      if (t.winPoints !== undefined) newT.winPoints = t.winPoints
+      if (t.drawPoints !== undefined) newT.drawPoints = t.drawPoints
+      if (t.lossPoints !== undefined) newT.lossPoints = t.lossPoints
       tournaments.value.push(newT)
       active.value = newT.id
       return newT.id
@@ -200,6 +215,9 @@ export function useCrudActions(
       t.promotionCount ?? 1
     )
     if (t.tiebreaker) newT.tiebreaker = t.tiebreaker
+    if (t.winPoints !== undefined) newT.winPoints = t.winPoints
+    if (t.drawPoints !== undefined) newT.drawPoints = t.drawPoints
+    if (t.lossPoints !== undefined) newT.lossPoints = t.lossPoints
     tournaments.value.push(newT)
     active.value = newT.id
     return newT.id
@@ -227,12 +245,15 @@ export function useCrudActions(
     const t = tournaments.value.find((t) => t.id === tournamentId)
     if (!t) return
     if (t.format === "league") {
+      const winPts = t.winPoints ?? 3
+      const drawPts = t.drawPoints ?? 1
+      const lossPts = t.lossPoints ?? 0
       if (t.tiers?.length) {
         for (const tier of t.tiers) {
           for (const matchday of tier.league.matchdays) {
             matchday.matches.forEach((m) => (m.result = null))
           }
-          recalcLeagueStandings(tier.league, t.tiebreaker)
+          recalcLeagueStandings(tier.league, t.tiebreaker, winPts, drawPts, lossPts)
         }
         t.winnerId = null
         return
@@ -241,15 +262,18 @@ export function useCrudActions(
         for (const matchday of t.league.matchdays) {
           matchday.matches.forEach((m) => (m.result = null))
         }
-        recalcLeagueStandings(t.league, t.tiebreaker)
+        recalcLeagueStandings(t.league, t.tiebreaker, winPts, drawPts, lossPts)
         t.winnerId = null
         return
       }
     }
     if (t.groups) {
+      const winPts = t.winPoints ?? 3
+      const drawPts = t.drawPoints ?? 1
+      const lossPts = t.lossPoints ?? 0
       for (const group of t.groups) {
         group.matches.forEach((m) => (m.result = null))
-        recalcStandings(group, t.tiebreaker)
+        recalcStandings(group, t.tiebreaker, winPts, drawPts, lossPts)
       }
       t.groupsDone = false
     }

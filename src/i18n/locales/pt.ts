@@ -222,6 +222,13 @@ export default {
         drawOptions: "Opções de sorteio:",
         playoffSeeding: "Cabeça de chave no playoff:",
       },
+      scoring: {
+        title: "Pontuação padrão",
+        desc: "Valores iniciais ao criar um torneio de grupos/liga",
+        winPoints: "Vitória",
+        drawPoints: "Empate",
+        lossPoints: "Derrota",
+      },
     },
     graphics: {
       title: "Gráficos",
@@ -496,6 +503,12 @@ export default {
         method: "Método",
         h2h: "H2H",
         goalDiff: "Diferença de gols",
+      },
+      scoring: {
+        title: "Pontuação",
+        winPoints: "Pontos por vitória",
+        drawPoints: "Pontos por empate",
+        lossPoints: "Pontos por derrota",
       },
       simulation: {
         title: "Simulação Monte Carlo",

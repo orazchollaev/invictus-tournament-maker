@@ -119,5 +119,10 @@ export interface Tournament {
   // how many teams swap between adjacent tiers at season end
   promotionCount?: number
 
+  // scoring points (group+bracket and league formats)
+  winPoints?: number
+  drawPoints?: number
+  lossPoints?: number
+
   createdAt: number
 }

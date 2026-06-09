@@ -35,6 +35,9 @@ const knockoutLegMode = ref<LegMode>(settingsStore.knockoutLegMode)
 const finalLegMode = ref<LegMode>(settingsStore.finalLegMode)
 const leagueLegMode = ref<LegMode>("single")
 const tiebreaker = ref<Tiebreaker>(settingsStore.tiebreaker)
+const winPoints = ref(settingsStore.winPoints)
+const drawPoints = ref(settingsStore.drawPoints)
+const lossPoints = ref(settingsStore.lossPoints)
 const tierCount = ref(1)
 const tierAssignments = ref<Record<string, number>>({})
 const promotionCount = ref(1)
@@ -167,7 +170,10 @@ function doCreate(orderedIds?: string[]) {
         tierDefs,
         leagueLegMode.value,
         promotionCount.value,
-        tiebreaker.value
+        tiebreaker.value,
+        winPoints.value,
+        drawPoints.value,
+        lossPoints.value
       )
       router.push(`/tournaments/${id}`)
       return
@@ -176,7 +182,10 @@ function doCreate(orderedIds?: string[]) {
       name.value.trim(),
       selected.value,
       leagueLegMode.value,
-      tiebreaker.value
+      tiebreaker.value,
+      winPoints.value,
+      drawPoints.value,
+      lossPoints.value
     )
     router.push(`/tournaments/${id}`)
     return
@@ -197,7 +206,10 @@ function doCreate(orderedIds?: string[]) {
     gLeg,
     knockoutLegMode.value,
     finalLegMode.value,
-    tiebreaker.value
+    tiebreaker.value,
+    isGroup ? winPoints.value : undefined,
+    isGroup ? drawPoints.value : undefined,
+    isGroup ? lossPoints.value : undefined
   )
   if (isGroup) store.setPlayoffSeedMode(id, playoffSeedMode.value)
   if (hasThirdPlace.value) store.toggleThirdPlace(id)
@@ -529,6 +541,55 @@ function doCreate(orderedIds?: string[]) {
                 { value: 'goal-diff', label: 'Goal diff' },
               ]"
             />
+          </div>
+        </div>
+      </template>
+
+      <!-- Scoring -->
+      <template v-if="format !== 'bracket'">
+        <div class="ctp-card">
+          <div class="ctp-section-title">Scoring</div>
+          <div class="ctp-gc-row" style="margin-bottom: 6px">
+            <span class="ctp-gc-label">Points for a Win</span>
+            <div class="ctp-gc-stepper">
+              <button :disabled="winPoints <= 0" @click="winPoints = Math.max(0, winPoints - 1)">
+                −
+              </button>
+              <span class="ctp-gc-val">{{ winPoints }}</span>
+              <button :disabled="winPoints >= 10" @click="winPoints = Math.min(10, winPoints + 1)">
+                +
+              </button>
+            </div>
+          </div>
+          <div class="ctp-gc-row" style="margin-bottom: 6px">
+            <span class="ctp-gc-label">Points for a Draw</span>
+            <div class="ctp-gc-stepper">
+              <button :disabled="drawPoints <= 0" @click="drawPoints = Math.max(0, drawPoints - 1)">
+                −
+              </button>
+              <span class="ctp-gc-val">{{ drawPoints }}</span>
+              <button
+                :disabled="drawPoints >= 10"
+                @click="drawPoints = Math.min(10, drawPoints + 1)"
+              >
+                +
+              </button>
+            </div>
+          </div>
+          <div class="ctp-gc-row" style="margin-bottom: 6px">
+            <span class="ctp-gc-label">Points for a Loss</span>
+            <div class="ctp-gc-stepper">
+              <button :disabled="lossPoints <= 0" @click="lossPoints = Math.max(0, lossPoints - 1)">
+                −
+              </button>
+              <span class="ctp-gc-val">{{ lossPoints }}</span>
+              <button
+                :disabled="lossPoints >= 10"
+                @click="lossPoints = Math.min(10, lossPoints + 1)"
+              >
+                +
+              </button>
+            </div>
           </div>
         </div>
       </template>

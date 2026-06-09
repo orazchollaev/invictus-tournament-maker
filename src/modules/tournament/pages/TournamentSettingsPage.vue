@@ -58,6 +58,9 @@ const localLinkedLeagueId = ref<string>(tournament.value?.linkedLeagueId ?? "")
 const localTiebreaker = ref<Tiebreaker>(tournament.value?.tiebreaker ?? "goal-diff")
 const localPromotionCount = ref(tournament.value?.promotionCount ?? 1)
 const localTierCount = ref(tournament.value?.tiers?.length ?? 1)
+const localWinPoints = ref(tournament.value?.winPoints ?? 3)
+const localDrawPoints = ref(tournament.value?.drawPoints ?? 1)
+const localLossPoints = ref(tournament.value?.lossPoints ?? 0)
 
 const isLeagueFormat = computed(() => tournament.value?.format === "league")
 const isGroupFormat = computed(() => tournament.value?.format === "group+bracket")
@@ -190,6 +193,13 @@ const hasChanges = computed(() => {
   if (isMultiTier.value && localTierCount.value !== (orig.tiers?.length ?? 1)) return true
   if (isMultiTier.value && localPromotionCount.value !== (orig.promotionCount ?? 1)) return true
   if (localTiebreaker.value !== (orig.tiebreaker ?? "goal-diff")) return true
+  if (
+    (isLeagueFormat.value || isGroupFormat.value) &&
+    (localWinPoints.value !== (orig.winPoints ?? 3) ||
+      localDrawPoints.value !== (orig.drawPoints ?? 1) ||
+      localLossPoints.value !== (orig.lossPoints ?? 0))
+  )
+    return true
   return false
 })
 
@@ -288,6 +298,18 @@ function saveOnly() {
     store.setPromotionCount(tournamentId.value, localPromotionCount.value)
   if (localTiebreaker.value !== (orig.tiebreaker ?? "goal-diff"))
     store.setTiebreaker(tournamentId.value, localTiebreaker.value)
+  if (
+    (isLeagueFormat.value || isGroupFormat.value) &&
+    (localWinPoints.value !== (orig.winPoints ?? 3) ||
+      localDrawPoints.value !== (orig.drawPoints ?? 1) ||
+      localLossPoints.value !== (orig.lossPoints ?? 0))
+  )
+    store.setPointsConfig(
+      tournamentId.value,
+      localWinPoints.value,
+      localDrawPoints.value,
+      localLossPoints.value
+    )
 }
 
 function handleSave() {
@@ -762,6 +784,73 @@ function handleSave() {
                   { value: 'goal-diff', label: t('tournament.settingsPage.tiebreaker.goalDiff') },
                 ]"
               />
+            </div>
+          </div>
+        </template>
+
+        <!-- Scoring -->
+        <template v-if="isLeagueFormat || isGroupFormat">
+          <div class="tsp-card">
+            <div class="tsp-section-title">{{ t("tournament.settingsPage.scoring.title") }}</div>
+            <div class="tsp-stepper-row">
+              <span class="tsp-stepper-label">
+                {{ t("tournament.settingsPage.scoring.winPoints") }}
+              </span>
+              <div class="tsp-stepper">
+                <button
+                  :disabled="localWinPoints <= 0"
+                  @click="localWinPoints = Math.max(0, localWinPoints - 1)"
+                >
+                  −
+                </button>
+                <span class="tsp-stepper-val">{{ localWinPoints }}</span>
+                <button
+                  :disabled="localWinPoints >= 10"
+                  @click="localWinPoints = Math.min(10, localWinPoints + 1)"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+            <div class="tsp-stepper-row">
+              <span class="tsp-stepper-label">
+                {{ t("tournament.settingsPage.scoring.drawPoints") }}
+              </span>
+              <div class="tsp-stepper">
+                <button
+                  :disabled="localDrawPoints <= 0"
+                  @click="localDrawPoints = Math.max(0, localDrawPoints - 1)"
+                >
+                  −
+                </button>
+                <span class="tsp-stepper-val">{{ localDrawPoints }}</span>
+                <button
+                  :disabled="localDrawPoints >= 10"
+                  @click="localDrawPoints = Math.min(10, localDrawPoints + 1)"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+            <div class="tsp-stepper-row">
+              <span class="tsp-stepper-label">
+                {{ t("tournament.settingsPage.scoring.lossPoints") }}
+              </span>
+              <div class="tsp-stepper">
+                <button
+                  :disabled="localLossPoints <= 0"
+                  @click="localLossPoints = Math.max(0, localLossPoints - 1)"
+                >
+                  −
+                </button>
+                <span class="tsp-stepper-val">{{ localLossPoints }}</span>
+                <button
+                  :disabled="localLossPoints >= 10"
+                  @click="localLossPoints = Math.min(10, localLossPoints + 1)"
+                >
+                  +
+                </button>
+              </div>
             </div>
           </div>
         </template>

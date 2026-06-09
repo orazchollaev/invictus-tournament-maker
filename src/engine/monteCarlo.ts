@@ -191,7 +191,13 @@ function runOnce(
             if (!m.result) m.result = simulateMatch(m as any, teams)
           }
         }
-        recalcLeagueStandings(tier.league, t.tiebreaker)
+        recalcLeagueStandings(
+          tier.league,
+          t.tiebreaker,
+          t.winPoints ?? 3,
+          t.drawPoints ?? 1,
+          t.lossPoints ?? 0
+        )
       }
       const topTier = t.tiers[0].league.standings
       const n = topTier.length
@@ -211,7 +217,13 @@ function runOnce(
           if (!m.result) m.result = simulateMatch(m as any, teams)
         }
       }
-      recalcLeagueStandings(t.league, t.tiebreaker)
+      recalcLeagueStandings(
+        t.league,
+        t.tiebreaker,
+        t.winPoints ?? 3,
+        t.drawPoints ?? 1,
+        t.lossPoints ?? 0
+      )
       const n = t.league.standings.length
       t.league.standings.forEach((s, rank) => {
         const st = stats.get(s.teamId)

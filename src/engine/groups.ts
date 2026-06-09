@@ -13,7 +13,9 @@ import { getTiebreaker } from "./tableConfig"
 
 function h2hStats(
   ids: Set<string>,
-  matches: GroupMatch[]
+  matches: GroupMatch[],
+  winPts = 3,
+  drawPts = 1
 ): Map<string, { pts: number; gd: number; gf: number }> {
   const stats = new Map<string, { pts: number; gd: number; gf: number }>()
   for (const id of ids) stats.set(id, { pts: 0, gd: 0, gf: 0 })
@@ -26,17 +28,23 @@ function h2hStats(
     h.gd += home - away
     a.gf += away
     a.gd += away - home
-    if (home > away) h.pts += 3
-    else if (away > home) a.pts += 3
+    if (home > away) h.pts += winPts
+    else if (away > home) a.pts += winPts
     else {
-      h.pts += 1
-      a.pts += 1
+      h.pts += drawPts
+      a.pts += drawPts
     }
   }
   return stats
 }
 
-function sortStandings(standings: GroupStanding[], matches: GroupMatch[], tiebreaker?: Tiebreaker) {
+function sortStandings(
+  standings: GroupStanding[],
+  matches: GroupMatch[],
+  tiebreaker?: Tiebreaker,
+  winPts = 3,
+  drawPts = 1
+) {
   standings.sort((a, b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf)
 
   if ((tiebreaker ?? getTiebreaker()) !== "head-to-head") return
@@ -49,7 +57,7 @@ function sortStandings(standings: GroupStanding[], matches: GroupMatch[], tiebre
     if (j - i > 1) {
       const group = standings.slice(i, j)
       const ids = new Set(group.map((s) => s.teamId))
-      const h2h = h2hStats(ids, matches)
+      const h2h = h2hStats(ids, matches, winPts, drawPts)
       group.sort((a, b) => {
         const ha = h2h.get(a.teamId)!
         const hb = h2h.get(b.teamId)!
@@ -105,7 +113,13 @@ export function buildGroupFixture(teamIds: string[], legs = 1): GroupMatch[] {
   return matches
 }
 
-export function recalcStandings(group: Group, tiebreaker?: Tiebreaker) {
+export function recalcStandings(
+  group: Group,
+  tiebreaker?: Tiebreaker,
+  winPts = 3,
+  drawPts = 1,
+  lossPts = 0
+) {
   group.standings.forEach((s) => {
     s.played = 0
     s.won = 0
@@ -137,21 +151,23 @@ export function recalcStandings(group: Group, tiebreaker?: Tiebreaker) {
 
     if (home > away) {
       hRow.won++
-      hRow.pts += 3
+      hRow.pts += winPts
       aRow.lost++
+      aRow.pts += lossPts
     } else if (away > home) {
       aRow.won++
-      aRow.pts += 3
+      aRow.pts += winPts
       hRow.lost++
+      hRow.pts += lossPts
     } else {
       hRow.drawn++
-      hRow.pts++
+      hRow.pts += drawPts
       aRow.drawn++
-      aRow.pts++
+      aRow.pts += drawPts
     }
   }
 
-  sortStandings(group.standings, group.matches, tiebreaker)
+  sortStandings(group.standings, group.matches, tiebreaker, winPts, drawPts)
 }
 
 export function setGroupMatchResult(
@@ -163,7 +179,13 @@ export function setGroupMatchResult(
 ) {
   const group = tournament.groups![groupIdx]
   group.matches[matchIdx].result = { home, away }
-  recalcStandings(group, tournament.tiebreaker)
+  recalcStandings(
+    group,
+    tournament.tiebreaker,
+    tournament.winPoints ?? 3,
+    tournament.drawPoints ?? 1,
+    tournament.lossPoints ?? 0
+  )
 }
 
 export function simulateGroupMatch(
@@ -177,7 +199,13 @@ export function simulateGroupMatch(
     ? computeFormAdjustments(group.teamIds, group.matches)
     : undefined
   group.matches[matchIdx].result = simulateMatch(group.matches[matchIdx] as any, teams, form)
-  recalcStandings(group, tournament.tiebreaker)
+  recalcStandings(
+    group,
+    tournament.tiebreaker,
+    tournament.winPoints ?? 3,
+    tournament.drawPoints ?? 1,
+    tournament.lossPoints ?? 0
+  )
 }
 
 export function simulateGroup(tournament: Tournament, groupIdx: number, teams: Team[]) {
@@ -190,7 +218,13 @@ export function simulateGroup(tournament: Tournament, groupIdx: number, teams: T
       group.matches[i].result = simulateMatch(group.matches[i] as any, teams, form)
     }
   }
-  recalcStandings(group, tournament.tiebreaker)
+  recalcStandings(
+    group,
+    tournament.tiebreaker,
+    tournament.winPoints ?? 3,
+    tournament.drawPoints ?? 1,
+    tournament.lossPoints ?? 0
+  )
 }
 
 export function simulateAllGroups(tournament: Tournament, teams: Team[]) {
@@ -217,7 +251,13 @@ export function simulateGroupWeek(tournament: Tournament, groupIdx: number, team
     if (!group.matches[i].result)
       group.matches[i].result = simulateMatch(group.matches[i] as any, teams, form)
   }
-  recalcStandings(group, tournament.tiebreaker)
+  recalcStandings(
+    group,
+    tournament.tiebreaker,
+    tournament.winPoints ?? 3,
+    tournament.drawPoints ?? 1,
+    tournament.lossPoints ?? 0
+  )
   return roundIdx
 }
 
@@ -240,7 +280,13 @@ export function simulateWeek(tournament: Tournament, teams: Team[]): number {
       if (!group.matches[i].result)
         group.matches[i].result = simulateMatch(group.matches[i] as any, teams, form)
     }
-    recalcStandings(group, tournament.tiebreaker)
+    recalcStandings(
+      group,
+      tournament.tiebreaker,
+      tournament.winPoints ?? 3,
+      tournament.drawPoints ?? 1,
+      tournament.lossPoints ?? 0
+    )
     simulatedRound = roundIdx
   }
   return simulatedRound

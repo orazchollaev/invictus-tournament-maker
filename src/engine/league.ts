@@ -13,7 +13,9 @@ import { getTiebreaker } from "./tableConfig"
 
 function h2hLeagueStats(
   ids: Set<string>,
-  matchdays: League["matchdays"]
+  matchdays: League["matchdays"],
+  winPts = 3,
+  drawPts = 1
 ): Map<string, { pts: number; gd: number; gf: number }> {
   const stats = new Map<string, { pts: number; gd: number; gf: number }>()
   for (const id of ids) stats.set(id, { pts: 0, gd: 0, gf: 0 })
@@ -27,11 +29,11 @@ function h2hLeagueStats(
       h.gd += home - away
       a.gf += away
       a.gd += away - home
-      if (home > away) h.pts += 3
-      else if (away > home) a.pts += 3
+      if (home > away) h.pts += winPts
+      else if (away > home) a.pts += winPts
       else {
-        h.pts += 1
-        a.pts += 1
+        h.pts += drawPts
+        a.pts += drawPts
       }
     }
   }
@@ -41,7 +43,9 @@ function h2hLeagueStats(
 function sortLeagueStandings(
   standings: GroupStanding[],
   matchdays: League["matchdays"],
-  tiebreaker?: Tiebreaker
+  tiebreaker?: Tiebreaker,
+  winPts = 3,
+  drawPts = 1
 ) {
   standings.sort((a, b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf)
 
@@ -54,7 +58,7 @@ function sortLeagueStandings(
     if (j - i > 1) {
       const group = standings.slice(i, j)
       const ids = new Set(group.map((s) => s.teamId))
-      const h2h = h2hLeagueStats(ids, matchdays)
+      const h2h = h2hLeagueStats(ids, matchdays, winPts, drawPts)
       group.sort((a, b) => {
         const ha = h2h.get(a.teamId)!
         const hb = h2h.get(b.teamId)!
@@ -81,7 +85,13 @@ export function buildLeagueMatchdays(teamIds: string[], legs = 1): League["match
   return matchdays
 }
 
-export function recalcLeagueStandings(league: League, tiebreaker?: Tiebreaker) {
+export function recalcLeagueStandings(
+  league: League,
+  tiebreaker?: Tiebreaker,
+  winPts = 3,
+  drawPts = 1,
+  lossPts = 0
+) {
   league.standings.forEach((s) => {
     s.played = s.won = s.drawn = s.lost = s.gf = s.ga = s.gd = s.pts = 0
   })
@@ -103,21 +113,23 @@ export function recalcLeagueStandings(league: League, tiebreaker?: Tiebreaker) {
       aRow.gd = aRow.gf - aRow.ga
       if (home > away) {
         hRow.won++
-        hRow.pts += 3
+        hRow.pts += winPts
         aRow.lost++
+        aRow.pts += lossPts
       } else if (away > home) {
         aRow.won++
-        aRow.pts += 3
+        aRow.pts += winPts
         hRow.lost++
+        hRow.pts += lossPts
       } else {
         hRow.drawn++
-        hRow.pts++
+        hRow.pts += drawPts
         aRow.drawn++
-        aRow.pts++
+        aRow.pts += drawPts
       }
     }
   }
-  sortLeagueStandings(league.standings, league.matchdays, tiebreaker)
+  sortLeagueStandings(league.standings, league.matchdays, tiebreaker, winPts, drawPts)
 }
 
 export function setLeagueMatchResult(
@@ -129,7 +141,13 @@ export function setLeagueMatchResult(
 ) {
   if (!tournament.league) return
   tournament.league.matchdays[matchdayIdx].matches[matchIdx].result = { home, away }
-  recalcLeagueStandings(tournament.league, tournament.tiebreaker)
+  recalcLeagueStandings(
+    tournament.league,
+    tournament.tiebreaker,
+    tournament.winPoints ?? 3,
+    tournament.drawPoints ?? 1,
+    tournament.lossPoints ?? 0
+  )
 }
 
 export function simulateLeagueMatch(
@@ -147,7 +165,13 @@ export function simulateLeagueMatch(
       )
     : undefined
   match.result = simulateMatch(match as any, teams, form)
-  recalcLeagueStandings(tournament.league, tournament.tiebreaker)
+  recalcLeagueStandings(
+    tournament.league,
+    tournament.tiebreaker,
+    tournament.winPoints ?? 3,
+    tournament.drawPoints ?? 1,
+    tournament.lossPoints ?? 0
+  )
 }
 
 export function simulateLeagueMatchday(tournament: Tournament, matchdayIdx: number, teams: Team[]) {
@@ -161,7 +185,13 @@ export function simulateLeagueMatchday(tournament: Tournament, matchdayIdx: numb
   for (const match of tournament.league.matchdays[matchdayIdx].matches) {
     if (!match.result) match.result = simulateMatch(match as any, teams, form)
   }
-  recalcLeagueStandings(tournament.league, tournament.tiebreaker)
+  recalcLeagueStandings(
+    tournament.league,
+    tournament.tiebreaker,
+    tournament.winPoints ?? 3,
+    tournament.drawPoints ?? 1,
+    tournament.lossPoints ?? 0
+  )
 }
 
 export function simulateAllLeague(tournament: Tournament, teams: Team[]) {
@@ -198,7 +228,13 @@ export function setTierMatchResult(
   const tier = getTier(tournament, tierIdx)
   if (!tier) return
   tier.league.matchdays[matchdayIdx].matches[matchIdx].result = { home, away }
-  recalcLeagueStandings(tier.league, tournament.tiebreaker)
+  recalcLeagueStandings(
+    tier.league,
+    tournament.tiebreaker,
+    tournament.winPoints ?? 3,
+    tournament.drawPoints ?? 1,
+    tournament.lossPoints ?? 0
+  )
 }
 
 export function simulateTierMatch(
@@ -218,7 +254,13 @@ export function simulateTierMatch(
       )
     : undefined
   match.result = simulateMatch(match as any, teams, form)
-  recalcLeagueStandings(tier.league, tournament.tiebreaker)
+  recalcLeagueStandings(
+    tier.league,
+    tournament.tiebreaker,
+    tournament.winPoints ?? 3,
+    tournament.drawPoints ?? 1,
+    tournament.lossPoints ?? 0
+  )
 }
 
 export function simulateTierMatchday(
@@ -238,7 +280,13 @@ export function simulateTierMatchday(
   for (const match of tier.league.matchdays[matchdayIdx].matches) {
     if (!match.result) match.result = simulateMatch(match as any, teams, form)
   }
-  recalcLeagueStandings(tier.league, tournament.tiebreaker)
+  recalcLeagueStandings(
+    tier.league,
+    tournament.tiebreaker,
+    tournament.winPoints ?? 3,
+    tournament.drawPoints ?? 1,
+    tournament.lossPoints ?? 0
+  )
 }
 
 export function simulateAllTier(tournament: Tournament, tierIdx: number, teams: Team[]) {

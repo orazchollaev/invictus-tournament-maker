@@ -222,6 +222,13 @@ export default {
         drawOptions: "Kura seçenekleri:",
         playoffSeeding: "Playoff yerleşimi:",
       },
+      scoring: {
+        title: "Varsayılan Puanlama",
+        desc: "Grup/lig turnuvası oluştururken başlangıç değerleri olarak kullanılır",
+        winPoints: "Galibiyet",
+        drawPoints: "Beraberlik",
+        lossPoints: "Mağlubiyet",
+      },
     },
     graphics: {
       title: "Grafik",
@@ -495,6 +502,12 @@ export default {
         method: "Yöntem",
         h2h: "H2H",
         goalDiff: "Gol farkı",
+      },
+      scoring: {
+        title: "Puanlama",
+        winPoints: "Galibiyet Puanı",
+        drawPoints: "Beraberlik Puanı",
+        lossPoints: "Mağlubiyet Puanı",
       },
       simulation: {
         title: "Monte Carlo Simülasyonu",
