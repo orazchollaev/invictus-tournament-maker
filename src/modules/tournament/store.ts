@@ -2,7 +2,15 @@
 import { defineStore } from "pinia"
 import { ref } from "vue"
 import type { Tournament, Tiebreaker, LegMode } from "./types"
-import { recalcStandings, recalcLeagueStandings, createMultiTierLeague } from "@/engine"
+import {
+  recalcStandings,
+  recalcLeagueStandings,
+  createMultiTierLeague,
+  allLeagueDone,
+  getLeagueWinner,
+  allTiersDone,
+  getTiersWinner,
+} from "@/engine"
 import { useTeamsStore } from "../teams/store"
 import { useCrudActions } from "./store/crud"
 import { useBracketActions } from "./store/bracket"
@@ -74,8 +82,10 @@ export const useTournamentStore = defineStore("tournament", () => {
         t.tiers.forEach((tier) =>
           recalcLeagueStandings(tier.league, t.tiebreaker, winPoints, drawPoints, lossPoints)
         )
+        if (allTiersDone(t)) t.winnerId = getTiersWinner(t)
       } else if (t.league) {
         recalcLeagueStandings(t.league, t.tiebreaker, winPoints, drawPoints, lossPoints)
+        if (allLeagueDone(t)) t.winnerId = getLeagueWinner(t)
       }
     } else if (t.groups) {
       t.groups.forEach((g) => recalcStandings(g, t.tiebreaker, winPoints, drawPoints, lossPoints))
