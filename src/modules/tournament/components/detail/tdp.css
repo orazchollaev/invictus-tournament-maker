@@ -1,0 +1,172 @@
+/* ── Header ─────────────────────────────────────────────────── */
+.t-format-tag {
+  font-size: 11px;
+  color: var(--text-muted);
+  background: color-mix(in srgb, var(--accent) 12%, var(--surface));
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+  border-radius: var(--radius);
+  padding: 1px 7px;
+  font-family: var(--font-ui);
+}
+.t-meta {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.t-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.new-season-btn {
+  font-size: 12px;
+  padding: 3px 10px;
+}
+.settings-btn {
+  font-size: 12px;
+  padding: 3px 10px;
+  border-color: var(--border-light);
+  color: var(--text-muted);
+}
+.settings-btn:hover {
+  color: var(--text);
+  border-color: var(--border);
+}
+.simulate-all-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  padding: 3px 10px;
+  border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 8%, var(--surface));
+}
+.simulate-all-btn:hover {
+  background: color-mix(in srgb, var(--accent) 16%, var(--surface));
+  border-color: var(--accent);
+}
+.winner-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border: 1px solid;
+  border-radius: var(--radius);
+  padding: 2px 9px;
+  font-size: 12px;
+  font-weight: 600;
+  background: color-mix(in srgb, currentColor 8%, var(--surface));
+  white-space: nowrap;
+}
+
+/* ── Multi-tier modal ────────────────────────────────────────── */
+.mt-modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 4px 0;
+}
+.mt-tier-block {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.mt-tier-title {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 2px;
+}
+.mt-tier-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.mt-tier-row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 3px 8px;
+  border-radius: var(--radius);
+  font-size: 12px;
+  background: var(--bg);
+  border: 1px solid var(--border-light);
+}
+.mt-row--promoted {
+  border-color: color-mix(in srgb, var(--success) 35%, transparent);
+  background: color-mix(in srgb, var(--success) 4%, var(--surface));
+}
+.mt-row--relegated {
+  border-color: color-mix(in srgb, var(--danger) 35%, transparent);
+  background: color-mix(in srgb, var(--danger) 4%, var(--surface));
+}
+.mt-rank {
+  width: 18px;
+  text-align: center;
+  font-size: 11px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+.mt-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.mt-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.mt-pts {
+  font-size: 11px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+.mt-badge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: var(--radius);
+  flex-shrink: 0;
+}
+.mt-badge--up {
+  color: var(--success);
+  background: color-mix(in srgb, var(--success) 12%, transparent);
+}
+.mt-badge--down {
+  color: var(--danger);
+  background: color-mix(in srgb, var(--danger) 12%, transparent);
+}
+
+/* ── Responsive ──────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .t-header-top {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .t-header-actions {
+    gap: 4px;
+  }
+  .t-header-actions .btn-label {
+    display: none;
+  }
+  .winner-chip {
+    font-size: 11px;
+    padding: 2px 6px;
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .new-season-btn,
+  .simulate-all-btn,
+  .settings-btn {
+    padding: 5px 8px;
+    min-width: 32px;
+    justify-content: center;
+  }
+}

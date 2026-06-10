@@ -14,9 +14,10 @@ import GroupDraw from "@/modules/tournament/components/GroupDraw.vue"
 import TournamentStats from "@/modules/tournament/components/TournamentStats.vue"
 import PromotionModal from "@/modules/tournament/components/PromotionModal.vue"
 import AppModal from "@/components/AppModal.vue"
+import { DetailHeader, DetailPhaseTabs, DetailMultiTierModal } from "../components/detail"
+import type { MainTab } from "../components/detail"
 import { useTournamentDetail } from "../composables/useTournamentDetail"
 import { useSettingsStore } from "@/modules/settings/store"
-import { Settings, Trophy, Lock, ArrowLeft, Zap, RefreshCw } from "@lucide/vue"
 import { showAlert } from "@/composables/useDialog"
 
 const { t: trns } = useI18n()
@@ -157,7 +158,6 @@ function handleMultiTierSeasonConfirm() {
   if (id) router.push(`/tournaments/${id}`)
 }
 
-type MainTab = "groups" | "bracket" | "league" | "stats" | "participants"
 const VALID_TABS: MainTab[] = ["groups", "bracket", "league", "stats", "participants"]
 
 function defaultTab(): MainTab {
@@ -264,142 +264,31 @@ function changeTab(tab: MainTab, tierIdx?: number) {
       <p class="not-found">
         {{ trns("tournament.notFound") }}
         <RouterLink to="/tournaments">
-          <ArrowLeft :size="14" />
           {{ trns("common.back") }}
         </RouterLink>
       </p>
     </div>
     <template v-else>
-      <div class="t-header">
-        <div class="t-header-top">
-          <RouterLink to="/tournaments" class="back-link">
-            <ArrowLeft :size="14" />
-            {{ trns("nav.tournaments") }}
-          </RouterLink>
-          <div class="t-header-actions">
-            <Transition name="fade">
-              <div
-                v-if="tournament.winnerId"
-                class="winner-chip"
-                :style="{ borderColor: winnerTeam?.color, color: winnerTeam?.color }"
-              >
-                <Trophy :size="12" />
-                {{ winnerTeam?.name }}
-              </div>
-            </Transition>
-            <button v-if="isFinished" class="primary new-season-btn" @click="openNewSeason">
-              <RefreshCw :size="13" />
-              <span class="btn-label">{{ trns("tournament.newSeason") }}</span>
-            </button>
-            <button
-              v-if="!isFinished"
-              class="simulate-all-btn"
-              @click="store.simulateTournament(tournament!.id)"
-            >
-              <Zap :size="13" />
-              <span class="btn-label">{{ trns("tournament.simulateAll") }}</span>
-            </button>
-            <button
-              class="settings-btn"
-              @click="router.push(`/tournaments/${tournament!.id}/settings`)"
-            >
-              <Settings :size="14" />
-              <span class="btn-label">{{ trns("tournament.settings") }}</span>
-            </button>
-          </div>
-        </div>
-        <h1>
-          {{ tournament.name }}
-          <span class="t-season">S{{ tournament.season }}</span>
-          <span class="t-format-tag">
-            {{
-              tournament.format === "group+bracket"
-                ? trns("tournaments.format.groupsKoLong")
-                : tournament.format === "league"
-                  ? trns("tournaments.format.league")
-                  : trns("tournaments.format.bracket")
-            }}
-          </span>
-        </h1>
-        <span class="t-meta">
-          {{ trns("common.teams", { n: tournament.teamIds.length }) }} ·
-          {{ trns("tournament.header.created", { date: dateStr }) }}
-        </span>
-      </div>
+      <DetailHeader
+        :tournament="tournament"
+        :winner-team="winnerTeam"
+        :date-str="dateStr"
+        :is-finished="isFinished"
+        @open-new-season="openNewSeason"
+        @simulate-all="store.simulateTournament(tournament!.id)"
+        @open-settings="router.push(`/tournaments/${tournament!.id}/settings`)"
+      />
 
-      <div class="phase-tabs">
-        <!-- League format -->
-        <template v-if="isLeagueFormat">
-          <!-- Multi-tier: bir tab per tier -->
-          <template v-if="isMultiTier">
-            <button
-              v-for="(tier, ti) in tournament.tiers"
-              :key="ti"
-              class="phase-tab"
-              :class="{ active: activeTab === 'league' && activeTierIdx === ti }"
-              @click="changeTab('league', ti)"
-            >
-              {{ tier.name }}
-            </button>
-          </template>
-          <!-- Single-tier -->
-          <template v-else>
-            <button
-              class="phase-tab"
-              :class="{ active: activeTab === 'league' }"
-              @click="changeTab('league')"
-            >
-              {{ trns("tournament.tabs.league") }}
-            </button>
-          </template>
-        </template>
-        <!-- Groups + Bracket format -->
-        <template v-else-if="isGroupFormat">
-          <button
-            class="phase-tab"
-            :class="{ active: activeTab === 'groups' }"
-            @click="changeTab('groups')"
-          >
-            {{ trns("tournament.tabs.groups") }}
-          </button>
-
-          <button
-            class="phase-tab"
-            :class="{ active: activeTab === 'bracket', disabled: !tournament.groupsDone }"
-            :disabled="!tournament.groupsDone"
-            @click="tournament.groupsDone && changeTab('bracket')"
-          >
-            {{ trns("tournament.tabs.bracket") }}
-            <Lock v-if="!tournament.groupsDone" :size="13" class="tab-lock" />
-          </button>
-        </template>
-        <!-- Pure bracket format -->
-        <template v-else>
-          <button
-            class="phase-tab"
-            :class="{ active: activeTab === 'bracket' }"
-            @click="changeTab('bracket')"
-          >
-            {{ trns("tournament.tabs.bracket") }}
-          </button>
-        </template>
-        <button
-          class="phase-tab"
-          :class="{ active: activeTab === 'stats', disabled: !hasAnyResults }"
-          :disabled="!hasAnyResults"
-          @click="hasAnyResults && changeTab('stats')"
-        >
-          {{ trns("tournament.tabs.stats") }}
-          <Lock v-if="!hasAnyResults" :size="13" class="tab-lock" />
-        </button>
-        <button
-          class="phase-tab"
-          :class="{ active: activeTab === 'participants' }"
-          @click="changeTab('participants')"
-        >
-          {{ trns("tournament.tabs.participants") }}
-        </button>
-      </div>
+      <DetailPhaseTabs
+        :tournament="tournament"
+        :active-tab="activeTab"
+        :is-league-format="isLeagueFormat"
+        :is-group-format="isGroupFormat"
+        :is-multi-tier="isMultiTier"
+        :active-tier-idx="activeTierIdx"
+        :has-any-results="hasAnyResults"
+        @change-tab="changeTab"
+      />
 
       <Transition name="tab" mode="out-in">
         <div v-if="activeTab === 'league'" key="league" class="section-box">
@@ -515,63 +404,13 @@ function changeTab(tab: MainTab, tierIdx?: number) {
       @cancel="showPromotionModal = false"
     />
 
-    <!-- Multi-tier new season confirmation modal -->
-    <AppModal
+    <DetailMultiTierModal
       v-if="showMultiTierModal && tournament?.tiers"
-      :title="`New Season — ${tournament.name}`"
-      :width="'min(520px, calc(100vw - 32px))'"
+      :tournament="tournament"
+      :all-teams="allTeams"
+      @confirm="handleMultiTierSeasonConfirm"
       @close="showMultiTierModal = false"
-    >
-      <div class="mt-modal-body">
-        <div v-for="(tier, ti) in tournament.tiers" :key="ti" class="mt-tier-block">
-          <div class="mt-tier-title">{{ tier.name }}</div>
-          <div class="mt-tier-rows">
-            <div
-              v-for="(row, rank) in tier.league.standings"
-              :key="row.teamId"
-              class="mt-tier-row"
-              :class="{
-                'mt-row--promoted': ti > 0 && rank < (tournament.promotionCount ?? 0),
-                'mt-row--relegated':
-                  ti < tournament.tiers!.length - 1 &&
-                  rank >= tier.league.standings.length - (tournament.promotionCount ?? 0),
-              }"
-            >
-              <span class="mt-rank">{{ rank + 1 }}</span>
-              <span
-                class="mt-dot"
-                :style="{ background: allTeams.find((t) => t.id === row.teamId)?.color ?? '#888' }"
-              />
-              <span class="mt-name">
-                {{ allTeams.find((t) => t.id === row.teamId)?.name ?? row.teamId }}
-              </span>
-              <span class="mt-pts">{{ row.pts }} pts</span>
-              <span
-                v-if="ti > 0 && rank < (tournament.promotionCount ?? 0)"
-                class="mt-badge mt-badge--up"
-              >
-                ↑ Up
-              </span>
-              <span
-                v-else-if="
-                  ti < tournament.tiers!.length - 1 &&
-                  rank >= tier.league.standings.length - (tournament.promotionCount ?? 0)
-                "
-                class="mt-badge mt-badge--down"
-              >
-                ↓ Down
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-      <template #footer>
-        <button class="primary" @click="handleMultiTierSeasonConfirm">
-          {{ trns("tournament.newSeason") }} →
-        </button>
-        <button @click="showMultiTierModal = false">{{ trns("common.cancel") }}</button>
-      </template>
-    </AppModal>
+    />
 
     <AppModal
       v-if="showPlayoffManualDraw && tournament"
@@ -648,182 +487,10 @@ function changeTab(tab: MainTab, tierIdx?: number) {
   color: var(--text-muted);
 }
 
-.t-format-tag {
-  font-size: 11px;
-  color: var(--text-muted);
-  background: color-mix(in srgb, var(--accent) 12%, var(--surface));
-  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
-  border-radius: var(--radius);
-  padding: 1px 7px;
-  font-family: var(--font-ui);
-}
-.t-meta {
-  font-size: 12px;
-  color: var(--text-muted);
-}
-.t-header-actions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.new-season-btn {
-  font-size: 12px;
-  padding: 3px 10px;
-}
-.settings-btn {
-  font-size: 12px;
-  padding: 3px 10px;
-  border-color: var(--border-light);
-  color: var(--text-muted);
-}
-.settings-btn:hover {
-  color: var(--text);
-  border-color: var(--border);
-}
-.simulate-all-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 12px;
-  padding: 3px 10px;
-  border-color: color-mix(in srgb, var(--accent) 40%, transparent);
-  color: var(--accent);
-  background: color-mix(in srgb, var(--accent) 8%, var(--surface));
-}
-.simulate-all-btn:hover {
-  background: color-mix(in srgb, var(--accent) 16%, var(--surface));
-  border-color: var(--accent);
-}
-.winner-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  border: 1px solid;
-  border-radius: var(--radius);
-  padding: 2px 9px;
-  font-size: 12px;
-  font-weight: 600;
-  background: color-mix(in srgb, currentColor 8%, var(--surface));
-  white-space: nowrap;
-}
 .gs-body {
   padding: 8px 0;
 }
 
-.mt-modal-body {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 4px 0;
-}
-.mt-tier-block {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-.mt-tier-title {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  margin-bottom: 2px;
-}
-.mt-tier-rows {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-}
-.mt-tier-row {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  padding: 3px 8px;
-  border-radius: var(--radius);
-  font-size: 12px;
-  background: var(--bg);
-  border: 1px solid var(--border-light);
-}
-.mt-row--promoted {
-  border-color: color-mix(in srgb, var(--success) 35%, transparent);
-  background: color-mix(in srgb, var(--success) 4%, var(--surface));
-}
-.mt-row--relegated {
-  border-color: color-mix(in srgb, var(--danger) 35%, transparent);
-  background: color-mix(in srgb, var(--danger) 4%, var(--surface));
-}
-.mt-rank {
-  width: 18px;
-  text-align: center;
-  font-size: 11px;
-  color: var(--text-muted);
-  flex-shrink: 0;
-}
-.mt-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-.mt-name {
-  flex: 1;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.mt-pts {
-  font-size: 11px;
-  color: var(--text-muted);
-  flex-shrink: 0;
-}
-.mt-badge {
-  font-size: 10px;
-  font-weight: 700;
-  padding: 1px 5px;
-  border-radius: var(--radius);
-  flex-shrink: 0;
-}
-.mt-badge--up {
-  color: var(--success);
-  background: color-mix(in srgb, var(--success) 12%, transparent);
-}
-.mt-badge--down {
-  color: var(--danger);
-  background: color-mix(in srgb, var(--danger) 12%, transparent);
-}
-
-@media (max-width: 640px) {
-  .page {
-    padding-bottom: 40px;
-  }
-
-  .t-header-top {
-    flex-wrap: wrap;
-    gap: 6px;
-  }
-  .t-header-actions {
-    gap: 4px;
-  }
-  .t-header-actions .btn-label {
-    display: none;
-  }
-  .winner-chip {
-    font-size: 11px;
-    padding: 2px 6px;
-    max-width: 120px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  .new-season-btn,
-  .simulate-all-btn,
-  .settings-btn {
-    padding: 5px 8px;
-    min-width: 32px;
-    justify-content: center;
-  }
-}
 .quick-draw-row {
   display: flex;
   align-items: center;
@@ -836,5 +503,11 @@ function changeTab(tab: MainTab, tierIdx?: number) {
   font-size: 12px;
   color: var(--text-muted);
   margin-right: 2px;
+}
+
+@media (max-width: 640px) {
+  .page {
+    padding-bottom: 40px;
+  }
 }
 </style>
