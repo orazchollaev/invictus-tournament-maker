@@ -506,6 +506,7 @@ export default {
         winPoints: "Points for a Win",
         drawPoints: "Points for a Draw",
         lossPoints: "Points for a Loss",
+        lockedBanner: "Scoring cannot be changed once matches have been played.",
       },
       simulation: {
         title: "Monte Carlo Simulation",

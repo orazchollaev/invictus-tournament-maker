@@ -508,6 +508,7 @@ export default {
         winPoints: "Galibiyet Puanı",
         drawPoints: "Beraberlik Puanı",
         lossPoints: "Mağlubiyet Puanı",
+        lockedBanner: "Maçlar başladıktan sonra puanlama değiştirilemez.",
       },
       simulation: {
         title: "Monte Carlo Simülasyonu",

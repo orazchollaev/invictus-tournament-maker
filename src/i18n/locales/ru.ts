@@ -507,6 +507,7 @@ export default {
         winPoints: "Очки за победу",
         drawPoints: "Очки за ничью",
         lossPoints: "Очки за поражение",
+        lockedBanner: "Начисление очков нельзя изменить после начала матчей.",
       },
       simulation: {
         title: "Симуляция Монте-Карло",

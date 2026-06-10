@@ -353,6 +353,7 @@ function handleSave() {
             v-model:local-win-points="localWinPoints"
             v-model:local-draw-points="localDrawPoints"
             v-model:local-loss-points="localLossPoints"
+            :has-any-results="hasAnyResults"
           />
         </template>
 

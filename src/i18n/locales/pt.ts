@@ -509,6 +509,7 @@ export default {
         winPoints: "Pontos por vitória",
         drawPoints: "Pontos por empate",
         lossPoints: "Pontos por derrota",
+        lockedBanner: "A pontuação não pode ser alterada após o início das partidas.",
       },
       simulation: {
         title: "Simulação Monte Carlo",
