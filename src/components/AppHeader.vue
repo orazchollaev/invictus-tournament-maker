@@ -2,6 +2,7 @@
 import { Settings, Star, Trophy, History, RefreshCw, FolderGit2, Users } from "@lucide/vue"
 import { useSettingsStore } from "@/modules/settings/store"
 import { usePwaUpdate } from "@/composables/usePwaUpdate"
+import { useNavActive } from "@/composables/useNavActive"
 import AppLogo from "./AppLogo.vue"
 import { useI18n } from "vue-i18n"
 
@@ -9,6 +10,7 @@ const { t } = useI18n()
 const GITHUB_URL = "https://github.com/orazchollaev/invictus-tournament-maker"
 const settings = useSettingsStore()
 const { needRefresh, applyUpdate } = usePwaUpdate()
+const { isNavActive } = useNavActive()
 </script>
 
 <template>
@@ -28,15 +30,18 @@ const { needRefresh, applyUpdate } = usePwaUpdate()
       </Transition>
 
       <nav class="main-nav">
-        <RouterLink to="/tournaments">
+        <RouterLink
+          to="/tournaments"
+          :class="{ 'router-link-active': isNavActive('/tournaments') }"
+        >
           <Trophy :size="16" />
           {{ t("nav.tournaments") }}
         </RouterLink>
-        <RouterLink to="/teams">
+        <RouterLink to="/teams" :class="{ 'router-link-active': isNavActive('/teams') }">
           <Users :size="16" />
           {{ t("nav.teams") }}
         </RouterLink>
-        <RouterLink to="/history">
+        <RouterLink to="/history" :class="{ 'router-link-active': isNavActive('/history') }">
           <History :size="16" class="nav-icon" />
           {{ t("nav.history") }}
         </RouterLink>
@@ -66,7 +71,12 @@ const { needRefresh, applyUpdate } = usePwaUpdate()
           <span class="github-star-label">{{ t("common.star") }}</span>
           <Star :size="12" class="github-star-icon" />
         </a>
-        <RouterLink to="/settings" class="settings-btn" :title="t('nav.settings')">
+        <RouterLink
+          to="/settings"
+          class="settings-btn"
+          :class="{ 'router-link-active': isNavActive('/settings') }"
+          :title="t('nav.settings')"
+        >
           <Settings :size="16" />
         </RouterLink>
       </div>
@@ -152,7 +162,6 @@ const { needRefresh, applyUpdate } = usePwaUpdate()
 .main-nav a.router-link-active {
   background: color-mix(in srgb, var(--accent) 12%, transparent);
   color: var(--accent);
-  font-weight: 600;
 }
 
 /* Right side */

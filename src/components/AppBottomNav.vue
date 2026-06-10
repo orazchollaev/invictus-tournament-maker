@@ -1,25 +1,43 @@
 <script setup lang="ts">
 import { Trophy, Users, History, Settings } from "@lucide/vue"
 import { useI18n } from "vue-i18n"
+import { useNavActive } from "@/composables/useNavActive"
 
 const { t } = useI18n()
+const { isNavActive } = useNavActive()
 </script>
 
 <template>
   <nav class="bottom-nav">
-    <RouterLink to="/tournaments" class="bottom-nav-item">
+    <RouterLink
+      to="/tournaments"
+      class="bottom-nav-item"
+      :class="{ 'router-link-active': isNavActive('/tournaments') }"
+    >
       <Trophy :size="22" />
       <span>{{ t("nav.tournaments") }}</span>
     </RouterLink>
-    <RouterLink to="/teams" class="bottom-nav-item">
+    <RouterLink
+      to="/teams"
+      class="bottom-nav-item"
+      :class="{ 'router-link-active': isNavActive('/teams') }"
+    >
       <Users :size="22" />
       <span>{{ t("nav.teams") }}</span>
     </RouterLink>
-    <RouterLink to="/history" class="bottom-nav-item">
+    <RouterLink
+      to="/history"
+      class="bottom-nav-item"
+      :class="{ 'router-link-active': isNavActive('/history') }"
+    >
       <History :size="22" />
       <span>{{ t("nav.history") }}</span>
     </RouterLink>
-    <RouterLink to="/settings" class="bottom-nav-item">
+    <RouterLink
+      to="/settings"
+      class="bottom-nav-item"
+      :class="{ 'router-link-active': isNavActive('/settings') }"
+    >
       <Settings :size="22" />
       <span>{{ t("nav.settings") }}</span>
     </RouterLink>
