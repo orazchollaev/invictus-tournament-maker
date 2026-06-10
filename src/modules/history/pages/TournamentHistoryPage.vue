@@ -153,9 +153,7 @@ const leagueSeasons = computed<LeagueSeasonEntry[]>(() =>
 const allTimeRows = computed<AllTimeRow[]>(() => {
   const map = new Map<string, AllTimeRow>()
   for (const t of completedSeasons.value) {
-    const allStandings = t.tiers?.length
-      ? t.tiers.flatMap((tier) => tier.league.standings)
-      : t.league?.standings
+    const allStandings = t.tiers?.length ? t.tiers[0].league.standings : t.league?.standings
     if (!allStandings) continue
     for (const s of allStandings) {
       const team = teamById(s.teamId)
