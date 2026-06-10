@@ -35,7 +35,7 @@ function getOrCreateOverlay() {
 watchEffect(() => {
   if (team.value) {
     const el = getOrCreateOverlay()
-    el.style.backgroundImage = `linear-gradient(45deg, color-mix(in srgb, ${team.value.color} 12%, transparent), transparent)`
+    el.style.backgroundImage = `radial-gradient(circle, color-mix(in srgb, ${team.value.color} 16%, transparent), transparent)`
     requestAnimationFrame(() => {
       if (_overlay) _overlay.style.opacity = "1"
     })
