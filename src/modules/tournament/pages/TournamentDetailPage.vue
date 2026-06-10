@@ -223,6 +223,15 @@ function closeSeasonModal() {
   showManualSeason.value = false
 }
 
+function handleQuickGroupDraw(seeded: boolean) {
+  const t = tournament.value
+  if (!t) return
+  const playoffSeedMode = settings.newSeasonPlayoffSeedMode
+  startNewSeason(seeded, undefined, t.hasThirdPlace ?? false, playoffSeedMode)
+  showSeasonModal.value = false
+  showManualSeason.value = false
+}
+
 function onAdvance() {
   const t = tournament.value
   if (!t) return
@@ -591,6 +600,11 @@ function changeTab(tab: MainTab, tierIdx?: number) {
           @confirm="handleManualSeasonConfirm"
           @cancel="showManualSeason = false"
         />
+        <div class="quick-draw-row">
+          <span class="quick-draw-label">or:</span>
+          <button @click="handleQuickGroupDraw(true)">{{ trns("common.seeded") }}</button>
+          <button @click="handleQuickGroupDraw(false)">{{ trns("common.random") }}</button>
+        </div>
       </template>
       <template v-else-if="showManualSeason">
         <ManualDraw
@@ -809,5 +823,18 @@ function changeTab(tab: MainTab, tierIdx?: number) {
     min-width: 32px;
     justify-content: center;
   }
+}
+.quick-draw-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 0 2px;
+  border-top: 1px solid var(--border-light);
+  margin-top: 4px;
+}
+.quick-draw-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-right: 2px;
 }
 </style>

@@ -146,7 +146,7 @@ export function useCrudActions(
       t.knockoutLegMode ?? "single",
       t.finalLegMode ?? "single"
     )
-    newT.drawType = deriveDrawType(seeded, orderedIds)
+    newT.drawType = t.drawType ?? deriveDrawType(seeded, orderedIds)
     if (playoffSeedMode) newT.playoffSeedMode = playoffSeedMode
     else if (t.playoffSeedMode) newT.playoffSeedMode = t.playoffSeedMode
     if (withThirdPlace && newT.rounds.length >= 2) {
