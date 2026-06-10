@@ -7,6 +7,7 @@ import BracketClassic from "./BracketClassic.vue"
 import FixtureView from "./FixtureView.vue"
 import { useTournamentStore } from "../store"
 import { useSettingsStore } from "@/modules/settings/store"
+import { useGradualSim } from "../composables/useGradualSim"
 import { Maximize2, Minus, Plus, Shuffle, X, Download, Expand } from "@lucide/vue"
 import { toPng } from "html-to-image"
 
@@ -18,6 +19,33 @@ const props = defineProps<{
 
 const store = useTournamentStore()
 const settings = useSettingsStore()
+const { runSequential } = useGradualSim()
+
+async function simRoundGradual(ri: number) {
+  const round = props.tournament.rounds[ri]
+  if (!round) return
+  const cbs = round.matches
+    .map((m, mi) => ({ m, mi }))
+    .filter(({ m }) => m.homeId && m.awayId && !m.result)
+    .map(
+      ({ mi }) =>
+        () =>
+          store.simulateBracketMatch(props.tournament.id, ri, mi)
+    )
+  await runSequential(cbs)
+}
+
+async function simAllGradual() {
+  for (let ri = 0; ri < props.tournament.rounds.length; ri++) {
+    await simRoundGradual(ri)
+  }
+  if (props.tournament.hasThirdPlace && props.tournament.thirdPlaceMatch) {
+    const tp = props.tournament.thirdPlaceMatch
+    if (tp.homeId && tp.awayId && !tp.result) {
+      store.simulateThirdPlace(props.tournament.id)
+    }
+  }
+}
 
 const activeBracket = computed(() => {
   const style = settings.bracketStyle
@@ -352,15 +380,11 @@ onUnmounted(() => {
     </h2>
     <div class="section-body bracket-body">
       <div class="flex sim-toolbar">
-        <button @click="store.simulateAll(tournament.id)">
+        <button @click="simAllGradual">
           <Shuffle :size="14" />
           Simulate All
         </button>
-        <button
-          v-for="(round, ri) in tournament.rounds"
-          :key="ri"
-          @click="store.simulateRound(tournament.id, ri)"
-        >
+        <button v-for="(round, ri) in tournament.rounds" :key="ri" @click="simRoundGradual(ri)">
           Sim {{ round.name }}
         </button>
         <button

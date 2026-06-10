@@ -58,6 +58,13 @@ const bracketConnectorColorsVal = computed({
     settings.bracketConnectorColors = v === "on"
   },
 })
+
+const gradualRevealVal = computed({
+  get: () => (settings.gradualReveal ? "on" : "off"),
+  set: (v: string) => {
+    settings.gradualReveal = v === "on"
+  },
+})
 </script>
 
 <template>
@@ -114,6 +121,13 @@ const bracketConnectorColorsVal = computed({
           <div class="setting-desc">{{ t("settings.display.bracketConnectorColors.desc") }}</div>
         </div>
         <BtnGroup v-model="bracketConnectorColorsVal" :options="onOffOptions" />
+      </div>
+      <div class="setting-row">
+        <div class="setting-info">
+          <div class="setting-label">{{ t("settings.display.gradualReveal.label") }}</div>
+          <div class="setting-desc">{{ t("settings.display.gradualReveal.desc") }}</div>
+        </div>
+        <BtnGroup v-model="gradualRevealVal" :options="onOffOptions" />
       </div>
     </div>
   </div>

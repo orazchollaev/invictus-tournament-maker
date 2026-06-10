@@ -268,6 +268,10 @@ export default {
         label: "Cores dos conectores",
         desc: "Colore as linhas do chave com a cor de cada time à medida que avançam",
       },
+      gradualReveal: {
+        label: "Revelação gradual",
+        desc: "Os resultados aparecem um a um com uma breve pausa em vez de todos de uma vez",
+      },
     },
     simulation: {
       title: "Simulação",

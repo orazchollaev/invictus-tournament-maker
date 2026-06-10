@@ -267,6 +267,10 @@ export default {
         label: "Bracket Connector Colors",
         desc: "Color the bracket connector lines with each team's color as they advance",
       },
+      gradualReveal: {
+        label: "Gradual Result Reveal",
+        desc: "Show match results one by one with a short delay instead of all at once",
+      },
     },
     simulation: {
       title: "Simulation",

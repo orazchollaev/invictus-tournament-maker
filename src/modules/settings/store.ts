@@ -34,6 +34,7 @@ export const useSettingsStore = defineStore("settings", () => {
   const winPoints = ref(3)
   const drawPoints = ref(1)
   const lossPoints = ref(0)
+  const gradualReveal = ref(true)
 
   watch(
     theme,
@@ -79,6 +80,7 @@ export const useSettingsStore = defineStore("settings", () => {
     winPoints.value = 3
     drawPoints.value = 1
     lossPoints.value = 0
+    gradualReveal.value = true
   }
 
   return {
@@ -104,6 +106,7 @@ export const useSettingsStore = defineStore("settings", () => {
     winPoints,
     drawPoints,
     lossPoints,
+    gradualReveal,
     resetAll,
   }
 })

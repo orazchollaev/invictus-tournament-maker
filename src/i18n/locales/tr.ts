@@ -268,6 +268,10 @@ export default {
         label: "Bracket Bağlantı Renkleri",
         desc: "Bracket bağlantı çizgilerini ilerleyen takımların renkleriyle boyar",
       },
+      gradualReveal: {
+        label: "Kademeli Sonuç Açılımı",
+        desc: "Maç sonuçları hepsi birden değil, kısa gecikmelerle teker teker gösterilsin",
+      },
     },
     simulation: {
       title: "Simülasyon",

@@ -268,6 +268,10 @@ export default {
         label: "Colores de conectores",
         desc: "Colorea las líneas del cuadro con el color de cada equipo a medida que avanzan",
       },
+      gradualReveal: {
+        label: "Revelación gradual",
+        desc: "Los resultados aparecen uno a uno con una breve pausa en lugar de todos a la vez",
+      },
     },
     simulation: {
       title: "Simulación",

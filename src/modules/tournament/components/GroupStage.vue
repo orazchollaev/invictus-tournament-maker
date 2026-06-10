@@ -7,6 +7,7 @@ import { useTeamLookup } from "@/composables/useTeamLookup"
 import TeamNameAuto from "@/modules/teams/components/TeamNameAuto.vue"
 import { Lock, Shuffle, Check } from "@lucide/vue"
 import { useI18n } from "vue-i18n"
+import { useGradualSim } from "../composables/useGradualSim"
 
 const props = defineProps<{
   tournament: Tournament
@@ -24,6 +25,7 @@ const emit = defineEmits<{
 }>()
 
 const { t } = useI18n()
+const { runSequential } = useGradualSim()
 const locked = computed(() => !!props.tournament.groupsDone)
 
 const editingMatch = ref<{ gi: number; mi: number } | null>(null)
@@ -57,7 +59,7 @@ function setRound(gi: number, r: number) {
   selectedRound.value[gi] = r
 }
 
-function handleSimGroupWeek(gi: number) {
+async function handleSimGroupWeek(gi: number) {
   const group = props.tournament.groups![gi]
   const n = group.teamIds.length
   const mpr = Math.floor(n / 2)
@@ -65,26 +67,82 @@ function handleSimGroupWeek(gi: number) {
   const first = group.matches.findIndex((m) => !m.result)
   if (first === -1) return
   const roundIdx = Math.floor(first / mpr)
-  emit("simGroupWeek", gi)
+  const start = roundIdx * mpr
+  const end = Math.min(start + mpr, group.matches.length)
+  const cbs = []
+  for (let mi = start; mi < end; mi++) {
+    if (!group.matches[mi].result) {
+      const captured = mi
+      cbs.push(() => emit("simMatch", gi, captured))
+    }
+  }
+  await runSequential(cbs)
   selectedRound.value[gi] = roundIdx
 }
 
-function handleSimWeek() {
+async function handleSimWeek() {
   const groups = props.tournament.groups
   if (!groups) return
-  // Snapshot which round will be simulated per group before emitting
-  const nextRounds = groups.map((group) => {
+  const cbs: (() => void)[] = []
+  const nextRounds: number[] = []
+  for (let gi = 0; gi < groups.length; gi++) {
+    const group = groups[gi]
     const n = group.teamIds.length
     const mpr = Math.floor(n / 2)
-    if (mpr < 1) return 0
+    if (mpr < 1) {
+      nextRounds.push(0)
+      continue
+    }
     const first = group.matches.findIndex((m) => !m.result)
-    return first === -1 ? -1 : Math.floor(first / mpr)
-  })
-  emit("simWeek")
-  // Navigate each group's view to the round that was just simulated
+    if (first === -1) {
+      nextRounds.push(-1)
+      continue
+    }
+    const roundIdx = Math.floor(first / mpr)
+    nextRounds.push(roundIdx)
+    const start = roundIdx * mpr
+    const end = Math.min(start + mpr, group.matches.length)
+    for (let mi = start; mi < end; mi++) {
+      if (!group.matches[mi].result) {
+        const cgi = gi,
+          cmi = mi
+        cbs.push(() => emit("simMatch", cgi, cmi))
+      }
+    }
+  }
+  await runSequential(cbs)
   nextRounds.forEach((r, gi) => {
     if (r !== -1) selectedRound.value[gi] = r
   })
+}
+
+async function handleSimGroup(gi: number) {
+  const group = props.tournament.groups![gi]
+  const cbs = group.matches
+    .map((m, mi) => ({ m, mi }))
+    .filter(({ m }) => !m.result)
+    .map(
+      ({ mi }) =>
+        () =>
+          emit("simMatch", gi, mi)
+    )
+  await runSequential(cbs)
+}
+
+async function handleSimAll() {
+  const groups = props.tournament.groups
+  if (!groups) return
+  const cbs: (() => void)[] = []
+  for (let gi = 0; gi < groups.length; gi++) {
+    for (let mi = 0; mi < groups[gi].matches.length; mi++) {
+      if (!groups[gi].matches[mi].result) {
+        const cgi = gi,
+          cmi = mi
+        cbs.push(() => emit("simMatch", cgi, cmi))
+      }
+    }
+  }
+  await runSequential(cbs)
 }
 
 function openEdit(gi: number, mi: number, match: GroupMatch) {
@@ -135,12 +193,12 @@ function scoreAccentColor(match: GroupMatch): string {
         <Shuffle :size="14" />
         Sim Week
       </button>
-      <button :disabled="allDone" @click="emit('simAll')">
+      <button :disabled="allDone" @click="handleSimAll()">
         <Shuffle :size="14" />
         Simulate All
       </button>
       <template v-for="(g, gi) in tournament.groups" :key="gi">
-        <button v-if="g.matches.some((m) => !m.result)" @click="emit('simGroup', gi)">
+        <button v-if="g.matches.some((m) => !m.result)" @click="handleSimGroup(gi)">
           Sim {{ g.name }}
         </button>
       </template>

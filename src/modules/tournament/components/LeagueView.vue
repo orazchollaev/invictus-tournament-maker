@@ -3,6 +3,7 @@ import { ref, computed, watch, nextTick } from "vue"
 import type { League, Tournament } from "@/modules/tournament/types"
 import type { Team } from "@/modules/teams/types"
 import { Zap, ChevronLeft, ChevronRight } from "@lucide/vue"
+import { useGradualSim } from "@/modules/tournament/composables/useGradualSim"
 
 const props = defineProps<{
   tournament: Tournament
@@ -110,12 +111,22 @@ function cancelEdit() {
   editing.value = null
 }
 
-function handleSimMatchday(idx: number) {
-  emit("simMatchday", idx)
-  nextTick(() => {
-    const next = matchdays.value.findIndex((md, i) => i > idx && md.matches.some((m) => !m.result))
-    if (next !== -1) activeIdx.value = next
-  })
+const { runSequential } = useGradualSim()
+
+async function handleSimMatchday(idx: number) {
+  const md = matchdays.value[idx]
+  if (!md) return
+  const cbs = md.matches
+    .map((m, mi) => ({ m, mi }))
+    .filter(({ m }) => !m.result)
+    .map(
+      ({ mi }) =>
+        () =>
+          emit("simMatch", idx, mi)
+    )
+  await runSequential(cbs)
+  const next = matchdays.value.findIndex((m, i) => i > idx && m.matches.some((mm) => !mm.result))
+  if (next !== -1) activeIdx.value = next
 }
 </script>
 
