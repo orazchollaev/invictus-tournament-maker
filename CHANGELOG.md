@@ -1,5 +1,37 @@
 # Changelog
 
+## [1.11.0](https://github.com/orazchollaev/invictus-tournament-maker/compare/v1.10.1...v1.11.0) (2026-06-10)
+
+### 🚀 New Features
+
+- add manual playoff seeding mode with group-rank draw UI ([3e3262d](https://github.com/orazchollaev/invictus-tournament-maker/commit/3e3262dd49c1b62e524729939341be2a4a4ef036))
+- add tournament name editing with cross-season rename support ([a372174](https://github.com/orazchollaev/invictus-tournament-maker/commit/a3721748201363353f7967d154559ce9a2e376d9))
+- **header:** add icons to navigation links ([b373089](https://github.com/orazchollaev/invictus-tournament-maker/commit/b3730896c6b440d16efdc90c5d020b87ba91242d))
+- **nav:** highlight header and bottom nav links on nested routes via path-prefix matching ([cc95782](https://github.com/orazchollaev/invictus-tournament-maker/commit/cc957822d45655c7084f311c3caade43797f81fa))
+- **sample-data:** add order field to datasets and switch to grid layout for more entries ([a0237a9](https://github.com/orazchollaev/invictus-tournament-maker/commit/a0237a97bc0cff8c1b895f64958b1e34d4cb0c09))
+- **settings:** lock scoring points after matches have been played ([ef6cf8f](https://github.com/orazchollaev/invictus-tournament-maker/commit/ef6cf8fc604b0492633a3795cdc82b838da1e305))
+- **sim:** gradual result reveal with per-match delay, toggleable from display settings ([ed994b9](https://github.com/orazchollaev/invictus-tournament-maker/commit/ed994b94e389dc3cbcd814859876b7eb4eed833e))
+- sort tournaments from newest to oldest ([510fb91](https://github.com/orazchollaev/invictus-tournament-maker/commit/510fb91995f29acde5a1208b27f4992974c4ff52))
+- **team-detail:** add team color theming to detail page ([3d3e0a7](https://github.com/orazchollaev/invictus-tournament-maker/commit/3d3e0a70e763a2ec186da5c239b23da8ba24468e))
+- **tournament, settings:** add configurable win/draw/loss points to group and league tournaments ([42bb7ec](https://github.com/orazchollaev/invictus-tournament-maker/commit/42bb7ec2e3bda3396b386f94e038809aa660ab19))
+- **tournament, settings:** warn on unsaved changes before leaving ([e521e64](https://github.com/orazchollaev/invictus-tournament-maker/commit/e521e6460407d52c1ec37aafd23aef1db8032523))
+- **tournament:** add seeded/random quick-draw buttons to manual group season modal ([bb2837e](https://github.com/orazchollaev/invictus-tournament-maker/commit/bb2837e384e5d32f98adac283cf87b4b7dc5d37a))
+
+### 🐛 Bug Fixes
+
+- **android:** account for safe-area-inset-top in sticky nav top offsets ([d04c52c](https://github.com/orazchollaev/invictus-tournament-maker/commit/d04c52c8d7ec1b12971cbb8adafbc2afa5eb3e6b))
+- **group-stage:** advance week tab live during gradual sim ([c59d317](https://github.com/orazchollaev/invictus-tournament-maker/commit/c59d317fe0ad6e979acbd4f6d0c29ccd83d2077b))
+- **settings:** recalc winner after points config change ([de0f32d](https://github.com/orazchollaev/invictus-tournament-maker/commit/de0f32dbeb4d4978e8135ddbc6ab13b21f6dd54d))
+
+### ♻️ Refactoring
+
+- **settings:** move simulation settings stepper to the right of badge ([e26efa9](https://github.com/orazchollaev/invictus-tournament-maker/commit/e26efa99fdd700f686e81325741ce9a159d9fa7e))
+- **tournament:** tournament settings split new components ([4a21b18](https://github.com/orazchollaev/invictus-tournament-maker/commit/4a21b186cf0739b44604a58a7b2cc8b96d446c27))
+
+### 🎨 Styles
+
+- **team-detail:** change team background gradient from linear to radial ([c9150d8](https://github.com/orazchollaev/invictus-tournament-maker/commit/c9150d8f629541ca98b2361334051452f946307c))
+
 ## [1.10.1](https://github.com/orazchollaev/invictus-tournament-maker/compare/v1.10.0...v1.10.1) (2026-06-07)
 
 ### 🐛 Bug Fixes
