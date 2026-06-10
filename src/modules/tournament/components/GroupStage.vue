@@ -69,63 +69,71 @@ async function handleSimGroupWeek(gi: number) {
   const roundIdx = Math.floor(first / mpr)
   const start = roundIdx * mpr
   const end = Math.min(start + mpr, group.matches.length)
-  const cbs = []
+  const cbs: (() => void)[] = []
   for (let mi = start; mi < end; mi++) {
     if (!group.matches[mi].result) {
       const captured = mi
-      cbs.push(() => emit("simMatch", gi, captured))
+      cbs.push(() => {
+        emit("simMatch", gi, captured)
+        selectedRound.value[gi] = roundIdx
+      })
     }
   }
   await runSequential(cbs)
-  selectedRound.value[gi] = roundIdx
+  const nextFirst = group.matches.findIndex((m) => !m.result)
+  if (nextFirst !== -1) selectedRound.value[gi] = Math.floor(nextFirst / mpr)
 }
 
 async function handleSimWeek() {
   const groups = props.tournament.groups
   if (!groups) return
   const cbs: (() => void)[] = []
-  const nextRounds: number[] = []
   for (let gi = 0; gi < groups.length; gi++) {
     const group = groups[gi]
     const n = group.teamIds.length
     const mpr = Math.floor(n / 2)
-    if (mpr < 1) {
-      nextRounds.push(0)
-      continue
-    }
+    if (mpr < 1) continue
     const first = group.matches.findIndex((m) => !m.result)
-    if (first === -1) {
-      nextRounds.push(-1)
-      continue
-    }
+    if (first === -1) continue
     const roundIdx = Math.floor(first / mpr)
-    nextRounds.push(roundIdx)
     const start = roundIdx * mpr
     const end = Math.min(start + mpr, group.matches.length)
     for (let mi = start; mi < end; mi++) {
       if (!group.matches[mi].result) {
         const cgi = gi,
           cmi = mi
-        cbs.push(() => emit("simMatch", cgi, cmi))
+        cbs.push(() => {
+          emit("simMatch", cgi, cmi)
+          selectedRound.value[cgi] = roundIdx
+        })
       }
     }
   }
   await runSequential(cbs)
-  nextRounds.forEach((r, gi) => {
-    if (r !== -1) selectedRound.value[gi] = r
-  })
+  for (let gi = 0; gi < groups.length; gi++) {
+    const group = groups[gi]
+    const n = group.teamIds.length
+    const mpr = Math.floor(n / 2)
+    if (mpr < 1) continue
+    const nextFirst = group.matches.findIndex((m) => !m.result)
+    if (nextFirst !== -1) selectedRound.value[gi] = Math.floor(nextFirst / mpr)
+  }
 }
 
 async function handleSimGroup(gi: number) {
   const group = props.tournament.groups![gi]
+  const n = group.teamIds.length
+  const mpr = Math.floor(n / 2)
   const cbs = group.matches
     .map((m, mi) => ({ m, mi }))
     .filter(({ m }) => !m.result)
-    .map(
-      ({ mi }) =>
-        () =>
-          emit("simMatch", gi, mi)
-    )
+    .map(({ mi }) => {
+      const roundIdx = mpr > 0 ? Math.floor(mi / mpr) : 0
+      return () => {
+        emit("simMatch", gi, mi)
+        selectedRound.value[gi] = roundIdx
+      }
+    })
   await runSequential(cbs)
 }
 
@@ -134,11 +142,18 @@ async function handleSimAll() {
   if (!groups) return
   const cbs: (() => void)[] = []
   for (let gi = 0; gi < groups.length; gi++) {
-    for (let mi = 0; mi < groups[gi].matches.length; mi++) {
-      if (!groups[gi].matches[mi].result) {
+    const group = groups[gi]
+    const n = group.teamIds.length
+    const mpr = Math.floor(n / 2)
+    for (let mi = 0; mi < group.matches.length; mi++) {
+      if (!group.matches[mi].result) {
         const cgi = gi,
           cmi = mi
-        cbs.push(() => emit("simMatch", cgi, cmi))
+        const roundIdx = mpr > 0 ? Math.floor(mi / mpr) : 0
+        cbs.push(() => {
+          emit("simMatch", cgi, cmi)
+          selectedRound.value[cgi] = roundIdx
+        })
       }
     }
   }
