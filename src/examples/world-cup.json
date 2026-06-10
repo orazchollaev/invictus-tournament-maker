@@ -1,6 +1,7 @@
 {
   "label": "FIFA World Cup 2026",
   "description": "48 teams — real groups",
+  "order": 1,
   "teams": [
     {
       "id": "nt-01",

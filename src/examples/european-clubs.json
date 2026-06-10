@@ -1,0 +1,79 @@
+{
+  "label": "UEFA",
+  "description": "32 top European clubs",
+  "order": 2,
+  "teams": [
+    { "id": "ec-01", "name": "Real Madrid", "color": "#FEBE10", "power": 97 },
+    {
+      "id": "ec-02",
+      "name": "Manchester City",
+      "color": "#6CABDD",
+      "power": 96
+    },
+    { "id": "ec-03", "name": "Bayern Munich", "color": "#DC052D", "power": 95 },
+    { "id": "ec-04", "name": "Liverpool", "color": "#C8102E", "power": 94 },
+    {
+      "id": "ec-05",
+      "name": "Paris Saint-Germain",
+      "color": "#004170",
+      "power": 93
+    },
+    { "id": "ec-06", "name": "Barcelona", "color": "#A50044", "power": 92 },
+    { "id": "ec-07", "name": "Arsenal", "color": "#EF0107", "power": 91 },
+    { "id": "ec-08", "name": "Inter", "color": "#0055A4", "power": 90 },
+    {
+      "id": "ec-09",
+      "name": "Atletico Madrid",
+      "color": "#CE3524",
+      "power": 89
+    },
+    { "id": "ec-10", "name": "Juventus", "color": "#000000", "power": 88 },
+    { "id": "ec-11", "name": "Chelsea", "color": "#034694", "power": 87 },
+    {
+      "id": "ec-12",
+      "name": "Borussia Dortmund",
+      "color": "#FDE100",
+      "power": 86
+    },
+    { "id": "ec-13", "name": "AC Milan", "color": "#FB090B", "power": 85 },
+    { "id": "ec-14", "name": "Napoli", "color": "#008BD2", "power": 84 },
+    { "id": "ec-15", "name": "Benfica", "color": "#E30613", "power": 83 },
+    { "id": "ec-16", "name": "Sporting CP", "color": "#008F39", "power": 82 },
+    { "id": "ec-17", "name": "RB Leipzig", "color": "#DD013F", "power": 81 },
+    {
+      "id": "ec-18",
+      "name": "Bayer Leverkusen",
+      "color": "#E32221",
+      "power": 81
+    },
+    {
+      "id": "ec-19",
+      "name": "Newcastle United",
+      "color": "#241F20",
+      "power": 80
+    },
+    { "id": "ec-20", "name": "Tottenham", "color": "#132257", "power": 80 },
+    { "id": "ec-21", "name": "Aston Villa", "color": "#670E36", "power": 79 },
+    { "id": "ec-22", "name": "Ajax", "color": "#D2122E", "power": 78 },
+    { "id": "ec-23", "name": "PSV", "color": "#E31E24", "power": 78 },
+    { "id": "ec-24", "name": "Porto", "color": "#003399", "power": 77 },
+    { "id": "ec-25", "name": "Galatasaray", "color": "#A32638", "power": 76 },
+    { "id": "ec-26", "name": "Fenerbahce", "color": "#001489", "power": 75 },
+    {
+      "id": "ec-27",
+      "name": "Shakhtar Donetsk",
+      "color": "#FF6A00",
+      "power": 74
+    },
+    { "id": "ec-28", "name": "Club Brugge", "color": "#0055A4", "power": 73 },
+    { "id": "ec-29", "name": "Celtic", "color": "#018749", "power": 72 },
+    { "id": "ec-30", "name": "Olympiacos", "color": "#E30613", "power": 71 },
+    {
+      "id": "ec-31",
+      "name": "Red Star Belgrade",
+      "color": "#D40000",
+      "power": 70
+    },
+    { "id": "ec-32", "name": "Dinamo Zagreb", "color": "#005BBB", "power": 69 }
+  ]
+}

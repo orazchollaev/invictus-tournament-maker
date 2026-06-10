@@ -1,0 +1,122 @@
+{
+  "label": "MLS",
+  "description": "30 MLS clubs",
+  "order": 5,
+  "teams": [
+    { "id": "mls-01", "name": "Inter Miami", "color": "#F7B5CD", "power": 88 },
+    { "id": "mls-02", "name": "LAFC", "color": "#000000", "power": 87 },
+    { "id": "mls-03", "name": "LA Galaxy", "color": "#00245D", "power": 86 },
+    {
+      "id": "mls-04",
+      "name": "Seattle Sounders",
+      "color": "#5D9732",
+      "power": 85
+    },
+    {
+      "id": "mls-05",
+      "name": "Atlanta United",
+      "color": "#A71930",
+      "power": 84
+    },
+    {
+      "id": "mls-06",
+      "name": "FC Cincinnati",
+      "color": "#003087",
+      "power": 84
+    },
+    {
+      "id": "mls-07",
+      "name": "Columbus Crew",
+      "color": "#FFD100",
+      "power": 83
+    },
+    {
+      "id": "mls-08",
+      "name": "Philadelphia Union",
+      "color": "#002D62",
+      "power": 82
+    },
+    { "id": "mls-09", "name": "Orlando City", "color": "#633492", "power": 81 },
+    { "id": "mls-10", "name": "Nashville SC", "color": "#ECE83A", "power": 80 },
+    {
+      "id": "mls-11",
+      "name": "New York City FC",
+      "color": "#6CADDF",
+      "power": 80
+    },
+    {
+      "id": "mls-12",
+      "name": "New York Red Bulls",
+      "color": "#DD013F",
+      "power": 79
+    },
+    { "id": "mls-13", "name": "Charlotte FC", "color": "#00AEEF", "power": 78 },
+    { "id": "mls-14", "name": "Austin FC", "color": "#00B140", "power": 78 },
+    { "id": "mls-15", "name": "FC Dallas", "color": "#C8102E", "power": 77 },
+    {
+      "id": "mls-16",
+      "name": "Houston Dynamo",
+      "color": "#F37021",
+      "power": 77
+    },
+    {
+      "id": "mls-17",
+      "name": "Portland Timbers",
+      "color": "#004812",
+      "power": 76
+    },
+    {
+      "id": "mls-18",
+      "name": "Sporting Kansas City",
+      "color": "#93B1D7",
+      "power": 75
+    },
+    {
+      "id": "mls-19",
+      "name": "San Jose Earthquakes",
+      "color": "#0067B1",
+      "power": 74
+    },
+    {
+      "id": "mls-20",
+      "name": "Minnesota United",
+      "color": "#8C8F90",
+      "power": 74
+    },
+    {
+      "id": "mls-21",
+      "name": "Real Salt Lake",
+      "color": "#A41E35",
+      "power": 73
+    },
+    {
+      "id": "mls-22",
+      "name": "Colorado Rapids",
+      "color": "#960A2C",
+      "power": 72
+    },
+    { "id": "mls-23", "name": "Chicago Fire", "color": "#8A1538", "power": 72 },
+    { "id": "mls-24", "name": "CF Montreal", "color": "#003DA5", "power": 71 },
+    {
+      "id": "mls-25",
+      "name": "Vancouver Whitecaps",
+      "color": "#00205B",
+      "power": 71
+    },
+    { "id": "mls-26", "name": "Toronto FC", "color": "#D71920", "power": 70 },
+    { "id": "mls-27", "name": "DC United", "color": "#000000", "power": 69 },
+    {
+      "id": "mls-28",
+      "name": "St. Louis City",
+      "color": "#E2231A",
+      "power": 69
+    },
+    { "id": "mls-29", "name": "San Diego FC", "color": "#00AEEF", "power": 68 },
+    {
+      "id": "mls-30",
+      "name": "New England Revolution",
+      "color": "#0C2340",
+      "power": 68
+    }
+  ]
+}

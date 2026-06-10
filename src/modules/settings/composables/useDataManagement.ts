@@ -7,6 +7,7 @@ import { version } from "../../../../package.json"
 interface Dataset {
   label: string
   description: string
+  order?: number
   teams: { id: string; name: string; color: string; power: number }[]
   tournaments?: any[]
 }
@@ -15,7 +16,9 @@ const globbed = import.meta.glob<Dataset>("../../../examples/*.json", {
   eager: true,
   import: "default",
 })
-export const SAMPLE_DATASETS = Object.values(globbed)
+export const SAMPLE_DATASETS = Object.values(globbed).sort(
+  (a, b) => (a.order ?? 999) - (b.order ?? 999)
+)
 
 const DATA_KEYS = ["teams", "tournament"] as const
 

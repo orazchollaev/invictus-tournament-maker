@@ -1,0 +1,62 @@
+{
+  "label": "Premier League",
+  "description": "20 English clubs",
+  "order": 4,
+  "teams": [
+    {
+      "id": "pl-01",
+      "name": "Manchester City",
+      "color": "#6CABDD",
+      "power": 95
+    },
+    { "id": "pl-02", "name": "Liverpool", "color": "#C8102E", "power": 94 },
+    { "id": "pl-03", "name": "Arsenal", "color": "#EF0107", "power": 93 },
+    { "id": "pl-04", "name": "Chelsea", "color": "#034694", "power": 89 },
+    {
+      "id": "pl-05",
+      "name": "Newcastle United",
+      "color": "#241F20",
+      "power": 88
+    },
+    {
+      "id": "pl-06",
+      "name": "Tottenham Hotspur",
+      "color": "#132257",
+      "power": 87
+    },
+    { "id": "pl-07", "name": "Aston Villa", "color": "#670E36", "power": 86 },
+    {
+      "id": "pl-08",
+      "name": "Manchester United",
+      "color": "#DA291C",
+      "power": 85
+    },
+    { "id": "pl-09", "name": "Brighton", "color": "#0057B8", "power": 82 },
+    {
+      "id": "pl-10",
+      "name": "West Ham United",
+      "color": "#7A263A",
+      "power": 81
+    },
+    {
+      "id": "pl-11",
+      "name": "Crystal Palace",
+      "color": "#1B458F",
+      "power": 80
+    },
+    { "id": "pl-12", "name": "Brentford", "color": "#E30613", "power": 79 },
+    { "id": "pl-13", "name": "Bournemouth", "color": "#DA291C", "power": 78 },
+    { "id": "pl-14", "name": "Fulham", "color": "#000000", "power": 77 },
+    { "id": "pl-15", "name": "Everton", "color": "#003399", "power": 76 },
+    { "id": "pl-16", "name": "Wolverhampton", "color": "#FDB913", "power": 75 },
+    {
+      "id": "pl-17",
+      "name": "Nottingham Forest",
+      "color": "#DD0000",
+      "power": 74
+    },
+    { "id": "pl-18", "name": "Burnley", "color": "#6C1D45", "power": 73 },
+    { "id": "pl-19", "name": "Leeds United", "color": "#FFCD00", "power": 72 },
+    { "id": "pl-20", "name": "Sunderland", "color": "#EB172B", "power": 71 }
+  ]
+}

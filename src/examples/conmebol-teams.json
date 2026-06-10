@@ -1,0 +1,74 @@
+{
+  "label": "Conmebol",
+  "description": "32 top Conmebol clubs",
+  "order": 3,
+  "teams": [
+    { "id": "sa-01", "name": "Flamengo", "color": "#C8102E", "power": 95 },
+    { "id": "sa-02", "name": "Palmeiras", "color": "#006437", "power": 94 },
+    { "id": "sa-03", "name": "River Plate", "color": "#D71920", "power": 93 },
+    { "id": "sa-04", "name": "Botafogo", "color": "#000000", "power": 92 },
+    { "id": "sa-05", "name": "Boca Juniors", "color": "#0033A0", "power": 91 },
+    { "id": "sa-06", "name": "Fluminense", "color": "#7A263A", "power": 90 },
+    {
+      "id": "sa-07",
+      "name": "Atletico Mineiro",
+      "color": "#111111",
+      "power": 89
+    },
+    { "id": "sa-08", "name": "Sao Paulo", "color": "#D71920", "power": 88 },
+    { "id": "sa-09", "name": "Racing Club", "color": "#4DB5FF", "power": 87 },
+    { "id": "sa-10", "name": "Independiente", "color": "#E30613", "power": 86 },
+    { "id": "sa-11", "name": "Estudiantes", "color": "#E21836", "power": 85 },
+    {
+      "id": "sa-12",
+      "name": "Velez Sarsfield",
+      "color": "#0057B8",
+      "power": 84
+    },
+    { "id": "sa-13", "name": "Internacional", "color": "#D71920", "power": 83 },
+    { "id": "sa-14", "name": "Gremio", "color": "#0094D9", "power": 82 },
+    { "id": "sa-15", "name": "Corinthians", "color": "#111111", "power": 81 },
+    { "id": "sa-16", "name": "Cruzeiro", "color": "#003DA5", "power": 80 },
+    { "id": "sa-17", "name": "Olimpia", "color": "#000000", "power": 79 },
+    { "id": "sa-18", "name": "Cerro Porteno", "color": "#C8102E", "power": 78 },
+    { "id": "sa-19", "name": "Nacional", "color": "#003DA5", "power": 77 },
+    { "id": "sa-20", "name": "Penarol", "color": "#FFD100", "power": 77 },
+    { "id": "sa-21", "name": "LDU Quito", "color": "#FFFFFF", "power": 76 },
+    {
+      "id": "sa-22",
+      "name": "Independiente del Valle",
+      "color": "#000000",
+      "power": 75
+    },
+    { "id": "sa-23", "name": "Barcelona SC", "color": "#FFD100", "power": 74 },
+    { "id": "sa-24", "name": "Colo-Colo", "color": "#111111", "power": 73 },
+    {
+      "id": "sa-25",
+      "name": "Universidad de Chile",
+      "color": "#0033A0",
+      "power": 72
+    },
+    { "id": "sa-26", "name": "Universitario", "color": "#7A0019", "power": 71 },
+    {
+      "id": "sa-27",
+      "name": "Sporting Cristal",
+      "color": "#5BC2E7",
+      "power": 70
+    },
+    { "id": "sa-28", "name": "Bolivar", "color": "#5BC2E7", "power": 69 },
+    { "id": "sa-29", "name": "The Strongest", "color": "#FFD100", "power": 68 },
+    {
+      "id": "sa-30",
+      "name": "Deportivo Tachira",
+      "color": "#FFD100",
+      "power": 67
+    },
+    { "id": "sa-31", "name": "Millonarios", "color": "#003DA5", "power": 66 },
+    {
+      "id": "sa-32",
+      "name": "Atletico Nacional",
+      "color": "#00A651",
+      "power": 65
+    }
+  ]
+}
