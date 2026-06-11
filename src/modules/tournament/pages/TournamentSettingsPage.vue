@@ -125,9 +125,8 @@ const hasChanges = computed(() => {
   )
     return true
   if (
-    (isLeagueFormat.value || isGroupFormat.value) &&
     JSON.stringify(localTeamPowerAdjustments.value) !==
-      JSON.stringify(orig.teamPowerAdjustments ?? {})
+    JSON.stringify(orig.teamPowerAdjustments ?? {})
   )
     return true
   return false
@@ -243,15 +242,15 @@ function saveOnly() {
       if (!(teamId in localTeamPointAdjustments.value))
         store.setTeamPointAdjustment(tournamentId.value, teamId, 0)
     }
-    const origPowerAdj = orig.teamPowerAdjustments ?? {}
-    for (const [teamId, val] of Object.entries(localTeamPowerAdjustments.value)) {
-      if (val !== (origPowerAdj[teamId] ?? 0))
-        store.setTeamPowerAdjustment(tournamentId.value, teamId, val)
-    }
-    for (const teamId of Object.keys(origPowerAdj)) {
-      if (!(teamId in localTeamPowerAdjustments.value))
-        store.setTeamPowerAdjustment(tournamentId.value, teamId, 0)
-    }
+  }
+  const origPowerAdj = orig.teamPowerAdjustments ?? {}
+  for (const [teamId, val] of Object.entries(localTeamPowerAdjustments.value)) {
+    if (val !== (origPowerAdj[teamId] ?? 0))
+      store.setTeamPowerAdjustment(tournamentId.value, teamId, val)
+  }
+  for (const teamId of Object.keys(origPowerAdj)) {
+    if (!(teamId in localTeamPowerAdjustments.value))
+      store.setTeamPowerAdjustment(tournamentId.value, teamId, 0)
   }
 }
 
@@ -397,14 +396,13 @@ function handleSave() {
         </template>
 
         <!-- Team Adjustments -->
-        <template v-if="isLeagueFormat || isGroupFormat">
-          <SettingsTeamAdjustments
-            v-model:team-point-adjustments="localTeamPointAdjustments"
-            v-model:team-power-adjustments="localTeamPowerAdjustments"
-            :teams="localTeams"
-            :has-any-results="hasAnyResults"
-          />
-        </template>
+        <SettingsTeamAdjustments
+          v-model:team-point-adjustments="localTeamPointAdjustments"
+          v-model:team-power-adjustments="localTeamPowerAdjustments"
+          :teams="localTeams"
+          :has-any-results="hasAnyResults"
+          :show-points="isLeagueFormat || isGroupFormat"
+        />
 
         <!-- Simulation -->
         <SettingsSimulation :tournament-id="tournamentId" :tournament="tournament" />

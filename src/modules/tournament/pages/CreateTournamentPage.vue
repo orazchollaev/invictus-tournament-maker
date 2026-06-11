@@ -159,7 +159,7 @@ function doCreate(orderedIds?: string[]) {
   )
   if (isGroup) store.setPlayoffSeedMode(id, playoffSeedMode.value)
   if (hasThirdPlace.value) store.toggleThirdPlace(id)
-  if (isGroup) applyAdjustments(id)
+  applyAdjustments(id)
   router.push(`/tournaments/${id}`)
 }
 </script>
@@ -263,12 +263,13 @@ function doCreate(orderedIds?: string[]) {
       </template>
 
       <!-- Team Adjustments -->
-      <template v-if="format !== 'bracket' && selected.length >= 2">
+      <template v-if="selected.length >= 2">
         <SettingsTeamAdjustments
           v-model:team-point-adjustments="teamPointAdjustments"
           v-model:team-power-adjustments="teamPowerAdjustments"
           :teams="selectedTeams"
           :has-any-results="false"
+          :show-points="format !== 'bracket'"
         />
       </template>
 

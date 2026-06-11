@@ -9,6 +9,7 @@ const { t } = useI18n()
 defineProps<{
   teams: Team[]
   hasAnyResults: boolean
+  showPoints?: boolean
 }>()
 
 const teamPointAdjustments = defineModel<Record<string, number>>("teamPointAdjustments", {
@@ -47,7 +48,7 @@ const MAX = 30
 
 <template>
   <!-- Point Adjustments Accordion -->
-  <div class="tsp-card tsp-accordion-card">
+  <div v-if="showPoints !== false" class="tsp-card tsp-accordion-card">
     <button class="tsp-accordion-header" @click="pointsOpen = !pointsOpen">
       <div class="tsp-accordion-title-row">
         <span class="tsp-section-title tsp-section-title--inline">
