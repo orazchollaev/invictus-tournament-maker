@@ -155,9 +155,9 @@ function doCreate(orderedIds?: string[]) {
     <div class="ctp-header">
       <RouterLink to="/tournaments" class="back-link">
         <ArrowLeft :size="14" />
-        Tournaments
+        {{ $t("tournaments.title") }}
       </RouterLink>
-      <h2 class="ctp-title">New Tournament</h2>
+      <h2 class="ctp-title">{{ $t("tournaments.newBtn") }}</h2>
     </div>
 
     <!-- Manual draw overlay -->
@@ -182,7 +182,7 @@ function doCreate(orderedIds?: string[]) {
     <template v-else>
       <!-- Name -->
       <div class="ctp-card">
-        <div class="ctp-section-title">Tournament Name</div>
+        <div class="ctp-section-title">{{ $t("tournament.create.name") }}</div>
         <div class="ctp-name-wrap">
           <input
             v-model="name"
@@ -198,7 +198,7 @@ function doCreate(orderedIds?: string[]) {
 
       <!-- Teams -->
       <div class="ctp-card">
-        <div class="ctp-section-title">Participating Teams</div>
+        <div class="ctp-section-title">{{ $t("tournament.create.teams") }}</div>
         <TeamSelector :teams="allTeams" :selected="selected" @update:selected="selected = $event" />
       </div>
 
@@ -250,10 +250,12 @@ function doCreate(orderedIds?: string[]) {
       <!-- Footer actions -->
       <div class="ctp-footer">
         <button class="primary ctp-create-btn" :disabled="!canCreate" @click="handleCreate">
-          Create Tournament
-          <span v-if="selected.length >= 2" class="ctp-badge">{{ selected.length }} teams</span>
+          {{ $t("tournament.create.createBtn") }}
+          <span v-if="selected.length >= 2" class="ctp-badge">
+            {{ $t("common.teams", { n: selected.length }) }}
+          </span>
         </button>
-        <RouterLink to="/tournaments" class="ctp-cancel-link">Cancel</RouterLink>
+        <RouterLink to="/tournaments" class="ctp-cancel-link">{{ $t("common.cancel") }}</RouterLink>
       </div>
     </template>
   </div>
