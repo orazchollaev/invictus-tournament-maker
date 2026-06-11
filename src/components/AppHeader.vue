@@ -21,14 +21,6 @@ const { isNavActive } = useNavActive()
         <span class="brand-name">Invictus</span>
       </RouterLink>
 
-      <Transition name="wc-badge">
-        <div v-if="settings.theme === 'worldcup2026'" class="wc-badge">
-          <Trophy :size="12" />
-          <span>FIFA World Cup 2026™</span>
-          <span class="wc-hosts">USA · CAN · MEX</span>
-        </div>
-      </Transition>
-
       <nav class="main-nav">
         <RouterLink
           to="/tournaments"
@@ -81,6 +73,14 @@ const { isNavActive } = useNavActive()
         </RouterLink>
       </div>
     </div>
+
+    <Transition name="wc-badge">
+      <div v-if="settings.theme === 'worldcup2026'" class="wc-badge">
+        <span class="wc-badge-title">FIFA World Cup 2026™</span>
+        <span class="wc-badge-sep">·</span>
+        <span class="wc-badge-hosts">USA · CAN · MEX</span>
+      </div>
+    </Transition>
   </header>
 </template>
 
@@ -269,22 +269,29 @@ const { isNavActive } = useNavActive()
 .wc-badge {
   display: flex;
   align-items: center;
-  gap: 5px;
-  padding: 3px 10px;
-  border-radius: var(--radius);
-  border: 1px solid color-mix(in srgb, #c9a227 40%, transparent);
-  background: color-mix(in srgb, #c9a227 8%, transparent);
-  color: #c9a227;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
+  justify-content: center;
+  gap: 6px;
+  padding: 3px 0;
+  background: var(--surface);
+  border-top: 1px solid var(--border-light);
   white-space: nowrap;
 }
-.wc-hosts {
+.wc-badge-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.wc-badge-sep {
   font-size: 10px;
-  opacity: 0.7;
-  font-weight: 400;
-  letter-spacing: 0.06em;
+  color: var(--border);
+}
+.wc-badge-hosts {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--text-muted);
+  letter-spacing: 0.07em;
 }
 
 .wc-badge-enter-active,
