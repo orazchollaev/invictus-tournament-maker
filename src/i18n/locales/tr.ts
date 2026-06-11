@@ -350,6 +350,7 @@ export default {
       stats: "İstatistikler",
       participants: "Katılımcılar",
       wildcards: "Jokerler",
+      fixtures: "Fikstür",
     },
     header: {
       teams: "{n} takım",

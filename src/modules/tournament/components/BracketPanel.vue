@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, reactive, onMounted, onUnmounted, nextTick } from "vue"
+import { useI18n } from "vue-i18n"
 import type { Tournament } from "../types"
 import type { Team } from "@/modules/teams/types"
 import BracketDoubleSide from "./BracketDoubleSide.vue"
@@ -17,6 +18,7 @@ const props = defineProps<{
   title?: string
 }>()
 
+const { t } = useI18n()
 const store = useTournamentStore()
 const settings = useSettingsStore()
 const { runSequential } = useGradualSim()
@@ -456,14 +458,14 @@ onUnmounted(() => {
       :class="{ active: bracketView === 'bracket' }"
       @click="bracketView = 'bracket'"
     >
-      Bracket
+      {{ t("tournament.tabs.bracket") }}
     </button>
     <button
       class="bracket-mobile-tab"
       :class="{ active: bracketView === 'fixtures' }"
       @click="bracketView = 'fixtures'"
     >
-      Fixtures
+      {{ t("tournament.tabs.fixtures") }}
     </button>
   </div>
 
@@ -708,7 +710,7 @@ onUnmounted(() => {
   .bracket-mobile-tabs {
     display: flex;
     position: fixed;
-    bottom: var(--bottom-nav-height);
+    bottom: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom));
     left: 0;
     right: 0;
     z-index: 90;

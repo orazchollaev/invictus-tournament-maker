@@ -350,6 +350,7 @@ export default {
       stats: "Estadísticas",
       participants: "Participantes",
       wildcards: "Comodines",
+      fixtures: "Calendario",
     },
     header: {
       teams: "{n} equipos",

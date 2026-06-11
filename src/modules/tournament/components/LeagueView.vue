@@ -710,4 +710,50 @@ async function handleSimMatchday(idx: number) {
     grid-template-columns: 1fr;
   }
 }
+
+@media (max-width: 640px) {
+  /* Hide D, L, GF, GA — keep #, Team, P, W, GD, Pts */
+  .lv-table th:nth-child(5),
+  .lv-table td:nth-child(5),
+  .lv-table th:nth-child(6),
+  .lv-table td:nth-child(6),
+  .lv-table th:nth-child(7),
+  .lv-table td:nth-child(7),
+  .lv-table th:nth-child(8),
+  .lv-table td:nth-child(8) {
+    display: none;
+  }
+
+  /* Bigger touch targets for match rows */
+  .lv-match {
+    min-height: 40px;
+    font-size: 12px;
+    padding: 4px 10px;
+  }
+
+  /* Bigger score button */
+  .lv-score-btn {
+    min-width: 48px;
+    padding: 4px 8px;
+    font-size: 12px;
+  }
+
+  /* Bigger inline score inputs */
+  .lv-score-input {
+    width: 40px;
+    padding: 4px;
+    font-size: 13px;
+  }
+
+  /* Bigger matchday nav buttons */
+  .lv-nav-btn {
+    padding: 6px 10px;
+  }
+
+  /* Sim match button always visible */
+  .lv-sim-btn {
+    padding: 5px 7px;
+    opacity: 0.7;
+  }
+}
 </style>

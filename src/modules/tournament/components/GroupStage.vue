@@ -649,6 +649,27 @@ function scoreAccentColor(match: GroupMatch): string {
     min-width: 90px;
   }
 
+  /* Hide D, L, GF, GA — keep #, Team, P, W, GD, Pts */
+  .gs-table th:nth-child(5),
+  .gs-table td:nth-child(5),
+  .gs-table th:nth-child(6),
+  .gs-table td:nth-child(6),
+  .gs-table th:nth-child(7),
+  .gs-table td:nth-child(7),
+  .gs-table th:nth-child(8),
+  .gs-table td:nth-child(8) {
+    display: none;
+  }
+
+  /* Bigger touch target for score and sim buttons */
+  .gs-match {
+    padding: 5px 0;
+  }
+  .gs-score-btn {
+    min-width: 56px;
+    padding: 5px 8px;
+  }
+
   .gs-toolbar {
     gap: 5px;
     padding: 0 4px;

@@ -349,6 +349,7 @@ export default {
       stats: "Статистика",
       participants: "Участники",
       wildcards: "Уайлдкарды",
+      fixtures: "Расписание",
     },
     header: {
       teams: "{n} команд",
