@@ -522,6 +522,15 @@ export default {
         done: "Simulation complete — 10,000 runs finished.",
         viewResults: "View Results",
       },
+      teamAdjustments: {
+        pointsTitle: "Team Point Adjustments",
+        powerTitle: "Team Power Adjustments",
+        pointsHint:
+          "Add or subtract table points for specific teams this season. Resets to zero on the next season.",
+        powerHint:
+          "Temporarily boost or reduce a team's power rating for simulation this season. Resets to zero on the next season.",
+        lockedBanner: "Adjustments cannot be changed once matches have been played.",
+      },
       dangerZone: {
         title: "Danger Zone",
         resetLabel: "Reset Tournament",

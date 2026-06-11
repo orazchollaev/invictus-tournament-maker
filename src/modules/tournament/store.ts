@@ -56,13 +56,29 @@ export const useTournamentStore = defineStore("tournament", () => {
     if (t.format === "league") {
       if (t.tiers?.length) {
         t.tiers.forEach((tier) =>
-          recalcLeagueStandings(tier.league, tiebreaker, winPts, drawPts, lossPts)
+          recalcLeagueStandings(
+            tier.league,
+            tiebreaker,
+            winPts,
+            drawPts,
+            lossPts,
+            t.teamPointAdjustments
+          )
         )
       } else if (t.league) {
-        recalcLeagueStandings(t.league, tiebreaker, winPts, drawPts, lossPts)
+        recalcLeagueStandings(
+          t.league,
+          tiebreaker,
+          winPts,
+          drawPts,
+          lossPts,
+          t.teamPointAdjustments
+        )
       }
     } else if (t.groups) {
-      t.groups.forEach((g) => recalcStandings(g, tiebreaker, winPts, drawPts, lossPts))
+      t.groups.forEach((g) =>
+        recalcStandings(g, tiebreaker, winPts, drawPts, lossPts, t.teamPointAdjustments)
+      )
     }
   }
 
@@ -80,15 +96,83 @@ export const useTournamentStore = defineStore("tournament", () => {
     if (t.format === "league") {
       if (t.tiers?.length) {
         t.tiers.forEach((tier) =>
-          recalcLeagueStandings(tier.league, t.tiebreaker, winPoints, drawPoints, lossPoints)
+          recalcLeagueStandings(
+            tier.league,
+            t.tiebreaker,
+            winPoints,
+            drawPoints,
+            lossPoints,
+            t.teamPointAdjustments
+          )
         )
         if (allTiersDone(t)) t.winnerId = getTiersWinner(t)
       } else if (t.league) {
-        recalcLeagueStandings(t.league, t.tiebreaker, winPoints, drawPoints, lossPoints)
+        recalcLeagueStandings(
+          t.league,
+          t.tiebreaker,
+          winPoints,
+          drawPoints,
+          lossPoints,
+          t.teamPointAdjustments
+        )
         if (allLeagueDone(t)) t.winnerId = getLeagueWinner(t)
       }
     } else if (t.groups) {
-      t.groups.forEach((g) => recalcStandings(g, t.tiebreaker, winPoints, drawPoints, lossPoints))
+      t.groups.forEach((g) =>
+        recalcStandings(g, t.tiebreaker, winPoints, drawPoints, lossPoints, t.teamPointAdjustments)
+      )
+    }
+  }
+
+  function setTeamPointAdjustment(tournamentId: string, teamId: string, value: number) {
+    const t = tournaments.value.find((t) => t.id === tournamentId)
+    if (!t) return
+    if (!t.teamPointAdjustments) t.teamPointAdjustments = {}
+    if (value === 0) {
+      delete t.teamPointAdjustments[teamId]
+    } else {
+      t.teamPointAdjustments[teamId] = value
+    }
+    const winPts = t.winPoints ?? 3
+    const drawPts = t.drawPoints ?? 1
+    const lossPts = t.lossPoints ?? 0
+    if (t.format === "league") {
+      if (t.tiers?.length) {
+        t.tiers.forEach((tier) =>
+          recalcLeagueStandings(
+            tier.league,
+            t.tiebreaker,
+            winPts,
+            drawPts,
+            lossPts,
+            t.teamPointAdjustments
+          )
+        )
+      } else if (t.league) {
+        recalcLeagueStandings(
+          t.league,
+          t.tiebreaker,
+          winPts,
+          drawPts,
+          lossPts,
+          t.teamPointAdjustments
+        )
+      }
+    } else if (t.groups) {
+      t.groups.forEach((g) =>
+        recalcStandings(g, t.tiebreaker, winPts, drawPts, lossPts, t.teamPointAdjustments)
+      )
+    }
+  }
+
+  function setTeamPowerAdjustment(tournamentId: string, teamId: string, value: number) {
+    const t = tournaments.value.find((t) => t.id === tournamentId)
+    if (!t) return
+    if (!t.teamPowerAdjustments) t.teamPowerAdjustments = {}
+    if (value === 0) {
+      delete t.teamPowerAdjustments[teamId]
+    } else {
+      t.teamPowerAdjustments[teamId] = value
     }
   }
 
@@ -154,5 +238,7 @@ export const useTournamentStore = defineStore("tournament", () => {
     setRelegationCount,
     setLinkedLeague,
     createMultiTierLeagueTournament,
+    setTeamPointAdjustment,
+    setTeamPowerAdjustment,
   }
 })

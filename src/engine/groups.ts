@@ -118,7 +118,8 @@ export function recalcStandings(
   tiebreaker?: Tiebreaker,
   winPts = 3,
   drawPts = 1,
-  lossPts = 0
+  lossPts = 0,
+  pointAdjustments?: Record<string, number>
 ) {
   group.standings.forEach((s) => {
     s.played = 0
@@ -167,6 +168,13 @@ export function recalcStandings(
     }
   }
 
+  if (pointAdjustments) {
+    for (const s of group.standings) {
+      const adj = pointAdjustments[s.teamId]
+      if (adj) s.pts += adj
+    }
+  }
+
   sortStandings(group.standings, group.matches, tiebreaker, winPts, drawPts)
 }
 
@@ -184,7 +192,8 @@ export function setGroupMatchResult(
     tournament.tiebreaker,
     tournament.winPoints ?? 3,
     tournament.drawPoints ?? 1,
-    tournament.lossPoints ?? 0
+    tournament.lossPoints ?? 0,
+    tournament.teamPointAdjustments
   )
 }
 
@@ -204,7 +213,8 @@ export function simulateGroupMatch(
     tournament.tiebreaker,
     tournament.winPoints ?? 3,
     tournament.drawPoints ?? 1,
-    tournament.lossPoints ?? 0
+    tournament.lossPoints ?? 0,
+    tournament.teamPointAdjustments
   )
 }
 
@@ -223,7 +233,8 @@ export function simulateGroup(tournament: Tournament, groupIdx: number, teams: T
     tournament.tiebreaker,
     tournament.winPoints ?? 3,
     tournament.drawPoints ?? 1,
-    tournament.lossPoints ?? 0
+    tournament.lossPoints ?? 0,
+    tournament.teamPointAdjustments
   )
 }
 
@@ -256,7 +267,8 @@ export function simulateGroupWeek(tournament: Tournament, groupIdx: number, team
     tournament.tiebreaker,
     tournament.winPoints ?? 3,
     tournament.drawPoints ?? 1,
-    tournament.lossPoints ?? 0
+    tournament.lossPoints ?? 0,
+    tournament.teamPointAdjustments
   )
   return roundIdx
 }
@@ -285,7 +297,8 @@ export function simulateWeek(tournament: Tournament, teams: Team[]): number {
       tournament.tiebreaker,
       tournament.winPoints ?? 3,
       tournament.drawPoints ?? 1,
-      tournament.lossPoints ?? 0
+      tournament.lossPoints ?? 0,
+      tournament.teamPointAdjustments
     )
     simulatedRound = roundIdx
   }

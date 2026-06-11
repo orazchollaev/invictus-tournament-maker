@@ -124,5 +124,9 @@ export interface Tournament {
   drawPoints?: number
   lossPoints?: number
 
+  // per-team adjustments for this season only (reset on new season)
+  teamPointAdjustments?: Record<string, number> // +/- table points per team
+  teamPowerAdjustments?: Record<string, number> // +/- power rating per team
+
   createdAt: number
 }

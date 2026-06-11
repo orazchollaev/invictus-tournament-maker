@@ -17,6 +17,15 @@ import {
   getTiersWinner,
 } from "@/engine"
 
+function adjustedTeams(teams: Team[], t: Tournament): Team[] {
+  const adj = t.teamPowerAdjustments
+  if (!adj || Object.keys(adj).length === 0) return teams
+  return teams.map((team) => {
+    const delta = adj[team.id] ?? 0
+    return delta === 0 ? team : { ...team, power: Math.max(1, Math.min(100, team.power + delta)) }
+  })
+}
+
 export function useLeagueActions(tournaments: Ref<Tournament[]>, getTeams: () => Team[]) {
   function getT(id: string) {
     return tournaments.value.find((t) => t.id === id)
@@ -40,21 +49,21 @@ export function useLeagueActions(tournaments: Ref<Tournament[]>, getTeams: () =>
   function simLeagueMatch(tournamentId: string, matchdayIdx: number, matchIdx: number) {
     const t = getT(tournamentId)
     if (!t) return
-    simulateLeagueMatch(t, matchdayIdx, matchIdx, getTeams())
+    simulateLeagueMatch(t, matchdayIdx, matchIdx, adjustedTeams(getTeams(), t))
     if (allLeagueDone(t)) t.winnerId = getLeagueWinner(t)
   }
 
   function simLeagueMatchday(tournamentId: string, matchdayIdx: number) {
     const t = getT(tournamentId)
     if (!t) return
-    simulateLeagueMatchday(t, matchdayIdx, getTeams())
+    simulateLeagueMatchday(t, matchdayIdx, adjustedTeams(getTeams(), t))
     if (allLeagueDone(t)) t.winnerId = getLeagueWinner(t)
   }
 
   function simAllLeague(tournamentId: string) {
     const t = getT(tournamentId)
     if (!t) return
-    simulateAllLeague(t, getTeams())
+    simulateAllLeague(t, adjustedTeams(getTeams(), t))
     if (allLeagueDone(t)) t.winnerId = getLeagueWinner(t)
   }
 
@@ -82,28 +91,28 @@ export function useLeagueActions(tournaments: Ref<Tournament[]>, getTeams: () =>
   ) {
     const t = getT(tournamentId)
     if (!t) return
-    simulateTierMatch(t, tierIdx, matchdayIdx, matchIdx, getTeams())
+    simulateTierMatch(t, tierIdx, matchdayIdx, matchIdx, adjustedTeams(getTeams(), t))
     if (allTiersDone(t)) t.winnerId = getTiersWinner(t)
   }
 
   function simTierMatchday(tournamentId: string, tierIdx: number, matchdayIdx: number) {
     const t = getT(tournamentId)
     if (!t) return
-    simulateTierMatchday(t, tierIdx, matchdayIdx, getTeams())
+    simulateTierMatchday(t, tierIdx, matchdayIdx, adjustedTeams(getTeams(), t))
     if (allTiersDone(t)) t.winnerId = getTiersWinner(t)
   }
 
   function simAllTierAction(tournamentId: string, tierIdx: number) {
     const t = getT(tournamentId)
     if (!t) return
-    simulateAllTier(t, tierIdx, getTeams())
+    simulateAllTier(t, tierIdx, adjustedTeams(getTeams(), t))
     if (allTiersDone(t)) t.winnerId = getTiersWinner(t)
   }
 
   function simAllTiersAction(tournamentId: string) {
     const t = getT(tournamentId)
     if (!t) return
-    simulateAllTiers(t, getTeams())
+    simulateAllTiers(t, adjustedTeams(getTeams(), t))
     if (allTiersDone(t)) t.winnerId = getTiersWinner(t)
   }
 

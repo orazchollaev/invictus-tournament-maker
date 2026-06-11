@@ -90,7 +90,8 @@ export function recalcLeagueStandings(
   tiebreaker?: Tiebreaker,
   winPts = 3,
   drawPts = 1,
-  lossPts = 0
+  lossPts = 0,
+  pointAdjustments?: Record<string, number>
 ) {
   league.standings.forEach((s) => {
     s.played = s.won = s.drawn = s.lost = s.gf = s.ga = s.gd = s.pts = 0
@@ -129,6 +130,12 @@ export function recalcLeagueStandings(
       }
     }
   }
+  if (pointAdjustments) {
+    for (const s of league.standings) {
+      const adj = pointAdjustments[s.teamId]
+      if (adj) s.pts += adj
+    }
+  }
   sortLeagueStandings(league.standings, league.matchdays, tiebreaker, winPts, drawPts)
 }
 
@@ -146,7 +153,8 @@ export function setLeagueMatchResult(
     tournament.tiebreaker,
     tournament.winPoints ?? 3,
     tournament.drawPoints ?? 1,
-    tournament.lossPoints ?? 0
+    tournament.lossPoints ?? 0,
+    tournament.teamPointAdjustments
   )
 }
 
@@ -170,7 +178,8 @@ export function simulateLeagueMatch(
     tournament.tiebreaker,
     tournament.winPoints ?? 3,
     tournament.drawPoints ?? 1,
-    tournament.lossPoints ?? 0
+    tournament.lossPoints ?? 0,
+    tournament.teamPointAdjustments
   )
 }
 
@@ -190,7 +199,8 @@ export function simulateLeagueMatchday(tournament: Tournament, matchdayIdx: numb
     tournament.tiebreaker,
     tournament.winPoints ?? 3,
     tournament.drawPoints ?? 1,
-    tournament.lossPoints ?? 0
+    tournament.lossPoints ?? 0,
+    tournament.teamPointAdjustments
   )
 }
 
@@ -233,7 +243,8 @@ export function setTierMatchResult(
     tournament.tiebreaker,
     tournament.winPoints ?? 3,
     tournament.drawPoints ?? 1,
-    tournament.lossPoints ?? 0
+    tournament.lossPoints ?? 0,
+    tournament.teamPointAdjustments
   )
 }
 
@@ -259,7 +270,8 @@ export function simulateTierMatch(
     tournament.tiebreaker,
     tournament.winPoints ?? 3,
     tournament.drawPoints ?? 1,
-    tournament.lossPoints ?? 0
+    tournament.lossPoints ?? 0,
+    tournament.teamPointAdjustments
   )
 }
 
@@ -285,7 +297,8 @@ export function simulateTierMatchday(
     tournament.tiebreaker,
     tournament.winPoints ?? 3,
     tournament.drawPoints ?? 1,
-    tournament.lossPoints ?? 0
+    tournament.lossPoints ?? 0,
+    tournament.teamPointAdjustments
   )
 }
 

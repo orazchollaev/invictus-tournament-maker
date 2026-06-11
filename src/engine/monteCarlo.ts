@@ -196,7 +196,8 @@ function runOnce(
           t.tiebreaker,
           t.winPoints ?? 3,
           t.drawPoints ?? 1,
-          t.lossPoints ?? 0
+          t.lossPoints ?? 0,
+          t.teamPointAdjustments
         )
       }
       const topTier = t.tiers[0].league.standings
@@ -222,7 +223,8 @@ function runOnce(
         t.tiebreaker,
         t.winPoints ?? 3,
         t.drawPoints ?? 1,
-        t.lossPoints ?? 0
+        t.lossPoints ?? 0,
+        t.teamPointAdjustments
       )
       const n = t.league.standings.length
       t.league.standings.forEach((s, rank) => {

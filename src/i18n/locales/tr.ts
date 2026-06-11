@@ -524,6 +524,14 @@ export default {
         done: "Simülasyon tamamlandı — 10.000 çalıştırma bitti.",
         viewResults: "Sonuçları Gör",
       },
+      teamAdjustments: {
+        pointsTitle: "Takım Puan Ayarlamaları",
+        powerTitle: "Takım Güç Ayarlamaları",
+        pointsHint: "Bu sezon belirli takımlara puan ekle veya çıkar. Yeni sezonda sıfırlanır.",
+        powerHint:
+          "Bu sezon simülasyon için takımların güç puanını geçici olarak artır veya azalt. Yeni sezonda sıfırlanır.",
+        lockedBanner: "Maçlar başladıktan sonra ayarlamalar değiştirilemez.",
+      },
       dangerZone: {
         title: "Tehlikeli Bölge",
         resetLabel: "Turnuvayı Sıfırla",

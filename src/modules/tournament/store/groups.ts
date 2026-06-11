@@ -12,6 +12,15 @@ import {
   seedBracketFromGroups,
 } from "@/engine"
 
+function adjustedTeams(teams: Team[], t: Tournament): Team[] {
+  const adj = t.teamPowerAdjustments
+  if (!adj || Object.keys(adj).length === 0) return teams
+  return teams.map((team) => {
+    const delta = adj[team.id] ?? 0
+    return delta === 0 ? team : { ...team, power: Math.max(1, Math.min(100, team.power + delta)) }
+  })
+}
+
 export function useGroupActions(tournaments: Ref<Tournament[]>, getTeams: () => Team[]) {
   function setGroupResult(
     tournamentId: string,
@@ -28,31 +37,31 @@ export function useGroupActions(tournaments: Ref<Tournament[]>, getTeams: () => 
   function simGroupMatch(tournamentId: string, groupIdx: number, matchIdx: number) {
     const t = tournaments.value.find((t) => t.id === tournamentId)
     if (!t) return
-    simulateGroupMatch(t, groupIdx, matchIdx, getTeams())
+    simulateGroupMatch(t, groupIdx, matchIdx, adjustedTeams(getTeams(), t))
   }
 
   function simGroup(tournamentId: string, groupIdx: number) {
     const t = tournaments.value.find((t) => t.id === tournamentId)
     if (!t) return
-    simulateGroup(t, groupIdx, getTeams())
+    simulateGroup(t, groupIdx, adjustedTeams(getTeams(), t))
   }
 
   function simAllGroups(tournamentId: string) {
     const t = tournaments.value.find((t) => t.id === tournamentId)
     if (!t) return
-    simulateAllGroups(t, getTeams())
+    simulateAllGroups(t, adjustedTeams(getTeams(), t))
   }
 
   function simGroupWeek(tournamentId: string, groupIdx: number): number {
     const t = tournaments.value.find((t) => t.id === tournamentId)
     if (!t) return -1
-    return simulateGroupWeek(t, groupIdx, getTeams())
+    return simulateGroupWeek(t, groupIdx, adjustedTeams(getTeams(), t))
   }
 
   function simWeek(tournamentId: string): number {
     const t = tournaments.value.find((t) => t.id === tournamentId)
     if (!t) return -1
-    return simulateWeek(t, getTeams())
+    return simulateWeek(t, adjustedTeams(getTeams(), t))
   }
 
   function advanceToBracket(tournamentId: string) {

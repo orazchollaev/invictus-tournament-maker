@@ -525,6 +525,15 @@ export default {
         done: "Simulação concluída — 10.000 execuções finalizadas.",
         viewResults: "Ver resultados",
       },
+      teamAdjustments: {
+        pointsTitle: "Ajuste de pontos dos times",
+        powerTitle: "Ajuste de poder dos times",
+        pointsHint:
+          "Adicione ou subtraia pontos na tabela para times específicos nesta temporada. Reinicia na próxima temporada.",
+        powerHint:
+          "Aumente ou reduza temporariamente o poder de um time para simulação nesta temporada. Reinicia na próxima temporada.",
+        lockedBanner: "Os ajustes não podem ser alterados após o início das partidas.",
+      },
       dangerZone: {
         title: "Zona de perigo",
         resetLabel: "Redefinir torneio",

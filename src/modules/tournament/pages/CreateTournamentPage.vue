@@ -16,6 +16,7 @@ import {
   CreateMatchRules,
   CreateScoringTiebreaker,
 } from "../components/create"
+import { SettingsTeamAdjustments } from "../components/settings"
 
 type DrawType = "random" | "seeded" | "manual"
 type TournamentFormat = "bracket" | "group+bracket" | "league"
@@ -46,6 +47,8 @@ const lossPoints = ref(settingsStore.lossPoints)
 const tierCount = ref(1)
 const tierAssignments = ref<Record<string, number>>({})
 const promotionCount = ref(1)
+const teamPointAdjustments = ref<Record<string, number>>({})
+const teamPowerAdjustments = ref<Record<string, number>>({})
 
 const allTeams = computed(() => teamsStore.teams)
 const selectedTeams = computed(() => allTeams.value.filter((t) => selected.value.includes(t.id)))
@@ -90,6 +93,15 @@ function handleCreate() {
   doCreate()
 }
 
+function applyAdjustments(id: string) {
+  for (const [teamId, val] of Object.entries(teamPointAdjustments.value)) {
+    if (val !== 0) store.setTeamPointAdjustment(id, teamId, val)
+  }
+  for (const [teamId, val] of Object.entries(teamPowerAdjustments.value)) {
+    if (val !== 0) store.setTeamPowerAdjustment(id, teamId, val)
+  }
+}
+
 function doCreate(orderedIds?: string[]) {
   if (format.value === "league") {
     if (tierCount.value > 1) {
@@ -107,6 +119,7 @@ function doCreate(orderedIds?: string[]) {
         drawPoints.value,
         lossPoints.value
       )
+      applyAdjustments(id)
       router.push(`/tournaments/${id}`)
       return
     }
@@ -119,6 +132,7 @@ function doCreate(orderedIds?: string[]) {
       drawPoints.value,
       lossPoints.value
     )
+    applyAdjustments(id)
     router.push(`/tournaments/${id}`)
     return
   }
@@ -145,6 +159,7 @@ function doCreate(orderedIds?: string[]) {
   )
   if (isGroup) store.setPlayoffSeedMode(id, playoffSeedMode.value)
   if (hasThirdPlace.value) store.toggleThirdPlace(id)
+  if (isGroup) applyAdjustments(id)
   router.push(`/tournaments/${id}`)
 }
 </script>
@@ -244,6 +259,16 @@ function doCreate(orderedIds?: string[]) {
           v-model:win-points="winPoints"
           v-model:draw-points="drawPoints"
           v-model:loss-points="lossPoints"
+        />
+      </template>
+
+      <!-- Team Adjustments -->
+      <template v-if="format !== 'bracket' && selected.length >= 2">
+        <SettingsTeamAdjustments
+          v-model:team-point-adjustments="teamPointAdjustments"
+          v-model:team-power-adjustments="teamPowerAdjustments"
+          :teams="selectedTeams"
+          :has-any-results="false"
         />
       </template>
 

@@ -15,6 +15,7 @@ import {
   SettingsDangerZone,
   SettingsLeagueOptions,
   SettingsSimulation,
+  SettingsTeamAdjustments,
 } from "../components/settings"
 
 type DrawType = "random" | "seeded" | "manual"
@@ -64,6 +65,12 @@ const localTierCount = ref(tournament.value?.tiers?.length ?? 1)
 const localWinPoints = ref(tournament.value?.winPoints ?? 3)
 const localDrawPoints = ref(tournament.value?.drawPoints ?? 1)
 const localLossPoints = ref(tournament.value?.lossPoints ?? 0)
+const localTeamPointAdjustments = ref<Record<string, number>>({
+  ...(tournament.value?.teamPointAdjustments ?? {}),
+})
+const localTeamPowerAdjustments = ref<Record<string, number>>({
+  ...(tournament.value?.teamPowerAdjustments ?? {}),
+})
 
 const isLeagueFormat = computed(() => tournament.value?.format === "league")
 const isGroupFormat = computed(() => tournament.value?.format === "group+bracket")
@@ -109,6 +116,18 @@ const hasChanges = computed(() => {
     (localWinPoints.value !== (orig.winPoints ?? 3) ||
       localDrawPoints.value !== (orig.drawPoints ?? 1) ||
       localLossPoints.value !== (orig.lossPoints ?? 0))
+  )
+    return true
+  if (
+    (isLeagueFormat.value || isGroupFormat.value) &&
+    JSON.stringify(localTeamPointAdjustments.value) !==
+      JSON.stringify(orig.teamPointAdjustments ?? {})
+  )
+    return true
+  if (
+    (isLeagueFormat.value || isGroupFormat.value) &&
+    JSON.stringify(localTeamPowerAdjustments.value) !==
+      JSON.stringify(orig.teamPowerAdjustments ?? {})
   )
     return true
   return false
@@ -214,6 +233,26 @@ function saveOnly() {
       localDrawPoints.value,
       localLossPoints.value
     )
+  if (isLeagueFormat.value || isGroupFormat.value) {
+    const origPointAdj = orig.teamPointAdjustments ?? {}
+    for (const [teamId, val] of Object.entries(localTeamPointAdjustments.value)) {
+      if (val !== (origPointAdj[teamId] ?? 0))
+        store.setTeamPointAdjustment(tournamentId.value, teamId, val)
+    }
+    for (const teamId of Object.keys(origPointAdj)) {
+      if (!(teamId in localTeamPointAdjustments.value))
+        store.setTeamPointAdjustment(tournamentId.value, teamId, 0)
+    }
+    const origPowerAdj = orig.teamPowerAdjustments ?? {}
+    for (const [teamId, val] of Object.entries(localTeamPowerAdjustments.value)) {
+      if (val !== (origPowerAdj[teamId] ?? 0))
+        store.setTeamPowerAdjustment(tournamentId.value, teamId, val)
+    }
+    for (const teamId of Object.keys(origPowerAdj)) {
+      if (!(teamId in localTeamPowerAdjustments.value))
+        store.setTeamPowerAdjustment(tournamentId.value, teamId, 0)
+    }
+  }
 }
 
 function handleSave() {
@@ -353,6 +392,16 @@ function handleSave() {
             v-model:local-win-points="localWinPoints"
             v-model:local-draw-points="localDrawPoints"
             v-model:local-loss-points="localLossPoints"
+            :has-any-results="hasAnyResults"
+          />
+        </template>
+
+        <!-- Team Adjustments -->
+        <template v-if="isLeagueFormat || isGroupFormat">
+          <SettingsTeamAdjustments
+            v-model:team-point-adjustments="localTeamPointAdjustments"
+            v-model:team-power-adjustments="localTeamPowerAdjustments"
+            :teams="localTeams"
             :has-any-results="hasAnyResults"
           />
         </template>
