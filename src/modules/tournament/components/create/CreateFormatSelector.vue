@@ -47,7 +47,10 @@ function setFormat(f: TournamentFormat) {
 
 <template>
   <div class="ctp-card">
-    <div class="ctp-section-title">Tournament Format</div>
+    <div class="ctp-section-title">
+      {{ $t("tournament.create.format") }}
+    </div>
+
     <div class="ctp-format-row">
       <button
         class="ctp-format-card"
@@ -55,9 +58,16 @@ function setFormat(f: TournamentFormat) {
         @click="setFormat('bracket')"
       >
         <Trophy :size="28" class="ctp-format-icon" />
-        <span class="ctp-format-title">Knockout Bracket</span>
-        <span class="ctp-format-desc">Lose once and you're out</span>
+
+        <span class="ctp-format-title">
+          {{ $t("tournament.create.formats.bracket") }}
+        </span>
+
+        <span class="ctp-format-desc">
+          {{ $t("tournament.create.formats.bracketDesc") }}
+        </span>
       </button>
+
       <button
         class="ctp-format-card"
         :class="{ 'ctp-format-card--on': format === 'group+bracket' }"
@@ -65,9 +75,16 @@ function setFormat(f: TournamentFormat) {
         @click="setFormat('group+bracket')"
       >
         <LayoutGrid :size="28" class="ctp-format-icon" />
-        <span class="ctp-format-title">Groups + Knockout</span>
-        <span class="ctp-format-desc">Group stage, then top teams advance</span>
+
+        <span class="ctp-format-title">
+          {{ $t("tournament.create.formats.groupsKo") }}
+        </span>
+
+        <span class="ctp-format-desc">
+          {{ $t("tournament.create.formats.groupsKoDesc") }}
+        </span>
       </button>
+
       <button
         class="ctp-format-card"
         :class="{ 'ctp-format-card--on': format === 'league' }"
@@ -75,34 +92,43 @@ function setFormat(f: TournamentFormat) {
         @click="setFormat('league')"
       >
         <List :size="28" class="ctp-format-icon" />
-        <span class="ctp-format-title">League</span>
-        <span class="ctp-format-desc">Everyone plays everyone, most points wins</span>
+
+        <span class="ctp-format-title">
+          {{ $t("tournament.create.formats.league") }}
+        </span>
+
+        <span class="ctp-format-desc">
+          {{ $t("tournament.create.formats.leagueDesc") }}
+        </span>
       </button>
     </div>
 
-    <!-- Group count + qualifiers -->
     <div v-if="format === 'group+bracket'" class="ctp-gc-block">
       <AppStepper
         v-model="groupCount"
-        label="Number of Groups"
+        :label="$t('tournament.create.groups')"
         :min="minGroups"
         :max="maxGroups"
-        :hint="`~${teamsPerGroup} teams per group`"
+        :hint="$t('tournament.create.teamsPerGroup', { n: teamsPerGroup })"
       />
+
       <AppStepper
         v-model="qualifiersPerGroup"
-        label="Teams that advance"
+        :label="$t('tournament.create.advance')"
         :min="minQpg"
         :max="maxQpg"
-        :hint="`per group → ${qualifiersPerGroup * groupCount} reach knockout`"
+        :hint="`${$t('tournament.create.perGroup')} → ${
+          qualifiersPerGroup * groupCount
+        } ${$t('tournament.create.reachKnockout')}`"
       />
+
       <AppStepper
         v-if="maxWildcards > 0"
         v-model="wildcardCount"
-        label="Best runner-up wildcards"
+        :label="$t('tournament.create.wildcards')"
         :min="0"
         :max="maxWildcards"
-        :hint="`→ ${qualifiersPerGroup * groupCount + wildcardCount} total`"
+        :hint="`→ ${qualifiersPerGroup * groupCount + wildcardCount} ${$t('tournament.create.total')}`"
       />
     </div>
   </div>
