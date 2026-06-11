@@ -40,6 +40,8 @@ export default {
     starOnGithub: "Звезда на GitHub",
     star: "Звезда",
     setResult: "Ввести счёт",
+    moveUp: "Переместить вверх",
+    moveDown: "Переместить вниз",
   },
   tournaments: {
     title: "Турниры",

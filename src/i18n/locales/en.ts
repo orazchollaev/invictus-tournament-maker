@@ -59,6 +59,8 @@ export default {
     },
     deleteConfirm: "Delete this tournament?",
     deleteLabel: "Delete",
+    moveUp: "Move up",
+    moveDown: "Move down",
   },
   teams: {
     title: "Teams",

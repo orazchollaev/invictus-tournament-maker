@@ -74,46 +74,99 @@ watch(
 <template>
   <!-- Round Format -->
   <div class="ctp-card">
-    <div class="ctp-section-title">Round Format</div>
+    <div class="ctp-section-title">
+      {{ $t("tournament.create.roundFormat") }}
+    </div>
+
     <div class="ctp-leg-row">
-      <span class="ctp-row-label">Schedule</span>
+      <span class="ctp-row-label">
+        {{ $t("tournament.create.schedule") }}
+      </span>
+
       <BtnGroup v-model="leagueLegMode" :options="multiLegOptions" />
     </div>
+
     <div class="ctp-hint-box">
-      <strong>Single</strong>
-      — once &nbsp;·&nbsp;
-      <strong>Double</strong>
-      — home &amp; away &nbsp;·&nbsp;
-      <strong>3×</strong>
-      — 3 matches &nbsp;·&nbsp;
-      <strong>4×</strong>
-      — 4 matches (2H &amp; 2A)
+      <strong>{{ $t("common.single") }}</strong>
+      —
+      {{
+        $t("tournament.create.leagueHint", {
+          single: $t("common.single"),
+          double: $t("common.double"),
+          triple: $t("common.triple"),
+          quad: $t("common.quadruple"),
+        }).split("·")[0]
+      }}
+      &nbsp;·&nbsp;
+
+      <strong>{{ $t("common.double") }}</strong>
+      —
+      {{
+        $t("tournament.create.leagueHint", {
+          single: $t("common.single"),
+          double: $t("common.double"),
+          triple: $t("common.triple"),
+          quad: $t("common.quadruple"),
+        }).split("·")[1]
+      }}
+      &nbsp;·&nbsp;
+
+      <strong>{{ $t("common.triple") }}</strong>
+      —
+      {{
+        $t("tournament.create.leagueHint", {
+          single: $t("common.single"),
+          double: $t("common.double"),
+          triple: $t("common.triple"),
+          quad: $t("common.quadruple"),
+        }).split("·")[2]
+      }}
+      &nbsp;·&nbsp;
+
+      <strong>{{ $t("common.quadruple") }}</strong>
+      —
+      {{
+        $t("tournament.create.leagueHint", {
+          single: $t("common.single"),
+          double: $t("common.double"),
+          triple: $t("common.triple"),
+          quad: $t("common.quadruple"),
+        }).split("·")[3]
+      }}
     </div>
   </div>
 
   <!-- League Tiers -->
   <div class="ctp-card">
-    <div class="ctp-section-title">League Tiers</div>
+    <div class="ctp-section-title">
+      {{ $t("tournament.create.tiers") }}
+    </div>
+
     <AppStepper
       v-model="tierCount"
-      label="Number of Tiers"
+      :label="$t('tournament.create.numberOfTiers')"
       :min="1"
       :max="Math.min(4, Math.floor(selectedTeams.length / 2))"
-      :hint="tierCount === 1 ? 'single division' : `${tierCount} divisions`"
+      :hint="
+        tierCount === 1
+          ? $t('tournament.create.singleDivision')
+          : $t('tournament.create.divisions', { n: tierCount })
+      "
     />
 
     <template v-if="tierCount > 1">
       <AppStepper
         v-model="promotionCount"
-        label="Promotion / Relegation"
+        :label="$t('tournament.create.promotionRelegation')"
         :min="1"
         :max="maxPromotionCount"
-        hint="teams swap between adjacent tiers"
+        :hint="$t('tournament.create.teamsSwap')"
       />
 
       <div class="ctp-tier-blocks">
         <div v-for="(ids, ti) in teamsPerTier" :key="ti" class="ctp-tier-block">
           <div class="ctp-tier-label">{{ tierNames[ti] }} ({{ ids.length }})</div>
+
           <div class="ctp-tier-chips">
             <div v-for="teamId in ids" :key="teamId" class="ctp-tier-chip">
               <span
@@ -122,22 +175,25 @@ watch(
                   background: allTeams.find((t) => t.id === teamId)?.color ?? '#888',
                 }"
               />
+
               <span class="ctp-tier-chip-name">
                 {{ allTeams.find((t) => t.id === teamId)?.name }}
               </span>
+
               <div class="ctp-tier-move">
                 <button
                   v-if="ti > 0"
                   class="ctp-tier-mv-btn"
-                  title="Move up"
+                  :title="$t('common.moveUp')"
                   @click="tierAssignments[teamId] = ti - 1"
                 >
                   ↑
                 </button>
+
                 <button
                   v-if="ti < tierCount - 1"
                   class="ctp-tier-mv-btn"
-                  title="Move down"
+                  :title="$t('common.moveDown')"
                   @click="tierAssignments[teamId] = ti + 1"
                 >
                   ↓

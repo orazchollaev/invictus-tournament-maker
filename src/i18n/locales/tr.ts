@@ -40,6 +40,8 @@ export default {
     starOnGithub: "GitHub'da Yıldız",
     star: "Yıldız",
     setResult: "Sonuç Gir",
+    moveUp: "Yukarı taşı",
+    moveDown: "Aşağı taşı",
   },
   tournaments: {
     title: "Turnuvalar",
