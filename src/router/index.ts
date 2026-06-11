@@ -1,31 +1,42 @@
 import { createRouter, createWebHashHistory } from "vue-router"
 
-import TeamsPage from "../modules/teams/pages/TeamsPage.vue"
-import TeamDetailPage from "../modules/teams/pages/TeamDetailPage.vue"
-import TournamentsPage from "../modules/tournament/pages/TournamentsPage.vue"
-import TournamentDetailPage from "../modules/tournament/pages/TournamentDetailPage.vue"
-import CreateTournamentPage from "../modules/tournament/pages/CreateTournamentPage.vue"
-import TournamentSettingsPage from "../modules/tournament/pages/TournamentSettingsPage.vue"
-import SimulationResultsPage from "../modules/tournament/pages/SimulationResultsPage.vue"
-import HistoryPage from "../modules/history/pages/HistoryPage.vue"
-import TournamentHistoryPage from "../modules/history/pages/TournamentHistoryPage.vue"
-import SettingsPage from "../modules/settings/pages/SettingsPage.vue"
-import NotFoundPage from "../modules/core/pages/NotFoundPage.vue"
-
 export default createRouter({
   history: createWebHashHistory(),
   routes: [
     { path: "/", redirect: "/tournaments" },
-    { path: "/teams", component: TeamsPage },
-    { path: "/teams/:id", component: TeamDetailPage },
-    { path: "/tournaments", component: TournamentsPage },
-    { path: "/tournaments/new", component: CreateTournamentPage },
-    { path: "/tournaments/:id", component: TournamentDetailPage },
-    { path: "/tournaments/:id/settings", component: TournamentSettingsPage },
-    { path: "/tournaments/:id/simulation", component: SimulationResultsPage },
-    { path: "/history", component: HistoryPage },
-    { path: "/history/:name", component: TournamentHistoryPage },
-    { path: "/settings", component: SettingsPage },
-    { path: "/:pathMatch(.*)*", component: NotFoundPage },
+
+    { path: "/teams", component: () => import("../modules/teams/pages/TeamsPage.vue") },
+    { path: "/teams/:id", component: () => import("../modules/teams/pages/TeamDetailPage.vue") },
+
+    {
+      path: "/tournaments",
+      component: () => import("../modules/tournament/pages/TournamentsPage.vue"),
+    },
+    {
+      path: "/tournaments/new",
+      component: () => import("../modules/tournament/pages/CreateTournamentPage.vue"),
+    },
+    {
+      path: "/tournaments/:id",
+      component: () => import("../modules/tournament/pages/TournamentDetailPage.vue"),
+    },
+    {
+      path: "/tournaments/:id/settings",
+      component: () => import("../modules/tournament/pages/TournamentSettingsPage.vue"),
+    },
+    {
+      path: "/tournaments/:id/simulation",
+      component: () => import("../modules/tournament/pages/SimulationResultsPage.vue"),
+    },
+
+    { path: "/history", component: () => import("../modules/history/pages/HistoryPage.vue") },
+    {
+      path: "/history/:name",
+      component: () => import("../modules/history/pages/TournamentHistoryPage.vue"),
+    },
+
+    { path: "/settings", component: () => import("../modules/settings/pages/SettingsPage.vue") },
+
+    { path: "/:pathMatch(.*)*", component: () => import("../modules/core/pages/NotFoundPage.vue") },
   ],
 })
