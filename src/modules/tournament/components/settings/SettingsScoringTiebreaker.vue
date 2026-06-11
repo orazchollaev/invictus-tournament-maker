@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import type { Tiebreaker } from "@/modules/tournament/types"
+import AppStepper from "@/components/AppStepper.vue"
 import BtnGroup from "@/components/BtnGroup.vue"
-import { Lock } from "@lucide/vue"
+import TspLockedCard from "./TspLockedCard.vue"
 import { useI18n } from "vue-i18n"
 
 const { t } = useI18n()
@@ -31,75 +32,30 @@ const localLossPoints = defineModel<number>("localLossPoints", { required: true 
   </div>
 
   <!-- Scoring -->
-  <div class="tsp-card">
-    <div class="tsp-card-header">
-      <div class="tsp-section-title">{{ t("tournament.settingsPage.scoring.title") }}</div>
-      <span v-if="hasAnyResults" class="tsp-lock-tag">
-        <Lock :size="10" />
-        {{ t("tournament.settingsPage.locked") }}
-      </span>
-    </div>
-    <template v-if="!hasAnyResults">
-      <div class="tsp-stepper-row">
-        <span class="tsp-stepper-label">{{ t("tournament.settingsPage.scoring.winPoints") }}</span>
-        <div class="tsp-stepper">
-          <button
-            :disabled="localWinPoints <= 0"
-            @click="localWinPoints = Math.max(0, localWinPoints - 1)"
-          >
-            −
-          </button>
-          <span class="tsp-stepper-val">{{ localWinPoints }}</span>
-          <button
-            :disabled="localWinPoints >= 10"
-            @click="localWinPoints = Math.min(10, localWinPoints + 1)"
-          >
-            +
-          </button>
-        </div>
-      </div>
-      <div class="tsp-stepper-row">
-        <span class="tsp-stepper-label">{{ t("tournament.settingsPage.scoring.drawPoints") }}</span>
-        <div class="tsp-stepper">
-          <button
-            :disabled="localDrawPoints <= 0"
-            @click="localDrawPoints = Math.max(0, localDrawPoints - 1)"
-          >
-            −
-          </button>
-          <span class="tsp-stepper-val">{{ localDrawPoints }}</span>
-          <button
-            :disabled="localDrawPoints >= 10"
-            @click="localDrawPoints = Math.min(10, localDrawPoints + 1)"
-          >
-            +
-          </button>
-        </div>
-      </div>
-      <div class="tsp-stepper-row">
-        <span class="tsp-stepper-label">{{ t("tournament.settingsPage.scoring.lossPoints") }}</span>
-        <div class="tsp-stepper">
-          <button
-            :disabled="localLossPoints <= 0"
-            @click="localLossPoints = Math.max(0, localLossPoints - 1)"
-          >
-            −
-          </button>
-          <span class="tsp-stepper-val">{{ localLossPoints }}</span>
-          <button
-            :disabled="localLossPoints >= 10"
-            @click="localLossPoints = Math.min(10, localLossPoints + 1)"
-          >
-            +
-          </button>
-        </div>
-      </div>
-    </template>
-    <div v-else class="tsp-locked-banner">
-      <Lock :size="12" />
-      {{ t("tournament.settingsPage.scoring.lockedBanner") }}
-    </div>
-  </div>
+  <TspLockedCard
+    :title="t('tournament.settingsPage.scoring.title')"
+    :locked="hasAnyResults"
+    :locked-message="t('tournament.settingsPage.scoring.lockedBanner')"
+  >
+    <AppStepper
+      v-model="localWinPoints"
+      :label="t('tournament.settingsPage.scoring.winPoints')"
+      :min="0"
+      :max="10"
+    />
+    <AppStepper
+      v-model="localDrawPoints"
+      :label="t('tournament.settingsPage.scoring.drawPoints')"
+      :min="0"
+      :max="10"
+    />
+    <AppStepper
+      v-model="localLossPoints"
+      :label="t('tournament.settingsPage.scoring.lossPoints')"
+      :min="0"
+      :max="10"
+    />
+  </TspLockedCard>
 </template>
 
 <style src="./tsp.css"></style>

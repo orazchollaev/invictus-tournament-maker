@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { computed, watch } from "vue"
+import AppStepper from "@/components/AppStepper.vue"
 import BtnGroup from "@/components/BtnGroup.vue"
 import type { LegMode } from "@/modules/tournament/types"
 import type { Team } from "@/modules/teams/types"
+import { useLegOptions } from "@/modules/tournament/composables/useLegOptions"
 
 const props = defineProps<{
   selectedTeams: Team[]
@@ -14,12 +16,7 @@ const tierCount = defineModel<number>("tierCount", { required: true })
 const tierAssignments = defineModel<Record<string, number>>("tierAssignments", { required: true })
 const promotionCount = defineModel<number>("promotionCount", { required: true })
 
-const multiLegOptions = [
-  { value: "single", label: "Single" },
-  { value: "double", label: "Double" },
-  { value: "triple", label: "3×" },
-  { value: "quadruple", label: "4×" },
-]
+const { multiLegOptions } = useLegOptions()
 
 const tierNames = computed(() => {
   const names: string[] = []
@@ -97,45 +94,22 @@ watch(
   <!-- League Tiers -->
   <div class="ctp-card">
     <div class="ctp-section-title">League Tiers</div>
-    <div class="ctp-gc-row">
-      <span class="ctp-gc-label">Number of Tiers</span>
-      <div class="ctp-gc-stepper">
-        <button :disabled="tierCount <= 1" @click="tierCount = Math.max(1, tierCount - 1)">
-          −
-        </button>
-        <span class="ctp-gc-val">{{ tierCount }}</span>
-        <button
-          :disabled="tierCount >= 4 || selectedTeams.length < (tierCount + 1) * 2"
-          @click="tierCount = Math.min(4, tierCount + 1)"
-        >
-          +
-        </button>
-      </div>
-      <span class="ctp-gc-hint">
-        {{ tierCount === 1 ? "single division" : `${tierCount} divisions` }}
-      </span>
-    </div>
+    <AppStepper
+      v-model="tierCount"
+      label="Number of Tiers"
+      :min="1"
+      :max="Math.min(4, Math.floor(selectedTeams.length / 2))"
+      :hint="tierCount === 1 ? 'single division' : `${tierCount} divisions`"
+    />
 
     <template v-if="tierCount > 1">
-      <div class="ctp-gc-row" style="margin-top: 8px">
-        <span class="ctp-gc-label">Promotion / Relegation</span>
-        <div class="ctp-gc-stepper">
-          <button
-            :disabled="promotionCount <= 1"
-            @click="promotionCount = Math.max(1, promotionCount - 1)"
-          >
-            −
-          </button>
-          <span class="ctp-gc-val">{{ promotionCount }}</span>
-          <button
-            :disabled="promotionCount >= maxPromotionCount"
-            @click="promotionCount = Math.min(maxPromotionCount, promotionCount + 1)"
-          >
-            +
-          </button>
-        </div>
-        <span class="ctp-gc-hint">teams swap between adjacent tiers</span>
-      </div>
+      <AppStepper
+        v-model="promotionCount"
+        label="Promotion / Relegation"
+        :min="1"
+        :max="maxPromotionCount"
+        hint="teams swap between adjacent tiers"
+      />
 
       <div class="ctp-tier-blocks">
         <div v-for="(ids, ti) in teamsPerTier" :key="ti" class="ctp-tier-block">

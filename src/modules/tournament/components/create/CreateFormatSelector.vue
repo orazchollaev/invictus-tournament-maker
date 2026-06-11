@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, watch } from "vue"
 import { Trophy, LayoutGrid, List } from "@lucide/vue"
+import AppStepper from "@/components/AppStepper.vue"
 
 type TournamentFormat = "bracket" | "group+bracket" | "league"
 
@@ -81,71 +82,28 @@ function setFormat(f: TournamentFormat) {
 
     <!-- Group count + qualifiers -->
     <div v-if="format === 'group+bracket'" class="ctp-gc-block">
-      <div class="ctp-gc-row">
-        <span class="ctp-gc-label">Number of Groups</span>
-        <div class="ctp-gc-stepper">
-          <button
-            :disabled="groupCount <= minGroups"
-            @click="groupCount = Math.max(minGroups, groupCount - 1)"
-          >
-            −
-          </button>
-          <span class="ctp-gc-val">{{ groupCount }}</span>
-          <button
-            :disabled="groupCount >= maxGroups"
-            @click="groupCount = Math.min(maxGroups, groupCount + 1)"
-          >
-            +
-          </button>
-        </div>
-        <span class="ctp-gc-hint">~{{ teamsPerGroup }} teams per group</span>
-      </div>
-      <div class="ctp-gc-row">
-        <span class="ctp-gc-label">Teams that advance</span>
-        <div class="ctp-gc-stepper">
-          <button
-            :disabled="qualifiersPerGroup <= minQpg"
-            @click="qualifiersPerGroup = Math.max(minQpg, qualifiersPerGroup - 1)"
-          >
-            −
-          </button>
-          <span class="ctp-gc-val">{{ qualifiersPerGroup }}</span>
-          <button
-            :disabled="qualifiersPerGroup >= maxQpg"
-            @click="qualifiersPerGroup = Math.min(maxQpg, qualifiersPerGroup + 1)"
-          >
-            +
-          </button>
-        </div>
-        <span class="ctp-gc-hint">
-          per group →
-          <strong>{{ qualifiersPerGroup * groupCount }}</strong>
-          reach knockout
-        </span>
-      </div>
-      <div v-if="maxWildcards > 0" class="ctp-gc-row">
-        <span class="ctp-gc-label">Best runner-up wildcards</span>
-        <div class="ctp-gc-stepper">
-          <button
-            :disabled="wildcardCount <= 0"
-            @click="wildcardCount = Math.max(0, wildcardCount - 1)"
-          >
-            −
-          </button>
-          <span class="ctp-gc-val">{{ wildcardCount }}</span>
-          <button
-            :disabled="wildcardCount >= maxWildcards"
-            @click="wildcardCount = Math.min(maxWildcards, wildcardCount + 1)"
-          >
-            +
-          </button>
-        </div>
-        <span class="ctp-gc-hint">
-          →
-          <strong>{{ qualifiersPerGroup * groupCount + wildcardCount }}</strong>
-          total
-        </span>
-      </div>
+      <AppStepper
+        v-model="groupCount"
+        label="Number of Groups"
+        :min="minGroups"
+        :max="maxGroups"
+        :hint="`~${teamsPerGroup} teams per group`"
+      />
+      <AppStepper
+        v-model="qualifiersPerGroup"
+        label="Teams that advance"
+        :min="minQpg"
+        :max="maxQpg"
+        :hint="`per group → ${qualifiersPerGroup * groupCount} reach knockout`"
+      />
+      <AppStepper
+        v-if="maxWildcards > 0"
+        v-model="wildcardCount"
+        label="Best runner-up wildcards"
+        :min="0"
+        :max="maxWildcards"
+        :hint="`→ ${qualifiersPerGroup * groupCount + wildcardCount} total`"
+      />
     </div>
   </div>
 </template>
