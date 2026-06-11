@@ -211,7 +211,7 @@ const { isNavActive } = useNavActive()
   display: flex;
   align-items: center;
   gap: 5px;
-  padding: 5px 10px;
+  padding: 8px 10px;
   border-radius: var(--radius);
   border: 1px solid var(--border-light);
   background: var(--surface);
@@ -253,6 +253,7 @@ const { isNavActive } = useNavActive()
   transition:
     background 0.12s,
     color 0.12s;
+  padding: 0;
 }
 .settings-btn:hover {
   background: var(--bg);
