@@ -5,7 +5,7 @@ import type { Tournament, GroupMatch } from "@/modules/tournament/types"
 import AppModal from "@/components/AppModal.vue"
 import { useTeamLookup } from "@/composables/useTeamLookup"
 import TeamNameAuto from "@/modules/teams/components/TeamNameAuto.vue"
-import { Lock, Shuffle, Check } from "@lucide/vue"
+import { Lock, Shuffle, Check, ChevronDown } from "@lucide/vue"
 import { useI18n } from "vue-i18n"
 import { useGradualSim } from "../composables/useGradualSim"
 
@@ -28,6 +28,7 @@ const { t } = useI18n()
 const { runSequential } = useGradualSim()
 const locked = computed(() => !!props.tournament.groupsDone)
 
+const showSimMenu = ref(false)
 const editingMatch = ref<{ gi: number; mi: number } | null>(null)
 const editHome = ref(0)
 const editAway = ref(0)
@@ -204,19 +205,65 @@ function scoreAccentColor(match: GroupMatch): string {
 
     <!-- Toolbar (only when not locked) -->
     <div v-else class="gs-toolbar">
-      <button :disabled="allDone" @click="handleSimWeek()">
+      <!-- Mobile: single dropdown trigger -->
+      <div class="sim-dropdown">
+        <button class="sim-dropdown-trigger" @click="showSimMenu = !showSimMenu">
+          <Shuffle :size="14" />
+          Simulate
+          <ChevronDown :size="12" class="sim-chevron" :class="{ open: showSimMenu }" />
+        </button>
+        <div v-if="showSimMenu" class="sim-dropdown-panel">
+          <button
+            :disabled="allDone"
+            @click="
+              handleSimWeek()
+              showSimMenu = false
+            "
+          >
+            Sim Week
+          </button>
+          <button
+            :disabled="allDone"
+            @click="
+              handleSimAll()
+              showSimMenu = false
+            "
+          >
+            Simulate All
+          </button>
+          <template v-for="(g, gi) in tournament.groups" :key="gi">
+            <button
+              v-if="g.matches.some((m) => !m.result)"
+              @click="
+                handleSimGroup(gi)
+                showSimMenu = false
+              "
+            >
+              Sim {{ g.name }}
+            </button>
+          </template>
+        </div>
+      </div>
+
+      <!-- Desktop: inline buttons -->
+      <button class="gs-sim-inline" :disabled="allDone" @click="handleSimWeek()">
         <Shuffle :size="14" />
         Sim Week
       </button>
-      <button :disabled="allDone" @click="handleSimAll()">
+      <button class="gs-sim-inline" :disabled="allDone" @click="handleSimAll()">
         <Shuffle :size="14" />
         Simulate All
       </button>
       <template v-for="(g, gi) in tournament.groups" :key="gi">
-        <button v-if="g.matches.some((m) => !m.result)" @click="handleSimGroup(gi)">
+        <button
+          v-if="g.matches.some((m) => !m.result)"
+          class="gs-sim-inline"
+          @click="handleSimGroup(gi)"
+        >
           Sim {{ g.name }}
         </button>
       </template>
+
       <button
         v-if="allDone"
         class="primary advance-btn"
@@ -423,6 +470,52 @@ function scoreAccentColor(match: GroupMatch): string {
   gap: 6px;
   align-items: center;
   padding: 0 8px;
+}
+
+.sim-dropdown {
+  display: none;
+  position: relative;
+}
+
+.sim-dropdown-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.sim-chevron {
+  transition: transform 0.15s;
+  &.open {
+    transform: rotate(180deg);
+  }
+}
+
+.sim-dropdown-panel {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  z-index: 200;
+  background: var(--surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius);
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 150px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+
+  button {
+    width: 100%;
+    justify-content: flex-start;
+    text-align: left;
+    font-size: 13px;
+    padding: 5px 10px;
+    background: var(--bg);
+    &:hover {
+      background: color-mix(in srgb, var(--accent) 12%, var(--bg));
+    }
+  }
 }
 
 .gs-groups {
@@ -677,16 +770,14 @@ function scoreAccentColor(match: GroupMatch): string {
     button {
       padding: 4px 8px;
       font-size: 12px;
+    }
+
+    .gs-sim-inline {
       display: none;
     }
 
-    button:nth-child(1),
-    button:nth-child(2) {
-      display: inline-flex;
-    }
-
-    button.advance-btn {
-      display: inline-flex;
+    .sim-dropdown {
+      display: block;
     }
   }
 }

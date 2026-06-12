@@ -9,7 +9,7 @@ import FixtureView from "./FixtureView.vue"
 import { useTournamentStore } from "../store"
 import { useSettingsStore } from "@/modules/settings/store"
 import { useGradualSim } from "../composables/useGradualSim"
-import { Maximize2, Minus, Plus, Shuffle, X, Download, Expand } from "@lucide/vue"
+import { Maximize2, Minus, Plus, Shuffle, X, Download, Expand, ChevronDown } from "@lucide/vue"
 import { toPng } from "html-to-image"
 
 const props = defineProps<{
@@ -59,6 +59,7 @@ const activeBracket = computed(() => {
 
 const bracketView = ref<"bracket" | "fixtures">("bracket")
 const showFullBracket = ref(false)
+const showSimMenu = ref(false)
 const isExporting = ref(false)
 
 // Viewport / inner refs for normal bracket
@@ -382,15 +383,65 @@ onUnmounted(() => {
     </h2>
     <div class="section-body bracket-body">
       <div class="flex sim-toolbar">
-        <button @click="simAllGradual">
+        <!-- Mobile: single dropdown trigger -->
+        <div class="sim-dropdown">
+          <button class="sim-dropdown-trigger" @click="showSimMenu = !showSimMenu">
+            <Shuffle :size="14" />
+            Simulate
+            <ChevronDown :size="12" class="sim-chevron" :class="{ open: showSimMenu }" />
+          </button>
+          <div v-if="showSimMenu" class="sim-dropdown-panel">
+            <button
+              @click="
+                simAllGradual()
+                showSimMenu = false
+              "
+            >
+              Simulate All
+            </button>
+            <button
+              v-for="(round, ri) in tournament.rounds"
+              :key="ri"
+              @click="
+                simRoundGradual(ri)
+                showSimMenu = false
+              "
+            >
+              Sim {{ round.name }}
+            </button>
+            <button
+              v-if="tournament.hasThirdPlace && tournament.thirdPlaceMatch"
+              :disabled="
+                !tournament.thirdPlaceMatch.homeId ||
+                !tournament.thirdPlaceMatch.awayId ||
+                !!tournament.thirdPlaceMatch.result
+              "
+              @click="
+                simThirdPlace()
+                showSimMenu = false
+              "
+            >
+              Sim 3rd Place
+            </button>
+          </div>
+        </div>
+
+        <!-- Desktop: inline buttons -->
+        <button class="sim-inline" @click="simAllGradual">
           <Shuffle :size="14" />
           Simulate All
         </button>
-        <button v-for="(round, ri) in tournament.rounds" :key="ri" @click="simRoundGradual(ri)">
+        <button
+          v-for="(round, ri) in tournament.rounds"
+          :key="ri"
+          class="sim-inline"
+          @click="simRoundGradual(ri)"
+        >
           Sim {{ round.name }}
         </button>
         <button
           v-if="tournament.hasThirdPlace && tournament.thirdPlaceMatch"
+          class="sim-inline"
           :disabled="
             !tournament.thirdPlaceMatch.homeId ||
             !tournament.thirdPlaceMatch.awayId ||
@@ -554,6 +605,52 @@ onUnmounted(() => {
   margin-bottom: 10px;
   flex-wrap: wrap;
   gap: 6px;
+}
+
+.sim-dropdown {
+  display: none;
+  position: relative;
+}
+
+.sim-dropdown-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.sim-chevron {
+  transition: transform 0.15s;
+  &.open {
+    transform: rotate(180deg);
+  }
+}
+
+.sim-dropdown-panel {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  z-index: 200;
+  background: var(--surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius);
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 150px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+
+  button {
+    width: 100%;
+    justify-content: flex-start;
+    text-align: left;
+    font-size: 13px;
+    padding: 5px 10px;
+    background: var(--bg);
+    &:hover {
+      background: color-mix(in srgb, var(--accent) 12%, var(--bg));
+    }
+  }
 }
 
 /* ── Pan / zoom viewport ── */
@@ -774,9 +871,17 @@ onUnmounted(() => {
     gap: 5px;
     padding: 0 4px;
 
-    button {
-      padding: 4px 8px;
-      font-size: 12px;
+    .sim-inline {
+      display: none;
+    }
+
+    .sim-dropdown {
+      display: block;
+
+      .sim-dropdown-trigger {
+        padding: 4px 8px;
+        font-size: 12px;
+      }
     }
   }
 }
