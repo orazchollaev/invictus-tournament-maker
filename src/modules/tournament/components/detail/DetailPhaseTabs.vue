@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { Lock } from "@lucide/vue"
 import type { Tournament } from "@/modules/tournament/types"
 import type { MainTab } from "./types"
 import { useI18n } from "vue-i18n"
@@ -25,7 +24,6 @@ const emit = defineEmits<{
   <div class="phase-tabs">
     <!-- League format -->
     <template v-if="isLeagueFormat">
-      <!-- Multi-tier: one tab per tier -->
       <template v-if="isMultiTier">
         <button
           v-for="(tier, ti) in tournament.tiers"
@@ -37,7 +35,6 @@ const emit = defineEmits<{
           {{ tier.name }}
         </button>
       </template>
-      <!-- Single-tier -->
       <template v-else>
         <button
           class="phase-tab"
@@ -48,6 +45,7 @@ const emit = defineEmits<{
         </button>
       </template>
     </template>
+
     <!-- Groups + Bracket format -->
     <template v-else-if="isGroupFormat">
       <button
@@ -58,15 +56,15 @@ const emit = defineEmits<{
         {{ t("tournament.tabs.groups") }}
       </button>
       <button
+        v-if="tournament.groupsDone"
         class="phase-tab"
-        :class="{ active: activeTab === 'bracket', disabled: !tournament.groupsDone }"
-        :disabled="!tournament.groupsDone"
-        @click="tournament.groupsDone && emit('changeTab', 'bracket')"
+        :class="{ active: activeTab === 'bracket' }"
+        @click="emit('changeTab', 'bracket')"
       >
         {{ t("tournament.tabs.bracket") }}
-        <Lock v-if="!tournament.groupsDone" :size="13" class="tab-lock" />
       </button>
     </template>
+
     <!-- Pure bracket format -->
     <template v-else>
       <button
@@ -77,15 +75,16 @@ const emit = defineEmits<{
         {{ t("tournament.tabs.bracket") }}
       </button>
     </template>
+
     <button
+      v-if="hasAnyResults"
       class="phase-tab"
-      :class="{ active: activeTab === 'stats', disabled: !hasAnyResults }"
-      :disabled="!hasAnyResults"
-      @click="hasAnyResults && emit('changeTab', 'stats')"
+      :class="{ active: activeTab === 'stats' }"
+      @click="emit('changeTab', 'stats')"
     >
       {{ t("tournament.tabs.stats") }}
-      <Lock v-if="!hasAnyResults" :size="13" class="tab-lock" />
     </button>
+
     <button
       class="phase-tab"
       :class="{ active: activeTab === 'participants' }"

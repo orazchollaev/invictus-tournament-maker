@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import { ArrowLeft, Trophy, RefreshCw, Zap, Settings } from "@lucide/vue"
+import { computed } from "vue"
+import { ArrowLeft, Trophy, RefreshCw, Settings, Zap } from "@lucide/vue"
 import type { Tournament } from "@/modules/tournament/types"
 import type { Team } from "@/modules/teams/types"
 import { useI18n } from "vue-i18n"
 
 const { t } = useI18n()
 
-defineProps<{
+const props = defineProps<{
   tournament: Tournament
   winnerTeam: Team | undefined
   dateStr: string
@@ -18,6 +19,12 @@ const emit = defineEmits<{
   simulateAll: []
   openSettings: []
 }>()
+
+const formatLabel = computed(() => {
+  if (props.tournament.format === "group+bracket") return t("tournaments.format.groupsKoLong")
+  if (props.tournament.format === "league") return t("tournaments.format.league")
+  return t("tournaments.format.bracket")
+})
 </script>
 
 <template>
@@ -28,47 +35,49 @@ const emit = defineEmits<{
         {{ t("nav.tournaments") }}
       </RouterLink>
       <div class="t-header-actions">
-        <Transition name="fade">
-          <div
-            v-if="tournament.winnerId"
-            class="winner-chip"
-            :style="{ borderColor: winnerTeam?.color, color: winnerTeam?.color }"
-          >
-            <Trophy :size="12" />
-            {{ winnerTeam?.name }}
-          </div>
-        </Transition>
         <button v-if="isFinished" class="primary new-season-btn" @click="emit('openNewSeason')">
           <RefreshCw :size="13" />
           <span class="btn-label">{{ t("tournament.newSeason") }}</span>
         </button>
-        <button v-if="!isFinished" class="simulate-all-btn" @click="emit('simulateAll')">
-          <Zap :size="13" />
-          <span class="btn-label">{{ t("tournament.simulateAll") }}</span>
+        <button
+          v-if="!isFinished"
+          class="icon-btn sim-btn"
+          :title="t('tournament.simulateAll')"
+          @click="emit('simulateAll')"
+        >
+          <Zap :size="15" />
         </button>
-        <button class="settings-btn" @click="emit('openSettings')">
-          <Settings :size="14" />
-          <span class="btn-label">{{ t("tournament.settings") }}</span>
+        <button
+          class="icon-btn settings-btn"
+          :title="t('tournament.settings')"
+          @click="emit('openSettings')"
+        >
+          <Settings :size="15" />
         </button>
       </div>
     </div>
+
     <h1>
       {{ tournament.name }}
       <span class="t-season">S{{ tournament.season }}</span>
-      <span class="t-format-tag">
-        {{
-          tournament.format === "group+bracket"
-            ? t("tournaments.format.groupsKoLong")
-            : tournament.format === "league"
-              ? t("tournaments.format.league")
-              : t("tournaments.format.bracket")
-        }}
-      </span>
     </h1>
-    <span class="t-meta">
-      {{ t("common.teams", { n: tournament.teamIds.length }) }} ·
-      {{ t("tournament.header.created", { date: dateStr }) }}
-    </span>
+
+    <div class="t-meta-row">
+      <span class="t-meta">
+        {{ t("common.teams", { n: tournament.teamIds.length }) }} · {{ formatLabel }} ·
+        {{ t("tournament.header.created", { date: dateStr }) }}
+      </span>
+    </div>
+
+    <Transition name="fade">
+      <div v-if="tournament.winnerId && winnerTeam" class="t-winner">
+        <Trophy :size="12" class="t-winner-icon" />
+        <span class="t-winner-name" :style="{ color: winnerTeam.color }">
+          {{ winnerTeam.name }}
+        </span>
+        <span class="t-winner-label">{{ t("history.table.champion") }}</span>
+      </div>
+    </Transition>
   </div>
 </template>
 

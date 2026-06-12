@@ -15,47 +15,41 @@
 .t-header-actions {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 .new-season-btn {
   font-size: 12px;
   padding: 3px 10px;
 }
+.sim-btn,
 .settings-btn {
-  font-size: 12px;
-  padding: 3px 10px;
+  width: 30px;
+  height: 30px;
   border-color: var(--border-light);
   color: var(--text-muted);
 }
+.sim-btn:hover,
 .settings-btn:hover {
   color: var(--text);
   border-color: var(--border);
 }
-.simulate-all-btn {
+.t-winner {
   display: inline-flex;
   align-items: center;
   gap: 5px;
+  margin-top: 6px;
   font-size: 12px;
-  padding: 3px 10px;
-  border-color: color-mix(in srgb, var(--accent) 40%, transparent);
-  color: var(--accent);
-  background: color-mix(in srgb, var(--accent) 8%, var(--surface));
 }
-.simulate-all-btn:hover {
-  background: color-mix(in srgb, var(--accent) 16%, var(--surface));
-  border-color: var(--accent);
+.t-winner-icon {
+  color: var(--accent-2);
+  flex-shrink: 0;
 }
-.winner-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  border: 1px solid;
-  border-radius: var(--radius);
-  padding: 2px 9px;
-  font-size: 12px;
+.t-winner-name {
   font-weight: 600;
-  background: color-mix(in srgb, currentColor 8%, var(--surface));
-  white-space: nowrap;
+}
+.t-winner-label {
+  color: var(--text-muted);
+  font-size: 11px;
 }
 
 /* ── Multi-tier modal ────────────────────────────────────────── */
@@ -154,17 +148,7 @@
   .t-header-actions .btn-label {
     display: none;
   }
-  .winner-chip {
-    font-size: 11px;
-    padding: 2px 6px;
-    max-width: 120px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  .new-season-btn,
-  .simulate-all-btn,
-  .settings-btn {
+  .new-season-btn {
     padding: 5px 8px;
     min-width: 32px;
     justify-content: center;
