@@ -1,5 +1,40 @@
 # Changelog
 
+## [1.12.0](https://github.com/orazchollaev/invictus-tournament-maker/compare/v1.11.0...v1.12.0) (2026-06-13)
+
+### 🚀 New Features
+
+- **guide:** add step-by-step 'How to Use' page ([0238c9c](https://github.com/orazchollaev/invictus-tournament-maker/commit/0238c9cec44dd224ef737e95707c35ddb8adcad4))
+- **i18n:** add multi-language support for user guide ([80a598c](https://github.com/orazchollaev/invictus-tournament-maker/commit/80a598c2f497f7b9a7f82ad960b6ae55a7c126bd))
+- **i18n:** add round format and league tiers translations ([6517889](https://github.com/orazchollaev/invictus-tournament-maker/commit/6517889e499cbac94b1e90d7fa4044df4f58aa2b))
+- **i18n:** format selector translations added ([ebb547e](https://github.com/orazchollaev/invictus-tournament-maker/commit/ebb547ef3ecb172671598f09adeb98867ed99a48))
+- **theme:** wc2026 theme overhaul — colors, fonts, bg image, header badge ([cdb06ad](https://github.com/orazchollaev/invictus-tournament-maker/commit/cdb06ad40722790705ff09091e467f42d4a2bf40))
+- **tournament:** add per-season team point and power adjustments for league and group formats ([9b707a0](https://github.com/orazchollaev/invictus-tournament-maker/commit/9b707a01bc155e85549d1cb1d2ed3d702e82a90a))
+- **tournament:** extend power adjustments to bracket format ([e2718b5](https://github.com/orazchollaev/invictus-tournament-maker/commit/e2718b572196bb990e24f82954307c5965ea7101))
+
+### 🐛 Bug Fixes
+
+- github star and settings button size ([febc23f](https://github.com/orazchollaev/invictus-tournament-maker/commit/febc23f8db1bcdf865f39459410dadc90d861aca))
+- **header:** show How to Use icon in top-right on mobile ([3911f8f](https://github.com/orazchollaev/invictus-tournament-maker/commit/3911f8fdd3a2573a77786f3e06a91d239e7b7573))
+- **history:** all-time table uses top tier only for tiered leagues ([42a3f57](https://github.com/orazchollaev/invictus-tournament-maker/commit/42a3f575a3b01fe19e902297b90dceb4ff629314))
+- **i18n:** format selector title translations fixed ([cae1e05](https://github.com/orazchollaev/invictus-tournament-maker/commit/cae1e05f68d3edfc80427b0d0688de8614fd7b9f))
+- **mobile:** collapse sim buttons into dropdown on small screens ([14b61c0](https://github.com/orazchollaev/invictus-tournament-maker/commit/14b61c038303f4040bfe16b4d52aafcf4e1b878a))
+- **mobile:** improve touch targets, condense standings tables, fix bracket tab position ([ebbae23](https://github.com/orazchollaev/invictus-tournament-maker/commit/ebbae238e176133e31b973aeeb9ac76a0b7f8a42))
+
+### ♻️ Refactoring
+
+- extract shared stepper, lock card, and leg options ([019c0f0](https://github.com/orazchollaev/invictus-tournament-maker/commit/019c0f0799dea6c70bdd0bbf440c992ad9d7fb19))
+- **tournament:** simplify detail page header and tabs UX ([049e1ac](https://github.com/orazchollaev/invictus-tournament-maker/commit/049e1ac713faca0526df4684f70f683d000ec7c9))
+- **tournament:** split detail and create pages into component subfolders ([11b22ac](https://github.com/orazchollaev/invictus-tournament-maker/commit/11b22ac38ce820cca8b8d4350dbf28cd3d849165))
+
+### 🔧 Maintenance
+
+- **build:** combine multi-statement [@click](https://github.com/click) handlers into single expressions ([ff391c6](https://github.com/orazchollaev/invictus-tournament-maker/commit/ff391c6a181f8a5bf32399737e8deda2f4cd27bd))
+
+### 🎨 Styles
+
+- **logo:** improve brand logo text styling ([f36c606](https://github.com/orazchollaev/invictus-tournament-maker/commit/f36c6068cfd625b2be462edc19574763f49a2780))
+
 ## [1.11.0](https://github.com/orazchollaev/invictus-tournament-maker/compare/v1.10.1...v1.11.0) (2026-06-10)
 
 ### 🚀 New Features
