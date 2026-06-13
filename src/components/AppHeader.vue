@@ -140,10 +140,30 @@ const { isNavActive } = useNavActive()
   color: var(--accent);
 }
 .brand-name {
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--text);
-  letter-spacing: -0.01em;
+  font-size: 18px;
+  font-weight: 800;
+  font-family: var(--font);
+  background: linear-gradient(-135deg, var(--text) 20%, var(--accent) 50%, var(--text) 80%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 0.02em;
+  filter: drop-shadow(0px 2px 4px var(--accent-subtle));
+  transition:
+    transform 0.3s ease,
+    filter 0.3s ease;
+  animation: shine 5s linear infinite;
+}
+
+.brand:hover .brand-name {
+  filter: drop-shadow(0px 4px 8px color-mix(in srgb, var(--accent) 30%, transparent));
+}
+
+@keyframes shine {
+  to {
+    background-position: 200% center;
+  }
 }
 
 /* Main nav */
