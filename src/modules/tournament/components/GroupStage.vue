@@ -213,31 +213,16 @@ function scoreAccentColor(match: GroupMatch): string {
           <ChevronDown :size="12" class="sim-chevron" :class="{ open: showSimMenu }" />
         </button>
         <div v-if="showSimMenu" class="sim-dropdown-panel">
-          <button
-            :disabled="allDone"
-            @click="
-              handleSimWeek()
-              showSimMenu = false
-            "
-          >
+          <button :disabled="allDone" @click="(handleSimWeek(), (showSimMenu = false))">
             Sim Week
           </button>
-          <button
-            :disabled="allDone"
-            @click="
-              handleSimAll()
-              showSimMenu = false
-            "
-          >
+          <button :disabled="allDone" @click="(handleSimAll(), (showSimMenu = false))">
             Simulate All
           </button>
           <template v-for="(g, gi) in tournament.groups" :key="gi">
             <button
               v-if="g.matches.some((m) => !m.result)"
-              @click="
-                handleSimGroup(gi)
-                showSimMenu = false
-              "
+              @click="(handleSimGroup(gi), (showSimMenu = false))"
             >
               Sim {{ g.name }}
             </button>

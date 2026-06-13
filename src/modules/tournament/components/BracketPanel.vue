@@ -391,21 +391,11 @@ onUnmounted(() => {
             <ChevronDown :size="12" class="sim-chevron" :class="{ open: showSimMenu }" />
           </button>
           <div v-if="showSimMenu" class="sim-dropdown-panel">
-            <button
-              @click="
-                simAllGradual()
-                showSimMenu = false
-              "
-            >
-              Simulate All
-            </button>
+            <button @click="(simAllGradual(), (showSimMenu = false))">Simulate All</button>
             <button
               v-for="(round, ri) in tournament.rounds"
               :key="ri"
-              @click="
-                simRoundGradual(ri)
-                showSimMenu = false
-              "
+              @click="(simRoundGradual(ri), (showSimMenu = false))"
             >
               Sim {{ round.name }}
             </button>
@@ -416,10 +406,7 @@ onUnmounted(() => {
                 !tournament.thirdPlaceMatch.awayId ||
                 !!tournament.thirdPlaceMatch.result
               "
-              @click="
-                simThirdPlace()
-                showSimMenu = false
-              "
+              @click="(simThirdPlace(), (showSimMenu = false))"
             >
               Sim 3rd Place
             </button>
