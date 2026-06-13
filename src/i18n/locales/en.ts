@@ -5,6 +5,37 @@ export default {
     history: "History",
     settings: "Settings",
   },
+  guide: {
+    title: "How to Use",
+    intro: "New here? Follow these steps to build and simulate your first tournament.",
+    steps: {
+      teams: {
+        title: "Add your teams",
+        desc: "Open the Teams tab and tap “+ Add Team” to set a name, abbreviation, power rating and color. In a hurry? Go to Settings → Sample Data to load a ready-made team list instead.",
+      },
+      create: {
+        title: "Create a tournament",
+        desc: "On the Tournaments tab, tap “+ New Tournament”, name it and pick the teams. Choose a format — Knockout Bracket, Groups + Knockout, or League — then set options like number of groups, legs per match (single or home & away) and points for a win/draw.",
+      },
+      play: {
+        title: "Play or simulate matches",
+        desc: "Enter scores yourself with “Set Result”, or hit “Simulate All” to play everything instantly. Browse the Groups, Bracket, League, Stats and Fixtures tabs, and use “Advance to Knockout” once the group stage is done.",
+      },
+      simulate: {
+        title: "Run a Monte Carlo simulation",
+        desc: "Open a tournament’s Settings and tap “Simulate 10,000×” to play it out thousands of times. The Simulation Results page shows each team’s championship odds and average stats.",
+      },
+      seasons: {
+        title: "Start new seasons & track history",
+        desc: "Tap “New Season” to replay a tournament with the same teams. The History tab collects your Champions, All-Time Table and Statistics across every season.",
+      },
+      settings: {
+        title: "Customize in Settings",
+        desc: "Change the language, switch themes (Light, Dark, or World Cup 2026), tweak table rules and display options, and back up or export all your data from the Settings tab.",
+      },
+    },
+    outro: "That’s it — you can change almost anything later from a tournament’s Settings page.",
+  },
   common: {
     back: "Back",
     close: "Close",

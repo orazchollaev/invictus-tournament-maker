@@ -104,6 +104,9 @@ onUnmounted(() => observer?.disconnect())
 
     <div class="version-row">
       <span class="version">v{{ version }}</span>
+      <RouterLink class="changelog-btn" to="/guide">
+        {{ t("guide.title") }}
+      </RouterLink>
       <a
         class="changelog-btn"
         href="https://github.com/orazchollaev/invictus-tournament-maker/blob/main/CHANGELOG.md"

@@ -1,5 +1,14 @@
 <script setup lang="ts">
-import { Settings, Star, Trophy, History, RefreshCw, FolderGit2, Users } from "@lucide/vue"
+import {
+  Settings,
+  Star,
+  Trophy,
+  History,
+  RefreshCw,
+  FolderGit2,
+  Users,
+  BookOpen,
+} from "@lucide/vue"
 import { useSettingsStore } from "@/modules/settings/store"
 import { usePwaUpdate } from "@/composables/usePwaUpdate"
 import { useNavActive } from "@/composables/useNavActive"
@@ -63,6 +72,14 @@ const { isNavActive } = useNavActive()
           <span class="github-star-label">{{ t("common.star") }}</span>
           <Star :size="12" class="github-star-icon" />
         </a>
+        <RouterLink
+          to="/guide"
+          class="settings-btn"
+          :class="{ 'router-link-active': isNavActive('/guide') }"
+          :title="t('guide.title')"
+        >
+          <BookOpen :size="16" />
+        </RouterLink>
         <RouterLink
           to="/settings"
           class="settings-btn"
