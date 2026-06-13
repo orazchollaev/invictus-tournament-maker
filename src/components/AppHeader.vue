@@ -74,7 +74,7 @@ const { isNavActive } = useNavActive()
         </a>
         <RouterLink
           to="/guide"
-          class="settings-btn"
+          class="settings-btn guide-btn"
           :class="{ 'router-link-active': isNavActive('/guide') }"
           :title="t('guide.title')"
         >
@@ -346,6 +346,10 @@ const { isNavActive } = useNavActive()
   }
   .settings-btn {
     display: none;
+  }
+  /* Keep the guide button visible, anchored top-right */
+  .guide-btn {
+    display: flex;
   }
   .wc-badge {
     display: none;
