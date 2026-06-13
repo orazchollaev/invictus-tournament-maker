@@ -5,6 +5,39 @@ export default {
     history: "Geçmiş",
     settings: "Ayarlar",
   },
+  guide: {
+    title: "Nasıl Kullanılır",
+    intro:
+      "Burada yeni misiniz? İlk turnuvanızı oluşturmak ve simüle etmek için bu adımları takip edin.",
+    steps: {
+      teams: {
+        title: "Takımlarınızı ekleyin",
+        desc: "Takımlar sekmesini açın ve isim, kısaltma, güç reytingi ve renk belirlemek için “+ Takım Ekle” seçeneğine dokunun. Aceleniz mi var? Hazır bir takım listesi yüklemek için Ayarlar → Örnek Veri bölümüne gidin.",
+      },
+      create: {
+        title: "Bir turnuva oluşturun",
+        desc: "Turnuvalar sekmesinde “+ Yeni Turnuva” seçeneğine dokunun, turnuvaya bir isim verin ve takımları seçin. Bir format seçin (Eleme Usulü Braket, Gruplar + Eleme veya Lig) ve ardından grup sayısı, maç başına ayak sayısı (tek maç veya iç saha & dış saha) ve galibiyet/beraberlik puanları gibi seçenekleri ayarlayın.",
+      },
+      play: {
+        title: "Maçları oynayın veya simüle edin",
+        desc: "Skorları “Sonucu Ayarla” ile kendiniz girin veya her şeyi anında oynamak için “Tümünü Simüle Et” seçeneğine basın. Gruplar, Braket, Lig, İstatistikler ve Fikstür sekmelerine göz atın ve grup aşaması bittiğinde “Elemelere Geç” seçeneğini kullanın.",
+      },
+      simulate: {
+        title: "Monte Carlo simülasyonu çalıştırın",
+        desc: "Bir turnuvanın Ayarlarını açın ve binlerce kez oynatmak için “10.000× Simüle Et” seçeneğine dokunun. Simülasyon Sonuçları sayfası, her takımın şampiyonluk oranlarını ve ortalama istatistiklerini gösterir.",
+      },
+      seasons: {
+        title: "Yeni sezonlar başlatın ve geçmişi takip edin",
+        desc: "Bir turnuvayı aynı takımlarla yeniden oynamak için “Yeni Sezon” seçeneğine dokunun. Geçmiş sekmesi, her sezondaki Şampiyonlarınızı, Tüm Zamanların Puan Durumunu ve İstatistiklerini bir araya getirir.",
+      },
+      settings: {
+        title: "Ayarlar'da özelleştirin",
+        desc: "Dili değiştirin, temalar arasında geçiş yapın (Açık, Koyu veya Dünya Kupası 2026), tablo kurallarını ve görüntüleme seçeneklerini ince ayarlayın ve tüm verilerinizi Ayarlar sekmesinden yedekleyin veya dışa aktarın.",
+      },
+    },
+    outro:
+      "İşte bu kadar — daha sonra bir turnuvanın Ayarlar sayfasından neredeyse her şeyi değiştirebilirsiniz.",
+  },
   common: {
     back: "Geri",
     close: "Kapat",

@@ -5,6 +5,38 @@ export default {
     history: "Histórico",
     settings: "Configurações",
   },
+  guide: {
+    title: "Como Usar",
+    intro: "Novo por aqui? Siga estes passos para criar e simular o seu primeiro torneio.",
+    steps: {
+      teams: {
+        title: "Adicione as suas equipas",
+        desc: "Abra o separador Equipas e toque em “+ Adicionar Equipa” para definir um nome, abreviatura, nível de força e cor. Com pressa? Vá a Definições → Dados de Exemplo para carregar uma lista de equipas já pronta.",
+      },
+      create: {
+        title: "Crie um torneio",
+        desc: "No separador Torneios, toque em “+ Novo Torneio”, dê-lhe un nome e escolha as equipas. Escolha um formato — Eliminatória Direta, Grupos + Eliminatória, ou Liga — depois defina opções como o número de grupos, partidas por eliminatória (mão única ou ida e volta) e pontos por vitória/empate.",
+      },
+      play: {
+        title: "Jogue ou simule partidas",
+        desc: "Introduza os resultados você mesmo com “Definir Resultado”, ou clique em “Simular Tudo” para jogar tudo instantaneamente. Navegue pelos separadores Grupos, Eliminatórias, Liga, Estatísticas e Calendário, e use “Avançar para Eliminatórias” assim que a fase de grupos terminar.",
+      },
+      simulate: {
+        title: "Execute uma simulação de Monte Carlo",
+        desc: "Abra as Definições de um torneio e toque em “Simular 10.000×” para o jogar milhares de vezes. A página de Resultados da Simulação mostra as probabilidades de campeonato de cada equipa e as suas estatísticas médias.",
+      },
+      seasons: {
+        title: "Inicie novas épocas e acompanhe o histórico",
+        desc: "Toque em “Nova Época” para repetir um torneio com as mesmas equipas. O separador Histórico reúne os seus Campeões, a Classificação Geral e as Estatísticas de todas as épocas.",
+      },
+      settings: {
+        title: "Personalize nas Definições",
+        desc: "Altere o idioma, mude de tema (Claro, Escuro ou Mundial 2026), ajuste as regras das tabelas e as opções de visualização, e faça uma cópia de segurança ou exporte todos os seus dados a partir do separador Definições.",
+      },
+    },
+    outro:
+      "E já está — pode alterar quase tudo mais tarde a partir da página de Definições de um torneio.",
+  },
   common: {
     back: "Voltar",
     close: "Fechar",

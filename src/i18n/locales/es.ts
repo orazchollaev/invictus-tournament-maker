@@ -5,6 +5,38 @@ export default {
     history: "Historia",
     settings: "Configuración",
   },
+  guide: {
+    title: "Cómo usar",
+    intro: "¿Eres nuevo aquí? Sigue estos pasos para crear y simular tu primer torneo.",
+    steps: {
+      teams: {
+        title: "Añade tus equipos",
+        desc: "Abre la pestaña Equipos y toca “+ Añadir equipo” para configurar un nombre, abreviatura, nivel de fuerza y color. ¿Tienes prisa? Ve a Configuración → Datos de muestra para cargar una lista de equipos predefinida.",
+      },
+      create: {
+        title: "Crea un torneo",
+        desc: "In la pestaña Torneos, toca “+ Nuevo torneo”, dale un nombre y elige los equipos. Selecciona un formato — Eliminatoria directa, Grupos + Eliminatoria, o Liga — luego define opciones como el número de grupos, partidos por eliminatoria (ida sola o ida y vuelta) y puntos por victoria/empate.",
+      },
+      play: {
+        title: "Juega o simula partidos",
+        desc: "Introduce los resultados tú mismo con “Definir resultado”, o pulsa “Simular todo” para jugarlo todo al instante. Explora las pestañas de Grupos, Eliminatorias, Liga, Estadísticas y Calendario, y usa “Avanzar a eliminatorias” una vez terminada la fase de grupos.",
+      },
+      simulate: {
+        title: "Ejecuta una simulación de Montecarlo",
+        desc: "Abre la Configuración de un torneo y toca “Simular 10.000×” para reproducirlo miles de veces. La página de Resultados de simulación muestra las probabilidades de campeonato de cada equipo y sus estadísticas promedio.",
+      },
+      seasons: {
+        title: "Inicia nuevas temporadas y sigue el historial",
+        desc: "Toca “Nueva temporada” para volver a jugar un torneo con los mismos equipos. La pestaña Historial reúne tus Campeones, la Clasificación histórica y las Estadísticas de todas las temporadas.",
+      },
+      settings: {
+        title: "Personaliza en Configuración",
+        desc: "Cambia el idioma, cambia de tema (Claro, Oscuro o Copa del Mundo 2026), ajusta las reglas de la tabla y las opciones de visualización, y haz una copia de seguridad o exporta todos tus datos desde la pestaña Configuración.",
+      },
+    },
+    outro:
+      "Eso es todo — puedes cambiar casi cualquier cosa más tarde desde la página de Configuración de un torneo.",
+  },
   common: {
     back: "Volver",
     close: "Cerrar",

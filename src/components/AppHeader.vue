@@ -354,10 +354,7 @@ const { isNavActive } = useNavActive()
   .header-end {
     right: 12px;
   }
-  .brand-logo {
-    height: 44px;
-    width: 44px;
-  }
+
   .main-nav {
     display: none;
   }
