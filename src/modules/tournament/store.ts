@@ -218,7 +218,9 @@ export const useTournamentStore = defineStore("tournament", () => {
     }
     if (t.format === "group+bracket") {
       groups.simAllGroups(tournamentId)
-      groups.advanceToBracket(tournamentId)
+      // Only seed the bracket if it hasn't been seeded yet — re-seeding would
+      // rebuild rounds and wipe any knockout matches already played.
+      if (!t.groupsDone) groups.advanceToBracket(tournamentId)
     }
     bracket.simulateAll(tournamentId)
   }
