@@ -1,4 +1,22 @@
 export default {
+  drawCeremony: {
+    title: "Sorteio",
+    potsHint: "Arraste as equipes entre os potes e depois inicie o sorteio.",
+    resetPots: "Redefinir potes",
+    startDraw: "Iniciar Sorteio",
+    skipDraw: "Pular Sorteio",
+    continue: "Continuar",
+    speed: "Velocidade",
+    speedNormal: "Normal",
+    speedFast: "Rápida",
+    settingsLabel: "Sorteio",
+    settingsDesc: "Mostrar um sorteio animado ao distribuir as equipes em grupos ou na chave",
+    errors: {
+      unassigned: "Todas as equipes devem ser atribuídas a um pote.",
+      duplicate: "Uma equipe aparece em mais de um pote.",
+      emptyPot: "Os potes não podem estar vazios.",
+    },
+  },
   nav: {
     tournaments: "Torneios",
     teams: "Times",

@@ -65,6 +65,13 @@ const gradualRevealVal = computed({
     settings.gradualReveal = v === "on"
   },
 })
+
+const drawCeremonyVal = computed({
+  get: () => (settings.drawCeremony ? "on" : "off"),
+  set: (v: string) => {
+    settings.drawCeremony = v === "on"
+  },
+})
 </script>
 
 <template>
@@ -128,6 +135,13 @@ const gradualRevealVal = computed({
           <div class="setting-desc">{{ t("settings.display.gradualReveal.desc") }}</div>
         </div>
         <BtnGroup v-model="gradualRevealVal" :options="onOffOptions" />
+      </div>
+      <div class="setting-row">
+        <div class="setting-info">
+          <div class="setting-label">{{ t("drawCeremony.settingsLabel") }}</div>
+          <div class="setting-desc">{{ t("drawCeremony.settingsDesc") }}</div>
+        </div>
+        <BtnGroup v-model="drawCeremonyVal" :options="onOffOptions" />
       </div>
     </div>
   </div>

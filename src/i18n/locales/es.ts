@@ -1,4 +1,22 @@
 export default {
+  drawCeremony: {
+    title: "Sorteo",
+    potsHint: "Arrastra los equipos entre bombos y luego inicia el sorteo.",
+    resetPots: "Restablecer bombos",
+    startDraw: "Iniciar Sorteo",
+    skipDraw: "Saltar Sorteo",
+    continue: "Continuar",
+    speed: "Velocidad",
+    speedNormal: "Normal",
+    speedFast: "Rápida",
+    settingsLabel: "Sorteo",
+    settingsDesc: "Mostrar un sorteo animado al asignar equipos a grupos o al cuadro",
+    errors: {
+      unassigned: "Todos los equipos deben estar asignados a un bombo.",
+      duplicate: "Un equipo aparece en más de un bombo.",
+      emptyPot: "Los bombos no pueden estar vacíos.",
+    },
+  },
   nav: {
     tournaments: "Torneos",
     teams: "Equipos",

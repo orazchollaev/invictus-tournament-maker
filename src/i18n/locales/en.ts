@@ -1,4 +1,22 @@
 export default {
+  drawCeremony: {
+    title: "Draw Ceremony",
+    potsHint: "Drag teams between pots, then start the draw.",
+    resetPots: "Reset pots",
+    startDraw: "Start Draw",
+    skipDraw: "Skip Draw",
+    continue: "Continue",
+    speed: "Speed",
+    speedNormal: "Normal",
+    speedFast: "Fast",
+    settingsLabel: "Draw Ceremony",
+    settingsDesc: "Show an animated draw when teams are drawn into groups or the bracket",
+    errors: {
+      unassigned: "All teams must be assigned to a pot.",
+      duplicate: "A team appears in more than one pot.",
+      emptyPot: "Pots cannot be empty.",
+    },
+  },
   nav: {
     tournaments: "Tournaments",
     teams: "Teams",

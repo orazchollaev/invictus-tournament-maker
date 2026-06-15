@@ -7,8 +7,10 @@ import { useSettingsStore } from "@/modules/settings/store"
 import ManualDraw from "../components/ManualDraw.vue"
 import GroupDraw from "../components/GroupDraw.vue"
 import TeamSelector from "../components/TeamSelector.vue"
+import { DrawCeremony } from "../components/draw-ceremony"
 import { Shuffle, ArrowLeft } from "@lucide/vue"
 import { randomTournamentName } from "@/composables/useRandomNames"
+import type { CeremonyContext, DrawMode } from "@/engine"
 import type { LegMode, PlayoffSeedMode, Tiebreaker } from "@/modules/tournament/types"
 import {
   CreateFormatSelector,
@@ -34,6 +36,8 @@ const groupCount = ref(4)
 const qualifiersPerGroup = ref(2)
 const wildcardCount = ref(0)
 const showManualDraw = ref(false)
+const showCeremony = ref(false)
+const ceremonyContext = ref<CeremonyContext | null>(null)
 const hasThirdPlace = ref(false)
 const playoffSeedMode = ref<PlayoffSeedMode>(settingsStore.newSeasonPlayoffSeedMode)
 const groupLegMode = ref<LegMode>(settingsStore.groupLegMode)
@@ -90,7 +94,26 @@ function handleCreate() {
     showManualDraw.value = true
     return
   }
+  if (settingsStore.drawCeremony) {
+    openCeremony()
+    return
+  }
   doCreate()
+}
+
+function openCeremony() {
+  ceremonyContext.value = {
+    kind: format.value === "group+bracket" ? "group" : "bracket",
+    teams: selectedTeams.value,
+    drawMode: drawType.value as DrawMode,
+    groupCount: format.value === "group+bracket" ? groupCount.value : undefined,
+  }
+  showCeremony.value = true
+}
+
+function onCeremonyComplete(orderedIds: string[]) {
+  showCeremony.value = false
+  doCreate(orderedIds)
 }
 
 function applyAdjustments(id: string) {
@@ -157,6 +180,9 @@ function doCreate(orderedIds?: string[]) {
     isGroup ? drawPoints.value : undefined,
     isGroup ? lossPoints.value : undefined
   )
+  // The ceremony commits its result via orderedIds (manual placement under the
+  // hood); preserve the user's real draw-method label for display.
+  store.setDrawType(id, drawType.value)
   if (isGroup) store.setPlayoffSeedMode(id, playoffSeedMode.value)
   if (hasThirdPlace.value) store.toggleThirdPlace(id)
   applyAdjustments(id)
@@ -284,6 +310,15 @@ function doCreate(orderedIds?: string[]) {
         <RouterLink to="/tournaments" class="ctp-cancel-link">{{ $t("common.cancel") }}</RouterLink>
       </div>
     </template>
+
+    <DrawCeremony
+      v-if="showCeremony && ceremonyContext"
+      :title="$t('drawCeremony.title')"
+      :context="ceremonyContext"
+      :teams="selectedTeams"
+      @complete="onCeremonyComplete"
+      @cancel="showCeremony = false"
+    />
   </div>
 </template>
 

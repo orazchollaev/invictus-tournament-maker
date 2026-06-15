@@ -13,6 +13,10 @@ import PlayoffManualDraw from "@/modules/tournament/components/PlayoffManualDraw
 import GroupDraw from "@/modules/tournament/components/GroupDraw.vue"
 import TournamentStats from "@/modules/tournament/components/TournamentStats.vue"
 import PromotionModal from "@/modules/tournament/components/PromotionModal.vue"
+import { DrawCeremony } from "@/modules/tournament/components/draw-ceremony"
+import { buildPlayoffPots } from "@/engine"
+import type { CeremonyContext, DrawMode, Pot } from "@/engine"
+import type { PlayoffSeedMode } from "@/modules/tournament/types"
 import AppModal from "@/components/AppModal.vue"
 import { DetailHeader, DetailPhaseTabs, DetailMultiTierModal } from "../components/detail"
 import type { MainTab } from "../components/detail"
@@ -42,6 +46,12 @@ const showManualSeason = ref(false)
 const showPromotionModal = ref(false)
 const showMultiTierModal = ref(false)
 const showPlayoffManualDraw = ref(false)
+
+const showCeremony = ref(false)
+const ceremonyContext = ref<CeremonyContext | null>(null)
+const ceremonyPots = ref<Pot[] | undefined>(undefined)
+const ceremonyAction = ref<"playoff" | "season" | null>(null)
+const ceremonySeasonOpts = ref<{ thirdPlace: boolean; playoffSeedMode?: PlayoffSeedMode }>()
 
 const isMultiTier = computed(() => (tournament.value?.tiers?.length ?? 0) > 1)
 const activeTierIdx = ref(0)
@@ -90,7 +100,9 @@ async function openNewSeason() {
     ? (t.playoffSeedMode ?? settings.newSeasonPlayoffSeedMode)
     : undefined
   const thirdPlace = t.hasThirdPlace ?? false
-  if (drawType === "random") {
+  if ((drawType === "random" || drawType === "seeded") && settings.drawCeremony) {
+    openSeasonCeremony(drawType, thirdPlace, playoffSeedMode)
+  } else if (drawType === "random") {
     startNewSeason(false, undefined, thirdPlace, playoffSeedMode)
   } else if (drawType === "seeded") {
     startNewSeason(true, undefined, thirdPlace, playoffSeedMode)
@@ -98,6 +110,54 @@ async function openNewSeason() {
     showManualSeason.value = true
     showSeasonModal.value = true
   }
+}
+
+function openSeasonCeremony(
+  drawMode: DrawMode,
+  thirdPlace: boolean,
+  playoffSeedMode?: PlayoffSeedMode
+) {
+  const t = tournament.value
+  if (!t) return
+  ceremonyContext.value = {
+    kind: t.format === "group+bracket" ? "group" : "bracket",
+    teams: tournamentTeams.value,
+    drawMode,
+    groupCount: t.format === "group+bracket" ? t.groups?.length : undefined,
+  }
+  ceremonyPots.value = undefined
+  ceremonySeasonOpts.value = { thirdPlace, playoffSeedMode }
+  ceremonyAction.value = "season"
+  showCeremony.value = true
+}
+
+function openPlayoffCeremony() {
+  const t = tournament.value
+  if (!t) return
+  const pots = buildPlayoffPots(t, allTeams.value)
+  const qIds = new Set(pots.flatMap((p) => p.teamIds))
+  ceremonyContext.value = {
+    kind: "playoff",
+    teams: allTeams.value.filter((tm) => qIds.has(tm.id)),
+    drawMode: "seeded",
+  }
+  ceremonyPots.value = pots
+  ceremonySeasonOpts.value = undefined
+  ceremonyAction.value = "playoff"
+  showCeremony.value = true
+}
+
+function onCeremonyComplete(orderedIds: string[]) {
+  showCeremony.value = false
+  const t = tournament.value
+  if (!t) return
+  if (ceremonyAction.value === "playoff") {
+    store.advanceToBracketManual(t.id, orderedIds)
+  } else if (ceremonyAction.value === "season") {
+    const opts = ceremonySeasonOpts.value
+    startNewSeason(false, orderedIds, opts?.thirdPlace ?? false, opts?.playoffSeedMode)
+  }
+  ceremonyAction.value = null
 }
 
 function handlePromotionConfirm(newTeamIds: string[]) {
@@ -238,6 +298,8 @@ function onAdvance() {
   const mode = t.playoffSeedMode ?? settings.newSeasonPlayoffSeedMode
   if (mode === "manual") {
     showPlayoffManualDraw.value = true
+  } else if (settings.drawCeremony) {
+    openPlayoffCeremony()
   } else {
     store.advanceToBracket(t.id)
   }
@@ -402,6 +464,16 @@ function changeTab(tab: MainTab, tierIdx?: number) {
       "
       @confirm="handlePromotionConfirm"
       @cancel="showPromotionModal = false"
+    />
+
+    <DrawCeremony
+      v-if="showCeremony && ceremonyContext"
+      :title="trns('drawCeremony.title')"
+      :context="ceremonyContext"
+      :teams="allTeams"
+      :initial-pots="ceremonyPots"
+      @complete="onCeremonyComplete"
+      @cancel="showCeremony = false"
     />
 
     <DetailMultiTierModal

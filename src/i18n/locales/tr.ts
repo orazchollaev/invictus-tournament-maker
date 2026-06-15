@@ -1,4 +1,22 @@
 export default {
+  drawCeremony: {
+    title: "Kura Çekimi",
+    potsHint: "Takımları torbalar arasında sürükleyin, ardından kurayı başlatın.",
+    resetPots: "Torbaları sıfırla",
+    startDraw: "Kurayı Başlat",
+    skipDraw: "Kurayı Atla",
+    continue: "Devam Et",
+    speed: "Hız",
+    speedNormal: "Normal",
+    speedFast: "Hızlı",
+    settingsLabel: "Kura Çekimi",
+    settingsDesc: "Takımlar gruplara veya eşleşmelere çekilirken animasyonlu kura göster",
+    errors: {
+      unassigned: "Tüm takımlar bir torbaya yerleştirilmeli.",
+      duplicate: "Bir takım birden fazla torbada görünüyor.",
+      emptyPot: "Torbalar boş olamaz.",
+    },
+  },
   nav: {
     tournaments: "Turnuvalar",
     teams: "Takımlar",

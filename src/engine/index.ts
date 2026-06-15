@@ -1,5 +1,14 @@
 // engine/index.ts
-export { uid, shuffle, getRoundName } from "./utils"
+export { uid, shuffle, shuffleWith, makeRng, randomSeed, getRoundName } from "./utils"
+export { buildPots, buildPlayoffPots, validatePots, computeDrawPlan } from "./drawCeremony"
+export type {
+  Pot,
+  DrawStep,
+  DrawPlan,
+  DrawMode,
+  CeremonyKind,
+  CeremonyContext,
+} from "./drawCeremony"
 export { simulateMatch, simulatePenaltyShootout, setSimConfig } from "./simulation"
 export { setTableConfig } from "./tableConfig"
 export {
