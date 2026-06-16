@@ -387,13 +387,15 @@ const isEditing = computed(() => sMode.value !== "off" || editingLeg.value !== n
   border: 1px solid var(--border-light);
   border-radius: var(--radius);
   background: var(--surface);
+  box-shadow: var(--shadow-sm);
   font-size: 12px;
   box-sizing: border-box;
   overflow: hidden;
-  animation: fade-up 0.28s ease both;
+  animation: fade-up var(--dur-slow) var(--ease) both;
   transition:
-    opacity 0.2s ease,
-    filter 0.2s ease;
+    opacity var(--dur) var(--ease),
+    box-shadow var(--dur) var(--ease),
+    filter var(--dur) var(--ease);
 }
 .mc.final {
   border-color: #c9a227;

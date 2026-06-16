@@ -125,6 +125,7 @@ onUnmounted(() => {
 .drawer {
   background: var(--surface);
   border-left: 1px solid var(--border);
+  box-shadow: var(--shadow-lg);
   width: 420px;
   max-width: 100vw;
   height: 100%;

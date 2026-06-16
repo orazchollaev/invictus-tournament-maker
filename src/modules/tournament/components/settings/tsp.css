@@ -1,16 +1,17 @@
 .tsp-card {
   background: var(--surface);
   border: 1px solid var(--border-light);
-  border-radius: var(--radius);
-  padding: 16px;
-  margin-bottom: 12px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: var(--sp-5);
+  margin-bottom: var(--sp-4);
 }
 
 .tsp-card-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 12px;
+  margin-bottom: var(--sp-4);
 }
 .tsp-card-header .tsp-section-title {
   margin-bottom: 0;
@@ -36,8 +37,8 @@
   color: var(--text-muted);
   background: var(--bg);
   border: 1px solid var(--border-light);
-  padding: 2px 7px;
-  border-radius: var(--radius);
+  padding: 2px 9px;
+  border-radius: var(--radius-pill);
 }
 
 .tsp-locked-banner {

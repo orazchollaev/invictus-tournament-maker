@@ -38,8 +38,10 @@ const {
   skip,
 } = useDrawCeremony(props.context, props.initialPots)
 
+const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+
 watch(phase, (p) => {
-  if (p === "done" && settings.confettiOnWin) {
+  if (p === "done" && settings.confettiOnWin && !prefersReducedMotion) {
     confetti({ particleCount: 90, spread: 75, origin: { y: 0.6 }, zIndex: 9999 })
   }
 })
@@ -157,12 +159,12 @@ function complete() {
   inset: 0;
   z-index: 300;
   background: rgba(20, 22, 28, 0.62);
-  backdrop-filter: blur(2px);
+  backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 16px;
-  animation: dc-backdrop-in 0.18s ease both;
+  padding: var(--sp-4);
+  animation: dc-backdrop-in var(--dur) var(--ease) both;
 }
 .dc-panel {
   width: min(720px, 100%);
@@ -171,24 +173,24 @@ function complete() {
   flex-direction: column;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: var(--radius);
-  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
   padding-top: env(safe-area-inset-top);
-  animation: dc-panel-in 0.25s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: dc-panel-in var(--dur-slow) cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 .dc-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
-  padding: 10px 14px;
+  gap: var(--sp-2);
+  padding: var(--sp-3) var(--sp-4);
   background: var(--bg);
   border-bottom: 1px solid var(--border-light);
   flex-shrink: 0;
 }
 .dc-title {
   font-family: var(--font);
-  font-size: 15px;
+  font-size: var(--fs-md);
   font-weight: 600;
 }
 .dc-close {
@@ -209,7 +211,7 @@ function complete() {
   color: var(--text);
 }
 .dc-body {
-  padding: 14px;
+  padding: var(--sp-4);
   overflow-y: auto;
   flex: 1;
 }
@@ -228,8 +230,8 @@ function complete() {
 .dc-footer {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 14px;
+  gap: var(--sp-2);
+  padding: var(--sp-3) var(--sp-4);
   border-top: 1px solid var(--border-light);
   background: var(--bg);
   flex-shrink: 0;

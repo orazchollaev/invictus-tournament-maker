@@ -109,6 +109,7 @@ export function useTournamentDetail() {
   }
 
   function fireTeamConfetti(color: string) {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return
     const end = Date.now() + 2500
 
     const frame = () => {

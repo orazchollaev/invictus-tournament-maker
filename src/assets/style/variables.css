@@ -4,10 +4,10 @@
 
 :root {
   --bottom-nav-height: 56px;
-  --bg: #d1d6e0;
-  --surface: #dde1eb;
-  --border: #8a97ad;
-  --border-light: #ccd2de;
+  --bg: #eceff5;
+  --surface: #ffffff;
+  --border: #c2cad8;
+  --border-light: #e3e8f0;
   --text: #1a2234;
   --text-muted: #475569;
   --accent: #0d9488;
@@ -16,24 +16,61 @@
   --accent-2: #f59e0b;
   --danger: #dc2626;
   --success: #059669;
-  --radius: 4px;
   --font: "IBM Plex Sans", sans-serif;
   --font-ui: "IBM Plex Sans", sans-serif;
+
+  /* ── Spacing scale ── */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 24px;
+  --sp-6: 32px;
+  --sp-7: 48px;
+
+  /* ── Radius scale (soft & spacious) ── */
+  --radius-sm: 6px;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --radius-pill: 999px;
+
+  /* ── Elevation (soft, layered) ── */
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06), 0 1px 3px rgba(15, 23, 42, 0.04);
+  --shadow-md: 0 2px 6px rgba(15, 23, 42, 0.08), 0 6px 16px rgba(15, 23, 42, 0.06);
+  --shadow-lg: 0 8px 24px rgba(15, 23, 42, 0.12), 0 18px 48px rgba(15, 23, 42, 0.14);
+
+  /* ── Type scale ── */
+  --fs-xs: 11px;
+  --fs-sm: 12px;
+  --fs-base: 14px;
+  --fs-md: 15px;
+  --fs-lg: 18px;
+  --fs-xl: 22px;
+  --fs-2xl: 28px;
+
+  /* ── Motion ── */
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --dur-fast: 0.12s;
+  --dur: 0.2s;
+  --dur-slow: 0.35s;
 }
 
 [data-theme="dark"] {
-  --bg: #16181f;
-  --surface: #1f2229;
-  --border: #2e3340;
-  --border-light: #252932;
+  --bg: #14161c;
+  --surface: #232733;
+  --border: #323845;
+  --border-light: #2a2f3a;
   --text: #f1f5f9;
-  --text-muted: #94a3b8;
+  --text-muted: #9aa7bd;
   --accent: #14b8a6;
   --accent-hover: #2dd4bf;
   --accent-subtle: color-mix(in srgb, var(--accent) 12%, transparent);
   --accent-2: #fbbf24;
   --danger: #f87171;
   --success: #34d399;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3), 0 1px 3px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 2px 6px rgba(0, 0, 0, 0.35), 0 6px 16px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.45), 0 18px 48px rgba(0, 0, 0, 0.5);
 }
 
 [data-theme="worldcup2026"] {
@@ -51,6 +88,9 @@
   --success: #00b874;
   --font: "Bebas Neue", "Oswald", sans-serif;
   --font-ui: "Barlow Condensed", "IBM Plex Sans", sans-serif;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 2px 6px rgba(0, 0, 0, 0.45), 0 6px 16px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.55), 0 18px 48px rgba(0, 0, 0, 0.6);
 }
 
 [data-theme="worldcup2026"] body {

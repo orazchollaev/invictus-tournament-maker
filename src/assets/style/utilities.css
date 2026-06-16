@@ -1,14 +1,14 @@
 /* ── Utility Classes ── */
 .flex {
   display: flex;
-  gap: 8px;
+  gap: var(--sp-2);
   align-items: center;
 }
 
 .flex-wrap {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: var(--sp-2);
 }
 
 .ml-auto {
@@ -17,22 +17,22 @@
 
 .tag {
   display: inline-block;
-  font-size: 11px;
-  padding: 1px 6px;
-  border-radius: var(--radius);
+  font-size: var(--fs-xs);
+  padding: 2px 9px;
+  border-radius: var(--radius-pill);
   color: #fff;
   font-weight: 600;
 }
 
 .sm {
-  font-size: 12px;
+  font-size: var(--fs-sm);
   /* padding: 3px 9px; */
 }
 
 .btn-xs {
-  font-size: 11px;
-  padding: 2px 7px;
-  border-radius: var(--radius);
+  font-size: var(--fs-xs);
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
 }
 
 .flush {
@@ -131,8 +131,8 @@
 .page-enter-active,
 .page-leave-active {
   transition:
-    opacity 0.14s ease,
-    transform 0.14s ease;
+    opacity var(--dur) var(--ease),
+    transform var(--dur) var(--ease);
 }
 .page-enter-from {
   opacity: 0;
@@ -145,7 +145,7 @@
 
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 0.18s ease;
+  transition: opacity var(--dur) var(--ease);
 }
 .fade-enter-from,
 .fade-leave-to {

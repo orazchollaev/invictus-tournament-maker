@@ -4,8 +4,8 @@
   color: var(--text-muted);
   background: color-mix(in srgb, var(--accent) 12%, var(--surface));
   border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
-  border-radius: var(--radius);
-  padding: 1px 7px;
+  border-radius: var(--radius-pill);
+  padding: 2px 9px;
   font-family: var(--font-ui);
 }
 .t-meta {
