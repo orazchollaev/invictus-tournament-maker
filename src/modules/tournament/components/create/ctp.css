@@ -283,4 +283,7 @@
     font-weight: 600;
     white-space: nowrap;
   }
+  .ctp-card {
+    padding: var(--sp-3);
+  }
 }

@@ -90,9 +90,11 @@ let touchZoom0 = 1
 let touchCtx: "normal" | "full" = "normal"
 
 // ── Computed transforms ───────────────────────────────────────
-const bracketTransform = computed(() => `translate(${pan.x}px, ${pan.y}px) scale(${zoom.value})`)
+const bracketTransform = computed(
+  () => `translate3d(${pan.x}px, ${pan.y}px, 0) scale(${zoom.value})`
+)
 const fullTransform = computed(
-  () => `translate(${fullPan.x}px, ${fullPan.y}px) scale(${fullZoom.value})`
+  () => `translate3d(${fullPan.x}px, ${fullPan.y}px, 0) scale(${fullZoom.value})`
 )
 const panLayerStyle = computed(() => ({
   willChange: settings.bracketQuality === "low" ? "transform" : "auto",
