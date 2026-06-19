@@ -4,6 +4,7 @@ import { useSettingsStore } from "../store"
 import type { Theme } from "../store"
 import { useI18n } from "vue-i18n"
 import BtnGroup from "@/components/BtnGroup.vue"
+import SettingDesc from "./SettingDesc.vue"
 
 const { t } = useI18n()
 const settings = useSettingsStore()
@@ -22,7 +23,7 @@ const themes = computed<{ value: Theme; label: string }[]>(() => [
       <div class="setting-row">
         <div class="setting-info">
           <div class="setting-label">{{ t("settings.appearance.theme.label") }}</div>
-          <div class="setting-desc">{{ t("settings.appearance.theme.desc") }}</div>
+          <SettingDesc>{{ t("settings.appearance.theme.desc") }}</SettingDesc>
         </div>
         <BtnGroup v-model="settings.theme" :options="themes" />
       </div>

@@ -2,6 +2,7 @@
 import { useSettingsStore } from "../store"
 import { useI18n } from "vue-i18n"
 import BtnGroup from "@/components/BtnGroup.vue"
+import SettingDesc from "./SettingDesc.vue"
 
 const { t } = useI18n()
 const settings = useSettingsStore()
@@ -16,7 +17,7 @@ const settings = useSettingsStore()
         <div class="setting-row">
           <div class="setting-info">
             <div class="setting-label">{{ t("settings.newTournament.knockoutDraw.label") }}</div>
-            <div class="setting-desc">{{ t("settings.newTournament.knockoutDraw.desc") }}</div>
+            <SettingDesc>{{ t("settings.newTournament.knockoutDraw.desc") }}</SettingDesc>
           </div>
           <BtnGroup
             v-model="settings.newSeasonDrawType"
@@ -30,7 +31,7 @@ const settings = useSettingsStore()
         <div class="setting-row">
           <div class="setting-info">
             <div class="setting-label">{{ t("settings.newTournament.groupDraw.label") }}</div>
-            <div class="setting-desc">{{ t("settings.newTournament.groupDraw.desc") }}</div>
+            <SettingDesc>{{ t("settings.newTournament.groupDraw.desc") }}</SettingDesc>
           </div>
           <BtnGroup
             v-model="settings.newSeasonGroupDrawType"
@@ -46,7 +47,7 @@ const settings = useSettingsStore()
             <div class="setting-label">
               {{ t("settings.newTournament.playoffSeeding.label") }}
             </div>
-            <div class="setting-desc">{{ t("settings.newTournament.playoffSeeding.desc") }}</div>
+            <SettingDesc>{{ t("settings.newTournament.playoffSeeding.desc") }}</SettingDesc>
           </div>
           <BtnGroup
             v-model="settings.newSeasonPlayoffSeedMode"
@@ -63,7 +64,7 @@ const settings = useSettingsStore()
         <div class="setting-row scoring-row">
           <div class="setting-info">
             <div class="setting-label">{{ t("settings.newTournament.scoring.title") }}</div>
-            <div class="setting-desc">{{ t("settings.newTournament.scoring.desc") }}</div>
+            <SettingDesc>{{ t("settings.newTournament.scoring.desc") }}</SettingDesc>
           </div>
           <div class="scoring-steppers">
             <div class="scoring-stepper-item">

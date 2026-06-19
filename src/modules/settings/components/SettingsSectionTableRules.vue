@@ -2,6 +2,7 @@
 import { useSettingsStore } from "../store"
 import { useI18n } from "vue-i18n"
 import BtnGroup from "@/components/BtnGroup.vue"
+import SettingDesc from "./SettingDesc.vue"
 
 const { t } = useI18n()
 const settings = useSettingsStore()
@@ -14,11 +15,11 @@ const settings = useSettingsStore()
       <div class="setting-row">
         <div class="setting-info">
           <div class="setting-label">{{ t("settings.tableRules.tiebreaker.label") }}</div>
-          <div class="setting-desc">
+          <SettingDesc>
             {{ t("settings.tableRules.tiebreaker.h2h") }} —
             {{ t("settings.tableRules.tiebreaker.h2h") }} first ·
             {{ t("settings.tableRules.tiebreaker.goalDiff") }} — overall GD first
-          </div>
+          </SettingDesc>
         </div>
         <BtnGroup
           v-model="settings.tiebreaker"

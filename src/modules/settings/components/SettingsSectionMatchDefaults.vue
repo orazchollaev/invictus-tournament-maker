@@ -3,6 +3,7 @@ import { computed } from "vue"
 import { useSettingsStore } from "../store"
 import { useI18n } from "vue-i18n"
 import BtnGroup from "@/components/BtnGroup.vue"
+import SettingDesc from "./SettingDesc.vue"
 
 const { t } = useI18n()
 const settings = useSettingsStore()
@@ -22,7 +23,7 @@ const legOptions = computed(() => [
         <div class="setting-row">
           <div class="setting-info">
             <div class="setting-label">{{ t("settings.matchDefaults.groupStage.label") }}</div>
-            <div class="setting-desc">
+            <SettingDesc>
               <strong>{{ t("common.single") }}</strong>
               —
               {{
@@ -40,7 +41,7 @@ const legOptions = computed(() => [
                   ?.trim()
                   .replace(/^—?\s*/, "")
               }}
-            </div>
+            </SettingDesc>
           </div>
           <BtnGroup v-model="settings.groupLegMode" :options="legOptions" />
         </div>
@@ -49,7 +50,7 @@ const legOptions = computed(() => [
             <div class="setting-label">
               {{ t("settings.matchDefaults.knockoutRounds.label") }}
             </div>
-            <div class="setting-desc">
+            <SettingDesc>
               <strong>{{ t("common.single") }}</strong>
               —
               {{
@@ -67,14 +68,14 @@ const legOptions = computed(() => [
                   ?.trim()
                   .replace(/^—?\s*/, "")
               }}
-            </div>
+            </SettingDesc>
           </div>
           <BtnGroup v-model="settings.knockoutLegMode" :options="legOptions" />
         </div>
         <div class="setting-row">
           <div class="setting-info">
             <div class="setting-label">{{ t("settings.matchDefaults.final.label") }}</div>
-            <div class="setting-desc">{{ t("settings.matchDefaults.final.desc") }}</div>
+            <SettingDesc>{{ t("settings.matchDefaults.final.desc") }}</SettingDesc>
           </div>
           <BtnGroup v-model="settings.finalLegMode" :options="legOptions" />
         </div>

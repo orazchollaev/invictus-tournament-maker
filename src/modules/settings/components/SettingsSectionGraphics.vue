@@ -3,6 +3,7 @@ import { computed } from "vue"
 import { useSettingsStore } from "../store"
 import { useI18n } from "vue-i18n"
 import BtnGroup from "@/components/BtnGroup.vue"
+import SettingDesc from "./SettingDesc.vue"
 
 const { t } = useI18n()
 const settings = useSettingsStore()
@@ -20,7 +21,7 @@ const bracketQualityOptions = computed(() => [
       <div class="setting-row">
         <div class="setting-info">
           <div class="setting-label">{{ t("settings.graphics.bracketQuality.label") }}</div>
-          <div class="setting-desc">{{ t("settings.graphics.bracketQuality.desc") }}</div>
+          <SettingDesc>{{ t("settings.graphics.bracketQuality.desc") }}</SettingDesc>
         </div>
         <BtnGroup v-model="settings.bracketQuality" :options="bracketQualityOptions" />
       </div>

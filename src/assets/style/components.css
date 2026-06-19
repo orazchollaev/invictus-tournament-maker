@@ -532,6 +532,15 @@
     align-items: flex-start;
     gap: 8px;
   }
+  .setting-info {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    width: 100%;
+  }
+  .setting-label {
+    flex: 1;
+  }
   .btn-row {
     flex-wrap: wrap;
   }

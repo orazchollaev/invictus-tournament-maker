@@ -2,6 +2,7 @@
 import { useSettingsStore } from "../store"
 import { useI18n } from "vue-i18n"
 import { LOCALES } from "@/i18n"
+import SettingDesc from "./SettingDesc.vue"
 
 const { t } = useI18n()
 const settings = useSettingsStore()
@@ -14,7 +15,7 @@ const settings = useSettingsStore()
       <div class="setting-row">
         <div class="setting-info">
           <div class="setting-label">{{ t("settings.language.label") }}</div>
-          <div class="setting-desc">{{ t("settings.language.desc") }}</div>
+          <SettingDesc>{{ t("settings.language.desc") }}</SettingDesc>
         </div>
         <div class="lang-picker">
           <button

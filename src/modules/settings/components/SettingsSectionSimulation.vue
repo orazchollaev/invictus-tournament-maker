@@ -3,6 +3,7 @@ import { computed } from "vue"
 import { useSettingsStore } from "../store"
 import { useI18n } from "vue-i18n"
 import BtnGroup from "@/components/BtnGroup.vue"
+import SettingDesc from "./SettingDesc.vue"
 
 const { t } = useI18n()
 const settings = useSettingsStore()
@@ -45,11 +46,11 @@ const surpriseFactorLabel = computed(() => {
       <div class="setting-row">
         <div class="setting-info">
           <div class="setting-label">{{ t("settings.simulation.homeAdvantage.label") }}</div>
-          <div class="setting-desc">
+          <SettingDesc>
             {{
               t("settings.simulation.homeAdvantage.desc", { zero: "0", default: "6", max: "20" })
             }}
-          </div>
+          </SettingDesc>
         </div>
         <div class="stepper-control">
           <span class="stepper-badge">{{ homeAdvantageLabel }}</span>
@@ -81,9 +82,9 @@ const surpriseFactorLabel = computed(() => {
       <div class="setting-row">
         <div class="setting-info">
           <div class="setting-label">{{ t("settings.simulation.surpriseFactor.label") }}</div>
-          <div class="setting-desc">
+          <SettingDesc>
             {{ t("settings.simulation.surpriseFactor.desc", { zero: "0", max: "100" }) }}
-          </div>
+          </SettingDesc>
         </div>
         <div class="stepper-control">
           <span class="stepper-badge">{{ surpriseFactorLabel }}</span>
@@ -115,9 +116,9 @@ const surpriseFactorLabel = computed(() => {
       <div class="setting-row">
         <div class="setting-info">
           <div class="setting-label">{{ t("settings.simulation.formFactor.label") }}</div>
-          <div class="setting-desc">
+          <SettingDesc>
             {{ t("settings.simulation.formFactor.desc", { plus: "+10", minus: "−10" }) }}
-          </div>
+          </SettingDesc>
         </div>
         <BtnGroup v-model="formFactorVal" :options="onOffOptions" />
       </div>

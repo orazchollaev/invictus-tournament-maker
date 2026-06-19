@@ -4,6 +4,7 @@ import { useSettingsStore } from "../store"
 import type { BracketStyle } from "../store"
 import { useI18n } from "vue-i18n"
 import BtnGroup from "@/components/BtnGroup.vue"
+import SettingDesc from "./SettingDesc.vue"
 
 const { t } = useI18n()
 const settings = useSettingsStore()
@@ -81,65 +82,63 @@ const drawCeremonyVal = computed({
       <div class="setting-row">
         <div class="setting-info">
           <div class="setting-label">{{ t("settings.display.teamAbbr.label") }}</div>
-          <div class="setting-desc">
-            {{ t("settings.display.teamAbbr.desc", { example: "BRA" }) }}
-          </div>
+          <SettingDesc>{{ t("settings.display.teamAbbr.desc", { example: "BRA" }) }}</SettingDesc>
         </div>
         <BtnGroup v-model="showTeamAbbrVal" :options="showHideOptions" />
       </div>
       <div class="setting-row">
         <div class="setting-info">
           <div class="setting-label">{{ t("settings.display.bracketStyle.label") }}</div>
-          <div class="setting-desc">
+          <SettingDesc>
             <strong>{{ t("settings.display.bracketStyle.doubleSided") }}</strong>
             — teams on both sides ·
             <strong>{{ t("settings.display.bracketStyle.classic") }}</strong>
             — single left-to-right ·
             <strong>{{ t("settings.display.bracketStyle.auto") }}</strong>
             — Double-Sided for 17+ teams
-          </div>
+          </SettingDesc>
         </div>
         <BtnGroup v-model="settings.bracketStyle" :options="bracketStyleOptions" />
       </div>
       <div class="setting-row">
         <div class="setting-info">
           <div class="setting-label">{{ t("settings.display.confetti.label") }}</div>
-          <div class="setting-desc">{{ t("settings.display.confetti.desc") }}</div>
+          <SettingDesc>{{ t("settings.display.confetti.desc") }}</SettingDesc>
         </div>
         <BtnGroup v-model="confettiOnWinVal" :options="onOffOptions" />
       </div>
       <div class="setting-row">
         <div class="setting-info">
           <div class="setting-label">{{ t("settings.display.sound.label") }}</div>
-          <div class="setting-desc">{{ t("settings.display.sound.desc") }}</div>
+          <SettingDesc>{{ t("settings.display.sound.desc") }}</SettingDesc>
         </div>
         <BtnGroup v-model="soundOnWinVal" :options="onOffOptions" />
       </div>
       <div class="setting-row">
         <div class="setting-info">
           <div class="setting-label">{{ t("settings.display.bracketHover.label") }}</div>
-          <div class="setting-desc">{{ t("settings.display.bracketHover.desc") }}</div>
+          <SettingDesc>{{ t("settings.display.bracketHover.desc") }}</SettingDesc>
         </div>
         <BtnGroup v-model="bracketHoverVal" :options="onOffOptions" />
       </div>
       <div class="setting-row">
         <div class="setting-info">
           <div class="setting-label">{{ t("settings.display.bracketConnectorColors.label") }}</div>
-          <div class="setting-desc">{{ t("settings.display.bracketConnectorColors.desc") }}</div>
+          <SettingDesc>{{ t("settings.display.bracketConnectorColors.desc") }}</SettingDesc>
         </div>
         <BtnGroup v-model="bracketConnectorColorsVal" :options="onOffOptions" />
       </div>
       <div class="setting-row">
         <div class="setting-info">
           <div class="setting-label">{{ t("settings.display.gradualReveal.label") }}</div>
-          <div class="setting-desc">{{ t("settings.display.gradualReveal.desc") }}</div>
+          <SettingDesc>{{ t("settings.display.gradualReveal.desc") }}</SettingDesc>
         </div>
         <BtnGroup v-model="gradualRevealVal" :options="onOffOptions" />
       </div>
       <div class="setting-row">
         <div class="setting-info">
           <div class="setting-label">{{ t("drawCeremony.settingsLabel") }}</div>
-          <div class="setting-desc">{{ t("drawCeremony.settingsDesc") }}</div>
+          <SettingDesc>{{ t("drawCeremony.settingsDesc") }}</SettingDesc>
         </div>
         <BtnGroup v-model="drawCeremonyVal" :options="onOffOptions" />
       </div>
