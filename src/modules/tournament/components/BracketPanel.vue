@@ -9,7 +9,17 @@ import FixtureView from "./FixtureView.vue"
 import { useTournamentStore } from "../store"
 import { useSettingsStore } from "@/modules/settings/store"
 import { useGradualSim } from "../composables/useGradualSim"
-import { Maximize2, Minus, Plus, Shuffle, X, Download, Expand, ChevronDown } from "@lucide/vue"
+import {
+  Maximize2,
+  Minus,
+  Plus,
+  Shuffle,
+  X,
+  Download,
+  Expand,
+  ChevronDown,
+  RotateCw,
+} from "@lucide/vue"
 import { toPng } from "html-to-image"
 
 const props = defineProps<{
@@ -61,6 +71,7 @@ const bracketView = ref<"bracket" | "fixtures">("bracket")
 const showFullBracket = ref(false)
 const showSimMenu = ref(false)
 const isExporting = ref(false)
+const forceLandscape = ref(false)
 
 const bracketWrapperRef = ref<HTMLElement | null>(null)
 const bracketInnerRef = ref<HTMLElement | null>(null)
@@ -114,8 +125,15 @@ function onWindowMouseMove(e: MouseEvent) {
     pan.y = dragStart.value.py + e.clientY - dragStart.value.y
   }
   if (fullIsDragging.value) {
-    fullPan.x = fullDragStart.value.px + e.clientX - fullDragStart.value.x
-    fullPan.y = fullDragStart.value.py + e.clientY - fullDragStart.value.y
+    const dx = e.clientX - fullDragStart.value.x
+    const dy = e.clientY - fullDragStart.value.y
+    if (forceLandscape.value) {
+      fullPan.x = fullDragStart.value.px + dy
+      fullPan.y = fullDragStart.value.py - dx
+    } else {
+      fullPan.x = fullDragStart.value.px + dx
+      fullPan.y = fullDragStart.value.py + dy
+    }
   }
 }
 
@@ -157,8 +175,15 @@ function onTouchMove(e: TouchEvent) {
     )
     z.value = +Math.min(2.5, Math.max(0.25, touchZoom0 * (dist / touchDist0))).toFixed(2)
   } else if (dragging.value && e.touches.length === 1) {
-    p.x = ds.value.px + e.touches[0].clientX - ds.value.x
-    p.y = ds.value.py + e.touches[0].clientY - ds.value.y
+    const dx = e.touches[0].clientX - ds.value.x
+    const dy = e.touches[0].clientY - ds.value.y
+    if (forceLandscape.value && ctx === "full") {
+      p.x = ds.value.px + dy
+      p.y = ds.value.py - dx
+    } else {
+      p.x = ds.value.px + dx
+      p.y = ds.value.py + dy
+    }
   }
 }
 
@@ -182,8 +207,10 @@ function onWheel(e: WheelEvent, ctx: "normal" | "full") {
   const p = ctx === "full" ? fullPan : pan
 
   const rect = wrapper.getBoundingClientRect()
-  const cx = e.clientX - rect.left - rect.width / 2
-  const cy = e.clientY - rect.top - rect.height / 2
+  const screenCx = e.clientX - rect.left - rect.width / 2
+  const screenCy = e.clientY - rect.top - rect.height / 2
+  const cx = forceLandscape.value && ctx === "full" ? screenCy : screenCx
+  const cy = forceLandscape.value && ctx === "full" ? -screenCx : screenCy
 
   const rawDelta = e.deltaMode === 1 ? e.deltaY * 20 : e.deltaY
   const factor = Math.exp(-rawDelta * 0.0015)
@@ -289,6 +316,18 @@ function onEscKey(e: KeyboardEvent) {
   if (e.key === "Escape") closeFullBracket()
 }
 
+function toggleLandscape() {
+  forceLandscape.value = !forceLandscape.value
+  nextTick(() => fullFitScreen())
+}
+
+function onOrientationChange() {
+  const angle = screen.orientation?.angle ?? 0
+  if (angle === 90 || angle === -90 || angle === 270) {
+    forceLandscape.value = false
+  }
+}
+
 function openFullBracket() {
   showFullBracket.value = true
   fullZoom.value = 1
@@ -296,13 +335,16 @@ function openFullBracket() {
   fullPan.y = 0
   document.body.style.overflow = "hidden"
   document.addEventListener("keydown", onEscKey)
+  window.addEventListener("orientationchange", onOrientationChange)
   nextTick(() => fullFitScreen())
 }
 
 function closeFullBracket() {
   showFullBracket.value = false
+  forceLandscape.value = false
   document.body.style.overflow = ""
   document.removeEventListener("keydown", onEscKey)
+  window.removeEventListener("orientationchange", onOrientationChange)
 }
 
 onMounted(() => {
@@ -498,7 +540,7 @@ onUnmounted(() => {
       class="modal-backdrop full-bracket-backdrop"
       @click.self="closeFullBracket"
     >
-      <div class="full-bracket-modal">
+      <div class="full-bracket-modal" :class="{ 'force-landscape': forceLandscape }">
         <div class="full-bracket-header">
           <span>{{ tournament.name }} — Knockout</span>
           <div class="full-bracket-header-right">
@@ -514,6 +556,13 @@ onUnmounted(() => {
                 <Expand :size="13" />
               </button>
             </div>
+            <button
+              class="btn-xs landscape-toggle-btn"
+              :class="{ active: forceLandscape }"
+              @click="toggleLandscape"
+            >
+              <RotateCw :size="13" />
+            </button>
             <button class="btn-xs" @click="closeFullBracket">
               <X :size="13" />
               Close
@@ -770,6 +819,10 @@ onUnmounted(() => {
   flex-shrink: 0;
 }
 
+.landscape-toggle-btn {
+  display: none;
+}
+
 /* ── Mobile bracket bottom tabs ── */
 .bracket-mobile-tabs {
   display: none;
@@ -819,9 +872,6 @@ onUnmounted(() => {
   .zoom-controls {
     display: none;
   }
-  .export-btn {
-    display: none;
-  }
   .btn-label {
     display: none;
   }
@@ -837,6 +887,26 @@ onUnmounted(() => {
   .full-bracket-modal {
     width: 100vw;
     height: 100dvh;
+  }
+
+  .landscape-toggle-btn {
+    display: inline-flex;
+  }
+
+  .landscape-toggle-btn.active {
+    color: var(--accent);
+    border-color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 12%, transparent);
+  }
+
+  .full-bracket-modal.force-landscape {
+    position: fixed;
+    top: 0;
+    left: 100vw;
+    width: 100dvh;
+    height: 100dvw;
+    transform-origin: top left;
+    transform: rotate(90deg);
   }
 
   .sim-toolbar {
