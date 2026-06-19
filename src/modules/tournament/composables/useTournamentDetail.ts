@@ -7,6 +7,7 @@ import confetti from "canvas-confetti"
 import { useSettingsStore } from "@/modules/settings/store"
 import { showConfirm } from "@/composables/useDialog"
 import { useInAppReview } from "@/composables/useInAppReview"
+import { useHaptic } from "@/composables/useHaptic"
 
 export function useTournamentDetail() {
   const route = useRoute()
@@ -16,6 +17,7 @@ export function useTournamentDetail() {
   const settings = useSettingsStore()
 
   const { onTournamentCompleted } = useInAppReview()
+  const { success: hapticSuccess } = useHaptic()
 
   const allTeams = computed(() => teamsStore.teams)
   const tournament = computed(() => store.getById(route.params.id as string))
@@ -156,6 +158,7 @@ export function useTournamentDetail() {
       const team = allTeams.value.find((t) => t.id === newWinnerId)
       if (team && settings.confettiOnWin) fireTeamConfetti(team.color)
       if (team && settings.soundOnWin) playWinnerSound()
+      hapticSuccess()
       onTournamentCompleted()
     }
   )

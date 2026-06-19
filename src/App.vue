@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted } from "vue"
+import { onMounted, onUnmounted, watch } from "vue"
 import { useRouter } from "vue-router"
 import { App } from "@capacitor/app"
 import AppHeader from "@/components/AppHeader.vue"
@@ -7,8 +7,11 @@ import AppBottomNav from "@/components/AppBottomNav.vue"
 import AppDialog from "@/components/AppDialog.vue"
 import ErrorBoundary from "@/components/ErrorBoundary.vue"
 import { useSettingsStore } from "@/modules/settings/store"
+import { useStatusBar } from "@/composables/useStatusBar"
 
-useSettingsStore()
+const settings = useSettingsStore()
+const { setTheme } = useStatusBar()
+watch(() => settings.theme, setTheme, { immediate: true })
 
 const router = useRouter()
 const ROOT_PATHS = ["/tournaments", "/teams", "/history", "/settings"]

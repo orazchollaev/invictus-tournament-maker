@@ -9,6 +9,8 @@ import FixtureView from "./FixtureView.vue"
 import { useTournamentStore } from "../store"
 import { useSettingsStore } from "@/modules/settings/store"
 import { useGradualSim } from "../composables/useGradualSim"
+import { useHaptic } from "@/composables/useHaptic"
+import { useSwipe } from "@/composables/useSwipe"
 import {
   Maximize2,
   Minus,
@@ -33,6 +35,7 @@ const { t } = useI18n()
 const store = useTournamentStore()
 const settings = useSettingsStore()
 const { runSequential } = useGradualSim()
+const { tap: hapticTap } = useHaptic()
 
 async function simRoundGradual(ri: number) {
   const round = props.tournament.rounds[ri]
@@ -49,6 +52,7 @@ async function simRoundGradual(ri: number) {
 }
 
 async function simAllGradual() {
+  hapticTap()
   for (let ri = 0; ri < props.tournament.rounds.length; ri++) {
     await simRoundGradual(ri)
   }
@@ -75,6 +79,16 @@ const isExporting = ref(false)
 const forceLandscape = ref(false)
 
 const canNativeShare = typeof navigator.share === "function"
+
+const mobileTabsRef = ref<HTMLElement | null>(null)
+const fixtureWrapperRef = ref<HTMLElement | null>(null)
+
+function switchToFixtures() {
+  bracketView.value = "fixtures"
+}
+function switchToBracket() {
+  bracketView.value = "bracket"
+}
 
 const bracketWrapperRef = ref<HTMLElement | null>(null)
 const bracketInnerRef = ref<HTMLElement | null>(null)
@@ -366,9 +380,17 @@ function closeFullBracket() {
   window.removeEventListener("orientationchange", onOrientationChange)
 }
 
+const swipeTabs = useSwipe(mobileTabsRef, {
+  onSwipeLeft: switchToFixtures,
+  onSwipeRight: switchToBracket,
+})
+const swipeFixtures = useSwipe(fixtureWrapperRef, { onSwipeRight: switchToBracket })
+
 onMounted(() => {
   window.addEventListener("mousemove", onWindowMouseMove)
   window.addEventListener("mouseup", stopDrag)
+  swipeTabs.mount()
+  swipeFixtures.mount()
 })
 
 onUnmounted(() => {
@@ -376,6 +398,8 @@ onUnmounted(() => {
   window.removeEventListener("mouseup", stopDrag)
   document.removeEventListener("keydown", onEscKey)
   document.body.style.overflow = ""
+  swipeTabs.unmount()
+  swipeFixtures.unmount()
 })
 </script>
 
@@ -522,24 +546,25 @@ onUnmounted(() => {
         </div>
       </div>
 
-      <FixtureView
-        v-else
-        class="fixture-wrapper"
-        :tournament="tournament"
-        :teams="teams"
-        @set-result="setResult"
-        @set-leg2-result="setLeg2Result"
-        @sim-match="simMatch"
-        @sim-leg1="simLeg1"
-        @sim-leg2="simLeg2"
-        @set-third-place-result="setThirdPlaceResult"
-        @sim-third-place="simThirdPlace"
-      />
+      <div v-else ref="fixtureWrapperRef">
+        <FixtureView
+          class="fixture-wrapper"
+          :tournament="tournament"
+          :teams="teams"
+          @set-result="setResult"
+          @set-leg2-result="setLeg2Result"
+          @sim-match="simMatch"
+          @sim-leg1="simLeg1"
+          @sim-leg2="simLeg2"
+          @set-third-place-result="setThirdPlaceResult"
+          @sim-third-place="simThirdPlace"
+        />
+      </div>
     </div>
   </div>
 
   <!-- Mobile: sticky bottom view switcher -->
-  <div class="bracket-mobile-tabs">
+  <div ref="mobileTabsRef" class="bracket-mobile-tabs">
     <button
       class="bracket-mobile-tab"
       :class="{ active: bracketView === 'bracket' }"

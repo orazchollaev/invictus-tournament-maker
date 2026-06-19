@@ -7,6 +7,7 @@ import type { Team } from "@/modules/teams/types"
 import type { CeremonyContext, Pot } from "@/engine"
 import { useSettingsStore } from "@/modules/settings/store"
 import { useDrawCeremony } from "../../composables/useDrawCeremony"
+import { useHaptic } from "@/composables/useHaptic"
 import PotEditor from "./PotEditor.vue"
 import DrawStage from "./DrawStage.vue"
 
@@ -39,10 +40,16 @@ const {
 } = useDrawCeremony(props.context, props.initialPots)
 
 const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+const { tap: hapticTap, success: hapticSuccess } = useHaptic()
 
 watch(phase, (p) => {
-  if (p === "done" && settings.confettiOnWin && !prefersReducedMotion) {
-    confetti({ particleCount: 90, spread: 75, origin: { y: 0.6 }, zIndex: 9999 })
+  if (p === "done") {
+    hapticSuccess()
+    if (settings.confettiOnWin && !prefersReducedMotion) {
+      confetti({ particleCount: 90, spread: 75, origin: { y: 0.6 }, zIndex: 9999 })
+    }
+  } else if (p === "drawing") {
+    hapticTap()
   }
 })
 

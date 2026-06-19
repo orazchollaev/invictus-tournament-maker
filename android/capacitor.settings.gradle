@@ -7,3 +7,6 @@ project(':capacitor-community-in-app-review').projectDir = new File('../node_mod
 
 include ':capacitor-app'
 project(':capacitor-app').projectDir = new File('../node_modules/.pnpm/@capacitor+app@8.1.0_@capacitor+core@8.4.0/node_modules/@capacitor/app/android')
+
+include ':capacitor-status-bar'
+project(':capacitor-status-bar').projectDir = new File('../node_modules/.pnpm/@capacitor+status-bar@8.0.2_@capacitor+core@8.4.0/node_modules/@capacitor/status-bar/android')
