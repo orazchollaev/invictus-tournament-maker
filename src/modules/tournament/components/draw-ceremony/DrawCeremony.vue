@@ -175,6 +175,7 @@ function complete() {
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-lg);
+  overflow: hidden;
   padding-top: env(safe-area-inset-top);
   animation: dc-panel-in var(--dur-slow) cubic-bezier(0.22, 1, 0.36, 1) both;
 }
@@ -267,6 +268,9 @@ function complete() {
     max-height: 100%;
     border-radius: 0;
     border: none;
+  }
+  .dc-footer {
+    padding-bottom: calc(var(--sp-3) + env(safe-area-inset-bottom));
   }
 }
 </style>
