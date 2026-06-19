@@ -169,10 +169,15 @@ function dblSelectLeg(leg: 1 | 2) {
 }
 
 const isEditing = computed(() => sMode.value !== "off" || editingLeg.value !== null)
+const isChampion = computed(() => props.isFinal && !!props.match.result)
 </script>
 
 <template>
-  <div class="mc" :class="{ final: isFinal, dimmed }" @mouseleave="$emit('hover-team', null)">
+  <div
+    class="mc"
+    :class="{ final: isFinal, dimmed, champion: isChampion }"
+    @mouseleave="$emit('hover-team', null)"
+  >
     <!-- ── Left: team names ── -->
     <div class="mc-teams">
       <div
@@ -406,6 +411,23 @@ const isEditing = computed(() => sMode.value !== "off" || editingLeg.value !== n
 .mc.dimmed {
   opacity: 0.22;
   filter: saturate(0.15);
+}
+.mc.champion {
+  animation: champion-glow 2s ease-in-out infinite;
+}
+@keyframes champion-glow {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 1px #c9a22733,
+      0 2px 10px #c9a22720;
+  }
+  50% {
+    box-shadow:
+      0 0 0 2px #c9a22766,
+      0 0 22px #c9a22750,
+      0 0 38px #c9a22728;
+  }
 }
 
 /* ── Teams column (left, fills remaining width) ── */

@@ -6,6 +6,7 @@ import type { PlayoffSeedMode, LegMode } from "@/modules/tournament/types"
 import confetti from "canvas-confetti"
 import { useSettingsStore } from "@/modules/settings/store"
 import { showConfirm } from "@/composables/useDialog"
+import { useInAppReview } from "@/composables/useInAppReview"
 
 export function useTournamentDetail() {
   const route = useRoute()
@@ -13,6 +14,8 @@ export function useTournamentDetail() {
   const teamsStore = useTeamsStore()
   const store = useTournamentStore()
   const settings = useSettingsStore()
+
+  const { onTournamentCompleted } = useInAppReview()
 
   const allTeams = computed(() => teamsStore.teams)
   const tournament = computed(() => store.getById(route.params.id as string))
@@ -153,6 +156,7 @@ export function useTournamentDetail() {
       const team = allTeams.value.find((t) => t.id === newWinnerId)
       if (team && settings.confettiOnWin) fireTeamConfetti(team.color)
       if (team && settings.soundOnWin) playWinnerSound()
+      onTournamentCompleted()
     }
   )
 

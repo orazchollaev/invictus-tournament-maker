@@ -89,6 +89,10 @@ export default {
     starOnGithub: "Star on GitHub",
     star: "Star",
     setResult: "Set Result",
+    share: "Share",
+    offline: "Offline",
+    retry: "Retry",
+    errorBoundaryMsg: "Something went wrong. Please retry.",
   },
   tournaments: {
     title: "Tournaments",

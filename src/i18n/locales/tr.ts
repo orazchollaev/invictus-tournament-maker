@@ -93,6 +93,10 @@ export default {
     setResult: "Sonuç Gir",
     moveUp: "Yukarı taşı",
     moveDown: "Aşağı taşı",
+    share: "Paylaş",
+    offline: "Çevrimdışı",
+    retry: "Tekrar Dene",
+    errorBoundaryMsg: "Bir şeyler ters gitti. Lütfen tekrar deneyin.",
   },
   tournaments: {
     title: "Turnuvalar",

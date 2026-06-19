@@ -92,6 +92,10 @@ export default {
     setResult: "Inserir resultado",
     moveUp: "Mover para cima",
     moveDown: "Mover para baixo",
+    share: "Compartilhar",
+    offline: "Offline",
+    retry: "Tentar novamente",
+    errorBoundaryMsg: "Algo deu errado. Por favor, tente novamente.",
   },
   tournaments: {
     title: "Torneios",

@@ -118,13 +118,31 @@ async function deleteTournament(id: string) {
       </TransitionGroup>
     </div>
 
-    <p v-else-if="teamsStore.teams.length >= 2" class="empty-text">
-      {{ t("tournaments.empty", { action: t("tournaments.newBtn") }) }}
-    </p>
+    <div v-else-if="teamsStore.teams.length >= 2" class="empty-state">
+      <Trophy :size="44" class="empty-icon" />
+      <p class="empty-text">{{ t("tournaments.empty", { action: t("tournaments.newBtn") }) }}</p>
+      <button class="primary" @click="router.push('/tournaments/new')">
+        {{ t("tournaments.newBtn") }}
+      </button>
+    </div>
   </div>
 </template>
 
 <style scoped>
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  gap: 14px;
+  text-align: center;
+}
+.empty-icon {
+  color: var(--text-muted);
+  opacity: 0.25;
+}
+
 .t-row {
   cursor: pointer;
 }

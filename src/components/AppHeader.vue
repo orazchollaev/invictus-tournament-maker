@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref, onMounted, onUnmounted } from "vue"
 import {
   Settings,
   Star,
@@ -8,6 +9,7 @@ import {
   FolderGit2,
   Users,
   BookOpen,
+  WifiOff,
 } from "@lucide/vue"
 import { useSettingsStore } from "@/modules/settings/store"
 import { usePwaUpdate } from "@/composables/usePwaUpdate"
@@ -20,6 +22,22 @@ const GITHUB_URL = "https://github.com/orazchollaev/invictus-tournament-maker"
 const settings = useSettingsStore()
 const { needRefresh, applyUpdate } = usePwaUpdate()
 const { isNavActive } = useNavActive()
+
+const isOnline = ref(navigator.onLine)
+function handleOnline() {
+  isOnline.value = true
+}
+function handleOffline() {
+  isOnline.value = false
+}
+onMounted(() => {
+  window.addEventListener("online", handleOnline)
+  window.addEventListener("offline", handleOffline)
+})
+onUnmounted(() => {
+  window.removeEventListener("online", handleOnline)
+  window.removeEventListener("offline", handleOffline)
+})
 </script>
 
 <template>
@@ -49,6 +67,12 @@ const { isNavActive } = useNavActive()
       </nav>
 
       <div class="header-end">
+        <Transition name="update-btn">
+          <div v-if="!isOnline" class="offline-chip" :title="t('common.offline')">
+            <WifiOff :size="12" />
+            <span>{{ t("common.offline") }}</span>
+          </div>
+        </Transition>
         <Transition name="update-btn">
           <button
             v-if="needRefresh"
@@ -230,6 +254,21 @@ const { isNavActive } = useNavActive()
 .update-btn:hover {
   background: color-mix(in srgb, var(--accent) 18%, transparent);
   border-color: var(--accent);
+}
+
+.offline-chip {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  border-radius: var(--radius);
+  border: 1px solid color-mix(in srgb, #ef4444 50%, transparent);
+  background: color-mix(in srgb, #ef4444 10%, transparent);
+  color: #ef4444;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  pointer-events: none;
 }
 
 .update-btn-enter-active,

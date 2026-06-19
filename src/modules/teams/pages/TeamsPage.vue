@@ -71,9 +71,13 @@ const filtered = computed(() => {
         </div>
       </div>
     </div>
-    <p v-else class="empty-text">
-      {{ t("teams.empty", { action: t("teams.addBtn") }) }}
-    </p>
+    <div v-else class="empty-state">
+      <Users :size="44" class="empty-icon" />
+      <p class="empty-text">{{ t("teams.empty", { action: t("teams.addBtn") }) }}</p>
+      <button class="primary" @click="showAddModal = true">
+        {{ t("teams.addBtn") }}
+      </button>
+    </div>
 
     <TeamFormModal v-if="showAddModal" @close="showAddModal = false" />
     <TeamFormModal v-if="editingTeam" :team="editingTeam" @close="editingTeam = null" />
@@ -81,6 +85,20 @@ const filtered = computed(() => {
 </template>
 
 <style scoped>
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  gap: 14px;
+  text-align: center;
+}
+.empty-icon {
+  color: var(--text-muted);
+  opacity: 0.25;
+}
+
 .count {
   font-size: 13px;
   font-weight: 400;

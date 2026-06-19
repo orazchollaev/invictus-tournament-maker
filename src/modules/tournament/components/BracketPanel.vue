@@ -16,6 +16,7 @@ import {
   Shuffle,
   X,
   Download,
+  Share2,
   Expand,
   ChevronDown,
   RotateCw,
@@ -72,6 +73,8 @@ const showFullBracket = ref(false)
 const showSimMenu = ref(false)
 const isExporting = ref(false)
 const forceLandscape = ref(false)
+
+const canNativeShare = typeof navigator.share === "function"
 
 const bracketWrapperRef = ref<HTMLElement | null>(null)
 const bracketInnerRef = ref<HTMLElement | null>(null)
@@ -278,8 +281,24 @@ async function exportPng() {
   try {
     const el = (inner.querySelector(".bracket") as HTMLElement) ?? inner
     const dataUrl = await toPng(el, { pixelRatio: 2 })
+    const filename = `${props.tournament.name}-S${props.tournament.season}.png`
+
+    if (canNativeShare) {
+      try {
+        const blob = await (await fetch(dataUrl)).blob()
+        const file = new File([blob], filename, { type: "image/png" })
+        const shareData = { title: props.tournament.name, files: [file] }
+        if (navigator.canShare?.(shareData)) {
+          await navigator.share(shareData)
+          return
+        }
+      } catch {
+        // share cancelled or failed — fall through to download
+      }
+    }
+
     const link = document.createElement("a")
-    link.download = `${props.tournament.name}-S${props.tournament.season}.png`
+    link.download = filename
     link.href = dataUrl
     link.click()
   } finally {
@@ -371,8 +390,11 @@ onUnmounted(() => {
           :disabled="isExporting"
           @click="exportPng"
         >
-          <Download :size="13" />
-          <span class="btn-label">{{ isExporting ? "Exporting…" : "Export PNG" }}</span>
+          <Share2 v-if="canNativeShare" :size="13" />
+          <Download v-else :size="13" />
+          <span class="btn-label">
+            {{ isExporting ? "…" : canNativeShare ? t("common.share") : "Export PNG" }}
+          </span>
         </button>
         <div v-if="bracketView === 'bracket'" class="zoom-controls">
           <button class="btn-xs icon-only" :disabled="zoom <= 0.25" @click="zoomOut">

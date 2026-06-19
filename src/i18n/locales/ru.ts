@@ -92,6 +92,10 @@ export default {
     setResult: "Ввести счёт",
     moveUp: "Переместить вверх",
     moveDown: "Переместить вниз",
+    share: "Поделиться",
+    offline: "Офлайн",
+    retry: "Повторить",
+    errorBoundaryMsg: "Что-то пошло не так. Попробуйте ещё раз.",
   },
   tournaments: {
     title: "Турниры",

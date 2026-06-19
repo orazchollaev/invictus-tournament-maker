@@ -5,6 +5,7 @@ import { App } from "@capacitor/app"
 import AppHeader from "@/components/AppHeader.vue"
 import AppBottomNav from "@/components/AppBottomNav.vue"
 import AppDialog from "@/components/AppDialog.vue"
+import ErrorBoundary from "@/components/ErrorBoundary.vue"
 import { useSettingsStore } from "@/modules/settings/store"
 
 useSettingsStore()
@@ -35,11 +36,13 @@ onUnmounted(() => {
   <div>
     <AppHeader />
     <main class="app-main">
-      <RouterView v-slot="{ Component }">
-        <Transition name="page" mode="out-in">
-          <component :is="Component" />
-        </Transition>
-      </RouterView>
+      <ErrorBoundary>
+        <RouterView v-slot="{ Component }">
+          <Transition name="page" mode="out-in">
+            <component :is="Component" />
+          </Transition>
+        </RouterView>
+      </ErrorBoundary>
     </main>
     <AppDialog />
     <AppBottomNav />
