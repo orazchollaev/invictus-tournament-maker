@@ -38,6 +38,11 @@ export default createRouter({
     { path: "/settings", component: () => import("../modules/settings/pages/SettingsPage.vue") },
 
     { path: "/guide", component: () => import("../modules/core/pages/GuidePage.vue") },
+    { path: "/guide", component: () => import("../modules/core/pages/GuidePage.vue") },
+    {
+      path: "/privacy-policy",
+      component: () => import("../modules/core/pages/PrivacyPolicyPage.vue"),
+    },
 
     { path: "/:pathMatch(.*)*", component: () => import("../modules/core/pages/NotFoundPage.vue") },
   ],

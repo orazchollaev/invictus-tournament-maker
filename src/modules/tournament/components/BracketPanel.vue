@@ -62,15 +62,12 @@ const showFullBracket = ref(false)
 const showSimMenu = ref(false)
 const isExporting = ref(false)
 
-// Viewport / inner refs for normal bracket
 const bracketWrapperRef = ref<HTMLElement | null>(null)
 const bracketInnerRef = ref<HTMLElement | null>(null)
 
-// Viewport / inner refs for full-screen bracket
 const fullWrapperRef = ref<HTMLElement | null>(null)
 const fullInnerRef = ref<HTMLElement | null>(null)
 
-// ── Normal bracket pan + zoom ─────────────────────────────────
 const zoom = ref(1)
 const pan = reactive({ x: 0, y: 0 })
 const isDragging = ref(false)
@@ -78,18 +75,15 @@ const dragStart = ref({ x: 0, y: 0, px: 0, py: 0 })
 const isZooming = ref(false)
 let zoomTimeout: number
 
-// ── Full-screen bracket pan + zoom ────────────────────────────
 const fullZoom = ref(1)
 const fullPan = reactive({ x: 0, y: 0 })
 const fullIsDragging = ref(false)
 const fullDragStart = ref({ x: 0, y: 0, px: 0, py: 0 })
 
-// Pinch-to-zoom touch state
 let touchDist0 = 0
 let touchZoom0 = 1
 let touchCtx: "normal" | "full" = "normal"
 
-// ── Computed transforms ───────────────────────────────────────
 const bracketTransform = computed(
   () => `translate3d(${pan.x}px, ${pan.y}px, 0) scale(${zoom.value})`
 )
@@ -100,7 +94,6 @@ const panLayerStyle = computed(() => ({
   willChange: settings.bracketQuality === "low" ? "transform" : "auto",
 }))
 
-// ── Drag handlers ─────────────────────────────────────────────
 function startDrag(e: MouseEvent) {
   if ((e.target as HTMLElement).closest("button, input, a")) return
   isDragging.value = true
@@ -131,7 +124,6 @@ function stopDrag() {
   fullIsDragging.value = false
 }
 
-// ── Touch handlers ────────────────────────────────────────────
 function onTouchStart(e: TouchEvent, ctx: "normal" | "full") {
   touchCtx = ctx
   const z = ctx === "full" ? fullZoom : zoom
@@ -175,7 +167,6 @@ function onTouchEnd() {
   fullIsDragging.value = false
 }
 
-// ── Wheel zoom (mouse scroll + touchpad pinch) ────────────────
 function onWheel(e: WheelEvent, ctx: "normal" | "full") {
   e.preventDefault()
   const wrapper = ctx === "full" ? fullWrapperRef.value : bracketWrapperRef.value
@@ -191,23 +182,19 @@ function onWheel(e: WheelEvent, ctx: "normal" | "full") {
   const p = ctx === "full" ? fullPan : pan
 
   const rect = wrapper.getBoundingClientRect()
-  // Cursor position relative to wrapper center (where transform-origin is)
   const cx = e.clientX - rect.left - rect.width / 2
   const cy = e.clientY - rect.top - rect.height / 2
 
-  // Normalize delta: deltaMode 1 = lines, 0 = pixels
   const rawDelta = e.deltaMode === 1 ? e.deltaY * 20 : e.deltaY
   const factor = Math.exp(-rawDelta * 0.0015)
   const newZoom = +Math.min(2.5, Math.max(0.25, z.value * factor)).toFixed(3)
   const ratio = newZoom / z.value
 
-  // Shift pan so the content point under cursor stays fixed
   p.x = cx - (cx - p.x) * ratio
   p.y = cy - (cy - p.y) * ratio
   z.value = newZoom
 }
 
-// ── Zoom buttons ──────────────────────────────────────────────
 function zoomIn() {
   zoom.value = Math.min(2.5, +(zoom.value + 0.1).toFixed(1))
 }
@@ -221,7 +208,6 @@ function fullZoomOut() {
   fullZoom.value = Math.max(0.25, +(fullZoom.value - 0.1).toFixed(1))
 }
 
-// ── Fit to screen ─────────────────────────────────────────────
 function fitScreen() {
   const wrapper = bracketWrapperRef.value
   const inner = bracketInnerRef.value
@@ -252,7 +238,6 @@ function fullFitScreen() {
   fullPan.y = 0
 }
 
-// ── Export ────────────────────────────────────────────────────
 async function exportPng() {
   const inner = bracketInnerRef.value
   if (!inner || isExporting.value) return
@@ -278,7 +263,6 @@ async function exportPng() {
   }
 }
 
-// ── Match actions ─────────────────────────────────────────────
 function setResult(ri: number, mi: number, h: number, a: number, ph?: number, pa?: number) {
   store.setResult(props.tournament.id, ri, mi, h, a, ph, pa)
 }
@@ -301,7 +285,6 @@ function simThirdPlace() {
   store.simulateThirdPlace(props.tournament.id)
 }
 
-// ── Modal ─────────────────────────────────────────────────────
 function onEscKey(e: KeyboardEvent) {
   if (e.key === "Escape") closeFullBracket()
 }

@@ -1,4 +1,4 @@
-package com.orazchollaev.invictus;
+package com.orazchollaev.invictustournamentmaker;
 
 import com.getcapacitor.BridgeActivity;
 
