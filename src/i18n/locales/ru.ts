@@ -579,6 +579,7 @@ export default {
         viewResults: "Смотреть результаты",
       },
       teamAdjustments: {
+        title: "Корректировки команд",
         pointsTitle: "Корректировка очков команд",
         powerTitle: "Корректировка силы команд",
         pointsHint:
@@ -616,5 +617,7 @@ export default {
     emptySelected: "Нет выбранных команд",
     emptyAvailable: "Команды не найдены",
     minTeams: "Выберите не менее 2 команд",
+    sortName: "Имя",
+    sortPower: "Сила",
   },
 } as const

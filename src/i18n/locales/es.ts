@@ -582,6 +582,7 @@ export default {
         viewResults: "Ver resultados",
       },
       teamAdjustments: {
+        title: "Ajustes de equipos",
         pointsTitle: "Ajuste de puntos de equipos",
         powerTitle: "Ajuste de poder de equipos",
         pointsHint:
@@ -619,5 +620,7 @@ export default {
     emptySelected: "Sin equipos seleccionados",
     emptyAvailable: "No se encontraron equipos",
     minTeams: "Selecciona al menos 2 equipos",
+    sortName: "Nombre",
+    sortPower: "Fuerza",
   },
 } as const

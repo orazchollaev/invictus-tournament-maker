@@ -581,6 +581,7 @@ export default {
         viewResults: "Sonuçları Gör",
       },
       teamAdjustments: {
+        title: "Takım Ayarlamaları",
         pointsTitle: "Takım Puan Ayarlamaları",
         powerTitle: "Takım Güç Ayarlamaları",
         pointsHint: "Bu sezon belirli takımlara puan ekle veya çıkar. Yeni sezonda sıfırlanır.",
@@ -617,5 +618,7 @@ export default {
     emptySelected: "Takım seçilmedi",
     emptyAvailable: "Takım bulunamadı",
     minTeams: "En az 2 takım seçin",
+    sortName: "İsim",
+    sortPower: "Güç",
   },
 } as const

@@ -581,6 +581,7 @@ export default {
         viewResults: "Ver resultados",
       },
       teamAdjustments: {
+        title: "Ajustes de times",
         pointsTitle: "Ajuste de pontos dos times",
         powerTitle: "Ajuste de poder dos times",
         pointsHint:
@@ -618,5 +619,7 @@ export default {
     emptySelected: "Nenhuma equipe selecionada",
     emptyAvailable: "Nenhuma equipe encontrada",
     minTeams: "Selecione pelo menos 2 equipes",
+    sortName: "Nome",
+    sortPower: "Força",
   },
 } as const

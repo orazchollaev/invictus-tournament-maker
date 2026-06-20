@@ -8,7 +8,7 @@ import ManualDraw from "../components/ManualDraw.vue"
 import GroupDraw from "../components/GroupDraw.vue"
 import TeamSelector from "../components/TeamSelector.vue"
 import { DrawCeremony } from "../components/draw-ceremony"
-import { Shuffle, ArrowLeft } from "@lucide/vue"
+import { Shuffle, ArrowLeft, ChevronDown } from "@lucide/vue"
 import { randomTournamentName } from "@/composables/useRandomNames"
 import type { CeremonyContext, DrawMode } from "@/engine"
 import type { LegMode, PlayoffSeedMode, Tiebreaker } from "@/modules/tournament/types"
@@ -57,6 +57,7 @@ const teamPowerAdjustments = ref<Record<string, number>>({})
 const allTeams = computed(() => teamsStore.teams)
 const selectedTeams = computed(() => allTeams.value.filter((t) => selected.value.includes(t.id)))
 const canCreate = computed(() => !!name.value.trim() && selected.value.length >= 2)
+const showAdjustments = ref(false)
 
 const tierNames = computed(() => {
   const names: string[] = []
@@ -288,15 +289,27 @@ function doCreate(orderedIds?: string[]) {
         />
       </template>
 
-      <!-- Team Adjustments -->
+      <!-- Team Adjustments (collapsible, advanced) -->
       <template v-if="selected.length >= 2">
-        <SettingsTeamAdjustments
-          v-model:team-point-adjustments="teamPointAdjustments"
-          v-model:team-power-adjustments="teamPowerAdjustments"
-          :teams="selectedTeams"
-          :has-any-results="false"
-          :show-points="format !== 'bracket'"
-        />
+        <div class="ctp-adj-wrap">
+          <button class="ctp-collapse-btn" @click="showAdjustments = !showAdjustments">
+            <span>{{ $t("tournament.settingsPage.teamAdjustments.title") }}</span>
+            <ChevronDown
+              :size="14"
+              class="ctp-collapse-icon"
+              :class="{ 'ctp-collapse-icon--open': showAdjustments }"
+            />
+          </button>
+          <div v-if="showAdjustments">
+            <SettingsTeamAdjustments
+              v-model:team-point-adjustments="teamPointAdjustments"
+              v-model:team-power-adjustments="teamPowerAdjustments"
+              :teams="selectedTeams"
+              :has-any-results="false"
+              :show-points="format !== 'bracket'"
+            />
+          </div>
+        </div>
       </template>
 
       <!-- Footer actions -->
@@ -371,6 +384,81 @@ function doCreate(orderedIds?: string[]) {
 .btn-random:hover {
   color: var(--text);
   background: var(--bg-hover, rgba(255, 255, 255, 0.08));
+}
+
+/* Step indicator */
+.ctp-steps {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius);
+  margin-bottom: 4px;
+  flex-wrap: wrap;
+}
+
+.ctp-step {
+  font-size: 12px;
+  font-weight: 600;
+  font-family: var(--font-ui);
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.ctp-step--active {
+  color: var(--accent);
+}
+
+.ctp-step-sep {
+  flex: 1;
+  height: 1px;
+  background: var(--border-light);
+  min-width: 12px;
+}
+
+/* Collapsible adjustments */
+.ctp-adj-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ctp-collapse-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 8px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
+  font-family: var(--font-ui);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  text-align: left;
+  transition:
+    color 0.15s,
+    border-color 0.15s;
+}
+
+.ctp-collapse-btn:hover {
+  color: var(--text);
+  border-color: var(--border);
+}
+
+.ctp-collapse-icon {
+  flex-shrink: 0;
+  transition: transform 0.2s;
+}
+
+.ctp-collapse-icon--open {
+  transform: rotate(180deg);
 }
 
 .ctp-footer {

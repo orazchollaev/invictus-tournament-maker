@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from "vue"
 import { useI18n } from "vue-i18n"
-import { X, Search } from "@lucide/vue"
+import { Search, Check, ArrowUp, ArrowDown } from "@lucide/vue"
 
 interface Team {
   id: string
@@ -30,15 +30,33 @@ const emit = defineEmits<Emits>()
 const { t } = useI18n()
 
 const searchQuery = ref("")
+type SortKey = "name" | "power"
+const sortKey = ref<SortKey>("name")
+const sortAsc = ref(true)
 
-const selectedTeams = computed(() => props.teams.filter((t) => props.selected.includes(t.id)))
-
-const availableTeams = computed(() => {
-  const available = props.teams.filter((t) => !props.selected.includes(t.id))
-  if (!searchQuery.value.trim()) return available
-  const q = searchQuery.value.toLowerCase()
-  return available.filter((t) => t.name.toLowerCase().includes(q))
+const sortedFilteredTeams = computed(() => {
+  let list = [...props.teams]
+  if (searchQuery.value.trim()) {
+    const q = searchQuery.value.toLowerCase()
+    list = list.filter((t) => t.name.toLowerCase().includes(q))
+  }
+  list.sort((a, b) => {
+    if (sortKey.value === "power") {
+      return sortAsc.value ? a.power - b.power : b.power - a.power
+    }
+    return sortAsc.value ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name)
+  })
+  return list
 })
+
+function toggleSort(key: SortKey) {
+  if (sortKey.value === key) {
+    sortAsc.value = !sortAsc.value
+  } else {
+    sortKey.value = key
+    sortAsc.value = key === "name"
+  }
+}
 
 function toggleTeam(teamId: string) {
   if (props.disabled) return
@@ -50,14 +68,6 @@ function toggleTeam(teamId: string) {
   } else {
     emit("update:selected", [...props.selected, teamId])
   }
-}
-
-function removeTeam(teamId: string) {
-  if (props.disabled) return
-  emit(
-    "update:selected",
-    props.selected.filter((id) => id !== teamId)
-  )
 }
 
 function selectAll() {
@@ -76,7 +86,8 @@ function deselectAll() {
 
 <template>
   <div class="ts">
-    <div class="ts-top-row">
+    <!-- Header: search + sort + count -->
+    <div class="ts-header">
       <div class="ts-search-wrap">
         <Search :size="14" class="ts-search-icon" />
         <input
@@ -87,62 +98,82 @@ function deselectAll() {
           :placeholder="t('teamSelector.searchPlaceholder')"
         />
       </div>
-      <div class="ts-top-btns">
-        <button class="ts-action" :disabled="disabled" @click="selectAll">
-          {{ t("teamSelector.selectAll") }}
-        </button>
-        <button class="ts-action ts-action--danger" :disabled="disabled" @click="deselectAll">
-          {{ t("teamSelector.deselectAll") }}
-        </button>
-      </div>
-    </div>
-
-    <div class="ts-grid">
-      <div class="ts-col">
-        <div class="ts-col-head">
-          <span class="ts-col-title">{{ t("teamSelector.selected") }}</span>
-          <span class="ts-badge">{{ selectedTeams.length }}</span>
-        </div>
-        <div class="ts-list">
-          <div v-for="team in selectedTeams" :key="team.id" class="ts-item ts-item--on">
-            <span class="ts-dot" :style="{ background: team.color }" />
-            <span class="ts-name">{{ team.name }}</span>
-            <span v-if="showPower" class="ts-power">{{ team.power }}</span>
-            <button class="ts-rm" :disabled="disabled" @click="removeTeam(team.id)">
-              <X :size="12" />
-            </button>
-          </div>
-          <div v-if="!selectedTeams.length" class="ts-empty">
-            {{ t("teamSelector.emptySelected") }}
-          </div>
-        </div>
-      </div>
-
-      <div class="ts-col">
-        <div class="ts-col-head">
-          <span class="ts-col-title">{{ t("teamSelector.available") }}</span>
-          <span class="ts-badge">{{ availableTeams.length }}</span>
-        </div>
-        <div class="ts-list">
-          <div
-            v-for="team in availableTeams"
-            :key="team.id"
-            class="ts-item"
-            :class="{ 'ts-item--disabled': disabled }"
-            @click="toggleTeam(team.id)"
+      <div class="ts-header-right">
+        <div v-if="showPower" class="ts-sort-group">
+          <button
+            class="ts-sort-btn"
+            :class="{ 'ts-sort-btn--active': sortKey === 'name' }"
+            :disabled="disabled"
+            @click="toggleSort('name')"
           >
-            <span class="ts-dot" :style="{ background: team.color }" />
-            <span class="ts-name">{{ team.name }}</span>
-            <span v-if="showPower" class="ts-power">{{ team.power }}</span>
-          </div>
-          <div v-if="!availableTeams.length" class="ts-empty">
-            {{ t("teamSelector.emptyAvailable") }}
-          </div>
+            {{ t("teamSelector.sortName") }}
+            <ArrowUp v-if="sortKey === 'name' && sortAsc" :size="11" />
+            <ArrowDown v-else-if="sortKey === 'name' && !sortAsc" :size="11" />
+          </button>
+          <button
+            class="ts-sort-btn"
+            :class="{ 'ts-sort-btn--active': sortKey === 'power' }"
+            :disabled="disabled"
+            @click="toggleSort('power')"
+          >
+            {{ t("teamSelector.sortPower") }}
+            <ArrowUp v-if="sortKey === 'power' && sortAsc" :size="11" />
+            <ArrowDown v-else-if="sortKey === 'power' && !sortAsc" :size="11" />
+          </button>
         </div>
+        <span
+          class="ts-count"
+          :class="{
+            'ts-count--warn': selected.length > 0 && selected.length < 2,
+            'ts-count--ok': selected.length >= 2,
+          }"
+        >
+          {{ selected.length }}&thinsp;/&thinsp;{{ teams.length }}
+        </span>
       </div>
     </div>
 
-    <p v-if="selected.length < 2" class="ts-warn">{{ t("teamSelector.minTeams") }}</p>
+    <!-- Action row -->
+    <div class="ts-actions">
+      <button class="ts-action" :disabled="disabled" @click="selectAll">
+        {{ t("teamSelector.selectAll") }}
+      </button>
+      <button class="ts-action ts-action--danger" :disabled="disabled" @click="deselectAll">
+        {{ t("teamSelector.deselectAll") }}
+      </button>
+    </div>
+
+    <!-- Team list -->
+    <div class="ts-list">
+      <div
+        v-for="team in sortedFilteredTeams"
+        :key="team.id"
+        class="ts-row"
+        :class="{
+          'ts-row--on': selected.includes(team.id),
+          'ts-row--disabled': disabled,
+        }"
+        @click="toggleTeam(team.id)"
+      >
+        <span class="ts-check">
+          <Check v-if="selected.includes(team.id)" :size="11" />
+        </span>
+        <span class="ts-dot" :style="{ background: team.color }" />
+        <span class="ts-name">{{ team.name }}</span>
+        <span v-if="showPower" class="ts-power">{{ team.power }}</span>
+      </div>
+      <div v-if="!sortedFilteredTeams.length" class="ts-empty">
+        {{ t("teamSelector.emptyAvailable") }}
+      </div>
+    </div>
+
+    <!-- Always reserve space to prevent bottom shift -->
+    <p
+      class="ts-warn"
+      :class="{ 'ts-warn--hidden': !(selected.length > 0 && selected.length < 2) }"
+    >
+      {{ t("teamSelector.minTeams") }}
+    </p>
   </div>
 </template>
 
@@ -153,7 +184,8 @@ function deselectAll() {
   gap: 8px;
 }
 
-.ts-top-row {
+/* Header */
+.ts-header {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -164,12 +196,6 @@ function deselectAll() {
   display: flex;
   align-items: center;
   flex: 1;
-}
-
-.ts-top-btns {
-  display: flex;
-  gap: 4px;
-  flex-shrink: 0;
 }
 
 .ts-search-icon {
@@ -205,159 +231,91 @@ function deselectAll() {
   color: var(--text-muted);
 }
 
-.ts-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
+.ts-header-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
 }
 
-.ts-col {
+/* Sort */
+.ts-sort-group {
   display: flex;
-  flex-direction: column;
+  gap: 3px;
+}
+
+.ts-sort-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 4px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  font-family: var(--font-ui);
   border: 1px solid var(--border-light);
   border-radius: var(--radius);
   background: var(--surface);
-  overflow: hidden;
-}
-
-.ts-col-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 7px 10px;
-  background: var(--bg);
-  border-bottom: 1px solid var(--border-light);
-}
-
-.ts-col-title {
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
   color: var(--text-muted);
-  font-family: var(--font-ui);
-}
-
-.ts-badge {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--accent);
-  background: color-mix(in srgb, var(--accent) 10%, transparent);
-  border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
-  padding: 0 5px;
-  border-radius: var(--radius);
-  line-height: 1.7;
-}
-
-.ts-list {
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  padding: 6px;
-  height: 220px;
-}
-
-.ts-item {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  padding: 6px 8px;
-  border: 1px solid var(--border-light);
-  border-left: 2px solid transparent;
-  border-radius: var(--radius);
-  background: var(--bg);
   cursor: pointer;
   transition:
     border-color 0.12s,
+    color 0.12s,
     background 0.12s;
-  user-select: none;
-}
-
-.ts-item:hover {
-  border-color: var(--border);
-  border-left-color: var(--accent);
-  background: color-mix(in srgb, var(--accent) 4%, var(--bg));
-}
-
-.ts-item--on {
-  border-color: color-mix(in srgb, var(--accent) 40%, transparent);
-  border-left-color: var(--accent);
-  background: color-mix(in srgb, var(--accent) 8%, var(--bg));
-}
-
-.ts-item--disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.ts-item--disabled:hover {
-  border-color: var(--border-light);
-  border-left-color: transparent;
-  background: var(--bg);
-}
-
-.ts-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-
-.ts-name {
-  flex: 1;
-  font-size: 12px;
-  color: var(--text);
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.ts-power {
-  font-size: 11px;
-  color: var(--text-muted);
-  font-weight: 600;
-  flex-shrink: 0;
+.ts-sort-btn:hover {
+  border-color: var(--border);
+  color: var(--text);
 }
 
-.ts-rm {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 20px;
-  height: 20px;
-  padding: 0;
-  border: none;
-  background: transparent;
-  color: var(--text-muted);
-  cursor: pointer;
-  border-radius: var(--radius);
-  transition:
-    color 0.12s,
-    background 0.12s;
-  flex-shrink: 0;
+.ts-sort-btn--active {
+  border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 8%, var(--surface));
 }
 
-.ts-rm:hover {
-  color: var(--danger);
-  background: color-mix(in srgb, var(--danger) 10%, transparent);
-}
-
-.ts-rm:disabled {
+.ts-sort-btn:disabled {
   opacity: 0.4;
   cursor: not-allowed;
 }
 
-.ts-empty {
-  padding: 16px 8px;
-  text-align: center;
-  font-size: 12px;
+/* Count badge */
+.ts-count {
+  font-size: 11px;
+  font-weight: 700;
+  font-family: var(--font-ui);
+  padding: 2px 7px;
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--border) 40%, transparent);
   color: var(--text-muted);
+  border: 1px solid var(--border-light);
+  transition:
+    color 0.15s,
+    background 0.15s,
+    border-color 0.15s;
+}
+
+.ts-count--warn {
+  color: var(--danger);
+  background: color-mix(in srgb, var(--danger) 10%, transparent);
+  border-color: color-mix(in srgb, var(--danger) 30%, transparent);
+}
+
+.ts-count--ok {
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 30%, transparent);
+}
+
+/* Action row */
+.ts-actions {
+  display: flex;
+  gap: 4px;
 }
 
 .ts-action {
-  padding: 6px 10px;
+  padding: 5px 10px;
   font-size: 11px;
   font-weight: 600;
   border: 1px solid var(--border-light);
@@ -387,16 +345,109 @@ function deselectAll() {
   cursor: not-allowed;
 }
 
+/* Team list — fixed height prevents shift when filter reduces results */
+.ts-list {
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius);
+  background: var(--surface);
+  overflow-y: auto;
+  height: 240px;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (max-width: 480px) {
+  .ts-chips {
+    height: 70px;
+  }
+  .ts-list {
+    height: 200px;
+  }
+}
+
+.ts-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  cursor: pointer;
+  user-select: none;
+  border-bottom: 1px solid var(--border-light);
+  transition: background 0.1s;
+}
+
+.ts-row:last-child {
+  border-bottom: none;
+}
+
+.ts-row:hover:not(.ts-row--disabled) {
+  background: color-mix(in srgb, var(--accent) 5%, var(--surface));
+}
+
+.ts-row--on {
+  background: color-mix(in srgb, var(--accent) 8%, var(--surface));
+}
+
+.ts-row--on:hover {
+  background: color-mix(in srgb, var(--accent) 12%, var(--surface));
+}
+
+.ts-row--disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.ts-check {
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.ts-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.ts-name {
+  flex: 1;
+  font-size: 13px;
+  color: var(--text);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ts-power {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.ts-empty {
+  padding: 20px 10px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
 .ts-warn {
   font-size: 11px;
   font-weight: 500;
   color: var(--danger);
   margin: 0;
+  min-height: 16px;
+  visibility: visible;
 }
 
-@media (max-width: 640px) {
-  .ts-grid {
-    grid-template-columns: 1fr;
-  }
+.ts-warn--hidden {
+  visibility: hidden;
 }
 </style>

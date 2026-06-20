@@ -577,6 +577,7 @@ export default {
         viewResults: "View Results",
       },
       teamAdjustments: {
+        title: "Team Adjustments",
         pointsTitle: "Team Point Adjustments",
         powerTitle: "Team Power Adjustments",
         pointsHint:
@@ -614,5 +615,7 @@ export default {
     emptySelected: "No teams selected",
     emptyAvailable: "No teams found",
     minTeams: "Select at least 2 teams",
+    sortName: "Name",
+    sortPower: "Power",
   },
 } as const
