@@ -2,7 +2,7 @@
 import { useRouter } from "vue-router"
 import { ref, computed, nextTick } from "vue"
 import { version } from "../../../../package.json"
-import { ArrowLeft, Globe, Monitor, Trophy, Dices, Database } from "@lucide/vue"
+import { ArrowLeft, Globe, Monitor, Trophy, Dices, Database, Menu, ChevronDown } from "@lucide/vue"
 import type { Component } from "vue"
 import { useI18n } from "vue-i18n"
 import { useMotionPrefs } from "@/composables/useMotionPrefs"
@@ -47,8 +47,10 @@ const { enabled: motionEnabled } = useMotionPrefs()
 const transitionName = computed(() => (motionEnabled.value ? "settings-panel" : ""))
 
 const activeCategory = ref<Category>("general")
+const menuOpen = ref(false)
 
 function selectCategory(id: Category) {
+  menuOpen.value = false
   if (activeCategory.value === id) return
   activeCategory.value = id
   nextTick(() => {
@@ -65,6 +67,30 @@ function selectCategory(id: Category) {
         {{ t("common.back") }}
       </button>
       <h2>{{ t("settings.title") }}</h2>
+    </div>
+
+    <div class="mobile-nav">
+      <button class="mobile-nav-trigger" :aria-expanded="menuOpen" @click="menuOpen = !menuOpen">
+        <Menu :size="18" class="mobile-nav-burger" />
+        <component :is="CATEGORY_ICONS[activeCategory]" :size="16" class="side-link-icon" />
+        <span class="mobile-nav-label">{{ t(`settings.nav.${activeCategory}`) }}</span>
+        <ChevronDown :size="16" class="mobile-nav-chev" :class="{ 'is-open': menuOpen }" />
+      </button>
+      <Transition name="menu">
+        <div v-if="menuOpen" class="mobile-nav-menu">
+          <button
+            v-for="cat in CATEGORIES"
+            :key="cat"
+            class="side-link"
+            :class="{ 'side-link--active': activeCategory === cat }"
+            :aria-current="activeCategory === cat ? 'page' : undefined"
+            @click="selectCategory(cat)"
+          >
+            <component :is="CATEGORY_ICONS[cat]" :size="16" class="side-link-icon" />
+            <span>{{ t(`settings.nav.${cat}`) }}</span>
+          </button>
+        </div>
+      </Transition>
     </div>
 
     <div class="settings-layout">
@@ -265,54 +291,98 @@ function selectCategory(id: Category) {
   color: var(--accent);
 }
 
-/* ── Mobile: sidebar → horizontal tab bar ── */
+/* ── Mobile hamburger nav (hidden on desktop) ── */
+.mobile-nav {
+  display: none;
+}
+.mobile-nav-trigger {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.mobile-nav-burger {
+  flex-shrink: 0;
+  color: var(--text-muted);
+}
+.mobile-nav-label {
+  flex: 1;
+  text-align: left;
+}
+.mobile-nav-chev {
+  flex-shrink: 0;
+  color: var(--text-muted);
+  transition: transform var(--dur-fast) var(--ease);
+}
+.mobile-nav-chev.is-open {
+  transform: rotate(180deg);
+}
+.mobile-nav-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 6px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow-lg);
+}
+
+/* dropdown open/close animation */
+.menu-enter-active,
+.menu-leave-active {
+  transition:
+    opacity var(--dur-fast) var(--ease),
+    transform var(--dur-fast) var(--ease);
+  transform-origin: top;
+}
+.menu-enter-from,
+.menu-leave-to {
+  opacity: 0;
+  transform: translateY(-6px) scaleY(0.96);
+}
+
 @media (max-width: 860px) {
+  .settings-sidebar {
+    display: none;
+  }
+  .mobile-nav {
+    display: block;
+    margin-bottom: 16px;
+    position: sticky;
+    top: calc(52px + env(safe-area-inset-top));
+    z-index: 9;
+  }
   .settings-layout {
     flex-direction: column;
     gap: 0;
   }
-  .settings-sidebar {
-    flex: none;
-    flex-direction: row;
-    width: 100%;
-    gap: 0;
-    overflow-x: auto;
-    scrollbar-width: none;
-    margin-bottom: 20px;
-    position: sticky;
-    top: calc(52px + env(safe-area-inset-top));
-    z-index: 9;
-    background: var(--bg);
-    border-bottom: 1px solid var(--border-light);
-  }
-  .settings-sidebar::-webkit-scrollbar {
-    display: none;
-  }
   .settings-panel {
     width: 100%;
   }
-  .side-link {
-    flex-shrink: 0;
-    width: auto;
-    border-radius: 0;
-    border-left: none;
-    border-bottom: 2px solid transparent;
-    margin-bottom: -1px;
-    padding: 8px 12px;
-    white-space: nowrap;
-  }
-  .side-link:hover {
-    background: none;
-  }
-  .side-link--active {
-    background: none;
-    border-left: none;
-    border-bottom-color: var(--accent);
-  }
 }
 @media (max-width: 640px) {
-  .settings-sidebar {
+  .mobile-nav {
     top: calc(48px + env(safe-area-inset-top));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mobile-nav-chev {
+    transition: none;
   }
 }
 </style>
