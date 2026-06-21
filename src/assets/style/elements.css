@@ -1,7 +1,7 @@
 button {
   font-family: var(--font-ui);
   font-size: var(--fs-sm);
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
   border: 1px solid var(--border);
   background: var(--surface);
@@ -12,10 +12,10 @@ button {
   align-items: center;
   gap: var(--sp-1);
   transition:
-    background var(--dur-fast),
-    border-color var(--dur-fast),
-    box-shadow var(--dur-fast),
-    color var(--dur-fast),
+    background var(--dur-fast) var(--ease),
+    border-color var(--dur-fast) var(--ease),
+    box-shadow var(--dur-fast) var(--ease),
+    color var(--dur-fast) var(--ease),
     transform var(--dur-fast) var(--ease);
 }
 
@@ -24,8 +24,10 @@ button:active:not(:disabled) {
 }
 
 button:hover {
-  background: var(--border-light);
-  border-color: var(--border);
+  background: var(--accent-subtle);
+  border-color: var(--accent);
+  color: var(--accent);
+  box-shadow: var(--shadow-sm);
 }
 
 button.primary {
@@ -39,7 +41,14 @@ button.primary {
 button.primary:hover {
   background: var(--accent-hover);
   background-image: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.1));
+  color: #fff;
+  border-color: var(--accent-hover);
   box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+button.primary:active:not(:disabled) {
+  transform: translateY(0) scale(0.97);
 }
 
 button.danger {
@@ -48,7 +57,10 @@ button.danger {
 }
 
 button.danger:hover {
-  background: color-mix(in srgb, var(--danger) 10%, var(--surface));
+  background: color-mix(in srgb, var(--danger) 12%, var(--surface));
+  color: var(--danger);
+  border-color: var(--danger);
+  box-shadow: var(--shadow-sm);
 }
 
 button:disabled {
