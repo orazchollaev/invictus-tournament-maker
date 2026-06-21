@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useSettingsStore } from "../store"
 import { useI18n } from "vue-i18n"
+import { Database, RotateCcw } from "@lucide/vue"
 import { useDataManagement } from "../composables/useDataManagement"
 import SettingDesc from "./SettingDesc.vue"
 
@@ -11,7 +12,10 @@ const { exportData, importData, clearData } = useDataManagement()
 
 <template>
   <div class="section-box">
-    <h2>{{ t("settings.dataManagement.title") }}</h2>
+    <h2>
+      <Database :size="15" class="section-icon" />
+      {{ t("settings.dataManagement.title") }}
+    </h2>
     <div class="section-body">
       <div class="setting-row">
         <div class="setting-info">
@@ -38,7 +42,10 @@ const { exportData, importData, clearData } = useDataManagement()
   </div>
 
   <div class="section-box">
-    <h2>{{ t("settings.resetSettings.title") }}</h2>
+    <h2>
+      <RotateCcw :size="15" class="section-icon" />
+      {{ t("settings.resetSettings.title") }}
+    </h2>
     <div class="section-body">
       <div class="danger-setting-row" style="margin-top: 0; padding-top: 0; border-top: none">
         <div class="setting-info">

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n"
+import { FlaskConical } from "@lucide/vue"
 import { SAMPLE_DATASETS, useDataManagement } from "../composables/useDataManagement"
 
 const { t } = useI18n()
@@ -8,7 +9,10 @@ const { loadDataset } = useDataManagement()
 
 <template>
   <div class="section-box">
-    <h2>{{ t("settings.sampleData.title") }}</h2>
+    <h2>
+      <FlaskConical :size="15" class="section-icon" />
+      {{ t("settings.sampleData.title") }}
+    </h2>
     <div class="section-body">
       <p class="section-intro">{{ t("settings.sampleData.intro") }}</p>
       <div class="dataset-grid">

@@ -6,9 +6,11 @@ import { useTournamentStore } from "@/modules/tournament/store"
 import type { Tournament } from "../types"
 import { Trophy, X, Search } from "@lucide/vue"
 import { showConfirm } from "@/composables/useDialog"
+import { useMotionPrefs } from "@/composables/useMotionPrefs"
 import { useI18n } from "vue-i18n"
 
 const { t } = useI18n()
+const { m } = useMotionPrefs()
 const router = useRouter()
 const teamsStore = useTeamsStore()
 const store = useTournamentStore()
@@ -83,6 +85,10 @@ async function deleteTournament(id: string) {
         <div
           v-for="(tour, i) in filtered"
           :key="tour.id"
+          v-motion
+          :initial="m.initial"
+          :hovered="m.hovered"
+          :tapped="m.tapped"
           class="t-row"
           :style="{ '--i': i }"
           @click="router.push(`/tournaments/${tour.id}`)"

@@ -2,23 +2,12 @@
 import { computed } from "vue"
 import { useSettingsStore } from "../store"
 import { useI18n } from "vue-i18n"
-import BtnGroup from "@/components/BtnGroup.vue"
+import { Dices } from "@lucide/vue"
+import ToggleSwitch from "@/components/ToggleSwitch.vue"
 import SettingDesc from "./SettingDesc.vue"
 
 const { t } = useI18n()
 const settings = useSettingsStore()
-
-const onOffOptions = computed(() => [
-  { value: "on", label: t("common.on") },
-  { value: "off", label: t("common.off") },
-])
-
-const formFactorVal = computed({
-  get: () => (settings.formFactorEnabled ? "on" : "off"),
-  set: (v: string) => {
-    settings.formFactorEnabled = v === "on"
-  },
-})
 
 const homeAdvantageLabel = computed(() => {
   const v = settings.homeAdvantage
@@ -41,7 +30,10 @@ const surpriseFactorLabel = computed(() => {
 
 <template>
   <div class="section-box">
-    <h2>{{ t("settings.simulation.title") }}</h2>
+    <h2>
+      <Dices :size="15" class="section-icon" />
+      {{ t("settings.simulation.title") }}
+    </h2>
     <div class="section-body">
       <div class="setting-row">
         <div class="setting-info">
@@ -120,7 +112,10 @@ const surpriseFactorLabel = computed(() => {
             {{ t("settings.simulation.formFactor.desc", { plus: "+10", minus: "−10" }) }}
           </SettingDesc>
         </div>
-        <BtnGroup v-model="formFactorVal" :options="onOffOptions" />
+        <ToggleSwitch
+          v-model="settings.formFactorEnabled"
+          :aria-label="t('settings.simulation.formFactor.label')"
+        />
       </div>
     </div>
   </div>

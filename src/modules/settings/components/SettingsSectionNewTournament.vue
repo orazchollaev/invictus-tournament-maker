@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useSettingsStore } from "../store"
 import { useI18n } from "vue-i18n"
+import { CalendarPlus } from "@lucide/vue"
 import BtnGroup from "@/components/BtnGroup.vue"
 import SettingDesc from "./SettingDesc.vue"
 
@@ -10,7 +11,10 @@ const settings = useSettingsStore()
 
 <template>
   <div class="section-box">
-    <h2>{{ t("settings.newTournament.title") }}</h2>
+    <h2>
+      <CalendarPlus :size="15" class="section-icon" />
+      {{ t("settings.newTournament.title") }}
+    </h2>
     <div class="section-body">
       <p class="section-intro">{{ t("settings.newTournament.intro") }}</p>
       <div class="setting-group">

@@ -23,32 +23,44 @@ defineEmits<{ "update:modelValue": [value: string] }>()
 
 <style scoped>
 .btn-group {
-  display: flex;
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  background: var(--border-light);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
 }
 .btn-group button {
-  border-radius: 0;
-  margin-left: -1px;
-  position: relative;
+  border: none;
+  background: none;
+  box-shadow: none;
+  border-radius: calc(var(--radius) - 3px);
   font-size: 12px;
-  padding: 4px 10px;
+  font-weight: 500;
+  padding: 5px 12px;
+  color: var(--text-muted);
+  transition:
+    color var(--dur-fast) var(--ease),
+    background var(--dur-fast) var(--ease),
+    box-shadow var(--dur-fast) var(--ease);
 }
-.btn-group button:first-child {
-  margin-left: 0;
-  border-radius: var(--radius) 0 0 var(--radius);
-}
-.btn-group button:last-child {
-  border-radius: 0 var(--radius) var(--radius) 0;
+.btn-group button:hover:not(.active) {
+  color: var(--text);
+  background: color-mix(in srgb, var(--text) 8%, transparent);
 }
 .btn-group button.active {
   background: var(--accent);
   color: #fff;
-  border-color: var(--accent-hover);
-  z-index: 1;
+  font-weight: 600;
+  box-shadow: var(--shadow-sm);
 }
 .btn-group button.active:hover {
   background: var(--accent-hover);
 }
-.btn-group button:hover:not(.active) {
-  background: var(--border-light);
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-group button {
+    transition: none;
+  }
 }
 </style>

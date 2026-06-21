@@ -15,7 +15,12 @@ button {
     background var(--dur-fast),
     border-color var(--dur-fast),
     box-shadow var(--dur-fast),
-    color var(--dur-fast);
+    color var(--dur-fast),
+    transform var(--dur-fast) var(--ease);
+}
+
+button:active:not(:disabled) {
+  transform: scale(0.96);
 }
 
 button:hover {

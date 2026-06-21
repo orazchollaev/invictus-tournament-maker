@@ -2,12 +2,15 @@
 import { ref, onErrorCaptured } from "vue"
 import { useI18n } from "vue-i18n"
 import { AlertTriangle } from "@lucide/vue"
+import { useHaptic } from "@/composables/useHaptic"
 
 const { t } = useI18n()
+const haptic = useHaptic()
 const error = ref<Error | null>(null)
 
 onErrorCaptured((err) => {
   error.value = err instanceof Error ? err : new Error(String(err))
+  haptic.error()
   return false
 })
 
@@ -35,6 +38,9 @@ function retry() {
   gap: 14px;
   text-align: center;
   min-height: 200px;
+  animation:
+    fade-up var(--dur) var(--ease),
+    shake 0.5s var(--ease);
 }
 .error-icon {
   color: var(--text-muted);

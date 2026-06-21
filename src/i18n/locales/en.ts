@@ -292,6 +292,10 @@ export default {
         high: "High",
         low: "Low",
       },
+      uiAnimations: {
+        label: "UI Animations",
+        desc: "Playful motion on buttons, cards and empty states · turn off to keep the interface static",
+      },
     },
     display: {
       title: "Display",

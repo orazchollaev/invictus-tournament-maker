@@ -6,9 +6,11 @@ import TeamFormModal from "../components/TeamFormModal.vue"
 import type { Team } from "../types"
 import { X, Pencil, Search } from "@lucide/vue"
 import { MAX_TEAMS } from "@/constants"
+import { useMotionPrefs } from "@/composables/useMotionPrefs"
 import { useI18n } from "vue-i18n"
 
 const { t } = useI18n()
+const { m } = useMotionPrefs()
 const store = useTeamsStore()
 const router = useRouter()
 
@@ -52,6 +54,10 @@ const filtered = computed(() => {
       <div
         v-for="team in filtered"
         :key="team.id"
+        v-motion
+        :initial="m.initial"
+        :hovered="m.hovered"
+        :tapped="m.tapped"
         class="t-row"
         :style="{ '--team-color': team.color }"
         @click="router.push(`/teams/${team.id}`)"

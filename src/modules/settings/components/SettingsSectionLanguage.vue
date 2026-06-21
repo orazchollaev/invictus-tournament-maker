@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useSettingsStore } from "../store"
 import { useI18n } from "vue-i18n"
+import { Languages } from "@lucide/vue"
 import { LOCALES } from "@/i18n"
 import SettingDesc from "./SettingDesc.vue"
 
@@ -10,7 +11,10 @@ const settings = useSettingsStore()
 
 <template>
   <div class="section-box">
-    <h2>{{ t("settings.language.label") }}</h2>
+    <h2>
+      <Languages :size="15" class="section-icon" />
+      {{ t("settings.language.label") }}
+    </h2>
     <div class="section-body">
       <div class="setting-row">
         <div class="setting-info">

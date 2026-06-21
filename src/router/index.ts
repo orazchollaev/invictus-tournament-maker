@@ -2,9 +2,6 @@ import { createRouter, createWebHashHistory } from "vue-router"
 
 export default createRouter({
   history: createWebHashHistory(),
-  // Page uses an out-in <Transition>, so wait for the swap before scrolling,
-  // otherwise scroll fires against the outgoing page. Back/forward restores
-  // saved position; everything else starts at the top.
   scrollBehavior(_to, _from, savedPosition) {
     return new Promise((resolve) => {
       setTimeout(() => resolve(savedPosition ?? { top: 0, left: 0 }), 250)

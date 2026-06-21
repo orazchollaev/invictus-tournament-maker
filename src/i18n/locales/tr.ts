@@ -295,6 +295,10 @@ export default {
         high: "Yüksek",
         low: "Düşük",
       },
+      uiAnimations: {
+        label: "Arayüz Animasyonları",
+        desc: "Düğmeler, kartlar ve boş ekranlarda eğlenceli hareket · arayüzü sabit tutmak için kapatın",
+      },
     },
     display: {
       title: "Görüntü",

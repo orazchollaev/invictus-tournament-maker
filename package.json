@@ -27,6 +27,7 @@
     "@capacitor/core": "^8.4.0",
     "@capacitor/status-bar": "^8.0.2",
     "@lucide/vue": "^1.17.0",
+    "@vueuse/motion": "^3.0.3",
     "canvas-confetti": "^1.9.4",
     "chart.js": "^4.5.1",
     "html-to-image": "^1.11.13",

@@ -2,6 +2,7 @@
 import { computed } from "vue"
 import { useSettingsStore } from "../store"
 import { useI18n } from "vue-i18n"
+import { Swords } from "@lucide/vue"
 import BtnGroup from "@/components/BtnGroup.vue"
 import SettingDesc from "./SettingDesc.vue"
 
@@ -16,7 +17,10 @@ const legOptions = computed(() => [
 
 <template>
   <div class="section-box">
-    <h2>{{ t("settings.matchDefaults.title") }}</h2>
+    <h2>
+      <Swords :size="15" class="section-icon" />
+      {{ t("settings.matchDefaults.title") }}
+    </h2>
     <div class="section-body">
       <p class="section-intro">{{ t("settings.matchDefaults.intro") }}</p>
       <div class="setting-group">

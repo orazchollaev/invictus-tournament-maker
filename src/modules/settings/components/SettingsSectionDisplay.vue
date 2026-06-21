@@ -3,7 +3,9 @@ import { computed } from "vue"
 import { useSettingsStore } from "../store"
 import type { BracketStyle } from "../store"
 import { useI18n } from "vue-i18n"
+import { Monitor } from "@lucide/vue"
 import BtnGroup from "@/components/BtnGroup.vue"
+import ToggleSwitch from "@/components/ToggleSwitch.vue"
 import SettingDesc from "./SettingDesc.vue"
 
 const { t } = useI18n()
@@ -14,77 +16,24 @@ const bracketStyleOptions = computed<{ value: BracketStyle; label: string }[]>((
   { value: "classic", label: t("settings.display.bracketStyle.classic") },
   { value: "auto", label: t("settings.display.bracketStyle.auto") },
 ])
-
-const onOffOptions = computed(() => [
-  { value: "on", label: t("common.on") },
-  { value: "off", label: t("common.off") },
-])
-
-const showHideOptions = computed(() => [
-  { value: "show", label: t("common.show") },
-  { value: "hide", label: t("common.hide") },
-])
-
-const showTeamAbbrVal = computed({
-  get: () => (settings.showTeamAbbr ? "show" : "hide"),
-  set: (v: string) => {
-    settings.showTeamAbbr = v === "show"
-  },
-})
-
-const confettiOnWinVal = computed({
-  get: () => (settings.confettiOnWin ? "on" : "off"),
-  set: (v: string) => {
-    settings.confettiOnWin = v === "on"
-  },
-})
-
-const soundOnWinVal = computed({
-  get: () => (settings.soundOnWin ? "on" : "off"),
-  set: (v: string) => {
-    settings.soundOnWin = v === "on"
-  },
-})
-
-const bracketHoverVal = computed({
-  get: () => (settings.bracketHighlightOnHover ? "on" : "off"),
-  set: (v: string) => {
-    settings.bracketHighlightOnHover = v === "on"
-  },
-})
-
-const bracketConnectorColorsVal = computed({
-  get: () => (settings.bracketConnectorColors ? "on" : "off"),
-  set: (v: string) => {
-    settings.bracketConnectorColors = v === "on"
-  },
-})
-
-const gradualRevealVal = computed({
-  get: () => (settings.gradualReveal ? "on" : "off"),
-  set: (v: string) => {
-    settings.gradualReveal = v === "on"
-  },
-})
-
-const drawCeremonyVal = computed({
-  get: () => (settings.drawCeremony ? "on" : "off"),
-  set: (v: string) => {
-    settings.drawCeremony = v === "on"
-  },
-})
 </script>
 
 <template>
   <div class="section-box">
-    <h2>{{ t("settings.display.title") }}</h2>
+    <h2>
+      <Monitor :size="15" class="section-icon" />
+      {{ t("settings.display.title") }}
+    </h2>
     <div class="section-body">
       <div class="setting-row">
         <div class="setting-info">
           <div class="setting-label">{{ t("settings.display.teamAbbr.label") }}</div>
           <SettingDesc>{{ t("settings.display.teamAbbr.desc", { example: "BRA" }) }}</SettingDesc>
         </div>
-        <BtnGroup v-model="showTeamAbbrVal" :options="showHideOptions" />
+        <ToggleSwitch
+          v-model="settings.showTeamAbbr"
+          :aria-label="t('settings.display.teamAbbr.label')"
+        />
       </div>
       <div class="setting-row">
         <div class="setting-info">
@@ -105,42 +54,60 @@ const drawCeremonyVal = computed({
           <div class="setting-label">{{ t("settings.display.confetti.label") }}</div>
           <SettingDesc>{{ t("settings.display.confetti.desc") }}</SettingDesc>
         </div>
-        <BtnGroup v-model="confettiOnWinVal" :options="onOffOptions" />
+        <ToggleSwitch
+          v-model="settings.confettiOnWin"
+          :aria-label="t('settings.display.confetti.label')"
+        />
       </div>
       <div class="setting-row">
         <div class="setting-info">
           <div class="setting-label">{{ t("settings.display.sound.label") }}</div>
           <SettingDesc>{{ t("settings.display.sound.desc") }}</SettingDesc>
         </div>
-        <BtnGroup v-model="soundOnWinVal" :options="onOffOptions" />
+        <ToggleSwitch
+          v-model="settings.soundOnWin"
+          :aria-label="t('settings.display.sound.label')"
+        />
       </div>
       <div class="setting-row">
         <div class="setting-info">
           <div class="setting-label">{{ t("settings.display.bracketHover.label") }}</div>
           <SettingDesc>{{ t("settings.display.bracketHover.desc") }}</SettingDesc>
         </div>
-        <BtnGroup v-model="bracketHoverVal" :options="onOffOptions" />
+        <ToggleSwitch
+          v-model="settings.bracketHighlightOnHover"
+          :aria-label="t('settings.display.bracketHover.label')"
+        />
       </div>
       <div class="setting-row">
         <div class="setting-info">
           <div class="setting-label">{{ t("settings.display.bracketConnectorColors.label") }}</div>
           <SettingDesc>{{ t("settings.display.bracketConnectorColors.desc") }}</SettingDesc>
         </div>
-        <BtnGroup v-model="bracketConnectorColorsVal" :options="onOffOptions" />
+        <ToggleSwitch
+          v-model="settings.bracketConnectorColors"
+          :aria-label="t('settings.display.bracketConnectorColors.label')"
+        />
       </div>
       <div class="setting-row">
         <div class="setting-info">
           <div class="setting-label">{{ t("settings.display.gradualReveal.label") }}</div>
           <SettingDesc>{{ t("settings.display.gradualReveal.desc") }}</SettingDesc>
         </div>
-        <BtnGroup v-model="gradualRevealVal" :options="onOffOptions" />
+        <ToggleSwitch
+          v-model="settings.gradualReveal"
+          :aria-label="t('settings.display.gradualReveal.label')"
+        />
       </div>
       <div class="setting-row">
         <div class="setting-info">
           <div class="setting-label">{{ t("drawCeremony.settingsLabel") }}</div>
           <SettingDesc>{{ t("drawCeremony.settingsDesc") }}</SettingDesc>
         </div>
-        <BtnGroup v-model="drawCeremonyVal" :options="onOffOptions" />
+        <ToggleSwitch
+          v-model="settings.drawCeremony"
+          :aria-label="t('drawCeremony.settingsLabel')"
+        />
       </div>
     </div>
   </div>

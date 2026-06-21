@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { useRouter } from "vue-router"
-import { ref, onMounted, onUnmounted } from "vue"
+import { ref, computed, nextTick } from "vue"
 import { version } from "../../../../package.json"
-import { ArrowLeft } from "@lucide/vue"
+import { ArrowLeft, Globe, Monitor, Trophy, Dices, Database } from "@lucide/vue"
+import type { Component } from "vue"
 import { useI18n } from "vue-i18n"
+import { useMotionPrefs } from "@/composables/useMotionPrefs"
 import SettingsSectionLanguage from "../components/SettingsSectionLanguage.vue"
 import SettingsSectionAppearance from "../components/SettingsSectionAppearance.vue"
 import SettingsSectionTableRules from "../components/SettingsSectionTableRules.vue"
@@ -21,33 +23,38 @@ const router = useRouter()
 const CATEGORIES = ["general", "display", "tournament", "simulation", "data"] as const
 type Category = (typeof CATEGORIES)[number]
 
-const activeCategory = ref<Category>("general")
-
-function scrollToCategory(id: Category) {
-  activeCategory.value = id
-  document.getElementById(`cat-${id}`)?.scrollIntoView({ behavior: "smooth", block: "start" })
+const CATEGORY_ICONS: Record<Category, Component> = {
+  general: Globe,
+  display: Monitor,
+  tournament: Trophy,
+  simulation: Dices,
+  data: Database,
 }
 
-let observer: IntersectionObserver | null = null
+const GROUPS: Record<Category, Component[]> = {
+  general: [SettingsSectionLanguage, SettingsSectionAppearance],
+  display: [SettingsSectionDisplay, SettingsSectionGraphics],
+  tournament: [
+    SettingsSectionTableRules,
+    SettingsSectionMatchDefaults,
+    SettingsSectionNewTournament,
+  ],
+  simulation: [SettingsSectionSimulation],
+  data: [SettingsSectionSampleData, SettingsSectionDataManagement],
+}
 
-onMounted(() => {
-  observer = new IntersectionObserver(
-    (entries) => {
-      for (const entry of entries) {
-        if (entry.isIntersecting) {
-          activeCategory.value = entry.target.id.replace("cat-", "") as Category
-        }
-      }
-    },
-    { rootMargin: "-20% 0px -70% 0px" }
-  )
-  CATEGORIES.forEach((id) => {
-    const el = document.getElementById(`cat-${id}`)
-    if (el) observer!.observe(el)
+const { enabled: motionEnabled } = useMotionPrefs()
+const transitionName = computed(() => (motionEnabled.value ? "settings-panel" : ""))
+
+const activeCategory = ref<Category>("general")
+
+function selectCategory(id: Category) {
+  if (activeCategory.value === id) return
+  activeCategory.value = id
+  nextTick(() => {
+    window.scrollTo({ top: 0, behavior: "auto" })
   })
-})
-
-onUnmounted(() => observer?.disconnect())
+}
 </script>
 
 <template>
@@ -60,61 +67,43 @@ onUnmounted(() => observer?.disconnect())
       <h2>{{ t("settings.title") }}</h2>
     </div>
 
-    <nav class="settings-nav">
-      <button
-        v-for="cat in CATEGORIES"
-        :key="cat"
-        class="nav-pill"
-        :class="{ 'nav-pill--active': activeCategory === cat }"
-        @click="scrollToCategory(cat)"
-      >
-        {{ t(`settings.nav.${cat}`) }}
-      </button>
-    </nav>
+    <div class="settings-layout">
+      <nav class="settings-sidebar">
+        <button
+          v-for="cat in CATEGORIES"
+          :key="cat"
+          class="side-link"
+          :class="{ 'side-link--active': activeCategory === cat }"
+          :aria-current="activeCategory === cat ? 'page' : undefined"
+          @click="selectCategory(cat)"
+        >
+          <component :is="CATEGORY_ICONS[cat]" :size="16" class="side-link-icon" />
+          <span>{{ t(`settings.nav.${cat}`) }}</span>
+        </button>
+      </nav>
 
-    <div id="cat-general" class="category-group">
-      <div class="category-label">{{ t("settings.nav.general") }}</div>
-      <SettingsSectionLanguage />
-      <SettingsSectionAppearance />
-    </div>
+      <div class="settings-panel">
+        <Transition :name="transitionName" mode="out-in">
+          <div :key="activeCategory" class="category-group">
+            <component :is="section" v-for="(section, i) in GROUPS[activeCategory]" :key="i" />
+          </div>
+        </Transition>
 
-    <div id="cat-display" class="category-group">
-      <div class="category-label">{{ t("settings.nav.display") }}</div>
-      <SettingsSectionDisplay />
-      <SettingsSectionGraphics />
-    </div>
-
-    <div id="cat-tournament" class="category-group">
-      <div class="category-label">{{ t("settings.nav.tournament") }}</div>
-      <SettingsSectionTableRules />
-      <SettingsSectionMatchDefaults />
-      <SettingsSectionNewTournament />
-    </div>
-
-    <div id="cat-simulation" class="category-group">
-      <div class="category-label">{{ t("settings.nav.simulation") }}</div>
-      <SettingsSectionSimulation />
-    </div>
-
-    <div id="cat-data" class="category-group">
-      <div class="category-label">{{ t("settings.nav.data") }}</div>
-      <SettingsSectionSampleData />
-      <SettingsSectionDataManagement />
-    </div>
-
-    <div class="version-row">
-      <span class="version">v{{ version }}</span>
-      <RouterLink class="changelog-btn" to="/guide">
-        {{ t("guide.title") }}
-      </RouterLink>
-      <a
-        class="changelog-btn"
-        href="https://github.com/orazchollaev/invictus-tournament-maker/blob/main/CHANGELOG.md"
-        target="_blank"
-        rel="noopener"
-      >
-        {{ t("settings.changelog") }}
-      </a>
+        <div class="version-row">
+          <span class="version">v{{ version }}</span>
+          <RouterLink class="changelog-btn" to="/guide">
+            {{ t("guide.title") }}
+          </RouterLink>
+          <a
+            class="changelog-btn"
+            href="https://github.com/orazchollaev/invictus-tournament-maker/blob/main/CHANGELOG.md"
+            target="_blank"
+            rel="noopener"
+          >
+            {{ t("settings.changelog") }}
+          </a>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -124,7 +113,7 @@ onUnmounted(() => observer?.disconnect())
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
 }
 .page-header h2 {
   margin: 0;
@@ -146,73 +135,117 @@ onUnmounted(() => observer?.disconnect())
   color: var(--accent);
 }
 
-.settings-nav {
+/* ── Layout ── */
+.settings-layout {
   display: flex;
-  overflow-x: auto;
-  scrollbar-width: none;
-  margin-bottom: 20px;
+  align-items: flex-start;
+  gap: var(--sp-5);
+}
+.settings-panel {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ── Sidebar (desktop) ── */
+.settings-sidebar {
+  flex: 0 0 200px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
   position: sticky;
-  top: calc(52px + env(safe-area-inset-top));
-  z-index: 9;
-  background: var(--bg);
-  border-bottom: 1px solid var(--border-light);
+  top: calc(64px + env(safe-area-inset-top));
 }
-@media (max-width: 640px) {
-  .settings-nav {
-    top: calc(48px + env(safe-area-inset-top));
-  }
-}
-.settings-nav::-webkit-scrollbar {
-  display: none;
-}
-.nav-pill {
-  flex-shrink: 0;
-  padding: 8px 14px;
-  border-radius: 0;
+.side-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  text-align: left;
+  padding: 9px 12px;
   border: none;
-  border-bottom: 2px solid transparent;
+  border-left: 3px solid transparent;
+  border-radius: var(--radius);
   background: none;
   color: var(--text-muted);
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
   transition:
-    color 0.15s,
-    border-color 0.15s;
-  white-space: nowrap;
-  margin-bottom: -1px;
+    color var(--dur-fast) var(--ease),
+    background var(--dur-fast) var(--ease);
 }
-.nav-pill:hover {
+.side-link-icon {
+  flex-shrink: 0;
+  opacity: 0.8;
+}
+.side-link:hover {
   color: var(--text);
+  background: var(--border-light);
 }
-.nav-pill--active {
-  border-bottom-color: var(--accent);
+.side-link--active {
   color: var(--accent);
+  background: var(--accent-subtle);
+  border-left-color: var(--accent);
   font-weight: 600;
 }
+.side-link--active .side-link-icon {
+  opacity: 1;
+}
+.side-link:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
 
+/* ── Panel content ── */
 .category-group {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-bottom: 28px;
-  scroll-margin-top: calc(104px + env(safe-area-inset-top));
+  gap: 16px;
 }
-.category-label {
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--text-muted);
-  padding-bottom: 4px;
+
+/* ── Panel transition ── */
+.settings-panel-enter-active,
+.settings-panel-leave-active {
+  transition:
+    opacity var(--dur) var(--ease),
+    transform var(--dur) var(--ease);
+}
+.settings-panel-enter-from {
+  opacity: 0;
+  transform: translateY(6px);
+}
+.settings-panel-leave-to {
+  opacity: 0;
+  transform: translateY(-6px);
+}
+
+/* ── Section card "medium" modernization (settings only) ── */
+.settings-panel :deep(.section-box h2) {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.settings-panel :deep(.section-icon) {
+  color: var(--accent);
+  flex-shrink: 0;
+}
+.settings-panel :deep(.section-body) {
+  padding: 4px var(--sp-4);
+}
+.settings-panel :deep(.setting-row) {
+  margin-bottom: 0;
+  padding: 14px 0;
   border-bottom: 1px solid var(--border-light);
+}
+.settings-panel :deep(.setting-row:last-child) {
+  border-bottom: none;
 }
 
 .version-row {
   display: flex;
   align-items: center;
   gap: 8.1px;
-  margin-top: 8px;
+  margin-top: 20px;
 }
 .version {
   font-size: 12px;
@@ -230,5 +263,56 @@ onUnmounted(() => observer?.disconnect())
 .changelog-btn:hover {
   border-color: var(--accent);
   color: var(--accent);
+}
+
+/* ── Mobile: sidebar → horizontal tab bar ── */
+@media (max-width: 860px) {
+  .settings-layout {
+    flex-direction: column;
+    gap: 0;
+  }
+  .settings-sidebar {
+    flex: none;
+    flex-direction: row;
+    width: 100%;
+    gap: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+    margin-bottom: 20px;
+    position: sticky;
+    top: calc(52px + env(safe-area-inset-top));
+    z-index: 9;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border-light);
+  }
+  .settings-sidebar::-webkit-scrollbar {
+    display: none;
+  }
+  .settings-panel {
+    width: 100%;
+  }
+  .side-link {
+    flex-shrink: 0;
+    width: auto;
+    border-radius: 0;
+    border-left: none;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    padding: 8px 12px;
+    white-space: nowrap;
+  }
+  .side-link:hover {
+    background: none;
+  }
+  .side-link--active {
+    background: none;
+    border-left: none;
+    border-bottom-color: var(--accent);
+  }
+}
+@media (max-width: 640px) {
+  .settings-sidebar {
+    top: calc(48px + env(safe-area-inset-top));
+  }
 }
 </style>

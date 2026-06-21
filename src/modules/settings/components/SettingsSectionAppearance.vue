@@ -3,6 +3,7 @@ import { computed } from "vue"
 import { useSettingsStore } from "../store"
 import type { Theme } from "../store"
 import { useI18n } from "vue-i18n"
+import { Palette } from "@lucide/vue"
 import BtnGroup from "@/components/BtnGroup.vue"
 import SettingDesc from "./SettingDesc.vue"
 
@@ -18,7 +19,10 @@ const themes = computed<{ value: Theme; label: string }[]>(() => [
 
 <template>
   <div class="section-box">
-    <h2>{{ t("settings.appearance.title") }}</h2>
+    <h2>
+      <Palette :size="15" class="section-icon" />
+      {{ t("settings.appearance.title") }}
+    </h2>
     <div class="section-body">
       <div class="setting-row">
         <div class="setting-info">

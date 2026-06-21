@@ -294,6 +294,10 @@ export default {
         high: "Alta",
         low: "Baja",
       },
+      uiAnimations: {
+        label: "Animaciones de interfaz",
+        desc: "Movimiento divertido en botones, tarjetas y estados vacíos · desactívalo para mantener la interfaz estática",
+      },
     },
     display: {
       title: "Visualización",
