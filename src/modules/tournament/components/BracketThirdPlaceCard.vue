@@ -50,31 +50,30 @@ function tpPenSave() {
 
 <template>
   <div class="tp-card">
-    <template v-if="!match.homeId || !match.awayId">
-      <div class="tp-waiting">Waiting for semi-finals…</div>
-    </template>
-    <template v-else>
-      <div class="tp-teams">
-        <div
-          class="tp-row"
-          :class="{
-            winner: isWinnerTp(match.homeId),
-            loser: match.result && !isWinnerTp(match.homeId),
-          }"
-        >
-          <TeamBadge :team-id="match.homeId" :teams="teams" />
-        </div>
-        <div
-          class="tp-row tp-row--away"
-          :class="{
-            winner: isWinnerTp(match.awayId),
-            loser: match.result && !isWinnerTp(match.awayId),
-          }"
-        >
-          <TeamBadge :team-id="match.awayId" :teams="teams" />
-        </div>
+    <!-- Teams column: always rendered, TeamBadge shows TBD placeholder when id is null -->
+    <div class="tp-teams">
+      <div
+        class="tp-row"
+        :class="{
+          winner: isWinnerTp(match.homeId),
+          loser: match.result && !isWinnerTp(match.homeId),
+        }"
+      >
+        <TeamBadge :team-id="match.homeId" :teams="teams" />
       </div>
+      <div
+        class="tp-row tp-row--away"
+        :class="{
+          winner: isWinnerTp(match.awayId),
+          loser: match.result && !isWinnerTp(match.awayId),
+        }"
+      >
+        <TeamBadge :team-id="match.awayId" :teams="teams" />
+      </div>
+    </div>
 
+    <!-- Scores + actions: only once both teams are known, same gating as MatchCard -->
+    <template v-if="match.homeId && match.awayId">
       <div class="tp-scores">
         <div
           class="tp-scell"
@@ -156,12 +155,6 @@ function tpPenSave() {
   font-size: 12px;
   overflow: hidden;
   box-sizing: border-box;
-}
-.tp-waiting {
-  font-size: 11px;
-  color: var(--text-muted);
-  text-align: center;
-  padding: 10px 8px;
 }
 
 .tp-teams {
