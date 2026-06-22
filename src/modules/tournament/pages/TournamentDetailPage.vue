@@ -46,12 +46,16 @@ const showManualSeason = ref(false)
 const showPromotionModal = ref(false)
 const showMultiTierModal = ref(false)
 const showPlayoffManualDraw = ref(false)
+const pendingOverrideTeamIds = ref<string[] | null>(null)
 
 const showCeremony = ref(false)
 const ceremonyContext = ref<CeremonyContext | null>(null)
 const ceremonyPots = ref<Pot[] | undefined>(undefined)
 const ceremonyAction = ref<"playoff" | "season" | null>(null)
-const ceremonySeasonOpts = ref<{ thirdPlace: boolean; playoffSeedMode?: PlayoffSeedMode }>()
+const ceremonySeasonOpts = ref<{
+  thirdPlace: boolean
+  playoffSeedMode?: PlayoffSeedMode
+}>()
 
 const isMultiTier = computed(() => (tournament.value?.tiers?.length ?? 0) > 1)
 const activeTierIdx = ref(0)
@@ -93,6 +97,13 @@ async function openNewSeason() {
     return
   }
 
+  // League without relegation
+  if (t.format === "league") {
+    startNewLeagueSeason(t.teamIds)
+    return
+  }
+
+  // Bracket / group+bracket: go straight to ceremony (team mgmt + old-draw inside)
   const isGroup = t.format === "group+bracket"
   const drawType =
     t.drawType ?? (isGroup ? settings.newSeasonGroupDrawType : settings.newSeasonDrawType)
@@ -100,6 +111,7 @@ async function openNewSeason() {
     ? (t.playoffSeedMode ?? settings.newSeasonPlayoffSeedMode)
     : undefined
   const thirdPlace = t.hasThirdPlace ?? false
+
   if ((drawType === "random" || drawType === "seeded") && settings.drawCeremony) {
     openSeasonCeremony(drawType, thirdPlace, playoffSeedMode)
   } else if (drawType === "random") {
@@ -107,6 +119,7 @@ async function openNewSeason() {
   } else if (drawType === "seeded") {
     startNewSeason(true, undefined, thirdPlace, playoffSeedMode)
   } else {
+    pendingOverrideTeamIds.value = null
     showManualSeason.value = true
     showSeasonModal.value = true
   }
@@ -129,6 +142,15 @@ function openSeasonCeremony(
   ceremonySeasonOpts.value = { thirdPlace, playoffSeedMode }
   ceremonyAction.value = "season"
   showCeremony.value = true
+}
+
+function onCeremonyUseOldDraw() {
+  showCeremony.value = false
+  const t = tournament.value
+  if (!t) return
+  const opts = ceremonySeasonOpts.value
+  startNewSeason(false, [...t.teamIds], opts?.thirdPlace ?? false, opts?.playoffSeedMode)
+  ceremonyAction.value = null
 }
 
 function openPlayoffCeremony() {
@@ -155,7 +177,7 @@ function onCeremonyComplete(orderedIds: string[]) {
     store.advanceToBracketManual(t.id, orderedIds)
   } else if (ceremonyAction.value === "season") {
     const opts = ceremonySeasonOpts.value
-    startNewSeason(false, orderedIds, opts?.thirdPlace ?? false, opts?.playoffSeedMode)
+    startNewSeason(false, orderedIds, opts?.thirdPlace ?? false, opts?.playoffSeedMode, orderedIds)
   }
   ceremonyAction.value = null
 }
@@ -270,15 +292,30 @@ const tournamentTeams = computed(() =>
   allTeams.value.filter((t) => tournament.value?.teamIds.includes(t.id) ?? false)
 )
 
+const manualSeasonTeams = computed(() => {
+  if (pendingOverrideTeamIds.value) {
+    return allTeams.value.filter((t) => pendingOverrideTeamIds.value!.includes(t.id))
+  }
+  return tournamentTeams.value
+})
+
 function handleManualSeasonConfirm(orderedIds: string[]) {
   const playoffSeedMode =
     tournament.value?.format === "group+bracket" ? settings.newSeasonPlayoffSeedMode : undefined
-  startNewSeason(false, orderedIds, tournament.value?.hasThirdPlace ?? false, playoffSeedMode)
+  startNewSeason(
+    false,
+    orderedIds,
+    tournament.value?.hasThirdPlace ?? false,
+    playoffSeedMode,
+    pendingOverrideTeamIds.value ?? undefined
+  )
+  pendingOverrideTeamIds.value = null
   showSeasonModal.value = false
   showManualSeason.value = false
 }
 
 function closeSeasonModal() {
+  pendingOverrideTeamIds.value = null
   showSeasonModal.value = false
   showManualSeason.value = false
 }
@@ -472,7 +509,10 @@ function changeTab(tab: MainTab, tierIdx?: number) {
       :context="ceremonyContext"
       :teams="allTeams"
       :initial-pots="ceremonyPots"
+      :previous-team-ids="ceremonyAction === 'season' ? tournament?.teamIds : undefined"
+      :all-available-teams="ceremonyAction === 'season' ? allTeams : undefined"
       @complete="onCeremonyComplete"
+      @use-old-draw="onCeremonyUseOldDraw"
       @cancel="showCeremony = false"
     />
 
@@ -506,10 +546,10 @@ function changeTab(tab: MainTab, tierIdx?: number) {
     >
       <template v-if="showManualSeason && isGroupFormat">
         <GroupDraw
-          :teams="tournamentTeams"
+          :teams="manualSeasonTeams"
           :group-count="tournament?.groups?.length ?? 2"
           @confirm="handleManualSeasonConfirm"
-          @cancel="showManualSeason = false"
+          @cancel="closeSeasonModal"
         />
         <div class="quick-draw-row">
           <span class="quick-draw-label">or:</span>
@@ -519,9 +559,9 @@ function changeTab(tab: MainTab, tierIdx?: number) {
       </template>
       <template v-else-if="showManualSeason">
         <ManualDraw
-          :teams="tournamentTeams"
+          :teams="manualSeasonTeams"
           @confirm="handleManualSeasonConfirm"
-          @cancel="showManualSeason = false"
+          @cancel="closeSeasonModal"
         />
       </template>
     </AppModal>

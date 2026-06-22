@@ -40,6 +40,8 @@ onUnmounted(() => {
   document.body.style.paddingRight = ""
   document.removeEventListener("keydown", onKey)
 })
+
+defineExpose({ close })
 </script>
 
 <template>

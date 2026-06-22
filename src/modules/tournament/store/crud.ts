@@ -106,7 +106,8 @@ export function useCrudActions(
     const t = tournaments.value.find((t) => t.id === id)
     if (!t || !t.winnerId) return
     const allTeams = getTeams()
-    const selected = allTeams.filter((tm) => t.teamIds.includes(tm.id))
+    const effectiveTeamIds = overrideTeamIds ?? t.teamIds
+    const selected = allTeams.filter((tm) => effectiveTeamIds.includes(tm.id))
     const season =
       tournaments.value
         .filter((tr) => tr.name === t.name)

@@ -1,4 +1,5 @@
 import { ref, computed, onUnmounted } from "vue"
+import type { Team } from "@/modules/teams/types"
 import {
   buildPots,
   computeDrawPlan,
@@ -19,7 +20,7 @@ export type CeremonySpeed = "normal" | "fast"
 // ephemeral; a mid-ceremony page refresh simply discards it (nothing is
 // persisted until the host commits `orderedIds`).
 export function useDrawCeremony(ctx: CeremonyContext, initialPots?: Pot[]) {
-  const basePots: Pot[] = (initialPots ?? buildPots(ctx)).map((p) => ({
+  let basePots: Pot[] = (initialPots ?? buildPots(ctx)).map((p) => ({
     label: p.label,
     teamIds: [...p.teamIds],
   }))
@@ -34,7 +35,8 @@ export function useDrawCeremony(ctx: CeremonyContext, initialPots?: Pot[]) {
   const revealed = ref<DrawStep[]>([])
   const current = ref<DrawStep | null>(null)
 
-  const errors = computed(() => validatePots(pots.value, ctx.teams.length))
+  const localTeamCount = ref(ctx.teams.length)
+  const errors = computed(() => validatePots(pots.value, localTeamCount.value))
   const canStart = computed(() => errors.value.length === 0)
   const progress = computed(() =>
     sequence.value.length ? revealed.value.length / sequence.value.length : 0
@@ -64,6 +66,14 @@ export function useDrawCeremony(ctx: CeremonyContext, initialPots?: Pot[]) {
 
   function resetPots() {
     if (phase.value !== "pots") return
+    pots.value = clone()
+  }
+
+  function rebuild(newTeams: Team[]) {
+    if (phase.value !== "pots") return
+    localTeamCount.value = newTeams.length
+    const newCtx: CeremonyContext = { ...ctx, teams: newTeams }
+    basePots = buildPots(newCtx).map((p) => ({ label: p.label, teamIds: [...p.teamIds] }))
     pots.value = clone()
   }
 
@@ -125,6 +135,7 @@ export function useDrawCeremony(ctx: CeremonyContext, initialPots?: Pot[]) {
     canStart,
     progress,
     resetPots,
+    rebuild,
     start,
     skip,
   }

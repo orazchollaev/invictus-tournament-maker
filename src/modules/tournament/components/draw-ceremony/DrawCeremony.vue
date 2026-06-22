@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, watch } from "vue"
+import { ref, computed, watch, onMounted, onUnmounted } from "vue"
 import { useI18n } from "vue-i18n"
 import confetti from "canvas-confetti"
-import { X, Play, FastForward, Check } from "@lucide/vue"
+import { X, Play, FastForward, Check, History, ChevronDown } from "@lucide/vue"
 import type { Team } from "@/modules/teams/types"
 import type { CeremonyContext, Pot } from "@/engine"
 import { useSettingsStore } from "@/modules/settings/store"
@@ -10,15 +10,22 @@ import { useDrawCeremony } from "../../composables/useDrawCeremony"
 import { useHaptic } from "@/composables/useHaptic"
 import PotEditor from "./PotEditor.vue"
 import DrawStage from "./DrawStage.vue"
+import TeamSelector from "../TeamSelector.vue"
 
 const props = defineProps<{
   title: string
   context: CeremonyContext
   teams: Team[]
   initialPots?: Pot[]
+  previousTeamIds?: string[]
+  allAvailableTeams?: Team[]
 }>()
 
-const emit = defineEmits<{ complete: [orderedIds: string[]]; cancel: [] }>()
+const emit = defineEmits<{
+  complete: [orderedIds: string[]]
+  useOldDraw: []
+  cancel: []
+}>()
 
 const { t } = useI18n()
 const settings = useSettingsStore()
@@ -35,12 +42,32 @@ const {
   progress,
   orderedIds,
   resetPots,
+  rebuild,
   start,
   skip,
 } = useDrawCeremony(props.context, props.initialPots)
 
 const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
 const { tap: hapticTap, success: hapticSuccess } = useHaptic()
+
+// ── Team management ──────────────────────────────────────────────
+const localTeamIds = ref(props.context.teams.map((t) => t.id))
+const showTeamEdit = ref(false)
+
+const localTeams = computed(() => {
+  if (!props.allAvailableTeams) return props.teams
+  return props.allAvailableTeams.filter((t) => localTeamIds.value.includes(t.id))
+})
+
+watch(localTeamIds, () => {
+  rebuild(localTeams.value)
+})
+
+function onTeamSelectionChange(ids: string[]) {
+  localTeamIds.value = ids
+}
+
+// ────────────────────────────────────────────────────────────────
 
 watch(phase, (p) => {
   if (p === "done") {
@@ -82,10 +109,31 @@ function complete() {
       </header>
 
       <div class="dc-body">
+        <!-- Team management accordion (pots phase only, when allAvailableTeams provided) -->
+        <div v-if="phase === 'pots' && allAvailableTeams" class="dc-team-panel">
+          <button class="dc-team-toggle" @click="showTeamEdit = !showTeamEdit">
+            <span class="dc-team-toggle-label">{{ t("drawCeremony.manageTeams") }}</span>
+            <span class="dc-team-toggle-count">{{ localTeamIds.length }}</span>
+            <ChevronDown
+              :size="13"
+              class="dc-team-toggle-icon"
+              :class="{ 'dc-team-toggle-icon--open': showTeamEdit }"
+            />
+          </button>
+
+          <div v-if="showTeamEdit" class="dc-team-edit">
+            <TeamSelector
+              :teams="allAvailableTeams"
+              :selected="localTeamIds"
+              @update:selected="onTeamSelectionChange"
+            />
+          </div>
+        </div>
+
         <PotEditor
           v-if="phase === 'pots'"
           :pots="pots"
-          :teams="teams"
+          :teams="localTeams"
           :errors="errors"
           @reset="resetPots"
         />
@@ -93,7 +141,12 @@ function complete() {
           <div class="dc-progress">
             <div class="dc-progress-bar" :style="{ width: `${Math.round(progress * 100)}%` }" />
           </div>
-          <DrawStage :revealed="revealed" :current="current" :sequence="sequence" :teams="teams" />
+          <DrawStage
+            :revealed="revealed"
+            :current="current"
+            :sequence="sequence"
+            :teams="localTeams"
+          />
         </template>
       </div>
 
@@ -104,6 +157,10 @@ function complete() {
             {{ t("drawCeremony.startDraw") }}
           </button>
           <button @click="emit('cancel')">{{ t("common.cancel") }}</button>
+          <button v-if="previousTeamIds" class="dc-old-draw-btn" @click="emit('useOldDraw')">
+            <History :size="13" />
+            {{ t("drawCeremony.useOldDraw") }}
+          </button>
         </template>
 
         <template v-else-if="phase === 'drawing'">
@@ -222,6 +279,9 @@ function complete() {
   padding: var(--sp-4);
   overflow-y: auto;
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 .dc-progress {
   height: 4px;
@@ -235,6 +295,60 @@ function complete() {
   background: var(--accent);
   transition: width 0.3s ease;
 }
+
+/* ── Team management ── */
+.dc-team-panel {
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.dc-team-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 8px 12px;
+  background: var(--bg);
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.12s;
+}
+.dc-team-toggle:hover {
+  background: color-mix(in srgb, var(--border-light) 60%, var(--bg));
+}
+.dc-team-toggle-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  flex: 1;
+}
+.dc-team-toggle-count {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: color-mix(in srgb, var(--border) 60%, transparent);
+  border-radius: 10px;
+  padding: 1px 7px;
+}
+.dc-team-toggle-icon {
+  color: var(--text-muted);
+  transition: transform 0.2s;
+  flex-shrink: 0;
+}
+.dc-team-toggle-icon--open {
+  transform: rotate(180deg);
+}
+
+.dc-team-edit {
+  border-top: 1px solid var(--border-light);
+  padding: 10px 12px;
+}
+
+/* ── Footer ── */
 .dc-footer {
   display: flex;
   align-items: center;
@@ -244,6 +358,30 @@ function complete() {
   background: var(--bg);
   flex-shrink: 0;
 }
+
+.dc-old-draw-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--text-muted);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius);
+  padding: 5px 12px;
+  background: transparent;
+  cursor: pointer;
+  transition:
+    color 0.12s,
+    border-color 0.12s,
+    background 0.12s;
+}
+.dc-old-draw-btn:hover {
+  color: var(--text);
+  border-color: var(--border);
+  background: color-mix(in srgb, var(--border-light) 40%, transparent);
+}
+
 .dc-speed {
   display: flex;
   align-items: center;
@@ -277,7 +415,13 @@ function complete() {
     border: none;
   }
   .dc-footer {
+    flex-wrap: wrap;
     padding-bottom: calc(var(--sp-3) + env(safe-area-inset-bottom));
+  }
+  .dc-old-draw-btn {
+    margin-left: 0;
+    width: 100%;
+    justify-content: center;
   }
 }
 </style>
