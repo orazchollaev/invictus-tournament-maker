@@ -1,26 +1,19 @@
 <template>
-  <svg viewBox="0 0 100 100">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
     <g
       fill="none"
       stroke="currentColor"
-      stroke-opacity=".42"
-      stroke-width="7"
+      stroke-width="8"
       stroke-linecap="round"
       stroke-linejoin="round"
     >
-      <path d="M22 28 H36 M22 44 H36 M22 56 H36 M22 72 H36" />
-      <path d="M36 28 V44 M36 56 V72" />
-      <path d="M36 36 H52 M36 64 H52" />
-      <path d="M52 36 V64 M52 50 H68" />
+      <path d="M20 28 H34 M20 44 H34 M20 56 H34 M20 72 H34"></path>
+      <path d="M34 28 V44 M34 56 V72"></path>
+      <path d="M34 36 H50 M34 64 H50"></path>
+      <path d="M50 36 V64"></path>
+      <path d="M50 50 H68"></path>
     </g>
-    <path
-      d="M22 28 H36 V36 H52 V50 H68"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="7"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-    />
-    <circle cx="74" cy="50" r="6.5" fill="currentColor" />
+
+    <circle cx="74" cy="50" r="7.5" fill="currentColor"></circle>
   </svg>
 </template>
