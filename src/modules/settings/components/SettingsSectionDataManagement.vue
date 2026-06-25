@@ -16,7 +16,7 @@ const { exportData, importData, clearData } = useDataManagement()
       <Database :size="15" class="section-icon" />
       {{ t("settings.dataManagement.title") }}
     </h2>
-    <div class="section-body">
+    <div class="section-body" style="padding: 4px 8px 10px 8px">
       <div class="setting-row">
         <div class="setting-info">
           <div class="setting-label">{{ t("settings.dataManagement.backup.label") }}</div>
@@ -46,7 +46,7 @@ const { exportData, importData, clearData } = useDataManagement()
       <RotateCcw :size="15" class="section-icon" />
       {{ t("settings.resetSettings.title") }}
     </h2>
-    <div class="section-body">
+    <div class="section-body" style="padding: 10px 8px">
       <div class="danger-setting-row" style="margin-top: 0; padding-top: 0; border-top: none">
         <div class="setting-info">
           <div class="setting-label">{{ t("settings.resetSettings.label") }}</div>

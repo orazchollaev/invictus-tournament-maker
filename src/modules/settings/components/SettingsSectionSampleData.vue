@@ -13,7 +13,7 @@ const { loadDataset } = useDataManagement()
       <FlaskConical :size="15" class="section-icon" />
       {{ t("settings.sampleData.title") }}
     </h2>
-    <div class="section-body">
+    <div class="section-body" style="padding: 10px 8px">
       <p class="section-intro">{{ t("settings.sampleData.intro") }}</p>
       <div class="dataset-grid">
         <button

@@ -445,8 +445,6 @@
   align-items: center;
   gap: 16px;
   margin-top: 10px;
-  padding-top: 10px;
-  border-top: 1px solid color-mix(in srgb, var(--danger) 20%, transparent);
 }
 
 .danger-label {
