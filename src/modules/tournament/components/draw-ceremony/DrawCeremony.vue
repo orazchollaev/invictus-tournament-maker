@@ -4,7 +4,7 @@ import { useI18n } from "vue-i18n"
 import confetti from "canvas-confetti"
 import { X, Play, FastForward, Check, History, ChevronDown } from "@lucide/vue"
 import type { Team } from "@/modules/teams/types"
-import type { CeremonyContext, Pot } from "@/engine"
+import type { CeremonyContext, Pot, DrawPlan } from "@/engine"
 import { useSettingsStore } from "@/modules/settings/store"
 import { useDrawCeremony } from "../../composables/useDrawCeremony"
 import { useHaptic } from "@/composables/useHaptic"
@@ -19,6 +19,7 @@ const props = defineProps<{
   initialPots?: Pot[]
   previousTeamIds?: string[]
   allAvailableTeams?: Team[]
+  fixedPlan?: DrawPlan
 }>()
 
 const emit = defineEmits<{
@@ -31,6 +32,7 @@ const { t } = useI18n()
 const settings = useSettingsStore()
 
 const {
+  locked,
   pots,
   phase,
   speed,
@@ -45,7 +47,7 @@ const {
   rebuild,
   start,
   skip,
-} = useDrawCeremony(props.context, props.initialPots)
+} = useDrawCeremony(props.context, props.initialPots, props.fixedPlan)
 
 const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
 const { tap: hapticTap, success: hapticSuccess } = useHaptic()
@@ -110,7 +112,7 @@ function complete() {
 
       <div class="dc-body">
         <!-- Team management accordion (pots phase only, when allAvailableTeams provided) -->
-        <div v-if="phase === 'pots' && allAvailableTeams" class="dc-team-panel">
+        <div v-if="phase === 'pots' && allAvailableTeams && !locked" class="dc-team-panel">
           <button class="dc-team-toggle" @click="showTeamEdit = !showTeamEdit">
             <span class="dc-team-toggle-label">{{ t("drawCeremony.manageTeams") }}</span>
             <span class="dc-team-toggle-count">{{ localTeamIds.length }}</span>
@@ -135,6 +137,7 @@ function complete() {
           :pots="pots"
           :teams="localTeams"
           :errors="errors"
+          :readonly="locked"
           @reset="resetPots"
         />
         <template v-else>

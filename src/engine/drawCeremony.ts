@@ -12,6 +12,7 @@ import type { Team } from "../modules/teams/types"
 import type { Tournament } from "../modules/tournament/types"
 import { shuffleWith } from "./utils"
 import { selectWildcards } from "./groups"
+import { crossPlayoffOrder } from "./tournament"
 
 export type DrawMode = "random" | "seeded"
 export type CeremonyKind = "bracket" | "group" | "playoff"
@@ -160,6 +161,38 @@ function groupPlan(pots: Pot[], gc: number, rng: () => number): DrawPlan {
   }
 
   return { sequence, orderedIds }
+}
+
+// Deterministic playoff plan for the "cross" seed mode: no RNG, no editable
+// pots. Reveals the rotating cross matchups (A1–B2, B1–C2, …) in the same order
+// that seedBracketFromGroups builds the bracket, so the animation and the
+// committed result are always identical. `orderedIds` is fed back through the
+// normal "manual" completion path, whose bye-front packing matches this layout.
+export function computeCrossDrawPlan(tournament: Tournament, teams: Team[]): DrawPlan {
+  const order = crossPlayoffOrder(tournament, teams)
+  if (!order) return { sequence: [], orderedIds: [] }
+  const { ids, byeCount } = order
+
+  const pots = buildPlayoffPots(tournament, teams)
+  const potOf = new Map<string, number>()
+  pots.forEach((p, i) => p.teamIds.forEach((id) => potOf.set(id, i)))
+
+  const sequence: DrawStep[] = []
+  for (let i = 0; i < byeCount; i++) {
+    sequence.push({ teamId: ids[i], potIdx: potOf.get(ids[i]) ?? 0, targetLabel: `BYE ${i + 1}` })
+  }
+  let matchNo = 1
+  for (let i = byeCount; i < ids.length; i += 2) {
+    const home = ids[i]
+    const away = ids[i + 1]
+    sequence.push({ teamId: home, potIdx: potOf.get(home) ?? 0, targetLabel: `Match ${matchNo}` })
+    if (away) {
+      sequence.push({ teamId: away, potIdx: potOf.get(away) ?? 0, targetLabel: `Match ${matchNo}` })
+    }
+    matchNo++
+  }
+
+  return { sequence, orderedIds: ids }
 }
 
 function bracketPlan(pots: Pot[], mode: DrawMode, rng: () => number): DrawPlan {

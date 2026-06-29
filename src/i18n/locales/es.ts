@@ -2,6 +2,7 @@ export default {
   drawCeremony: {
     title: "Sorteo",
     potsHint: "Arrastra los equipos entre bombos y luego inicia el sorteo.",
+    crossLocked: "Sorteo cruzado: los enfrentamientos son fijos. Inicia el sorteo para revelarlos.",
     resetPots: "Restablecer bombos",
     startDraw: "Iniciar Sorteo",
     useOldDraw: "Usar sorteo anterior",
@@ -101,7 +102,7 @@ export default {
   },
   tournaments: {
     title: "Torneos",
-    newBtn: "+ Nuevo torneo",
+    newBtn: "Nuevo torneo",
     needTeamsTitle: "Añade al menos 2 equipos primero",
     needTeamsNotice: "Añade al menos 2 equipos en la pestaña Equipos primero.",
     searchPlaceholder: "Buscar torneos…",
@@ -120,7 +121,7 @@ export default {
   },
   teams: {
     title: "Equipos",
-    addBtn: "+ Añadir equipo",
+    addBtn: "Añadir equipo",
     searchPlaceholder: "Buscar equipos…",
     empty: "Aún no hay equipos. Haz clic en {action} para empezar.",
     noMatch: 'No hay equipos que coincidan con "{query}".',
@@ -295,10 +296,6 @@ export default {
         desc: "Alta — renderizado nítido en todos los niveles de zoom · Baja — activa la aceleración GPU, puede reducir la nitidez al hacer zoom",
         high: "Alta",
         low: "Baja",
-      },
-      uiAnimations: {
-        label: "Animaciones de interfaz",
-        desc: "Movimiento divertido en botones, tarjetas y estados vacíos · desactívalo para mantener la interfaz estática",
       },
     },
     display: {

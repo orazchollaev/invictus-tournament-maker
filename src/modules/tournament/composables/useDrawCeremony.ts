@@ -9,6 +9,7 @@ import {
   type Pot,
   type CeremonyContext,
   type DrawStep,
+  type DrawPlan,
 } from "@/engine"
 
 export type CeremonyPhase = "pots" | "drawing" | "done"
@@ -19,7 +20,11 @@ export type CeremonySpeed = "normal" | "fast"
 // so that the live reveal and an instant "skip" always agree. State is local /
 // ephemeral; a mid-ceremony page refresh simply discards it (nothing is
 // persisted until the host commits `orderedIds`).
-export function useDrawCeremony(ctx: CeremonyContext, initialPots?: Pot[]) {
+// When `fixedPlan` is provided (e.g. the deterministic "cross" playoff draw) the
+// pots are locked: editing is disabled, validation is skipped, and the reveal
+// always replays the supplied plan instead of computing one from the pots.
+export function useDrawCeremony(ctx: CeremonyContext, initialPots?: Pot[], fixedPlan?: DrawPlan) {
+  const locked = !!fixedPlan
   let basePots: Pot[] = (initialPots ?? buildPots(ctx)).map((p) => ({
     label: p.label,
     teamIds: [...p.teamIds],
@@ -36,8 +41,8 @@ export function useDrawCeremony(ctx: CeremonyContext, initialPots?: Pot[]) {
   const current = ref<DrawStep | null>(null)
 
   const localTeamCount = ref(ctx.teams.length)
-  const errors = computed(() => validatePots(pots.value, localTeamCount.value))
-  const canStart = computed(() => errors.value.length === 0)
+  const errors = computed(() => (locked ? [] : validatePots(pots.value, localTeamCount.value)))
+  const canStart = computed(() => locked || errors.value.length === 0)
   const progress = computed(() =>
     sequence.value.length ? revealed.value.length / sequence.value.length : 0
   )
@@ -61,16 +66,17 @@ export function useDrawCeremony(ctx: CeremonyContext, initialPots?: Pot[]) {
   }
 
   function plan() {
+    if (fixedPlan) return fixedPlan
     return computeDrawPlan(pots.value, ctx, makeRng(randomSeed()))
   }
 
   function resetPots() {
-    if (phase.value !== "pots") return
+    if (locked || phase.value !== "pots") return
     pots.value = clone()
   }
 
   function rebuild(newTeams: Team[]) {
-    if (phase.value !== "pots") return
+    if (locked || phase.value !== "pots") return
     localTeamCount.value = newTeams.length
     const newCtx: CeremonyContext = { ...ctx, teams: newTeams }
     basePots = buildPots(newCtx).map((p) => ({ label: p.label, teamIds: [...p.teamIds] }))
@@ -124,6 +130,7 @@ export function useDrawCeremony(ctx: CeremonyContext, initialPots?: Pot[]) {
   onUnmounted(clearTimer)
 
   return {
+    locked,
     pots,
     phase,
     speed,

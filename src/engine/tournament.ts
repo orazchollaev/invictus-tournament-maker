@@ -189,6 +189,68 @@ function createGroupBracketTournament(
   }
 }
 
+// ─── Cross playoff ordering ─────────────────────────────────────
+//
+// Rotating cross seeding for the common "2 qualifiers per group" case
+// (winner + runner-up): group i's winner meets group (i+1)'s runner-up,
+// wrapping around — e.g. A1–B2, B1–C2, C1–A2. Returns team ids in a
+// bye-front / consecutive-pair layout (`[ ...byeTeams, ...pairedFlat ]`)
+// that the "manual" directSlots packing turns into the right bracket.
+// Byes go to the strongest group winners. Returns null for any other
+// `qualifiersPerGroup` so callers fall back to the legacy adjacent cross.
+export function crossPlayoffOrder(
+  tournament: Tournament,
+  teams: Team[]
+): { ids: string[]; byeCount: number } | null {
+  const groups = tournament.groups
+  if (!groups) return null
+  const qpg = tournament.qualifiersPerGroup ?? 2
+  if (qpg !== 2) return null // legacy adjacent cross handles other sizes
+
+  const gc = groups.length
+  const wcCount = tournament.wildcardCount ?? 0
+  const byId = (id?: string) => (id ? (teams.find((t) => t.id === id) ?? null) : null)
+
+  const winners = groups.map((g) => byId(g.standings[0]?.teamId))
+  const runners = groups.map((g) => byId(g.standings[1]?.teamId))
+  const wildcards =
+    wcCount > 0 ? selectWildcards(groups, qpg, wcCount, teams).map((w) => w.team) : []
+
+  const realCount = [...winners, ...runners, ...wildcards].filter(Boolean).length || 2
+  const size = Math.pow(2, Math.ceil(Math.log2(realCount)))
+  const byeCount = Math.max(0, size - realCount)
+
+  // Bye recipients: strongest group winners first, then strongest runners-up if more are needed.
+  const byeTeams = selectWildcards(groups, 0, Math.min(byeCount, gc), teams).map((w) => w.team)
+  if (byeCount > byeTeams.length) {
+    byeTeams.push(
+      ...selectWildcards(groups, 1, byeCount - byeTeams.length, teams).map((w) => w.team)
+    )
+  }
+  const byeIds = new Set(byeTeams.map((t) => t.id))
+
+  // Rotating cross pairs; teams whose intended partner is on a bye become orphans.
+  const paired: Team[] = []
+  const orphans: Team[] = []
+  for (let g = 0; g < gc; g++) {
+    const w = winners[g]
+    const r = runners[(g + 1) % gc]
+    const wOk = !!w && !byeIds.has(w.id)
+    const rOk = !!r && !byeIds.has(r.id)
+    if (wOk && rOk) {
+      paired.push(w as Team, r as Team)
+    } else {
+      if (wOk) orphans.push(w as Team)
+      if (rOk) orphans.push(r as Team)
+    }
+  }
+  // Wildcards (never byed) join the leftover pool and pair among themselves.
+  orphans.push(...wildcards)
+
+  const ids = [...byeTeams, ...paired, ...orphans].map((t) => t.id)
+  return { ids, byeCount }
+}
+
 // ─── Seed bracket from group results ────────────────────────────
 export function seedBracketFromGroups(
   tournament: Tournament,
@@ -299,10 +361,22 @@ export function seedBracketFromGroups(
     firstHalf = ordered.slice(0, mid)
     secondHalf = ordered.slice(mid)
     distributeWildcards(firstHalf, secondHalf)
+  } else if (crossPlayoffOrder(tournament, teams)) {
+    // "cross" (2 qualifiers/group) — rotating cross: winner of group i meets
+    // runner-up of group i+1, wrapping around (A1–B2, B1–C2, C1–A2, …). Byes go
+    // to the strongest group winners. Built via the same directSlots packing as
+    // the manual path so the bracket matches the draw-ceremony reveal exactly.
+    const { ids, byeCount } = crossPlayoffOrder(tournament, teams)!
+    const teamById = (id?: string) => (id ? (teams.find((t) => t.id === id) ?? null) : null)
+    directSlots = []
+    for (let i = 0; i < byeCount; i++) directSlots.push(teamById(ids[i]), null)
+    for (let i = byeCount; i < ids.length; i++) directSlots.push(teamById(ids[i]))
+    firstHalf = []
+    secondHalf = []
   } else {
-    // "cross" — rank k from group i meets rank (qpg-1-k) from group j.
-    // Adjacent groups are paired: (0,1), (2,3), ...
-    // Works for any qpg; odd gc puts the unpaired group's qualifiers in alternating halves.
+    // "cross" fallback for qualifiersPerGroup ≠ 2 — rank k from group i meets
+    // rank (qpg-1-k) from group j. Adjacent groups are paired: (0,1), (2,3), ...
+    // Odd gc puts the unpaired group's qualifiers in alternating halves.
     firstHalf = []
     secondHalf = []
     for (let gi = 0; gi < gc; gi += 2) {

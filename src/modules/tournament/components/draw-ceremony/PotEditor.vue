@@ -9,6 +9,7 @@ const props = defineProps<{
   pots: Pot[]
   teams: Team[]
   errors: string[]
+  readonly?: boolean
 }>()
 
 defineEmits<{ reset: [] }>()
@@ -20,8 +21,12 @@ const { getTeamName, getTeamColor } = useTeamLookup(() => props.teams)
 <template>
   <div class="pe-wrap">
     <div class="pe-top">
-      <p class="pe-hint">{{ t("drawCeremony.potsHint") }}</p>
-      <button class="pe-reset" @click="$emit('reset')">{{ t("drawCeremony.resetPots") }}</button>
+      <p class="pe-hint">
+        {{ t(readonly ? "drawCeremony.crossLocked" : "drawCeremony.potsHint") }}
+      </p>
+      <button v-if="!readonly" class="pe-reset" @click="$emit('reset')">
+        {{ t("drawCeremony.resetPots") }}
+      </button>
     </div>
 
     <div v-if="errors.length" class="pe-errors">
@@ -40,8 +45,10 @@ const { getTeamName, getTeamColor } = useTeamLookup(() => props.teams)
           :animation="150"
           :delay="120"
           :delay-on-touch-only="true"
+          :disabled="readonly"
           ghost-class="pe-ghost"
           class="pe-pot-list"
+          :class="{ 'pe-pot-list--locked': readonly }"
         >
           <div v-for="id in pot.teamIds" :key="id" class="pe-team">
             <span class="pe-dot" :style="{ background: getTeamColor(id) }" />
@@ -134,6 +141,9 @@ const { getTeamName, getTeamColor } = useTeamLookup(() => props.teams)
 }
 .pe-team:active {
   cursor: grabbing;
+}
+.pe-pot-list--locked .pe-team {
+  cursor: default;
 }
 .pe-ghost {
   opacity: 0.45;

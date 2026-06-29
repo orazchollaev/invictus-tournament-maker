@@ -1,6 +1,12 @@
 // engine/index.ts
 export { uid, shuffle, shuffleWith, makeRng, randomSeed, getRoundName } from "./utils"
-export { buildPots, buildPlayoffPots, validatePots, computeDrawPlan } from "./drawCeremony"
+export {
+  buildPots,
+  buildPlayoffPots,
+  validatePots,
+  computeDrawPlan,
+  computeCrossDrawPlan,
+} from "./drawCeremony"
 export type {
   Pot,
   DrawStep,
@@ -35,6 +41,7 @@ export {
 export {
   createTournament,
   seedBracketFromGroups,
+  crossPlayoffOrder,
   createLeague,
   createMultiTierLeague,
   legModeToCount,

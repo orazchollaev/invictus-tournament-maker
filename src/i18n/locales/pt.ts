@@ -2,6 +2,7 @@ export default {
   drawCeremony: {
     title: "Sorteio",
     potsHint: "Arraste as equipes entre os potes e depois inicie o sorteio.",
+    crossLocked: "Sorteio cruzado — os confrontos são fixos. Inicie o sorteio para revelá-los.",
     resetPots: "Redefinir potes",
     startDraw: "Iniciar Sorteio",
     useOldDraw: "Usar sorteio anterior",
@@ -101,7 +102,7 @@ export default {
   },
   tournaments: {
     title: "Torneios",
-    newBtn: "+ Novo torneio",
+    newBtn: "Novo torneio",
     needTeamsTitle: "Adicione pelo menos 2 times primeiro",
     needTeamsNotice: "Adicione pelo menos 2 times na aba Times primeiro.",
     searchPlaceholder: "Buscar torneios…",
@@ -120,7 +121,7 @@ export default {
   },
   teams: {
     title: "Times",
-    addBtn: "+ Adicionar time",
+    addBtn: "Adicionar time",
     searchPlaceholder: "Buscar times…",
     empty: "Nenhum time ainda. Clique em {action} para começar.",
     noMatch: 'Nenhum time corresponde a "{query}".',
@@ -295,10 +296,6 @@ export default {
         desc: "Alta — renderização nítida em todos os níveis de zoom · Baixa — ativa aceleração de GPU, pode reduzir a nitidez ao ampliar",
         high: "Alta",
         low: "Baixa",
-      },
-      uiAnimations: {
-        label: "Animações da interface",
-        desc: "Movimento divertido em botões, cartões e estados vazios · desative para manter a interface estática",
       },
     },
     display: {

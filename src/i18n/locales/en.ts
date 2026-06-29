@@ -2,6 +2,7 @@ export default {
   drawCeremony: {
     title: "Draw Ceremony",
     potsHint: "Drag teams between pots, then start the draw.",
+    crossLocked: "Cross draw — matchups are fixed. Start the draw to reveal them.",
     resetPots: "Reset pots",
     startDraw: "Start Draw",
     useOldDraw: "Use Last Season's Draw",
@@ -98,7 +99,7 @@ export default {
   },
   tournaments: {
     title: "Tournaments",
-    newBtn: "+ New Tournament",
+    newBtn: "New Tournament",
     needTeamsTitle: "Add at least 2 teams first",
     needTeamsNotice: "Add at least 2 teams on the Teams tab first.",
     searchPlaceholder: "Search tournaments…",
@@ -119,7 +120,7 @@ export default {
   },
   teams: {
     title: "Teams",
-    addBtn: "+ Add Team",
+    addBtn: "Add Team",
     searchPlaceholder: "Search teams…",
     empty: "No teams yet. Click {action} to get started.",
     noMatch: 'No teams match "{query}".',
@@ -293,10 +294,6 @@ export default {
         desc: "High — sharp rendering at all zoom levels · Low — enables GPU acceleration, may reduce sharpness when zooming",
         high: "High",
         low: "Low",
-      },
-      uiAnimations: {
-        label: "UI Animations",
-        desc: "Playful motion on buttons, cards and empty states · turn off to keep the interface static",
       },
     },
     display: {

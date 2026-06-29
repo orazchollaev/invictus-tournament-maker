@@ -14,8 +14,8 @@ import GroupDraw from "@/modules/tournament/components/GroupDraw.vue"
 import TournamentStats from "@/modules/tournament/components/TournamentStats.vue"
 import PromotionModal from "@/modules/tournament/components/PromotionModal.vue"
 import { DrawCeremony } from "@/modules/tournament/components/draw-ceremony"
-import { buildPlayoffPots } from "@/engine"
-import type { CeremonyContext, DrawMode, Pot } from "@/engine"
+import { buildPlayoffPots, computeCrossDrawPlan } from "@/engine"
+import type { CeremonyContext, DrawMode, DrawPlan, Pot } from "@/engine"
 import type { PlayoffSeedMode } from "@/modules/tournament/types"
 import AppModal from "@/components/AppModal.vue"
 import { DetailHeader, DetailPhaseTabs, DetailMultiTierModal } from "../components/detail"
@@ -51,6 +51,7 @@ const pendingOverrideTeamIds = ref<string[] | null>(null)
 const showCeremony = ref(false)
 const ceremonyContext = ref<CeremonyContext | null>(null)
 const ceremonyPots = ref<Pot[] | undefined>(undefined)
+const ceremonyFixedPlan = ref<DrawPlan | undefined>(undefined)
 const ceremonyAction = ref<"playoff" | "season" | null>(null)
 const ceremonySeasonOpts = ref<{
   thirdPlace: boolean
@@ -139,6 +140,7 @@ function openSeasonCeremony(
     groupCount: t.format === "group+bracket" ? t.groups?.length : undefined,
   }
   ceremonyPots.value = undefined
+  ceremonyFixedPlan.value = undefined
   ceremonySeasonOpts.value = { thirdPlace, playoffSeedMode }
   ceremonyAction.value = "season"
   showCeremony.value = true
@@ -164,6 +166,17 @@ function openPlayoffCeremony() {
     drawMode: "seeded",
   }
   ceremonyPots.value = pots
+
+  // "cross" seed mode → deterministic rotating cross, pots locked (no editing).
+  // Falls back to editable pots when the cross order can't be built (e.g. qpg ≠ 2).
+  const mode = t.playoffSeedMode ?? settings.newSeasonPlayoffSeedMode
+  let fixedPlan: DrawPlan | undefined
+  if (mode === "cross") {
+    const plan = computeCrossDrawPlan(t, allTeams.value)
+    if (plan.orderedIds.length) fixedPlan = plan
+  }
+  ceremonyFixedPlan.value = fixedPlan
+
   ceremonySeasonOpts.value = undefined
   ceremonyAction.value = "playoff"
   showCeremony.value = true
@@ -509,6 +522,7 @@ function changeTab(tab: MainTab, tierIdx?: number) {
       :context="ceremonyContext"
       :teams="allTeams"
       :initial-pots="ceremonyPots"
+      :fixed-plan="ceremonyFixedPlan"
       :previous-team-ids="ceremonyAction === 'season' ? tournament?.teamIds : undefined"
       :all-available-teams="ceremonyAction === 'season' ? allTeams : undefined"
       @complete="onCeremonyComplete"

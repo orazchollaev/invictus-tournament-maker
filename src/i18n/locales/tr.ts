@@ -2,6 +2,7 @@ export default {
   drawCeremony: {
     title: "Kura Çekimi",
     potsHint: "Takımları torbalar arasında sürükleyin, ardından kurayı başlatın.",
+    crossLocked: "Çapraz kura — eşleşmeler sabittir. Göstermek için kurayı başlatın.",
     resetPots: "Torbaları sıfırla",
     startDraw: "Kurayı Başlat",
     useOldDraw: "Eski Kurayı Kullan",
@@ -102,7 +103,7 @@ export default {
   },
   tournaments: {
     title: "Turnuvalar",
-    newBtn: "+ Yeni Turnuva",
+    newBtn: "Yeni Turnuva",
     needTeamsTitle: "Önce en az 2 takım ekleyin",
     needTeamsNotice: "Önce Takımlar sekmesinde en az 2 takım ekleyin.",
     searchPlaceholder: "Turnuva ara…",
@@ -121,7 +122,7 @@ export default {
   },
   teams: {
     title: "Takımlar",
-    addBtn: "+ Takım Ekle",
+    addBtn: "Takım Ekle",
     searchPlaceholder: "Takım ara…",
     empty: "Henüz takım yok. Başlamak için {action} tıklayın.",
     noMatch: '"{query}" ile eşleşen takım yok.',
@@ -296,10 +297,6 @@ export default {
         desc: "Yüksek — tüm yakınlaştırma seviyelerinde keskin görüntü · Düşük — GPU hızlandırmasını etkinleştirir, yakınlaştırmada netliği azaltabilir",
         high: "Yüksek",
         low: "Düşük",
-      },
-      uiAnimations: {
-        label: "Arayüz Animasyonları",
-        desc: "Düğmeler, kartlar ve boş ekranlarda eğlenceli hareket · arayüzü sabit tutmak için kapatın",
       },
     },
     display: {
