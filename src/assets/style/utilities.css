@@ -196,11 +196,11 @@
 }
 .page-enter-from {
   opacity: 0;
-  transform: translateY(7px);
+  transform: translateY(10px);
 }
 .page-leave-to {
   opacity: 0;
-  transform: translateY(-4px);
+  transform: translateY(-10px);
 }
 
 .fade-enter-active,

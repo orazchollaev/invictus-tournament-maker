@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import { useRouter } from "vue-router"
-import { ref, computed, nextTick } from "vue"
+import { ref, nextTick } from "vue"
 import { version } from "../../../../package.json"
 import { ArrowLeft, Globe, Monitor, Trophy, Dices, Database, Menu, ChevronDown } from "@lucide/vue"
 import type { Component } from "vue"
 import { useI18n } from "vue-i18n"
-import { useMotionPrefs } from "@/composables/useMotionPrefs"
 import SettingsSectionLanguage from "../components/SettingsSectionLanguage.vue"
 import SettingsSectionAppearance from "../components/SettingsSectionAppearance.vue"
 import SettingsSectionTableRules from "../components/SettingsSectionTableRules.vue"
@@ -43,8 +42,7 @@ const GROUPS: Record<Category, Component[]> = {
   data: [SettingsSectionSampleData, SettingsSectionDataManagement],
 }
 
-const { enabled: motionEnabled } = useMotionPrefs()
-const transitionName = computed(() => (motionEnabled.value ? "settings-panel" : ""))
+const transitionName = ""
 
 const activeCategory = ref<Category>("general")
 const menuOpen = ref(false)
