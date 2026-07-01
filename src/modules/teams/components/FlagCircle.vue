@@ -1,11 +1,23 @@
 <script setup lang="ts">
-import { computed } from "vue"
+import { ref, watch } from "vue"
 import { flagDataUrl } from "../flags"
 
 const props = defineProps<{ code: string; size?: number }>()
 const size = props.size ?? 20
 
-const src = computed(() => flagDataUrl(props.code))
+const src = ref<string | undefined>(undefined)
+
+watch(
+  () => props.code,
+  async (newCode) => {
+    if (!newCode) {
+      src.value = undefined
+      return
+    }
+    src.value = await flagDataUrl(newCode)
+  },
+  { immediate: true }
+)
 </script>
 
 <template>

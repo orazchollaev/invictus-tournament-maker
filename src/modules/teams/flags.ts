@@ -3,26 +3,40 @@
 const raws = import.meta.glob("../../../node_modules/circle-flags/flags/*.svg", {
   query: "?raw",
   import: "default",
-  eager: true,
-}) as Record<string, string>
+}) as Record<string, () => Promise<string>>
 
-const byCode: Record<string, string> = {}
+const loaders: Record<string, () => Promise<string>> = {}
 for (const path in raws) {
-  const code = path.split("/").pop()!.replace(".svg", "")
-  byCode[code] = raws[path]
+  const code = path.split("/").pop()!.replace(".svg", "").toLowerCase()
+  loaders[code] = raws[path]
 }
 
-export function flagSvg(code: string): string | undefined {
-  return byCode[code.toLowerCase()]
+const svgCache = new Map<string, string>()
+
+export async function flagSvg(code: string): Promise<string | undefined> {
+  const key = code.toLowerCase()
+  if (svgCache.has(key)) return svgCache.get(key)
+
+  const loader = loaders[key]
+  if (!loader) return undefined
+
+  try {
+    const svg = await loader()
+    svgCache.set(key, svg)
+    return svg
+  } catch (e) {
+    console.error(`Failed to load flag: ${code}`, e)
+    return undefined
+  }
 }
 
-export function flagDataUrl(code: string): string | undefined {
-  const svg = flagSvg(code)
+export async function flagDataUrl(code: string): Promise<string | undefined> {
+  const svg = await flagSvg(code)
   return svg ? "data:image/svg+xml;utf8," + encodeURIComponent(svg) : undefined
 }
 
 export function hasFlag(code: string | undefined | null): boolean {
-  return !!code && code.toLowerCase() in byCode
+  return !!code && code.toLowerCase() in loaders
 }
 
 const colorCache = new Map<string, string | undefined>()
@@ -37,7 +51,7 @@ export async function flagPrimaryColor(code: string): Promise<string | undefined
   const key = code.toLowerCase()
   if (colorCache.has(key)) return colorCache.get(key)
 
-  const url = flagDataUrl(key)
+  const url = await flagDataUrl(key)
   if (!url) {
     colorCache.set(key, undefined)
     return undefined
