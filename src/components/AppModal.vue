@@ -29,15 +29,10 @@ function onKey(e: KeyboardEvent) {
 }
 
 onMounted(() => {
-  const scrollbarW = window.innerWidth - document.documentElement.clientWidth
-  document.body.style.overflow = "hidden"
-  if (scrollbarW > 0) document.body.style.paddingRight = `${scrollbarW}px`
   document.addEventListener("keydown", onKey)
 })
 
 onUnmounted(() => {
-  document.body.style.overflow = ""
-  document.body.style.paddingRight = ""
   document.removeEventListener("keydown", onKey)
 })
 

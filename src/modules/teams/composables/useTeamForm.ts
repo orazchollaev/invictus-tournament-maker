@@ -8,20 +8,23 @@ export function useTeamForm() {
   const newName = ref("")
   const newAbbr = ref("")
   const newColor = ref("#3366cc")
+  const newFlag = ref<string | undefined>(undefined)
   const newPower = ref(70)
 
   function addTeam() {
     if (!newName.value.trim()) return
-    store.add(newName.value.trim(), newColor.value, newPower.value, newAbbr.value)
+    store.add(newName.value.trim(), newColor.value, newPower.value, newAbbr.value, newFlag.value)
     newName.value = ""
     newAbbr.value = ""
     newPower.value = 70
+    newFlag.value = undefined
   }
 
   const editing = ref<string | null>(null)
   const editName = ref("")
   const editAbbr = ref("")
   const editColor = ref("")
+  const editFlag = ref<string | undefined>(undefined)
   const editPower = ref(70)
 
   function startEdit(team: Team) {
@@ -29,6 +32,7 @@ export function useTeamForm() {
     editName.value = team.name
     editAbbr.value = team.abbr ?? ""
     editColor.value = team.color
+    editFlag.value = team.flag
     editPower.value = team.power
   }
 
@@ -37,6 +41,7 @@ export function useTeamForm() {
       name: editName.value,
       abbr: editAbbr.value.trim().slice(0, 7) || undefined,
       color: editColor.value,
+      flag: editFlag.value,
       power: editPower.value,
     })
     editing.value = null
@@ -46,12 +51,14 @@ export function useTeamForm() {
     newName,
     newAbbr,
     newColor,
+    newFlag,
     newPower,
     addTeam,
     editing,
     editName,
     editAbbr,
     editColor,
+    editFlag,
     editPower,
     startEdit,
     saveEdit,

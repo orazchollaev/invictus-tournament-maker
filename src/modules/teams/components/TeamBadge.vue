@@ -2,6 +2,7 @@
 import { computed } from "vue"
 import type { Team } from "../types"
 import TeamNameAuto from "./TeamNameAuto.vue"
+import FlagCircle from "./FlagCircle.vue"
 
 const props = defineProps<{ teamId: string | null; teams: Team[] }>()
 const team = computed(() => props.teams.find((t) => t.id === props.teamId))
@@ -9,7 +10,8 @@ const team = computed(() => props.teams.find((t) => t.id === props.teamId))
 
 <template>
   <span class="team-badge">
-    <span class="dot" :style="{ background: team?.color ?? '#ccc' }" />
+    <FlagCircle v-if="team?.flag" :code="team.flag" :size="14" />
+    <span v-else class="dot" :style="{ background: team?.color ?? '#ccc' }" />
     <TeamNameAuto :team="team" fallback="TBD" class="name" />
   </span>
 </template>
@@ -23,8 +25,8 @@ const team = computed(() => props.teams.find((t) => t.id === props.teamId))
   min-width: 0;
 }
 .dot {
-  width: 11px;
-  height: 11px;
+  width: 14px;
+  height: 14px;
   border-radius: 50%;
   flex-shrink: 0;
   box-shadow: 0 0 0 1.5px rgba(0, 0, 0, 0.15);

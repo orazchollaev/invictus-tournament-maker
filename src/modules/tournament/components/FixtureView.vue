@@ -5,6 +5,7 @@ import type { Team } from "@/modules/teams/types"
 import { getWinnerId } from "@/engine"
 import { teamAbbr } from "@/composables/useTeamLookup"
 import TeamNameAuto from "@/modules/teams/components/TeamNameAuto.vue"
+import FlagCircle from "@/modules/teams/components/FlagCircle.vue"
 import { useSettingsStore } from "@/modules/settings/store"
 import { X, Shuffle, Pencil, Check } from "@lucide/vue"
 
@@ -245,7 +246,16 @@ function hasPen(result: MatchResult | null | undefined): boolean {
           <!-- Aggregate header -->
           <div class="tie-hd">
             <div class="tie-hd-team">
-              <span class="cdot" :style="{ background: getTeam(match.homeId)?.color ?? '#ccc' }" />
+              <FlagCircle
+                v-if="getTeam(match.homeId)?.flag"
+                :code="getTeam(match.homeId)!.flag!"
+                :size="14"
+              />
+              <span
+                v-else
+                class="cdot"
+                :style="{ background: getTeam(match.homeId)?.color ?? '#ccc' }"
+              />
               <span class="tie-hd-name">{{ getAbbr(match.homeId) }}</span>
             </div>
             <div class="tie-hd-center">
@@ -263,7 +273,16 @@ function hasPen(result: MatchResult | null | undefined): boolean {
             </div>
             <div class="tie-hd-team tie-hd-team--r">
               <span class="tie-hd-name">{{ getAbbr(match.awayId) }}</span>
-              <span class="cdot" :style="{ background: getTeam(match.awayId)?.color ?? '#ccc' }" />
+              <FlagCircle
+                v-if="getTeam(match.awayId)?.flag"
+                :code="getTeam(match.awayId)!.flag!"
+                :size="14"
+              />
+              <span
+                v-else
+                class="cdot"
+                :style="{ background: getTeam(match.awayId)?.color ?? '#ccc' }"
+              />
             </div>
             <button
               v-if="match.homeId && match.awayId"
@@ -288,7 +307,13 @@ function hasPen(result: MatchResult | null | undefined): boolean {
                     loser: !!match.result && !legWinner(match.result, 'home'),
                   }"
                 >
+                  <FlagCircle
+                    v-if="getTeam(match.homeId)?.flag"
+                    :code="getTeam(match.homeId)!.flag!"
+                    :size="14"
+                  />
                   <span
+                    v-else
                     class="cdot"
                     :style="{ background: getTeam(match.homeId)?.color ?? '#ccc' }"
                   />
@@ -301,7 +326,13 @@ function hasPen(result: MatchResult | null | undefined): boolean {
                     loser: !!match.result && !legWinner(match.result, 'away'),
                   }"
                 >
+                  <FlagCircle
+                    v-if="getTeam(match.awayId)?.flag"
+                    :code="getTeam(match.awayId)!.flag!"
+                    :size="14"
+                  />
                   <span
+                    v-else
                     class="cdot"
                     :style="{ background: getTeam(match.awayId)?.color ?? '#ccc' }"
                   />
@@ -377,7 +408,13 @@ function hasPen(result: MatchResult | null | undefined): boolean {
                     loser: !!match.leg2Result && !legWinner(match.leg2Result, 'home'),
                   }"
                 >
+                  <FlagCircle
+                    v-if="getTeam(match.awayId)?.flag"
+                    :code="getTeam(match.awayId)!.flag!"
+                    :size="14"
+                  />
                   <span
+                    v-else
                     class="cdot"
                     :style="{ background: getTeam(match.awayId)?.color ?? '#ccc' }"
                   />
@@ -390,7 +427,13 @@ function hasPen(result: MatchResult | null | undefined): boolean {
                     loser: !!match.leg2Result && !legWinner(match.leg2Result, 'away'),
                   }"
                 >
+                  <FlagCircle
+                    v-if="getTeam(match.homeId)?.flag"
+                    :code="getTeam(match.homeId)!.flag!"
+                    :size="14"
+                  />
                   <span
+                    v-else
                     class="cdot"
                     :style="{ background: getTeam(match.homeId)?.color ?? '#ccc' }"
                   />
@@ -515,7 +558,16 @@ function hasPen(result: MatchResult | null | undefined): boolean {
                 loser: match.result && getWinnerId(match) !== match.homeId,
               }"
             >
-              <span class="cdot" :style="{ background: getTeam(match.homeId)?.color ?? '#ccc' }" />
+              <FlagCircle
+                v-if="getTeam(match.homeId)?.flag"
+                :code="getTeam(match.homeId)!.flag!"
+                :size="14"
+              />
+              <span
+                v-else
+                class="cdot"
+                :style="{ background: getTeam(match.homeId)?.color ?? '#ccc' }"
+              />
               <TeamNameAuto :team="getTeam(match.homeId)" />
             </div>
             <div
@@ -525,7 +577,16 @@ function hasPen(result: MatchResult | null | undefined): boolean {
                 loser: match.result && getWinnerId(match) !== match.awayId,
               }"
             >
-              <span class="cdot" :style="{ background: getTeam(match.awayId)?.color ?? '#ccc' }" />
+              <FlagCircle
+                v-if="getTeam(match.awayId)?.flag"
+                :code="getTeam(match.awayId)!.flag!"
+                :size="14"
+              />
+              <span
+                v-else
+                class="cdot"
+                :style="{ background: getTeam(match.awayId)?.color ?? '#ccc' }"
+              />
               <TeamNameAuto :team="getTeam(match.awayId)" />
             </div>
           </div>
@@ -640,7 +701,7 @@ function hasPen(result: MatchResult | null | undefined): boolean {
   display: flex;
   gap: 4px;
   flex-wrap: wrap;
-  padding: 0 12px 10px;
+  padding: 0 8px 8px;
   border-bottom: 1px solid var(--border-light);
   margin-bottom: 12px;
 }
@@ -679,7 +740,7 @@ function hasPen(result: MatchResult | null | undefined): boolean {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 6px;
-  padding: 0 12px 12px;
+  padding: 0 8px 8px;
 }
 .fv-grid.solo {
   grid-template-columns: 1fr;
@@ -689,7 +750,7 @@ function hasPen(result: MatchResult | null | undefined): boolean {
 
 @media (max-width: 580px) {
   .fv-grid {
-    grid-template-columns: 1fr;
+    /* grid-template-columns: 1fr; */
   }
 }
 
@@ -1035,8 +1096,8 @@ function hasPen(result: MatchResult | null | undefined): boolean {
 /* ── Color dot ── */
 .cdot {
   display: inline-block;
-  width: 7px;
-  height: 7px;
+  width: 14px;
+  height: 14px;
   border-radius: 50%;
   flex-shrink: 0;
   box-shadow: 0 0 0 1.5px rgba(0, 0, 0, 0.08);

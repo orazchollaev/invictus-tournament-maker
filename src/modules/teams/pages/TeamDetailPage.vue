@@ -8,6 +8,7 @@ import { useTeamLookup } from "@/composables/useTeamLookup"
 import type { Match } from "@/modules/tournament/types"
 import { Trophy, ArrowLeft } from "@lucide/vue"
 import SeasonChart from "../components/SeasonChart.vue"
+import FlagCircle from "../components/FlagCircle.vue"
 import { useI18n } from "vue-i18n"
 
 const route = useRoute()
@@ -58,8 +59,7 @@ interface MatchRow {
   round: string
   roundPhase: "group" | "knockout" | "league"
   match:
-    | Match
-    | { id: string; homeId: string; awayId: string; result: { home: number; away: number } }
+    Match | { id: string; homeId: string; awayId: string; result: { home: number; away: number } }
   opponentId: string | null
   goalsFor: number
   goalsAgainst: number
@@ -387,7 +387,9 @@ const seasonStats = computed(() =>
               <ArrowLeft :size="14" />
               Back
             </button>
+            <FlagCircle v-if="team.flag" :code="team.flag" :size="40" class="team-flag" />
             <span
+              v-else
               class="team-badge"
               :style="{
                 background: team.color,
@@ -626,10 +628,13 @@ h2:has(.tour-select) {
   flex-shrink: 0;
 }
 .team-badge {
-  width: 18px;
-  height: 18px;
+  width: 14px;
+  height: 14px;
   border-radius: 50%;
   border: 1px solid var(--border-light);
+  flex-shrink: 0;
+}
+.team-flag {
   flex-shrink: 0;
 }
 .team-title {

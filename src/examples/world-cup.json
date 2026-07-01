@@ -7,289 +7,337 @@
       "id": "nt-01",
       "name": "France",
       "color": "#003189",
-      "power": 95
+      "power": 95,
+      "flag": "fr"
     },
     {
       "id": "nt-02",
       "name": "Spain",
       "color": "#AA151B",
-      "power": 94
+      "power": 94,
+      "flag": "es"
     },
     {
       "id": "nt-03",
       "name": "Argentina",
       "color": "#74ACDF",
-      "power": 93
+      "power": 93,
+      "flag": "ar"
     },
     {
       "id": "nt-04",
       "name": "England",
       "color": "#CF081F",
-      "power": 91
+      "power": 91,
+      "flag": "gb-eng"
     },
     {
       "id": "nt-05",
       "name": "Portugal",
       "color": "#006600",
-      "power": 90
+      "power": 90,
+      "flag": "pt"
     },
     {
       "id": "nt-06",
       "name": "Brazil",
       "color": "#009C3B",
-      "power": 89
+      "power": 89,
+      "flag": "br"
     },
     {
       "id": "nt-07",
       "name": "Netherlands",
       "color": "#FF6600",
-      "power": 88
+      "power": 88,
+      "flag": "nl"
     },
     {
       "id": "nt-08",
       "name": "Morocco",
       "color": "#006233",
-      "power": 87
+      "power": 87,
+      "flag": "ma"
     },
     {
       "id": "nt-09",
       "name": "Belgium",
       "color": "#EF3340",
-      "power": 86
+      "power": 86,
+      "flag": "be"
     },
     {
       "id": "nt-10",
       "name": "Germany",
       "color": "#1a1a1a",
-      "power": 85
+      "power": 85,
+      "flag": "de"
     },
     {
       "id": "nt-11",
       "name": "Croatia",
       "color": "#E63946",
-      "power": 84
+      "power": 84,
+      "flag": "hr"
     },
     {
       "id": "nt-12",
       "name": "Colombia",
       "color": "#FCD116",
-      "power": 83
+      "power": 83,
+      "flag": "co"
     },
     {
       "id": "nt-13",
       "name": "Senegal",
       "color": "#00853F",
-      "power": 82
+      "power": 82,
+      "flag": "sn"
     },
     {
       "id": "nt-14",
       "name": "Mexico",
       "color": "#006847",
-      "power": 81
+      "power": 81,
+      "flag": "mx"
     },
     {
       "id": "nt-15",
       "name": "USA",
       "color": "#002868",
-      "power": 80
+      "power": 80,
+      "flag": "us"
     },
     {
       "id": "nt-16",
       "name": "Uruguay",
       "color": "#5EB6E4",
-      "power": 80
+      "power": 80,
+      "flag": "uy"
     },
     {
       "id": "nt-17",
       "name": "Japan",
       "color": "#BC002D",
-      "power": 79
+      "power": 79,
+      "flag": "jp"
     },
     {
       "id": "nt-18",
       "name": "Switzerland",
       "color": "#D52B1E",
-      "power": 78
+      "power": 78,
+      "flag": "ch"
     },
     {
       "id": "nt-19",
       "name": "Austria",
       "color": "#ED2939",
-      "power": 77
+      "power": 77,
+      "flag": "at"
     },
     {
       "id": "nt-20",
       "name": "Turkey",
       "color": "#E30A17",
-      "power": 76
+      "power": 76,
+      "flag": "tr"
     },
     {
       "id": "nt-21",
       "name": "South Korea",
       "color": "#CD2E3A",
-      "power": 75
+      "power": 75,
+      "flag": "kr"
     },
     {
       "id": "nt-22",
       "name": "Ecuador",
       "color": "#FFD100",
-      "power": 74
+      "power": 74,
+      "flag": "ec"
     },
     {
       "id": "nt-23",
       "name": "Canada",
       "color": "#FF0000",
-      "power": 73
+      "power": 73,
+      "flag": "ca"
     },
     {
       "id": "nt-24",
       "name": "Scotland",
       "color": "#003087",
-      "power": 72
+      "power": 72,
+      "flag": "gb-sct"
     },
     {
       "id": "nt-25",
       "name": "Iran",
       "color": "#239F40",
-      "power": 71
+      "power": 71,
+      "flag": "ir"
     },
     {
       "id": "nt-26",
       "name": "Sweden",
       "color": "#006AA7",
-      "power": 71
+      "power": 71,
+      "flag": "se"
     },
     {
       "id": "nt-27",
       "name": "Norway",
       "color": "#EF2B2D",
-      "power": 70
+      "power": 70,
+      "flag": "no"
     },
     {
       "id": "nt-28",
       "name": "Egypt",
       "color": "#CE1126",
-      "power": 70
+      "power": 70,
+      "flag": "eg"
     },
     {
       "id": "nt-29",
       "name": "Algeria",
       "color": "#006233",
-      "power": 69
+      "power": 69,
+      "flag": "dz"
     },
     {
       "id": "nt-30",
       "name": "Australia",
       "color": "#00843D",
-      "power": 68
+      "power": 68,
+      "flag": "au"
     },
     {
       "id": "nt-31",
       "name": "Paraguay",
       "color": "#D52B1E",
-      "power": 68
+      "power": 68,
+      "flag": "py"
     },
     {
       "id": "nt-32",
       "name": "Ivory Coast",
       "color": "#F77F00",
-      "power": 67
+      "power": 67,
+      "flag": "ci"
     },
     {
       "id": "nt-33",
       "name": "Saudi Arabia",
       "color": "#006C35",
-      "power": 66
+      "power": 66,
+      "flag": "sa"
     },
     {
       "id": "nt-34",
       "name": "Bosnia and Herzegovina",
       "color": "#002395",
-      "power": 66
+      "power": 66,
+      "flag": "ba"
     },
     {
       "id": "nt-35",
       "name": "Czechia",
       "color": "#D7141A",
-      "power": 66
+      "power": 66,
+      "flag": "cz"
     },
     {
       "id": "nt-36",
       "name": "DR Congo",
       "color": "#007FFF",
-      "power": 65
+      "power": 65,
+      "flag": "cd"
     },
     {
       "id": "nt-37",
       "name": "South Africa",
       "color": "#007A4D",
-      "power": 64
+      "power": 64,
+      "flag": "za"
     },
     {
       "id": "nt-38",
       "name": "Tunisia",
       "color": "#E70013",
-      "power": 64
+      "power": 64,
+      "flag": "tn"
     },
     {
       "id": "nt-39",
       "name": "Iraq",
       "color": "#007A3D",
-      "power": 63
+      "power": 63,
+      "flag": "iq"
     },
     {
       "id": "nt-40",
       "name": "Ghana",
       "color": "#006B3F",
-      "power": 63
+      "power": 63,
+      "flag": "gh"
     },
     {
       "id": "nt-41",
       "name": "Panama",
       "color": "#DA121A",
-      "power": 62
+      "power": 62,
+      "flag": "pa"
     },
     {
       "id": "nt-42",
       "name": "Cape Verde",
       "color": "#003893",
-      "power": 61
+      "power": 61,
+      "flag": "cv"
     },
     {
       "id": "nt-43",
       "name": "Jordan",
       "color": "#007A3D",
-      "power": 60
+      "power": 60,
+      "flag": "jo"
     },
     {
       "id": "nt-44",
       "name": "Qatar",
       "color": "#8D1B3D",
-      "power": 59
+      "power": 59,
+      "flag": "qa"
     },
     {
       "id": "nt-45",
       "name": "New Zealand",
       "color": "#000000",
-      "power": 58
+      "power": 58,
+      "flag": "nz"
     },
     {
       "id": "nt-46",
       "name": "Uzbekistan",
       "color": "#1EB53A",
-      "power": 57
+      "power": 57,
+      "flag": "uz"
     },
     {
       "id": "nt-47",
       "name": "Curacao",
       "color": "#002B7F",
-      "power": 55
+      "power": 55,
+      "flag": "cw"
     },
     {
       "id": "nt-48",
       "name": "Haiti",
       "color": "#00209F",
-      "power": 52
+      "power": 52,
+      "flag": "ht"
     }
   ],
   "tournaments": [

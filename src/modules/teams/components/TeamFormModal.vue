@@ -2,11 +2,14 @@
 import { ref, watch } from "vue"
 import AppModal from "@/components/AppModal.vue"
 import ColorPicker from "@/components/ColorPicker.vue"
+import FlagPicker from "./FlagPicker.vue"
+import FlagCircle from "./FlagCircle.vue"
+import { flagPrimaryColor } from "../flags"
 import { useTeamsStore } from "../store"
 import { useModal } from "@/composables/useModal"
 import { autoAbbr } from "@/composables/useTeamLookup"
 import { randomTeamName } from "@/composables/useRandomNames"
-import { Shuffle } from "@lucide/vue"
+import { Shuffle, X } from "@lucide/vue"
 import type { Team } from "../types"
 import { useI18n } from "vue-i18n"
 
@@ -15,19 +18,32 @@ const emit = defineEmits<{ close: [] }>()
 
 const { t } = useI18n()
 const store = useTeamsStore()
-useModal(() => emit("close"))
+useModal(() => modal.value?.close())
 
+const modal = ref<InstanceType<typeof AppModal> | null>(null)
+const flagModal = ref<InstanceType<typeof AppModal> | null>(null)
 const isEdit = !!props.team
 
 const name = ref(props.team?.name ?? "")
 const abbr = ref(props.team?.abbr ?? "")
 const color = ref(props.team?.color ?? "#3366cc")
+const flag = ref<string | undefined>(props.team?.flag)
 const power = ref(props.team?.power ?? 70)
+const showFlagPicker = ref(false)
 
 const abbrPlaceholder = ref(autoAbbr(name.value))
 watch(name, (v) => {
   abbrPlaceholder.value = autoAbbr(v)
 })
+
+async function onFlagSelect(code: string | undefined) {
+  flag.value = code
+  flagModal.value?.close()
+  if (code) {
+    const primary = await flagPrimaryColor(code)
+    if (primary) color.value = primary
+  }
+}
 
 function submit() {
   if (!name.value.trim()) return
@@ -36,17 +52,25 @@ function submit() {
       name: name.value.trim(),
       abbr: abbr.value.trim().slice(0, 7) || undefined,
       color: color.value,
+      flag: flag.value,
       power: power.value,
     })
   } else {
-    store.add(name.value.trim(), color.value, power.value, abbr.value.trim() || undefined)
+    store.add(
+      name.value.trim(),
+      color.value,
+      power.value,
+      abbr.value.trim() || undefined,
+      flag.value
+    )
   }
-  emit("close")
+  modal.value?.close()
 }
 </script>
 
 <template>
   <AppModal
+    ref="modal"
     :title="isEdit ? t('teams.form.editTitle') : t('teams.form.addTitle')"
     @close="emit('close')"
   >
@@ -96,6 +120,19 @@ function submit() {
       </div>
 
       <div class="field">
+        <label>{{ t("teams.form.flag") }}</label>
+        <div class="flag-header">
+          <button type="button" class="btn-flag-toggle" @click="showFlagPicker = true">
+            <FlagCircle v-if="flag" :code="flag" :size="20" />
+            <span v-show="!flag">{{ t("teams.form.flagNone") }}</span>
+          </button>
+          <button v-if="flag" type="button" class="btn-flag-remove" @click="flag = undefined">
+            <X :size="12" />
+          </button>
+        </div>
+      </div>
+
+      <div class="field">
         <label>{{ t("teams.form.color") }}</label>
         <ColorPicker v-model="color" />
       </div>
@@ -104,9 +141,19 @@ function submit() {
         <button class="primary" :disabled="!name.trim()" @click="submit">
           {{ isEdit ? t("common.save") : t("teams.form.addTitle") }}
         </button>
-        <button @click="emit('close')">{{ t("common.cancel") }}</button>
+        <button @click="modal?.close()">{{ t("common.cancel") }}</button>
       </div>
     </div>
+  </AppModal>
+
+  <AppModal
+    v-if="showFlagPicker"
+    ref="flagModal"
+    :title="t('teams.form.flagPickerTitle')"
+    :z-index="210"
+    @close="showFlagPicker = false"
+  >
+    <FlagPicker :model-value="flag" @update:model-value="onFlagSelect" />
   </AppModal>
 </template>
 
@@ -182,6 +229,51 @@ function submit() {
   gap: 8px;
   padding-top: 4px;
   flex-wrap: wrap;
+}
+
+.flag-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-flag-remove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  color: var(--text-muted);
+  transition:
+    color 0.1s,
+    background 0.1s;
+}
+.btn-flag-remove:hover {
+  color: var(--text);
+  background: color-mix(in srgb, var(--border) 60%, transparent);
+}
+
+.btn-flag-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--text);
+  transition: background 0.1s;
+  height: 32px;
+}
+.btn-flag-toggle:hover {
+  background: var(--bg-hover, rgba(255, 255, 255, 0.08));
 }
 
 @media (max-width: 640px) {

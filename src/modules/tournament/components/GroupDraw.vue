@@ -2,6 +2,7 @@
 import { ref, computed } from "vue"
 import type { Team } from "@/modules/teams/types"
 import { useTeamLookup } from "@/composables/useTeamLookup"
+import FlagCircle from "@/modules/teams/components/FlagCircle.vue"
 
 const props = defineProps<{
   teams: Team[]
@@ -73,8 +74,13 @@ function confirm() {
         <div class="gd-slots">
           <div v-for="(_, slot) in groupSlots[g]" :key="slot" class="gd-slot">
             <span class="gd-slot-num">{{ slot + 1 }}</span>
+            <FlagCircle
+              v-if="groupSlots[g][slot] && teamById(groupSlots[g][slot])?.flag"
+              :code="teamById(groupSlots[g][slot])!.flag!"
+              :size="14"
+            />
             <span
-              v-if="groupSlots[g][slot]"
+              v-else-if="groupSlots[g][slot]"
               class="gd-dot"
               :style="{ background: teamById(groupSlots[g][slot])?.color ?? '#888' }"
             />
@@ -154,8 +160,8 @@ function confirm() {
 }
 
 .gd-dot {
-  width: 7px;
-  height: 7px;
+  width: 14px;
+  height: 14px;
   border-radius: 50%;
   flex-shrink: 0;
 }
