@@ -2,13 +2,8 @@
 import { ref, computed } from "vue"
 import { useI18n } from "vue-i18n"
 import { Search, Check, ArrowUp, ArrowDown } from "@lucide/vue"
-
-interface Team {
-  id: string
-  name: string
-  color: string
-  power: number
-}
+import type { Team } from "@/modules/teams/types"
+import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
 
 interface Props {
   teams: Team[]
@@ -158,8 +153,7 @@ function deselectAll() {
         <span class="ts-check">
           <Check v-if="selected.includes(team.id)" :size="11" />
         </span>
-        <span class="ts-dot" :style="{ background: team.color }" />
-        <span class="ts-name">{{ team.name }}</span>
+        <TeamBadge :team-id="team.id" :teams="teams" />
         <span v-if="showPower" class="ts-power">{{ team.power }}</span>
       </div>
       <div v-if="!sortedFilteredTeams.length" class="ts-empty">
@@ -405,23 +399,6 @@ function deselectAll() {
   justify-content: center;
   color: var(--accent);
   flex-shrink: 0;
-}
-
-.ts-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-
-.ts-name {
-  flex: 1;
-  font-size: 13px;
-  color: var(--text);
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .ts-power {
