@@ -547,7 +547,16 @@ const seasonStats = computed(() =>
 
               <span class="vs-label">vs</span>
 
-              <span class="opponent-dot" :style="{ background: getTeamColor(m.opponentId) }" />
+              <FlagCircle
+                v-if="teamsStore.teams.find((t) => t.id === m.opponentId)?.flag"
+                :code="teamsStore.teams.find((t) => t.id === m.opponentId)!.flag!"
+                :size="14"
+              />
+              <span
+                v-else
+                class="opponent-dot"
+                :style="{ background: getTeamColor(m.opponentId) }"
+              />
               <span class="match-opponent">{{ getTeamName(m.opponentId) }}</span>
 
               <!-- Round + phase chip -->

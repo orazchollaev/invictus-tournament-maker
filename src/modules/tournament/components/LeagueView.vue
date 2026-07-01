@@ -4,6 +4,7 @@ import type { League, Tournament } from "@/modules/tournament/types"
 import type { Team } from "@/modules/teams/types"
 import { Zap, ChevronLeft, ChevronRight } from "@lucide/vue"
 import { useGradualSim } from "@/modules/tournament/composables/useGradualSim"
+import FlagCircle from "@/modules/teams/components/FlagCircle.vue"
 
 const props = defineProps<{
   tournament: Tournament
@@ -177,7 +178,13 @@ async function handleSimMatchday(idx: number) {
                   <span v-else>{{ rank + 1 }}</span>
                 </td>
                 <td class="col-team">
+                  <FlagCircle
+                    v-if="teamById(row.teamId)?.flag"
+                    :code="teamById(row.teamId)!.flag!"
+                    :size="14"
+                  />
                   <span
+                    v-else
                     class="lv-team-dot"
                     :style="{ background: teamById(row.teamId)?.color ?? '#888' }"
                   />
@@ -235,7 +242,13 @@ async function handleSimMatchday(idx: number) {
             <!-- Editing mode -->
             <template v-if="editing?.mdIdx === activeIdx && editing?.mIdx === mIdx">
               <span class="lv-match-team lv-match-team--home">
+                <FlagCircle
+                  v-if="teamById(match.homeId)?.flag"
+                  :code="teamById(match.homeId)!.flag!"
+                  :size="12"
+                />
                 <span
+                  v-else
                   class="lv-match-dot"
                   :style="{ background: teamById(match.homeId)?.color ?? '#888' }"
                 />
@@ -261,7 +274,13 @@ async function handleSimMatchday(idx: number) {
                 @keyup.escape="cancelEdit"
               />
               <span class="lv-match-team lv-match-team--away">
+                <FlagCircle
+                  v-if="teamById(match.awayId)?.flag"
+                  :code="teamById(match.awayId)!.flag!"
+                  :size="12"
+                />
                 <span
+                  v-else
                   class="lv-match-dot"
                   :style="{ background: teamById(match.awayId)?.color ?? '#888' }"
                 />
@@ -277,7 +296,13 @@ async function handleSimMatchday(idx: number) {
                 class="lv-match-team lv-match-team--home"
                 :class="{ 'lv-winner': match.result && match.result.home > match.result.away }"
               >
+                <FlagCircle
+                  v-if="teamById(match.homeId)?.flag"
+                  :code="teamById(match.homeId)!.flag!"
+                  :size="12"
+                />
                 <span
+                  v-else
                   class="lv-match-dot"
                   :style="{ background: teamById(match.homeId)?.color ?? '#888' }"
                 />
@@ -299,7 +324,13 @@ async function handleSimMatchday(idx: number) {
                 class="lv-match-team lv-match-team--away"
                 :class="{ 'lv-winner': match.result && match.result.away > match.result.home }"
               >
+                <FlagCircle
+                  v-if="teamById(match.awayId)?.flag"
+                  :code="teamById(match.awayId)!.flag!"
+                  :size="12"
+                />
                 <span
+                  v-else
                   class="lv-match-dot"
                   :style="{ background: teamById(match.awayId)?.color ?? '#888' }"
                 />

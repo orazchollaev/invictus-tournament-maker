@@ -2,6 +2,7 @@
 import { ref } from "vue"
 import { ChevronDown, ChevronRight, Trophy } from "@lucide/vue"
 import { useI18n } from "vue-i18n"
+import FlagCircle from "@/modules/teams/components/FlagCircle.vue"
 
 export interface TeamSeasonRow {
   season: number
@@ -20,6 +21,7 @@ export interface TeamStatEntry {
   teamId: string
   name: string
   color: string
+  flag?: string
   seasons: number
   titles: number
   played: number
@@ -73,7 +75,8 @@ function toggle(teamId: string) {
             >
               <td class="col-rank muted">{{ i + 1 }}</td>
               <td class="col-team">
-                <span class="color-dot" :style="{ background: row.color }" />
+                <FlagCircle v-if="row.flag" :code="row.flag" :size="14" />
+                <span v-else class="color-dot" :style="{ background: row.color }" />
                 {{ row.name }}
               </td>
               <td class="muted">{{ row.seasons }}</td>

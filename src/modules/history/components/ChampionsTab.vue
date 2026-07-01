@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { Trophy } from "@lucide/vue"
 import { useI18n } from "vue-i18n"
+import FlagCircle from "@/modules/teams/components/FlagCircle.vue"
 
 export interface ChampEntry {
   teamId: string
   name: string
   color: string
+  flag?: string
   wins: number
   finals: number
 }
@@ -31,7 +33,8 @@ const { t } = useI18n()
           <td class="col-rank muted">{{ i + 1 }}</td>
           <td>
             <div class="team-cell">
-              <span class="color-dot" :style="{ background: entry.color }" />
+              <FlagCircle v-if="entry.flag" :code="entry.flag" :size="14" />
+              <span v-else class="color-dot" :style="{ background: entry.color }" />
               {{ entry.name }}
             </div>
           </td>

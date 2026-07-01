@@ -4,6 +4,7 @@ import type { Tournament, League } from "../types"
 import type { Team } from "@/modules/teams/types"
 import { useTournamentStats } from "../composables/useTournamentStats"
 import LeagueProgressChart from "./LeagueProgressChart.vue"
+import FlagCircle from "@/modules/teams/components/FlagCircle.vue"
 
 const props = defineProps<{
   tournament: Tournament
@@ -108,7 +109,8 @@ const chartTitle = computed(() => {
               <td class="col-rank">{{ i + 1 }}</td>
               <td class="col-team">
                 <span class="team-cell">
-                  <span class="dot" :style="{ background: s.color }" />
+                  <FlagCircle v-if="s.flag" :code="s.flag" :size="14" />
+                  <span v-else class="dot" :style="{ background: s.color }" />
                   {{ s.name }}
                 </span>
               </td>
@@ -138,7 +140,8 @@ const chartTitle = computed(() => {
               <td class="col-rank">{{ i + 1 }}</td>
               <td class="col-team">
                 <span class="team-cell">
-                  <span class="dot" :style="{ background: s.color }" />
+                  <FlagCircle v-if="s.flag" :code="s.flag" :size="14" />
+                  <span v-else class="dot" :style="{ background: s.color }" />
                   {{ s.name }}
                 </span>
               </td>

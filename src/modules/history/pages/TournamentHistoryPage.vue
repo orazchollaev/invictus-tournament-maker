@@ -78,7 +78,13 @@ const champions = computed<ChampEntry[]>(() => {
   return [...map.entries()]
     .map(([id, data]) => {
       const team = teamById(id)
-      return { teamId: id, name: team?.name ?? "?", color: team?.color ?? "#888", ...data }
+      return {
+        teamId: id,
+        name: team?.name ?? "?",
+        color: team?.color ?? "#888",
+        flag: team?.flag,
+        ...data,
+      }
     })
     .sort((a, b) => b.wins - a.wins || b.finals - a.finals)
 })
@@ -127,8 +133,10 @@ const finals = computed<FinalEntry[]>(() =>
       season: t.season,
       champName: champ?.name ?? "?",
       champColor: champ?.color ?? "#888",
+      champFlag: champ?.flag,
       runnerName: runner?.name ?? "?",
       runnerColor: runner?.color ?? "#888",
+      runnerFlag: runner?.flag,
       score: fm ? buildScore(fm, t.winnerId) : "?",
     }
   })
@@ -143,7 +151,7 @@ const leagueSeasons = computed<LeagueSeasonEntry[]>(() =>
       const s = standings[pos]
       if (!s) return null
       const team = teamById(s.teamId)
-      return { name: team?.name ?? "?", color: team?.color ?? "#888", pts: s.pts }
+      return { name: team?.name ?? "?", color: team?.color ?? "#888", flag: team?.flag, pts: s.pts }
     }
     return { season: t.season, first: getAt(0), second: getAt(1), third: getAt(2) }
   })
@@ -174,6 +182,7 @@ const allTimeRows = computed<AllTimeRow[]>(() => {
           teamId: s.teamId,
           name: team?.name ?? "?",
           color: team?.color ?? "#888",
+          flag: team?.flag,
           seasons: 1,
           titles: t.winnerId === s.teamId ? 1 : 0,
           played: s.played,
@@ -230,8 +239,10 @@ const stats = computed<HistoryStats>(() => {
         score: `${wG}–${lG}`,
         winnerName: w?.name ?? "?",
         winnerColor: w?.color ?? "#888",
+        winnerFlag: w?.flag,
         loserName: l?.name ?? "?",
         loserColor: l?.color ?? "#888",
+        loserFlag: l?.flag,
       }
     }
   }
@@ -294,7 +305,7 @@ const stats = computed<HistoryStats>(() => {
   if (teamGoals.size) {
     const [topId, topG] = [...teamGoals.entries()].reduce((a, b) => (b[1] > a[1] ? b : a))
     const t = teamById(topId)
-    topScoringTeam = { name: t?.name ?? "?", color: t?.color ?? "#888", goals: topG }
+    topScoringTeam = { name: t?.name ?? "?", color: t?.color ?? "#888", flag: t?.flag, goals: topG }
   }
 
   // Most clean sheets
@@ -302,7 +313,12 @@ const stats = computed<HistoryStats>(() => {
   if (teamCS.size) {
     const [csId, csCount] = [...teamCS.entries()].reduce((a, b) => (b[1] > a[1] ? b : a))
     const t = teamById(csId)
-    mostCleanSheets = { name: t?.name ?? "?", color: t?.color ?? "#888", count: csCount }
+    mostCleanSheets = {
+      name: t?.name ?? "?",
+      color: t?.color ?? "#888",
+      flag: t?.flag,
+      count: csCount,
+    }
   }
 
   // Champion streak analysis
@@ -315,7 +331,12 @@ const stats = computed<HistoryStats>(() => {
     const first = sorted[0]
     if (first.winnerId) {
       const t = teamById(first.winnerId)
-      firstChampion = { name: t?.name ?? "?", color: t?.color ?? "#888", season: first.season }
+      firstChampion = {
+        name: t?.name ?? "?",
+        color: t?.color ?? "#888",
+        flag: t?.flag,
+        season: first.season,
+      }
     }
 
     let streak = 0
@@ -337,11 +358,21 @@ const stats = computed<HistoryStats>(() => {
 
     if (maxStreak >= 2 && maxStreakId) {
       const t = teamById(maxStreakId)
-      longestStreak = { name: t?.name ?? "?", color: t?.color ?? "#888", count: maxStreak }
+      longestStreak = {
+        name: t?.name ?? "?",
+        color: t?.color ?? "#888",
+        flag: t?.flag,
+        count: maxStreak,
+      }
     }
     if (streak >= 2 && streakId) {
       const t = teamById(streakId)
-      currentStreak = { name: t?.name ?? "?", color: t?.color ?? "#888", count: streak }
+      currentStreak = {
+        name: t?.name ?? "?",
+        color: t?.color ?? "#888",
+        flag: t?.flag,
+        count: streak,
+      }
     }
   }
 
@@ -487,6 +518,7 @@ const teamStats = computed<TeamStatEntry[]>(() => {
         teamId,
         name: team?.name ?? "?",
         color: team?.color ?? "#888",
+        flag: team?.flag,
         seasons: data.seasonNums.size,
         titles: data.titles,
         played: data.all.played,

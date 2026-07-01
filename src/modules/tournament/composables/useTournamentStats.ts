@@ -6,6 +6,7 @@ export interface TeamStat {
   teamId: string
   name: string
   color: string
+  flag?: string
   played: number
   gf: number
   ga: number
@@ -25,6 +26,7 @@ export function useTournamentStats(tournament: () => Tournament | undefined, tea
           teamId: id,
           name: team?.name ?? id,
           color: team?.color ?? "#888",
+          flag: team?.flag,
           played: 0,
           gf: 0,
           ga: 0,

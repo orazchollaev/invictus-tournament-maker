@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n"
+import FlagCircle from "@/modules/teams/components/FlagCircle.vue"
 
 export interface FinalEntry {
   season: number
   champName: string
   champColor: string
+  champFlag?: string
   runnerName: string
   runnerColor: string
+  runnerFlag?: string
   score: string
 }
 
@@ -33,14 +36,16 @@ const { t } = useI18n()
           </td>
           <td>
             <div class="team-cell">
-              <span class="color-dot" :style="{ background: entry.champColor }" />
+              <FlagCircle v-if="entry.champFlag" :code="entry.champFlag" :size="14" />
+              <span v-else class="color-dot" :style="{ background: entry.champColor }" />
               <strong>{{ entry.champName }}</strong>
             </div>
           </td>
           <td class="col-score muted">{{ entry.score }}</td>
           <td>
             <div class="team-cell muted">
-              <span class="color-dot" :style="{ background: entry.runnerColor }" />
+              <FlagCircle v-if="entry.runnerFlag" :code="entry.runnerFlag" :size="14" />
+              <span v-else class="color-dot" :style="{ background: entry.runnerColor }" />
               {{ entry.runnerName }}
             </div>
           </td>

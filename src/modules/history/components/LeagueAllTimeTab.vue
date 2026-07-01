@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n"
+import FlagCircle from "@/modules/teams/components/FlagCircle.vue"
 
 export interface AllTimeRow {
   teamId: string
   name: string
   color: string
+  flag?: string
   seasons: number
   titles: number
   played: number
@@ -55,7 +57,8 @@ const { t } = useI18n()
           >
             <td class="col-rank">{{ i + 1 }}</td>
             <td class="col-team">
-              <span class="at-dot" :style="{ background: row.color }" />
+              <FlagCircle v-if="row.flag" :code="row.flag" :size="14" />
+              <span v-else class="at-dot" :style="{ background: row.color }" />
               {{ row.name }}
             </td>
             <td class="muted">{{ row.seasons }}</td>

@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { Trophy } from "@lucide/vue"
 import { useI18n } from "vue-i18n"
+import FlagCircle from "@/modules/teams/components/FlagCircle.vue"
 
 export interface LeagueSeasonEntry {
   season: number
-  first: { name: string; color: string; pts: number } | null
-  second: { name: string; color: string; pts: number } | null
-  third: { name: string; color: string; pts: number } | null
+  first: { name: string; color: string; flag?: string; pts: number } | null
+  second: { name: string; color: string; flag?: string; pts: number } | null
+  third: { name: string; color: string; flag?: string; pts: number } | null
 }
 
 defineProps<{ seasons: LeagueSeasonEntry[] }>()
@@ -32,7 +33,8 @@ const { t } = useI18n()
           </td>
           <td>
             <div v-if="entry.first" class="team-cell">
-              <span class="color-dot" :style="{ background: entry.first.color }" />
+              <FlagCircle v-if="entry.first.flag" :code="entry.first.flag" :size="14" />
+              <span v-else class="color-dot" :style="{ background: entry.first.color }" />
               <strong>{{ entry.first.name }}</strong>
               <span class="pts-badge">
                 <Trophy :size="10" />
@@ -43,7 +45,8 @@ const { t } = useI18n()
           </td>
           <td>
             <div v-if="entry.second" class="team-cell muted">
-              <span class="color-dot" :style="{ background: entry.second.color }" />
+              <FlagCircle v-if="entry.second.flag" :code="entry.second.flag" :size="14" />
+              <span v-else class="color-dot" :style="{ background: entry.second.color }" />
               {{ entry.second.name }}
               <span class="pts-label">{{ entry.second.pts }} pts</span>
             </div>
@@ -51,7 +54,8 @@ const { t } = useI18n()
           </td>
           <td>
             <div v-if="entry.third" class="team-cell muted">
-              <span class="color-dot" :style="{ background: entry.third.color }" />
+              <FlagCircle v-if="entry.third.flag" :code="entry.third.flag" :size="14" />
+              <span v-else class="color-dot" :style="{ background: entry.third.color }" />
               {{ entry.third.name }}
               <span class="pts-label">{{ entry.third.pts }} pts</span>
             </div>
