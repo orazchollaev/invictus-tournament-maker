@@ -4,7 +4,8 @@ import { createPersistedStatePlugin } from "pinia-plugin-persistedstate-2"
 
 import router from "./router"
 import App from "./App.vue"
-import i18n from "./i18n"
+import i18n, { loadLocale } from "./i18n"
+import type { Locale } from "./i18n"
 
 import "./assets/style/index.css"
 
@@ -14,9 +15,24 @@ const persistedStatePlugin = createPersistedStatePlugin({
 })
 pinia.use(persistedStatePlugin)
 
-const app = createApp(App)
+async function bootstrap() {
+  try {
+    const raw = localStorage.getItem("settings")
+    if (raw) {
+      const saved = JSON.parse(raw)
+      const locale = saved?.locale as Locale
+      if (locale && locale !== "en") {
+        await loadLocale(locale)
+        i18n.global.locale.value = locale
+      }
+    }
+  } catch {}
 
-app.use(pinia)
-app.use(router)
-app.use(i18n)
-app.mount("#app")
+  const app = createApp(App)
+  app.use(pinia)
+  app.use(router)
+  app.use(i18n)
+  app.mount("#app")
+}
+
+bootstrap()

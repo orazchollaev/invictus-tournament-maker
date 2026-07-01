@@ -701,7 +701,7 @@ function hasPen(result: MatchResult | null | undefined): boolean {
   display: flex;
   gap: 4px;
   flex-wrap: wrap;
-  padding: 0 8px 8px;
+  padding: 0 0 8px 0;
   border-bottom: 1px solid var(--border-light);
   margin-bottom: 12px;
 }
@@ -740,7 +740,7 @@ function hasPen(result: MatchResult | null | undefined): boolean {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 6px;
-  padding: 0 8px 8px;
+  padding: 0 0 8px 0;
 }
 .fv-grid.solo {
   grid-template-columns: 1fr;

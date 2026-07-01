@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from "vue"
+import { useI18n } from "vue-i18n"
 import type { Team } from "@/modules/teams/types"
 
 const props = defineProps<{ teams: Team[] }>()
@@ -7,6 +8,8 @@ const emit = defineEmits<{
   confirm: [orderedIds: string[]]
   cancel: []
 }>()
+
+const { t } = useI18n()
 
 const count = props.teams.length
 const size = Math.pow(2, Math.ceil(Math.log2(count)))
@@ -47,38 +50,38 @@ function confirm() {
   <div class="md-wrap">
     <!-- Byes -->
     <div v-if="byeCount > 0" class="md-section">
-      <div class="md-label">Byes (automatic win)</div>
+      <div class="md-label">{{ t("manualDraw.byesTitle") }}</div>
       <div class="md-bye-grid">
         <div v-for="(_, i) in byeSlots" :key="'bye-' + i" class="md-bye-row">
           <span class="md-idx">{{ i + 1 }}</span>
           <select v-model="byeSlots[i]" class="md-sel">
-            <option value="">— Pick team</option>
-            <option v-for="t in available(byeSlots[i])" :key="t.id" :value="t.id">
-              {{ t.name }}
+            <option value="">{{ t("manualDraw.pickTeam") }}</option>
+            <option v-for="tm in available(byeSlots[i])" :key="tm.id" :value="tm.id">
+              {{ tm.name }}
             </option>
           </select>
-          <span class="md-bye-tag">BYE</span>
+          <span class="md-bye-tag">{{ t("manualDraw.bye") }}</span>
         </div>
       </div>
     </div>
 
     <!-- Matches -->
     <div class="md-section">
-      <div v-if="byeCount > 0" class="md-label">Matches</div>
+      <div v-if="byeCount > 0" class="md-label">{{ t("manualDraw.matches") }}</div>
       <div class="md-matches-grid">
         <div v-for="(slot, i) in matchSlots" :key="'match-' + i" class="md-card">
           <span class="md-card-num">{{ byeCount + i + 1 }}</span>
           <select v-model="slot.homeId" class="md-sel-full">
-            <option value="">— Home</option>
-            <option v-for="t in available(slot.homeId)" :key="t.id" :value="t.id">
-              {{ t.name }}
+            <option value="">{{ t("manualDraw.home") }}</option>
+            <option v-for="tm in available(slot.homeId)" :key="tm.id" :value="tm.id">
+              {{ tm.name }}
             </option>
           </select>
-          <span class="md-vs">vs</span>
+          <span class="md-vs">{{ t("common.vs") }}</span>
           <select v-model="slot.awayId" class="md-sel-full">
-            <option value="">— Away</option>
-            <option v-for="t in available(slot.awayId)" :key="t.id" :value="t.id">
-              {{ t.name }}
+            <option value="">{{ t("manualDraw.away") }}</option>
+            <option v-for="tm in available(slot.awayId)" :key="tm.id" :value="tm.id">
+              {{ tm.name }}
             </option>
           </select>
         </div>
@@ -87,8 +90,10 @@ function confirm() {
 
     <!-- Actions -->
     <div class="md-actions">
-      <button class="primary" :disabled="!complete" @click="confirm">Confirm draw</button>
-      <button @click="emit('cancel')">Cancel</button>
+      <button class="primary" :disabled="!complete" @click="confirm">
+        {{ t("manualDraw.confirmDraw") }}
+      </button>
+      <button @click="emit('cancel')">{{ t("common.cancel") }}</button>
     </div>
   </div>
 </template>

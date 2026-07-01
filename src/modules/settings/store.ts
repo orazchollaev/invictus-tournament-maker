@@ -3,7 +3,7 @@ import { ref, watch } from "vue"
 import type { LegMode, PlayoffSeedMode } from "@/modules/tournament/types"
 import { setSimConfig, setTableConfig } from "@/engine"
 import type { Tiebreaker } from "@/modules/tournament/types"
-import { i18n } from "@/i18n"
+import { i18n, loadLocale } from "@/i18n"
 import type { Locale } from "@/i18n"
 
 export type Theme = "light" | "dark" | "worldcup2026"
@@ -47,7 +47,8 @@ export const useSettingsStore = defineStore("settings", () => {
 
   watch(
     locale,
-    (val) => {
+    async (val) => {
+      await loadLocale(val)
       i18n.global.locale.value = val
     },
     { immediate: true }
