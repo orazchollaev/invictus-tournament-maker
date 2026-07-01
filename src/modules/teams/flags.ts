@@ -1,5 +1,3 @@
-// Local circle-flags assets (no CDN). SVGs bundled from the installed
-// `circle-flags` package via Vite glob — same pattern as
 // src/modules/settings/composables/useDataManagement.ts.
 
 const raws = import.meta.glob("../../../node_modules/circle-flags/flags/*.svg", {

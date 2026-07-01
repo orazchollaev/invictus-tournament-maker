@@ -4,6 +4,7 @@ import { useI18n } from "vue-i18n"
 import { Languages } from "@lucide/vue"
 import { LOCALES } from "@/i18n"
 import SettingDesc from "./SettingDesc.vue"
+import FlagCircle from "@/modules/teams/components/FlagCircle.vue"
 
 const { t } = useI18n()
 const settings = useSettingsStore()
@@ -29,7 +30,7 @@ const settings = useSettingsStore()
             :class="{ 'lang-btn--active': settings.locale === loc.value }"
             @click="settings.locale = loc.value"
           >
-            <img :src="`./flags/${loc.flag}`" :alt="loc.label" class="lang-flag" />
+            <FlagCircle :code="loc.flag" :size="18" />
             <span class="lang-name">{{ loc.label }}</span>
           </button>
         </div>
@@ -71,10 +72,7 @@ const settings = useSettingsStore()
   color: var(--accent);
   font-weight: 600;
 }
-.lang-flag {
-  width: 18px;
-  height: auto;
-}
+
 .lang-name {
   line-height: 1;
 }

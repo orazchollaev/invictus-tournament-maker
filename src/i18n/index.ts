@@ -14,11 +14,11 @@ export interface LocaleOption {
 }
 
 export const LOCALES: LocaleOption[] = [
-  { value: "en", label: "English", flag: "en.webp" },
-  { value: "tr", label: "Türkçe", flag: "tr.webp" },
-  { value: "ru", label: "Русский", flag: "ru.webp" },
-  { value: "es", label: "Español", flag: "sp.webp" },
-  { value: "pt", label: "Português", flag: "pt.webp" },
+  { value: "en", label: "English", flag: "GB" },
+  { value: "tr", label: "Türkçe", flag: "TR" },
+  { value: "ru", label: "Русский", flag: "RU" },
+  { value: "es", label: "Español", flag: "ES" },
+  { value: "pt", label: "Português", flag: "PT" },
 ]
 
 export const i18n = createI18n({
