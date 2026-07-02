@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onBeforeUnmount, watch, nextTick } from "vue"
-import type { Team } from "../types"
+import type { Team, TeamLike } from "../types"
 import { teamAbbr } from "@/composables/useTeamLookup"
 import { useSettingsStore } from "@/modules/settings/store"
 
 const settings = useSettingsStore()
 
-const props = defineProps<{ team: Team | undefined | null; fallback?: string }>()
+const props = defineProps<{ team: Team | TeamLike | undefined | null; fallback?: string }>()
 
 const el = ref<HTMLSpanElement>()
 const showAbbr = ref(false)

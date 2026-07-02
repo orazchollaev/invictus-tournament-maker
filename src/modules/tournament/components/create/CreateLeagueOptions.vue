@@ -5,6 +5,7 @@ import BtnGroup from "@/components/BtnGroup.vue"
 import type { LegMode } from "@/modules/tournament/types"
 import type { Team } from "@/modules/teams/types"
 import { useLegOptions } from "@/modules/tournament/composables/useLegOptions"
+import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
 
 const props = defineProps<{
   selectedTeams: Team[]
@@ -169,16 +170,11 @@ watch(
 
           <div class="ctp-tier-chips">
             <div v-for="teamId in ids" :key="teamId" class="ctp-tier-chip">
-              <span
-                class="ctp-dot"
-                :style="{
-                  background: allTeams.find((t) => t.id === teamId)?.color ?? '#888',
-                }"
+              <TeamBadge
+                :team="allTeams.find((t) => t.id === teamId)"
+                :size="12"
+                class="ctp-tier-chip-name"
               />
-
-              <span class="ctp-tier-chip-name">
-                {{ allTeams.find((t) => t.id === teamId)?.name }}
-              </span>
 
               <div class="ctp-tier-move">
                 <button

@@ -4,7 +4,7 @@ import type { League, Tournament } from "@/modules/tournament/types"
 import type { Team } from "@/modules/teams/types"
 import { Zap, ChevronLeft, ChevronRight } from "@lucide/vue"
 import { useGradualSim } from "@/modules/tournament/composables/useGradualSim"
-import FlagCircle from "@/modules/teams/components/FlagCircle.vue"
+import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
 
 const props = defineProps<{
   tournament: Tournament
@@ -178,17 +178,11 @@ async function handleSimMatchday(idx: number) {
                   <span v-else>{{ rank + 1 }}</span>
                 </td>
                 <td class="col-team">
-                  <FlagCircle
-                    v-if="teamById(row.teamId)?.flag"
-                    :code="teamById(row.teamId)!.flag!"
-                    :size="14"
+                  <TeamBadge
+                    :team="teamById(row.teamId)"
+                    :fallback="row.teamId"
+                    class="lv-team-name"
                   />
-                  <span
-                    v-else
-                    class="lv-team-dot"
-                    :style="{ background: teamById(row.teamId)?.color ?? '#888' }"
-                  />
-                  <span class="lv-team-name">{{ teamById(row.teamId)?.name ?? row.teamId }}</span>
                 </td>
                 <td>{{ row.played }}</td>
                 <td>{{ row.won }}</td>
@@ -241,19 +235,7 @@ async function handleSimMatchday(idx: number) {
           >
             <!-- Editing mode -->
             <template v-if="editing?.mdIdx === activeIdx && editing?.mIdx === mIdx">
-              <span class="lv-match-team lv-match-team--home">
-                <FlagCircle
-                  v-if="teamById(match.homeId)?.flag"
-                  :code="teamById(match.homeId)!.flag!"
-                  :size="12"
-                />
-                <span
-                  v-else
-                  class="lv-match-dot"
-                  :style="{ background: teamById(match.homeId)?.color ?? '#888' }"
-                />
-                <span class="lv-match-team-name">{{ teamById(match.homeId)?.name }}</span>
-              </span>
+              <TeamBadge :team="teamById(match.homeId)" class="lv-match-team lv-match-team--home" />
               <input
                 v-model="editing.home"
                 class="lv-score-input"
@@ -273,41 +255,20 @@ async function handleSimMatchday(idx: number) {
                 @keyup.enter="commitEdit"
                 @keyup.escape="cancelEdit"
               />
-              <span class="lv-match-team lv-match-team--away">
-                <FlagCircle
-                  v-if="teamById(match.awayId)?.flag"
-                  :code="teamById(match.awayId)!.flag!"
-                  :size="12"
-                />
-                <span
-                  v-else
-                  class="lv-match-dot"
-                  :style="{ background: teamById(match.awayId)?.color ?? '#888' }"
-                />
-                <span class="lv-match-team-name">{{ teamById(match.awayId)?.name }}</span>
-              </span>
+              <TeamBadge :team="teamById(match.awayId)" class="lv-match-team lv-match-team--away" />
               <button class="primary lv-btn-xs" @click="commitEdit">✓</button>
               <button class="lv-btn-xs" @click="cancelEdit">✕</button>
             </template>
 
             <!-- Result / unplayed -->
             <template v-else>
-              <span
-                class="lv-match-team lv-match-team--home"
-                :class="{ 'lv-winner': match.result && match.result.home > match.result.away }"
-              >
-                <FlagCircle
-                  v-if="teamById(match.homeId)?.flag"
-                  :code="teamById(match.homeId)!.flag!"
-                  :size="12"
-                />
-                <span
-                  v-else
-                  class="lv-match-dot"
-                  :style="{ background: teamById(match.homeId)?.color ?? '#888' }"
-                />
-                <span class="lv-match-team-name">{{ teamById(match.homeId)?.name }}</span>
-              </span>
+              <TeamBadge
+                :team="teamById(match.homeId)"
+                :class="[
+                  'lv-match-team lv-match-team--home',
+                  { 'lv-winner': match.result && match.result.home > match.result.away },
+                ]"
+              />
               <button
                 class="lv-score-btn"
                 :class="{ 'lv-score-btn--played': !!match.result }"
@@ -320,22 +281,13 @@ async function handleSimMatchday(idx: number) {
                 </template>
                 <template v-else>vs</template>
               </button>
-              <span
-                class="lv-match-team lv-match-team--away"
-                :class="{ 'lv-winner': match.result && match.result.away > match.result.home }"
-              >
-                <FlagCircle
-                  v-if="teamById(match.awayId)?.flag"
-                  :code="teamById(match.awayId)!.flag!"
-                  :size="12"
-                />
-                <span
-                  v-else
-                  class="lv-match-dot"
-                  :style="{ background: teamById(match.awayId)?.color ?? '#888' }"
-                />
-                <span class="lv-match-team-name">{{ teamById(match.awayId)?.name }}</span>
-              </span>
+              <TeamBadge
+                :team="teamById(match.awayId)"
+                :class="[
+                  'lv-match-team lv-match-team--away',
+                  { 'lv-winner': match.result && match.result.away > match.result.home },
+                ]"
+              />
               <button
                 v-if="!match.result"
                 class="lv-sim-btn"
@@ -610,9 +562,12 @@ async function handleSimMatchday(idx: number) {
   min-width: 0;
   color: var(--text-muted);
 }
+.lv-match-team .name {
+  display: none !important;
+}
 .lv-match-team--home {
   flex-direction: row-reverse;
-  justify-content: flex-start;
+  justify-content: flex-end;
 }
 .lv-match-team--away {
   flex-direction: row;

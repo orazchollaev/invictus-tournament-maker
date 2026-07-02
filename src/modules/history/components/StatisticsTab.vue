@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Zap, Shield, Flame, Star, Trophy } from "@lucide/vue"
 import { useI18n } from "vue-i18n"
-import FlagCircle from "@/modules/teams/components/FlagCircle.vue"
+import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
 
 export interface BiggestWin {
   score: string
@@ -73,34 +73,28 @@ const { t } = useI18n()
           <Zap :size="12" class="record-icon" />
           <div class="record-key">{{ t("history.stats.biggestWin") }}</div>
           <div class="record-val">
-            <FlagCircle
-              v-if="stats.biggestWin.winnerFlag"
-              :code="stats.biggestWin.winnerFlag"
-              :size="14"
+            <TeamBadge
+              :team="{
+                name: stats.biggestWin.winnerName,
+                color: stats.biggestWin.winnerColor,
+                flag: stats.biggestWin.winnerFlag,
+              }"
             />
-            <span v-else class="color-dot" :style="{ background: stats.biggestWin.winnerColor }" />
-            {{ stats.biggestWin.winnerName }}
             <span class="score-chip">{{ stats.biggestWin.score }}</span>
-            <FlagCircle
-              v-if="stats.biggestWin.loserFlag"
-              :code="stats.biggestWin.loserFlag"
-              :size="14"
+            <TeamBadge
+              :team="{
+                name: stats.biggestWin.loserName,
+                color: stats.biggestWin.loserColor,
+                flag: stats.biggestWin.loserFlag,
+              }"
             />
-            <span v-else class="color-dot" :style="{ background: stats.biggestWin.loserColor }" />
-            {{ stats.biggestWin.loserName }}
           </div>
         </div>
         <div v-if="stats.topScoringTeam" class="record-row">
           <Trophy :size="12" class="record-icon" />
           <div class="record-key">{{ t("history.stats.topScorer") }}</div>
           <div class="record-val">
-            <FlagCircle
-              v-if="stats.topScoringTeam.flag"
-              :code="stats.topScoringTeam.flag"
-              :size="14"
-            />
-            <span v-else class="color-dot" :style="{ background: stats.topScoringTeam.color }" />
-            {{ stats.topScoringTeam.name }}
+            <TeamBadge :team="stats.topScoringTeam" />
             <span class="record-num">
               {{ t("history.stats.goals", { n: stats.topScoringTeam.goals }) }}
             </span>
@@ -110,13 +104,7 @@ const { t } = useI18n()
           <Shield :size="12" class="record-icon" />
           <div class="record-key">{{ t("history.stats.cleanSheets") }}</div>
           <div class="record-val">
-            <FlagCircle
-              v-if="stats.mostCleanSheets.flag"
-              :code="stats.mostCleanSheets.flag"
-              :size="14"
-            />
-            <span v-else class="color-dot" :style="{ background: stats.mostCleanSheets.color }" />
-            {{ stats.mostCleanSheets.name }}
+            <TeamBadge :team="stats.mostCleanSheets" />
             <span class="record-num">{{ stats.mostCleanSheets.count }}</span>
           </div>
         </div>
@@ -134,13 +122,7 @@ const { t } = useI18n()
           <Star :size="14" class="badge-icon badge-star" />
           <div class="badge-title">{{ t("history.stats.firstChampion") }}</div>
           <div class="badge-team">
-            <FlagCircle
-              v-if="stats.firstChampion.flag"
-              :code="stats.firstChampion.flag"
-              :size="14"
-            />
-            <span v-else class="color-dot" :style="{ background: stats.firstChampion.color }" />
-            {{ stats.firstChampion.name }}
+            <TeamBadge :team="stats.firstChampion" />
           </div>
           <div class="badge-meta">
             {{ t("history.stats.season", { n: stats.firstChampion.season }) }}
@@ -150,13 +132,7 @@ const { t } = useI18n()
           <Flame :size="14" class="badge-icon badge-flame" />
           <div class="badge-title">{{ t("history.stats.longestStreak") }}</div>
           <div class="badge-team">
-            <FlagCircle
-              v-if="stats.longestStreak.flag"
-              :code="stats.longestStreak.flag"
-              :size="14"
-            />
-            <span v-else class="color-dot" :style="{ background: stats.longestStreak.color }" />
-            {{ stats.longestStreak.name }}
+            <TeamBadge :team="stats.longestStreak" />
           </div>
           <div class="badge-meta">
             {{ t("history.stats.inARow", { n: stats.longestStreak.count }) }}
@@ -166,13 +142,7 @@ const { t } = useI18n()
           <Trophy :size="14" class="badge-icon badge-trophy" />
           <div class="badge-title">{{ t("history.stats.defending") }}</div>
           <div class="badge-team">
-            <FlagCircle
-              v-if="stats.currentStreak.flag"
-              :code="stats.currentStreak.flag"
-              :size="14"
-            />
-            <span v-else class="color-dot" :style="{ background: stats.currentStreak.color }" />
-            {{ stats.currentStreak.name }}
+            <TeamBadge :team="stats.currentStreak" />
           </div>
           <div class="badge-meta">
             {{ t("history.stats.consecutive", { n: stats.currentStreak.count }) }}

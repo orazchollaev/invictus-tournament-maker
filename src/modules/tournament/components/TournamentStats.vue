@@ -4,7 +4,7 @@ import type { Tournament, League } from "../types"
 import type { Team } from "@/modules/teams/types"
 import { useTournamentStats } from "../composables/useTournamentStats"
 import LeagueProgressChart from "./LeagueProgressChart.vue"
-import FlagCircle from "@/modules/teams/components/FlagCircle.vue"
+import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
 
 const props = defineProps<{
   tournament: Tournament
@@ -108,11 +108,7 @@ const chartTitle = computed(() => {
             <tr v-for="(s, i) in topScorers" :key="s.teamId">
               <td class="col-rank">{{ i + 1 }}</td>
               <td class="col-team">
-                <span class="team-cell">
-                  <FlagCircle v-if="s.flag" :code="s.flag" :size="14" />
-                  <span v-else class="dot" :style="{ background: s.color }" />
-                  {{ s.name }}
-                </span>
+                <TeamBadge :team="s" class="team-cell" />
               </td>
               <td class="col-highlight">{{ s.gf }}</td>
               <td class="col-muted">{{ s.ga }}</td>
@@ -139,11 +135,7 @@ const chartTitle = computed(() => {
             <tr v-for="(s, i) in bestDefense" :key="s.teamId">
               <td class="col-rank">{{ i + 1 }}</td>
               <td class="col-team">
-                <span class="team-cell">
-                  <FlagCircle v-if="s.flag" :code="s.flag" :size="14" />
-                  <span v-else class="dot" :style="{ background: s.color }" />
-                  {{ s.name }}
-                </span>
+                <TeamBadge :team="s" class="team-cell" />
               </td>
               <td class="col-highlight">{{ s.ga }}</td>
               <td class="col-muted">{{ s.gf }}</td>

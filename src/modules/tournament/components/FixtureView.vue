@@ -4,8 +4,8 @@ import type { Tournament, Match, MatchResult } from "../types"
 import type { Team } from "@/modules/teams/types"
 import { getWinnerId } from "@/engine"
 import { teamAbbr } from "@/composables/useTeamLookup"
-import TeamNameAuto from "@/modules/teams/components/TeamNameAuto.vue"
 import FlagCircle from "@/modules/teams/components/FlagCircle.vue"
+import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
 import { useSettingsStore } from "@/modules/settings/store"
 import { X, Shuffle, Pencil, Check } from "@lucide/vue"
 
@@ -307,17 +307,7 @@ function hasPen(result: MatchResult | null | undefined): boolean {
                     loser: !!match.result && !legWinner(match.result, 'home'),
                   }"
                 >
-                  <FlagCircle
-                    v-if="getTeam(match.homeId)?.flag"
-                    :code="getTeam(match.homeId)!.flag!"
-                    :size="14"
-                  />
-                  <span
-                    v-else
-                    class="cdot"
-                    :style="{ background: getTeam(match.homeId)?.color ?? '#ccc' }"
-                  />
-                  <TeamNameAuto :team="getTeam(match.homeId)" />
+                  <TeamBadge :team="getTeam(match.homeId)" />
                 </div>
                 <div
                   class="leg-tr leg-tr--away"
@@ -326,17 +316,7 @@ function hasPen(result: MatchResult | null | undefined): boolean {
                     loser: !!match.result && !legWinner(match.result, 'away'),
                   }"
                 >
-                  <FlagCircle
-                    v-if="getTeam(match.awayId)?.flag"
-                    :code="getTeam(match.awayId)!.flag!"
-                    :size="14"
-                  />
-                  <span
-                    v-else
-                    class="cdot"
-                    :style="{ background: getTeam(match.awayId)?.color ?? '#ccc' }"
-                  />
-                  <TeamNameAuto :team="getTeam(match.awayId)" />
+                  <TeamBadge :team="getTeam(match.awayId)" />
                 </div>
               </div>
               <div v-if="match.homeId && match.awayId" class="leg-scores">
@@ -408,17 +388,7 @@ function hasPen(result: MatchResult | null | undefined): boolean {
                     loser: !!match.leg2Result && !legWinner(match.leg2Result, 'home'),
                   }"
                 >
-                  <FlagCircle
-                    v-if="getTeam(match.awayId)?.flag"
-                    :code="getTeam(match.awayId)!.flag!"
-                    :size="14"
-                  />
-                  <span
-                    v-else
-                    class="cdot"
-                    :style="{ background: getTeam(match.awayId)?.color ?? '#ccc' }"
-                  />
-                  <TeamNameAuto :team="getTeam(match.awayId)" />
+                  <TeamBadge :team="getTeam(match.awayId)" />
                 </div>
                 <div
                   class="leg-tr leg-tr--away"
@@ -427,17 +397,7 @@ function hasPen(result: MatchResult | null | undefined): boolean {
                     loser: !!match.leg2Result && !legWinner(match.leg2Result, 'away'),
                   }"
                 >
-                  <FlagCircle
-                    v-if="getTeam(match.homeId)?.flag"
-                    :code="getTeam(match.homeId)!.flag!"
-                    :size="14"
-                  />
-                  <span
-                    v-else
-                    class="cdot"
-                    :style="{ background: getTeam(match.homeId)?.color ?? '#ccc' }"
-                  />
-                  <TeamNameAuto :team="getTeam(match.homeId)" />
+                  <TeamBadge :team="getTeam(match.homeId)" />
                 </div>
               </div>
               <div v-if="match.homeId && match.awayId" class="leg-scores">
@@ -558,17 +518,7 @@ function hasPen(result: MatchResult | null | undefined): boolean {
                 loser: match.result && getWinnerId(match) !== match.homeId,
               }"
             >
-              <FlagCircle
-                v-if="getTeam(match.homeId)?.flag"
-                :code="getTeam(match.homeId)!.flag!"
-                :size="14"
-              />
-              <span
-                v-else
-                class="cdot"
-                :style="{ background: getTeam(match.homeId)?.color ?? '#ccc' }"
-              />
-              <TeamNameAuto :team="getTeam(match.homeId)" />
+              <TeamBadge :team="getTeam(match.homeId)" />
             </div>
             <div
               class="mc-row mc-row--away"
@@ -577,17 +527,7 @@ function hasPen(result: MatchResult | null | undefined): boolean {
                 loser: match.result && getWinnerId(match) !== match.awayId,
               }"
             >
-              <FlagCircle
-                v-if="getTeam(match.awayId)?.flag"
-                :code="getTeam(match.awayId)!.flag!"
-                :size="14"
-              />
-              <span
-                v-else
-                class="cdot"
-                :style="{ background: getTeam(match.awayId)?.color ?? '#ccc' }"
-              />
-              <TeamNameAuto :team="getTeam(match.awayId)" />
+              <TeamBadge :team="getTeam(match.awayId)" />
             </div>
           </div>
 

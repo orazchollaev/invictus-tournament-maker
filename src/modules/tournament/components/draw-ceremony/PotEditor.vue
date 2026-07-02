@@ -4,6 +4,7 @@ import { VueDraggable } from "vue-draggable-plus"
 import type { Team } from "@/modules/teams/types"
 import type { Pot } from "@/engine"
 import { useTeamLookup } from "@/composables/useTeamLookup"
+import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
 
 const props = defineProps<{
   pots: Pot[]
@@ -15,7 +16,7 @@ const props = defineProps<{
 defineEmits<{ reset: [] }>()
 
 const { t } = useI18n()
-const { getTeamName, getTeamColor } = useTeamLookup(() => props.teams)
+const { teamById } = useTeamLookup(() => props.teams)
 </script>
 
 <template>
@@ -51,8 +52,7 @@ const { getTeamName, getTeamColor } = useTeamLookup(() => props.teams)
           :class="{ 'pe-pot-list--locked': readonly }"
         >
           <div v-for="id in pot.teamIds" :key="id" class="pe-team">
-            <span class="pe-dot" :style="{ background: getTeamColor(id) }" />
-            <span class="pe-name">{{ getTeamName(id) }}</span>
+            <TeamBadge :team="teamById(id)" :size="8" class="pe-name" />
           </div>
         </VueDraggable>
       </div>
@@ -150,17 +150,8 @@ const { getTeamName, getTeamColor } = useTeamLookup(() => props.teams)
   border-style: dashed;
   border-color: var(--accent);
 }
-.pe-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
 .pe-name {
   font-size: 12px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 @media (max-width: 500px) {

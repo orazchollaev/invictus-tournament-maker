@@ -1,18 +1,32 @@
 <script setup lang="ts">
 import { computed } from "vue"
-import type { Team } from "../types"
+import type { Team, TeamLike } from "../types"
 import TeamNameAuto from "./TeamNameAuto.vue"
 import FlagCircle from "./FlagCircle.vue"
 
-const props = defineProps<{ teamId: string | null; teams: Team[] }>()
-const team = computed(() => props.teams.find((t) => t.id === props.teamId))
+const props = withDefaults(
+  defineProps<{
+    teamId?: string | null
+    teams?: Team[]
+    team?: Team | TeamLike | null
+    size?: number
+    reverse?: boolean
+    fallback?: string
+  }>(),
+  { size: 14, reverse: false, fallback: "TBD" }
+)
+const team = computed(() => props.team ?? props.teams?.find((t) => t.id === props.teamId))
 </script>
 
 <template>
-  <span class="team-badge">
-    <FlagCircle v-if="team?.flag" :code="team.flag" :size="14" />
-    <span v-else class="dot" :style="{ background: team?.color ?? '#ccc' }" />
-    <TeamNameAuto :team="team" fallback="TBD" class="name" />
+  <span class="team-badge" :class="{ reverse }">
+    <FlagCircle v-if="team?.flag" :code="team.flag" :size="size" />
+    <span
+      v-else
+      class="dot"
+      :style="{ background: team?.color ?? '#ccc', width: size + 'px', height: size + 'px' }"
+    />
+    <TeamNameAuto :team="team" :fallback="fallback" class="name" />
   </span>
 </template>
 
@@ -23,6 +37,9 @@ const team = computed(() => props.teams.find((t) => t.id === props.teamId))
   gap: 5px;
   flex: 1;
   min-width: 0;
+}
+.team-badge.reverse {
+  flex-direction: row-reverse;
 }
 .dot {
   width: 14px;

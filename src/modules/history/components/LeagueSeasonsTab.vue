@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Trophy } from "@lucide/vue"
 import { useI18n } from "vue-i18n"
-import FlagCircle from "@/modules/teams/components/FlagCircle.vue"
+import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
 
 export interface LeagueSeasonEntry {
   season: number
@@ -33,9 +33,7 @@ const { t } = useI18n()
           </td>
           <td>
             <div v-if="entry.first" class="team-cell">
-              <FlagCircle v-if="entry.first.flag" :code="entry.first.flag" :size="14" />
-              <span v-else class="color-dot" :style="{ background: entry.first.color }" />
-              <strong>{{ entry.first.name }}</strong>
+              <strong><TeamBadge :team="entry.first" /></strong>
               <span class="pts-badge">
                 <Trophy :size="10" />
                 {{ entry.first.pts }} pts
@@ -45,18 +43,14 @@ const { t } = useI18n()
           </td>
           <td>
             <div v-if="entry.second" class="team-cell muted">
-              <FlagCircle v-if="entry.second.flag" :code="entry.second.flag" :size="14" />
-              <span v-else class="color-dot" :style="{ background: entry.second.color }" />
-              {{ entry.second.name }}
+              <TeamBadge :team="entry.second" />
               <span class="pts-label">{{ entry.second.pts }} pts</span>
             </div>
             <span v-else class="muted">—</span>
           </td>
           <td>
             <div v-if="entry.third" class="team-cell muted">
-              <FlagCircle v-if="entry.third.flag" :code="entry.third.flag" :size="14" />
-              <span v-else class="color-dot" :style="{ background: entry.third.color }" />
-              {{ entry.third.name }}
+              <TeamBadge :team="entry.third" />
               <span class="pts-label">{{ entry.third.pts }} pts</span>
             </div>
             <span v-else class="muted">—</span>

@@ -27,14 +27,6 @@
   margin-bottom: 0;
 }
 
-/* ── Dot ─────────────────────────────────────────────────────── */
-.ctp-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-
 /* ── Format selector ─────────────────────────────────────────── */
 .ctp-format-row {
   display: grid;

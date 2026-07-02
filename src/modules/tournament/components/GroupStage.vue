@@ -4,8 +4,7 @@ import type { Team } from "@/modules/teams/types"
 import type { Tournament, GroupMatch } from "@/modules/tournament/types"
 import AppModal from "@/components/AppModal.vue"
 import { useTeamLookup } from "@/composables/useTeamLookup"
-import TeamNameAuto from "@/modules/teams/components/TeamNameAuto.vue"
-import FlagCircle from "@/modules/teams/components/FlagCircle.vue"
+import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
 import { Lock, Shuffle, Check, ChevronDown } from "@lucide/vue"
 import { useI18n } from "vue-i18n"
 import { useGradualSim } from "../composables/useGradualSim"
@@ -313,19 +312,11 @@ function scoreAccentColor(match: GroupMatch): string {
               >
                 <td class="col-rank">{{ ri + 1 }}</td>
                 <td class="col-team">
-                  <span class="flex team-cell">
-                    <FlagCircle
-                      v-if="teamById(row.teamId)?.flag"
-                      :code="teamById(row.teamId)!.flag!"
-                      :size="14"
-                    />
-                    <span
-                      v-else
-                      class="dot"
-                      :style="{ background: teamById(row.teamId)?.color ?? '#888' }"
-                    />
-                    <TeamNameAuto :team="teamById(row.teamId)" :fallback="row.teamId" />
-                  </span>
+                  <TeamBadge
+                    :team="teamById(row.teamId)"
+                    :fallback="row.teamId"
+                    class="flex team-cell"
+                  />
                 </td>
                 <td>{{ row.played }}</td>
                 <td>{{ row.won }}</td>
@@ -376,19 +367,7 @@ function scoreAccentColor(match: GroupMatch): string {
             :key="match.id"
             class="gs-match"
           >
-            <span class="gs-team gs-team--home">
-              <TeamNameAuto :team="teamById(match.homeId)" />
-              <FlagCircle
-                v-if="teamById(match.homeId)?.flag"
-                :code="teamById(match.homeId)!.flag!"
-                :size="14"
-              />
-              <span
-                v-else
-                class="dot"
-                :style="{ background: teamById(match.homeId)?.color ?? '#888' }"
-              />
-            </span>
+            <TeamBadge :team="teamById(match.homeId)" reverse class="gs-team gs-team--home" />
 
             <button
               class="gs-score-btn"
@@ -402,19 +381,7 @@ function scoreAccentColor(match: GroupMatch): string {
               {{ matchResultStr(match) }}
             </button>
 
-            <span class="gs-team gs-team--away">
-              <FlagCircle
-                v-if="teamById(match.awayId)?.flag"
-                :code="teamById(match.awayId)!.flag!"
-                :size="14"
-              />
-              <span
-                v-else
-                class="dot"
-                :style="{ background: teamById(match.awayId)?.color ?? '#888' }"
-              />
-              <TeamNameAuto :team="teamById(match.awayId)" />
-            </span>
+            <TeamBadge :team="teamById(match.awayId)" class="gs-team gs-team--away" />
 
             <button v-if="!locked" class="btn-xs sim-btn" @click="emit('simMatch', gi, mi)">
               <Shuffle :size="13" />

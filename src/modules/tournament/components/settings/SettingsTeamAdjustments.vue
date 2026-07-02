@@ -3,6 +3,7 @@ import { ref } from "vue"
 import { ChevronDown, Lock } from "@lucide/vue"
 import type { Team } from "@/modules/teams/types"
 import { useI18n } from "vue-i18n"
+import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
 
 const { t } = useI18n()
 
@@ -49,7 +50,7 @@ const MAX = 30
 <template>
   <!-- Point Adjustments Accordion -->
   <div v-if="showPoints !== false" class="tsp-card tsp-accordion-card">
-    <button class="tsp-accordion-header" @click="pointsOpen = !pointsOpen">
+    <div class="tsp-accordion-header" @click="pointsOpen = !pointsOpen">
       <div class="tsp-accordion-title-row">
         <span class="tsp-section-title tsp-section-title--inline">
           {{ t("tournament.settingsPage.teamAdjustments.pointsTitle") }}
@@ -64,7 +65,7 @@ const MAX = 30
         class="tsp-accordion-chevron"
         :class="{ 'tsp-accordion-chevron--open': pointsOpen }"
       />
-    </button>
+    </div>
 
     <div v-if="pointsOpen" class="tsp-accordion-body">
       <div v-if="hasAnyResults" class="tsp-locked-banner">
@@ -77,8 +78,7 @@ const MAX = 30
         </div>
         <div class="tsp-adj-list">
           <div v-for="team in teams" :key="team.id" class="tsp-adj-row">
-            <span class="tsp-adj-dot" :style="{ background: team.color }" />
-            <span class="tsp-adj-name">{{ team.name }}</span>
+            <TeamBadge :team="team" class="tsp-adj-name" />
             <div class="tsp-adj-stepper">
               <button
                 :disabled="getPointAdj(team.id) <= MIN"
@@ -110,7 +110,7 @@ const MAX = 30
 
   <!-- Power Adjustments Accordion -->
   <div class="tsp-card tsp-accordion-card">
-    <button class="tsp-accordion-header" @click="powerOpen = !powerOpen">
+    <div class="tsp-accordion-header" @click="powerOpen = !powerOpen">
       <div class="tsp-accordion-title-row">
         <span class="tsp-section-title tsp-section-title--inline">
           {{ t("tournament.settingsPage.teamAdjustments.powerTitle") }}
@@ -125,7 +125,7 @@ const MAX = 30
         class="tsp-accordion-chevron"
         :class="{ 'tsp-accordion-chevron--open': powerOpen }"
       />
-    </button>
+    </div>
 
     <div v-if="powerOpen" class="tsp-accordion-body">
       <div v-if="hasAnyResults" class="tsp-locked-banner">
@@ -138,8 +138,7 @@ const MAX = 30
         </div>
         <div class="tsp-adj-list">
           <div v-for="team in teams" :key="team.id" class="tsp-adj-row">
-            <span class="tsp-adj-dot" :style="{ background: team.color }" />
-            <span class="tsp-adj-name">{{ team.name }}</span>
+            <TeamBadge :team="team" class="tsp-adj-name" />
             <div class="tsp-adj-stepper">
               <button
                 :disabled="getPowerAdj(team.id) <= MIN"
@@ -223,31 +222,32 @@ const MAX = 30
 .tsp-adj-list {
   display: flex;
   flex-direction: column;
-  gap: 4px;
   margin-top: 10px;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius);
+  background: var(--surface);
+  overflow: hidden;
 }
 
 .tsp-adj-row {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 5px 0;
+  padding: 7px 10px;
+  border-bottom: 1px solid var(--border-light);
+  transition: background 0.1s;
 }
-
-.tsp-adj-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  flex-shrink: 0;
+.tsp-adj-row:last-child {
+  border-bottom: none;
+}
+.tsp-adj-row:hover {
+  background: color-mix(in srgb, var(--accent) 5%, var(--surface));
 }
 
 .tsp-adj-name {
   flex: 1;
   font-size: 13px;
   color: var(--text);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .tsp-adj-stepper {

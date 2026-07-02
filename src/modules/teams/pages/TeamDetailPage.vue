@@ -9,6 +9,7 @@ import type { Match } from "@/modules/tournament/types"
 import { Trophy, ArrowLeft } from "@lucide/vue"
 import SeasonChart from "../components/SeasonChart.vue"
 import FlagCircle from "../components/FlagCircle.vue"
+import TeamBadge from "../components/TeamBadge.vue"
 import { useI18n } from "vue-i18n"
 
 const route = useRoute()
@@ -16,7 +17,7 @@ const router = useRouter()
 const { t } = useI18n()
 const teamsStore = useTeamsStore()
 const tournamentStore = useTournamentStore()
-const { getTeamName, getTeamColor } = useTeamLookup(() => teamsStore.teams)
+const { getTeamName } = useTeamLookup(() => teamsStore.teams)
 
 const teamId = computed(() => route.params.id as string)
 const team = computed(() => teamsStore.teams.find((t) => t.id === teamId.value))
@@ -547,17 +548,7 @@ const seasonStats = computed(() =>
 
               <span class="vs-label">vs</span>
 
-              <FlagCircle
-                v-if="teamsStore.teams.find((t) => t.id === m.opponentId)?.flag"
-                :code="teamsStore.teams.find((t) => t.id === m.opponentId)!.flag!"
-                :size="14"
-              />
-              <span
-                v-else
-                class="opponent-dot"
-                :style="{ background: getTeamColor(m.opponentId) }"
-              />
-              <span class="match-opponent">{{ getTeamName(m.opponentId) }}</span>
+              <TeamBadge :team-id="m.opponentId" :teams="teamsStore.teams" class="match-opponent" />
 
               <!-- Round + phase chip -->
               <span class="match-round">

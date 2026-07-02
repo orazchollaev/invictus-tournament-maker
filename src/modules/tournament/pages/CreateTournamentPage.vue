@@ -292,14 +292,14 @@ function doCreate(orderedIds?: string[]) {
       <!-- Team Adjustments (collapsible, advanced) -->
       <template v-if="selected.length >= 2">
         <div class="ctp-adj-wrap">
-          <button class="ctp-collapse-btn" @click="showAdjustments = !showAdjustments">
+          <div class="ctp-collapse-btn" @click="showAdjustments = !showAdjustments">
             <span>{{ $t("tournament.settingsPage.teamAdjustments.title") }}</span>
             <ChevronDown
               :size="14"
               class="ctp-collapse-icon"
               :class="{ 'ctp-collapse-icon--open': showAdjustments }"
             />
-          </button>
+          </div>
           <div v-if="showAdjustments">
             <SettingsTeamAdjustments
               v-model:team-point-adjustments="teamPointAdjustments"

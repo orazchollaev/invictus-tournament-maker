@@ -1,6 +1,6 @@
 import { toValue } from "vue"
 import type { MaybeRefOrGetter } from "vue"
-import type { Team } from "@/modules/teams/types"
+import type { Team, TeamLike } from "@/modules/teams/types"
 
 export function autoAbbr(name: string): string {
   const words = name.trim().split(/\s+/)
@@ -13,7 +13,7 @@ export function autoAbbr(name: string): string {
   return `${first} ${rest}.`.slice(0, 7)
 }
 
-export function teamAbbr(team: Team): string {
+export function teamAbbr(team: TeamLike): string {
   return team.abbr?.trim() || autoAbbr(team.name)
 }
 

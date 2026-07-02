@@ -2,7 +2,7 @@
 import { ref, computed } from "vue"
 import type { Team } from "@/modules/teams/types"
 import type { Tournament } from "@/modules/tournament/types"
-import FlagCircle from "@/modules/teams/components/FlagCircle.vue"
+import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
 import { getWinnerId, getLoserId } from "@/engine"
 
 const props = defineProps<{ teams: Team[]; tournament: Tournament }>()
@@ -400,11 +400,7 @@ function sortIcon(key: SortKey): string {
             </span>
           </td>
           <td class="col-team">
-            <span class="team-cell">
-              <FlagCircle v-if="row.team.flag" :code="row.team.flag" :size="14" />
-              <span v-else class="dot" :style="{ background: row.team.color }" />
-              {{ row.team.name }}
-            </span>
+            <TeamBadge :team="row.team" class="team-cell" />
           </td>
           <td v-if="isGroupFormat" class="col-group">
             <span class="group-badge">{{ row.groupName ?? "—" }}</span>

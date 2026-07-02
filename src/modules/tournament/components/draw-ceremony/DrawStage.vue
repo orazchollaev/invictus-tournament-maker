@@ -3,6 +3,7 @@ import { computed } from "vue"
 import type { Team } from "@/modules/teams/types"
 import type { DrawStep } from "@/engine"
 import { useTeamLookup } from "@/composables/useTeamLookup"
+import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
 
 const props = defineProps<{
   revealed: DrawStep[]
@@ -11,7 +12,7 @@ const props = defineProps<{
   teams: Team[]
 }>()
 
-const { getTeamName, getTeamColor } = useTeamLookup(() => props.teams)
+const { teamById } = useTeamLookup(() => props.teams)
 
 // Full board skeleton, built once from the whole sequence so the layout never
 // reflows: every slot and every row exists from the start; teams only fill in.
@@ -41,10 +42,7 @@ function isRevealed(step: DrawStep) {
       <Transition name="ds-capsule" appear :duration="{ enter: 760, leave: 260 }">
         <div v-if="current" :key="current.teamId" class="ds-capsule">
           <div class="ds-paper">
-            <div class="ds-paper-face">
-              <span class="ds-paper-dot" :style="{ background: getTeamColor(current.teamId) }" />
-              <span class="ds-paper-name">{{ getTeamName(current.teamId) }}</span>
-            </div>
+            <TeamBadge :team="teamById(current.teamId)" :size="12" class="ds-paper-face" />
           </div>
           <div class="ds-target">{{ current.targetLabel }}</div>
         </div>
@@ -58,10 +56,12 @@ function isRevealed(step: DrawStep) {
         <div class="ds-slot-rows">
           <div v-for="(step, i) in slot.steps" :key="i" class="ds-row">
             <Transition name="ds-pop">
-              <div v-if="isRevealed(step)" class="ds-slot-team">
-                <span class="ds-dot" :style="{ background: getTeamColor(step.teamId) }" />
-                <span class="ds-team-name">{{ getTeamName(step.teamId) }}</span>
-              </div>
+              <TeamBadge
+                v-if="isRevealed(step)"
+                :team="teamById(step.teamId)"
+                :size="8"
+                class="ds-slot-team"
+              />
               <span v-else class="ds-row-empty" />
             </Transition>
           </div>
@@ -111,17 +111,9 @@ function isRevealed(step: DrawStep) {
   transform-origin: top center;
 }
 .ds-paper-face {
-  display: flex;
-  align-items: center;
   gap: 9px;
 }
-.ds-paper-dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-.ds-paper-name {
+.ds-paper-face :deep(.name) {
   font-size: 18px;
   font-weight: 700;
   letter-spacing: 0.01em;
@@ -234,21 +226,7 @@ function isRevealed(step: DrawStep) {
 .ds-slot-team {
   position: absolute;
   inset: 0;
-  display: flex;
-  align-items: center;
   gap: 6px;
-}
-.ds-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-.ds-team-name {
-  font-size: 12px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 /* team drops into its (already-sized) slot — no layout shift */

@@ -4,7 +4,7 @@ import { useRouter } from "vue-router"
 import { useTeamsStore } from "@/modules/teams/store"
 import { useTournamentStore } from "@/modules/tournament/store"
 import type { Tournament } from "../types"
-import FlagCircle from "@/modules/teams/components/FlagCircle.vue"
+import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
 import { Trophy, X, Search, Plus } from "@lucide/vue"
 import { showConfirm } from "@/composables/useDialog"
 import { useI18n } from "vue-i18n"
@@ -14,14 +14,8 @@ const router = useRouter()
 const teamsStore = useTeamsStore()
 const store = useTournamentStore()
 
-function winnerName(tour: Tournament) {
-  return teamsStore.teams.find((tm) => tm.id === tour.winnerId)?.name ?? "?"
-}
 function winnerColor(tour: Tournament) {
   return teamsStore.teams.find((tm) => tm.id === tour.winnerId)?.color ?? "#888"
-}
-function winnerFlag(tour: Tournament) {
-  return teamsStore.teams.find((tm) => tm.id === tour.winnerId)?.flag
 }
 
 const query = ref("")
@@ -110,9 +104,7 @@ async function deleteTournament(id: string) {
               :style="{ '--team-color': winnerColor(tour) }"
             >
               <Trophy :size="11" />
-              <FlagCircle v-if="winnerFlag(tour)" :code="winnerFlag(tour)!" :size="14" />
-              <span v-else class="winner-dot" />
-              {{ winnerName(tour) }}
+              <TeamBadge :team="teamsStore.teams.find((tm) => tm.id === tour.winnerId)" />
             </span>
             <span v-else class="status-live">{{ t("tournaments.live") }}</span>
           </div>

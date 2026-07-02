@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n"
-import FlagCircle from "@/modules/teams/components/FlagCircle.vue"
+import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
 
 export interface AllTimeRow {
   teamId: string
@@ -57,9 +57,7 @@ const { t } = useI18n()
           >
             <td class="col-rank">{{ i + 1 }}</td>
             <td class="col-team">
-              <FlagCircle v-if="row.flag" :code="row.flag" :size="14" />
-              <span v-else class="at-dot" :style="{ background: row.color }" />
-              {{ row.name }}
+              <TeamBadge :team="row" :size="7" />
             </td>
             <td class="muted">{{ row.seasons }}</td>
             <td>
