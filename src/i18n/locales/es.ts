@@ -111,6 +111,8 @@ export default {
     needTeamsTitle: "Añade al menos 2 equipos primero",
     needTeamsNotice: "Añade al menos 2 equipos en la pestaña Equipos primero.",
     searchPlaceholder: "Buscar torneos…",
+    viewList: "Vista de lista",
+    viewGrid: "Vista de cuadrícula",
     empty: "Aún no hay torneos. Haz clic en {action} para empezar.",
     noMatch: 'No hay torneos que coincidan con "{query}".',
     live: "En curso",

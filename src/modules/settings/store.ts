@@ -10,6 +10,7 @@ export type Theme = "light" | "dark" | "worldcup2026"
 export type DrawType = "random" | "seeded" | "manual"
 export type BracketStyle = "double-sided" | "classic" | "auto"
 export type BracketQuality = "high" | "low"
+export type TournamentListView = "list" | "grid"
 
 export const useSettingsStore = defineStore("settings", () => {
   const theme = ref<Theme>("light")
@@ -36,6 +37,8 @@ export const useSettingsStore = defineStore("settings", () => {
   const drawPoints = ref(1)
   const lossPoints = ref(0)
   const gradualReveal = ref(true)
+  const tournamentListView = ref<TournamentListView>("list")
+  const teamsListView = ref<TournamentListView>("list")
 
   watch(
     theme,
@@ -84,6 +87,8 @@ export const useSettingsStore = defineStore("settings", () => {
     drawPoints.value = 1
     lossPoints.value = 0
     gradualReveal.value = true
+    tournamentListView.value = "list"
+    teamsListView.value = "list"
   }
 
   return {
@@ -111,6 +116,8 @@ export const useSettingsStore = defineStore("settings", () => {
     drawPoints,
     lossPoints,
     gradualReveal,
+    tournamentListView,
+    teamsListView,
     resetAll,
   }
 })

@@ -3,9 +3,11 @@ import { ref, computed } from "vue"
 import { useRouter } from "vue-router"
 import { useTeamsStore } from "@/modules/teams/store"
 import { useTournamentStore } from "@/modules/tournament/store"
+import { useSettingsStore } from "@/modules/settings/store"
 import type { Tournament } from "../types"
 import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
-import { Trophy, X, Search, Plus } from "@lucide/vue"
+import BtnGroup from "@/components/BtnGroup.vue"
+import { Trophy, X, Search, Plus, List, Grid3x3 } from "@lucide/vue"
 import { showConfirm } from "@/composables/useDialog"
 import { useI18n } from "vue-i18n"
 
@@ -13,6 +15,12 @@ const { t } = useI18n()
 const router = useRouter()
 const teamsStore = useTeamsStore()
 const store = useTournamentStore()
+const settings = useSettingsStore()
+
+const viewOptions = computed(() => [
+  { value: "list", label: t("tournaments.viewList"), icon: List },
+  { value: "grid", label: t("tournaments.viewGrid"), icon: Grid3x3 },
+])
 
 function winnerColor(tour: Tournament) {
   return teamsStore.teams.find((tm) => tm.id === tour.winnerId)?.color ?? "#888"
@@ -74,26 +82,29 @@ async function deleteTournament(id: string) {
           :placeholder="t('tournaments.searchPlaceholder')"
         />
       </div>
+      <BtnGroup v-model="settings.tournamentListView" :options="viewOptions" />
     </div>
 
     <div v-if="store.tournaments.length" class="t-list">
       <p v-if="!filtered.length" class="empty-text">{{ t("tournaments.noMatch", { query }) }}</p>
-      <TransitionGroup name="list" tag="div" class="t-list-inner">
+      <TransitionGroup
+        name="list"
+        tag="div"
+        :class="settings.tournamentListView === 'grid' ? 't-grid' : 't-list-inner'"
+      >
         <div
           v-for="(tour, i) in filtered"
           :key="tour.id"
-          class="t-row"
+          :class="settings.tournamentListView === 'grid' ? 't-card' : 't-row'"
           :style="{ '--i': i }"
           @click="router.push(`/tournaments/${tour.id}`)"
         >
           <div class="t-body">
-            <div class="t-name-row">
-              <span class="t-name">{{ tour.name }}</span>
-              <span class="t-season-tag">S{{ tour.season }}</span>
-            </div>
+            <span class="t-name">{{ tour.name }}</span>
             <div class="t-meta-row">
-              <span class="format-tag">{{ formatLabel(tour.format) }}</span>
-              <span class="t-dot">{{ t("common.teams", { n: tour.teamIds.length }) }}</span>
+              <span class="t-meta-text">S{{ tour.season }}</span>
+              <span class="t-meta-text format-text">{{ formatLabel(tour.format) }}</span>
+              <span class="t-meta-text">{{ t("common.teams", { n: tour.teamIds.length }) }}</span>
             </div>
           </div>
 
@@ -145,21 +156,91 @@ async function deleteTournament(id: string) {
   cursor: pointer;
 }
 
-.t-name-row {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  min-width: 0;
+.t-meta-row {
+  gap: 0;
 }
 
-.t-season-tag {
+.t-meta-text {
   font-size: 11px;
   color: var(--text-muted);
-  background: var(--bg);
+}
+
+.t-meta-text + .t-meta-text::before {
+  content: "·";
+  margin: 0 6px;
+  opacity: 0.5;
+}
+
+@media (max-width: 640px) {
+  .format-text {
+    display: none;
+  }
+}
+
+.t-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--sp-3);
+  position: relative;
+}
+
+@media (min-width: 641px) {
+  .t-grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  }
+}
+
+.t-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  padding: var(--sp-3);
+  padding-right: 40px;
+  background: var(--surface);
   border: 1px solid var(--border-light);
-  border-radius: var(--radius);
-  padding: 1px 5px;
-  flex-shrink: 0;
+  border-left: 3px solid transparent;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  min-width: 0;
+  cursor: pointer;
+  transition:
+    border-color var(--dur-fast),
+    box-shadow var(--dur),
+    transform var(--dur),
+    background var(--dur-fast);
+}
+
+.t-card:hover {
+  border-color: var(--border);
+  border-left-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 4%, var(--surface));
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.t-card .t-body {
+  gap: 6px;
+}
+
+.t-card .t-meta-row {
+  flex-wrap: wrap;
+}
+
+.t-card .t-status {
+  margin-top: 2px;
+}
+
+.t-card .del-btn {
+  position: absolute;
+  top: var(--sp-2);
+  right: var(--sp-2);
+}
+
+@media (max-width: 640px) {
+  .t-card {
+    padding: 10px;
+  }
 }
 
 .t-status {
@@ -172,18 +253,6 @@ async function deleteTournament(id: string) {
   border-left: 2px solid var(--team-color, var(--accent));
   padding-left: 6px;
   background: color-mix(in srgb, var(--team-color, var(--border)) 8%, var(--bg));
-}
-
-.format-tag {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: var(--accent);
-  background: color-mix(in srgb, var(--accent) 10%, transparent);
-  border-radius: 99px;
-  padding: 2px 9px;
-  flex-shrink: 0;
 }
 
 .del-btn {

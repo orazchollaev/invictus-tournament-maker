@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import type { Component } from "vue"
+
 defineProps<{
-  options: { value: string; label: string }[]
+  options: { value: string; label: string; icon?: Component }[]
   modelValue: string
 }>()
 
@@ -13,10 +15,13 @@ defineEmits<{ "update:modelValue": [value: string] }>()
       v-for="opt in options"
       :key="opt.value"
       type="button"
-      :class="{ active: modelValue === opt.value }"
+      :class="{ active: modelValue === opt.value, 'icon-only': opt.icon }"
+      :title="opt.icon ? opt.label : undefined"
+      :aria-label="opt.icon ? opt.label : undefined"
       @click="$emit('update:modelValue', opt.value)"
     >
-      {{ opt.label }}
+      <component :is="opt.icon" v-if="opt.icon" :size="14" />
+      <template v-else>{{ opt.label }}</template>
     </button>
   </div>
 </template>
@@ -39,6 +44,8 @@ defineEmits<{ "update:modelValue": [value: string] }>()
   font-weight: 500;
   padding: 5px 12px;
   color: var(--text-muted);
+  display: flex;
+  align-items: center;
   transition:
     color var(--dur-fast) var(--ease),
     background var(--dur-fast) var(--ease),
@@ -56,6 +63,12 @@ defineEmits<{ "update:modelValue": [value: string] }>()
 }
 .btn-group button.active:hover {
   background: var(--accent-hover);
+}
+.btn-group button.icon-only {
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  justify-content: center;
 }
 
 @media (prefers-reduced-motion: reduce) {

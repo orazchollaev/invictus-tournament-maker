@@ -110,6 +110,8 @@ export default {
     needTeamsTitle: "Add at least 2 teams first",
     needTeamsNotice: "Add at least 2 teams on the Teams tab first.",
     searchPlaceholder: "Search tournaments…",
+    viewList: "List view",
+    viewGrid: "Grid view",
     empty: "No tournaments yet. Click {action} to get started.",
     noMatch: 'No tournaments match "{query}".',
     live: "Live",

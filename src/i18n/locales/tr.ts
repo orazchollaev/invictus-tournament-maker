@@ -112,6 +112,8 @@ export default {
     needTeamsTitle: "Önce en az 2 takım ekleyin",
     needTeamsNotice: "Önce Takımlar sekmesinde en az 2 takım ekleyin.",
     searchPlaceholder: "Turnuva ara…",
+    viewList: "Liste görünümü",
+    viewGrid: "Izgara görünümü",
     empty: "Henüz turnuva yok. Başlamak için {action} tıklayın.",
     noMatch: '"{query}" ile eşleşen turnuva yok.',
     live: "Devam Ediyor",

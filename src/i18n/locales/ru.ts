@@ -112,6 +112,8 @@ export default {
     needTeamsTitle: "Сначала добавьте минимум 2 команды",
     needTeamsNotice: "Сначала добавьте минимум 2 команды во вкладке «Команды».",
     searchPlaceholder: "Поиск турниров…",
+    viewList: "Список",
+    viewGrid: "Сетка",
     empty: "Турниров пока нет. Нажмите {action}, чтобы начать.",
     noMatch: 'Турниры по запросу "{query}" не найдены.',
     live: "Активный",

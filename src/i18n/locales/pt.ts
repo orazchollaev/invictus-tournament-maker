@@ -110,6 +110,8 @@ export default {
     needTeamsTitle: "Adicione pelo menos 2 times primeiro",
     needTeamsNotice: "Adicione pelo menos 2 times na aba Times primeiro.",
     searchPlaceholder: "Buscar torneios…",
+    viewList: "Visualização em lista",
+    viewGrid: "Visualização em grade",
     empty: "Nenhum torneio ainda. Clique em {action} para começar.",
     noMatch: 'Nenhum torneio corresponde a "{query}".',
     live: "Em andamento",

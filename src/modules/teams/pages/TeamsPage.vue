@@ -2,19 +2,27 @@
 import { ref, computed } from "vue"
 import { useRouter } from "vue-router"
 import { useTeamsStore } from "../store"
+import { useSettingsStore } from "@/modules/settings/store"
 import TeamFormModal from "../components/TeamFormModal.vue"
 import type { Team } from "../types"
-import { X, Pencil, Search, Plus, Users } from "@lucide/vue"
+import BtnGroup from "@/components/BtnGroup.vue"
+import { X, Pencil, Search, Plus, Users, List, Grid3x3 } from "@lucide/vue"
 import { MAX_TEAMS } from "@/constants"
 import { useI18n } from "vue-i18n"
 
 const { t } = useI18n()
 const store = useTeamsStore()
+const settings = useSettingsStore()
 const router = useRouter()
 
 const showAddModal = ref(false)
 const editingTeam = ref<Team | null>(null)
 const query = ref("")
+
+const viewOptions = computed(() => [
+  { value: "list", label: t("tournaments.viewList"), icon: List },
+  { value: "grid", label: t("tournaments.viewGrid"), icon: Grid3x3 },
+])
 
 const filtered = computed(() => {
   const q = query.value.trim().toLowerCase()
@@ -46,29 +54,32 @@ const filtered = computed(() => {
         <Search :size="14" class="search-icon" />
         <input v-model="query" class="search-input" :placeholder="t('teams.searchPlaceholder')" />
       </div>
+      <BtnGroup v-model="settings.teamsListView" :options="viewOptions" />
     </div>
 
     <div v-if="store.teams.length" class="t-list">
       <p v-if="!filtered.length" class="empty-text">{{ t("teams.noMatch", { query }) }}</p>
-      <div
-        v-for="team in filtered"
-        :key="team.id"
-        class="t-row"
-        :style="{ '--team-color': team.color }"
-        @click="router.push(`/teams/${team.id}`)"
-      >
-        <div class="t-body">
-          <span class="t-name">{{ team.name }}</span>
-          <span v-if="team.abbr" class="t-abbr">{{ team.abbr }}</span>
-        </div>
-        <span class="t-power">{{ team.power }}</span>
-        <div class="t-actions">
-          <button class="sm icon-btn" :title="t('common.edit')" @click.stop="editingTeam = team">
-            <Pencil :size="13" />
-          </button>
-          <button class="danger sm icon-btn" @click.stop="store.remove(team.id)">
-            <X :size="13" />
-          </button>
+      <div :class="settings.teamsListView === 'grid' ? 't-grid' : 't-list-inner'">
+        <div
+          v-for="team in filtered"
+          :key="team.id"
+          :class="settings.teamsListView === 'grid' ? 't-card' : 't-row'"
+          :style="{ '--team-color': team.color }"
+          @click="router.push(`/teams/${team.id}`)"
+        >
+          <div class="t-body">
+            <span class="t-name">{{ team.name }}</span>
+            <span v-if="team.abbr" class="t-abbr">{{ team.abbr }}</span>
+          </div>
+          <span class="t-power">{{ team.power }}</span>
+          <div class="t-actions">
+            <button class="sm icon-btn" :title="t('common.edit')" @click.stop="editingTeam = team">
+              <Pencil :size="13" />
+            </button>
+            <button class="danger sm icon-btn" @click.stop="store.remove(team.id)">
+              <X :size="13" />
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -151,5 +162,62 @@ const filtered = computed(() => {
     flex: 1;
     min-width: 0;
   }
+}
+
+.t-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--sp-3);
+}
+
+@media (min-width: 641px) {
+  .t-grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  }
+}
+
+.t-grid .t-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  padding: var(--sp-3);
+  padding-right: 68px;
+  background: var(--surface);
+  border: 1px solid var(--border-light);
+  border-left: 3px solid var(--team-color, var(--border-light));
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  min-width: 0;
+  cursor: pointer;
+  transition:
+    border-color var(--dur-fast),
+    box-shadow var(--dur),
+    transform var(--dur),
+    background var(--dur-fast);
+}
+
+.t-grid .t-card:hover {
+  border-left-color: var(--team-color, var(--accent));
+  background: color-mix(in srgb, var(--team-color, var(--accent)) 6%, var(--surface));
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.t-grid .t-card .t-body {
+  flex-direction: row;
+  align-items: center;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+
+.t-grid .t-card .t-power {
+  align-self: flex-start;
+}
+
+.t-grid .t-card .t-actions {
+  position: absolute;
+  top: var(--sp-2);
+  right: var(--sp-2);
 }
 </style>
