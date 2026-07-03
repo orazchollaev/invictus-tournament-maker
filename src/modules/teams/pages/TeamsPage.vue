@@ -4,7 +4,7 @@ import { useRouter } from "vue-router"
 import { useTeamsStore } from "../store"
 import { useSettingsStore } from "@/modules/settings/store"
 import TeamFormModal from "../components/TeamFormModal.vue"
-import FlagCircle from "../components/FlagCircle.vue"
+import TeamBadge from "../components/TeamBadge.vue"
 import type { Team } from "../types"
 import BtnGroup from "@/components/BtnGroup.vue"
 import { X, Pencil, Search, Plus, Users, List, Grid3x3 } from "@lucide/vue"
@@ -69,9 +69,7 @@ const filtered = computed(() => {
           @click="router.push(`/teams/${team.id}`)"
         >
           <div class="t-body">
-            <FlagCircle v-if="team.flag" :code="team.flag" :size="18" class="t-flag" />
-            <span class="t-name">{{ team.name }}</span>
-            <span v-if="team.abbr" class="t-abbr">{{ team.abbr }}</span>
+            <TeamBadge :team="team" :size="18" />
           </div>
           <span class="t-power">{{ team.power }}</span>
           <div class="t-actions">
@@ -135,18 +133,6 @@ const filtered = computed(() => {
   flex-direction: row;
   align-items: center;
   gap: 7px;
-}
-.t-abbr {
-  font-size: 11px;
-  color: var(--text-muted);
-  background: var(--bg);
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius);
-  padding: 1px 5px;
-  flex-shrink: 0;
-}
-.t-flag {
-  flex-shrink: 0;
 }
 .t-power {
   font-size: 11px;
