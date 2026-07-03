@@ -4,6 +4,7 @@ import { useRouter } from "vue-router"
 import { useTeamsStore } from "../store"
 import { useSettingsStore } from "@/modules/settings/store"
 import TeamFormModal from "../components/TeamFormModal.vue"
+import FlagCircle from "../components/FlagCircle.vue"
 import type { Team } from "../types"
 import BtnGroup from "@/components/BtnGroup.vue"
 import { X, Pencil, Search, Plus, Users, List, Grid3x3 } from "@lucide/vue"
@@ -68,6 +69,7 @@ const filtered = computed(() => {
           @click="router.push(`/teams/${team.id}`)"
         >
           <div class="t-body">
+            <FlagCircle v-if="team.flag" :code="team.flag" :size="18" class="t-flag" />
             <span class="t-name">{{ team.name }}</span>
             <span v-if="team.abbr" class="t-abbr">{{ team.abbr }}</span>
           </div>
@@ -141,6 +143,9 @@ const filtered = computed(() => {
   border: 1px solid var(--border-light);
   border-radius: var(--radius);
   padding: 1px 5px;
+  flex-shrink: 0;
+}
+.t-flag {
   flex-shrink: 0;
 }
 .t-power {
