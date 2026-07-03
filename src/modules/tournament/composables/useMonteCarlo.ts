@@ -1,37 +1,64 @@
 import { ref } from "vue"
 import type { Tournament } from "../types"
 import type { Team } from "@/modules/teams/types"
-import { runMonteCarloSimulations, type MonteCarloResult } from "@/engine/monteCarlo"
+import type { MonteCarloResult } from "@/engine/monteCarlo"
 
 export function useMonteCarlo() {
   const isRunning = ref(false)
   const progress = ref(0)
   const result = ref<MonteCarloResult | null>(null)
-  const cancelSignal = ref({ cancelled: false })
+  let worker: Worker | null = null
 
-  async function run(tournament: Tournament, teams: Team[], n = 10_000) {
+  function run(
+    tournament: Tournament,
+    teams: Team[],
+    n = 10_000
+  ): Promise<MonteCarloResult | null> {
     isRunning.value = true
     progress.value = 0
     result.value = null
-    cancelSignal.value = { cancelled: false }
 
-    const res = await runMonteCarloSimulations(
-      tournament,
-      teams,
-      n,
-      (completed) => {
-        progress.value = Math.round((completed / n) * 100)
-      },
-      cancelSignal.value
-    )
+    worker?.terminate()
+    worker = new Worker(new URL("../../../engine/monteCarlo.worker.ts", import.meta.url), {
+      type: "module",
+    })
+    const activeWorker = worker
 
-    result.value = res
-    isRunning.value = false
-    return res
+    return new Promise((resolve) => {
+      activeWorker.onmessage = (event) => {
+        const msg = event.data
+        if (msg.type === "progress") {
+          progress.value = Math.round((msg.completed / n) * 100)
+        } else if (msg.type === "result") {
+          result.value = msg.result
+          isRunning.value = false
+          activeWorker.terminate()
+          if (worker === activeWorker) worker = null
+          resolve(msg.result)
+        }
+      }
+
+      activeWorker.onerror = () => {
+        isRunning.value = false
+        activeWorker.terminate()
+        if (worker === activeWorker) worker = null
+        resolve(null)
+      }
+
+      // tournament/teams are Vue reactive proxies — postMessage's structured clone
+      // can't clone them directly, so strip reactivity via a plain JSON round-trip.
+      const plainTournament = JSON.parse(JSON.stringify(tournament)) as Tournament
+      const plainTeams = JSON.parse(JSON.stringify(teams)) as Team[]
+      activeWorker.postMessage({ type: "run", tournament: plainTournament, teams: plainTeams, n })
+    })
   }
 
   function cancel() {
-    cancelSignal.value.cancelled = true
+    if (worker) {
+      worker.postMessage({ type: "cancel" })
+      worker.terminate()
+      worker = null
+    }
     isRunning.value = false
   }
 

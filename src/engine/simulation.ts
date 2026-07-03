@@ -67,13 +67,25 @@ function poisson(lambda: number): number {
   return Math.min(k - 1, 6)
 }
 
+const teamLookupCache = new WeakMap<Team[], Map<string, Team>>()
+
+function getTeamLookup(teams: Team[]): Map<string, Team> {
+  let lookup = teamLookupCache.get(teams)
+  if (!lookup || lookup.size !== teams.length) {
+    lookup = new Map(teams.map((t) => [t.id, t]))
+    teamLookupCache.set(teams, lookup)
+  }
+  return lookup
+}
+
 export function simulateMatch(
   match: Match | GroupMatch,
   teams: Team[],
   formAdjustments?: Map<string, number>
 ): { home: number; away: number } {
-  const homeTeam = teams.find((t) => t.id === match.homeId)
-  const awayTeam = teams.find((t) => t.id === match.awayId)
+  const lookup = getTeamLookup(teams)
+  const homeTeam = lookup.get(match.homeId as string)
+  const awayTeam = lookup.get(match.awayId as string)
 
   const baseHp = homeTeam?.power ?? 50
   const baseAp = awayTeam?.power ?? 50
@@ -115,8 +127,9 @@ export function simulatePenaltyShootout(
   match: Match | GroupMatch,
   teams: Team[]
 ): { penHome: number; penAway: number } {
-  const homeTeam = teams.find((t) => t.id === match.homeId)
-  const awayTeam = teams.find((t) => t.id === match.awayId)
+  const lookup = getTeamLookup(teams)
+  const homeTeam = lookup.get(match.homeId as string)
+  const awayTeam = lookup.get(match.awayId as string)
   const hp = homeTeam?.power ?? 50
   const ap = awayTeam?.power ?? 50
 
