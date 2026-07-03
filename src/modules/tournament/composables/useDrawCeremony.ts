@@ -40,6 +40,8 @@ export function useDrawCeremony(ctx: CeremonyContext, initialPots?: Pot[], fixed
   const revealed = ref<DrawStep[]>([])
   const current = ref<DrawStep | null>(null)
 
+  const paused = ref(false)
+
   const localTeamCount = ref(ctx.teams.length)
   const errors = computed(() => (locked ? [] : validatePots(pots.value, localTeamCount.value)))
   const canStart = computed(() => locked || errors.value.length === 0)
@@ -48,11 +50,49 @@ export function useDrawCeremony(ctx: CeremonyContext, initialPots?: Pot[], fixed
   )
 
   let timer: ReturnType<typeof setTimeout> | null = null
+  // While paused, the pending step's callback + remaining delay are kept here
+  // so resume() can pick up exactly where the reveal left off.
+  let pendingFn: (() => void) | null = null
+  let pendingRemaining = 0
+  let timerStart = 0
 
   function clearTimer() {
     if (timer) {
       clearTimeout(timer)
       timer = null
+    }
+    pendingFn = null
+  }
+
+  function schedule(fn: () => void, ms: number) {
+    if (paused.value) {
+      pendingFn = fn
+      pendingRemaining = ms
+      return
+    }
+    timerStart = Date.now()
+    pendingFn = fn
+    pendingRemaining = ms
+    timer = setTimeout(fn, ms)
+  }
+
+  function pause() {
+    if (paused.value || phase.value !== "drawing") return
+    paused.value = true
+    if (timer) {
+      clearTimeout(timer)
+      timer = null
+      pendingRemaining = Math.max(0, pendingRemaining - (Date.now() - timerStart))
+    }
+  }
+
+  function resume() {
+    if (!paused.value) return
+    paused.value = false
+    if (pendingFn) {
+      const fn = pendingFn
+      timerStart = Date.now()
+      timer = setTimeout(fn, pendingRemaining)
     }
   }
 
@@ -90,6 +130,7 @@ export function useDrawCeremony(ctx: CeremonyContext, initialPots?: Pot[], fixed
     orderedIds.value = p.orderedIds
     revealed.value = []
     current.value = null
+    paused.value = false
     phase.value = "drawing"
     tick(0)
   }
@@ -101,10 +142,10 @@ export function useDrawCeremony(ctx: CeremonyContext, initialPots?: Pot[], fixed
     }
     current.value = sequence.value[i]
     // paper unfolds, then drops onto the board, then a short gap before next
-    timer = setTimeout(() => {
+    schedule(() => {
       revealed.value = [...revealed.value, sequence.value[i]]
       current.value = null
-      timer = setTimeout(() => tick(i + 1), gapMs())
+      schedule(() => tick(i + 1), gapMs())
     }, displayMs())
   }
 
@@ -134,6 +175,7 @@ export function useDrawCeremony(ctx: CeremonyContext, initialPots?: Pot[], fixed
     pots,
     phase,
     speed,
+    paused,
     sequence,
     orderedIds,
     revealed,
@@ -145,5 +187,7 @@ export function useDrawCeremony(ctx: CeremonyContext, initialPots?: Pot[], fixed
     rebuild,
     start,
     skip,
+    pause,
+    resume,
   }
 }

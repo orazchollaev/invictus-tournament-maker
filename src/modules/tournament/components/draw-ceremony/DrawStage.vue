@@ -2,6 +2,7 @@
 import { computed } from "vue"
 import type { Team } from "@/modules/teams/types"
 import type { DrawStep } from "@/engine"
+import type { CeremonySpeed } from "../../composables/useDrawCeremony"
 import { useTeamLookup } from "@/composables/useTeamLookup"
 import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
 
@@ -10,9 +11,15 @@ const props = defineProps<{
   current: DrawStep | null
   sequence: DrawStep[]
   teams: Team[]
+  speed: CeremonySpeed
 }>()
 
 const { teamById } = useTeamLookup(() => props.teams)
+
+// Leave animation must fit inside the gap the ceremony timer leaves between
+// reveals (see gapMs() in useDrawCeremony), otherwise the next capsule enters
+// while the previous one is still fading out and both show at once.
+const leaveMs = computed(() => (props.speed === "fast" ? 90 : 240))
 
 // Full board skeleton, built once from the whole sequence so the layout never
 // reflows: every slot and every row exists from the start; teams only fill in.
@@ -39,8 +46,13 @@ function isRevealed(step: DrawStep) {
   <div class="ds-wrap">
     <!-- Folded-paper reveal -->
     <div class="ds-stage">
-      <Transition name="ds-capsule" appear :duration="{ enter: 760, leave: 260 }">
-        <div v-if="current" :key="current.teamId" class="ds-capsule">
+      <Transition name="ds-capsule" appear :duration="{ enter: 760, leave: leaveMs }">
+        <div
+          v-if="current"
+          :key="current.teamId"
+          class="ds-capsule"
+          :style="{ '--ds-leave-dur': `${leaveMs}ms` }"
+        >
           <div class="ds-paper">
             <TeamBadge :team="teamById(current.teamId)" :size="24" class="ds-paper-face" />
           </div>
@@ -168,8 +180,8 @@ function isRevealed(step: DrawStep) {
 }
 .ds-capsule-leave-active .ds-paper {
   transition:
-    opacity 0.24s ease,
-    transform 0.24s ease;
+    opacity var(--ds-leave-dur, 0.24s) ease,
+    transform var(--ds-leave-dur, 0.24s) ease;
 }
 .ds-capsule-leave-to .ds-paper {
   opacity: 0;

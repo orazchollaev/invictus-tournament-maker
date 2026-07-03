@@ -1,6 +1,6 @@
 {
   "label": "UEFA Nations",
-  "description": "all 55 nations",
+  "description": "all uefa nations",
   "order": 2,
   "type": "country",
   "teams": [

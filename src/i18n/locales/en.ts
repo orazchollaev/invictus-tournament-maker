@@ -8,6 +8,8 @@ export default {
     useOldDraw: "Use Last Season's Draw",
     manageTeams: "Teams",
     skipDraw: "Skip Draw",
+    pauseDraw: "Pause",
+    resumeDraw: "Resume",
     continue: "Continue",
     speed: "Speed",
     speedNormal: "Normal",

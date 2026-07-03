@@ -8,6 +8,8 @@ export default {
     useOldDraw: "Usar sorteio anterior",
     manageTeams: "Equipes",
     skipDraw: "Pular Sorteio",
+    pauseDraw: "Pausar",
+    resumeDraw: "Retomar",
     continue: "Continuar",
     speed: "Velocidade",
     speedNormal: "Normal",

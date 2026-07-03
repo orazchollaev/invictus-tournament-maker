@@ -9,6 +9,8 @@ export default {
     useOldDraw: "Использовать прошлую жеребьёвку",
     manageTeams: "Команды",
     skipDraw: "Пропустить",
+    pauseDraw: "Пауза",
+    resumeDraw: "Продолжить",
     continue: "Продолжить",
     speed: "Скорость",
     speedNormal: "Обычная",

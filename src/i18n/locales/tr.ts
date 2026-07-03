@@ -8,6 +8,8 @@ export default {
     useOldDraw: "Eski Kurayı Kullan",
     manageTeams: "Takımlar",
     skipDraw: "Kurayı Atla",
+    pauseDraw: "Duraklat",
+    resumeDraw: "Devam Et",
     continue: "Devam Et",
     speed: "Hız",
     speedNormal: "Normal",

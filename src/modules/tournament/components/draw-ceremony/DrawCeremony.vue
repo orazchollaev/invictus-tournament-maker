@@ -2,7 +2,7 @@
 import { ref, computed, watch, onMounted, onUnmounted } from "vue"
 import { useI18n } from "vue-i18n"
 import confetti from "canvas-confetti"
-import { X, Play, FastForward, Check, History, ChevronDown } from "@lucide/vue"
+import { X, Play, Pause, FastForward, Check, History, ChevronDown } from "@lucide/vue"
 import type { Team } from "@/modules/teams/types"
 import type { CeremonyContext, Pot, DrawPlan } from "@/engine"
 import { useSettingsStore } from "@/modules/settings/store"
@@ -36,6 +36,7 @@ const {
   pots,
   phase,
   speed,
+  paused,
   sequence,
   revealed,
   current,
@@ -47,7 +48,14 @@ const {
   rebuild,
   start,
   skip,
+  pause,
+  resume,
 } = useDrawCeremony(props.context, props.initialPots, props.fixedPlan)
+
+function togglePause() {
+  if (paused.value) resume()
+  else pause()
+}
 
 const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
 const { tap: hapticTap, success: hapticSuccess } = useHaptic()
@@ -149,6 +157,7 @@ function complete() {
             :current="current"
             :sequence="sequence"
             :teams="localTeams"
+            :speed="speed"
           />
         </template>
       </div>
@@ -170,6 +179,11 @@ function complete() {
           <button @click="skip">
             <FastForward :size="14" />
             {{ t("drawCeremony.skipDraw") }}
+          </button>
+          <button @click="togglePause">
+            <Pause v-if="!paused" :size="14" />
+            <Play v-else :size="14" />
+            {{ paused ? t("drawCeremony.resumeDraw") : t("drawCeremony.pauseDraw") }}
           </button>
           <div class="dc-speed">
             <span class="dc-speed-label">{{ t("drawCeremony.speed") }}</span>
