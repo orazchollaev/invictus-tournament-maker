@@ -73,7 +73,7 @@ function buildChartData(
       tension: 0.3,
       spanGaps: true,
       clip: false as const,
-      hidden: hiddenMap ? (hiddenMap.get(ds.name) ?? i >= 2) : i >= 2,
+      hidden: hiddenMap ? (hiddenMap.get(ds.name) ?? i >= 4) : i >= 4,
     })),
   }
 }

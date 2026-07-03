@@ -366,6 +366,8 @@ export default {
     },
     sampleData: {
       title: "Sample Data",
+      countries: "Countries",
+      clubs: "Clubs",
       intro:
         "Load a preset team list. This will replace your current teams and clear all tournaments.",
       loadConfirm: 'Load "{name}" dataset? This will replace your teams and clear all tournaments.',

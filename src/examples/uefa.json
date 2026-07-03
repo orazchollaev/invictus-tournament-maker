@@ -1,0 +1,393 @@
+{
+  "label": "UEFA Nations",
+  "description": "all 55 nations",
+  "order": 2,
+  "type": "country",
+  "teams": [
+    {
+      "id": "uefa-01",
+      "name": "France",
+      "color": "#003189",
+      "power": 95,
+      "flag": "fr"
+    },
+    {
+      "id": "uefa-02",
+      "name": "Spain",
+      "color": "#AA151B",
+      "power": 94,
+      "flag": "es"
+    },
+    {
+      "id": "uefa-03",
+      "name": "England",
+      "color": "#CF081F",
+      "power": 91,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "uefa-04",
+      "name": "Portugal",
+      "color": "#006600",
+      "power": 90,
+      "flag": "pt"
+    },
+    {
+      "id": "uefa-05",
+      "name": "Netherlands",
+      "color": "#FF6600",
+      "power": 88,
+      "flag": "nl"
+    },
+    {
+      "id": "uefa-06",
+      "name": "Italy",
+      "color": "#008C45",
+      "power": 87,
+      "flag": "it"
+    },
+    {
+      "id": "uefa-07",
+      "name": "Belgium",
+      "color": "#EF3340",
+      "power": 86,
+      "flag": "be"
+    },
+    {
+      "id": "uefa-08",
+      "name": "Germany",
+      "color": "#1A1A1A",
+      "power": 85,
+      "flag": "de"
+    },
+    {
+      "id": "uefa-09",
+      "name": "Croatia",
+      "color": "#E63946",
+      "power": 84,
+      "flag": "hr"
+    },
+    {
+      "id": "uefa-10",
+      "name": "Switzerland",
+      "color": "#D52B1E",
+      "power": 78,
+      "flag": "ch"
+    },
+    {
+      "id": "uefa-11",
+      "name": "Austria",
+      "color": "#ED2939",
+      "power": 77,
+      "flag": "at"
+    },
+    {
+      "id": "uefa-12",
+      "name": "Turkey",
+      "color": "#E30A17",
+      "power": 76,
+      "flag": "tr"
+    },
+    {
+      "id": "uefa-13",
+      "name": "Denmark",
+      "color": "#C60C30",
+      "power": 76,
+      "flag": "dk"
+    },
+    {
+      "id": "uefa-14",
+      "name": "Serbia",
+      "color": "#C6363C",
+      "power": 75,
+      "flag": "rs"
+    },
+    {
+      "id": "uefa-15",
+      "name": "Ukraine",
+      "color": "#005BBB",
+      "power": 74,
+      "flag": "ua"
+    },
+    {
+      "id": "uefa-16",
+      "name": "Poland",
+      "color": "#DC143C",
+      "power": 73,
+      "flag": "pl"
+    },
+    {
+      "id": "uefa-17",
+      "name": "Scotland",
+      "color": "#003087",
+      "power": 72,
+      "flag": "gb-sct"
+    },
+    {
+      "id": "uefa-18",
+      "name": "Wales",
+      "color": "#D30731",
+      "power": 72,
+      "flag": "gb-wls"
+    },
+    {
+      "id": "uefa-19",
+      "name": "Hungary",
+      "color": "#436F4D",
+      "power": 72,
+      "flag": "hu"
+    },
+    {
+      "id": "uefa-20",
+      "name": "Sweden",
+      "color": "#006AA7",
+      "power": 71,
+      "flag": "se"
+    },
+    {
+      "id": "uefa-21",
+      "name": "Norway",
+      "color": "#EF2B2D",
+      "power": 70,
+      "flag": "no"
+    },
+    {
+      "id": "uefa-22",
+      "name": "Slovenia",
+      "color": "#005DA4",
+      "power": 70,
+      "flag": "si"
+    },
+    {
+      "id": "uefa-23",
+      "name": "Greece",
+      "color": "#0D5EAF",
+      "power": 70,
+      "flag": "gr"
+    },
+    {
+      "id": "uefa-24",
+      "name": "Romania",
+      "color": "#FCD116",
+      "power": 69,
+      "flag": "ro"
+    },
+    {
+      "id": "uefa-25",
+      "name": "Bosnia and Herzegovina",
+      "color": "#002395",
+      "power": 66,
+      "flag": "ba"
+    },
+    {
+      "id": "uefa-26",
+      "name": "Czechia",
+      "color": "#D7141A",
+      "power": 66,
+      "flag": "cz"
+    },
+    {
+      "id": "uefa-27",
+      "name": "Georgia",
+      "color": "#E41E20",
+      "power": 66,
+      "flag": "ge"
+    },
+    {
+      "id": "uefa-28",
+      "name": "Northern Ireland",
+      "color": "#006A4E",
+      "power": 65,
+      "flag": "gb-nir"
+    },
+    {
+      "id": "uefa-29",
+      "name": "Albania",
+      "color": "#DA291C",
+      "power": 65,
+      "flag": "al"
+    },
+    {
+      "id": "uefa-30",
+      "name": "Finland",
+      "color": "#003580",
+      "power": 64,
+      "flag": "fi"
+    },
+    {
+      "id": "uefa-31",
+      "name": "Montenegro",
+      "color": "#C40308",
+      "power": 64,
+      "flag": "me"
+    },
+    {
+      "id": "uefa-32",
+      "name": "North Macedonia",
+      "color": "#D20000",
+      "power": 64,
+      "flag": "mk"
+    },
+    {
+      "id": "uefa-33",
+      "name": "Bulgaria",
+      "color": "#00966E",
+      "power": 63,
+      "flag": "bg"
+    },
+    {
+      "id": "uefa-34",
+      "name": "Kosovo",
+      "color": "#244AA5",
+      "power": 63,
+      "flag": "xk"
+    },
+    {
+      "id": "uefa-35",
+      "name": "Slovakia",
+      "color": "#0B4EA2",
+      "power": 63,
+      "flag": "sk"
+    },
+    {
+      "id": "uefa-36",
+      "name": "Ireland",
+      "color": "#169B62",
+      "power": 62,
+      "flag": "ie"
+    },
+    {
+      "id": "uefa-37",
+      "name": "Luxembourg",
+      "color": "#00A3E0",
+      "power": 62,
+      "flag": "lu"
+    },
+    {
+      "id": "uefa-38",
+      "name": "Belarus",
+      "color": "#C8313E",
+      "power": 61,
+      "flag": "by"
+    },
+    {
+      "id": "uefa-39",
+      "name": "Armenia",
+      "color": "#D90012",
+      "power": 60,
+      "flag": "am"
+    },
+    {
+      "id": "uefa-40",
+      "name": "Kazakhstan",
+      "color": "#00A3DD",
+      "power": 60,
+      "flag": "kz"
+    },
+    {
+      "id": "uefa-41",
+      "name": "Azerbaijan",
+      "color": "#00B5E2",
+      "power": 59,
+      "flag": "az"
+    },
+    {
+      "id": "uefa-42",
+      "name": "Estonia",
+      "color": "#4891D9",
+      "power": 58,
+      "flag": "ee"
+    },
+    {
+      "id": "uefa-43",
+      "name": "Latvia",
+      "color": "#9E3039",
+      "power": 57,
+      "flag": "lv"
+    },
+    {
+      "id": "uefa-44",
+      "name": "Lithuania",
+      "color": "#FDB913",
+      "power": 57,
+      "flag": "lt"
+    },
+    {
+      "id": "uefa-45",
+      "name": "Moldova",
+      "color": "#003F87",
+      "power": 56,
+      "flag": "md"
+    },
+    {
+      "id": "uefa-46",
+      "name": "Faroe Islands",
+      "color": "#003897",
+      "power": 55,
+      "flag": "fo"
+    },
+    {
+      "id": "uefa-47",
+      "name": "Cyprus",
+      "color": "#D57800",
+      "power": 54,
+      "flag": "cy"
+    },
+    {
+      "id": "uefa-48",
+      "name": "Malta",
+      "color": "#CF142B",
+      "power": 52,
+      "flag": "mt"
+    },
+    {
+      "id": "uefa-49",
+      "name": "Andorra",
+      "color": "#0055A4",
+      "power": 46,
+      "flag": "ad"
+    },
+    {
+      "id": "uefa-50",
+      "name": "Liechtenstein",
+      "color": "#002B7F",
+      "power": 44,
+      "flag": "li"
+    },
+    {
+      "id": "uefa-51",
+      "name": "San Marino",
+      "color": "#6AB2E7",
+      "power": 35,
+      "flag": "sm"
+    },
+    {
+      "id": "uefa-52",
+      "name": "Russia",
+      "color": "#0039A6",
+      "power": 79,
+      "flag": "ru"
+    },
+    {
+      "id": "uefa-53",
+      "name": "Iceland",
+      "color": "#02529C",
+      "power": 64,
+      "flag": "is"
+    },
+    {
+      "id": "uefa-54",
+      "name": "Israel",
+      "color": "#0038B8",
+      "power": 65,
+      "flag": "il"
+    },
+    {
+      "id": "uefa-55",
+      "name": "Gibraltar",
+      "color": "#DA291C",
+      "power": 42,
+      "flag": "gi"
+    }
+  ]
+}

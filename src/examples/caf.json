@@ -1,0 +1,386 @@
+{
+  "label": "CAF Nations",
+  "description": "all african nations",
+  "order": 4,
+  "type": "country",
+  "teams": [
+    {
+      "id": "caf-01",
+      "name": "Morocco",
+      "color": "#C1272D",
+      "power": 84,
+      "flag": "ma"
+    },
+    {
+      "id": "caf-02",
+      "name": "Senegal",
+      "color": "#00853F",
+      "power": 83,
+      "flag": "sn"
+    },
+    {
+      "id": "caf-03",
+      "name": "Egypt",
+      "color": "#CE1126",
+      "power": 81,
+      "flag": "eg"
+    },
+    {
+      "id": "caf-04",
+      "name": "Côte d'Ivoire",
+      "color": "#FF8200",
+      "power": 80,
+      "flag": "ci"
+    },
+    {
+      "id": "caf-05",
+      "name": "Nigeria",
+      "color": "#008751",
+      "power": 80,
+      "flag": "ng"
+    },
+    {
+      "id": "caf-06",
+      "name": "Algeria",
+      "color": "#006233",
+      "power": 79,
+      "flag": "dz"
+    },
+    {
+      "id": "caf-07",
+      "name": "Cameroon",
+      "color": "#007A5E",
+      "power": 78,
+      "flag": "cm"
+    },
+    {
+      "id": "caf-08",
+      "name": "Mali",
+      "color": "#14B53A",
+      "power": 77,
+      "flag": "ml"
+    },
+    {
+      "id": "caf-09",
+      "name": "Tunisia",
+      "color": "#E70013",
+      "power": 77,
+      "flag": "tn"
+    },
+    {
+      "id": "caf-10",
+      "name": "South Africa",
+      "color": "#007749",
+      "power": 76,
+      "flag": "za"
+    },
+    {
+      "id": "caf-11",
+      "name": "Ghana",
+      "color": "#CE1126",
+      "power": 75,
+      "flag": "gh"
+    },
+    {
+      "id": "caf-12",
+      "name": "Congo (DRC)",
+      "color": "#007FFF",
+      "power": 74,
+      "flag": "cd"
+    },
+    {
+      "id": "caf-13",
+      "name": "Burkina Faso",
+      "color": "#009E49",
+      "power": 74,
+      "flag": "bf"
+    },
+    {
+      "id": "caf-14",
+      "name": "Cape Verde",
+      "color": "#003893",
+      "power": 73,
+      "flag": "cv"
+    },
+    {
+      "id": "caf-15",
+      "name": "Guinea",
+      "color": "#CE1126",
+      "power": 72,
+      "flag": "gn"
+    },
+    {
+      "id": "caf-16",
+      "name": "Gabon",
+      "color": "#009E60",
+      "power": 71,
+      "flag": "ga"
+    },
+    {
+      "id": "caf-17",
+      "name": "Zambia",
+      "color": "#198A00",
+      "power": 71,
+      "flag": "zm"
+    },
+    {
+      "id": "caf-18",
+      "name": "Equatorial Guinea",
+      "color": "#E32118",
+      "power": 70,
+      "flag": "gq"
+    },
+    {
+      "id": "caf-19",
+      "name": "Uganda",
+      "color": "#000000",
+      "power": 69,
+      "flag": "ug"
+    },
+    {
+      "id": "caf-20",
+      "name": "Angola",
+      "color": "#CC092F",
+      "power": 69,
+      "flag": "ao"
+    },
+    {
+      "id": "caf-21",
+      "name": "Benin",
+      "color": "#008751",
+      "power": 68,
+      "flag": "bj"
+    },
+    {
+      "id": "caf-22",
+      "name": "Mauritania",
+      "color": "#006233",
+      "power": 68,
+      "flag": "mr"
+    },
+    {
+      "id": "caf-23",
+      "name": "Namibia",
+      "color": "#003580",
+      "power": 67,
+      "flag": "na"
+    },
+    {
+      "id": "caf-24",
+      "name": "Mozambique",
+      "color": "#007168",
+      "power": 66,
+      "flag": "mz"
+    },
+    {
+      "id": "caf-25",
+      "name": "Madagascar",
+      "color": "#FC3E32",
+      "power": 65,
+      "flag": "mg"
+    },
+    {
+      "id": "caf-26",
+      "name": "Togo",
+      "color": "#006A4E",
+      "power": 64,
+      "flag": "tg"
+    },
+    {
+      "id": "caf-27",
+      "name": "Central African Republic",
+      "color": "#003082",
+      "power": 64,
+      "flag": "cf"
+    },
+    {
+      "id": "caf-28",
+      "name": "Zimbabwe",
+      "color": "#006400",
+      "power": 63,
+      "flag": "zw"
+    },
+    {
+      "id": "caf-29",
+      "name": "Kenya",
+      "color": "#000000",
+      "power": 63,
+      "flag": "ke"
+    },
+    {
+      "id": "caf-30",
+      "name": "Tanzania",
+      "color": "#1EB53A",
+      "power": 62,
+      "flag": "tz"
+    },
+    {
+      "id": "caf-31",
+      "name": "Congo",
+      "color": "#009543",
+      "power": 61,
+      "flag": "cg"
+    },
+    {
+      "id": "caf-32",
+      "name": "Guinea-Bissau",
+      "color": "#CE1126",
+      "power": 61,
+      "flag": "gw"
+    },
+    {
+      "id": "caf-33",
+      "name": "Malawi",
+      "color": "#000000",
+      "power": 60,
+      "flag": "mw"
+    },
+    {
+      "id": "caf-34",
+      "name": "Sudan",
+      "color": "#D21034",
+      "power": 60,
+      "flag": "sd"
+    },
+    {
+      "id": "caf-35",
+      "name": "Libya",
+      "color": "#000000",
+      "power": 59,
+      "flag": "ly"
+    },
+    {
+      "id": "caf-36",
+      "name": "Rwanda",
+      "color": "#00A1DE",
+      "power": 59,
+      "flag": "rw"
+    },
+    {
+      "id": "caf-37",
+      "name": "Burundi",
+      "color": "#CE1126",
+      "power": 58,
+      "flag": "bi"
+    },
+    {
+      "id": "caf-38",
+      "name": "Ethiopia",
+      "color": "#078930",
+      "power": 58,
+      "flag": "et"
+    },
+    {
+      "id": "caf-39",
+      "name": "Comoros",
+      "color": "#FFC61E",
+      "power": 57,
+      "flag": "km"
+    },
+    {
+      "id": "caf-40",
+      "name": "Liberia",
+      "color": "#BF0A30",
+      "power": 56,
+      "flag": "lr"
+    },
+    {
+      "id": "caf-41",
+      "name": "Eswatini",
+      "color": "#3E5EB9",
+      "power": 55,
+      "flag": "sz"
+    },
+    {
+      "id": "caf-42",
+      "name": "Botswana",
+      "color": "#75AADB",
+      "power": 55,
+      "flag": "bw"
+    },
+    {
+      "id": "caf-43",
+      "name": "Lesotho",
+      "color": "#00205B",
+      "power": 54,
+      "flag": "ls"
+    },
+    {
+      "id": "caf-44",
+      "name": "Gambia",
+      "color": "#CE1126",
+      "power": 54,
+      "flag": "gm"
+    },
+    {
+      "id": "caf-45",
+      "name": "Sierra Leone",
+      "color": "#1EB53A",
+      "power": 53,
+      "flag": "sl"
+    },
+    {
+      "id": "caf-46",
+      "name": "Niger",
+      "color": "#E05206",
+      "power": 52,
+      "flag": "ne"
+    },
+    {
+      "id": "caf-47",
+      "name": "Chad",
+      "color": "#002664",
+      "power": 51,
+      "flag": "td"
+    },
+    {
+      "id": "caf-48",
+      "name": "São Tomé and Príncipe",
+      "color": "#12AD2B",
+      "power": 50,
+      "flag": "st"
+    },
+    {
+      "id": "caf-49",
+      "name": "Djibouti",
+      "color": "#6AB2E7",
+      "power": 49,
+      "flag": "dj"
+    },
+    {
+      "id": "caf-50",
+      "name": "Mauritius",
+      "color": "#EA2839",
+      "power": 48,
+      "flag": "mu"
+    },
+    {
+      "id": "caf-51",
+      "name": "Seychelles",
+      "color": "#003D88",
+      "power": 47,
+      "flag": "sc"
+    },
+    {
+      "id": "caf-52",
+      "name": "Eritrea",
+      "color": "#239F40",
+      "power": 46,
+      "flag": "er"
+    },
+    {
+      "id": "caf-53",
+      "name": "South Sudan",
+      "color": "#000000",
+      "power": 45,
+      "flag": "ss"
+    },
+    {
+      "id": "caf-54",
+      "name": "Somalia",
+      "color": "#4189DD",
+      "power": 44,
+      "flag": "so"
+    }
+  ]
+}

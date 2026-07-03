@@ -367,6 +367,8 @@ export default {
     },
     sampleData: {
       title: "Dados de exemplo",
+      countries: "Seleções",
+      clubs: "Clubes",
       intro:
         "Carregue uma lista de times predefinida. Isso substituirá seus times atuais e apagará todos os torneios.",
       loadConfirm:

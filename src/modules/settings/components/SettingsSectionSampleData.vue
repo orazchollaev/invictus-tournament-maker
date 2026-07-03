@@ -1,10 +1,14 @@
 <script setup lang="ts">
+import { computed } from "vue"
 import { useI18n } from "vue-i18n"
 import { FlaskConical } from "@lucide/vue"
 import { SAMPLE_DATASETS, useDataManagement } from "../composables/useDataManagement"
 
 const { t } = useI18n()
 const { loadDataset } = useDataManagement()
+
+const countryDatasets = computed(() => SAMPLE_DATASETS.filter((ds) => ds.type === "country"))
+const clubDatasets = computed(() => SAMPLE_DATASETS.filter((ds) => ds.type === "club"))
 </script>
 
 <template>
@@ -15,9 +19,24 @@ const { loadDataset } = useDataManagement()
     </h2>
     <div class="section-body" style="padding: 10px 8px">
       <p class="section-intro">{{ t("settings.sampleData.intro") }}</p>
+
+      <h3 class="dataset-group-title">{{ t("settings.sampleData.countries") }}</h3>
       <div class="dataset-grid">
         <button
-          v-for="ds in SAMPLE_DATASETS"
+          v-for="ds in countryDatasets"
+          :key="ds.label"
+          class="dataset-card"
+          @click="loadDataset(ds)"
+        >
+          <span class="dataset-name">{{ ds.label }}</span>
+          <span class="dataset-desc">{{ ds.description }}</span>
+        </button>
+      </div>
+
+      <h3 class="dataset-group-title">{{ t("settings.sampleData.clubs") }}</h3>
+      <div class="dataset-grid">
+        <button
+          v-for="ds in clubDatasets"
           :key="ds.label"
           class="dataset-card"
           @click="loadDataset(ds)"
@@ -31,6 +50,17 @@ const { loadDataset } = useDataManagement()
 </template>
 
 <style scoped>
+.dataset-group-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  margin: 14px 0 6px;
+}
+.dataset-group-title:first-of-type {
+  margin-top: 4px;
+}
 .dataset-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));

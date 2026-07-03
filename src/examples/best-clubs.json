@@ -2,6 +2,7 @@
   "label": "Best Clubs",
   "description": "32 best clubs from all continents",
   "order": 6,
+  "type": "club",
   "teams": [
     { "id": "cwc-01", "name": "Real Madrid", "color": "#FEBE10", "power": 96 },
     {

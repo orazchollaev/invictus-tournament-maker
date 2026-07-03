@@ -2,7 +2,7 @@
 import { computed } from "vue"
 import type { Team } from "@/modules/teams/types"
 import type { Tournament } from "@/modules/tournament/types"
-import TeamNameAuto from "@/modules/teams/components/TeamNameAuto.vue"
+import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
 import { useTeamLookup } from "@/composables/useTeamLookup"
 import { useI18n } from "vue-i18n"
 
@@ -88,11 +88,8 @@ const candidates = computed(() => {
           >
             <td class="col-rank">{{ ri + 1 }}</td>
             <td class="col-group">{{ row.groupName }}</td>
-            <td class="col-team">
-              <span class="team-cell">
-                <span class="dot" :style="{ background: teamById(row.teamId)?.color ?? '#888' }" />
-                <TeamNameAuto :team="teamById(row.teamId)" :fallback="row.teamId" />
-              </span>
+            <td class="col-team" style="text-align: left">
+              <TeamBadge :team="teamById(row.teamId)" :fallback="row.teamId" class="team-cell" />
             </td>
             <td>{{ row.played }}</td>
             <td>{{ row.won }}</td>
@@ -199,20 +196,6 @@ const candidates = computed(() => {
 
 .row-out {
   opacity: 0.6;
-}
-
-.team-cell {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.dot {
-  display: inline-block;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  flex-shrink: 0;
 }
 
 .wc-empty {

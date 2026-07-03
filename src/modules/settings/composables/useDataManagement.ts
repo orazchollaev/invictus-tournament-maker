@@ -8,6 +8,7 @@ interface Dataset {
   label: string
   description: string
   order?: number
+  type: "country" | "club"
   teams: { id: string; name: string; color: string; power: number }[]
   tournaments?: any[]
 }

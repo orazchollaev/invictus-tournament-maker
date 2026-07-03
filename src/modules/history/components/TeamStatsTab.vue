@@ -74,7 +74,7 @@ function toggle(teamId: string) {
               @click="toggle(row.teamId)"
             >
               <td class="col-rank muted">{{ i + 1 }}</td>
-              <td class="col-team">
+              <td class="col-team" style="text-align: left !important">
                 <TeamBadge :team="row" />
               </td>
               <td class="muted">{{ row.seasons }}</td>
@@ -180,7 +180,7 @@ function toggle(teamId: string) {
   font-size: 11px;
 }
 .col-team {
-  text-align: left !important;
+  /* text-align: left !important; */
   min-width: 90px;
 }
 .col-expand {

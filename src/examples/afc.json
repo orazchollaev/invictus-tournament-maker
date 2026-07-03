@@ -1,0 +1,302 @@
+{
+  "label": "AFC Nations",
+  "description": "all asian nations",
+  "order": 3,
+  "type": "country",
+  "teams": [
+    {
+      "id": "afc-01",
+      "name": "Japan",
+      "color": "#000555",
+      "power": 84,
+      "flag": "jp"
+    },
+    {
+      "id": "afc-02",
+      "name": "South Korea",
+      "color": "#C21920",
+      "power": 82,
+      "flag": "kr"
+    },
+    {
+      "id": "afc-03",
+      "name": "Iran",
+      "color": "#239F40",
+      "power": 80,
+      "flag": "ir"
+    },
+    {
+      "id": "afc-04",
+      "name": "Australia",
+      "color": "#FFCD00",
+      "power": 79,
+      "flag": "au"
+    },
+    {
+      "id": "afc-05",
+      "name": "Saudi Arabia",
+      "color": "#006C35",
+      "power": 77,
+      "flag": "sa"
+    },
+    {
+      "id": "afc-06",
+      "name": "Qatar",
+      "color": "#8A1538",
+      "power": 76,
+      "flag": "qa"
+    },
+    {
+      "id": "afc-07",
+      "name": "Uzbekistan",
+      "color": "#0099B5",
+      "power": 75,
+      "flag": "uz"
+    },
+    {
+      "id": "afc-08",
+      "name": "Iraq",
+      "color": "#007A3D",
+      "power": 74,
+      "flag": "iq"
+    },
+    {
+      "id": "afc-09",
+      "name": "United Arab Emirates",
+      "color": "#00732F",
+      "power": 73,
+      "flag": "ae"
+    },
+    {
+      "id": "afc-10",
+      "name": "Oman",
+      "color": "#DB161B",
+      "power": 71,
+      "flag": "om"
+    },
+    {
+      "id": "afc-11",
+      "name": "China",
+      "color": "#EE1C25",
+      "power": 70,
+      "flag": "cn"
+    },
+    {
+      "id": "afc-12",
+      "name": "Bahrain",
+      "color": "#CE1126",
+      "power": 69,
+      "flag": "bh"
+    },
+    {
+      "id": "afc-13",
+      "name": "Jordan",
+      "color": "#E70013",
+      "power": 68,
+      "flag": "jo"
+    },
+    {
+      "id": "afc-14",
+      "name": "Syria",
+      "color": "#CE1126",
+      "power": 68,
+      "flag": "sy"
+    },
+    {
+      "id": "afc-15",
+      "name": "Vietnam",
+      "color": "#DA251D",
+      "power": 66,
+      "flag": "vn"
+    },
+    {
+      "id": "afc-16",
+      "name": "Thailand",
+      "color": "#2D2A4A",
+      "power": 65,
+      "flag": "th"
+    },
+    {
+      "id": "afc-17",
+      "name": "North Korea",
+      "color": "#024FA2",
+      "power": 64,
+      "flag": "kp"
+    },
+    {
+      "id": "afc-18",
+      "name": "Lebanon",
+      "color": "#ED1C24",
+      "power": 63,
+      "flag": "lb"
+    },
+    {
+      "id": "afc-19",
+      "name": "India",
+      "color": "#FF9933",
+      "power": 62,
+      "flag": "in"
+    },
+    {
+      "id": "afc-20",
+      "name": "Tajikistan",
+      "color": "#CC0000",
+      "power": 62,
+      "flag": "tj"
+    },
+    {
+      "id": "afc-21",
+      "name": "Kyrgyzstan",
+      "color": "#E8112D",
+      "power": 61,
+      "flag": "kg"
+    },
+    {
+      "id": "afc-22",
+      "name": "Indonesia",
+      "color": "#FF0000",
+      "power": 60,
+      "flag": "id"
+    },
+    {
+      "id": "afc-23",
+      "name": "Malaysia",
+      "color": "#FFCC00",
+      "power": 60,
+      "flag": "my"
+    },
+    {
+      "id": "afc-24",
+      "name": "Kuwait",
+      "color": "#007A3D",
+      "power": 59,
+      "flag": "kw"
+    },
+    {
+      "id": "afc-25",
+      "name": "Turkmenistan",
+      "color": "#009A44",
+      "power": 58,
+      "flag": "tm"
+    },
+    {
+      "id": "afc-26",
+      "name": "Philippines",
+      "color": "#0038A8",
+      "power": 58,
+      "flag": "ph"
+    },
+    {
+      "id": "afc-27",
+      "name": "Singapore",
+      "color": "#ED2939",
+      "power": 57,
+      "flag": "sg"
+    },
+    {
+      "id": "afc-28",
+      "name": "Yemen",
+      "color": "#CE1126",
+      "power": 55,
+      "flag": "ye"
+    },
+    {
+      "id": "afc-29",
+      "name": "Afghanistan",
+      "color": "#000000",
+      "power": 54,
+      "flag": "af"
+    },
+    {
+      "id": "afc-30",
+      "name": "Myanmar",
+      "color": "#FECB00",
+      "power": 54,
+      "flag": "mm"
+    },
+    {
+      "id": "afc-31",
+      "name": "Maldives",
+      "color": "#D21034",
+      "power": 53,
+      "flag": "mv"
+    },
+    {
+      "id": "afc-32",
+      "name": "Taiwan",
+      "color": "#000095",
+      "power": 52,
+      "flag": "tw"
+    },
+    {
+      "id": "afc-33",
+      "name": "Nepal",
+      "color": "#DC143C",
+      "power": 50,
+      "flag": "np"
+    },
+    {
+      "id": "afc-34",
+      "name": "Cambodia",
+      "color": "#032EA1",
+      "power": 49,
+      "flag": "kh"
+    },
+    {
+      "id": "afc-35",
+      "name": "Bangladesh",
+      "color": "#006A4E",
+      "power": 48,
+      "flag": "bd"
+    },
+    {
+      "id": "afc-36",
+      "name": "Mongolia",
+      "color": "#E31C23",
+      "power": 47,
+      "flag": "mn"
+    },
+    {
+      "id": "afc-37",
+      "name": "Laos",
+      "color": "#CE1126",
+      "power": 46,
+      "flag": "la"
+    },
+    {
+      "id": "afc-38",
+      "name": "Bhutan",
+      "color": "#FF9933",
+      "power": 45,
+      "flag": "bt"
+    },
+    {
+      "id": "afc-39",
+      "name": "Brunei",
+      "color": "#F7E017",
+      "power": 44,
+      "flag": "bn"
+    },
+    {
+      "id": "afc-40",
+      "name": "Pakistan",
+      "color": "#01411C",
+      "power": 43,
+      "flag": "pk"
+    },
+    {
+      "id": "afc-41",
+      "name": "Sri Lanka",
+      "color": "#8D153A",
+      "power": 42,
+      "flag": "lk"
+    },
+    {
+      "id": "afc-42",
+      "name": "Timor-Leste",
+      "color": "#DA291C",
+      "power": 40,
+      "flag": "tl"
+    }
+  ]
+}

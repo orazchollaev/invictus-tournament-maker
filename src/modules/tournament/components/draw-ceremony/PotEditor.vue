@@ -52,7 +52,7 @@ const { teamById } = useTeamLookup(() => props.teams)
           :class="{ 'pe-pot-list--locked': readonly }"
         >
           <div v-for="id in pot.teamIds" :key="id" class="pe-team">
-            <TeamBadge :team="teamById(id)" :size="8" class="pe-name" />
+            <TeamBadge :team="teamById(id)" :size="12" class="pe-name" />
           </div>
         </VueDraggable>
       </div>

@@ -1,7 +1,8 @@
 {
   "label": "Premier League",
   "description": "20 English clubs",
-  "order": 4,
+  "order": 9,
+  "type": "club",
   "teams": [
     {
       "id": "pl-01",

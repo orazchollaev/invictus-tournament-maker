@@ -1,7 +1,8 @@
 {
   "label": "Conmebol",
   "description": "32 top Conmebol clubs",
-  "order": 3,
+  "order": 8,
+  "type": "club",
   "teams": [
     { "id": "sa-01", "name": "Flamengo", "color": "#C8102E", "power": 95 },
     { "id": "sa-02", "name": "Palmeiras", "color": "#006437", "power": 94 },

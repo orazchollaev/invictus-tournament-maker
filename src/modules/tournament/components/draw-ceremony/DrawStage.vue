@@ -42,7 +42,7 @@ function isRevealed(step: DrawStep) {
       <Transition name="ds-capsule" appear :duration="{ enter: 760, leave: 260 }">
         <div v-if="current" :key="current.teamId" class="ds-capsule">
           <div class="ds-paper">
-            <TeamBadge :team="teamById(current.teamId)" :size="12" class="ds-paper-face" />
+            <TeamBadge :team="teamById(current.teamId)" :size="24" class="ds-paper-face" />
           </div>
           <div class="ds-target">{{ current.targetLabel }}</div>
         </div>
@@ -59,7 +59,7 @@ function isRevealed(step: DrawStep) {
               <TeamBadge
                 v-if="isRevealed(step)"
                 :team="teamById(step.teamId)"
-                :size="8"
+                :size="12"
                 class="ds-slot-team"
               />
               <span v-else class="ds-row-empty" />
@@ -238,5 +238,12 @@ function isRevealed(step: DrawStep) {
 .ds-pop-enter-from {
   opacity: 0;
   transform: translateY(-7px) scale(0.92);
+}
+
+@media (max-width: 640px) {
+  .ds-board {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    height: 60vh;
+  }
 }
 </style>

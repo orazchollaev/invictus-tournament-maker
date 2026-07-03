@@ -369,6 +369,8 @@ export default {
     },
     sampleData: {
       title: "Örnek Veriler",
+      countries: "Ülkeler",
+      clubs: "Kulüpler",
       intro:
         "Hazır takım listesi yükleyin. Bu işlem mevcut takımlarınızın yerini alır ve tüm turnuvaları siler.",
       loadConfirm:

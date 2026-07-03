@@ -1,0 +1,253 @@
+{
+  "label": "Americas Nations",
+  "description": "all north and south american nations",
+  "order": 5,
+  "type": "country",
+  "teams": [
+    {
+      "id": "amr-01",
+      "name": "Argentina",
+      "color": "#43A1D5",
+      "power": 95,
+      "flag": "ar"
+    },
+    {
+      "id": "amr-02",
+      "name": "Brazil",
+      "color": "#009B3A",
+      "power": 94,
+      "flag": "br"
+    },
+    {
+      "id": "amr-03",
+      "name": "Uruguay",
+      "color": "#0038A8",
+      "power": 86,
+      "flag": "uy"
+    },
+    {
+      "id": "amr-04",
+      "name": "Colombia",
+      "color": "#FCD116",
+      "power": 84,
+      "flag": "co"
+    },
+    {
+      "id": "amr-05",
+      "name": "United States",
+      "color": "#0A3161",
+      "power": 83,
+      "flag": "us"
+    },
+    {
+      "id": "amr-06",
+      "name": "Mexico",
+      "color": "#006847",
+      "power": 82,
+      "flag": "mx"
+    },
+    {
+      "id": "amr-07",
+      "name": "Ecuador",
+      "color": "#FFD100",
+      "power": 81,
+      "flag": "ec"
+    },
+    {
+      "id": "amr-08",
+      "name": "Chile",
+      "color": "#D52B1E",
+      "power": 79,
+      "flag": "cl"
+    },
+    {
+      "id": "amr-09",
+      "name": "Peru",
+      "color": "#D91023",
+      "power": 78,
+      "flag": "pe"
+    },
+    {
+      "id": "amr-10",
+      "name": "Canada",
+      "color": "#FF0000",
+      "power": 78,
+      "flag": "ca"
+    },
+    {
+      "id": "amr-11",
+      "name": "Venezuela",
+      "color": "#FFCC00",
+      "power": 76,
+      "flag": "ve"
+    },
+    {
+      "id": "amr-12",
+      "name": "Paraguay",
+      "color": "#D52B1E",
+      "power": 75,
+      "flag": "py"
+    },
+    {
+      "id": "amr-13",
+      "name": "Costa Rica",
+      "color": "#002B7F",
+      "power": 74,
+      "flag": "cr"
+    },
+    {
+      "id": "amr-14",
+      "name": "Panama",
+      "color": "#C8102E",
+      "power": 73,
+      "flag": "pa"
+    },
+    {
+      "id": "amr-15",
+      "name": "Jamaica",
+      "color": "#009B3A",
+      "power": 72,
+      "flag": "jm"
+    },
+    {
+      "id": "amr-16",
+      "name": "Bolivia",
+      "color": "#007A33",
+      "power": 70,
+      "flag": "bo"
+    },
+    {
+      "id": "amr-17",
+      "name": "Honduras",
+      "color": "#001489",
+      "power": 68,
+      "flag": "hn"
+    },
+    {
+      "id": "amr-18",
+      "name": "El Salvador",
+      "color": "#0047AB",
+      "power": 67,
+      "flag": "sv"
+    },
+    {
+      "id": "amr-19",
+      "name": "Haiti",
+      "color": "#D21034",
+      "power": 66,
+      "flag": "ht"
+    },
+    {
+      "id": "amr-20",
+      "name": "Guatemala",
+      "color": "#4997D0",
+      "power": 65,
+      "flag": "gt"
+    },
+    {
+      "id": "amr-21",
+      "name": "Trinidad and Tobago",
+      "color": "#DA291C",
+      "power": 63,
+      "flag": "tt"
+    },
+    {
+      "id": "amr-22",
+      "name": "Cuba",
+      "color": "#002A8F",
+      "power": 62,
+      "flag": "cu"
+    },
+    {
+      "id": "amr-23",
+      "name": "Guyana",
+      "color": "#009E49",
+      "power": 60,
+      "flag": "gy"
+    },
+    {
+      "id": "amr-24",
+      "name": "Suriname",
+      "color": "#377E3F",
+      "power": 59,
+      "flag": "sr"
+    },
+    {
+      "id": "amr-25",
+      "name": "Antigua and Barbuda",
+      "color": "#CE1126",
+      "power": 58,
+      "flag": "ag"
+    },
+    {
+      "id": "amr-26",
+      "name": "Nicaragua",
+      "color": "#0067C6",
+      "power": 57,
+      "flag": "ni"
+    },
+    {
+      "id": "amr-27",
+      "name": "Dominican Republic",
+      "color": "#002D62",
+      "power": 56,
+      "flag": "do"
+    },
+    {
+      "id": "amr-28",
+      "name": "Belize",
+      "color": "#171696",
+      "power": 54,
+      "flag": "bz"
+    },
+    {
+      "id": "amr-29",
+      "name": "Barbados",
+      "color": "#00267F",
+      "power": 53,
+      "flag": "bb"
+    },
+    {
+      "id": "amr-30",
+      "name": "Bahamas",
+      "color": "#00778B",
+      "power": 52,
+      "flag": "bs"
+    },
+    {
+      "id": "amr-31",
+      "name": "Saint Lucia",
+      "color": "#6DC8F3",
+      "power": 51,
+      "flag": "lc"
+    },
+    {
+      "id": "amr-32",
+      "name": "Grenada",
+      "color": "#007A5E",
+      "power": 50,
+      "flag": "gd"
+    },
+    {
+      "id": "amr-33",
+      "name": "Saint Vincent and the Grenadines",
+      "color": "#0072CE",
+      "power": 49,
+      "flag": "vc"
+    },
+    {
+      "id": "amr-34",
+      "name": "Saint Kitts and Nevis",
+      "color": "#009E49",
+      "power": 48,
+      "flag": "kn"
+    },
+    {
+      "id": "amr-35",
+      "name": "Dominica",
+      "color": "#006B3F",
+      "power": 45,
+      "flag": "dm"
+    }
+  ]
+}

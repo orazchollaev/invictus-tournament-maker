@@ -368,6 +368,8 @@ export default {
     },
     sampleData: {
       title: "Datos de muestra",
+      countries: "Selecciones",
+      clubs: "Clubes",
       intro:
         "Carga una lista de equipos preestablecida. Esto reemplazará tus equipos actuales y borrará todos los torneos.",
       loadConfirm:

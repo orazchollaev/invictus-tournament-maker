@@ -236,7 +236,7 @@ const chartTitle = computed(() => {
 }
 
 .col-team {
-  text-align: left;
+  text-align: left !important;
   min-width: 110px;
 }
 

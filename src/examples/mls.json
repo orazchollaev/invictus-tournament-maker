@@ -2,6 +2,7 @@
   "label": "MLS",
   "description": "30 MLS clubs",
   "order": 5,
+  "type": "club",
   "teams": [
     { "id": "mls-01", "name": "Inter Miami", "color": "#F7B5CD", "power": 88 },
     { "id": "mls-02", "name": "LAFC", "color": "#000000", "power": 87 },
