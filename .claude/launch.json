@@ -5,7 +5,8 @@
       "name": "dev",
       "runtimeExecutable": "pnpm",
       "runtimeArgs": ["run", "dev"],
-      "port": 2008
+      "port": 2008,
+      "autoPort": true
     }
   ]
 }

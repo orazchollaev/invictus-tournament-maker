@@ -120,7 +120,7 @@ export function buildEmptyBracketRounds(size: number): Round[] {
   return rounds
 }
 
-function bracketOrder(n: number): number[] {
+export function bracketOrder(n: number): number[] {
   if (n === 1) return [0]
   const half = bracketOrder(n / 2)
   const result: number[] = []
@@ -129,6 +129,14 @@ function bracketOrder(n: number): number[] {
     result.push(n - 1 - pos)
   }
   return result
+}
+
+// Which `count` of `matchSlotCount` round-1 match slots should hold a bye,
+// most-spread-apart first, so byes land in different bracket subtrees
+// instead of colliding into the same round-2+ slot.
+export function spreadByeSlots(count: number, matchSlotCount: number): number[] {
+  if (count <= 0) return []
+  return bracketOrder(matchSlotCount).slice(0, count)
 }
 
 export function buildPureBracket(teams: Team[], seeded: boolean, orderedTeams?: Team[]): Round[] {
@@ -156,8 +164,9 @@ export function buildPureBracket(teams: Team[], seeded: boolean, orderedTeams?: 
     const pot1 = shuffle(rest.slice(0, half))
     const pot2 = shuffle(rest.slice(half))
     seededOrder = new Array(size).fill(null) as (Team | null)[]
+    const byeSlots = spreadByeSlots(byes, r2Size)
     for (let i = 0; i < byeTeams.length; i++) {
-      seededOrder[r2Slots[i] * 2] = byeTeams[i]
+      seededOrder[byeSlots[i] * 2] = byeTeams[i]
     }
     for (let i = 0; i < pot1.length; i++) {
       const r2pos = r2Slots[byes + i]
@@ -166,12 +175,20 @@ export function buildPureBracket(teams: Team[], seeded: boolean, orderedTeams?: 
     }
   } else {
     const shuffled = shuffle(teams)
-    seededOrder = []
-    let idx = 0
-    for (let i = 0; i < size / 2; i++) {
-      const home = shuffled[idx++] ?? null
-      const away = byes > 0 && i < byes ? null : (shuffled[idx++] ?? null)
-      seededOrder.push(home, away)
+    const byeTeams = shuffled.slice(0, byes)
+    const rest = shuffled.slice(byes)
+    const matchSlots = size / 2
+    const byeSlotSet = new Set(spreadByeSlots(byes, matchSlots))
+    seededOrder = new Array(size).fill(null) as (Team | null)[]
+    let byeIdx = 0
+    let restIdx = 0
+    for (let i = 0; i < matchSlots; i++) {
+      if (byeSlotSet.has(i)) {
+        seededOrder[i * 2] = byeTeams[byeIdx++] ?? null
+      } else {
+        seededOrder[i * 2] = rest[restIdx++] ?? null
+        seededOrder[i * 2 + 1] = rest[restIdx++] ?? null
+      }
     }
   }
 

@@ -329,3 +329,15 @@ export function selectWildcards(
   candidates.sort((a, b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf)
   return candidates.slice(0, count).map((c) => ({ team: c.team, fromGroupIdx: c.fromGroupIdx }))
 }
+
+// Ranks an arbitrary list of teams by their own group's pts → gd → gf,
+// for candidate pools that aren't all at the same standings rank (unlike selectWildcards).
+export function rankTeamsByStanding(groups: Group[], candidates: Team[]): Team[] {
+  const scored = candidates.map((team) => {
+    const g = groups.find((gr) => gr.teamIds.includes(team.id))
+    const s = g?.standings.find((st) => st.teamId === team.id)
+    return { team, pts: s?.pts ?? 0, gd: s?.gd ?? 0, gf: s?.gf ?? 0 }
+  })
+  scored.sort((a, b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf)
+  return scored.map((s) => s.team)
+}
