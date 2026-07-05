@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { ref, computed } from "vue"
+import { useI18n } from "vue-i18n"
 import type { Team } from "@/modules/teams/types"
 import { useTeamLookup } from "@/composables/useTeamLookup"
-import FlagCircle from "@/modules/teams/components/FlagCircle.vue"
+import DrawList from "./draw/DrawList.vue"
+import type { DrawItem } from "./draw/types"
 
 const props = defineProps<{
   teams: Team[]
@@ -14,6 +16,7 @@ const emit = defineEmits<{
   cancel: []
 }>()
 
+const { t } = useI18n()
 const { teamById } = useTeamLookup(() => props.teams)
 
 // Some groups get one extra team when division is uneven
@@ -23,40 +26,71 @@ function slotsForGroup(g: number): number {
   return g < extra ? base + 1 : base
 }
 
-const groupNames = Array.from(
-  { length: props.groupCount },
-  (_, i) => `Group ${String.fromCharCode(65 + i)}`
-)
-
-// groupSlots[g][slot] = teamId or ""
-const groupSlots = ref<string[][]>(
-  Array.from({ length: props.groupCount }, (_, g) => Array(slotsForGroup(g)).fill(""))
-)
-
-const usedIds = computed(() => {
-  const ids = new Set<string>()
-  groupSlots.value.forEach((g) =>
-    g.forEach((id) => {
-      if (id) ids.add(id)
-    })
-  )
-  return ids
-})
-
-function available(currentId: string) {
-  return props.teams.filter((t) => t.id === currentId || !usedIds.value.has(t.id))
+function groupLetter(g: number): string {
+  return String.fromCharCode(65 + g)
 }
 
-const complete = computed(() => groupSlots.value.every((g) => g.every((id) => !!id)))
+const pool = ref<string[]>(props.teams.map((tm) => tm.id))
+const groupLists = ref<string[][]>(Array.from({ length: props.groupCount }, () => []))
+const armed = ref<string | null>(null)
+
+function resolve(id: string): DrawItem {
+  return { id, team: teamById(id)! }
+}
+
+function removeFromAll(id: string) {
+  const pi = pool.value.indexOf(id)
+  if (pi !== -1) {
+    pool.value.splice(pi, 1)
+    return
+  }
+  for (const list of groupLists.value) {
+    const i = list.indexOf(id)
+    if (i !== -1) {
+      list.splice(i, 1)
+      return
+    }
+  }
+}
+
+function arm(id: string) {
+  armed.value = armed.value === id ? null : id
+}
+
+function assignTo(target: "pool" | number) {
+  const id = armed.value
+  if (!id) return
+  if (target === "pool") {
+    removeFromAll(id)
+    pool.value.push(id)
+  } else {
+    if (groupLists.value[target].length >= slotsForGroup(target)) return
+    removeFromAll(id)
+    groupLists.value[target].push(id)
+  }
+  armed.value = null
+}
+
+function unassignFromGroup(g: number, id: string) {
+  const i = groupLists.value[g].indexOf(id)
+  if (i !== -1) groupLists.value[g].splice(i, 1)
+  pool.value.push(id)
+  if (armed.value === id) armed.value = null
+}
+
+const assignedCount = computed(() => props.teams.length - pool.value.length)
+const complete = computed(() =>
+  groupLists.value.every((list, g) => list.length === slotsForGroup(g))
+)
 
 function confirm() {
   // Interleave: slot 0 of each group, slot 1 of each group, ...
   // This matches createGroupBracketTournament's round-robin distribution
-  const maxSlots = Math.max(...groupSlots.value.map((g) => g.length))
+  const maxSlots = Math.max(...groupLists.value.map((g) => g.length))
   const ids: string[] = []
   for (let slot = 0; slot < maxSlots; slot++) {
     for (let g = 0; g < props.groupCount; g++) {
-      const id = groupSlots.value[g][slot]
+      const id = groupLists.value[g][slot]
       if (id) ids.push(id)
     }
   }
@@ -66,38 +100,52 @@ function confirm() {
 
 <template>
   <div class="gd-wrap">
-    <p class="gd-hint">Assign teams to each group — order determines the draw.</p>
+    <p class="gd-hint">{{ t("manualDraw.groupDrawHint") }}</p>
+
+    <div class="gd-pool">
+      <div class="gd-pool-head">
+        <span>{{ t("manualDraw.poolTitle") }}</span>
+        <span class="gd-count">{{ pool.length }}</span>
+      </div>
+      <DrawList
+        v-model="pool"
+        :capacity="Infinity"
+        :resolve="resolve"
+        :armed-id="armed"
+        :placeholder="t('manualDraw.dropHere')"
+        @arm="arm"
+        @assign="assignTo('pool')"
+      />
+    </div>
 
     <div class="gd-groups">
-      <div v-for="(_, g) in groupSlots" :key="g" class="gd-group">
-        <div class="gd-group-header">{{ groupNames[g] }}</div>
-        <div class="gd-slots">
-          <div v-for="(_, slot) in groupSlots[g]" :key="slot" class="gd-slot">
-            <span class="gd-slot-num">{{ slot + 1 }}</span>
-            <FlagCircle
-              v-if="groupSlots[g][slot] && teamById(groupSlots[g][slot])?.flag"
-              :code="teamById(groupSlots[g][slot])!.flag!"
-              :size="14"
-            />
-            <span
-              v-else-if="groupSlots[g][slot]"
-              class="gd-dot"
-              :style="{ background: teamById(groupSlots[g][slot])?.color ?? '#888' }"
-            />
-            <select v-model="groupSlots[g][slot]" class="gd-sel">
-              <option value="">— Select team</option>
-              <option v-for="t in available(groupSlots[g][slot])" :key="t.id" :value="t.id">
-                {{ t.name }} ({{ t.power }})
-              </option>
-            </select>
-          </div>
+      <div v-for="(_, g) in groupLists" :key="g" class="gd-group">
+        <div class="gd-group-header">
+          <span>{{ t("manualDraw.groupLabel", { name: groupLetter(g) }) }}</span>
+          <span class="gd-count">{{ groupLists[g].length }}/{{ slotsForGroup(g) }}</span>
         </div>
+        <DrawList
+          v-model="groupLists[g]"
+          :capacity="slotsForGroup(g)"
+          :resolve="resolve"
+          :armed-id="armed"
+          :removable="true"
+          :placeholder="t('manualDraw.dropHere')"
+          @arm="arm"
+          @remove="(id) => unassignFromGroup(g, id)"
+          @assign="assignTo(g)"
+        />
       </div>
     </div>
 
     <div class="gd-actions">
-      <button class="primary" :disabled="!complete" @click="confirm">Confirm Draw</button>
-      <button @click="emit('cancel')">Cancel</button>
+      <span class="gd-progress">
+        {{ t("manualDraw.progress", { done: assignedCount, total: teams.length }) }}
+      </span>
+      <button class="primary" :disabled="!complete" @click="confirm">
+        {{ t("manualDraw.confirmDraw") }}
+      </button>
+      <button @click="emit('cancel')">{{ t("common.cancel") }}</button>
     </div>
   </div>
 </template>
@@ -115,20 +163,15 @@ function confirm() {
   margin: 0;
 }
 
-.gd-groups {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-  gap: 8px;
-  max-height: 340px;
-  overflow-y: auto;
-}
-
-.gd-group {
+.gd-pool {
   border: 1px solid var(--border-light);
   background: var(--bg);
 }
 
-.gd-group-header {
+.gd-pool-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   font-size: 12px;
   font-weight: 600;
   font-family: var(--font);
@@ -138,46 +181,65 @@ function confirm() {
   letter-spacing: 0.03em;
 }
 
-.gd-slots {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 6px 6px;
-}
-
-.gd-slot {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.gd-slot-num {
+.gd-count {
   font-size: 10px;
   color: var(--text-muted);
-  width: 12px;
-  flex-shrink: 0;
-  text-align: right;
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
 }
 
-.gd-dot {
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  flex-shrink: 0;
+.gd-pool :deep(.dl-list) {
+  flex-direction: row;
+  flex-wrap: wrap;
+  max-height: 120px;
+  overflow-y: auto;
+  padding: 6px;
 }
 
-.gd-sel {
-  flex: 1;
-  font-size: 11px;
-  padding: 2px 4px;
-  min-width: 0;
+.gd-groups {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 8px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.gd-group {
+  border: 1px solid var(--border-light);
+  background: var(--bg);
+}
+
+.gd-group-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: var(--font);
+  padding: 5px 8px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border-light);
+  letter-spacing: 0.03em;
+}
+
+.gd-group :deep(.dl-list) {
+  padding: 6px;
+  min-height: 60px;
 }
 
 .gd-actions {
   display: flex;
+  align-items: center;
   gap: 8px;
   padding-top: 4px;
   border-top: 1px solid var(--border-light);
+}
+
+.gd-progress {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-right: auto;
+  font-variant-numeric: tabular-nums;
 }
 
 @media (max-width: 500px) {
