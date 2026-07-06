@@ -16,6 +16,7 @@ export default {
         "ci", // CI configuration
         "chore", // General maintenance
         "revert", // Revert changes
+        "wip", // Work in progress
       ],
     ],
     "type-case": [2, "always", "lower-case"],

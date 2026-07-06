@@ -13,6 +13,7 @@ defineProps<{
   isMultiTier: boolean
   activeTierIdx: number
   hasAnyResults: boolean
+  hasLeaguePlayoff: boolean
 }>()
 
 const emit = defineEmits<{
@@ -44,6 +45,14 @@ const emit = defineEmits<{
           {{ t("tournament.tabs.league") }}
         </button>
       </template>
+      <button
+        v-if="hasLeaguePlayoff"
+        class="phase-tab"
+        :class="{ active: activeTab === 'bracket' }"
+        @click="emit('changeTab', 'bracket')"
+      >
+        {{ t("tournament.tabs.playoff") }}
+      </button>
     </template>
 
     <!-- Groups + Bracket format -->

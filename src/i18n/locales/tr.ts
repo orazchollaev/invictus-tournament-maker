@@ -424,6 +424,7 @@ export default {
       participants: "Katılımcılar",
       wildcards: "Jokerler",
       fixtures: "Fikstür",
+      playoff: "Play-off",
     },
     header: {
       teams: "{n} takım",
@@ -477,6 +478,15 @@ export default {
       divisions: "{n} lig",
       promotionRelegation: "Yükselme / Küme Düşme",
       teamsSwap: "takımlar komşu kademeler arasında yer değiştirir",
+      playoff: {
+        enable: "Play-off aşaması ekle",
+        hint: "Ligin ardından en iyi takımlar eleme usulü bir play-off oynar.",
+        directCount: "Doğrudan katılanlar",
+        directCountHint: "doğrudan play-off eleme tablosuna geçen takımlar",
+        playInTeamCount: "Play-in takımları",
+        playInHint: "kalan kontenjan için sıradaki takımlar play-in turu oynar",
+        seedMode: "Eşleştirme",
+      },
       drawMethod: "Kura Yöntemi",
       groupStage: "Grup aşaması",
       playoffBracket: "Playoff bracketi",

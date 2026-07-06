@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import { ref, computed } from "vue"
 import { useI18n } from "vue-i18n"
-import type { Tournament } from "../types"
 import type { Team } from "@/modules/teams/types"
 import DrawList from "./draw/DrawList.vue"
-import type { DrawItem } from "./draw/types"
+import type { DrawItem, Qualifier } from "./draw/types"
 
-const props = defineProps<{ tournament: Tournament; teams: Team[] }>()
+const props = defineProps<{ qualifiers: Qualifier[]; teams: Team[] }>()
 const emit = defineEmits<{
   confirm: [orderedIds: string[]]
   cancel: []
@@ -14,57 +13,7 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 
-function ordinal(n: number): string {
-  const s = ["th", "st", "nd", "rd"]
-  const v = n % 100
-  return n + (s[(v - 20) % 10] || s[v] || s[0])
-}
-
-interface Qualifier {
-  teamId: string
-  label: string
-  teamName: string
-}
-
-function buildQualifiers(): Qualifier[] {
-  if (!props.tournament.groups) return []
-  const qpg = props.tournament.qualifiersPerGroup ?? 2
-  const wcCount = props.tournament.wildcardCount ?? 0
-  const result: Qualifier[] = []
-
-  for (const group of props.tournament.groups) {
-    for (let rank = 0; rank < qpg; rank++) {
-      const standing = group.standings[rank]
-      if (!standing) continue
-      const team = props.teams.find((tm) => tm.id === standing.teamId)
-      result.push({
-        teamId: standing.teamId,
-        label: `${group.name} · ${ordinal(rank + 1)}`,
-        teamName: team?.name ?? standing.teamId,
-      })
-    }
-  }
-
-  if (wcCount > 0) {
-    const candidates = props.tournament.groups.flatMap((group) => {
-      const s = group.standings[qpg]
-      return s ? [{ teamId: s.teamId, groupName: group.name, pts: s.pts, gd: s.gd, gf: s.gf }] : []
-    })
-    candidates.sort((a, b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf)
-    for (let i = 0; i < wcCount && i < candidates.length; i++) {
-      const team = props.teams.find((tm) => tm.id === candidates[i].teamId)
-      result.push({
-        teamId: candidates[i].teamId,
-        label: `${candidates[i].groupName} · ${t("manualDraw.wildcard")}`,
-        teamName: team?.name ?? candidates[i].teamId,
-      })
-    }
-  }
-
-  return result
-}
-
-const qualifiers = buildQualifiers()
+const qualifiers = props.qualifiers
 const qualifierById = new Map(qualifiers.map((q) => [q.teamId, q]))
 const count = qualifiers.length
 const size = Math.pow(2, Math.ceil(Math.log2(Math.max(count, 2))))

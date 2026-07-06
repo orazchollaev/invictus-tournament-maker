@@ -15,6 +15,7 @@ import {
   buildPureBracket,
   propagateWinners,
   spreadByeSlots,
+  packDirectSlots,
 } from "./bracket"
 import { buildGroupFixture, recalcStandings, selectWildcards, rankTeamsByStanding } from "./groups"
 import { buildLeagueMatchdays } from "./league"
@@ -312,31 +313,6 @@ export function seedBracketFromGroups(
     return slots
   }
 
-  // Packs bye recipients + remaining teams into round-1 slots directly (bypassing
-  // the two-half split), spreading byes across match slots via bracketOrder.
-  function buildDirectSlots(
-    ids: string[],
-    byeCount: number,
-    matchSlotCount: number
-  ): (Team | null)[] {
-    const teamById = (id?: string) => (id ? (teams.find((t) => t.id === id) ?? null) : null)
-    const byeIds = ids.slice(0, byeCount)
-    const restIds = ids.slice(byeCount)
-    const byeSlotSet = new Set(spreadByeSlots(byeCount, matchSlotCount))
-    const slots: (Team | null)[] = new Array(matchSlotCount * 2).fill(null)
-    let byeIdx = 0
-    let restIdx = 0
-    for (let i = 0; i < matchSlotCount; i++) {
-      if (byeSlotSet.has(i)) {
-        slots[i * 2] = teamById(byeIds[byeIdx++])
-      } else {
-        slots[i * 2] = teamById(restIds[restIdx++])
-        slots[i * 2 + 1] = teamById(restIds[restIdx++])
-      }
-    }
-    return slots
-  }
-
   // Ranks a half's real teams by group-standings strength so the front-most
   // entries (which buildHalfSlots turns into byes) are the best finishers.
   function prioritizeByesByStanding(bracketHalf: (Team | null)[]): (Team | null)[] {
@@ -379,7 +355,7 @@ export function seedBracketFromGroups(
 
   if (mode === "manual" && orderedTeamIds) {
     const byeCount = size - realCount
-    directSlots = buildDirectSlots(orderedTeamIds, byeCount, half)
+    directSlots = packDirectSlots(orderedTeamIds, byeCount, half, teams)
     firstHalf = []
     secondHalf = []
   } else if (mode === "random") {
@@ -408,7 +384,7 @@ export function seedBracketFromGroups(
     // to the strongest group winners. Built via the same directSlots packing as
     // the manual path so the bracket matches the draw-ceremony reveal exactly.
     const { ids, byeCount } = crossPlayoffOrder(tournament, teams)!
-    directSlots = buildDirectSlots(ids, byeCount, half)
+    directSlots = packDirectSlots(ids, byeCount, half, teams)
     firstHalf = []
     secondHalf = []
   } else {

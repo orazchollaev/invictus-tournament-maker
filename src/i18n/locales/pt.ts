@@ -422,6 +422,7 @@ export default {
       participants: "Participantes",
       wildcards: "Wildcards",
       fixtures: "Jogos",
+      playoff: "Playoff",
     },
     header: {
       teams: "{n} times",
@@ -475,6 +476,15 @@ export default {
       divisions: "{n} divisões",
       promotionRelegation: "Promoção / Rebaixamento",
       teamsSwap: "times trocam entre divisões adjacentes",
+      playoff: {
+        enable: "Adicionar uma fase de playoff",
+        hint: "Os melhores times se classificam para um playoff mata-mata após a temporada regular.",
+        directCount: "Classificados diretos",
+        directCountHint: "times que avançam direto para a chave do playoff",
+        playInTeamCount: "Times do play-in",
+        playInHint: "os próximos times jogam uma rodada de play-in pelas vagas restantes",
+        seedMode: "Confrontos",
+      },
       drawMethod: "Método de sorteio",
       groupStage: "Fase de grupos",
       playoffBracket: "Chave do playoff",
@@ -586,6 +596,10 @@ export default {
         none: "— Nenhuma —",
         linkedLeagueHint:
           "Ao final da temporada, os {n} últimos desta liga trocam com os {n} primeiros da liga vinculada.",
+        playoff: {
+          title: "Playoff",
+          lockedBanner: "As configurações do playoff não podem ser alteradas após seu início.",
+        },
       },
       tiebreaker: {
         method: "Método",
@@ -664,6 +678,15 @@ export default {
     dropHere: "Solte ou toque no time aqui",
     wildcard: "Repescagem",
     remove: "Remover",
+  },
+  leaguePlayoff: {
+    playInTitle: "Play-In",
+    startPlayIn: "Iniciar Playoff",
+    seedBracket: "Sortear Chave",
+    resolvePlayIn: "Resolva todas as partidas de play-in para sortear a chave.",
+    directQualifier: "Posição {rank}",
+    playInWinner: "Vencedor Play-In {pair}",
+    playoffDrawTitle: "Sorteio do Playoff",
   },
   promotionModal: {
     newSeasonTitle: "Nova temporada — {name}",

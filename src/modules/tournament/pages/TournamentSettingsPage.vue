@@ -3,7 +3,13 @@ import { ref, computed } from "vue"
 import { useRoute, useRouter, onBeforeRouteLeave } from "vue-router"
 import { useTeamsStore } from "@/modules/teams/store"
 import { useTournamentStore } from "@/modules/tournament/store"
-import type { PlayoffSeedMode, LegMode, Tiebreaker } from "@/modules/tournament/types"
+import type {
+  PlayoffSeedMode,
+  LegMode,
+  Tiebreaker,
+  LeaguePlayoffSeedMode,
+} from "@/modules/tournament/types"
+import { getLeaguePlayoffData } from "@/engine"
 import ManualDraw from "@/modules/tournament/components/ManualDraw.vue"
 import GroupDraw from "@/modules/tournament/components/GroupDraw.vue"
 import TeamSelector from "@/modules/tournament/components/TeamSelector.vue"
@@ -62,6 +68,15 @@ const localLinkedLeagueId = ref<string>(tournament.value?.linkedLeagueId ?? "")
 const localTiebreaker = ref<Tiebreaker>(tournament.value?.tiebreaker ?? "goal-diff")
 const localPromotionCount = ref(tournament.value?.promotionCount ?? 1)
 const localTierCount = ref(tournament.value?.tiers?.length ?? 1)
+const origLeaguePlayoff = computed(() =>
+  tournament.value ? getLeaguePlayoffData(tournament.value) : undefined
+)
+const localPlayoffEnabled = ref(origLeaguePlayoff.value?.enabled ?? false)
+const localPlayoffDirectCount = ref(origLeaguePlayoff.value?.directCount ?? 4)
+const localPlayoffPlayInCount = ref(origLeaguePlayoff.value?.playInTeamCount ?? 0)
+const leagueLocalPlayoffSeedMode = ref<LeaguePlayoffSeedMode>(
+  origLeaguePlayoff.value?.seedMode ?? "seeded"
+)
 const localWinPoints = ref(tournament.value?.winPoints ?? 3)
 const localDrawPoints = ref(tournament.value?.drawPoints ?? 1)
 const localLossPoints = ref(tournament.value?.lossPoints ?? 0)
@@ -110,6 +125,14 @@ const hasChanges = computed(() => {
   if (isLeagueFormat.value && localLinkedLeagueId.value !== (orig.linkedLeagueId ?? "")) return true
   if (isMultiTier.value && localTierCount.value !== (orig.tiers?.length ?? 1)) return true
   if (isMultiTier.value && localPromotionCount.value !== (orig.promotionCount ?? 1)) return true
+  if (
+    isLeagueFormat.value &&
+    (localPlayoffEnabled.value !== (origLeaguePlayoff.value?.enabled ?? false) ||
+      localPlayoffDirectCount.value !== (origLeaguePlayoff.value?.directCount ?? 4) ||
+      localPlayoffPlayInCount.value !== (origLeaguePlayoff.value?.playInTeamCount ?? 0) ||
+      localPlayoffSeedMode.value !== (origLeaguePlayoff.value?.seedMode ?? "seeded"))
+  )
+    return true
   if (localTiebreaker.value !== (orig.tiebreaker ?? "goal-diff")) return true
   if (
     (isLeagueFormat.value || isGroupFormat.value) &&
@@ -218,6 +241,20 @@ function saveOnly() {
     store.rebuildTiers(tournamentId.value, localTierCount.value)
   if (isMultiTier.value && localPromotionCount.value !== (orig.promotionCount ?? 1))
     store.setPromotionCount(tournamentId.value, localPromotionCount.value)
+  if (
+    isLeagueFormat.value &&
+    !origLeaguePlayoff.value?.started &&
+    (localPlayoffEnabled.value !== (origLeaguePlayoff.value?.enabled ?? false) ||
+      localPlayoffDirectCount.value !== (origLeaguePlayoff.value?.directCount ?? 4) ||
+      localPlayoffPlayInCount.value !== (origLeaguePlayoff.value?.playInTeamCount ?? 0) ||
+      localPlayoffSeedMode.value !== (origLeaguePlayoff.value?.seedMode ?? "seeded"))
+  )
+    store.changeLeaguePlayoffSettings(tournamentId.value, {
+      enabled: localPlayoffEnabled.value,
+      directCount: localPlayoffDirectCount.value,
+      playInTeamCount: localPlayoffPlayInCount.value,
+      seedMode: leagueLocalPlayoffSeedMode.value,
+    })
   if (localTiebreaker.value !== (orig.tiebreaker ?? "goal-diff"))
     store.setTiebreaker(tournamentId.value, localTiebreaker.value)
   if (
@@ -375,12 +412,17 @@ function handleSave() {
             v-model:local-tier-count="localTierCount"
             v-model:local-promotion-count="localPromotionCount"
             v-model:local-linked-league-id="localLinkedLeagueId"
+            v-model:local-playoff-enabled="localPlayoffEnabled"
+            v-model:local-playoff-direct-count="localPlayoffDirectCount"
+            v-model:local-playoff-play-in-count="localPlayoffPlayInCount"
+            v-model:local-playoff-seed-mode="leagueLocalPlayoffSeedMode"
             :has-any-results="hasAnyResults"
             :is-multi-tier="isMultiTier"
             :team-count="localTeamIds.length"
             :max-tier-count="maxTierCount"
             :max-promotion-count="maxPromotionCount"
             :other-leagues="otherLeagues"
+            :league-playoff-started="origLeaguePlayoff?.started ?? false"
           />
         </template>
 

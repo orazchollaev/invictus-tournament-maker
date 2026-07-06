@@ -256,6 +256,11 @@ export function useCrudActions(
           }
           recalcLeagueStandings(tier.league, t.tiebreaker, winPts, drawPts, lossPts)
         }
+        if (t.tiers[0].playoff) {
+          t.tiers[0].playoff.started = false
+          t.tiers[0].playoff.playIn = undefined
+        }
+        t.rounds = []
         t.winnerId = null
         return
       }
@@ -264,6 +269,11 @@ export function useCrudActions(
           matchday.matches.forEach((m) => (m.result = null))
         }
         recalcLeagueStandings(t.league, t.tiebreaker, winPts, drawPts, lossPts)
+        if (t.leaguePlayoff) {
+          t.leaguePlayoff.started = false
+          t.leaguePlayoff.playIn = undefined
+        }
+        t.rounds = []
         t.winnerId = null
         return
       }

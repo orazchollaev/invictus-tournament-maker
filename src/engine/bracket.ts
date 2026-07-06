@@ -139,6 +139,33 @@ export function spreadByeSlots(count: number, matchSlotCount: number): number[] 
   return bracketOrder(matchSlotCount).slice(0, count)
 }
 
+// Packs bye recipients (ids[0..byeCount-1]) + remaining ids into round-1 slots,
+// spreading byes across match slots via spreadByeSlots so they don't collide
+// into the same round-2+ subtree. Shared by group+bracket and league-playoff seeding.
+export function packDirectSlots(
+  ids: string[],
+  byeCount: number,
+  matchSlotCount: number,
+  teams: Team[]
+): (Team | null)[] {
+  const teamById = (id?: string) => (id ? (teams.find((t) => t.id === id) ?? null) : null)
+  const byeIds = ids.slice(0, byeCount)
+  const restIds = ids.slice(byeCount)
+  const byeSlotSet = new Set(spreadByeSlots(byeCount, matchSlotCount))
+  const slots: (Team | null)[] = new Array(matchSlotCount * 2).fill(null)
+  let byeIdx = 0
+  let restIdx = 0
+  for (let i = 0; i < matchSlotCount; i++) {
+    if (byeSlotSet.has(i)) {
+      slots[i * 2] = teamById(byeIds[byeIdx++])
+    } else {
+      slots[i * 2] = teamById(restIds[restIdx++])
+      slots[i * 2 + 1] = teamById(restIds[restIdx++])
+    }
+  }
+  return slots
+}
+
 export function buildPureBracket(teams: Team[], seeded: boolean, orderedTeams?: Team[]): Round[] {
   const count = teams.length
   const size = Math.pow(2, Math.ceil(Math.log2(count)))

@@ -13,10 +13,17 @@ import PlayoffManualDraw from "@/modules/tournament/components/PlayoffManualDraw
 import GroupDraw from "@/modules/tournament/components/GroupDraw.vue"
 import TournamentStats from "@/modules/tournament/components/TournamentStats.vue"
 import PromotionModal from "@/modules/tournament/components/PromotionModal.vue"
+import LeaguePlayInPanel from "@/modules/tournament/components/LeaguePlayInPanel.vue"
 import { DrawCeremony } from "@/modules/tournament/components/draw-ceremony"
-import { buildPlayoffPots, computeCrossDrawPlan } from "@/engine"
+import {
+  buildPlayoffPots,
+  computeCrossDrawPlan,
+  getLeaguePlayoffData,
+  resolveLeaguePlayInWinners,
+} from "@/engine"
 import type { CeremonyContext, DrawMode, DrawPlan, Pot } from "@/engine"
 import type { PlayoffSeedMode } from "@/modules/tournament/types"
+import type { Qualifier } from "../components/draw/types"
 import AppModal from "@/components/AppModal.vue"
 import { DetailHeader, DetailPhaseTabs, DetailMultiTierModal } from "../components/detail"
 import type { MainTab } from "../components/detail"
@@ -46,6 +53,7 @@ const showManualSeason = ref(false)
 const showPromotionModal = ref(false)
 const showMultiTierModal = ref(false)
 const showPlayoffManualDraw = ref(false)
+const showLeaguePlayoffManualDraw = ref(false)
 const pendingOverrideTeamIds = ref<string[] | null>(null)
 
 const showCeremony = ref(false)
@@ -278,6 +286,137 @@ const isFinished = computed(
   () => !!tournament.value && store.isTournamentFinished(tournament.value.id)
 )
 
+const leaguePlayoffData = computed(() =>
+  tournament.value ? getLeaguePlayoffData(tournament.value) : undefined
+)
+const hasLeaguePlayoff = computed(() => !!leaguePlayoffData.value?.started)
+const showLeaguePlayoffControls = computed(
+  () => isLeagueFormat.value && (!isMultiTier.value || activeTierIdx.value === 0)
+)
+const canStartLeaguePlayoffFlow = computed(() => {
+  const t = tournament.value
+  if (!t) return false
+  return store.canStartPlayoff(t.id)
+})
+const leaguePlayInPending = computed(() => {
+  const playIn = leaguePlayoffData.value?.playIn
+  return !!playIn && playIn.matches.some((m) => m.result === null)
+})
+const leaguePlayInReady = computed(() => {
+  const playIn = leaguePlayoffData.value?.playIn
+  return !!playIn && playIn.matches.every((m) => m.result !== null)
+})
+
+function ordinal(n: number): string {
+  const s = ["th", "st", "nd", "rd"]
+  const v = n % 100
+  return n + (s[(v - 20) % 10] || s[v] || s[0])
+}
+
+const groupPlayoffQualifiers = computed<Qualifier[]>(() => {
+  const t = tournament.value
+  if (!t?.groups) return []
+  const qpg = t.qualifiersPerGroup ?? 2
+  const wcCount = t.wildcardCount ?? 0
+  const result: Qualifier[] = []
+  for (const group of t.groups) {
+    for (let rank = 0; rank < qpg; rank++) {
+      const standing = group.standings[rank]
+      if (!standing) continue
+      const team = allTeams.value.find((tm) => tm.id === standing.teamId)
+      result.push({
+        teamId: standing.teamId,
+        label: `${group.name} · ${ordinal(rank + 1)}`,
+        teamName: team?.name ?? standing.teamId,
+      })
+    }
+  }
+  if (wcCount > 0) {
+    const candidates = t.groups.flatMap((group) => {
+      const s = group.standings[qpg]
+      return s ? [{ teamId: s.teamId, groupName: group.name, pts: s.pts, gd: s.gd, gf: s.gf }] : []
+    })
+    candidates.sort((a, b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf)
+    for (let i = 0; i < wcCount && i < candidates.length; i++) {
+      const team = allTeams.value.find((tm) => tm.id === candidates[i].teamId)
+      result.push({
+        teamId: candidates[i].teamId,
+        label: `${candidates[i].groupName} · ${trns("manualDraw.wildcard")}`,
+        teamName: team?.name ?? candidates[i].teamId,
+      })
+    }
+  }
+  return result
+})
+
+const leaguePlayoffQualifiers = computed<Qualifier[]>(() => {
+  const t = tournament.value
+  const data = leaguePlayoffData.value
+  if (!t || !data) return []
+  const league = t.tiers?.length ? t.tiers[0].league : t.league
+  if (!league) return []
+  const result: Qualifier[] = []
+  league.standings.slice(0, data.directCount).forEach((s, i) => {
+    const team = allTeams.value.find((tm) => tm.id === s.teamId)
+    result.push({
+      teamId: s.teamId,
+      label: trns("leaguePlayoff.directQualifier", { rank: i + 1 }),
+      teamName: team?.name ?? s.teamId,
+    })
+  })
+  if (data.playIn) {
+    const winners = resolveLeaguePlayInWinners(data.playIn)
+    winners?.forEach((id, i) => {
+      const team = allTeams.value.find((tm) => tm.id === id)
+      result.push({
+        teamId: id,
+        label: trns("leaguePlayoff.playInWinner", { pair: i + 1 }),
+        teamName: team?.name ?? id,
+      })
+    })
+  }
+  return result
+})
+
+function startLeaguePlayoffFlow() {
+  const t = tournament.value
+  const data = leaguePlayoffData.value
+  if (!t || !data) return
+  if (data.playInTeamCount > 0) {
+    store.startLeaguePlayIn(t.id, data.seedMode)
+    return
+  }
+  if (data.seedMode === "manual") {
+    showLeaguePlayoffManualDraw.value = true
+    return
+  }
+  store.startLeaguePlayIn(t.id, data.seedMode)
+}
+
+function seedLeaguePlayoffFromPlayIn() {
+  const t = tournament.value
+  const data = leaguePlayoffData.value
+  if (!t || !data) return
+  if (data.seedMode === "manual") {
+    showLeaguePlayoffManualDraw.value = true
+    return
+  }
+  store.startLeaguePlayoffBracket(t.id, data.seedMode)
+}
+
+function handleLeaguePlayoffManualConfirm(orderedIds: string[]) {
+  const t = tournament.value
+  if (!t) return
+  store.startLeaguePlayoffBracket(t.id, "manual", orderedIds)
+  showLeaguePlayoffManualDraw.value = false
+}
+
+function setLeaguePlayInResult(matchIdx: number, home: number, away: number) {
+  const t = tournament.value
+  if (!t) return
+  store.setLeaguePlayInResult(t.id, matchIdx, home, away)
+}
+
 watch(
   () => tournament.value?.groupsDone,
   (done) => {
@@ -399,12 +538,43 @@ function changeTab(tab: MainTab, tierIdx?: number) {
         :is-multi-tier="isMultiTier"
         :active-tier-idx="activeTierIdx"
         :has-any-results="hasAnyResults"
+        :has-league-playoff="hasLeaguePlayoff"
         @change-tab="changeTab"
       />
 
       <Transition name="tab" mode="out-in">
         <div v-if="activeTab === 'league'" key="league" class="section-box">
           <div class="section-body">
+            <template
+              v-if="showLeaguePlayoffControls && leaguePlayoffData?.enabled && !hasLeaguePlayoff"
+            >
+              <LeaguePlayInPanel
+                v-if="leaguePlayoffData.playIn"
+                :play-in="leaguePlayoffData.playIn"
+                :teams="allTeams"
+                @set-result="setLeaguePlayInResult"
+              />
+              <div class="lpc-actions">
+                <button
+                  v-if="!leaguePlayoffData.playIn"
+                  class="primary"
+                  :disabled="!canStartLeaguePlayoffFlow"
+                  @click="startLeaguePlayoffFlow"
+                >
+                  {{ trns("leaguePlayoff.startPlayIn") }}
+                </button>
+                <button
+                  v-else-if="leaguePlayInReady"
+                  class="primary"
+                  @click="seedLeaguePlayoffFromPlayIn"
+                >
+                  {{ trns("leaguePlayoff.seedBracket") }}
+                </button>
+                <span v-else-if="leaguePlayInPending" class="lpc-hint">
+                  {{ trns("leaguePlayoff.resolvePlayIn") }}
+                </span>
+              </div>
+            </template>
             <!-- Multi-tier mode -->
             <template v-if="isMultiTier && tournament.tiers">
               <Transition name="tab" mode="out-in">
@@ -545,10 +715,24 @@ function changeTab(tab: MainTab, tierIdx?: number) {
       @close="showPlayoffManualDraw = false"
     >
       <PlayoffManualDraw
-        :tournament="tournament"
+        :qualifiers="groupPlayoffQualifiers"
         :teams="allTeams"
         @confirm="handlePlayoffManualConfirm"
         @cancel="showPlayoffManualDraw = false"
+      />
+    </AppModal>
+
+    <AppModal
+      v-if="showLeaguePlayoffManualDraw && tournament"
+      :title="trns('leaguePlayoff.playoffDrawTitle')"
+      :width="'min(680px, calc(100vw - 32px))'"
+      @close="showLeaguePlayoffManualDraw = false"
+    >
+      <PlayoffManualDraw
+        :qualifiers="leaguePlayoffQualifiers"
+        :teams="allTeams"
+        @confirm="handleLeaguePlayoffManualConfirm"
+        @cancel="showLeaguePlayoffManualDraw = false"
       />
     </AppModal>
 
@@ -583,6 +767,17 @@ function changeTab(tab: MainTab, tierIdx?: number) {
 </template>
 
 <style scoped>
+.lpc-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.lpc-hint {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
 .gs-subtab-row {
   display: flex;
   gap: 2px;

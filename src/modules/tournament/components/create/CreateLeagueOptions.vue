@@ -2,10 +2,11 @@
 import { computed, watch } from "vue"
 import AppStepper from "@/components/AppStepper.vue"
 import BtnGroup from "@/components/BtnGroup.vue"
-import type { LegMode } from "@/modules/tournament/types"
+import type { LegMode, LeaguePlayoffSeedMode } from "@/modules/tournament/types"
 import type { Team } from "@/modules/teams/types"
 import { useLegOptions } from "@/modules/tournament/composables/useLegOptions"
 import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
+import { useI18n } from "vue-i18n"
 
 const props = defineProps<{
   selectedTeams: Team[]
@@ -16,8 +17,23 @@ const leagueLegMode = defineModel<LegMode>("leagueLegMode", { required: true })
 const tierCount = defineModel<number>("tierCount", { required: true })
 const tierAssignments = defineModel<Record<string, number>>("tierAssignments", { required: true })
 const promotionCount = defineModel<number>("promotionCount", { required: true })
+const playoffEnabled = defineModel<boolean>("playoffEnabled", { required: true })
+const playoffDirectCount = defineModel<number>("playoffDirectCount", { required: true })
+const playoffPlayInCount = defineModel<number>("playoffPlayInCount", { required: true })
+const playoffSeedMode = defineModel<LeaguePlayoffSeedMode>("playoffSeedMode", { required: true })
 
+const { t } = useI18n()
 const { multiLegOptions } = useLegOptions()
+
+const playoffSeedModeOptions = computed(() => [
+  { value: "seeded" as const, label: t("common.seeded") },
+  { value: "random" as const, label: t("common.random") },
+  { value: "manual" as const, label: t("common.manual") },
+])
+
+const maxPlayInCount = computed(() =>
+  Math.max(0, Math.floor((props.selectedTeams.length - playoffDirectCount.value) / 2) * 2)
+)
 
 const tierNames = computed(() => {
   const names: string[] = []
@@ -198,6 +214,36 @@ watch(
             </div>
           </div>
         </div>
+      </div>
+    </template>
+  </div>
+
+  <!-- Playoff -->
+  <div class="ctp-card">
+    <label class="ctp-toggle-row">
+      <input v-model="playoffEnabled" type="checkbox" />
+      <span class="ctp-toggle-label">{{ $t("tournament.create.playoff.enable") }}</span>
+      <span class="ctp-toggle-hint">{{ $t("tournament.create.playoff.hint") }}</span>
+    </label>
+
+    <template v-if="playoffEnabled">
+      <AppStepper
+        v-model="playoffDirectCount"
+        :label="$t('tournament.create.playoff.directCount')"
+        :min="2"
+        :max="selectedTeams.length"
+        :hint="$t('tournament.create.playoff.directCountHint')"
+      />
+      <AppStepper
+        v-model="playoffPlayInCount"
+        :label="$t('tournament.create.playoff.playInTeamCount')"
+        :min="0"
+        :max="maxPlayInCount"
+        :hint="$t('tournament.create.playoff.playInHint')"
+      />
+      <div class="ctp-leg-row">
+        <span class="ctp-row-label">{{ $t("tournament.create.playoff.seedMode") }}</span>
+        <BtnGroup v-model="playoffSeedMode" :options="playoffSeedModeOptions" />
       </div>
     </template>
   </div>

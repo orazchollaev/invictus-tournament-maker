@@ -63,10 +63,22 @@ export interface League {
   legMode: LegMode
 }
 
+export type LeaguePlayoffSeedMode = "seeded" | "random" | "manual"
+
+export interface LeaguePlayoff {
+  enabled: boolean
+  directCount: number // top N teams qualify directly
+  playInTeamCount: number // ranks directCount+1..directCount+playInTeamCount play play-in (even)
+  seedMode: LeaguePlayoffSeedMode
+  started: boolean // true once play-in/bracket generation has begun — locks settings
+  playIn?: Round // play-in pairs, one match per pair; winners feed the bracket
+}
+
 export interface LeagueTier {
   name: string // "Division 1", "Division 2", …
   teamIds: string[]
   league: League
+  playoff?: LeaguePlayoff // only ever set on tiers[0] (top tier)
 }
 
 // ─── Tournament ──────────────────────────────────────────────────
@@ -104,6 +116,7 @@ export interface Tournament {
 
   // league (only when format === "league")
   league?: League
+  leaguePlayoff?: LeaguePlayoff // single-tier league playoff (mirrors LeagueTier.playoff)
 
   // wildcard slots: best N teams at rank `qualifiersPerGroup` across all groups
   wildcardCount?: number

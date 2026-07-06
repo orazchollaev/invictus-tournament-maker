@@ -10,6 +10,7 @@ import {
   getLeagueWinner,
   allTiersDone,
   getTiersWinner,
+  getLeaguePlayoffData,
 } from "@/engine"
 import { useTeamsStore } from "../teams/store"
 import { useCrudActions } from "./store/crud"
@@ -18,6 +19,7 @@ import { useThirdPlaceActions } from "./store/third-place"
 import { useGroupActions } from "./store/groups"
 import { useDrawActions } from "./store/draw"
 import { useLeagueActions } from "./store/league"
+import { useLeaguePlayoffActions } from "./store/leaguePlayoff"
 
 export const useTournamentStore = defineStore("tournament", () => {
   const tournaments = ref<Tournament[]>([])
@@ -33,6 +35,7 @@ export const useTournamentStore = defineStore("tournament", () => {
   const groups = useGroupActions(tournaments, getTeams)
   const draw = useDrawActions(tournaments, getTeams)
   const leagueActions = useLeagueActions(tournaments, getTeams)
+  const leaguePlayoff = useLeaguePlayoffActions(tournaments, getTeams)
 
   function setRelegationCount(tournamentId: string, count: number) {
     const t = tournaments.value.find((t) => t.id === tournamentId)
@@ -105,7 +108,7 @@ export const useTournamentStore = defineStore("tournament", () => {
             t.teamPointAdjustments
           )
         )
-        if (allTiersDone(t)) t.winnerId = getTiersWinner(t)
+        if (allTiersDone(t) && !getLeaguePlayoffData(t)?.enabled) t.winnerId = getTiersWinner(t)
       } else if (t.league) {
         recalcLeagueStandings(
           t.league,
@@ -115,7 +118,7 @@ export const useTournamentStore = defineStore("tournament", () => {
           lossPoints,
           t.teamPointAdjustments
         )
-        if (allLeagueDone(t)) t.winnerId = getLeagueWinner(t)
+        if (allLeagueDone(t) && !getLeaguePlayoffData(t)?.enabled) t.winnerId = getLeagueWinner(t)
       }
     } else if (t.groups) {
       t.groups.forEach((g) =>
@@ -234,6 +237,7 @@ export const useTournamentStore = defineStore("tournament", () => {
     ...groups,
     ...draw,
     ...leagueActions,
+    ...leaguePlayoff,
     simulateTournament,
     setTiebreaker,
     setPointsConfig,
