@@ -1,6 +1,12 @@
+import { ref } from "vue"
+import { Capacitor } from "@capacitor/core"
 import { useRegisterSW } from "virtual:pwa-register/vue"
 
 export function usePwaUpdate() {
+  if (Capacitor.isNativePlatform()) {
+    return { needRefresh: ref(false), applyUpdate: () => {} }
+  }
+
   const { needRefresh, updateServiceWorker } = useRegisterSW({
     onRegisteredSW(swUrl, r) {
       // Poll every 60 seconds to catch new Vercel deployments
