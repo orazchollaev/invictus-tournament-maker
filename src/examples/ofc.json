@@ -1,0 +1,141 @@
+{
+  "label": "OFC Nations",
+  "description": "all oceania nations",
+  "order": 5,
+  "type": "country",
+  "teams": [
+    {
+      "id": "ofc-01",
+      "name": "New Zealand",
+      "color": "#00247D",
+      "power": 79,
+      "flag": "nz"
+    },
+    {
+      "id": "ofc-02",
+      "name": "New Caledonia",
+      "color": "#0055A4",
+      "power": 66,
+      "flag": "nc"
+    },
+    {
+      "id": "ofc-03",
+      "name": "Tahiti",
+      "color": "#D21034",
+      "power": 64,
+      "flag": "ty"
+    },
+    {
+      "id": "ofc-04",
+      "name": "Fiji",
+      "color": "#68BFE5",
+      "power": 63,
+      "flag": "fj"
+    },
+    {
+      "id": "ofc-05",
+      "name": "Papua New Guinea",
+      "color": "#D21034",
+      "power": 62,
+      "flag": "pg"
+    },
+    {
+      "id": "ofc-06",
+      "name": "Solomon Islands",
+      "color": "#0051BA",
+      "power": 61,
+      "flag": "sb"
+    },
+    {
+      "id": "ofc-07",
+      "name": "Vanuatu",
+      "color": "#009543",
+      "power": 60,
+      "flag": "vu"
+    },
+    {
+      "id": "ofc-08",
+      "name": "Samoa",
+      "color": "#CE1126",
+      "power": 57,
+      "flag": "ws"
+    },
+    {
+      "id": "ofc-09",
+      "name": "Cook Islands",
+      "color": "#003F87",
+      "power": 55,
+      "flag": "ck"
+    },
+    {
+      "id": "ofc-10",
+      "name": "Tonga",
+      "color": "#C10000",
+      "power": 54,
+      "flag": "to"
+    },
+    {
+      "id": "ofc-11",
+      "name": "American Samoa",
+      "color": "#002868",
+      "power": 53,
+      "flag": "as"
+    },
+    {
+      "id": "ofc-12",
+      "name": "Micronesia",
+      "color": "#75B2DD",
+      "power": 51,
+      "flag": "fm"
+    },
+    {
+      "id": "ofc-13",
+      "name": "Kiribati",
+      "color": "#C8102E",
+      "power": 50,
+      "flag": "ki"
+    },
+    {
+      "id": "ofc-14",
+      "name": "Tuvalu",
+      "color": "#5BC2E7",
+      "power": 49,
+      "flag": "tv"
+    },
+    {
+      "id": "ofc-15",
+      "name": "Guam",
+      "color": "#0033A0",
+      "power": 48,
+      "flag": "gu"
+    },
+    {
+      "id": "ofc-16",
+      "name": "Northern Mariana Islands",
+      "color": "#0072CE",
+      "power": 47,
+      "flag": "mp"
+    },
+    {
+      "id": "ofc-17",
+      "name": "Palau",
+      "color": "#4AADD6",
+      "power": 46,
+      "flag": "pw"
+    },
+    {
+      "id": "ofc-18",
+      "name": "Marshall Islands",
+      "color": "#003893",
+      "power": 45,
+      "flag": "mh"
+    },
+    {
+      "id": "ofc-19",
+      "name": "Nauru",
+      "color": "#002B7F",
+      "power": 44,
+      "flag": "nr"
+    }
+  ]
+}

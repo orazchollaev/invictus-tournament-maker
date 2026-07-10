@@ -57,8 +57,7 @@ const tierCount = ref(1)
 const tierAssignments = ref<Record<string, number>>({})
 const promotionCount = ref(1)
 const playoffEnabled = ref(false)
-const playoffDirectCount = ref(4)
-const playoffPlayInCount = ref(0)
+const playoffQualifierCount = ref(4)
 const leaguePlayoffSeedMode = ref<LeaguePlayoffSeedMode>("seeded")
 const teamPointAdjustments = ref<Record<string, number>>({})
 const teamPowerAdjustments = ref<Record<string, number>>({})
@@ -139,8 +138,7 @@ function applyLeaguePlayoffSettings(id: string) {
   if (!playoffEnabled.value) return
   store.changeLeaguePlayoffSettings(id, {
     enabled: true,
-    directCount: playoffDirectCount.value,
-    playInTeamCount: playoffPlayInCount.value,
+    qualifierCount: playoffQualifierCount.value,
     seedMode: leaguePlayoffSeedMode.value,
   })
 }
@@ -282,8 +280,7 @@ function doCreate(orderedIds?: string[]) {
           v-model:tier-assignments="tierAssignments"
           v-model:promotion-count="promotionCount"
           v-model:playoff-enabled="playoffEnabled"
-          v-model:playoff-direct-count="playoffDirectCount"
-          v-model:playoff-play-in-count="playoffPlayInCount"
+          v-model:playoff-qualifier-count="playoffQualifierCount"
           v-model:playoff-seed-mode="leaguePlayoffSeedMode"
           :selected-teams="selectedTeams"
           :all-teams="allTeams"

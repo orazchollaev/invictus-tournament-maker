@@ -13,6 +13,8 @@ const props = defineProps<{
   leagueOverride?: League
   relegationCountOverride?: number
   promotionCount?: number
+  // Top-N playoff cutoff zone (0 = no playoff for this table)
+  playoffQualifierCount?: number
 }>()
 
 const emit = defineEmits<{
@@ -43,6 +45,16 @@ function isPromoted(rank: number) {
 
 function isLastPromoted(rank: number) {
   return (props.promotionCount ?? 0) > 0 && rank === (props.promotionCount ?? 0) - 1
+}
+
+const playoffCount = computed(() => props.playoffQualifierCount ?? 0)
+
+function isPlayoffQualifier(rank: number) {
+  return playoffCount.value > 0 && rank < playoffCount.value
+}
+
+function isLastPlayoffQualifier(rank: number) {
+  return playoffCount.value > 0 && rank === playoffCount.value - 1
 }
 
 function firstUnplayedIdx() {
@@ -163,10 +175,12 @@ async function handleSimMatchday(idx: number) {
                 :key="row.teamId"
                 :class="{
                   'lv-row--champion': rank === 0 && isFinished,
-                  'lv-pos--1': rank === 0 && !props.promotionCount,
-                  'lv-pos--2': rank === 1 && !props.promotionCount,
-                  'lv-pos--3': rank === 2 && !props.promotionCount,
-                  'lv-pos--4': rank === 3 && !props.promotionCount,
+                  'lv-pos--1': rank === 0 && !props.promotionCount && !playoffCount,
+                  'lv-pos--2': rank === 1 && !props.promotionCount && !playoffCount,
+                  'lv-pos--3': rank === 2 && !props.promotionCount && !playoffCount,
+                  'lv-pos--4': rank === 3 && !props.promotionCount && !playoffCount,
+                  'lv-pos--playoff': isPlayoffQualifier(rank),
+                  'lv-pos--playoff-last': isLastPlayoffQualifier(rank),
                   'lv-pos--promoted': isPromoted(rank),
                   'lv-pos--promoted-last': isLastPromoted(rank),
                   'lv-pos--relegated': isRelegated(rank),
@@ -463,6 +477,17 @@ async function handleSimMatchday(idx: number) {
   color: var(--success) !important;
   font-weight: 600;
 }
+.lv-pos--playoff td:first-child {
+  border-left: 3px solid var(--accent-2);
+}
+.lv-pos--playoff .col-rank {
+  color: var(--accent-2) !important;
+  font-weight: 600;
+}
+.lv-pos--playoff-last td {
+  border-bottom: 1px dashed color-mix(in srgb, var(--accent-2) 45%, transparent);
+}
+
 .lv-pos--promoted td:first-child {
   border-left: 3px solid var(--success);
 }

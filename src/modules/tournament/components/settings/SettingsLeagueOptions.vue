@@ -10,7 +10,7 @@ import { useI18n } from "vue-i18n"
 const { t } = useI18n()
 const { multiLegOptions } = useLegOptions()
 
-const props = defineProps<{
+defineProps<{
   hasAnyResults: boolean
   isMultiTier: boolean
   teamCount: number
@@ -26,8 +26,9 @@ const localTierCount = defineModel<number>("localTierCount", { required: true })
 const localPromotionCount = defineModel<number>("localPromotionCount", { required: true })
 const localLinkedLeagueId = defineModel<string>("localLinkedLeagueId", { required: true })
 const localPlayoffEnabled = defineModel<boolean>("localPlayoffEnabled", { required: true })
-const localPlayoffDirectCount = defineModel<number>("localPlayoffDirectCount", { required: true })
-const localPlayoffPlayInCount = defineModel<number>("localPlayoffPlayInCount", { required: true })
+const localPlayoffQualifierCount = defineModel<number>("localPlayoffQualifierCount", {
+  required: true,
+})
 const localPlayoffSeedMode = defineModel<LeaguePlayoffSeedMode>("localPlayoffSeedMode", {
   required: true,
 })
@@ -37,10 +38,6 @@ const playoffSeedModeOptions = computed(() => [
   { value: "random" as const, label: t("common.random") },
   { value: "manual" as const, label: t("common.manual") },
 ])
-
-const maxPlayInCount = computed(() =>
-  Math.max(0, Math.floor((props.teamCount - localPlayoffDirectCount.value) / 2) * 2)
-)
 </script>
 
 <template>
@@ -127,18 +124,11 @@ const maxPlayInCount = computed(() =>
 
     <template v-if="localPlayoffEnabled">
       <AppStepper
-        v-model="localPlayoffDirectCount"
-        :label="t('tournament.create.playoff.directCount')"
+        v-model="localPlayoffQualifierCount"
+        :label="t('tournament.create.playoff.qualifierCount')"
         :min="2"
         :max="teamCount"
-        :hint="t('tournament.create.playoff.directCountHint')"
-      />
-      <AppStepper
-        v-model="localPlayoffPlayInCount"
-        :label="t('tournament.create.playoff.playInTeamCount')"
-        :min="0"
-        :max="maxPlayInCount"
-        :hint="t('tournament.create.playoff.playInHint')"
+        :hint="t('tournament.create.playoff.qualifierCountHint')"
       />
       <div class="tsp-leg-row">
         <span class="tsp-row-label">{{ t("tournament.create.playoff.seedMode") }}</span>

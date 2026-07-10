@@ -67,11 +67,9 @@ export type LeaguePlayoffSeedMode = "seeded" | "random" | "manual"
 
 export interface LeaguePlayoff {
   enabled: boolean
-  directCount: number // top N teams qualify directly
-  playInTeamCount: number // ranks directCount+1..directCount+playInTeamCount play play-in (even)
+  qualifierCount: number // top N of the final table make the playoff
   seedMode: LeaguePlayoffSeedMode
-  started: boolean // true once play-in/bracket generation has begun — locks settings
-  playIn?: Round // play-in pairs, one match per pair; winners feed the bracket
+  started: boolean // true once the playoff bracket has been seeded — locks settings
 }
 
 export interface LeagueTier {

@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import { computed } from "vue"
 import { useRoute, useRouter } from "vue-router"
+import { useI18n } from "vue-i18n"
+
+import { ArrowLeft, Download, BarChart2, Trophy, Medal, Users, TrendingDown } from "@lucide/vue"
+import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
+
 import { useTournamentStore } from "@/modules/tournament/store"
 import { useTeamsStore } from "@/modules/teams/store"
 import { getCachedSimResult } from "@/modules/tournament/composables/simulationCache"
-import { ArrowLeft, Download, BarChart2, Trophy, Medal, Users, TrendingDown } from "@lucide/vue"
-import { useI18n } from "vue-i18n"
 
 const route = useRoute()
 const router = useRouter()
@@ -253,11 +256,8 @@ function handleSaveCSV() {
                 <tr v-for="(s, i) in sortedStats" :key="s.teamId">
                   <td class="col-rank">{{ i + 1 }}</td>
                   <td class="col-team">
-                    <span
-                      class="team-dot"
-                      :style="{ background: teamById(s.teamId)?.color ?? '#888' }"
-                    />
-                    {{ teamById(s.teamId)?.name ?? s.teamId }}
+                    <TeamBadge v-if="teamById(s.teamId)" :team="teamById(s.teamId)!" :size="14" />
+                    <span v-else>{{ s.teamId }}</span>
                   </td>
                   <td class="col-pwr">{{ teamById(s.teamId)?.power ?? "—" }}</td>
                   <td class="col-stat stat-win">{{ pct(s.wins) }}</td>
@@ -315,11 +315,8 @@ function handleSaveCSV() {
                 <tr v-for="(s, i) in sortedStats" :key="s.teamId">
                   <td class="col-rank">{{ i + 1 }}</td>
                   <td class="col-team">
-                    <span
-                      class="team-dot"
-                      :style="{ background: teamById(s.teamId)?.color ?? '#888' }"
-                    />
-                    {{ teamById(s.teamId)?.name ?? s.teamId }}
+                    <TeamBadge v-if="teamById(s.teamId)" :team="teamById(s.teamId)!" :size="14" />
+                    <span v-else>{{ s.teamId }}</span>
                   </td>
                   <td class="col-pwr">{{ teamById(s.teamId)?.power ?? "—" }}</td>
                   <td class="col-stat stat-win">{{ pct(s.wins) }}</td>

@@ -11,6 +11,8 @@ import {
   allTiersDone,
   getTiersWinner,
   getLeaguePlayoffData,
+  canStartLeaguePlayoff,
+  seedLeaguePlayoffBracket,
 } from "@/engine"
 import { useTeamsStore } from "../teams/store"
 import { useCrudActions } from "./store/crud"
@@ -216,6 +218,15 @@ export const useTournamentStore = defineStore("tournament", () => {
         leagueActions.simAllTiers(tournamentId)
       } else {
         leagueActions.simAllLeague(tournamentId)
+      }
+      // Auto-seed the playoff bracket once the season is done (like group→bracket),
+      // then play it out — so one "Simulate All" runs the whole structure.
+      const data = getLeaguePlayoffData(t)
+      if (data?.enabled && !data.started && canStartLeaguePlayoff(t)) {
+        seedLeaguePlayoffBracket(t, getTeams(), data.seedMode)
+      }
+      if (t.rounds.length && getLeaguePlayoffData(t)?.started) {
+        bracket.simulateAll(tournamentId)
       }
       return
     }

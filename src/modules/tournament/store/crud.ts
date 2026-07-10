@@ -123,6 +123,14 @@ export function useCrudActions(
       if (t.winPoints !== undefined) newT.winPoints = t.winPoints
       if (t.drawPoints !== undefined) newT.drawPoints = t.drawPoints
       if (t.lossPoints !== undefined) newT.lossPoints = t.lossPoints
+      if (t.leaguePlayoff?.enabled) {
+        newT.leaguePlayoff = {
+          enabled: true,
+          qualifierCount: t.leaguePlayoff.qualifierCount,
+          seedMode: t.leaguePlayoff.seedMode,
+          started: false,
+        }
+      }
       tournaments.value.push(newT)
       active.value = newT.id
       return newT.id
@@ -186,9 +194,11 @@ export function useCrudActions(
       tierDefs.push({ name: `Division ${i + 1}`, teams: sorted.slice(offset, offset + size) })
       offset += size
     }
+    const prevPlayoff = t.tiers[0]?.playoff
     const newT = createMultiTierLeague(t.name, tierDefs, t.season, legMode, t.promotionCount ?? 1)
     t.tiers = newT.tiers
     t.teamIds = newT.teamIds
+    if (prevPlayoff && t.tiers?.length) t.tiers[0].playoff = { ...prevPlayoff, started: false }
     t.winnerId = null
   }
 
@@ -219,6 +229,15 @@ export function useCrudActions(
     if (t.winPoints !== undefined) newT.winPoints = t.winPoints
     if (t.drawPoints !== undefined) newT.drawPoints = t.drawPoints
     if (t.lossPoints !== undefined) newT.lossPoints = t.lossPoints
+    const prevPlayoff = t.tiers[0]?.playoff
+    if (prevPlayoff?.enabled && newT.tiers?.length) {
+      newT.tiers[0].playoff = {
+        enabled: true,
+        qualifierCount: prevPlayoff.qualifierCount,
+        seedMode: prevPlayoff.seedMode,
+        started: false,
+      }
+    }
     tournaments.value.push(newT)
     active.value = newT.id
     return newT.id
@@ -256,10 +275,7 @@ export function useCrudActions(
           }
           recalcLeagueStandings(tier.league, t.tiebreaker, winPts, drawPts, lossPts)
         }
-        if (t.tiers[0].playoff) {
-          t.tiers[0].playoff.started = false
-          t.tiers[0].playoff.playIn = undefined
-        }
+        if (t.tiers[0].playoff) t.tiers[0].playoff.started = false
         t.rounds = []
         t.winnerId = null
         return
@@ -269,10 +285,7 @@ export function useCrudActions(
           matchday.matches.forEach((m) => (m.result = null))
         }
         recalcLeagueStandings(t.league, t.tiebreaker, winPts, drawPts, lossPts)
-        if (t.leaguePlayoff) {
-          t.leaguePlayoff.started = false
-          t.leaguePlayoff.playIn = undefined
-        }
+        if (t.leaguePlayoff) t.leaguePlayoff.started = false
         t.rounds = []
         t.winnerId = null
         return

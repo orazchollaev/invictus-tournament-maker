@@ -72,8 +72,7 @@ const origLeaguePlayoff = computed(() =>
   tournament.value ? getLeaguePlayoffData(tournament.value) : undefined
 )
 const localPlayoffEnabled = ref(origLeaguePlayoff.value?.enabled ?? false)
-const localPlayoffDirectCount = ref(origLeaguePlayoff.value?.directCount ?? 4)
-const localPlayoffPlayInCount = ref(origLeaguePlayoff.value?.playInTeamCount ?? 0)
+const localPlayoffQualifierCount = ref(origLeaguePlayoff.value?.qualifierCount ?? 4)
 const leagueLocalPlayoffSeedMode = ref<LeaguePlayoffSeedMode>(
   origLeaguePlayoff.value?.seedMode ?? "seeded"
 )
@@ -128,9 +127,8 @@ const hasChanges = computed(() => {
   if (
     isLeagueFormat.value &&
     (localPlayoffEnabled.value !== (origLeaguePlayoff.value?.enabled ?? false) ||
-      localPlayoffDirectCount.value !== (origLeaguePlayoff.value?.directCount ?? 4) ||
-      localPlayoffPlayInCount.value !== (origLeaguePlayoff.value?.playInTeamCount ?? 0) ||
-      localPlayoffSeedMode.value !== (origLeaguePlayoff.value?.seedMode ?? "seeded"))
+      localPlayoffQualifierCount.value !== (origLeaguePlayoff.value?.qualifierCount ?? 4) ||
+      leagueLocalPlayoffSeedMode.value !== (origLeaguePlayoff.value?.seedMode ?? "seeded"))
   )
     return true
   if (localTiebreaker.value !== (orig.tiebreaker ?? "goal-diff")) return true
@@ -245,14 +243,12 @@ function saveOnly() {
     isLeagueFormat.value &&
     !origLeaguePlayoff.value?.started &&
     (localPlayoffEnabled.value !== (origLeaguePlayoff.value?.enabled ?? false) ||
-      localPlayoffDirectCount.value !== (origLeaguePlayoff.value?.directCount ?? 4) ||
-      localPlayoffPlayInCount.value !== (origLeaguePlayoff.value?.playInTeamCount ?? 0) ||
-      localPlayoffSeedMode.value !== (origLeaguePlayoff.value?.seedMode ?? "seeded"))
+      localPlayoffQualifierCount.value !== (origLeaguePlayoff.value?.qualifierCount ?? 4) ||
+      leagueLocalPlayoffSeedMode.value !== (origLeaguePlayoff.value?.seedMode ?? "seeded"))
   )
     store.changeLeaguePlayoffSettings(tournamentId.value, {
       enabled: localPlayoffEnabled.value,
-      directCount: localPlayoffDirectCount.value,
-      playInTeamCount: localPlayoffPlayInCount.value,
+      qualifierCount: localPlayoffQualifierCount.value,
       seedMode: leagueLocalPlayoffSeedMode.value,
     })
   if (localTiebreaker.value !== (orig.tiebreaker ?? "goal-diff"))
@@ -413,8 +409,7 @@ function handleSave() {
             v-model:local-promotion-count="localPromotionCount"
             v-model:local-linked-league-id="localLinkedLeagueId"
             v-model:local-playoff-enabled="localPlayoffEnabled"
-            v-model:local-playoff-direct-count="localPlayoffDirectCount"
-            v-model:local-playoff-play-in-count="localPlayoffPlayInCount"
+            v-model:local-playoff-qualifier-count="localPlayoffQualifierCount"
             v-model:local-playoff-seed-mode="leagueLocalPlayoffSeedMode"
             :has-any-results="hasAnyResults"
             :is-multi-tier="isMultiTier"

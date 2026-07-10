@@ -69,9 +69,7 @@ export {
   setLeaguePlayoffData,
   isTopTierDone,
   canStartLeaguePlayoff,
-  buildLeaguePlayInPairs,
-  resolveLeaguePlayInWinners,
-  startLeaguePlayIn,
-  setLeaguePlayInResult,
+  getLeaguePlayoffQualifierIds,
   seedLeaguePlayoffBracket,
+  computeLeaguePlayoffPlan,
 } from "./leaguePlayoff"

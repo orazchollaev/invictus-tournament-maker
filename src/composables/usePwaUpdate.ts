@@ -3,7 +3,6 @@ import { useRegisterSW } from "virtual:pwa-register/vue"
 export function usePwaUpdate() {
   const { needRefresh, updateServiceWorker } = useRegisterSW({
     onRegisteredSW(swUrl, r) {
-      // Poll every 60 seconds to catch new Vercel deployments
       if (r) {
         setInterval(async () => {
           if (!(!r.installing && navigator)) return

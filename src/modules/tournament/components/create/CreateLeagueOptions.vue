@@ -18,8 +18,7 @@ const tierCount = defineModel<number>("tierCount", { required: true })
 const tierAssignments = defineModel<Record<string, number>>("tierAssignments", { required: true })
 const promotionCount = defineModel<number>("promotionCount", { required: true })
 const playoffEnabled = defineModel<boolean>("playoffEnabled", { required: true })
-const playoffDirectCount = defineModel<number>("playoffDirectCount", { required: true })
-const playoffPlayInCount = defineModel<number>("playoffPlayInCount", { required: true })
+const playoffQualifierCount = defineModel<number>("playoffQualifierCount", { required: true })
 const playoffSeedMode = defineModel<LeaguePlayoffSeedMode>("playoffSeedMode", { required: true })
 
 const { t } = useI18n()
@@ -30,10 +29,6 @@ const playoffSeedModeOptions = computed(() => [
   { value: "random" as const, label: t("common.random") },
   { value: "manual" as const, label: t("common.manual") },
 ])
-
-const maxPlayInCount = computed(() =>
-  Math.max(0, Math.floor((props.selectedTeams.length - playoffDirectCount.value) / 2) * 2)
-)
 
 const tierNames = computed(() => {
   const names: string[] = []
@@ -228,18 +223,11 @@ watch(
 
     <template v-if="playoffEnabled">
       <AppStepper
-        v-model="playoffDirectCount"
-        :label="$t('tournament.create.playoff.directCount')"
+        v-model="playoffQualifierCount"
+        :label="$t('tournament.create.playoff.qualifierCount')"
         :min="2"
         :max="selectedTeams.length"
-        :hint="$t('tournament.create.playoff.directCountHint')"
-      />
-      <AppStepper
-        v-model="playoffPlayInCount"
-        :label="$t('tournament.create.playoff.playInTeamCount')"
-        :min="0"
-        :max="maxPlayInCount"
-        :hint="$t('tournament.create.playoff.playInHint')"
+        :hint="$t('tournament.create.playoff.qualifierCountHint')"
       />
       <div class="ctp-leg-row">
         <span class="ctp-row-label">{{ $t("tournament.create.playoff.seedMode") }}</span>

@@ -481,10 +481,8 @@ export default {
       playoff: {
         enable: "Play-off aşaması ekle",
         hint: "Ligin ardından en iyi takımlar eleme usulü bir play-off oynar.",
-        directCount: "Doğrudan katılanlar",
-        directCountHint: "doğrudan play-off eleme tablosuna geçen takımlar",
-        playInTeamCount: "Play-in takımları",
-        playInHint: "kalan kontenjan için sıradaki takımlar play-in turu oynar",
+        qualifierCount: "Play-off'a çıkan takımlar",
+        qualifierCountHint: "final tablosunda play-off'a kalan en iyi takımlar",
         seedMode: "Eşleştirme",
       },
       drawMethod: "Kura Yöntemi",
@@ -674,6 +672,14 @@ export default {
     dropHere: "Takımı buraya bırakın veya dokunun",
     wildcard: "Wildcard",
     remove: "Kaldır",
+  },
+  leaguePlayoff: {
+    startPlayoff: "Play-off'u Başlat",
+    finishSeasonFirst: "Play-off'u başlatmak için sezonu tamamlayın.",
+    qualifier: "Sıra {rank}",
+    playoffDrawTitle: "Play-off Kurası",
+    potTop: "Seri başları",
+    potRest: "Diğerleri",
   },
   promotionModal: {
     newSeasonTitle: "Yeni Sezon — {name}",

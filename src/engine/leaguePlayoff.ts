@@ -5,11 +5,11 @@ import type {
   League,
   LeaguePlayoff,
   LeaguePlayoffSeedMode,
-  Round,
 } from "../modules/tournament/types"
-import { uid, shuffle } from "./utils"
-import { buildBracketRounds, propagateWinners, packDirectSlots, getWinnerId } from "./bracket"
+import { shuffle } from "./utils"
+import { buildBracketRounds, propagateWinners, packDirectSlots, spreadByeSlots } from "./bracket"
 import { allLeagueDone, isTierDone } from "./league"
+import type { DrawPlan, DrawStep } from "./drawCeremony"
 
 // Only the top tier (tiers[0]) ever carries playoff data — mirrors the
 // existing `league` (single-tier) vs `tiers[].league` (multi-tier) duality.
@@ -37,70 +37,16 @@ export function canStartLeaguePlayoff(tournament: Tournament): boolean {
   return isTopTierDone(tournament)
 }
 
-// Pairs ranks [directCount, directCount+playInTeamCount) first-vs-last
-// (rank directCount+1 vs the last play-in rank, etc — "7v10, 8v9" style).
-export function buildLeaguePlayInPairs(tournament: Tournament): Round | null {
+// Top `qualifierCount` teams of the final table, in rank order.
+export function getLeaguePlayoffQualifierIds(tournament: Tournament): string[] {
   const data = getLeaguePlayoffData(tournament)
   const league = getTopLeague(tournament)
-  if (!data || !league || data.playInTeamCount <= 0) return null
-
-  const pool = league.standings.slice(data.directCount, data.directCount + data.playInTeamCount)
-  const pairCount = Math.floor(pool.length / 2)
-  if (pairCount <= 0) return null
-
-  const matches = Array.from({ length: pairCount }, (_, i) => ({
-    id: uid(),
-    homeId: pool[i].teamId,
-    awayId: pool[pool.length - 1 - i].teamId,
-    result: null,
-  }))
-  return { name: "Play-In", matches }
+  if (!data || !league) return []
+  return league.standings.slice(0, data.qualifierCount).map((s) => s.teamId)
 }
 
-// One winner id per match, in pair order (pair i's winner inherits the better
-// rank of its pair, so qualifier order stays priority-ordered for seeding/byes).
-// Returns null if any play-in match is unresolved.
-export function resolveLeaguePlayInWinners(playIn: Round): string[] | null {
-  const winners: string[] = []
-  for (const m of playIn.matches) {
-    const winner = getWinnerId(m)
-    if (!winner) return null
-    winners.push(winner)
-  }
-  return winners
-}
-
-// Builds the play-in round (if needed) and stores it, or seeds the bracket
-// directly when there's no play-in stage. The "Start Playoff" entry point.
-export function startLeaguePlayIn(
-  tournament: Tournament,
-  teams: Team[],
-  mode: LeaguePlayoffSeedMode
-) {
-  const data = getLeaguePlayoffData(tournament)
-  if (!data || !canStartLeaguePlayoff(tournament)) return
-
-  if (data.playInTeamCount > 0) {
-    if (!data.playIn) data.playIn = buildLeaguePlayInPairs(tournament) ?? undefined
-    if (data.playIn) return // wait for play-in results before seeding the bracket
-  }
-  seedLeaguePlayoffBracket(tournament, teams, mode)
-}
-
-export function setLeaguePlayInResult(
-  tournament: Tournament,
-  matchIdx: number,
-  home: number,
-  away: number
-) {
-  const data = getLeaguePlayoffData(tournament)
-  const match = data?.playIn?.matches[matchIdx]
-  if (!match) return
-  match.result = { home, away }
-}
-
-// Seeds the final knockout bracket from direct qualifiers + play-in winners,
-// reusing the same bye-spreading/bracket-building engine as group+bracket.
+// Seeds the knockout bracket from the top-N qualifiers of the final table,
+// reusing the same bye-spreading/bracket-building engine as the group playoff.
 export function seedLeaguePlayoffBracket(
   tournament: Tournament,
   teams: Team[],
@@ -108,28 +54,15 @@ export function seedLeaguePlayoffBracket(
   orderedTeamIds?: string[]
 ) {
   const data = getLeaguePlayoffData(tournament)
-  const league = getTopLeague(tournament)
-  if (!data || !league) return
+  if (!data) return
 
-  const directIds = league.standings.slice(0, data.directCount).map((s) => s.teamId)
-
-  let playInWinners: string[] = []
-  if (data.playInTeamCount > 0) {
-    if (!data.playIn) return
-    const winners = resolveLeaguePlayInWinners(data.playIn)
-    if (!winners) return
-    playInWinners = winners
-  }
-
-  // Already priority-ordered: direct qualifiers by rank, then play-in winners
-  // in pair order (best-remaining-rank first) — exactly what packDirectSlots
-  // expects for placing byes on the strongest qualifiers.
-  const qualifierIds = [...directIds, ...playInWinners]
+  const qualifierIds = getLeaguePlayoffQualifierIds(tournament)
   const realCount = qualifierIds.length || 2
   const size = Math.pow(2, Math.ceil(Math.log2(realCount)))
   const matchSlotCount = size / 2
   const byeCount = size - realCount
 
+  // seeded → table order (byes to top ranks); random → shuffle; manual → drawn order.
   const idsForSlots =
     mode === "manual" && orderedTeamIds
       ? orderedTeamIds
@@ -158,4 +91,39 @@ export function seedLeaguePlayoffBracket(
   propagateWinners(rounds, teams)
   tournament.rounds = rounds
   data.started = true
+}
+
+// Deterministic reveal plan for the "seeded" ceremony: byes to the top-ranked
+// qualifiers, then table-order matchups. Mirrors computeCrossDrawPlan so the
+// animation and the committed bracket are always identical. Pots are locked.
+export function computeLeaguePlayoffPlan(tournament: Tournament): DrawPlan {
+  const ids = getLeaguePlayoffQualifierIds(tournament)
+  const realCount = ids.length || 2
+  const size = Math.pow(2, Math.ceil(Math.log2(realCount)))
+  const matchSlotCount = size / 2
+  const byeCount = size - realCount
+
+  // Which match slots hold a bye (spread across the tree), same as packDirectSlots.
+  const byeSlotSet = new Set(spreadByeSlots(byeCount, matchSlotCount))
+  const byeIds = ids.slice(0, byeCount)
+  const restIds = ids.slice(byeCount)
+
+  const sequence: DrawStep[] = []
+  let byeIdx = 0
+  let restIdx = 0
+  let matchNo = 1
+  for (let i = 0; i < matchSlotCount; i++) {
+    if (byeSlotSet.has(i)) {
+      const id = byeIds[byeIdx++]
+      if (id) sequence.push({ teamId: id, potIdx: 0, targetLabel: `BYE ${byeIdx}` })
+    } else {
+      const home = restIds[restIdx++]
+      const away = restIds[restIdx++]
+      if (home) sequence.push({ teamId: home, potIdx: 0, targetLabel: `Match ${matchNo}` })
+      if (away) sequence.push({ teamId: away, potIdx: 0, targetLabel: `Match ${matchNo}` })
+      matchNo++
+    }
+  }
+
+  return { sequence, orderedIds: ids }
 }
