@@ -1,5 +1,7 @@
 # Changelog
 
+## [1.14.0](https://github.com/orazchollaev/invictus-tournament-maker/compare/v1.13.0...v1.14.0) (2026-07-11)
+
 ## [1.13.0](https://github.com/orazchollaev/invictus-tournament-maker/compare/v1.12.0...v1.13.0) (2026-07-06)
 
 ## [1.12.0](https://github.com/orazchollaev/invictus-tournament-maker/compare/v1.11.0...v1.12.0) (2026-06-13)
