@@ -317,6 +317,12 @@ export function simulateAllTiers(tournament: Tournament, teams: Team[]) {
   }
 }
 
+export function isTierDone(tournament: Tournament, tierIdx: number): boolean {
+  const tier = getTier(tournament, tierIdx)
+  if (!tier) return false
+  return tier.league.matchdays.every((md) => md.matches.every((m) => m.result !== null))
+}
+
 export function allTiersDone(tournament: Tournament): boolean {
   if (!tournament.tiers?.length) return false
   return tournament.tiers.every((tier) =>

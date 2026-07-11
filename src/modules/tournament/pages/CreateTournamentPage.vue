@@ -11,7 +11,12 @@ import { DrawCeremony } from "../components/draw-ceremony"
 import { Shuffle, ArrowLeft, ChevronDown } from "@lucide/vue"
 import { randomTournamentName } from "@/composables/useRandomNames"
 import type { CeremonyContext, DrawMode } from "@/engine"
-import type { LegMode, PlayoffSeedMode, Tiebreaker } from "@/modules/tournament/types"
+import type {
+  LegMode,
+  PlayoffSeedMode,
+  Tiebreaker,
+  LeaguePlayoffSeedMode,
+} from "@/modules/tournament/types"
 import {
   CreateFormatSelector,
   CreateLeagueOptions,
@@ -51,6 +56,9 @@ const lossPoints = ref(settingsStore.lossPoints)
 const tierCount = ref(1)
 const tierAssignments = ref<Record<string, number>>({})
 const promotionCount = ref(1)
+const playoffEnabled = ref(false)
+const playoffQualifierCount = ref(4)
+const leaguePlayoffSeedMode = ref<LeaguePlayoffSeedMode>("seeded")
 const teamPointAdjustments = ref<Record<string, number>>({})
 const teamPowerAdjustments = ref<Record<string, number>>({})
 
@@ -126,6 +134,15 @@ function applyAdjustments(id: string) {
   }
 }
 
+function applyLeaguePlayoffSettings(id: string) {
+  if (!playoffEnabled.value) return
+  store.changeLeaguePlayoffSettings(id, {
+    enabled: true,
+    qualifierCount: playoffQualifierCount.value,
+    seedMode: leaguePlayoffSeedMode.value,
+  })
+}
+
 function doCreate(orderedIds?: string[]) {
   if (format.value === "league") {
     if (tierCount.value > 1) {
@@ -144,6 +161,7 @@ function doCreate(orderedIds?: string[]) {
         lossPoints.value
       )
       applyAdjustments(id)
+      applyLeaguePlayoffSettings(id)
       router.push(`/tournaments/${id}`)
       return
     }
@@ -157,6 +175,7 @@ function doCreate(orderedIds?: string[]) {
       lossPoints.value
     )
     applyAdjustments(id)
+    applyLeaguePlayoffSettings(id)
     router.push(`/tournaments/${id}`)
     return
   }
@@ -260,6 +279,9 @@ function doCreate(orderedIds?: string[]) {
           v-model:tier-count="tierCount"
           v-model:tier-assignments="tierAssignments"
           v-model:promotion-count="promotionCount"
+          v-model:playoff-enabled="playoffEnabled"
+          v-model:playoff-qualifier-count="playoffQualifierCount"
+          v-model:playoff-seed-mode="leaguePlayoffSeedMode"
           :selected-teams="selectedTeams"
           :all-teams="allTeams"
         />

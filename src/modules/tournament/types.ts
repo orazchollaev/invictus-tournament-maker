@@ -63,10 +63,20 @@ export interface League {
   legMode: LegMode
 }
 
+export type LeaguePlayoffSeedMode = "seeded" | "random" | "manual"
+
+export interface LeaguePlayoff {
+  enabled: boolean
+  qualifierCount: number // top N of the final table make the playoff
+  seedMode: LeaguePlayoffSeedMode
+  started: boolean // true once the playoff bracket has been seeded — locks settings
+}
+
 export interface LeagueTier {
   name: string // "Division 1", "Division 2", …
   teamIds: string[]
   league: League
+  playoff?: LeaguePlayoff // only ever set on tiers[0] (top tier)
 }
 
 // ─── Tournament ──────────────────────────────────────────────────
@@ -104,6 +114,7 @@ export interface Tournament {
 
   // league (only when format === "league")
   league?: League
+  leaguePlayoff?: LeaguePlayoff // single-tier league playoff (mirrors LeagueTier.playoff)
 
   // wildcard slots: best N teams at rank `qualifiersPerGroup` across all groups
   wildcardCount?: number

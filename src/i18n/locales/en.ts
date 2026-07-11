@@ -420,6 +420,7 @@ export default {
       participants: "Participants",
       wildcards: "Wildcards",
       fixtures: "Fixtures",
+      playoff: "Playoff",
     },
     header: {
       teams: "{n} teams",
@@ -473,6 +474,13 @@ export default {
       divisions: "{n} divisions",
       promotionRelegation: "Promotion / Relegation",
       teamsSwap: "teams swap between adjacent tiers",
+      playoff: {
+        enable: "Add a playoff stage",
+        hint: "Top teams qualify for a knockout playoff after the regular season.",
+        qualifierCount: "Teams in playoff",
+        qualifierCountHint: "top teams of the final table that make the playoff",
+        seedMode: "Seeding",
+      },
       drawMethod: "Draw Method",
       groupStage: "Group stage",
       playoffBracket: "Playoff bracket",
@@ -583,6 +591,10 @@ export default {
         none: "— None —",
         linkedLeagueHint:
           "At season end, bottom {n} of this league swap with top {n} of the linked league.",
+        playoff: {
+          title: "Playoff",
+          lockedBanner: "Playoff settings cannot be changed after the playoff has started.",
+        },
       },
       tiebreaker: {
         method: "Method",
@@ -660,6 +672,14 @@ export default {
     dropHere: "Drop or tap team here",
     wildcard: "Wildcard",
     remove: "Remove",
+  },
+  leaguePlayoff: {
+    startPlayoff: "Start Playoff",
+    finishSeasonFirst: "Finish the season to start the playoff.",
+    qualifier: "Rank {rank}",
+    playoffDrawTitle: "Playoff Draw",
+    potTop: "Top seeds",
+    potRest: "Lower seeds",
   },
   promotionModal: {
     newSeasonTitle: "New Season — {name}",

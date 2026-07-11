@@ -3,7 +3,7 @@ import { ref, computed } from "vue"
 import type { Team } from "@/modules/teams/types"
 import type { Tournament } from "@/modules/tournament/types"
 import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
-import { getWinnerId, getLoserId } from "@/engine"
+import { getWinnerId, getLoserId, getLeaguePlayoffData } from "@/engine"
 
 const props = defineProps<{ teams: Team[]; tournament: Tournament }>()
 
@@ -121,6 +121,36 @@ const rows = computed<Row[]>(() => {
   const finalMatch = finalRound?.matches[0]
   const secondPlaceId = finalMatch ? getLoserId(finalMatch) : null
 
+  // For a league whose playoff bracket has been seeded, a qualifier's finish is
+  // its playoff result (champion / runner-up / eliminated round), layered on top
+  // of the regular-season table. Returns null for teams that never made the playoff.
+  const playoffActive =
+    props.tournament.format === "league" &&
+    props.tournament.rounds.length > 0 &&
+    !!getLeaguePlayoffData(props.tournament)?.started
+
+  function bracketFinish(teamId: string): Partial<Row> | null {
+    if (!playoffActive) return null
+    const inBracket = props.tournament.rounds[0]?.matches.some(
+      (m) => m.homeId === teamId || m.awayId === teamId
+    )
+    if (!inBracket) return null
+    if (props.tournament.winnerId === teamId) return { isWinner: true }
+    if (secondPlaceId === teamId) return { isSecondPlace: true }
+    for (let ri = 0; ri < props.tournament.rounds.length; ri++) {
+      const round = props.tournament.rounds[ri]
+      for (const match of round.matches) {
+        if ((match.homeId === teamId || match.awayId === teamId) && match.result) {
+          const w = getWinnerId(match)
+          if (w && w !== teamId) {
+            return { eliminatedRound: round.name, eliminatedRoundIdx: 1000 + ri }
+          }
+        }
+      }
+    }
+    return null
+  }
+
   const emptyStats: TeamStats = { played: 0, wins: 0, draws: 0, losses: 0, gf: 0, ga: 0 }
   const nil: Pick<
     Row,
@@ -172,6 +202,8 @@ const rows = computed<Row[]>(() => {
           }
           globalOffset += tier.teamIds.length
         }
+        const bf = bracketFinish(team.id)
+        if (bf) return { ...base, ...nil, ...bf }
         return {
           ...base,
           ...nil,
@@ -187,6 +219,8 @@ const rows = computed<Row[]>(() => {
       if (props.tournament.format === "league" && props.tournament.league) {
         const posIdx = props.tournament.league.standings.findIndex((s) => s.teamId === team.id)
         const leaguePosition = posIdx !== -1 ? posIdx + 1 : null
+        const bf = bracketFinish(team.id)
+        if (bf) return { ...base, ...nil, ...bf }
         return {
           ...base,
           ...nil,
@@ -257,13 +291,15 @@ const rows = computed<Row[]>(() => {
 
 function resultScore(r: Row): number {
   if (r.isWinner) return 0
-  if (r.leaguePosition !== null) return r.leaguePosition
   if (r.isSecondPlace) return 1
   if (r.isThirdPlace) return 2
   if (r.isFourthPlace) return 3
-  if (r.eliminatedRoundIdx >= 1000) return 1000 + (9999 - r.eliminatedRoundIdx)
-  if (r.eliminatedRoundIdx === -1) return 9999
-  return 5000 - r.eliminatedRoundIdx
+  // Bracket / playoff round losers — later rounds rank better.
+  if (r.eliminatedRoundIdx >= 1000) return 10 + (9999 - r.eliminatedRoundIdx)
+  // League table position (pure league, or non-qualifiers below the playoff cutoff).
+  if (r.leaguePosition !== null) return 20000 + r.leaguePosition
+  if (r.eliminatedRoundIdx === -1) return 40000
+  return 30000 - r.eliminatedRoundIdx
 }
 
 const sorted = computed(() => {

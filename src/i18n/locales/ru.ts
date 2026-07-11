@@ -423,6 +423,7 @@ export default {
       participants: "Участники",
       wildcards: "Уайлдкарды",
       fixtures: "Расписание",
+      playoff: "Плей-офф",
     },
     header: {
       teams: "{n} команд",
@@ -476,6 +477,13 @@ export default {
       divisions: "{n} дивизиона",
       promotionRelegation: "Повышение / Вылет",
       teamsSwap: "команды меняются между соседними дивизионами",
+      playoff: {
+        enable: "Добавить стадию плей-офф",
+        hint: "Лучшие команды выходят в плей-офф на выбывание после регулярного сезона.",
+        qualifierCount: "Команд в плей-офф",
+        qualifierCountHint: "лучшие команды итоговой таблицы, попадающие в плей-офф",
+        seedMode: "Посев",
+      },
       drawMethod: "Метод жеребьёвки",
       groupStage: "Групповой этап",
       playoffBracket: "Сетка плей-офф",
@@ -586,6 +594,10 @@ export default {
         none: "— Нет —",
         linkedLeagueHint:
           "По окончании сезона нижние {n} команды этой лиги меняются с верхними {n} связанной лиги.",
+        playoff: {
+          title: "Плей-офф",
+          lockedBanner: "Настройки плей-офф нельзя изменить после его начала.",
+        },
       },
       tiebreaker: {
         method: "Метод",
@@ -664,6 +676,14 @@ export default {
     dropHere: "Перетащите или коснитесь команды здесь",
     wildcard: "Уайлдкард",
     remove: "Удалить",
+  },
+  leaguePlayoff: {
+    startPlayoff: "Начать плей-офф",
+    finishSeasonFirst: "Завершите сезон, чтобы начать плей-офф.",
+    qualifier: "Место {rank}",
+    playoffDrawTitle: "Жеребьёвка плей-офф",
+    potTop: "Сеяные",
+    potRest: "Остальные",
   },
   promotionModal: {
     newSeasonTitle: "Новый сезон — {name}",

@@ -14,9 +14,16 @@ import GroupDraw from "@/modules/tournament/components/GroupDraw.vue"
 import TournamentStats from "@/modules/tournament/components/TournamentStats.vue"
 import PromotionModal from "@/modules/tournament/components/PromotionModal.vue"
 import { DrawCeremony } from "@/modules/tournament/components/draw-ceremony"
-import { buildPlayoffPots, computeCrossDrawPlan } from "@/engine"
+import {
+  buildPlayoffPots,
+  computeCrossDrawPlan,
+  getLeaguePlayoffData,
+  getLeaguePlayoffQualifierIds,
+  computeLeaguePlayoffPlan,
+} from "@/engine"
 import type { CeremonyContext, DrawMode, DrawPlan, Pot } from "@/engine"
 import type { PlayoffSeedMode } from "@/modules/tournament/types"
+import type { Qualifier } from "../components/draw/types"
 import AppModal from "@/components/AppModal.vue"
 import { DetailHeader, DetailPhaseTabs, DetailMultiTierModal } from "../components/detail"
 import type { MainTab } from "../components/detail"
@@ -46,13 +53,14 @@ const showManualSeason = ref(false)
 const showPromotionModal = ref(false)
 const showMultiTierModal = ref(false)
 const showPlayoffManualDraw = ref(false)
+const showLeaguePlayoffManualDraw = ref(false)
 const pendingOverrideTeamIds = ref<string[] | null>(null)
 
 const showCeremony = ref(false)
 const ceremonyContext = ref<CeremonyContext | null>(null)
 const ceremonyPots = ref<Pot[] | undefined>(undefined)
 const ceremonyFixedPlan = ref<DrawPlan | undefined>(undefined)
-const ceremonyAction = ref<"playoff" | "season" | null>(null)
+const ceremonyAction = ref<"playoff" | "season" | "leaguePlayoff" | null>(null)
 const ceremonySeasonOpts = ref<{
   thirdPlace: boolean
   playoffSeedMode?: PlayoffSeedMode
@@ -188,6 +196,8 @@ function onCeremonyComplete(orderedIds: string[]) {
   if (!t) return
   if (ceremonyAction.value === "playoff") {
     store.advanceToBracketManual(t.id, orderedIds)
+  } else if (ceremonyAction.value === "leaguePlayoff") {
+    store.startLeaguePlayoffBracket(t.id, "manual", orderedIds)
   } else if (ceremonyAction.value === "season") {
     const opts = ceremonySeasonOpts.value
     startNewSeason(false, orderedIds, opts?.thirdPlace ?? false, opts?.playoffSeedMode, orderedIds)
@@ -278,10 +288,132 @@ const isFinished = computed(
   () => !!tournament.value && store.isTournamentFinished(tournament.value.id)
 )
 
+const leaguePlayoffData = computed(() =>
+  tournament.value ? getLeaguePlayoffData(tournament.value) : undefined
+)
+const hasLeaguePlayoff = computed(() => !!leaguePlayoffData.value?.started)
+const showLeaguePlayoffControls = computed(
+  () => isLeagueFormat.value && (!isMultiTier.value || activeTierIdx.value === 0)
+)
+const canStartLeaguePlayoffFlow = computed(() => {
+  const t = tournament.value
+  if (!t) return false
+  return store.canStartPlayoff(t.id)
+})
+
+function ordinal(n: number): string {
+  const s = ["th", "st", "nd", "rd"]
+  const v = n % 100
+  return n + (s[(v - 20) % 10] || s[v] || s[0])
+}
+
+const groupPlayoffQualifiers = computed<Qualifier[]>(() => {
+  const t = tournament.value
+  if (!t?.groups) return []
+  const qpg = t.qualifiersPerGroup ?? 2
+  const wcCount = t.wildcardCount ?? 0
+  const result: Qualifier[] = []
+  for (const group of t.groups) {
+    for (let rank = 0; rank < qpg; rank++) {
+      const standing = group.standings[rank]
+      if (!standing) continue
+      const team = allTeams.value.find((tm) => tm.id === standing.teamId)
+      result.push({
+        teamId: standing.teamId,
+        label: `${group.name} · ${ordinal(rank + 1)}`,
+        teamName: team?.name ?? standing.teamId,
+      })
+    }
+  }
+  if (wcCount > 0) {
+    const candidates = t.groups.flatMap((group) => {
+      const s = group.standings[qpg]
+      return s ? [{ teamId: s.teamId, groupName: group.name, pts: s.pts, gd: s.gd, gf: s.gf }] : []
+    })
+    candidates.sort((a, b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf)
+    for (let i = 0; i < wcCount && i < candidates.length; i++) {
+      const team = allTeams.value.find((tm) => tm.id === candidates[i].teamId)
+      result.push({
+        teamId: candidates[i].teamId,
+        label: `${candidates[i].groupName} · ${trns("manualDraw.wildcard")}`,
+        teamName: team?.name ?? candidates[i].teamId,
+      })
+    }
+  }
+  return result
+})
+
+const leaguePlayoffQualifiers = computed<Qualifier[]>(() => {
+  const t = tournament.value
+  const data = leaguePlayoffData.value
+  if (!t || !data) return []
+  const league = t.tiers?.length ? t.tiers[0].league : t.league
+  if (!league) return []
+  return league.standings.slice(0, data.qualifierCount).map((s, i) => {
+    const team = allTeams.value.find((tm) => tm.id === s.teamId)
+    return {
+      teamId: s.teamId,
+      label: trns("leaguePlayoff.qualifier", { rank: i + 1 }),
+      teamName: team?.name ?? s.teamId,
+    }
+  })
+})
+
+function onStartLeaguePlayoff() {
+  const t = tournament.value
+  const data = leaguePlayoffData.value
+  if (!t || !data || !canStartLeaguePlayoffFlow.value) return
+  if (data.seedMode === "manual") {
+    showLeaguePlayoffManualDraw.value = true
+    return
+  }
+  if (settings.drawCeremony) {
+    openLeaguePlayoffCeremony(data.seedMode)
+    return
+  }
+  store.startLeaguePlayoffBracket(t.id, data.seedMode)
+}
+
+function openLeaguePlayoffCeremony(mode: "seeded" | "random") {
+  const t = tournament.value
+  if (!t) return
+  const qIds = getLeaguePlayoffQualifierIds(t)
+  // Two pots split by table position (top seeds / rest) — same shape as a
+  // seeded bracket draw. Locked & deterministic for "seeded" via the fixed plan.
+  const half = Math.ceil(qIds.length / 2)
+  ceremonyPots.value = [
+    { label: trns("leaguePlayoff.potTop"), teamIds: qIds.slice(0, half) },
+    { label: trns("leaguePlayoff.potRest"), teamIds: qIds.slice(half) },
+  ]
+  ceremonyContext.value = {
+    kind: "playoff",
+    teams: allTeams.value.filter((tm) => qIds.includes(tm.id)),
+    drawMode: mode,
+  }
+  ceremonyFixedPlan.value = mode === "seeded" ? computeLeaguePlayoffPlan(t) : undefined
+  ceremonySeasonOpts.value = undefined
+  ceremonyAction.value = "leaguePlayoff"
+  showCeremony.value = true
+}
+
+function handleLeaguePlayoffManualConfirm(orderedIds: string[]) {
+  const t = tournament.value
+  if (!t) return
+  store.startLeaguePlayoffBracket(t.id, "manual", orderedIds)
+  showLeaguePlayoffManualDraw.value = false
+}
+
 watch(
   () => tournament.value?.groupsDone,
   (done) => {
     if (done) changeTab("bracket")
+  }
+)
+
+watch(
+  () => leaguePlayoffData.value?.started,
+  (started) => {
+    if (started) changeTab("bracket")
   }
 )
 
@@ -399,12 +531,28 @@ function changeTab(tab: MainTab, tierIdx?: number) {
         :is-multi-tier="isMultiTier"
         :active-tier-idx="activeTierIdx"
         :has-any-results="hasAnyResults"
+        :has-league-playoff="hasLeaguePlayoff"
         @change-tab="changeTab"
       />
 
       <Transition name="tab" mode="out-in">
         <div v-if="activeTab === 'league'" key="league" class="section-box">
           <div class="section-body">
+            <div
+              v-if="showLeaguePlayoffControls && leaguePlayoffData?.enabled && !hasLeaguePlayoff"
+              class="lpc-actions"
+            >
+              <button
+                class="primary"
+                :disabled="!canStartLeaguePlayoffFlow"
+                @click="onStartLeaguePlayoff"
+              >
+                {{ trns("leaguePlayoff.startPlayoff") }}
+              </button>
+              <span v-if="!canStartLeaguePlayoffFlow" class="lpc-hint">
+                {{ trns("leaguePlayoff.finishSeasonFirst") }}
+              </span>
+            </div>
             <!-- Multi-tier mode -->
             <template v-if="isMultiTier && tournament.tiers">
               <Transition name="tab" mode="out-in">
@@ -419,6 +567,11 @@ function changeTab(tab: MainTab, tierIdx?: number) {
                       : 0
                   "
                   :promotion-count="activeTierIdx > 0 ? (tournament.promotionCount ?? 0) : 0"
+                  :playoff-qualifier-count="
+                    activeTierIdx === 0 && leaguePlayoffData?.enabled
+                      ? leaguePlayoffData.qualifierCount
+                      : 0
+                  "
                   @set-result="
                     (mdi, mi, h, a) =>
                       store.setTierResult(tournament!.id, activeTierIdx, mdi, mi, h, a)
@@ -436,6 +589,9 @@ function changeTab(tab: MainTab, tierIdx?: number) {
               <LeagueView
                 :tournament="tournament"
                 :teams="allTeams"
+                :playoff-qualifier-count="
+                  leaguePlayoffData?.enabled ? leaguePlayoffData.qualifierCount : 0
+                "
                 @set-result="
                   (mdi, mi, h, a) => store.setLeagueResult(tournament!.id, mdi, mi, h, a)
                 "
@@ -545,10 +701,24 @@ function changeTab(tab: MainTab, tierIdx?: number) {
       @close="showPlayoffManualDraw = false"
     >
       <PlayoffManualDraw
-        :tournament="tournament"
+        :qualifiers="groupPlayoffQualifiers"
         :teams="allTeams"
         @confirm="handlePlayoffManualConfirm"
         @cancel="showPlayoffManualDraw = false"
+      />
+    </AppModal>
+
+    <AppModal
+      v-if="showLeaguePlayoffManualDraw && tournament"
+      :title="trns('leaguePlayoff.playoffDrawTitle')"
+      :width="'min(680px, calc(100vw - 32px))'"
+      @close="showLeaguePlayoffManualDraw = false"
+    >
+      <PlayoffManualDraw
+        :qualifiers="leaguePlayoffQualifiers"
+        :teams="allTeams"
+        @confirm="handleLeaguePlayoffManualConfirm"
+        @cancel="showLeaguePlayoffManualDraw = false"
       />
     </AppModal>
 
@@ -583,6 +753,17 @@ function changeTab(tab: MainTab, tierIdx?: number) {
 </template>
 
 <style scoped>
+.lpc-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.lpc-hint {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
 .gs-subtab-row {
   display: flex;
   gap: 2px;

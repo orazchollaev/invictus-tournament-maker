@@ -55,8 +55,15 @@ const champions = computed<ChampEntry[]>(() => {
     } else map.set(wId, { wins: 1, finals: isLeague ? 0 : 1 })
 
     if (isLeague) {
-      const topStandings = t.tiers?.length ? t.tiers[0].league.standings : t.league?.standings
-      const rId = topStandings?.[1]?.teamId
+      // Playoff league → runner-up is the final's loser; otherwise the table's 2nd place.
+      const playoffFinal = t.rounds[t.rounds.length - 1]?.matches[0]
+      let rId: string | undefined
+      if (playoffFinal?.result) {
+        rId = (playoffFinal.homeId === wId ? playoffFinal.awayId : playoffFinal.homeId) ?? undefined
+      } else {
+        const topStandings = t.tiers?.length ? t.tiers[0].league.standings : t.league?.standings
+        rId = topStandings?.[1]?.teamId
+      }
       if (rId && rId !== wId) {
         const r = map.get(rId)
         if (r) r.finals++

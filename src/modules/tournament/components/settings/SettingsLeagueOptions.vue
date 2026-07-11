@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import type { LegMode } from "@/modules/tournament/types"
+import { computed } from "vue"
+import type { LegMode, LeaguePlayoffSeedMode } from "@/modules/tournament/types"
 import AppStepper from "@/components/AppStepper.vue"
 import BtnGroup from "@/components/BtnGroup.vue"
 import TspLockedCard from "./TspLockedCard.vue"
@@ -16,6 +17,7 @@ defineProps<{
   maxTierCount: number
   maxPromotionCount: number
   otherLeagues: { id: string; name: string; season: number }[]
+  leaguePlayoffStarted: boolean
 }>()
 
 const localLeagueLegMode = defineModel<LegMode>("localLeagueLegMode", { required: true })
@@ -23,6 +25,19 @@ const localRelegationCount = defineModel<number>("localRelegationCount", { requi
 const localTierCount = defineModel<number>("localTierCount", { required: true })
 const localPromotionCount = defineModel<number>("localPromotionCount", { required: true })
 const localLinkedLeagueId = defineModel<string>("localLinkedLeagueId", { required: true })
+const localPlayoffEnabled = defineModel<boolean>("localPlayoffEnabled", { required: true })
+const localPlayoffQualifierCount = defineModel<number>("localPlayoffQualifierCount", {
+  required: true,
+})
+const localPlayoffSeedMode = defineModel<LeaguePlayoffSeedMode>("localPlayoffSeedMode", {
+  required: true,
+})
+
+const playoffSeedModeOptions = computed(() => [
+  { value: "seeded" as const, label: t("common.seeded") },
+  { value: "random" as const, label: t("common.random") },
+  { value: "manual" as const, label: t("common.manual") },
+])
 </script>
 
 <template>
@@ -96,6 +111,31 @@ const localLinkedLeagueId = defineModel<string>("localLinkedLeagueId", { require
       </div>
     </template>
   </div>
+
+  <TspLockedCard
+    :title="t('tournament.settingsPage.leagueFormat.playoff.title')"
+    :locked="leaguePlayoffStarted"
+    :locked-message="t('tournament.settingsPage.leagueFormat.playoff.lockedBanner')"
+  >
+    <label class="tsp-toggle-row">
+      <input v-model="localPlayoffEnabled" type="checkbox" />
+      <span class="tsp-toggle-label">{{ t("tournament.create.playoff.enable") }}</span>
+    </label>
+
+    <template v-if="localPlayoffEnabled">
+      <AppStepper
+        v-model="localPlayoffQualifierCount"
+        :label="t('tournament.create.playoff.qualifierCount')"
+        :min="2"
+        :max="teamCount"
+        :hint="t('tournament.create.playoff.qualifierCountHint')"
+      />
+      <div class="tsp-leg-row">
+        <span class="tsp-row-label">{{ t("tournament.create.playoff.seedMode") }}</span>
+        <BtnGroup v-model="localPlayoffSeedMode" :options="playoffSeedModeOptions" />
+      </div>
+    </template>
+  </TspLockedCard>
 </template>
 
 <style src="./tsp.css"></style>
