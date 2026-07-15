@@ -879,7 +879,7 @@ onUnmounted(() => {
   .bracket-mobile-tabs {
     display: flex;
     position: fixed;
-    bottom: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom));
+    bottom: env(safe-area-inset-bottom);
     left: 0;
     right: 0;
     z-index: 90;

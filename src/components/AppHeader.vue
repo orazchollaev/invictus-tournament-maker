@@ -127,7 +127,9 @@ onUnmounted(() => {
 
 <style scoped>
 .site-header {
-  background: var(--surface);
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--border-light);
   position: sticky;
   top: 0;
@@ -383,31 +385,7 @@ onUnmounted(() => {
 }
 
 @media (max-width: 640px) {
-  .header-inner {
-    padding: 0 12px;
-    height: 48px;
-  }
-  .brand {
-    left: 12px;
-  }
-  .header-end {
-    right: 12px;
-  }
-
-  .main-nav {
-    display: none;
-  }
-  .github-star-btn {
-    display: none;
-  }
-  .settings-btn {
-    display: none;
-  }
-  /* Keep the guide button visible, anchored top-right */
-  .guide-btn {
-    display: flex;
-  }
-  .wc-badge {
+  .site-header {
     display: none;
   }
 }

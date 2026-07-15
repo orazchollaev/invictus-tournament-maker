@@ -27,3 +27,6 @@ dist-ssr
 android/app/build/
 android/.gradle/
 android/build/
+
+.claude
+.vscode

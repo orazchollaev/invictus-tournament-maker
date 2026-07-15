@@ -4,12 +4,14 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  -webkit-tap-highlight-color: transparent;
 }
 
 html {
   scrollbar-width: thin;
   scrollbar-color: var(--border) var(--bg);
   scrollbar-gutter: stable;
+  user-select: none;
 }
 
 body {

@@ -55,7 +55,7 @@ onUnmounted(() => {
 <style>
 @media (max-width: 640px) {
   .app-main {
-    padding-bottom: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom));
+    padding-bottom: env(safe-area-inset-bottom);
   }
 }
 </style>
