@@ -237,7 +237,6 @@ export default {
         desc: "Esquema de cores do aplicativo inteiro",
         light: "Claro",
         dark: "Escuro",
-        worldcup2026: "Copa do Mundo 2026",
       },
     },
     tableRules: {

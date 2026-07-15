@@ -6,7 +6,7 @@ import type { Tiebreaker } from "@/modules/tournament/types"
 import { i18n, loadLocale } from "@/i18n"
 import type { Locale } from "@/i18n"
 
-export type Theme = "light" | "dark" | "worldcup2026"
+export type Theme = "light" | "dark"
 export type DrawType = "random" | "seeded" | "manual"
 export type BracketStyle = "double-sided" | "classic" | "auto"
 export type BracketQuality = "high" | "low"

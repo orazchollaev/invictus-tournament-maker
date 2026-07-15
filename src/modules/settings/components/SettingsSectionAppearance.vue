@@ -13,7 +13,6 @@ const settings = useSettingsStore()
 const themes = computed<{ value: Theme; label: string }[]>(() => [
   { value: "light", label: t("settings.appearance.theme.light") },
   { value: "dark", label: t("settings.appearance.theme.dark") },
-  { value: "worldcup2026", label: t("settings.appearance.theme.worldcup2026") },
 ])
 </script>
 

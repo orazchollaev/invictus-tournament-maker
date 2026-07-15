@@ -238,7 +238,6 @@ export default {
         desc: "Esquema de colores de toda la aplicación",
         light: "Claro",
         dark: "Oscuro",
-        worldcup2026: "Copa del Mundo 2026",
       },
     },
     tableRules: {

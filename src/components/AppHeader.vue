@@ -11,7 +11,6 @@ import {
   BookOpen,
   WifiOff,
 } from "@lucide/vue"
-import { useSettingsStore } from "@/modules/settings/store"
 import { usePwaUpdate } from "@/composables/usePwaUpdate"
 import { useNavActive } from "@/composables/useNavActive"
 import AppLogo from "./AppLogo.vue"
@@ -19,7 +18,6 @@ import { useI18n } from "vue-i18n"
 
 const { t } = useI18n()
 const GITHUB_URL = "https://github.com/orazchollaev/invictus-tournament-maker"
-const settings = useSettingsStore()
 const { needRefresh, applyUpdate } = usePwaUpdate()
 const { isNavActive } = useNavActive()
 
@@ -114,14 +112,6 @@ onUnmounted(() => {
         </RouterLink>
       </div>
     </div>
-
-    <Transition name="wc-badge">
-      <div v-if="settings.theme === 'worldcup2026'" class="wc-badge">
-        <span class="wc-badge-title">FIFA World Cup 2026™</span>
-        <span class="wc-badge-sep">·</span>
-        <span class="wc-badge-hosts">USA · CAN · MEX</span>
-      </div>
-    </Transition>
   </header>
 </template>
 
@@ -343,46 +333,6 @@ onUnmounted(() => {
   color: var(--accent);
 }
 
-/* World Cup 2026 badge */
-.wc-badge {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  padding: 3px 0;
-  background: var(--surface);
-  border-top: 1px solid var(--border-light);
-  white-space: nowrap;
-}
-.wc-badge-title {
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--accent);
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-}
-.wc-badge-sep {
-  font-size: 10px;
-  color: var(--border);
-}
-.wc-badge-hosts {
-  font-size: 10px;
-  font-weight: 500;
-  color: var(--text-muted);
-  letter-spacing: 0.07em;
-}
-
-.wc-badge-enter-active,
-.wc-badge-leave-active {
-  transition:
-    opacity 0.25s,
-    transform 0.25s;
-}
-.wc-badge-enter-from,
-.wc-badge-leave-to {
-  opacity: 0;
-  transform: translateY(-4px);
-}
 
 @media (max-width: 640px) {
   .site-header {

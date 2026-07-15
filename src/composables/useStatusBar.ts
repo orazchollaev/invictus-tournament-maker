@@ -4,7 +4,6 @@ import type { Theme } from "@/modules/settings/store"
 const THEME_COLORS: Record<Theme, { color: string; dark: boolean }> = {
   light: { color: "#f8fafc", dark: false },
   dark: { color: "#16181f", dark: true },
-  worldcup2026: { color: "#0d1117", dark: true },
 }
 
 export function useStatusBar() {
