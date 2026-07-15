@@ -60,12 +60,16 @@ const filtered = computed(() => {
 
     <div v-if="store.teams.length" class="t-list">
       <p v-if="!filtered.length" class="empty-text">{{ t("teams.noMatch", { query }) }}</p>
-      <div :class="settings.teamsListView === 'grid' ? 't-grid' : 't-list-inner'">
+      <TransitionGroup
+        name="list"
+        tag="div"
+        :class="settings.teamsListView === 'grid' ? 't-grid' : 't-list-inner'"
+      >
         <div
-          v-for="team in filtered"
+          v-for="(team, i) in filtered"
           :key="team.id"
           :class="settings.teamsListView === 'grid' ? 't-card' : 't-row'"
-          :style="{ '--team-color': team.color }"
+          :style="{ '--team-color': team.color, '--i': i }"
           @click="router.push(`/teams/${team.id}`)"
         >
           <div class="t-body">
@@ -81,7 +85,7 @@ const filtered = computed(() => {
             </button>
           </div>
         </div>
-      </div>
+      </TransitionGroup>
     </div>
     <div v-else class="empty-state">
       <Users :size="44" class="empty-icon" />
