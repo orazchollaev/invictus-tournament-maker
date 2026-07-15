@@ -9,11 +9,9 @@ import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
 const props = defineProps<{
   tournament: Tournament
   teams: Team[]
-  // Optional overrides for multi-tier mode
   leagueOverride?: League
   relegationCountOverride?: number
   promotionCount?: number
-  // Top-N playoff cutoff zone (0 = no playoff for this table)
   playoffQualifierCount?: number
 }>()
 
@@ -145,9 +143,7 @@ async function handleSimMatchday(idx: number) {
 
 <template>
   <div class="lv-root">
-    <!-- Two-column layout -->
     <div class="lv-layout">
-      <!-- LEFT: Standings table -->
       <div class="lv-left">
         <div class="lv-section-title">
           League Table
@@ -216,9 +212,7 @@ async function handleSimMatchday(idx: number) {
         </div>
       </div>
 
-      <!-- RIGHT: Matchday view -->
       <div class="lv-right">
-        <!-- Matchday nav -->
         <div class="lv-md-nav">
           <button :disabled="isFirstMatchday" class="lv-nav-btn" @click="activeIdx--">
             <ChevronLeft :size="13" />
@@ -240,14 +234,12 @@ async function handleSimMatchday(idx: number) {
           </button>
         </div>
 
-        <!-- Matches -->
         <div class="lv-matches">
           <div
             v-for="(match, mIdx) in activeMatchday?.matches ?? []"
             :key="match.id"
             class="lv-match"
           >
-            <!-- Editing mode -->
             <template v-if="editing?.mdIdx === activeIdx && editing?.mIdx === mIdx">
               <TeamBadge :team="teamById(match.homeId)" class="lv-match-team lv-match-team--home" />
               <input
@@ -274,7 +266,6 @@ async function handleSimMatchday(idx: number) {
               <button class="lv-btn-xs" @click="cancelEdit">✕</button>
             </template>
 
-            <!-- Result / unplayed -->
             <template v-else>
               <TeamBadge
                 :team="teamById(match.homeId)"
@@ -303,7 +294,6 @@ async function handleSimMatchday(idx: number) {
                 ]"
               />
               <button
-                v-if="!match.result"
                 class="lv-sim-btn"
                 title="Simulate"
                 @click="emit('simMatch', activeIdx, mIdx)"
@@ -723,7 +713,6 @@ async function handleSimMatchday(idx: number) {
 }
 
 @media (max-width: 640px) {
-  /* Hide D, L, GF, GA — keep #, Team, P, W, GD, Pts */
   .lv-table th:nth-child(5),
   .lv-table td:nth-child(5),
   .lv-table th:nth-child(6),
@@ -735,33 +724,27 @@ async function handleSimMatchday(idx: number) {
     display: none;
   }
 
-  /* Bigger touch targets for match rows */
   .lv-match {
-    min-height: 40px;
     font-size: 12px;
     padding: 4px 10px;
   }
 
-  /* Bigger score button */
   .lv-score-btn {
     min-width: 48px;
     padding: 4px 8px;
     font-size: 12px;
   }
 
-  /* Bigger inline score inputs */
   .lv-score-input {
     width: 40px;
     padding: 4px;
     font-size: 13px;
   }
 
-  /* Bigger matchday nav buttons */
   .lv-nav-btn {
     padding: 6px 10px;
   }
 
-  /* Sim match button always visible */
   .lv-sim-btn {
     padding: 5px 7px;
     opacity: 0.7;

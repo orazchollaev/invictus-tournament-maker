@@ -175,8 +175,6 @@ function openPlayoffCeremony() {
   }
   ceremonyPots.value = pots
 
-  // "cross" seed mode → deterministic rotating cross, pots locked (no editing).
-  // Falls back to editable pots when the cross order can't be built (e.g. qpg ≠ 2).
   const mode = t.playoffSeedMode ?? settings.newSeasonPlayoffSeedMode
   let fixedPlan: DrawPlan | undefined
   if (mode === "cross") {
@@ -209,7 +207,6 @@ function handlePromotionConfirm(newTeamIds: string[]) {
   showPromotionModal.value = false
   const t = tournament.value
 
-  // If linked league exists, also start its new season before navigating
   if (t?.linkedLeagueId && (t.relegationCount ?? 0) > 0) {
     const linked = linkedLeague.value
     if (linked?.league && linked.winnerId) {
@@ -236,8 +233,6 @@ function handleMultiTierSeasonConfirm() {
   const n = tiers.length
   const pc = t.promotionCount ?? 1
 
-  // relegated[i] = bottom pc teams of tier i  → move DOWN to tier i+1
-  // promoted[i]  = top    pc teams of tier i+1 → move UP   to tier i
   const relegated: string[][] = []
   const promoted: string[][] = []
   for (let i = 0; i < n - 1; i++) {
@@ -247,7 +242,6 @@ function handleMultiTierSeasonConfirm() {
     promoted[i] = lower.slice(0, pc).map((s) => s.teamId)
   }
 
-  // Build each tier independently — no overwriting
   const newTierTeamIds: string[][] = tiers.map((tier, i) => {
     const leavingUp = i > 0 ? promoted[i - 1] : []
     const leavingDown = i < n - 1 ? relegated[i] : []
@@ -539,7 +533,12 @@ function changeTab(tab: MainTab, tierIdx?: number) {
         <div v-if="activeTab === 'league'" key="league" class="section-box">
           <div class="section-body">
             <div
-              v-if="showLeaguePlayoffControls && leaguePlayoffData?.enabled && !hasLeaguePlayoff"
+              v-if="
+                showLeaguePlayoffControls &&
+                leaguePlayoffData?.enabled &&
+                !hasLeaguePlayoff &&
+                canStartLeaguePlayoffFlow
+              "
               class="lpc-actions"
             >
               <button
@@ -553,7 +552,6 @@ function changeTab(tab: MainTab, tierIdx?: number) {
                 {{ trns("leaguePlayoff.finishSeasonFirst") }}
               </span>
             </div>
-            <!-- Multi-tier mode -->
             <template v-if="isMultiTier && tournament.tiers">
               <Transition name="tab" mode="out-in">
                 <LeagueView
@@ -584,7 +582,6 @@ function changeTab(tab: MainTab, tierIdx?: number) {
                 />
               </Transition>
             </template>
-            <!-- Single-tier mode -->
             <template v-else>
               <LeagueView
                 :tournament="tournament"

@@ -374,7 +374,7 @@ function selectCategory(id: Category) {
 }
 @media (max-width: 640px) {
   .mobile-nav {
-    top: calc(48px + env(safe-area-inset-top));
+    top: env(safe-area-inset-top);
   }
 }
 

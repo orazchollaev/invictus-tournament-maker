@@ -23,7 +23,6 @@ const emit = defineEmits<{
 
 <template>
   <div class="phase-tabs">
-    <!-- League format -->
     <template v-if="isLeagueFormat">
       <template v-if="isMultiTier">
         <button
@@ -55,7 +54,6 @@ const emit = defineEmits<{
       </button>
     </template>
 
-    <!-- Groups + Bracket format -->
     <template v-else-if="isGroupFormat">
       <button
         class="phase-tab"
@@ -74,7 +72,6 @@ const emit = defineEmits<{
       </button>
     </template>
 
-    <!-- Pure bracket format -->
     <template v-else>
       <button
         class="phase-tab"

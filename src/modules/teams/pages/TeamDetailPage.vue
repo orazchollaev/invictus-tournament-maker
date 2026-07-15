@@ -630,8 +630,6 @@ h2:has(.tour-select) {
 .team-badge {
   width: 14px;
   height: 14px;
-  /* border-radius: 50%; */
-  /* border: 1px solid var(--border-light); */
   flex-shrink: 0;
 }
 .team-flag {
