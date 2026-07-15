@@ -7,7 +7,6 @@ import App from "./App.vue"
 import i18n, { loadLocale } from "./i18n"
 import type { Locale } from "./i18n"
 
-import "@fontsource-variable/ibm-plex-sans"
 import "./assets/style/index.css"
 
 const pinia = createPinia()
