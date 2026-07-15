@@ -26,6 +26,7 @@
     "@capacitor/cli": "^8.4.1",
     "@capacitor/core": "^8.4.1",
     "@capacitor/status-bar": "^8.0.2",
+    "@fontsource-variable/ibm-plex-sans": "^5.2.8",
     "@lucide/vue": "^1.23.0",
     "canvas-confetti": "^1.9.4",
     "chart.js": "^4.5.1",

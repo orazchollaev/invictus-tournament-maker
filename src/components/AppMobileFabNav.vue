@@ -177,6 +177,10 @@ function close() {
     opacity: 0;
     transform: translateY(8px) scale(0.95);
   }
+  .fab-stagger-leave-active {
+    position: absolute;
+  }
+
   .fab-backdrop-enter-active,
   .fab-backdrop-leave-active {
     transition: opacity 0.16s var(--ease);
