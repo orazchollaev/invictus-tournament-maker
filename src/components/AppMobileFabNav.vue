@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import { ref } from "vue"
+import { computed, ref } from "vue"
 import { Trophy, Users, History, Settings, BookOpen, Menu, X } from "@lucide/vue"
 import { useI18n } from "vue-i18n"
 import { useNavActive } from "@/composables/useNavActive"
-import AppLogo from "./AppLogo.vue"
 
 const { t } = useI18n()
 const { isNavActive } = useNavActive()
@@ -11,12 +10,14 @@ const { isNavActive } = useNavActive()
 const open = ref(false)
 
 const items = [
-  { to: "/tournaments", icon: Trophy, label: () => t("nav.tournaments") },
-  { to: "/teams", icon: Users, label: () => t("nav.teams") },
-  { to: "/history", icon: History, label: () => t("nav.history") },
-  { to: "/settings", icon: Settings, label: () => t("nav.settings") },
   { to: "/guide", icon: BookOpen, label: () => t("guide.title") },
+  { to: "/settings", icon: Settings, label: () => t("nav.settings") },
+  { to: "/history", icon: History, label: () => t("nav.history") },
+  { to: "/teams", icon: Users, label: () => t("nav.teams") },
+  { to: "/tournaments", icon: Trophy, label: () => t("nav.tournaments") },
 ]
+
+const visibleItems = computed(() => (open.value ? items : []))
 
 function close() {
   open.value = false
@@ -29,25 +30,20 @@ function close() {
       <div v-if="open" class="fab-backdrop" @click="close" />
     </Transition>
 
-    <Transition name="fab-menu" tag="div">
-      <div v-if="open" class="fab-menu">
-        <RouterLink
-          v-for="item in items"
-          :key="item.to"
-          :to="item.to"
-          class="fab-item"
-          :class="{ 'router-link-active': isNavActive(item.to) }"
-          @click="close"
-        >
-          <component :is="item.icon" :size="18" />
-          <span class="fab-label">{{ item.label() }}</span>
-        </RouterLink>
-        <RouterLink to="/" class="fab-item fab-item-logo" @click="close">
-          <AppLogo class="fab-logo" />
-          <span class="fab-label">Invictus</span>
-        </RouterLink>
-      </div>
-    </Transition>
+    <TransitionGroup tag="div" name="fab-stagger" class="fab-menu">
+      <RouterLink
+        v-for="(item, i) in visibleItems"
+        :key="item.to"
+        :to="item.to"
+        class="fab-item"
+        :class="{ 'router-link-active': isNavActive(item.to) }"
+        :style="{ transitionDelay: `${i * 35}ms` }"
+        @click="close"
+      >
+        <component :is="item.icon" :size="18" />
+        <span class="fab-label">{{ item.label() }}</span>
+      </RouterLink>
+    </TransitionGroup>
 
     <button
       class="fab-toggle"
@@ -55,8 +51,8 @@ function close() {
       :aria-label="t('nav.settings')"
       @click="open = !open"
     >
-      <Menu v-if="!open" :size="22" />
-      <X v-else :size="22" />
+      <Menu class="fab-icon fab-icon-menu" :class="{ 'fab-icon-hidden': open }" :size="22" />
+      <X class="fab-icon fab-icon-close" :class="{ 'fab-icon-hidden': !open }" :size="22" />
     </button>
   </div>
 </template>
@@ -111,6 +107,17 @@ function close() {
     transform: scale(0.94);
   }
 
+  .fab-icon {
+    position: absolute;
+    transition:
+      opacity var(--dur) var(--ease),
+      transform var(--dur) var(--ease);
+  }
+  .fab-icon-hidden {
+    opacity: 0;
+    transform: rotate(-90deg) scale(0.6);
+  }
+
   .fab-toggle-open {
     background: linear-gradient(
       145deg,
@@ -146,6 +153,9 @@ function close() {
     font-weight: 500;
     box-shadow: var(--shadow-md);
     white-space: nowrap;
+    transition:
+      opacity 0.16s var(--ease),
+      transform 0.16s var(--ease);
   }
 
   .fab-item :deep(svg) {
@@ -162,28 +172,11 @@ function close() {
     color: var(--accent);
   }
 
-  .fab-item-logo {
-    font-weight: 800;
-  }
-
-  .fab-logo {
-    height: 24px;
-    width: 24px;
-    color: var(--accent);
-  }
-
-  .fab-menu-enter-active .fab-item,
-  .fab-menu-leave-active .fab-item {
-    transition:
-      opacity 0.16s var(--ease),
-      transform 0.16s var(--ease);
-  }
-  .fab-menu-enter-from .fab-item,
-  .fab-menu-leave-to .fab-item {
+  .fab-stagger-enter-from,
+  .fab-stagger-leave-to {
     opacity: 0;
     transform: translateY(8px) scale(0.95);
   }
-
   .fab-backdrop-enter-active,
   .fab-backdrop-leave-active {
     transition: opacity 0.16s var(--ease);
