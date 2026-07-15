@@ -80,13 +80,13 @@ function close() {
     right: 16px;
     bottom: calc(16px + env(safe-area-inset-bottom));
     z-index: 100;
-    width: 58px;
-    height: 58px;
+    width: 48px;
+    height: 48px;
     border-radius: var(--radius-pill);
     background: linear-gradient(
       145deg,
-      color-mix(in srgb, var(--accent) 55%, transparent),
-      color-mix(in srgb, var(--accent) 28%, transparent)
+      color-mix(in srgb, var(--accent) 92%, transparent),
+      color-mix(in srgb, var(--accent) 78%, transparent)
     );
     backdrop-filter: blur(20px) saturate(160%);
     -webkit-backdrop-filter: blur(20px) saturate(160%);
@@ -121,8 +121,8 @@ function close() {
   .fab-toggle-open {
     background: linear-gradient(
       145deg,
-      color-mix(in srgb, var(--accent-hover) 60%, transparent),
-      color-mix(in srgb, var(--accent-hover) 32%, transparent)
+      color-mix(in srgb, var(--accent-hover) 92%, transparent),
+      color-mix(in srgb, var(--accent-hover) 78%, transparent)
     );
   }
 
@@ -177,10 +177,6 @@ function close() {
     opacity: 0;
     transform: translateY(8px) scale(0.95);
   }
-  .fab-stagger-leave-active {
-    position: absolute;
-  }
-
   .fab-backdrop-enter-active,
   .fab-backdrop-leave-active {
     transition: opacity 0.16s var(--ease);
