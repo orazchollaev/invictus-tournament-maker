@@ -1,8 +1,7 @@
 {
   "git": {
     "commitMessage": "chore(release): v${version}",
-    "tagName": "v${version}",
-    "requireCleanWorkingDir": true
+    "tagName": "v${version}"
   },
   "github": {
     "release": true,
@@ -12,16 +11,7 @@
     "@release-it/conventional-changelog": {
       "infile": "CHANGELOG.md",
       "preset": {
-        "name": "conventionalcommits",
-        "types": [
-          { "type": "feat", "section": "🚀 New Features" },
-          { "type": "fix", "section": "🐛 Bug Fixes" },
-          { "type": "refactor", "section": "♻️ Refactoring" },
-          { "type": "chore", "section": "🔧 Maintenance" },
-          { "type": "docs", "section": "📚 Documentation" },
-          { "type": "style", "section": "🎨 Styles" },
-          { "type": "test", "section": "✅ Tests" }
-        ]
+        "name": "angular"
       }
     }
   }
