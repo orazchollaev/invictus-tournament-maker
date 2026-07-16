@@ -12,9 +12,9 @@ defineProps<{
 </script>
 
 <template>
-  <div class="tsp-card">
-    <div class="tsp-card-header">
-      <div class="tsp-section-title">{{ title }}</div>
+  <div class="form-card">
+    <div class="form-section-header">
+      <div class="form-section-title">{{ title }}</div>
       <span v-if="locked" class="tsp-lock-tag">
         <Lock :size="10" />
         {{ t("tournament.settingsPage.locked") }}
@@ -30,4 +30,4 @@ defineProps<{
   </div>
 </template>
 
-<style src="./tsp.css"></style>
+<style src="./tournament-settings.css"></style>

@@ -46,8 +46,8 @@ function setFormat(f: TournamentFormat) {
 </script>
 
 <template>
-  <div class="ctp-card">
-    <div class="ctp-section-title">
+  <div class="form-card">
+    <div class="form-section-title">
       {{ $t("tournament.create.format") }}
     </div>
 
@@ -134,4 +134,4 @@ function setFormat(f: TournamentFormat) {
   </div>
 </template>
 
-<style src="./ctp.css"></style>
+<style src="./create-tournament.css"></style>

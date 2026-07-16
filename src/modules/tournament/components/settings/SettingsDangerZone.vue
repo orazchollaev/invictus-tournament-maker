@@ -37,8 +37,8 @@ async function handleDelete() {
 </script>
 
 <template>
-  <div class="tsp-card tsp-card--danger">
-    <div class="tsp-section-title tsp-section-title--danger">
+  <div class="form-card form-card--danger">
+    <div class="form-section-title form-section-title--danger">
       {{ t("tournament.settingsPage.dangerZone.title") }}
     </div>
     <div class="danger-list">
@@ -60,13 +60,13 @@ async function handleDelete() {
   </div>
 </template>
 
-<style src="./tsp.css"></style>
+<style src="./tournament-settings.css"></style>
 <style scoped>
-.tsp-card--danger {
+.form-card--danger {
   border-color: color-mix(in srgb, var(--danger) 25%, transparent);
   background: color-mix(in srgb, var(--danger) 3%, var(--surface));
 }
-.tsp-section-title--danger {
+.form-section-title--danger {
   color: var(--danger);
 }
 .danger-list {

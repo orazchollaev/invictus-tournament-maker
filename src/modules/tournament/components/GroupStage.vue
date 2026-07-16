@@ -4,10 +4,11 @@ import type { Team } from "@/modules/teams/types"
 import type { Tournament, GroupMatch } from "@/modules/tournament/types"
 import AppModal from "@/components/AppModal.vue"
 import { useTeamLookup } from "@/composables/useTeamLookup"
-import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
-import { Lock, Shuffle, Check, ChevronDown } from "@lucide/vue"
+import { Lock } from "@lucide/vue"
 import { useI18n } from "vue-i18n"
 import { useGradualSim } from "../composables/useGradualSim"
+import GroupCard from "./group/GroupCard.vue"
+import GroupSimToolbar from "./group/GroupSimToolbar.vue"
 
 const props = defineProps<{
   tournament: Tournament
@@ -28,7 +29,6 @@ const { t } = useI18n()
 const { runSequential } = useGradualSim()
 const locked = computed(() => !!props.tournament.groupsDone)
 
-const showSimMenu = ref(false)
 const editingMatch = ref<{ gi: number; mi: number } | null>(null)
 const editHome = ref(0)
 const editAway = ref(0)
@@ -37,27 +37,8 @@ const { teamById } = useTeamLookup(() => props.teams)
 
 const selectedRound = ref<number[]>([])
 
-function getRounds(gi: number): { match: GroupMatch; mi: number }[][] {
-  const group = props.tournament.groups![gi]
-  const n = group.teamIds.length
-  const matchesPerRound = Math.floor(n / 2)
-  if (matchesPerRound < 1) return [group.matches.map((match, mi) => ({ match, mi }))]
-  const rounds: { match: GroupMatch; mi: number }[][] = []
-  for (let i = 0; i < group.matches.length; i += matchesPerRound) {
-    rounds.push(
-      group.matches.slice(i, i + matchesPerRound).map((match, j) => ({ match, mi: i + j }))
-    )
-  }
-  return rounds
-}
-
-function currentRound(gi: number): number {
-  if (selectedRound.value[gi] === undefined) selectedRound.value[gi] = 0
-  return selectedRound.value[gi]
-}
-
-function setRound(gi: number, r: number) {
-  selectedRound.value[gi] = r
+function roundOf(gi: number): number {
+  return selectedRound.value[gi] ?? 0
 }
 
 async function handleSimGroupWeek(gi: number) {
@@ -181,18 +162,6 @@ function cancelEdit() {
 const allDone = computed(
   () => props.tournament.groups?.every((g) => g.matches.every((m) => m.result !== null)) ?? false
 )
-
-function matchResultStr(match: GroupMatch): string {
-  if (!match.result) return "–"
-  return `${match.result.home} – ${match.result.away}`
-}
-
-function scoreAccentColor(match: GroupMatch): string {
-  if (!match.result) return ""
-  if (match.result.home > match.result.away) return teamById(match.homeId)?.color ?? ""
-  if (match.result.away > match.result.home) return teamById(match.awayId)?.color ?? ""
-  return "var(--border)"
-}
 </script>
 
 <template>
@@ -204,61 +173,15 @@ function scoreAccentColor(match: GroupMatch): string {
     </div>
 
     <!-- Toolbar (only when not locked) -->
-    <div v-else class="gs-toolbar">
-      <!-- Mobile: single dropdown trigger -->
-      <div class="sim-dropdown">
-        <button class="sim-dropdown-trigger" @click="showSimMenu = !showSimMenu">
-          <Shuffle :size="14" />
-          Simulate
-          <ChevronDown :size="12" class="sim-chevron" :class="{ open: showSimMenu }" />
-        </button>
-        <div v-if="showSimMenu" class="sim-dropdown-panel">
-          <button :disabled="allDone" @click="(handleSimWeek(), (showSimMenu = false))">
-            Sim Week
-          </button>
-          <button :disabled="allDone" @click="(handleSimAll(), (showSimMenu = false))">
-            Simulate All
-          </button>
-          <template v-for="(g, gi) in tournament.groups" :key="gi">
-            <button
-              v-if="g.matches.some((m) => !m.result)"
-              @click="(handleSimGroup(gi), (showSimMenu = false))"
-            >
-              Sim {{ g.name }}
-            </button>
-          </template>
-        </div>
-      </div>
-
-      <!-- Desktop: inline buttons -->
-      <button class="gs-sim-inline" :disabled="allDone" @click="handleSimWeek()">
-        <Shuffle :size="14" />
-        Sim Week
-      </button>
-      <button class="gs-sim-inline" :disabled="allDone" @click="handleSimAll()">
-        <Shuffle :size="14" />
-        Simulate All
-      </button>
-      <template v-for="(g, gi) in tournament.groups" :key="gi">
-        <button
-          v-if="g.matches.some((m) => !m.result)"
-          class="gs-sim-inline"
-          @click="handleSimGroup(gi)"
-        >
-          Sim {{ g.name }}
-        </button>
-      </template>
-
-      <button
-        v-if="allDone"
-        class="primary advance-btn"
-        style="margin-left: auto"
-        @click="emit('advance')"
-      >
-        <Check :size="14" />
-        Advance to Knockout →
-      </button>
-    </div>
+    <GroupSimToolbar
+      v-else
+      :groups="tournament.groups ?? []"
+      :all-done="allDone"
+      @sim-week="handleSimWeek"
+      @sim-all="handleSimAll"
+      @sim-group="handleSimGroup"
+      @advance="emit('advance')"
+    />
 
     <div class="gs-legend">
       <span class="legend-qualify">■</span>
@@ -275,123 +198,21 @@ function scoreAccentColor(match: GroupMatch): string {
 
     <!-- Groups grid -->
     <div class="gs-groups">
-      <div v-for="(group, gi) in tournament.groups" :key="gi" class="gs-group">
-        <div class="gs-group-header">{{ group.name }}</div>
-
-        <!-- Standings -->
-        <div class="gs-table-scroll">
-          <table class="gs-table">
-            <thead>
-              <tr>
-                <th class="col-rank">#</th>
-                <th class="col-team">{{ t("common.team") }}</th>
-                <th :title="t('history.table.played')">P</th>
-                <th :title="t('history.table.won')">W</th>
-                <th :title="t('history.table.drawn')">D</th>
-                <th :title="t('history.table.lost')">L</th>
-                <th :title="t('history.table.goalsFor')">GF</th>
-                <th :title="t('history.table.goalsAgainst')">GA</th>
-                <th :title="t('history.table.goalDiff')">GD</th>
-                <th :title="t('history.table.points')">Pts</th>
-              </tr>
-            </thead>
-            <TransitionGroup tag="tbody" name="standing-row">
-              <tr
-                v-for="(row, ri) in group.standings"
-                :key="row.teamId"
-                :class="{
-                  'row-qualify': ri < (tournament.qualifiersPerGroup ?? 2),
-                  'row-wildcard':
-                    ri === (tournament.qualifiersPerGroup ?? 2) &&
-                    (tournament.wildcardCount ?? 0) > 0,
-                  'row-out':
-                    ri > (tournament.qualifiersPerGroup ?? 2) ||
-                    (ri === (tournament.qualifiersPerGroup ?? 2) &&
-                      !(tournament.wildcardCount ?? 0)),
-                }"
-              >
-                <td class="col-rank">{{ ri + 1 }}</td>
-                <td class="col-team">
-                  <TeamBadge
-                    :team="teamById(row.teamId)"
-                    :fallback="row.teamId"
-                    class="flex team-cell"
-                  />
-                </td>
-                <td>{{ row.played }}</td>
-                <td>{{ row.won }}</td>
-                <td>{{ row.drawn }}</td>
-                <td>{{ row.lost }}</td>
-                <td>{{ row.gf }}</td>
-                <td>{{ row.ga }}</td>
-                <td>{{ row.gd >= 0 ? "+" + row.gd : row.gd }}</td>
-                <td class="col-pts">{{ row.pts }}</td>
-              </tr>
-            </TransitionGroup>
-          </table>
-        </div>
-
-        <!-- Matches -->
-        <div class="gs-matches">
-          <div class="gs-round-nav">
-            <span class="gs-round-label">
-              Round {{ currentRound(gi) + 1 }} / {{ getRounds(gi).length }}
-            </span>
-            <div class="gs-round-btns">
-              <button
-                v-if="!locked"
-                class="btn-xs"
-                :disabled="group.matches.every((m) => !!m.result)"
-                @click="handleSimGroupWeek(gi)"
-              >
-                <Shuffle :size="11" />
-              </button>
-              <button
-                class="btn-xs"
-                :disabled="currentRound(gi) === 0"
-                @click="setRound(gi, currentRound(gi) - 1)"
-              >
-                ‹
-              </button>
-              <button
-                class="btn-xs"
-                :disabled="currentRound(gi) >= getRounds(gi).length - 1"
-                @click="setRound(gi, currentRound(gi) + 1)"
-              >
-                ›
-              </button>
-            </div>
-          </div>
-          <div
-            v-for="{ match, mi } in getRounds(gi)[currentRound(gi)] ?? []"
-            :key="match.id"
-            class="gs-match"
-          >
-            <TeamBadge :team="teamById(match.homeId)" reverse class="gs-team gs-team--home" />
-
-            <button
-              class="gs-score-btn"
-              :class="{ 'gs-score-btn--locked': locked }"
-              :style="
-                match.result ? { borderColor: scoreAccentColor(match), borderLeftWidth: '3px' } : {}
-              "
-              :disabled="locked"
-              @click="openEdit(gi, mi, match)"
-            >
-              {{ matchResultStr(match) }}
-            </button>
-
-            <TeamBadge :team="teamById(match.awayId)" class="gs-team gs-team--away" />
-
-            <button v-if="!locked" class="btn-xs sim-btn" @click="emit('simMatch', gi, mi)">
-              <Shuffle :size="13" />
-            </button>
-          </div>
-        </div>
-      </div>
+      <GroupCard
+        v-for="(group, gi) in tournament.groups"
+        :key="gi"
+        :group="group"
+        :teams="teams"
+        :locked="locked"
+        :qualifiers-per-group="tournament.qualifiersPerGroup ?? 2"
+        :wildcard-count="tournament.wildcardCount ?? 0"
+        :round="roundOf(gi)"
+        @update:round="(r) => (selectedRound[gi] = r)"
+        @sim-match="(mi) => emit('simMatch', gi, mi)"
+        @sim-group-week="handleSimGroupWeek(gi)"
+        @open-edit="(mi, match) => openEdit(gi, mi, match)"
+      />
     </div>
-
-    <!-- Legend -->
   </div>
 
   <!-- Score edit modal -->
@@ -441,214 +262,11 @@ function scoreAccentColor(match: GroupMatch): string {
   margin: 0 8px;
 }
 
-.gs-toolbar {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  align-items: center;
-  padding: 0 8px;
-}
-
-.sim-dropdown {
-  display: none;
-  position: relative;
-}
-
-.sim-dropdown-trigger {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.sim-chevron {
-  transition: transform 0.15s;
-  &.open {
-    transform: rotate(180deg);
-  }
-}
-
-.sim-dropdown-panel {
-  position: absolute;
-  top: calc(100% + 4px);
-  left: 0;
-  z-index: 200;
-  background: var(--surface);
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius);
-  padding: 6px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  min-width: 150px;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
-
-  button {
-    width: 100%;
-    justify-content: flex-start;
-    text-align: left;
-    font-size: 13px;
-    padding: 5px 10px;
-    background: var(--bg);
-    &:hover {
-      background: color-mix(in srgb, var(--accent) 12%, var(--bg));
-    }
-  }
-}
-
 .gs-groups {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
   gap: 12px;
   padding: 0 8px 8px;
-}
-
-.gs-table-scroll {
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-}
-.gs-group {
-  border: 1px solid var(--border-light);
-  background: var(--surface);
-  border-radius: var(--radius);
-  overflow: hidden;
-}
-.gs-group-header {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-  padding: 7px 10px;
-  background: var(--bg);
-  border-bottom: 1px solid var(--border-light);
-  color: var(--text-muted);
-  border-left: 3px solid var(--accent);
-}
-
-.gs-table {
-  border-collapse: collapse;
-  width: 100%;
-  font-size: 12px;
-}
-.gs-table th,
-.gs-table td {
-  border: none;
-  border-bottom: 1px solid var(--border-light);
-  padding: 4px 6px;
-  text-align: center;
-}
-.gs-table tbody tr:last-child td {
-  border-bottom: none;
-}
-.gs-table th {
-  background: var(--bg);
-  font-weight: 600;
-  font-size: 11px;
-  color: var(--text-muted);
-}
-.gs-table .col-rank {
-  width: 18px;
-  color: var(--text-muted);
-  font-size: 11px;
-}
-.gs-table .col-team {
-  text-align: left;
-  min-width: 0;
-  max-width: 120px;
-}
-.col-pts {
-  font-weight: 700;
-}
-.row-qualify {
-  background: color-mix(in srgb, var(--accent) 6%, transparent);
-}
-.row-qualify td:first-child {
-  border-left: 3px solid var(--accent);
-}
-.row-wildcard {
-  background: color-mix(in srgb, var(--accent) 3%, transparent);
-}
-.row-wildcard td:first-child {
-  border-left: 3px dashed var(--accent);
-}
-.row-out {
-  opacity: 0.65;
-}
-
-.gs-matches {
-  padding: 4px 8px 6px;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  border-top: 1px solid var(--border-light);
-}
-.gs-round-nav {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 4px 0 4px;
-  border-bottom: 1px solid var(--border-light);
-  margin-bottom: 4px;
-}
-.gs-round-label {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-}
-.gs-round-btns {
-  display: flex;
-  gap: 3px;
-}
-.gs-match {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr auto;
-  align-items: center;
-  gap: 4px;
-  font-size: 12px;
-  padding: 2px 0;
-}
-.gs-team {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  min-width: 0;
-}
-.gs-team--home {
-  justify-content: flex-end;
-  text-align: right;
-}
-.gs-team--away {
-  justify-content: flex-start;
-}
-
-.gs-score-btn {
-  font-family: var(--font);
-  font-size: 12px;
-  font-weight: 600;
-  min-width: 48px;
-  justify-content: center;
-  padding: 2px 6px;
-  background: var(--bg);
-  border: 1px solid var(--border-light);
-  cursor: pointer;
-  flex-shrink: 0;
-}
-.gs-score-btn:hover:not(:disabled) {
-  background: var(--border-light);
-}
-.gs-score-btn--locked {
-  cursor: default;
-  pointer-events: none;
-}
-
-.sim-btn {
-  flex-shrink: 0;
-  opacity: 0.55;
-  font-size: 11px;
-}
-.sim-btn:hover {
-  opacity: 1;
 }
 
 .gs-legend {
@@ -692,70 +310,10 @@ function scoreAccentColor(match: GroupMatch): string {
   margin-top: 12px;
 }
 
-.dot {
-  display: inline-block;
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-.team-cell {
-  gap: 6px;
-}
-.flex {
-  display: flex;
-  align-items: center;
-}
-
 @media (max-width: 600px) {
   .gs-groups {
     grid-template-columns: 1fr;
     padding: 0 4px 8px;
-  }
-  .gs-matches {
-    max-height: none;
-  }
-  .gs-table .col-team {
-    min-width: 90px;
-  }
-
-  /* Hide D, L, GF, GA — keep #, Team, P, W, GD, Pts */
-  .gs-table th:nth-child(5),
-  .gs-table td:nth-child(5),
-  .gs-table th:nth-child(6),
-  .gs-table td:nth-child(6),
-  .gs-table th:nth-child(7),
-  .gs-table td:nth-child(7),
-  .gs-table th:nth-child(8),
-  .gs-table td:nth-child(8) {
-    display: none;
-  }
-
-  /* Bigger touch target for score and sim buttons */
-  .gs-match {
-    padding: 5px 0;
-  }
-  .gs-score-btn {
-    min-width: 56px;
-    padding: 5px 8px;
-  }
-
-  .gs-toolbar {
-    gap: 5px;
-    padding: 0 4px;
-
-    button {
-      padding: 4px 8px;
-      font-size: 12px;
-    }
-
-    .gs-sim-inline {
-      display: none;
-    }
-
-    .sim-dropdown {
-      display: block;
-    }
   }
 }
 </style>

@@ -321,7 +321,7 @@ function handleSave() {
 
       <!-- Manual draw overlay -->
       <template v-if="showManualDraw">
-        <div class="tsp-card">
+        <div class="form-card">
           <GroupDraw
             v-if="isGroupFormat"
             :teams="localTeams"
@@ -340,8 +340,8 @@ function handleSave() {
 
       <template v-else>
         <!-- Tournament Name -->
-        <div class="tsp-card">
-          <div class="tsp-section-title">
+        <div class="form-card">
+          <div class="form-section-title">
             {{ t("tournament.settingsPage.tournamentName.title") }}
           </div>
           <input
@@ -350,15 +350,15 @@ function handleSave() {
             type="text"
             :placeholder="tournament.name"
           />
-          <div v-if="seasonCount > 1" class="tsp-hint-box" style="margin-top: 8px">
+          <div v-if="seasonCount > 1" class="hint-box" style="margin-top: 8px">
             {{ t("tournament.settingsPage.tournamentName.hint", { n: seasonCount }) }}
           </div>
         </div>
 
         <!-- Manage Teams -->
-        <div class="tsp-card">
-          <div class="tsp-card-header">
-            <div class="tsp-section-title">
+        <div class="form-card">
+          <div class="form-section-header">
+            <div class="form-section-title">
               {{ t("tournament.settingsPage.manageTeams.title") }}
             </div>
             <span v-if="hasAnyResults" class="tsp-lock-tag">
@@ -536,7 +536,7 @@ function handleSave() {
   padding: 2px 8px;
 }
 
-.tsp-card {
+.form-card {
   background: var(--surface);
   border: 1px solid var(--border-light);
   border-radius: var(--radius);
@@ -544,17 +544,17 @@ function handleSave() {
   margin-bottom: 12px;
 }
 
-.tsp-card-header {
+.form-section-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 12px;
 }
-.tsp-card-header .tsp-section-title {
+.form-section-header .form-section-title {
   margin-bottom: 0;
 }
 
-.tsp-section-title {
+.form-section-title {
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.07em;
@@ -590,7 +590,7 @@ function handleSave() {
   border-radius: var(--radius);
 }
 
-.tsp-hint-box {
+.hint-box {
   padding: 8px 10px;
   background: var(--bg);
   border: 1px solid var(--border-light);

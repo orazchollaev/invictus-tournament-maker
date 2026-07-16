@@ -46,11 +46,11 @@ const playoffSeedModeOptions = computed(() => [
     :locked="hasAnyResults"
     :locked-message="t('tournament.settingsPage.leagueFormat.lockedBanner')"
   >
-    <div class="tsp-leg-row" style="margin-bottom: 8px">
-      <span class="tsp-row-label">{{ t("tournament.create.roundFormat") }}</span>
+    <div class="form-row" style="margin-bottom: 8px">
+      <span class="form-label">{{ t("tournament.create.roundFormat") }}</span>
       <BtnGroup v-model="localLeagueLegMode" :options="multiLegOptions" />
     </div>
-    <div class="tsp-hint-box">
+    <div class="hint-box">
       <strong>{{ t("common.single") }}</strong>
       — {{ t("tournament.settingsPage.leagueFormat.hintSingle") }} &nbsp;·&nbsp;
       <strong>{{ t("common.double") }}</strong>
@@ -62,7 +62,7 @@ const playoffSeedModeOptions = computed(() => [
     </div>
   </TspLockedCard>
 
-  <div class="tsp-card">
+  <div class="form-card">
     <AppStepper
       v-model="localRelegationCount"
       :label="t('tournament.settingsPage.leagueFormat.relegationZone')"
@@ -93,8 +93,8 @@ const playoffSeedModeOptions = computed(() => [
     </template>
 
     <template v-if="localRelegationCount > 0 && otherLeagues.length > 0">
-      <div class="tsp-stepper-row" style="margin-top: 8px">
-        <span class="tsp-stepper-label">
+      <div class="form-row" style="margin-top: 8px">
+        <span class="form-label form-label--lg">
           {{ t("tournament.settingsPage.leagueFormat.linkedLeague") }}
         </span>
         <select v-model="localLinkedLeagueId" class="tsp-linked-select">
@@ -104,7 +104,7 @@ const playoffSeedModeOptions = computed(() => [
           </option>
         </select>
       </div>
-      <div v-if="localLinkedLeagueId" class="tsp-hint-box" style="margin-top: 6px">
+      <div v-if="localLinkedLeagueId" class="hint-box" style="margin-top: 6px">
         {{
           t("tournament.settingsPage.leagueFormat.linkedLeagueHint", { n: localRelegationCount })
         }}
@@ -117,9 +117,9 @@ const playoffSeedModeOptions = computed(() => [
     :locked="leaguePlayoffStarted"
     :locked-message="t('tournament.settingsPage.leagueFormat.playoff.lockedBanner')"
   >
-    <label class="tsp-toggle-row">
+    <label class="toggle-row">
       <input v-model="localPlayoffEnabled" type="checkbox" />
-      <span class="tsp-toggle-label">{{ t("tournament.create.playoff.enable") }}</span>
+      <span class="toggle-label">{{ t("tournament.create.playoff.enable") }}</span>
     </label>
 
     <template v-if="localPlayoffEnabled">
@@ -130,15 +130,15 @@ const playoffSeedModeOptions = computed(() => [
         :max="teamCount"
         :hint="t('tournament.create.playoff.qualifierCountHint')"
       />
-      <div class="tsp-leg-row">
-        <span class="tsp-row-label">{{ t("tournament.create.playoff.seedMode") }}</span>
+      <div class="form-row">
+        <span class="form-label">{{ t("tournament.create.playoff.seedMode") }}</span>
         <BtnGroup v-model="localPlayoffSeedMode" :options="playoffSeedModeOptions" />
       </div>
     </template>
   </TspLockedCard>
 </template>
 
-<style src="./tsp.css"></style>
+<style src="./tournament-settings.css"></style>
 <style scoped>
 .tsp-linked-select {
   flex: 1;

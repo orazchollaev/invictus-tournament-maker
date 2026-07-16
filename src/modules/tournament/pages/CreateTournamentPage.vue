@@ -223,7 +223,7 @@ function doCreate(orderedIds?: string[]) {
 
     <!-- Manual draw overlay -->
     <template v-if="showManualDraw">
-      <div class="ctp-card">
+      <div class="form-card">
         <GroupDraw
           v-if="format === 'group+bracket'"
           :teams="selectedTeams"
@@ -242,8 +242,8 @@ function doCreate(orderedIds?: string[]) {
 
     <template v-else>
       <!-- Name -->
-      <div class="ctp-card">
-        <div class="ctp-section-title">{{ $t("tournament.create.name") }}</div>
+      <div class="form-card">
+        <div class="form-section-title">{{ $t("tournament.create.name") }}</div>
         <div class="ctp-name-wrap">
           <input
             v-model="name"
@@ -258,8 +258,8 @@ function doCreate(orderedIds?: string[]) {
       </div>
 
       <!-- Teams -->
-      <div class="ctp-card">
-        <div class="ctp-section-title">{{ $t("tournament.create.teams") }}</div>
+      <div class="form-card">
+        <div class="form-section-title">{{ $t("tournament.create.teams") }}</div>
         <TeamSelector :teams="allTeams" :selected="selected" @update:selected="selected = $event" />
       </div>
 

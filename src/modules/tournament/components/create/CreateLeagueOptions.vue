@@ -85,20 +85,20 @@ watch(
 
 <template>
   <!-- Round Format -->
-  <div class="ctp-card">
-    <div class="ctp-section-title">
+  <div class="form-card">
+    <div class="form-section-title">
       {{ $t("tournament.create.roundFormat") }}
     </div>
 
-    <div class="ctp-leg-row">
-      <span class="ctp-row-label">
+    <div class="form-row">
+      <span class="form-label">
         {{ $t("tournament.create.schedule") }}
       </span>
 
       <BtnGroup v-model="leagueLegMode" :options="multiLegOptions" />
     </div>
 
-    <div class="ctp-hint-box">
+    <div class="hint-box hint-box--bottom">
       <strong>{{ $t("common.single") }}</strong>
       —
       {{
@@ -149,8 +149,8 @@ watch(
   </div>
 
   <!-- League Tiers -->
-  <div class="ctp-card">
-    <div class="ctp-section-title">
+  <div class="form-card">
+    <div class="form-section-title">
       {{ $t("tournament.create.tiers") }}
     </div>
 
@@ -214,11 +214,11 @@ watch(
   </div>
 
   <!-- Playoff -->
-  <div class="ctp-card">
-    <label class="ctp-toggle-row">
+  <div class="form-card">
+    <label class="toggle-row">
       <input v-model="playoffEnabled" type="checkbox" />
-      <span class="ctp-toggle-label">{{ $t("tournament.create.playoff.enable") }}</span>
-      <span class="ctp-toggle-hint">{{ $t("tournament.create.playoff.hint") }}</span>
+      <span class="toggle-label">{{ $t("tournament.create.playoff.enable") }}</span>
+      <span class="toggle-hint">{{ $t("tournament.create.playoff.hint") }}</span>
     </label>
 
     <template v-if="playoffEnabled">
@@ -229,12 +229,12 @@ watch(
         :max="selectedTeams.length"
         :hint="$t('tournament.create.playoff.qualifierCountHint')"
       />
-      <div class="ctp-leg-row">
-        <span class="ctp-row-label">{{ $t("tournament.create.playoff.seedMode") }}</span>
+      <div class="form-row">
+        <span class="form-label">{{ $t("tournament.create.playoff.seedMode") }}</span>
         <BtnGroup v-model="playoffSeedMode" :options="playoffSeedModeOptions" />
       </div>
     </template>
   </div>
 </template>
 
-<style src="./ctp.css"></style>
+<style src="./create-tournament.css"></style>

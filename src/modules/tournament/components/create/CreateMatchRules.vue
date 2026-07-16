@@ -39,21 +39,21 @@ const playoffOptions = computed(() => [
 
 <template>
   <!-- Draw Method -->
-  <div class="ctp-card">
-    <div class="ctp-section-title">{{ t("tournament.create.drawMethod") }}</div>
-    <div class="ctp-draw-rows">
-      <div class="ctp-draw-row">
-        <span v-if="format === 'group+bracket'" class="ctp-row-label">
+  <div class="form-card">
+    <div class="form-section-title">{{ t("tournament.create.drawMethod") }}</div>
+    <div class="form-rows">
+      <div class="form-row">
+        <span v-if="format === 'group+bracket'" class="form-label">
           {{ t("tournament.create.groupStage") }}
         </span>
         <BtnGroup v-model="drawType" :options="drawOptions" />
       </div>
-      <div v-if="format === 'group+bracket'" class="ctp-draw-row">
-        <span class="ctp-row-label">{{ t("tournament.settingsPage.playoffSeeding.title") }}</span>
+      <div v-if="format === 'group+bracket'" class="form-row">
+        <span class="form-label">{{ t("tournament.settingsPage.playoffSeeding.title") }}</span>
         <BtnGroup v-model="playoffSeedMode" :options="playoffOptions" />
       </div>
     </div>
-    <div class="ctp-hint-box">
+    <div class="hint-box hint-box--bottom">
       {{
         t("tournament.create.drawHint", {
           random: t("common.random"),
@@ -75,35 +75,35 @@ const playoffOptions = computed(() => [
   </div>
 
   <!-- 3rd Place Option -->
-  <div v-if="selectedCount >= 4" class="ctp-card">
-    <div class="ctp-section-title">Options</div>
-    <label class="ctp-toggle-row">
+  <div v-if="selectedCount >= 4" class="form-card">
+    <div class="form-section-title">Options</div>
+    <label class="toggle-row">
       <input v-model="hasThirdPlace" type="checkbox" />
-      <span class="ctp-toggle-label">{{ t("tournament.create.thirdPlace") }}</span>
-      <span class="ctp-toggle-hint">{{ t("tournament.create.thirdPlaceHint") }}</span>
+      <span class="toggle-label">{{ t("tournament.create.thirdPlace") }}</span>
+      <span class="toggle-hint">{{ t("tournament.create.thirdPlaceHint") }}</span>
     </label>
   </div>
 
   <!-- Legs per Match -->
-  <div class="ctp-card">
-    <div class="ctp-section-title">{{ t("tournament.settingsPage.legsPerMatch.title") }}</div>
-    <div class="ctp-leg-rows">
-      <div v-if="format === 'group+bracket'" class="ctp-leg-row">
-        <span class="ctp-row-label">{{ t("tournament.create.groupStage") }}</span>
+  <div class="form-card">
+    <div class="form-section-title">{{ t("tournament.settingsPage.legsPerMatch.title") }}</div>
+    <div class="form-rows">
+      <div v-if="format === 'group+bracket'" class="form-row">
+        <span class="form-label">{{ t("tournament.create.groupStage") }}</span>
         <BtnGroup v-model="groupLegMode" :options="multiLegOptions" />
       </div>
-      <div class="ctp-leg-row">
-        <span class="ctp-row-label">
+      <div class="form-row">
+        <span class="form-label">
           {{ t("tournament.settingsPage.legsPerMatch.knockoutRounds") }}
         </span>
         <BtnGroup v-model="knockoutLegMode" :options="legOptions" />
       </div>
-      <div class="ctp-leg-row">
-        <span class="ctp-row-label">{{ t("tournament.settingsPage.legsPerMatch.final") }}</span>
+      <div class="form-row">
+        <span class="form-label">{{ t("tournament.settingsPage.legsPerMatch.final") }}</span>
         <BtnGroup v-model="finalLegMode" :options="legOptions" />
       </div>
     </div>
   </div>
 </template>
 
-<style src="./ctp.css"></style>
+<style src="./create-tournament.css"></style>

@@ -76,13 +76,13 @@ async function handleRedraw() {
     :locked="hasAnyResults"
     :locked-message="t('tournament.settingsPage.drawMethod.lockedBanner')"
   >
-    <div class="tsp-row">
+    <div class="form-row">
       <BtnGroup v-model="drawType" :options="drawOptions" />
       <button @click="handleRedraw">
         {{ t("tournament.settingsPage.drawMethod.regenerate") }}
       </button>
     </div>
-    <div class="tsp-hint-box">
+    <div class="hint-box">
       {{
         t("tournament.create.drawHint", {
           random: t("common.random"),
@@ -140,7 +140,7 @@ async function handleRedraw() {
       :locked-message="t('tournament.settingsPage.playoffSeeding.lockedBanner')"
     >
       <BtnGroup v-model="localPlayoffSeedMode" :options="playoffOptions" />
-      <div class="tsp-hint-box">
+      <div class="hint-box">
         {{
           t("tournament.create.playoffHint", {
             cross: t("tournament.create.cross"),
@@ -159,10 +159,10 @@ async function handleRedraw() {
       :locked="hasAnyResults"
       :locked-message="t('tournament.settingsPage.formatOptions.lockedBanner')"
     >
-      <label class="tsp-toggle-row">
+      <label class="toggle-row">
         <input v-model="localHasThirdPlace" type="checkbox" />
-        <span class="tsp-toggle-label">{{ t("tournament.create.thirdPlace") }}</span>
-        <span class="tsp-hint">{{ t("tournament.create.thirdPlaceHint") }}</span>
+        <span class="toggle-label">{{ t("tournament.create.thirdPlace") }}</span>
+        <span class="form-hint">{{ t("tournament.create.thirdPlaceHint") }}</span>
       </label>
     </TspLockedCard>
   </template>
@@ -173,25 +173,25 @@ async function handleRedraw() {
     :locked="hasAnyResults"
     :locked-message="t('tournament.settingsPage.legsPerMatch.lockedBanner')"
   >
-    <div class="tsp-hint-box tsp-hint-box--top">
+    <div class="hint-box hint-box--top">
       <strong>{{ t("common.single") }}</strong>
       — {{ t("tournament.settingsPage.legsPerMatch.hintSingle") }} &nbsp;·&nbsp;
       <strong>{{ t("common.double") }}</strong>
       — {{ t("tournament.settingsPage.legsPerMatch.hintDouble") }}
     </div>
-    <div class="tsp-leg-rows">
-      <div v-if="isGroupFormat" class="tsp-leg-row">
-        <span class="tsp-row-label">{{ t("tournament.create.groupStage") }}</span>
+    <div class="form-rows">
+      <div v-if="isGroupFormat" class="form-row">
+        <span class="form-label">{{ t("tournament.create.groupStage") }}</span>
         <BtnGroup v-model="localGroupLegMode" :options="multiLegOptions" />
       </div>
-      <div class="tsp-leg-row">
-        <span class="tsp-row-label">
+      <div class="form-row">
+        <span class="form-label">
           {{ t("tournament.settingsPage.legsPerMatch.knockoutRounds") }}
         </span>
         <BtnGroup v-model="localKnockoutLegMode" :options="legOptions" />
       </div>
-      <div class="tsp-leg-row">
-        <span class="tsp-row-label">
+      <div class="form-row">
+        <span class="form-label">
           {{ t("tournament.settingsPage.legsPerMatch.final") }}
         </span>
         <BtnGroup v-model="localFinalLegMode" :options="legOptions" />
@@ -200,4 +200,4 @@ async function handleRedraw() {
   </TspLockedCard>
 </template>
 
-<style src="./tsp.css"></style>
+<style src="./tournament-settings.css"></style>

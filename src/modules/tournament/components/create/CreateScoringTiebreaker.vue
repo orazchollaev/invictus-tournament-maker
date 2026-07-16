@@ -14,10 +14,10 @@ const lossPoints = defineModel<number>("lossPoints", { required: true })
 
 <template>
   <!-- Tiebreaker -->
-  <div class="ctp-card">
-    <div class="ctp-section-title">{{ t("tournament.create.tiebreaker") }}</div>
-    <div class="ctp-leg-row">
-      <span class="ctp-row-label">{{ t("tournament.settingsPage.tiebreaker.method") }}</span>
+  <div class="form-card">
+    <div class="form-section-title">{{ t("tournament.create.tiebreaker") }}</div>
+    <div class="form-row">
+      <span class="form-label">{{ t("tournament.settingsPage.tiebreaker.method") }}</span>
       <BtnGroup
         v-model="tiebreaker"
         :options="[
@@ -29,8 +29,8 @@ const lossPoints = defineModel<number>("lossPoints", { required: true })
   </div>
 
   <!-- Scoring -->
-  <div class="ctp-card">
-    <div class="ctp-section-title">{{ t("tournament.settingsPage.scoring.title") }}</div>
+  <div class="form-card">
+    <div class="form-section-title">{{ t("tournament.settingsPage.scoring.title") }}</div>
     <AppStepper
       v-model="winPoints"
       :label="t('tournament.settingsPage.scoring.winPoints')"
@@ -52,4 +52,4 @@ const lossPoints = defineModel<number>("lossPoints", { required: true })
   </div>
 </template>
 
-<style src="./ctp.css"></style>
+<style src="./create-tournament.css"></style>

@@ -1,0 +1,133 @@
+/* Create Tournament page — component-specific styles.
+   Shared form primitives (form-card, stepper, toggle-row, hint-box…)
+   live in src/assets/style/forms.css */
+
+/* ── Format selector ─────────────────────────────────────────── */
+.ctp-format-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.ctp-format-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: var(--sp-4) var(--sp-3);
+  border: 2px solid var(--border-light);
+  background: var(--bg);
+  cursor: pointer;
+  text-align: center;
+  border-radius: var(--radius-lg);
+  transition:
+    border-color var(--dur-fast),
+    box-shadow var(--dur),
+    background var(--dur-fast);
+}
+.ctp-format-card:hover:not(:disabled) {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 6%, var(--bg));
+  box-shadow: var(--shadow-sm);
+}
+.ctp-format-card--on {
+  border-color: var(--accent) !important;
+  background: color-mix(in srgb, var(--accent) 10%, var(--bg)) !important;
+}
+.ctp-format-card:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.ctp-format-icon {
+  color: var(--accent);
+}
+.ctp-format-title {
+  font-size: 13px;
+  font-weight: 700;
+}
+.ctp-format-desc {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* ── Group+bracket config block ──────────────────────────────── */
+.ctp-gc-block {
+  padding-top: 12px;
+  border-top: 1px solid var(--border-light);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* ── Tier assignment ─────────────────────────────────────────── */
+.ctp-tier-blocks {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 12px;
+}
+.ctp-tier-block {
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.ctp-tier-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding: 5px 10px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border-light);
+}
+.ctp-tier-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  padding: 8px 10px;
+}
+.ctp-tier-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  padding: 3px 6px 3px 10px;
+  border: 1px solid var(--border-light);
+  background: var(--surface);
+  border-radius: var(--radius-pill);
+}
+.ctp-tier-chip-name {
+  max-width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ctp-tier-move {
+  display: inline-flex;
+  gap: 2px;
+  margin-left: 2px;
+}
+.ctp-tier-mv-btn {
+  padding: 0 4px;
+  font-size: 11px;
+  line-height: 18px;
+  height: 18px;
+  border-color: transparent;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-radius: var(--radius);
+}
+.ctp-tier-mv-btn:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 8%, var(--surface));
+}
+
+/* ── Responsive ──────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .ctp-format-row {
+    grid-template-columns: 1fr;
+  }
+}

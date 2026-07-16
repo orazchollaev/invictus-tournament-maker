@@ -17,10 +17,10 @@ const localLossPoints = defineModel<number>("localLossPoints", { required: true 
 
 <template>
   <!-- Tiebreaker -->
-  <div class="tsp-card">
-    <div class="tsp-section-title">{{ t("tournament.create.tiebreaker") }}</div>
-    <div class="tsp-leg-row">
-      <span class="tsp-row-label">{{ t("tournament.settingsPage.tiebreaker.method") }}</span>
+  <div class="form-card">
+    <div class="form-section-title">{{ t("tournament.create.tiebreaker") }}</div>
+    <div class="form-row">
+      <span class="form-label">{{ t("tournament.settingsPage.tiebreaker.method") }}</span>
       <BtnGroup
         v-model="localTiebreaker"
         :options="[
@@ -58,4 +58,4 @@ const localLossPoints = defineModel<number>("localLossPoints", { required: true 
   </TspLockedCard>
 </template>
 
-<style src="./tsp.css"></style>
+<style src="./tournament-settings.css"></style>

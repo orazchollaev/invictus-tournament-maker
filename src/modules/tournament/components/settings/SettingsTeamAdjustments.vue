@@ -49,10 +49,10 @@ const MAX = 30
 
 <template>
   <!-- Point Adjustments Accordion -->
-  <div v-if="showPoints !== false" class="tsp-card tsp-accordion-card">
+  <div v-if="showPoints !== false" class="form-card tsp-accordion-card">
     <div class="tsp-accordion-header" @click="pointsOpen = !pointsOpen">
       <div class="tsp-accordion-title-row">
-        <span class="tsp-section-title tsp-section-title--inline">
+        <span class="form-section-title form-section-title--inline">
           {{ t("tournament.settingsPage.teamAdjustments.pointsTitle") }}
         </span>
         <span v-if="hasAnyResults" class="tsp-lock-tag">
@@ -73,7 +73,7 @@ const MAX = 30
         {{ t("tournament.settingsPage.teamAdjustments.lockedBanner") }}
       </div>
       <template v-else>
-        <div class="tsp-hint-box tsp-hint-box--top">
+        <div class="hint-box hint-box--top">
           {{ t("tournament.settingsPage.teamAdjustments.pointsHint") }}
         </div>
         <div class="tsp-adj-list">
@@ -109,10 +109,10 @@ const MAX = 30
   </div>
 
   <!-- Power Adjustments Accordion -->
-  <div class="tsp-card tsp-accordion-card">
+  <div class="form-card tsp-accordion-card">
     <div class="tsp-accordion-header" @click="powerOpen = !powerOpen">
       <div class="tsp-accordion-title-row">
-        <span class="tsp-section-title tsp-section-title--inline">
+        <span class="form-section-title form-section-title--inline">
           {{ t("tournament.settingsPage.teamAdjustments.powerTitle") }}
         </span>
         <span v-if="hasAnyResults" class="tsp-lock-tag">
@@ -133,7 +133,7 @@ const MAX = 30
         {{ t("tournament.settingsPage.teamAdjustments.lockedBanner") }}
       </div>
       <template v-else>
-        <div class="tsp-hint-box tsp-hint-box--top">
+        <div class="hint-box hint-box--top">
           {{ t("tournament.settingsPage.teamAdjustments.powerHint") }}
         </div>
         <div class="tsp-adj-list">
@@ -169,7 +169,7 @@ const MAX = 30
   </div>
 </template>
 
-<style src="./tsp.css"></style>
+<style src="./tournament-settings.css"></style>
 <style scoped>
 .tsp-accordion-card {
   padding: 0;
@@ -201,7 +201,7 @@ const MAX = 30
   flex: 1;
 }
 
-.tsp-section-title--inline {
+.form-section-title--inline {
   margin-bottom: 0;
 }
 

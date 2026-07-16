@@ -50,9 +50,9 @@ function goToSimResults() {
 </script>
 
 <template>
-  <div class="tsp-card tsp-card--sim">
-    <div class="tsp-card-header">
-      <div class="tsp-section-title tsp-section-title--sim">
+  <div class="form-card form-card--sim">
+    <div class="form-section-header">
+      <div class="form-section-title form-section-title--sim">
         {{ t("tournament.settingsPage.simulation.title") }}
       </div>
     </div>
@@ -101,13 +101,13 @@ function goToSimResults() {
   </Teleport>
 </template>
 
-<style src="./tsp.css"></style>
+<style src="./tournament-settings.css"></style>
 <style scoped>
-.tsp-card--sim {
+.form-card--sim {
   border-color: color-mix(in srgb, var(--accent) 30%, var(--border-light));
   background: color-mix(in srgb, var(--accent) 4%, var(--surface));
 }
-.tsp-section-title--sim {
+.form-section-title--sim {
   color: var(--accent);
 }
 .tsp-sim-row {

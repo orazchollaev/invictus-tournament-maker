@@ -81,4 +81,4 @@ const formatLabel = computed(() => {
   </div>
 </template>
 
-<style src="./tdp.css"></style>
+<style src="./tournament-detail.css"></style>

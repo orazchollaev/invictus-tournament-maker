@@ -1,0 +1,151 @@
+/* ── Shared form primitives ──────────────────────────────────────
+   Used by Create Tournament + Tournament Settings pages (and any
+   future form-heavy page). Page-specific styles stay next to their
+   components (create-tournament.css / tournament-settings.css). */
+
+/* ── Card / section ──────────────────────────────────────────── */
+.form-card {
+  background: var(--surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: var(--sp-5);
+  margin-bottom: var(--sp-4);
+}
+
+.form-section-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+}
+
+.form-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.form-section-header .form-section-title {
+  margin-bottom: 0;
+}
+
+/* ── Rows & labels ───────────────────────────────────────────── */
+.form-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.form-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.form-label {
+  font-size: 13px;
+  color: var(--text);
+  width: 140px;
+  flex-shrink: 0;
+}
+.form-label--md {
+  width: 160px;
+}
+.form-label--lg {
+  width: 200px;
+}
+
+.form-hint {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* ── Hint box ────────────────────────────────────────────────── */
+.hint-box {
+  padding: 8px 10px;
+  background: var(--bg);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius);
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+.hint-box--top {
+  margin-bottom: 10px;
+}
+.hint-box--bottom {
+  margin-top: 10px;
+}
+
+/* ── Stepper ─────────────────────────────────────────────────── */
+.stepper {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.stepper button {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  font-size: 16px;
+  line-height: 1;
+  display: flex;
+  justify-content: center;
+}
+.stepper button:first-child {
+  border-right: 1px solid var(--border);
+}
+.stepper button:last-child {
+  border-left: 1px solid var(--border);
+}
+.stepper-val {
+  width: 40px;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 700;
+  font-family: var(--font-ui);
+}
+
+/* ── Toggle ──────────────────────────────────────────────────── */
+.toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  user-select: none;
+}
+.toggle-label {
+  font-size: 14px;
+  font-weight: 600;
+}
+.toggle-hint {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* ── Responsive ──────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .form-card {
+    padding: var(--sp-3);
+  }
+  .form-label,
+  .form-label--md,
+  .form-label--lg {
+    width: auto;
+    flex: 1 1 100%;
+  }
+  .form-row {
+    row-gap: 6px;
+  }
+  .toggle-label {
+    font-size: 12px;
+    white-space: nowrap;
+  }
+}
