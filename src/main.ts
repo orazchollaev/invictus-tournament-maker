@@ -6,6 +6,7 @@ import router from "./router"
 import App from "./App.vue"
 import i18n, { loadLocale } from "./i18n"
 import type { Locale } from "./i18n"
+import { initPush } from "./composables/usePush"
 
 import "./assets/style/index.css"
 
@@ -33,6 +34,8 @@ async function bootstrap() {
   app.use(router)
   app.use(i18n)
   app.mount("#app")
+
+  void initPush()
 }
 
 bootstrap()

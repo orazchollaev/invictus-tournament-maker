@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vue-tsc -b && vite build",
     "preview": "vite preview",
     "release": "release-it",
     "release:patch": "release-it patch",
@@ -25,6 +25,7 @@
     "@capacitor/app": "^8.1.0",
     "@capacitor/cli": "^8.4.1",
     "@capacitor/core": "^8.4.1",
+    "@capacitor/push-notifications": "^8.1.2",
     "@capacitor/status-bar": "^8.0.2",
     "@fontsource-variable/ibm-plex-sans": "^5.2.8",
     "@lucide/vue": "^1.23.0",

@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1005830448191",
+    "project_id": "invictus-tournament-maker",
+    "storage_bucket": "invictus-tournament-maker.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1005830448191:android:10f893dac109581eebc48a",
+        "android_client_info": {
+          "package_name": "com.orazchollaev.invictustournamentmaker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1005830448191-hjfqd084q4gl2hnibi2hno6dmk01glmt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBY0vPBd7t8a6neZPbOX5aNxaRzUH36Q70"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1005830448191-hjfqd084q4gl2hnibi2hno6dmk01glmt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
