@@ -117,7 +117,6 @@ async function deleteTournament(id: string) {
               <Trophy :size="11" />
               <TeamBadge :team="teamsStore.teams.find((tm) => tm.id === tour.winnerId)" />
             </span>
-            <span v-else class="status-live">{{ t("tournaments.live") }}</span>
           </div>
 
           <button class="danger sm icon-btn del-btn" @click.stop="deleteTournament(tour.id)">
