@@ -1,7 +1,13 @@
 import type { Ref } from "vue"
 import type { Tournament, PlayoffSeedMode, LegMode } from "../types"
 import type { Team } from "@/modules/teams/types"
-import { createTournament, createLeague, buildLeagueMatchdays, legModeToCount } from "@/engine"
+import {
+  createTournament,
+  createLeague,
+  buildLeagueMatchdays,
+  legModeToCount,
+  buildEmptyBracketRounds,
+} from "@/engine"
 
 export function useDrawActions(tournaments: Ref<Tournament[]>, getTeams: () => Team[]) {
   function hasAnyResults(tournamentId: string): boolean {
@@ -95,12 +101,46 @@ export function useDrawActions(tournaments: Ref<Tournament[]>, getTeams: () => T
     }
   }
 
+  // Re-derives the empty knockout-bracket placeholder (round count/size only — no
+  // teams assigned yet) from the current qualifier/wildcard settings, without touching
+  // the groups themselves. Used when qualification settings change mid-group-stage so
+  // the Bracket tab preview stays the right size, while existing group fixtures/results
+  // are left untouched (the real bracket only gets seeded once seedBracketFromGroups runs).
+  function regenerateEmptyBracket(t: Tournament) {
+    if (!t.groups) return
+    const groupCount = t.groups.length
+    const minGroupSize = Math.floor(t.teamIds.length / groupCount)
+    const clampedQpg = Math.max(1, Math.min(t.qualifiersPerGroup ?? 2, minGroupSize))
+    const clampedWildcards = Math.max(0, Math.min(t.wildcardCount ?? 0, groupCount))
+    t.qualifiersPerGroup = clampedQpg
+    t.wildcardCount = clampedWildcards > 0 ? clampedWildcards : undefined
+
+    const qualifierCount = groupCount * clampedQpg + clampedWildcards
+    const bracketSize = Math.pow(2, Math.ceil(Math.log2(Math.max(qualifierCount, 2))))
+    const emptyRounds = buildEmptyBracketRounds(bracketSize)
+
+    if (t.knockoutLegMode === "double") {
+      for (let r = 0; r < emptyRounds.length - 1; r++) {
+        emptyRounds[r].matches.forEach((m) => {
+          m.leg2Result = null
+        })
+      }
+    }
+    if (t.finalLegMode === "double" && emptyRounds.length > 0) {
+      emptyRounds[emptyRounds.length - 1].matches.forEach((m) => {
+        m.leg2Result = null
+      })
+    }
+
+    t.rounds = emptyRounds
+  }
+
   function changeWildcardCount(tournamentId: string, count: number) {
     const t = tournaments.value.find((t) => t.id === tournamentId)
-    if (!t || t.format !== "group+bracket" || hasAnyResults(tournamentId)) return
+    if (!t || t.format !== "group+bracket" || t.groupsDone) return
     const max = t.groups?.length ?? 0
     t.wildcardCount = Math.max(0, Math.min(count, max)) || undefined
-    rebuildDraw(t)
+    regenerateEmptyBracket(t)
   }
 
   function setLegMode(tournamentId: string, stage: "group" | "knockout" | "final", mode: LegMode) {
@@ -124,11 +164,9 @@ export function useDrawActions(tournaments: Ref<Tournament[]>, getTeams: () => T
 
   function changeQualifiersPerGroup(tournamentId: string, qpg: number) {
     const t = tournaments.value.find((t) => t.id === tournamentId)
-    if (!t || t.format !== "group+bracket" || hasAnyResults(tournamentId)) return
-    const gc = t.groups?.length ?? 2
-    const minGroupSize = Math.floor(t.teamIds.length / gc)
-    const clamped = Math.max(1, Math.min(qpg, minGroupSize))
-    rebuildDraw(t, false, undefined, gc, clamped)
+    if (!t || t.format !== "group+bracket" || t.groupsDone) return
+    t.qualifiersPerGroup = qpg
+    regenerateEmptyBracket(t)
   }
 
   function addTeamToTournament(tournamentId: string, teamId: string) {

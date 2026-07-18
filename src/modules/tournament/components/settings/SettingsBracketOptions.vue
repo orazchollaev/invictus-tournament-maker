@@ -93,7 +93,7 @@ async function handleRedraw() {
     </div>
   </TspLockedCard>
 
-  <!-- Group Structure -->
+  <!-- Group Structure (number of groups — still requires a redraw to change) -->
   <template v-if="isGroupFormat">
     <TspLockedCard
       :title="t('tournament.settingsPage.groupStructure.title')"
@@ -106,13 +106,24 @@ async function handleRedraw() {
         :min="minGroups"
         :max="maxGroups"
       />
+    </TspLockedCard>
+  </template>
+
+  <!-- Qualification & Wildcards — editable throughout the group stage, only locks
+       once the knockout bracket has actually been seeded from the groups. -->
+  <template v-if="isGroupFormat">
+    <TspLockedCard
+      :title="t('tournament.settingsPage.qualification.title')"
+      :locked="!!tournament.groupsDone"
+      :locked-message="t('tournament.settingsPage.qualification.lockedBanner')"
+    >
       <AppStepper
         v-model="localQpg"
-        :label="t('tournament.settingsPage.groupStructure.teamsAdvance')"
+        :label="t('tournament.settingsPage.qualification.teamsAdvance')"
         :min="minQpg"
         :max="maxQpg"
         :hint="
-          t('tournament.settingsPage.groupStructure.reachKnockout', {
+          t('tournament.settingsPage.qualification.reachKnockout', {
             n: localQpg * localGroupCount,
           })
         "
@@ -124,7 +135,7 @@ async function handleRedraw() {
         :min="0"
         :max="localGroupCount"
         :hint="
-          t('tournament.settingsPage.groupStructure.total', {
+          t('tournament.settingsPage.qualification.total', {
             n: localQpg * localGroupCount + localWildcardCount,
           })
         "

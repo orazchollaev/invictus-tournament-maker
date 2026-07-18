@@ -24,9 +24,7 @@ defineEmits<{
 const league = computed(() => props.leagueOverride ?? props.tournament.league!)
 const matchdays = computed(() => league.value.matchdays)
 const standings = computed(() => league.value.standings)
-const relegationCount = computed(
-  () => props.relegationCountOverride ?? props.tournament.relegationCount ?? 0
-)
+const relegationCount = computed(() => props.relegationCountOverride ?? 0)
 const isFinished = computed(() => !!props.tournament.winnerId)
 
 function matchdayDone(idx: number) {

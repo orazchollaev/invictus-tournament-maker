@@ -39,18 +39,6 @@ export const useTournamentStore = defineStore("tournament", () => {
   const leagueActions = useLeagueActions(tournaments, getTeams)
   const leaguePlayoff = useLeaguePlayoffActions(tournaments, getTeams)
 
-  function setRelegationCount(tournamentId: string, count: number) {
-    const t = tournaments.value.find((t) => t.id === tournamentId)
-    if (!t) return
-    t.relegationCount = Math.max(0, count)
-  }
-
-  function setLinkedLeague(tournamentId: string, linkedId: string | null) {
-    const t = tournaments.value.find((t) => t.id === tournamentId)
-    if (!t) return
-    t.linkedLeagueId = linkedId ?? undefined
-  }
-
   function setTiebreaker(tournamentId: string, tiebreaker: Tiebreaker) {
     const t = tournaments.value.find((t) => t.id === tournamentId)
     if (!t) return
@@ -252,8 +240,6 @@ export const useTournamentStore = defineStore("tournament", () => {
     simulateTournament,
     setTiebreaker,
     setPointsConfig,
-    setRelegationCount,
-    setLinkedLeague,
     createMultiTierLeagueTournament,
     setTeamPointAdjustment,
     setTeamPowerAdjustment,

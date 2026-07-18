@@ -429,7 +429,6 @@ export default {
       created: "Creado el {date}",
     },
     advanceToKnockout: "Avanzar a eliminatorias",
-    linkedLeagueNotFinished: '"{name}" debe terminar antes de iniciar una nueva temporada.',
     newSeasonModal: {
       useOldDraw: "Usar el sorteo anterior",
       useOldDrawDesc: "Mantener el mismo orden del sorteo de la Temporada {n}",
@@ -497,11 +496,6 @@ export default {
       thirdPlaceHint: "Los perdedores de semifinales juegan por la medalla de bronce",
       tiebreaker: "Desempate",
       createBtn: "Crear torneo",
-      relegation: "Descenso",
-      relegationCount: "Descendidos por temporada",
-      relegationHint: "Los {n} equipos del fondo bajan a la liga inferior vinculada",
-      linkLeague: "Vincular a liga inferior",
-      noLeague: "Ninguna",
     },
     setResult: "Ingresar resultado",
     simulationResults: {
@@ -526,7 +520,6 @@ export default {
       avgPts: "Pts prom.",
       avgGF: "GF prom.",
       avgGA: "GA prom.",
-      relegate: "Desc.",
       saveJson: "Guardar JSON",
       saveCsv: "Guardar CSV",
     },
@@ -555,11 +548,15 @@ export default {
       },
       groupStructure: {
         title: "Estructura de grupos",
+        lockedBanner:
+          "La estructura de grupos no se puede cambiar una vez que se han jugado partidos.",
+      },
+      qualification: {
+        title: "Clasificación y comodines",
         teamsAdvance: "Equipos que avanzan por grupo",
         reachKnockout: "→ {n} llegan a la fase eliminatoria",
         total: "→ {n} total",
-        lockedBanner:
-          "La estructura de grupos no se puede cambiar una vez que se han jugado partidos.",
+        lockedBanner: "Bloqueado — el cuadro eliminatorio ya se generó a partir de los grupos.",
       },
       playoffSeeding: {
         title: "Cabezas de serie del playoff",
@@ -585,16 +582,13 @@ export default {
         hintTriple: "3 encuentros",
         hintQuad: "4 encuentros (2L & 2V)",
         lockedBanner: "El formato no se puede cambiar una vez iniciados los partidos.",
-        relegationZone: "Zona de descenso",
-        relegated: "los {n} últimos descienden",
-        relegationDisabled: "desactivado",
         numberOfDivisions: "Número de divisiones",
         minTeams: "mín. 2 equipos por división",
         slotsSwapped: "plazas intercambiadas entre divisiones adyacentes",
-        linkedLeague: "Liga vinculada (2.ª división)",
-        none: "— Ninguna —",
-        linkedLeagueHint:
-          "Al final de la temporada, los {n} últimos de esta liga se intercambian con los {n} primeros de la liga vinculada.",
+        divisions: {
+          title: "Divisiones",
+          lockedBanner: "Las divisiones no se pueden cambiar una vez iniciados los partidos.",
+        },
         playoff: {
           title: "Playoff",
           lockedBanner: "Los ajustes del playoff no se pueden cambiar una vez iniciado.",
@@ -685,22 +679,5 @@ export default {
     playoffDrawTitle: "Sorteo de Playoff",
     potTop: "Cabezas de serie",
     potRest: "Resto",
-  },
-  promotionModal: {
-    newSeasonTitle: "Nueva temporada — {name}",
-    finalStandingsTitle: "Clasificación final — Temporada {season}",
-    relegated: "Relegado",
-    promoted: "Ascendido",
-    promotedFrom: "Ascendido de {name}",
-    relegatedNote: "Los últimos {count} de {name} recibirán a los equipos relegados.",
-    incomingTeamsTitle: "Equipos entrantes ({count} plazas)",
-    incomingTeamsTitleSingle: "Equipos entrantes (1 plaza)",
-    noTeamsToPromote:
-      "No hay equipos disponibles para ascender. La nueva temporada comenzará con {count} equipos.",
-    slotLabel: "Plaza {count}",
-    leaveEmpty: "— Dejar vacío —",
-    startNewSeasonBtn: "Iniciar nueva temporada",
-    upBadge: "Arriba",
-    downBadge: "Abajo",
   },
 } as const

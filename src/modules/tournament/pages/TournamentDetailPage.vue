@@ -12,7 +12,6 @@ import ManualDraw from "@/modules/tournament/components/ManualDraw.vue"
 import PlayoffManualDraw from "@/modules/tournament/components/PlayoffManualDraw.vue"
 import GroupDraw from "@/modules/tournament/components/GroupDraw.vue"
 import TournamentStats from "@/modules/tournament/components/TournamentStats.vue"
-import PromotionModal from "@/modules/tournament/components/PromotionModal.vue"
 import { DrawCeremony } from "@/modules/tournament/components/draw-ceremony"
 import {
   buildPlayoffPots,
@@ -29,7 +28,6 @@ import { DetailHeader, DetailPhaseTabs, DetailMultiTierModal } from "../componen
 import type { MainTab } from "../components/detail"
 import { useTournamentDetail } from "../composables/useTournamentDetail"
 import { useSettingsStore } from "@/modules/settings/store"
-import { showAlert } from "@/composables/useDialog"
 
 const { t: trns } = useI18n()
 const route = useRoute()
@@ -45,12 +43,10 @@ const {
   startNewSeason,
   startNewLeagueSeason,
   hasAnyResults,
-  availableTeams,
 } = useTournamentDetail()
 
 const showSeasonModal = ref(false)
 const showManualSeason = ref(false)
-const showPromotionModal = ref(false)
 const showMultiTierModal = ref(false)
 const showPlayoffManualDraw = ref(false)
 const showLeaguePlayoffManualDraw = ref(false)
@@ -76,12 +72,6 @@ watch(
   }
 )
 
-const linkedLeague = computed(() => {
-  const t = tournament.value
-  if (!t?.linkedLeagueId) return undefined
-  return store.getById(t.linkedLeagueId)
-})
-
 async function openNewSeason() {
   const t = tournament.value
   if (!t) return
@@ -92,21 +82,7 @@ async function openNewSeason() {
     return
   }
 
-  // Single-tier league with relegation: show promotion/relegation modal
-  if (t.format === "league" && (t.relegationCount ?? 0) > 0) {
-    if (t.linkedLeagueId && !linkedLeague.value?.winnerId) {
-      await showAlert(
-        trns("tournament.linkedLeagueNotFinished", {
-          name: linkedLeague.value?.name ?? "Linked league",
-        })
-      )
-      return
-    }
-    showPromotionModal.value = true
-    return
-  }
-
-  // League without relegation
+  // Single-tier league
   if (t.format === "league") {
     startNewLeagueSeason(t.teamIds)
     return
@@ -201,28 +177,6 @@ function onCeremonyComplete(orderedIds: string[]) {
     startNewSeason(false, orderedIds, opts?.thirdPlace ?? false, opts?.playoffSeedMode, orderedIds)
   }
   ceremonyAction.value = null
-}
-
-function handlePromotionConfirm(newTeamIds: string[]) {
-  showPromotionModal.value = false
-  const t = tournament.value
-
-  if (t?.linkedLeagueId && (t.relegationCount ?? 0) > 0) {
-    const linked = linkedLeague.value
-    if (linked?.league && linked.winnerId) {
-      const relegationCount = t.relegationCount!
-      const relegatedIds = t
-        .league!.standings.slice(t.league!.standings.length - relegationCount)
-        .map((s) => s.teamId)
-      const survivingL2Ids = linked.league.standings.slice(relegationCount).map((s) => s.teamId)
-      store.newSeason(t.linkedLeagueId, false, undefined, undefined, undefined, undefined, [
-        ...survivingL2Ids,
-        ...relegatedIds,
-      ])
-    }
-  }
-
-  startNewLeagueSeason(newTeamIds)
 }
 
 function handleMultiTierSeasonConfirm() {
@@ -651,23 +605,6 @@ function changeTab(tab: MainTab, tierIdx?: number) {
         </div>
       </Transition>
     </template>
-
-    <PromotionModal
-      v-if="showPromotionModal && tournament"
-      :tournament-name="tournament.name"
-      :season="tournament.season"
-      :standings="tournament.league?.standings ?? []"
-      :all-teams="allTeams"
-      :available-teams="availableTeams"
-      :relegation-count="tournament.relegationCount ?? 0"
-      :linked-league="
-        linkedLeague?.league
-          ? { name: linkedLeague.name, standings: linkedLeague.league.standings }
-          : undefined
-      "
-      @confirm="handlePromotionConfirm"
-      @cancel="showPromotionModal = false"
-    />
 
     <DrawCeremony
       v-if="showCeremony && ceremonyContext"

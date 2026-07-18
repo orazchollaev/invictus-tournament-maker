@@ -3,7 +3,7 @@ import { computed } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import { useI18n } from "vue-i18n"
 
-import { ArrowLeft, Download, BarChart2, Trophy, Medal, Users, TrendingDown } from "@lucide/vue"
+import { ArrowLeft, Download, BarChart2, Trophy, Medal, Users } from "@lucide/vue"
 import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
 
 import { useTournamentStore } from "@/modules/tournament/store"
@@ -32,7 +32,6 @@ const isBracket = computed(
 const isLeague = computed(() => result.value?.format === "league")
 const hasGroups = computed(() => result.value?.hasGroups)
 const showTop4 = computed(() => (result.value?.bracketRounds ?? 0) >= 3)
-const showRelegate = computed(() => isLeague.value && (result.value?.relegationCount ?? 0) > 0)
 
 const runs = computed(() => result.value?.runs ?? 0)
 
@@ -99,11 +98,6 @@ function handleSaveJSON() {
         avgGoalsFor: parseFloat((s.totalGF / runs.value).toFixed(2)),
         avgGoalsAgainst: parseFloat((s.totalGA / runs.value).toFixed(2)),
         topThreePct: parseFloat(((s.topThree / runs.value) * 100).toFixed(2)),
-        ...(showRelegate.value
-          ? {
-              relegatedPct: parseFloat(((s.relegated / runs.value) * 100).toFixed(2)),
-            }
-          : {}),
       }
     }),
   }
@@ -125,7 +119,6 @@ function handleSaveCSV() {
     if (hasGroups.value) headers.push("Group Adv.%", "Group Adv.")
   } else {
     headers.push("Title%", "Avg Pts", "Avg GF", "Avg GA", "Top 3%")
-    if (showRelegate.value) headers.push("Relegated%")
   }
   const rows = sortedStats.value.map((s) => {
     const team = teamById(s.teamId)
@@ -151,9 +144,6 @@ function handleSaveCSV() {
         parseFloat((s.totalGA / runs.value).toFixed(2)),
         parseFloat(((s.topThree / runs.value) * 100).toFixed(2))
       )
-      if (showRelegate.value) {
-        row.push(parseFloat(((s.relegated / runs.value) * 100).toFixed(2)))
-      }
     }
     return row
   })
@@ -304,10 +294,6 @@ function handleSaveCSV() {
                   <th class="col-stat">{{ t("tournament.simulationResults.avgPts") }}</th>
                   <th class="col-stat">{{ t("tournament.simulationResults.avgGF") }}</th>
                   <th class="col-stat">{{ t("tournament.simulationResults.avgGA") }}</th>
-                  <th v-if="showRelegate" class="col-stat">
-                    <TrendingDown :size="12" />
-                    {{ t("tournament.simulationResults.relegate") }}
-                  </th>
                   <th class="col-bar">{{ t("tournament.simulationResults.titleProbability") }}</th>
                 </tr>
               </thead>
@@ -324,9 +310,6 @@ function handleSaveCSV() {
                   <td class="col-stat">{{ avg(s.totalPoints) }}</td>
                   <td class="col-stat">{{ avg(s.totalGF) }}</td>
                   <td class="col-stat">{{ avg(s.totalGA) }}</td>
-                  <td v-if="showRelegate" class="col-stat stat-danger">
-                    {{ pct(s.relegated) }}
-                  </td>
                   <td class="col-bar">
                     <div class="srp-bar-track">
                       <div
@@ -529,9 +512,6 @@ function handleSaveCSV() {
 .stat-win {
   font-weight: 700;
   color: var(--accent);
-}
-.stat-danger {
-  color: var(--danger);
 }
 .col-bar {
   min-width: 100px;

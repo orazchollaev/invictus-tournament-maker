@@ -17,14 +17,12 @@ export interface TeamSimStats {
   totalGF: number
   totalGA: number
   topThree: number
-  relegated: number
 }
 
 export interface MonteCarloResult {
   runs: number
   format: string
   teamStats: TeamSimStats[]
-  relegationCount: number
   hasGroups: boolean
   bracketRounds: number
 }
@@ -135,12 +133,7 @@ function resetForRun(t: Tournament) {
   t.winnerId = null
 }
 
-function runOnce(
-  t: Tournament,
-  teams: Team[],
-  stats: Map<string, TeamSimStats>,
-  relegationCount: number
-) {
+function runOnce(t: Tournament, teams: Team[], stats: Map<string, TeamSimStats>) {
   if (t.format === "bracket") {
     const { winnerId, runnerUpId, top4Ids } = simBracketInPlace(t, teams)
     if (winnerId) {
@@ -201,7 +194,6 @@ function runOnce(
         )
       }
       const topTier = t.tiers[0].league.standings
-      const n = topTier.length
       topTier.forEach((s, rank) => {
         const st = stats.get(s.teamId)
         if (!st) return
@@ -210,7 +202,6 @@ function runOnce(
         st.totalPoints += s.pts
         st.totalGF += s.gf
         st.totalGA += s.ga
-        if (relegationCount > 0 && rank >= n - relegationCount) st.relegated++
       })
     } else if (t.league) {
       for (const md of t.league.matchdays) {
@@ -226,7 +217,6 @@ function runOnce(
         t.lossPoints ?? 0,
         t.teamPointAdjustments
       )
-      const n = t.league.standings.length
       t.league.standings.forEach((s, rank) => {
         const st = stats.get(s.teamId)
         if (!st) return
@@ -235,7 +225,6 @@ function runOnce(
         st.totalPoints += s.pts
         st.totalGF += s.gf
         st.totalGA += s.ga
-        if (relegationCount > 0 && rank >= n - relegationCount) st.relegated++
       })
     }
   }
@@ -313,7 +302,6 @@ export async function runMonteCarloSimulations(
   cancelSignal: { cancelled: boolean }
 ): Promise<MonteCarloResult | null> {
   const template = buildTemplate(tournament)
-  const relegationCount = tournament.relegationCount ?? 0
 
   const statsMap = new Map<string, TeamSimStats>()
   for (const teamId of tournament.teamIds) {
@@ -327,7 +315,6 @@ export async function runMonteCarloSimulations(
       totalGF: 0,
       totalGA: 0,
       topThree: 0,
-      relegated: 0,
     })
   }
 
@@ -340,7 +327,7 @@ export async function runMonteCarloSimulations(
     const end = Math.min(completed + BATCH, n)
     for (let i = completed; i < end; i++) {
       resetForRun(template)
-      runOnce(template, teams, statsMap, relegationCount)
+      runOnce(template, teams, statsMap)
     }
     completed = end
     onProgress(completed)
@@ -352,7 +339,6 @@ export async function runMonteCarloSimulations(
     runs: n,
     format: tournament.format,
     teamStats: Array.from(statsMap.values()),
-    relegationCount,
     hasGroups: tournament.format === "group+bracket",
     bracketRounds: getBracketRounds(tournament),
   }

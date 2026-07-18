@@ -429,7 +429,6 @@ export default {
       created: "Создан {date}",
     },
     advanceToKnockout: "Перейти к плей-офф",
-    linkedLeagueNotFinished: '"{name}" должна завершиться перед началом нового сезона.',
     newSeasonModal: {
       useOldDraw: "Использовать жеребьёвку прошлого сезона",
       useOldDrawDesc: "Сохранить порядок сетки из сезона {n}",
@@ -497,11 +496,6 @@ export default {
       thirdPlaceHint: "Проигравшие в полуфинале играют за бронзовую медаль",
       tiebreaker: "Дополнительные показатели",
       createBtn: "Создать турнир",
-      relegation: "Вылет",
-      relegationCount: "Выбывает за сезон",
-      relegationHint: "Нижние {n} команд переходят в связанную низшую лигу",
-      linkLeague: "Привязать к низшей лиге",
-      noLeague: "Нет",
     },
     setResult: "Ввести счёт",
     simulationResults: {
@@ -526,7 +520,6 @@ export default {
       avgPts: "Ср. очки",
       avgGF: "Ср. голы",
       avgGA: "Ср. пропуск",
-      relegate: "Вылет",
       saveJson: "Со��ранить JSON",
       saveCsv: "Сохранить CSV",
     },
@@ -555,10 +548,14 @@ export default {
       },
       groupStructure: {
         title: "Структура групп",
+        lockedBanner: "Структуру групп нельзя изменить после начала матчей.",
+      },
+      qualification: {
+        title: "Квалификация и уайлд-карты",
         teamsAdvance: "Команд выходят из группы",
         reachKnockout: "→ {n} выходят в плей-офф",
         total: "→ {n} всего",
-        lockedBanner: "Структуру групп нельзя изменить после начала матчей.",
+        lockedBanner: "Заблокировано — сетка плей-офф уже сформирована из групп.",
       },
       playoffSeeding: {
         title: "Сетка плей-офф",
@@ -583,16 +580,13 @@ export default {
         hintTriple: "3 встречи",
         hintQuad: "4 встречи (2Д & 2Г)",
         lockedBanner: "Формат нельзя изменить после начала матчей.",
-        relegationZone: "Зона вылета",
-        relegated: "нижние {n} вылетают",
-        relegationDisabled: "отключено",
         numberOfDivisions: "Количество дивизионов",
         minTeams: "мин. 2 команды в дивизионе",
         slotsSwapped: "мест меняются между соседними дивизионами",
-        linkedLeague: "Связанная лига (2-й дивизион)",
-        none: "— Нет —",
-        linkedLeagueHint:
-          "По окончании сезона нижние {n} команды этой лиги меняются с верхними {n} связанной лиги.",
+        divisions: {
+          title: "Дивизионы",
+          lockedBanner: "Дивизионы нельзя изменить после начала матчей.",
+        },
         playoff: {
           title: "Плей-офф",
           lockedBanner: "Настройки плей-офф нельзя изменить после его начала.",
@@ -683,22 +677,5 @@ export default {
     playoffDrawTitle: "Жеребьёвка плей-офф",
     potTop: "Сеяные",
     potRest: "Остальные",
-  },
-  promotionModal: {
-    newSeasonTitle: "Новый сезон — {name}",
-    finalStandingsTitle: "Итоговая таблица — Сезон {season}",
-    relegated: "Вылетели",
-    promoted: "Вышли",
-    promotedFrom: "Вышли из {name}",
-    relegatedNote: "Последние {count} команд {name} примут вылетевшие команды.",
-    incomingTeamsTitle: "Входящие команды (слотов: {count})",
-    incomingTeamsTitleSingle: "Входящие команды (1 слот)",
-    noTeamsToPromote:
-      "Нет доступных команд для повышения. Новый сезон начнется с {count} командами.",
-    slotLabel: "Слот {count}",
-    leaveEmpty: "— Оставить пустым —",
-    startNewSeasonBtn: "Начать новый сезон",
-    upBadge: "Вверх",
-    downBadge: "Вниз",
   },
 } as const

@@ -37,12 +37,6 @@ const tournament = computed(() => store.getById(tournamentId.value))
 const allTeams = computed(() => teamsStore.teams)
 const hasAnyResults = computed(() => store.hasAnyResults(tournamentId.value))
 
-const otherLeagues = computed(() =>
-  store.tournaments
-    .filter((tn) => tn.format === "league" && tn.id !== tournamentId.value)
-    .map((tn) => ({ id: tn.id, name: tn.name, season: tn.season }))
-)
-
 const localName = ref(tournament.value?.name ?? "")
 const seasonCount = computed(
   () => store.tournaments.filter((tn) => tn.name === tournament.value?.name).length
@@ -63,8 +57,6 @@ const localFinalLegMode = ref<LegMode>(tournament.value?.finalLegMode ?? "single
 const localLeagueLegMode = ref<LegMode>(
   tournament.value?.league?.legMode ?? tournament.value?.tiers?.[0]?.league.legMode ?? "single"
 )
-const localRelegationCount = ref(tournament.value?.relegationCount ?? 0)
-const localLinkedLeagueId = ref<string>(tournament.value?.linkedLeagueId ?? "")
 const localTiebreaker = ref<Tiebreaker>(tournament.value?.tiebreaker ?? "goal-diff")
 const localPromotionCount = ref(tournament.value?.promotionCount ?? 1)
 const localTierCount = ref(tournament.value?.tiers?.length ?? 1)
@@ -119,9 +111,6 @@ const hasChanges = computed(() => {
       (orig.league?.legMode ?? orig.tiers?.[0]?.league.legMode ?? "single")
   )
     return true
-  if (isLeagueFormat.value && localRelegationCount.value !== (orig.relegationCount ?? 0))
-    return true
-  if (isLeagueFormat.value && localLinkedLeagueId.value !== (orig.linkedLeagueId ?? "")) return true
   if (isMultiTier.value && localTierCount.value !== (orig.tiers?.length ?? 1)) return true
   if (isMultiTier.value && localPromotionCount.value !== (orig.promotionCount ?? 1)) return true
   if (
@@ -231,10 +220,6 @@ function saveOnly() {
       (orig.league?.legMode ?? orig.tiers?.[0]?.league.legMode ?? "single")
   )
     store.setLeagueLegMode(tournamentId.value, localLeagueLegMode.value)
-  if (isLeagueFormat.value && localRelegationCount.value !== (orig.relegationCount ?? 0))
-    store.setRelegationCount(tournamentId.value, localRelegationCount.value)
-  if (isLeagueFormat.value && localLinkedLeagueId.value !== (orig.linkedLeagueId ?? ""))
-    store.setLinkedLeague(tournamentId.value, localLinkedLeagueId.value || null)
   if (isMultiTier.value && localTierCount.value !== (orig.tiers?.length ?? 1))
     store.rebuildTiers(tournamentId.value, localTierCount.value)
   if (isMultiTier.value && localPromotionCount.value !== (orig.promotionCount ?? 1))
@@ -404,10 +389,8 @@ function handleSave() {
         <template v-if="isLeagueFormat">
           <SettingsLeagueOptions
             v-model:local-league-leg-mode="localLeagueLegMode"
-            v-model:local-relegation-count="localRelegationCount"
             v-model:local-tier-count="localTierCount"
             v-model:local-promotion-count="localPromotionCount"
-            v-model:local-linked-league-id="localLinkedLeagueId"
             v-model:local-playoff-enabled="localPlayoffEnabled"
             v-model:local-playoff-qualifier-count="localPlayoffQualifierCount"
             v-model:local-playoff-seed-mode="leagueLocalPlayoffSeedMode"
@@ -416,7 +399,6 @@ function handleSave() {
             :team-count="localTeamIds.length"
             :max-tier-count="maxTierCount"
             :max-promotion-count="maxPromotionCount"
-            :other-leagues="otherLeagues"
             :league-playoff-started="origLeaguePlayoff?.started ?? false"
           />
         </template>

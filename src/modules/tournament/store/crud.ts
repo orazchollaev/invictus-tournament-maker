@@ -119,7 +119,6 @@ export function useCrudActions(
       const leagueTeams = allTeams.filter((tm) => teamIds.includes(tm.id))
       const newT = createLeague(t.name, leagueTeams, season, t.league?.legMode ?? "single")
       if (t.tiebreaker) newT.tiebreaker = t.tiebreaker
-      if (t.relegationCount) newT.relegationCount = t.relegationCount
       if (t.winPoints !== undefined) newT.winPoints = t.winPoints
       if (t.drawPoints !== undefined) newT.drawPoints = t.drawPoints
       if (t.lossPoints !== undefined) newT.lossPoints = t.lossPoints
