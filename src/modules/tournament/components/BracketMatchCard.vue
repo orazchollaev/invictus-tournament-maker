@@ -415,6 +415,12 @@ const isChampion = computed(() => props.isFinal && !!props.match.result)
 .mc.champion {
   animation: champion-glow 2s ease-in-out infinite;
 }
+/* Pause the glow's box-shadow animation while the bracket is being panned/zoomed —
+   box-shadow isn't compositable, so animating it fights the pan/zoom transform for paint time. */
+.bracket-pan-layer.zooming .mc.champion,
+.bracket-pan-layer.dragging .mc.champion {
+  animation-play-state: paused;
+}
 @keyframes champion-glow {
   0%,
   100% {

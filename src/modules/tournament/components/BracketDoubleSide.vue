@@ -126,42 +126,49 @@ function isFinalDimmed(): boolean {
 }
 
 // ── SVG connectors ────────────────────────────────────────────
+// Memoized as computed so pan/zoom-driven re-renders (or unrelated prop changes like
+// isExporting) don't recompute connector geometry — only actual match/hover/settings changes do.
+
 // Left-side connectors (matches 0..lCount-1)
-function connInfosL(ri: number): ConnInfo[] {
-  const nextCount = lCount(ri + 1)
-  return Array.from({ length: nextCount }, (_, ci) =>
-    buildConnInfo(
-      ri,
-      ci,
-      displayRounds.value,
-      props.teams,
-      matchCenterY,
-      hoveredTeamId.value,
-      settings.bracketHighlightOnHover,
-      0,
-      settings.bracketConnectorColors
+const connInfosLByRound = computed<ConnInfo[][]>(() =>
+  Array.from({ length: Math.max(0, nonFinalCount.value - 1) }, (_, ri) => {
+    const nextCount = lCount(ri + 1)
+    return Array.from({ length: nextCount }, (_, ci) =>
+      buildConnInfo(
+        ri,
+        ci,
+        displayRounds.value,
+        props.teams,
+        matchCenterY,
+        hoveredTeamId.value,
+        settings.bracketHighlightOnHover,
+        0,
+        settings.bracketConnectorColors
+      )
     )
-  )
-}
+  })
+)
 
 // Right-side connectors (matches rStart..end)
-function connInfosR(ri: number): ConnInfo[] {
-  const nextCount = lCount(ri + 1)
-  const offset = rStart(ri)
-  return Array.from({ length: nextCount }, (_, ci) =>
-    buildConnInfo(
-      ri,
-      ci,
-      displayRounds.value,
-      props.teams,
-      matchCenterY,
-      hoveredTeamId.value,
-      settings.bracketHighlightOnHover,
-      offset,
-      settings.bracketConnectorColors
+const connInfosRByRound = computed<ConnInfo[][]>(() =>
+  Array.from({ length: Math.max(0, nonFinalCount.value - 1) }, (_, ri) => {
+    const nextCount = lCount(ri + 1)
+    const offset = rStart(ri)
+    return Array.from({ length: nextCount }, (_, ci) =>
+      buildConnInfo(
+        ri,
+        ci,
+        displayRounds.value,
+        props.teams,
+        matchCenterY,
+        hoveredTeamId.value,
+        settings.bracketHighlightOnHover,
+        offset,
+        settings.bracketConnectorColors
+      )
     )
-  )
-}
+  })
+)
 
 // Segment builder for left-side connectors (arms go right → center)
 function segsL(p: ConnInfo, w: number) {
@@ -232,6 +239,19 @@ function segsR(p: ConnInfo, w: number) {
     { d: `M${m},${yMid + 1} H0`, stroke: p.bottomColor ?? base, opacity: botOp, w: 1.5 },
   ]
 }
+
+const segsLByRound = computed(() =>
+  connInfosLByRound.value.map((infos) => infos.map((p) => segsL(p, COL_GAP)))
+)
+const segsRByRound = computed(() =>
+  connInfosRByRound.value.map((infos) => infos.map((p) => segsR(p, COL_GAP)))
+)
+
+// Transition only matters when hover-highlight is on — skip it otherwise to cut
+// per-path style/transition bookkeeping for large brackets.
+const connectorTransition = computed(() =>
+  settings.bracketHighlightOnHover ? "stroke-opacity 0.2s ease, stroke 0.2s ease" : undefined
+)
 
 // Final connector line color (left/right innermost → final)
 function finalLineColor(side: "home" | "away"): string {
@@ -312,9 +332,9 @@ function finalLineOpacity(side: "home" | "away"): number {
           overflow="visible"
           style="display: block"
         >
-          <template v-for="(p, pi) in connInfosL(n - 1)" :key="pi">
+          <template v-for="(segs, pi) in segsLByRound[n - 1]" :key="pi">
             <path
-              v-for="(seg, si) in segsL(p, COL_GAP)"
+              v-for="(seg, si) in segs"
               :key="si"
               :d="seg.d"
               fill="none"
@@ -322,7 +342,7 @@ function finalLineOpacity(side: "home" | "away"): number {
               :style="{
                 stroke: seg.stroke,
                 strokeOpacity: seg.opacity,
-                transition: 'stroke-opacity 0.2s ease, stroke 0.2s ease',
+                transition: connectorTransition,
               }"
             />
           </template>
@@ -352,7 +372,7 @@ function finalLineOpacity(side: "home" | "away"): number {
           :style="{
             stroke: finalLineColor('home'),
             strokeOpacity: finalLineOpacity('home'),
-            transition: 'stroke-opacity 0.2s ease, stroke 0.2s ease',
+            transition: connectorTransition,
           }"
         />
       </svg>
@@ -419,7 +439,7 @@ function finalLineOpacity(side: "home" | "away"): number {
           :style="{
             stroke: finalLineColor('away'),
             strokeOpacity: finalLineOpacity('away'),
-            transition: 'stroke-opacity 0.2s ease, stroke 0.2s ease',
+            transition: connectorTransition,
           }"
         />
       </svg>
@@ -471,9 +491,9 @@ function finalLineOpacity(side: "home" | "away"): number {
           overflow="visible"
           style="display: block"
         >
-          <template v-for="(p, pi) in connInfosR(n - 1)" :key="pi">
+          <template v-for="(segs, pi) in segsRByRound[n - 1]" :key="pi">
             <path
-              v-for="(seg, si) in segsR(p, COL_GAP)"
+              v-for="(seg, si) in segs"
               :key="si"
               :d="seg.d"
               fill="none"
@@ -481,7 +501,7 @@ function finalLineOpacity(side: "home" | "away"): number {
               :style="{
                 stroke: seg.stroke,
                 strokeOpacity: seg.opacity,
-                transition: 'stroke-opacity 0.2s ease, stroke 0.2s ease',
+                transition: connectorTransition,
               }"
             />
           </template>

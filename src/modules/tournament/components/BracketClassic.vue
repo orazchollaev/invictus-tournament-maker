@@ -86,22 +86,36 @@ function isMatchDimmed(ri: number, mi: number): boolean {
 }
 
 // ── SVG connectors ────────────────────────────────────────────
-function connectorInfos(ri: number): ConnInfo[] {
-  const nextCount = displayRounds.value[ri + 1]?.length ?? 0
-  return Array.from({ length: nextCount }, (_, ci) =>
-    buildConnInfo(
-      ri,
-      ci,
-      displayRounds.value,
-      props.teams,
-      matchCenterY,
-      hoveredTeamId.value,
-      settings.bracketHighlightOnHover,
-      0,
-      settings.bracketConnectorColors
+// Memoized as computed so pan/zoom-driven re-renders (or unrelated prop changes like
+// isExporting) don't recompute connector geometry — only actual match/hover/settings changes do.
+const connectorInfosByRound = computed<ConnInfo[][]>(() =>
+  displayRounds.value.slice(0, -1).map((_, ri) => {
+    const nextCount = displayRounds.value[ri + 1]?.length ?? 0
+    return Array.from({ length: nextCount }, (_, ci) =>
+      buildConnInfo(
+        ri,
+        ci,
+        displayRounds.value,
+        props.teams,
+        matchCenterY,
+        hoveredTeamId.value,
+        settings.bracketHighlightOnHover,
+        0,
+        settings.bracketConnectorColors
+      )
     )
-  )
-}
+  })
+)
+
+const svgSegmentsByRound = computed(() =>
+  connectorInfosByRound.value.map((infos) => infos.map((p) => svgSegments(p, COL_GAP)))
+)
+
+// Transition only matters when hover-highlight is on — skip it otherwise to cut
+// per-path style/transition bookkeeping for large brackets.
+const connectorTransition = computed(() =>
+  settings.bracketHighlightOnHover ? "stroke-opacity 0.2s ease, stroke 0.2s ease" : undefined
+)
 
 function svgSegments(p: ConnInfo, w: number) {
   const mid = w / 2
@@ -189,9 +203,9 @@ function svgSegments(p: ConnInfo, w: number) {
           }"
         >
           <svg width="100%" height="100%" style="display: block; overflow: visible">
-            <template v-for="(p, pi) in connectorInfos(ri)" :key="pi">
+            <template v-for="(segs, pi) in svgSegmentsByRound[ri]" :key="pi">
               <path
-                v-for="(seg, si) in svgSegments(p, COL_GAP)"
+                v-for="(seg, si) in segs"
                 :key="si"
                 :d="seg.d"
                 fill="none"
@@ -199,7 +213,7 @@ function svgSegments(p: ConnInfo, w: number) {
                 :style="{
                   stroke: seg.stroke,
                   strokeOpacity: seg.opacity,
-                  transition: 'stroke-opacity 0.2s ease, stroke 0.2s ease',
+                  transition: connectorTransition,
                 }"
               />
             </template>
