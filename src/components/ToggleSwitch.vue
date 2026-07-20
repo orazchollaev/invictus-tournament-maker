@@ -1,30 +1,25 @@
 <script setup lang="ts">
+import { SwitchRoot, SwitchThumb } from "reka-ui"
+
 defineProps<{
   modelValue: boolean
   ariaLabel?: string
   disabled?: boolean
 }>()
 
-const emit = defineEmits<{ "update:modelValue": [value: boolean] }>()
-
-function toggle(current: boolean) {
-  emit("update:modelValue", !current)
-}
+defineEmits<{ "update:modelValue": [value: boolean] }>()
 </script>
 
 <template>
-  <button
-    type="button"
-    role="switch"
+  <SwitchRoot
     class="toggle-switch"
-    :class="{ 'is-on': modelValue }"
-    :aria-checked="modelValue"
+    :model-value="modelValue"
     :aria-label="ariaLabel"
     :disabled="disabled"
-    @click="toggle(modelValue)"
+    @update:model-value="(value) => $emit('update:modelValue', value)"
   >
-    <span class="toggle-knob" />
-  </button>
+    <SwitchThumb class="toggle-knob" />
+  </SwitchRoot>
 </template>
 
 <style scoped>
@@ -42,7 +37,7 @@ function toggle(current: boolean) {
     background var(--dur-fast) var(--ease),
     border-color var(--dur-fast) var(--ease);
 }
-.toggle-switch.is-on {
+.toggle-switch[data-state="checked"] {
   background: var(--accent);
   border-color: var(--accent-hover);
 }
@@ -67,7 +62,7 @@ function toggle(current: boolean) {
   transform: translateY(-50%);
   transition: transform var(--dur-fast) var(--ease);
 }
-.toggle-switch.is-on .toggle-knob {
+.toggle-switch[data-state="checked"] .toggle-knob {
   transform: translate(18px, -50%);
 }
 

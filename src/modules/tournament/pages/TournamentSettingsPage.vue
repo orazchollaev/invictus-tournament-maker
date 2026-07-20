@@ -142,7 +142,6 @@ const hasChanges = computed(() => {
   return false
 })
 
-// Unsaved changes guard
 type LeaveChoice = "leave" | "save-leave" | "stay"
 const showLeaveModal = ref(false)
 let resolveLeave: ((choice: LeaveChoice) => void) | null = null

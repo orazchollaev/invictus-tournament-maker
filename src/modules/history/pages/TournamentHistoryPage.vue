@@ -6,6 +6,7 @@ import { useTeamsStore } from "@/modules/teams/store"
 import type { Match } from "@/modules/tournament/types"
 import { ArrowLeft, Trophy, Medal, BarChart3, Table2, Users } from "@lucide/vue"
 import { useI18n } from "vue-i18n"
+import { TabsRoot, TabsList, TabsTrigger } from "reka-ui"
 import ChampionsTab, { type ChampEntry } from "../components/ChampionsTab.vue"
 import AllFinalsTab, { type FinalEntry } from "../components/AllFinalsTab.vue"
 import LeagueSeasonsTab, { type LeagueSeasonEntry } from "../components/LeagueSeasonsTab.vue"
@@ -32,6 +33,12 @@ const isLeagueSeries = computed(() => allSeasons.value[0]?.format === "league")
 
 type TabId = "champions" | "finals" | "alltime" | "stats" | "teams"
 const tab = ref<TabId>("champions")
+const tabValue = computed({
+  get: () => tab.value,
+  set: (v) => {
+    tab.value = v as TabId
+  },
+})
 
 function teamById(id: string | null | undefined) {
   if (!id) return null
@@ -579,37 +586,30 @@ const teamStats = computed<TeamStatEntry[]>(() => {
 
     <template v-else>
       <!-- Phase tabs -->
-      <div class="phase-tabs">
-        <button
-          class="phase-tab"
-          :class="{ active: tab === 'champions' }"
-          @click="tab = 'champions'"
-        >
-          <Trophy :size="13" />
-          {{ t("history.tabs.champions") }}
-        </button>
-        <button class="phase-tab" :class="{ active: tab === 'finals' }" @click="tab = 'finals'">
-          <Medal :size="13" />
-          {{ isLeagueSeries ? t("history.tabs.allSeasons") : t("history.tabs.allFinals") }}
-        </button>
-        <button
-          v-if="isLeagueSeries"
-          class="phase-tab"
-          :class="{ active: tab === 'alltime' }"
-          @click="tab = 'alltime'"
-        >
-          <Table2 :size="13" />
-          {{ t("history.tabs.allTimeTable") }}
-        </button>
-        <button class="phase-tab" :class="{ active: tab === 'stats' }" @click="tab = 'stats'">
-          <BarChart3 :size="13" />
-          {{ t("history.tabs.statistics") }}
-        </button>
-        <button class="phase-tab" :class="{ active: tab === 'teams' }" @click="tab = 'teams'">
-          <Users :size="13" />
-          {{ t("history.tabs.teams") }}
-        </button>
-      </div>
+      <TabsRoot v-model:model-value="tabValue">
+        <TabsList class="phase-tabs">
+          <TabsTrigger class="phase-tab" value="champions">
+            <Trophy :size="13" />
+            {{ t("history.tabs.champions") }}
+          </TabsTrigger>
+          <TabsTrigger class="phase-tab" value="finals">
+            <Medal :size="13" />
+            {{ isLeagueSeries ? t("history.tabs.allSeasons") : t("history.tabs.allFinals") }}
+          </TabsTrigger>
+          <TabsTrigger v-if="isLeagueSeries" class="phase-tab" value="alltime">
+            <Table2 :size="13" />
+            {{ t("history.tabs.allTimeTable") }}
+          </TabsTrigger>
+          <TabsTrigger class="phase-tab" value="stats">
+            <BarChart3 :size="13" />
+            {{ t("history.tabs.statistics") }}
+          </TabsTrigger>
+          <TabsTrigger class="phase-tab" value="teams">
+            <Users :size="13" />
+            {{ t("history.tabs.teams") }}
+          </TabsTrigger>
+        </TabsList>
+      </TabsRoot>
 
       <Transition name="tab" mode="out-in">
         <ChampionsTab

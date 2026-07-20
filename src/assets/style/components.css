@@ -172,7 +172,7 @@
   color: var(--text);
 }
 
-.phase-tab.active {
+.phase-tab[data-state="active"] {
   color: var(--accent);
   border-bottom-color: var(--accent);
 }

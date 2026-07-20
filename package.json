@@ -35,6 +35,7 @@
     "html-to-image": "^1.11.13",
     "pinia": "^3.0.4",
     "pinia-plugin-persistedstate-2": "^2.0.32",
+    "reka-ui": "^2.10.1",
     "sharp": "^0.35.3",
     "vue": "^3.5.39",
     "vue-draggable-plus": "^0.6.1",
@@ -74,11 +75,6 @@
     ],
     "*.{css,scss,json,md}": [
       "prettier --write"
-    ]
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "sharp"
     ]
   }
 }

@@ -1,5 +1,14 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from "vue"
+import { ref } from "vue"
+import {
+  DialogRoot,
+  DialogPortal,
+  DialogOverlay,
+  DialogContent,
+  DialogTitle,
+  DialogClose,
+  VisuallyHidden,
+} from "reka-ui"
 import { X } from "@lucide/vue"
 
 withDefaults(
@@ -24,48 +33,45 @@ function close() {
   setTimeout(() => emit("close"), 220)
 }
 
-function onKey(e: KeyboardEvent) {
-  if (e.key === "Escape") close()
-}
-
-onMounted(() => {
-  document.addEventListener("keydown", onKey)
-})
-
-onUnmounted(() => {
-  document.removeEventListener("keydown", onKey)
-})
-
 defineExpose({ close })
 </script>
 
 <template>
-  <div class="drawer-backdrop" :class="{ closing }" :style="{ zIndex }" @click.self="close">
-    <div
-      class="drawer"
-      :class="{ closing }"
-      :style="width ? { width } : {}"
-      role="dialog"
-      aria-modal="true"
-    >
-      <div class="drawer-header">
-        <slot name="title">
-          <span v-if="title" class="drawer-title">{{ title }}</span>
-        </slot>
-        <button class="drawer-close" aria-label="Close" @click="close">
-          <X :size="14" />
-        </button>
-      </div>
+  <DialogRoot :open="true" @update:open="(v) => !v && close()">
+    <DialogPortal>
+      <DialogOverlay class="drawer-backdrop" :class="{ closing }" :style="{ zIndex }" />
+      <DialogContent
+        class="drawer"
+        :class="{ closing }"
+        :style="{ zIndex, ...(width ? { width } : {}) }"
+        :aria-describedby="undefined"
+        @escape-key-down="close"
+        @pointer-down-outside="close"
+      >
+        <div class="drawer-header">
+          <slot name="title">
+            <DialogTitle v-if="title" as-child>
+              <span class="drawer-title">{{ title }}</span>
+            </DialogTitle>
+            <VisuallyHidden v-else as-child>
+              <DialogTitle>{{ title }}</DialogTitle>
+            </VisuallyHidden>
+          </slot>
+          <DialogClose class="drawer-close" aria-label="Close">
+            <X :size="14" />
+          </DialogClose>
+        </div>
 
-      <div class="drawer-body" :class="{ 'drawer-body--flush': flush }">
-        <slot />
-      </div>
+        <div class="drawer-body" :class="{ 'drawer-body--flush': flush }">
+          <slot />
+        </div>
 
-      <div v-if="$slots.footer" class="drawer-footer">
-        <slot name="footer" />
-      </div>
-    </div>
-  </div>
+        <div v-if="$slots.footer" class="drawer-footer">
+          <slot name="footer" />
+        </div>
+      </DialogContent>
+    </DialogPortal>
+  </DialogRoot>
 </template>
 
 <style scoped>
@@ -109,9 +115,6 @@ defineExpose({ close })
   position: fixed;
   inset: 0;
   background: rgba(32, 33, 34, 0.5);
-  display: flex;
-  align-items: stretch;
-  justify-content: flex-end;
   animation: backdrop-in 0.18s ease both;
 }
 
@@ -120,6 +123,9 @@ defineExpose({ close })
 }
 
 .drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
   background: var(--surface);
   border-left: 1px solid var(--border);
   box-shadow: var(--shadow-lg);
