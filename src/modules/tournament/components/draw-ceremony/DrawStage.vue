@@ -16,13 +16,8 @@ const props = defineProps<{
 
 const { teamById } = useTeamLookup(() => props.teams)
 
-// Leave animation must fit inside the gap the ceremony timer leaves between
-// reveals (see gapMs() in useDrawCeremony), otherwise the next capsule enters
-// while the previous one is still fading out and both show at once.
 const leaveMs = computed(() => (props.speed === "fast" ? 90 : 240))
 
-// Full board skeleton, built once from the whole sequence so the layout never
-// reflows: every slot and every row exists from the start; teams only fill in.
 const slots = computed(() => {
   const order: string[] = []
   const map = new Map<string, DrawStep[]>()
@@ -44,7 +39,6 @@ function isRevealed(step: DrawStep) {
 
 <template>
   <div class="ds-wrap">
-    <!-- Folded-paper reveal -->
     <div class="ds-stage">
       <Transition name="ds-capsule" appear :duration="{ enter: 760, leave: leaveMs }">
         <div
@@ -61,7 +55,6 @@ function isRevealed(step: DrawStep) {
       </Transition>
     </div>
 
-    <!-- Fixed board skeleton -->
     <div class="ds-board">
       <div v-for="slot in slots" :key="slot.label" class="ds-slot">
         <div class="ds-slot-label">{{ slot.label }}</div>
