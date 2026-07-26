@@ -1,5 +1,27 @@
 # Changelog
 
+# [1.15.0](https://github.com/orazchollaev/invictus-tournament-maker/compare/v1.14.0...v1.15.0) (2026-07-26)
+
+### Bug Fixes
+
+- **bracket:** remove mobile landscape rotate, fix pan/zoom jank via GPU layer promotion ([8e2d178](https://github.com/orazchollaev/invictus-tournament-maker/commit/8e2d1780158ad0fc5a643d890824df9c4b7e53bb))
+- **build:** load fontsource font via CSS import to avoid TS side-effect import error ([1acffef](https://github.com/orazchollaev/invictus-tournament-maker/commit/1acffef205305894a4d0326fd921e23a5723f394))
+- **mobile:** fix FAB exit animation and low-contrast toggle color ([dff883c](https://github.com/orazchollaev/invictus-tournament-maker/commit/dff883c8cbf8d948c64c0ddeb8b65d2915d2c2a5))
+- **mobile:** small big fix for mobile production ([6ab964c](https://github.com/orazchollaev/invictus-tournament-maker/commit/6ab964cce3934a68ee753cbc131db49dbd0fb62d))
+- skip vue-tsc in build, use vite build only (TS 7 incompatible) ([f19f363](https://github.com/orazchollaev/invictus-tournament-maker/commit/f19f363331377a861ec93afe7d1ce268e63f4e25))
+- **team-detail:** fix small bug in match history section ([7e1af09](https://github.com/orazchollaev/invictus-tournament-maker/commit/7e1af098f1a9e27924cdbcae3319d14c1c5fe999))
+
+### Features
+
+- add backend-less push notifications via FCM ([801d1c7](https://github.com/orazchollaev/invictus-tournament-maker/commit/801d1c7c24374f0e8ac261b6b484e132f1ccb009))
+- **mobile:** add directional slide transition for swipe navigation ([9cd062f](https://github.com/orazchollaev/invictus-tournament-maker/commit/9cd062fc83491705fe7bae20c39f0b139b021f0d))
+- **mobile:** replace header/bottom-nav with floating glass FAB menu ([318fad9](https://github.com/orazchollaev/invictus-tournament-maker/commit/318fad941313efc6d574b85ff35146b04bb9366c))
+- **teams:** add staggered list transition matching tournaments page ([85b795b](https://github.com/orazchollaev/invictus-tournament-maker/commit/85b795b11a3074750bcae2868ae487b2c652b220))
+
+### Performance Improvements
+
+- self-host IBM Plex Sans via fontsource instead of Google Fonts CDN ([4793088](https://github.com/orazchollaev/invictus-tournament-maker/commit/4793088ce69a13abaa8f2d94843b60246bc6792d))
+
 ## [1.14.0](https://github.com/orazchollaev/invictus-tournament-maker/compare/v1.13.0...v1.14.0) (2026-07-11)
 
 ## [1.13.0](https://github.com/orazchollaev/invictus-tournament-maker/compare/v1.12.0...v1.13.0) (2026-07-06)
