@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.15.1](https://github.com/orazchollaev/invictus-tournament-maker/compare/v1.15.0...v1.15.1) (2026-07-27)
+
+### Bug Fixes
+
+- mobile padding fix ([f425910](https://github.com/orazchollaev/invictus-tournament-maker/commit/f425910e05d0fd651886afe0085db52ac3b1d798))
+
 # [1.15.0](https://github.com/orazchollaev/invictus-tournament-maker/compare/v1.14.0...v1.15.0) (2026-07-26)
 
 ### Bug Fixes
