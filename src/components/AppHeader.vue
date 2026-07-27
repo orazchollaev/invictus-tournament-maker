@@ -1,24 +1,12 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from "vue"
-import {
-  Settings,
-  Star,
-  Trophy,
-  History,
-  RefreshCw,
-  FolderGit2,
-  Users,
-  BookOpen,
-  WifiOff,
-} from "@lucide/vue"
-import { usePwaUpdate } from "@/composables/usePwaUpdate"
+import { Settings, Star, Trophy, History, FolderGit2, Users, BookOpen, WifiOff } from "@lucide/vue"
 import { useNavActive } from "@/composables/useNavActive"
 import AppLogo from "./AppLogo.vue"
 import { useI18n } from "vue-i18n"
 
 const { t } = useI18n()
 const GITHUB_URL = "https://github.com/orazchollaev/invictus-tournament-maker"
-const { needRefresh, applyUpdate } = usePwaUpdate()
 const { isNavActive } = useNavActive()
 
 const isOnline = ref(navigator.onLine)
@@ -70,17 +58,6 @@ onUnmounted(() => {
             <WifiOff :size="12" />
             <span>{{ t("common.offline") }}</span>
           </div>
-        </Transition>
-        <Transition name="update-btn">
-          <button
-            v-if="needRefresh"
-            class="update-btn"
-            :title="t('common.newVersionAvailable')"
-            @click="applyUpdate"
-          >
-            <RefreshCw :size="13" />
-            <span>{{ t("common.update") }}</span>
-          </button>
         </Transition>
 
         <a
@@ -332,7 +309,6 @@ onUnmounted(() => {
   background: color-mix(in srgb, var(--accent) 12%, transparent);
   color: var(--accent);
 }
-
 
 @media (max-width: 640px) {
   .site-header {
