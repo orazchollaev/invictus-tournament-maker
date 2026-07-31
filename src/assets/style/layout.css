@@ -89,6 +89,20 @@
   text-decoration: none;
 }
 
+/* ── Vertical rhythm ─────────────────────────────────────────── */
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  min-width: 0;
+}
+.stack--sm {
+  gap: var(--sp-2);
+}
+.stack--lg {
+  gap: var(--sp-4);
+}
+
 /* ── Common row helpers ──────────────────────────────────────── */
 .t-list,
 .t-list-inner {

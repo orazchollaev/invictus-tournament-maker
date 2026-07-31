@@ -34,10 +34,13 @@ withDefaults(
     class="card"
     :class="[`card--${variant}`, { 'card--rail': rail, 'card--interactive': interactive }]"
   >
-    <div v-if="title || $slots.header" class="card-header">
-      <slot name="header">
-        <h2 class="card-title">{{ title }}</h2>
-      </slot>
+    <div v-if="title || $slots.title || $slots.actions" class="card-header">
+      <h2 class="card-title">
+        <slot name="title">{{ title }}</slot>
+      </h2>
+      <div v-if="$slots.actions" class="card-actions">
+        <slot name="actions" />
+      </div>
     </div>
     <div class="card-body" :class="`card-body--${padding}`">
       <slot />
@@ -105,6 +108,9 @@ withDefaults(
 }
 
 .card-title {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
   margin: 0;
   font-family: var(--font-ui);
   font-size: var(--fs-xs);
@@ -112,6 +118,14 @@ withDefaults(
   letter-spacing: 0.07em;
   text-transform: uppercase;
   color: var(--text-muted);
+  min-width: 0;
+}
+
+.card-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  flex-shrink: 0;
 }
 
 /* ── Body ────────────────────────────────────────────────────── */

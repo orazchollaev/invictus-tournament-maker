@@ -3,7 +3,7 @@ import { computed } from "vue"
 import { useSettingsStore } from "../store"
 import { useI18n } from "vue-i18n"
 import { Dices } from "@lucide/vue"
-import ToggleSwitch from "@/components/ui/ToggleSwitch.vue"
+import { AppCard, AppChip, AppField, AppIcon, AppNumberInput, ToggleSwitch } from "@/components/ui"
 import SettingDesc from "./SettingDesc.vue"
 
 const { t } = useI18n()
@@ -29,136 +29,49 @@ const surpriseFactorLabel = computed(() => {
 </script>
 
 <template>
-  <div class="section-box">
-    <h2>
-      <Dices :size="15" class="section-icon" />
+  <AppCard padding="md">
+    <template #title>
+      <AppIcon :icon="Dices" size="md" />
       {{ t("settings.simulation.title") }}
-    </h2>
-    <div class="section-body">
-      <div class="setting-row">
-        <div class="setting-info">
-          <div class="setting-label">{{ t("settings.simulation.homeAdvantage.label") }}</div>
-          <SettingDesc>
-            {{
-              t("settings.simulation.homeAdvantage.desc", { zero: "0", default: "6", max: "20" })
-            }}
-          </SettingDesc>
-        </div>
-        <div class="stepper-control">
-          <span class="stepper-badge">{{ homeAdvantageLabel }}</span>
-          <button
-            class="stepper-btn"
-            :disabled="settings.homeAdvantage <= 0"
-            @click="settings.homeAdvantage = Math.max(0, settings.homeAdvantage - 1)"
-          >
-            −
-          </button>
-          <input
-            v-model.number="settings.homeAdvantage"
-            type="number"
-            min="0"
-            max="20"
-            step="1"
-            class="stepper-value"
-            @change="settings.homeAdvantage = Math.max(0, Math.min(20, settings.homeAdvantage))"
-          />
-          <button
-            class="stepper-btn"
-            :disabled="settings.homeAdvantage >= 20"
-            @click="settings.homeAdvantage = Math.min(20, settings.homeAdvantage + 1)"
-          >
-            +
-          </button>
-        </div>
-      </div>
-      <div class="setting-row">
-        <div class="setting-info">
-          <div class="setting-label">{{ t("settings.simulation.surpriseFactor.label") }}</div>
-          <SettingDesc>
-            {{ t("settings.simulation.surpriseFactor.desc", { zero: "0", max: "100" }) }}
-          </SettingDesc>
-        </div>
-        <div class="stepper-control">
-          <span class="stepper-badge">{{ surpriseFactorLabel }}</span>
-          <button
-            class="stepper-btn"
-            :disabled="settings.surpriseFactor <= 0"
-            @click="settings.surpriseFactor = Math.max(0, settings.surpriseFactor - 5)"
-          >
-            −
-          </button>
-          <input
-            v-model.number="settings.surpriseFactor"
-            type="number"
-            min="0"
-            max="100"
-            step="5"
-            class="stepper-value"
-            @change="settings.surpriseFactor = Math.max(0, Math.min(100, settings.surpriseFactor))"
-          />
-          <button
-            class="stepper-btn"
-            :disabled="settings.surpriseFactor >= 100"
-            @click="settings.surpriseFactor = Math.min(100, settings.surpriseFactor + 5)"
-          >
-            +
-          </button>
-        </div>
-      </div>
-      <div class="setting-row">
-        <div class="setting-info">
-          <div class="setting-label">{{ t("settings.simulation.formFactor.label") }}</div>
-          <SettingDesc>
-            {{ t("settings.simulation.formFactor.desc", { plus: "+10", minus: "−10" }) }}
-          </SettingDesc>
-        </div>
-        <ToggleSwitch
-          v-model="settings.formFactorEnabled"
-          :aria-label="t('settings.simulation.formFactor.label')"
-        />
-      </div>
-    </div>
-  </div>
-</template>
+    </template>
 
-<style scoped>
-.stepper-control {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-shrink: 0;
-}
-.stepper-badge {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--accent);
-  background: color-mix(in srgb, var(--accent) 12%, var(--surface));
-  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
-  padding: 2px 8px;
-  border-radius: var(--radius);
-  white-space: nowrap;
-}
-.stepper-btn {
-  width: 28px;
-  height: 28px;
-  padding: 0;
-  font-size: 16px;
-  line-height: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.stepper-value {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--accent);
-  width: 44px;
-  text-align: center;
-  padding: 0 4px;
-  -moz-appearance: textfield;
-}
-.stepper-value::-webkit-outer-spin-button,
-.stepper-value::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-}
-</style>
+    <AppField layout="split" :label="t('settings.simulation.homeAdvantage.label')">
+      <template #description>
+        <SettingDesc>
+          {{ t("settings.simulation.homeAdvantage.desc", { zero: "0", default: "6", max: "20" }) }}
+        </SettingDesc>
+      </template>
+      <AppChip variant="accent" square>{{ homeAdvantageLabel }}</AppChip>
+      <AppNumberInput v-model="settings.homeAdvantage" :min="0" :max="20" editable />
+    </AppField>
+
+    <AppField layout="split" :label="t('settings.simulation.surpriseFactor.label')">
+      <template #description>
+        <SettingDesc>
+          {{ t("settings.simulation.surpriseFactor.desc", { zero: "0", max: "100" }) }}
+        </SettingDesc>
+      </template>
+      <AppChip variant="accent" square>{{ surpriseFactorLabel }}</AppChip>
+      <AppNumberInput
+        v-model="settings.surpriseFactor"
+        :min="0"
+        :max="100"
+        :step="5"
+        editable
+        value-width="md"
+      />
+    </AppField>
+
+    <AppField layout="split" :label="t('settings.simulation.formFactor.label')">
+      <template #description>
+        <SettingDesc>
+          {{ t("settings.simulation.formFactor.desc", { plus: "+10", minus: "−10" }) }}
+        </SettingDesc>
+      </template>
+      <ToggleSwitch
+        v-model="settings.formFactorEnabled"
+        :aria-label="t('settings.simulation.formFactor.label')"
+      />
+    </AppField>
+  </AppCard>
+</template>

@@ -1,38 +1,36 @@
 <script setup lang="ts">
+import { computed } from "vue"
 import { useSettingsStore } from "../store"
 import { useI18n } from "vue-i18n"
 import { ListOrdered } from "@lucide/vue"
-import BtnGroup from "@/components/ui/BtnGroup.vue"
+import { AppCard, AppField, AppIcon, BtnGroup } from "@/components/ui"
 import SettingDesc from "./SettingDesc.vue"
 
 const { t } = useI18n()
 const settings = useSettingsStore()
+
+const tiebreakerOptions = computed(() => [
+  { value: "head-to-head", label: t("settings.tableRules.tiebreaker.h2hShort") },
+  { value: "goal-diff", label: t("settings.tableRules.tiebreaker.goalDiffShort") },
+])
 </script>
 
 <template>
-  <div class="section-box">
-    <h2>
-      <ListOrdered :size="15" class="section-icon" />
+  <AppCard padding="md">
+    <template #title>
+      <AppIcon :icon="ListOrdered" size="md" />
       {{ t("settings.tableRules.title") }}
-    </h2>
-    <div class="section-body">
-      <div class="setting-row">
-        <div class="setting-info">
-          <div class="setting-label">{{ t("settings.tableRules.tiebreaker.label") }}</div>
-          <SettingDesc>
-            {{ t("settings.tableRules.tiebreaker.h2h") }} —
-            {{ t("settings.tableRules.tiebreaker.h2h") }} first ·
-            {{ t("settings.tableRules.tiebreaker.goalDiff") }} — overall GD first
-          </SettingDesc>
-        </div>
-        <BtnGroup
-          v-model="settings.tiebreaker"
-          :options="[
-            { value: 'head-to-head', label: t('settings.tableRules.tiebreaker.h2hShort') },
-            { value: 'goal-diff', label: t('settings.tableRules.tiebreaker.goalDiffShort') },
-          ]"
-        />
-      </div>
-    </div>
-  </div>
+    </template>
+
+    <AppField layout="split" :label="t('settings.tableRules.tiebreaker.label')">
+      <template #description>
+        <SettingDesc>
+          {{ t("settings.tableRules.tiebreaker.h2h") }} —
+          {{ t("settings.tableRules.tiebreaker.h2h") }} first ·
+          {{ t("settings.tableRules.tiebreaker.goalDiff") }} — overall GD first
+        </SettingDesc>
+      </template>
+      <BtnGroup v-model="settings.tiebreaker" :options="tiebreakerOptions" />
+    </AppField>
+  </AppCard>
 </template>

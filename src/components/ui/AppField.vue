@@ -31,7 +31,11 @@ withDefaults(
       <label v-if="label || $slots.label" class="field-label">
         <slot name="label">{{ label }}</slot>
       </label>
-      <p v-if="description" class="field-desc">{{ description }}</p>
+      <!-- Raw slot: settings rows pass SettingDesc, which brings its own
+           responsive desktop-text / mobile-popover wrapper. -->
+      <slot name="description">
+        <p v-if="description" class="field-desc">{{ description }}</p>
+      </slot>
     </div>
 
     <div class="field-control">

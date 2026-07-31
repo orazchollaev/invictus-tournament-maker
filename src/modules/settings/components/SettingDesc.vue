@@ -1,95 +1,139 @@
 <script setup lang="ts">
+/**
+ * Setting description. Plain text on desktop; on mobile it collapses to
+ * an ⓘ button that opens a popover.
+ *
+ * The popover is teleported to <body> and positioned `fixed` from the
+ * trigger's rect. Two reasons it can't just be an absolutely positioned
+ * sibling: the card wrapping these rows sets `overflow: hidden`, which
+ * clipped it at the card edge, and an absolute box appended in-flow
+ * grows the page and shifts the scroll position when it opens.
+ *
+ * It closes on scroll/resize rather than tracking the trigger, which
+ * keeps this to a rect read on open with no observers to tear down.
+ */
 import { ref, onMounted, onUnmounted } from "vue"
 import { Info } from "@lucide/vue"
 
 const open = ref(false)
-const rootEl = ref<HTMLElement>()
+const btn = ref<HTMLElement>()
+const pos = ref({ top: 0, right: 0 })
+
+const GAP = 6
+const EDGE = 12
 
 function toggle() {
   open.value = !open.value
-}
+  if (!open.value) return
 
-function onDocClick(e: MouseEvent) {
-  if (!rootEl.value?.contains(e.target as Node)) {
-    open.value = false
+  const r = btn.value?.getBoundingClientRect()
+  if (!r) return
+  pos.value = {
+    top: r.bottom + GAP,
+    right: Math.max(EDGE, window.innerWidth - r.right),
   }
 }
 
-onMounted(() => document.addEventListener("click", onDocClick))
-onUnmounted(() => document.removeEventListener("click", onDocClick))
+function close() {
+  open.value = false
+}
+
+function onDocClick(e: MouseEvent) {
+  if (!btn.value?.contains(e.target as Node)) close()
+}
+
+onMounted(() => {
+  document.addEventListener("click", onDocClick)
+  window.addEventListener("scroll", close, true)
+  window.addEventListener("resize", close)
+})
+
+onUnmounted(() => {
+  document.removeEventListener("click", onDocClick)
+  window.removeEventListener("scroll", close, true)
+  window.removeEventListener("resize", close)
+})
 </script>
 
 <template>
-  <div class="setting-desc sd-desktop"><slot /></div>
-  <div ref="rootEl" class="sd-mobile">
-    <button class="sd-btn" type="button" @click="toggle">
-      <Info :size="13" />
-    </button>
-    <div v-if="open" class="sd-popover">
+  <p class="sd-desktop"><slot /></p>
+
+  <button
+    ref="btn"
+    type="button"
+    class="sd-btn"
+    aria-label="Info"
+    :aria-expanded="open"
+    @click.stop="toggle"
+  >
+    <Info :size="14" />
+  </button>
+
+  <Teleport to="body">
+    <div
+      v-if="open"
+      class="sd-popover"
+      :style="{ top: `${pos.top}px`, right: `${pos.right}px` }"
+      @click.stop
+    >
       <slot />
     </div>
-  </div>
+  </Teleport>
 </template>
 
 <style scoped>
 .sd-desktop {
-  font-size: 12px;
+  margin: 2px 0 0;
+  font-size: var(--fs-sm);
   color: var(--text-muted);
-  margin-top: 2px;
   line-height: 1.4;
 }
 
-.sd-mobile {
+/* The trigger replaces the text only on narrow screens. */
+.sd-btn {
   display: none;
-  position: relative;
 }
 
 @media (max-width: 640px) {
   .sd-desktop {
     display: none;
   }
-  .sd-mobile {
-    display: flex;
+  .sd-btn {
+    display: inline-flex;
     align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    border: none;
+    background: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    border-radius: 50%;
+    flex-shrink: 0;
+    transition:
+      color var(--dur-fast) var(--ease),
+      background var(--dur-fast) var(--ease);
+  }
+  .sd-btn:hover,
+  .sd-btn[aria-expanded="true"] {
+    color: var(--accent);
+    background: var(--accent-subtle);
   }
 }
 
-.sd-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 20px;
-  height: 20px;
-  padding: 0;
-  border: none;
-  background: none;
-  color: var(--text-muted);
-  cursor: pointer;
-  border-radius: 50%;
-  transition:
-    color 0.12s,
-    background 0.12s;
-}
-
-.sd-btn:hover {
-  color: var(--accent);
-  background: color-mix(in srgb, var(--accent) 10%, transparent);
-}
-
 .sd-popover {
-  position: absolute;
-  right: 0;
-  top: calc(100% + 4px);
-  z-index: 200;
+  position: fixed;
+  z-index: var(--z-dropdown);
   width: 260px;
-  max-width: calc(100vw - 32px);
+  max-width: calc(100vw - var(--sp-5));
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 8px 10px;
-  font-size: 12px;
+  padding: var(--sp-2) var(--sp-3);
+  font-size: var(--fs-sm);
   color: var(--text-muted);
   line-height: 1.5;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--elev-2);
 }
 </style>

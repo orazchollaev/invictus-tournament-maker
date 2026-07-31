@@ -3,7 +3,7 @@ import { computed } from "vue"
 import { useSettingsStore } from "../store"
 import { useI18n } from "vue-i18n"
 import { Sparkles } from "@lucide/vue"
-import BtnGroup from "@/components/ui/BtnGroup.vue"
+import { AppCard, AppField, AppIcon, BtnGroup } from "@/components/ui"
 import SettingDesc from "./SettingDesc.vue"
 
 const { t } = useI18n()
@@ -16,19 +16,17 @@ const bracketQualityOptions = computed(() => [
 </script>
 
 <template>
-  <div class="section-box">
-    <h2>
-      <Sparkles :size="15" class="section-icon" />
+  <AppCard padding="md">
+    <template #title>
+      <AppIcon :icon="Sparkles" size="md" />
       {{ t("settings.graphics.title") }}
-    </h2>
-    <div class="section-body">
-      <div class="setting-row">
-        <div class="setting-info">
-          <div class="setting-label">{{ t("settings.graphics.bracketQuality.label") }}</div>
-          <SettingDesc>{{ t("settings.graphics.bracketQuality.desc") }}</SettingDesc>
-        </div>
-        <BtnGroup v-model="settings.bracketQuality" :options="bracketQualityOptions" />
-      </div>
-    </div>
-  </div>
+    </template>
+
+    <AppField layout="split" :label="t('settings.graphics.bracketQuality.label')">
+      <template #description>
+        <SettingDesc>{{ t("settings.graphics.bracketQuality.desc") }}</SettingDesc>
+      </template>
+      <BtnGroup v-model="settings.bracketQuality" :options="bracketQualityOptions" />
+    </AppField>
+  </AppCard>
 </template>

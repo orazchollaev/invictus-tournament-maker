@@ -6,6 +6,7 @@ import AppEmptyState from "./AppEmptyState.vue"
 import AppField from "./AppField.vue"
 import AppIcon from "./AppIcon.vue"
 import AppModal from "./AppModal.vue"
+import AppNumberInput from "./AppNumberInput.vue"
 import AppSectionHeader from "./AppSectionHeader.vue"
 import AppStepper from "./AppStepper.vue"
 import AppTab from "./AppTab.vue"
@@ -24,6 +25,7 @@ export {
   AppField,
   AppIcon,
   AppModal,
+  AppNumberInput,
   AppSectionHeader,
   AppStepper,
   AppTab,

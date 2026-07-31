@@ -5,6 +5,7 @@ import { version } from "../../../../package.json"
 import { ArrowLeft, Globe, Monitor, Trophy, Dices, Database, Menu, ChevronDown } from "@lucide/vue"
 import type { Component } from "vue"
 import { useI18n } from "vue-i18n"
+import { AppButton, AppIcon } from "@/components/ui"
 import SettingsSectionLanguage from "../components/SettingsSectionLanguage.vue"
 import SettingsSectionAppearance from "../components/SettingsSectionAppearance.vue"
 import SettingsSectionTableRules from "../components/SettingsSectionTableRules.vue"
@@ -60,10 +61,10 @@ function selectCategory(id: Category) {
 <template>
   <div class="page">
     <div class="page-header">
-      <button class="back-btn" @click="router.back()">
-        <ArrowLeft :size="14" />
+      <AppButton variant="text" @click="router.back()">
+        <AppIcon :icon="ArrowLeft" />
         {{ t("common.back") }}
-      </button>
+      </AppButton>
       <h2>{{ t("settings.title") }}</h2>
     </div>
 
@@ -136,27 +137,11 @@ function selectCategory(id: Category) {
 .page-header {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 16px;
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-4);
 }
 .page-header h2 {
   margin: 0;
-}
-.back-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  background: none;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 4px 12px;
-  font-size: 13px;
-  color: var(--text-muted);
-  cursor: pointer;
-}
-.back-btn:hover {
-  border-color: var(--accent);
-  color: var(--accent);
 }
 
 /* ── Layout ── */
@@ -177,21 +162,21 @@ function selectCategory(id: Category) {
   flex-direction: column;
   gap: 2px;
   position: sticky;
-  top: calc(64px + env(safe-area-inset-top));
+  top: var(--sticky-top);
 }
 .side-link {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--sp-3);
   width: 100%;
   text-align: left;
-  padding: 9px 12px;
+  padding: var(--sp-2) var(--sp-3);
   border: none;
   border-left: 3px solid transparent;
   border-radius: var(--radius);
   background: none;
   color: var(--text-muted);
-  font-size: 13px;
+  font-size: var(--fs-base);
   font-weight: 500;
   cursor: pointer;
   transition:
@@ -224,7 +209,7 @@ function selectCategory(id: Category) {
 .category-group {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--sp-4);
 }
 
 /* ── Panel transition ── */
@@ -243,46 +228,57 @@ function selectCategory(id: Category) {
   transform: translateY(-6px);
 }
 
-/* ── Section card "medium" modernization (settings only) ── */
-.settings-panel :deep(.section-box h2) {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.settings-panel :deep(.section-icon) {
+/* ── Settings-only card density ──────────────────────────────────
+   The cards themselves are plain AppCards; settings wants tighter body
+   padding and a hairline between each row, which is local to this page. */
+.settings-panel :deep(.card-title svg) {
   color: var(--accent);
-  flex-shrink: 0;
 }
-.settings-panel :deep(.section-body) {
-  padding: 4px var(--sp-4);
+.settings-panel :deep(.card-body) {
+  padding: var(--sp-1) var(--sp-4);
 }
-.settings-panel :deep(.setting-row) {
-  margin-bottom: 0;
-  padding: 14px 0;
+.settings-panel :deep(.field) {
+  padding: var(--sp-4) 0;
   border-bottom: 1px solid var(--border-light);
 }
-.settings-panel :deep(.setting-row:last-child) {
+.settings-panel :deep(.field:last-child) {
   border-bottom: none;
+}
+
+@media (max-width: 640px) {
+  /* On mobile the description collapses into SettingDesc's ⓘ trigger,
+     which belongs beside the label rather than stacked under it. */
+  .settings-panel :deep(.field-info) {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-1);
+    width: 100%;
+  }
+  .settings-panel :deep(.field-label) {
+    flex: 1;
+  }
 }
 
 .version-row {
   display: flex;
   align-items: center;
-  gap: 8.1px;
-  margin-top: 20px;
+  gap: var(--sp-2);
+  margin-top: var(--sp-5);
 }
 .version {
-  font-size: 12px;
+  font-size: var(--fs-sm);
   color: var(--text-muted);
 }
 .changelog-btn {
-  font-size: 11px;
-  padding: 2px 8px;
+  font-size: var(--fs-xs);
+  padding: 2px var(--sp-2);
   border-radius: var(--radius);
   border: 1px solid var(--border-light);
   color: var(--text-muted);
   text-decoration: none;
-  transition: all 0.15s;
+  transition:
+    border-color var(--dur-fast) var(--ease),
+    color var(--dur-fast) var(--ease);
 }
 .changelog-btn:hover {
   border-color: var(--accent);
@@ -296,14 +292,14 @@ function selectCategory(id: Category) {
 .mobile-nav-trigger {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--sp-3);
   width: 100%;
-  padding: 10px 14px;
+  padding: var(--sp-3) var(--sp-4);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   background: var(--surface);
   color: var(--text);
-  font-size: 14px;
+  font-size: var(--fs-base);
   font-weight: 600;
   cursor: pointer;
 }
@@ -325,18 +321,18 @@ function selectCategory(id: Category) {
 }
 .mobile-nav-menu {
   position: absolute;
-  top: calc(100% + 6px);
+  top: calc(100% + var(--sp-2));
   left: 0;
   right: 0;
-  z-index: 20;
+  z-index: var(--z-dropdown);
   display: flex;
   flex-direction: column;
   gap: 2px;
-  padding: 6px;
+  padding: var(--sp-2);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   background: var(--surface);
-  box-shadow: var(--shadow-lg);
+  box-shadow: var(--elev-3);
 }
 
 /* dropdown open/close animation */
@@ -359,10 +355,10 @@ function selectCategory(id: Category) {
   }
   .mobile-nav {
     display: block;
-    margin-bottom: 16px;
+    margin-bottom: var(--sp-4);
     position: sticky;
-    top: calc(52px + env(safe-area-inset-top));
-    z-index: 9;
+    top: var(--sticky-top);
+    z-index: var(--z-sticky);
   }
   .settings-layout {
     flex-direction: column;
