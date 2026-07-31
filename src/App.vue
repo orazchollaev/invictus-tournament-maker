@@ -65,7 +65,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div>
+  <div style="height: 100%">
     <AppHeader />
     <main class="app-main" @touchstart.passive="onTouchStart" @touchend.passive="onTouchEnd">
       <ErrorBoundary>
@@ -82,6 +82,10 @@ onUnmounted(() => {
 </template>
 
 <style>
+.app-main {
+  height: 100%;
+}
+
 @media (max-width: 640px) {
   .app-main {
     padding-bottom: env(safe-area-inset-bottom);

@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import { computed } from "vue"
 import { Trophy } from "@lucide/vue"
 import { useI18n } from "vue-i18n"
+import { AppCard, AppChip, AppTable } from "@/components/ui"
 import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
 
 export interface LeagueSeasonEntry {
@@ -10,14 +12,17 @@ export interface LeagueSeasonEntry {
   third: { name: string; color: string; flag?: string; pts: number } | null
 }
 
-defineProps<{ seasons: LeagueSeasonEntry[] }>()
+const props = defineProps<{ seasons: LeagueSeasonEntry[] }>()
 
 const { t } = useI18n()
+
+/** Newest season first. */
+const rows = computed(() => [...props.seasons].reverse())
 </script>
 
 <template>
-  <div class="section-box">
-    <table class="data-table">
+  <AppCard>
+    <AppTable>
       <thead>
         <tr>
           <th class="col-season">{{ t("history.table.season") }}</th>
@@ -27,15 +32,15 @@ const { t } = useI18n()
         </tr>
       </thead>
       <tbody>
-        <tr v-for="entry in [...seasons].reverse()" :key="entry.season">
+        <tr v-for="entry in rows" :key="entry.season">
           <td class="col-season">
-            <span class="season-badge">S{{ entry.season }}</span>
+            <AppChip square>S{{ entry.season }}</AppChip>
           </td>
           <td>
             <div v-if="entry.first" class="team-cell">
               <strong><TeamBadge :team="entry.first" /></strong>
               <span class="pts-badge">
-                <Trophy :size="10" />
+                <Trophy :size="12" />
                 {{ entry.first.pts }} pts
               </span>
             </div>
@@ -57,41 +62,28 @@ const { t } = useI18n()
           </td>
         </tr>
       </tbody>
-    </table>
-  </div>
+    </AppTable>
+  </AppCard>
 </template>
 
 <style scoped>
-.section-box {
-  overflow: hidden;
-}
 .col-season {
   width: 72px;
 }
-.season-badge {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--text-muted);
-  background: var(--bg);
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius);
-  padding: 1px 6px;
+.pts-badge,
+.pts-label {
+  font-size: var(--fs-xs);
   font-family: var(--font-ui);
+  margin-left: var(--sp-1);
 }
 .pts-badge {
   display: inline-flex;
   align-items: center;
   gap: 3px;
-  font-size: 10px;
   color: var(--accent);
   font-weight: 600;
-  font-family: var(--font-ui);
-  margin-left: 4px;
 }
 .pts-label {
-  font-size: 10px;
   color: var(--text-muted);
-  font-family: var(--font-ui);
-  margin-left: 4px;
 }
 </style>

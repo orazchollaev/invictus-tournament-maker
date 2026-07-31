@@ -2,6 +2,7 @@
 import { ref } from "vue"
 import { ChevronDown, ChevronRight, Trophy } from "@lucide/vue"
 import { useI18n } from "vue-i18n"
+import { AppCard, AppIcon } from "@/components/ui"
 import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
 
 export interface TeamSeasonRow {
@@ -46,7 +47,10 @@ function toggle(teamId: string) {
 </script>
 
 <template>
-  <div class="section-box">
+  <AppCard>
+    <!-- Deliberately not AppTable: this is an expandable master/detail grid
+         with a nested table inside a full-width cell, so it needs its own
+         row and cell rules rather than the shared data-table ones. -->
     <div class="ts-wrap">
       <table class="ts-table">
         <thead>
@@ -74,13 +78,13 @@ function toggle(teamId: string) {
               @click="toggle(row.teamId)"
             >
               <td class="col-rank muted">{{ i + 1 }}</td>
-              <td class="col-team" style="text-align: left !important">
+              <td class="col-team">
                 <TeamBadge :team="row" />
               </td>
               <td class="muted">{{ row.seasons }}</td>
               <td>
                 <span v-if="row.titles > 0" class="title-badge">
-                  <Trophy :size="10" />
+                  <Trophy :size="12" />
                   {{ row.titles }}
                 </span>
                 <span v-else class="muted">—</span>
@@ -96,10 +100,10 @@ function toggle(teamId: string) {
               </td>
               <td>{{ row.cleanSheets }}</td>
               <td class="col-expand">
-                <ChevronDown v-if="expanded === row.teamId" :size="12" class="expand-icon" />
-                <ChevronRight v-else :size="12" class="expand-icon" />
+                <AppIcon :icon="expanded === row.teamId ? ChevronDown : ChevronRight" size="xs" />
               </td>
             </tr>
+
             <tr v-if="expanded === row.teamId" class="ts-breakdown-row">
               <td colspan="13" class="ts-breakdown-cell">
                 <table class="ts-sub-table">
@@ -131,7 +135,7 @@ function toggle(teamId: string) {
                       </td>
                       <td>{{ s.cleanSheets }}</td>
                       <td>
-                        <Trophy v-if="s.title" :size="10" class="sub-trophy" />
+                        <Trophy v-if="s.title" :size="12" class="sub-trophy" />
                       </td>
                     </tr>
                   </tbody>
@@ -142,65 +146,72 @@ function toggle(teamId: string) {
         </tbody>
       </table>
     </div>
-  </div>
+  </AppCard>
 </template>
 
 <style scoped>
-.section-box {
-  overflow: hidden;
-}
 .ts-wrap {
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  height: 100%;
 }
+
 .ts-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 12px;
+  font-size: var(--fs-sm);
 }
+
 .ts-table th {
-  font-size: 10px;
+  font-size: var(--fs-xs);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--text-muted);
-  padding: 4px 6px;
+  padding: var(--sp-1) var(--sp-2);
   text-align: right;
   border-bottom: 1px solid var(--border-light);
   white-space: nowrap;
 }
+
 .ts-table td {
-  padding: 5px 6px;
+  padding: var(--sp-1) var(--sp-2);
   text-align: right;
   border-bottom: 1px solid var(--border-light);
   color: var(--text);
 }
-.col-rank {
-  text-align: center !important;
+
+.ts-table th.col-rank,
+.ts-table td.col-rank {
   width: 28px;
-  font-size: 11px;
+  text-align: center;
 }
-.col-team {
-  /* text-align: left !important; */
+
+.ts-table th.col-team,
+.ts-table td.col-team {
   min-width: 90px;
+  text-align: left;
 }
-.col-expand {
+
+.ts-table th.col-expand,
+.ts-table td.col-expand {
   width: 24px;
-  text-align: center !important;
+  text-align: center;
+  color: var(--text-muted);
 }
+
 .ts-row {
   cursor: pointer;
-  transition: background 0.1s;
+  transition: background var(--dur-fast) var(--ease);
 }
 .ts-row:hover td {
-  background: color-mix(in srgb, var(--border-light) 30%, transparent);
+  background: var(--bg-hover);
 }
 .ts-row--expanded td {
   background: color-mix(in srgb, var(--border-light) 20%, transparent);
   border-bottom: none;
 }
-.expand-icon {
-  color: var(--text-muted);
-}
+
 .title-badge {
   display: inline-flex;
   align-items: center;
@@ -208,6 +219,7 @@ function toggle(teamId: string) {
   color: var(--accent);
   font-weight: 700;
 }
+
 .gd-pos {
   color: color-mix(in srgb, var(--accent) 80%, var(--text));
 }
@@ -215,49 +227,52 @@ function toggle(teamId: string) {
   color: var(--danger);
 }
 
-/* Breakdown sub-table */
-.ts-breakdown-row td {
-  border-bottom: 1px solid var(--border-light);
-  padding: 0;
-}
+/* ── Season breakdown ────────────────────────────────────────── */
 .ts-breakdown-cell {
-  padding: 0 !important;
+  padding: 0;
   background: color-mix(in srgb, var(--border-light) 12%, transparent);
 }
+
 .ts-sub-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 11px;
+  font-size: var(--fs-xs);
 }
+
 .ts-sub-table th {
-  font-size: 9px;
+  font-size: var(--fs-xs);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--text-muted);
-  padding: 4px 8px 4px 6px;
+  padding: var(--sp-1) var(--sp-2);
   text-align: right;
   border-bottom: 1px solid var(--border-light);
 }
-.ts-sub-table th:first-child {
-  text-align: left;
-  padding-left: 32px;
-}
+
 .ts-sub-table td {
-  padding: 4px 8px 4px 6px;
+  padding: var(--sp-1) var(--sp-2);
   text-align: right;
   border-bottom: 1px solid var(--border-light);
   color: var(--text);
 }
+
 .ts-sub-table tbody tr:last-child td {
   border-bottom: none;
 }
+
+/* Indent the season column so the sub-table reads as nested. */
+.ts-sub-table th:first-child,
+.ts-sub-table td.sub-season {
+  text-align: left;
+  padding-left: var(--sp-6);
+}
+
 .sub-season {
-  text-align: left !important;
-  padding-left: 32px !important;
   color: var(--text-muted);
   font-weight: 600;
 }
+
 .sub-trophy {
   color: var(--accent);
 }

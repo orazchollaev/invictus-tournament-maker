@@ -4,9 +4,9 @@ import { useRoute, RouterLink } from "vue-router"
 import { useTournamentStore } from "@/modules/tournament/store"
 import { ArrowLeft, Trophy, Medal, BarChart3, Table2, Users } from "@lucide/vue"
 import { useI18n } from "vue-i18n"
-import { TabsRoot, TabsList, TabsTrigger } from "reka-ui"
 import { Swiper, SwiperSlide } from "swiper/vue"
 import "swiper/css"
+import { AppChip, AppEmptyState, AppIcon, AppTab, AppTabs } from "@/components/ui"
 import ChampionsTab from "../components/ChampionsTab.vue"
 import AllFinalsTab from "../components/AllFinalsTab.vue"
 import LeagueSeasonsTab from "../components/LeagueSeasonsTab.vue"
@@ -46,51 +46,47 @@ const tabValue = computed({
 
 <template>
   <div class="page">
-    <!-- Header -->
     <div class="t-header">
       <RouterLink to="/history" class="back-link">
-        <ArrowLeft :size="13" />
+        <AppIcon :icon="ArrowLeft" />
         {{ t("history.title") }}
       </RouterLink>
       <div class="t-header-top">
         <h1>
           {{ name }}
-          <span class="t-season">
+          <AppChip square>
             {{ allSeasons.length }}
             {{ allSeasons.length === 1 ? t("common.season", 1) : t("common.season", 2) }}
-          </span>
+          </AppChip>
         </h1>
       </div>
     </div>
 
-    <p v-if="!completedSeasons.length" class="empty-text">{{ t("history.noCompletedSeasons") }}</p>
+    <AppEmptyState v-if="!completedSeasons.length" :description="t('history.noCompletedSeasons')" />
 
     <template v-else>
-      <!-- Phase tabs -->
-      <TabsRoot v-model:model-value="tabValue">
-        <TabsList class="phase-tabs">
-          <TabsTrigger class="phase-tab" value="champions">
-            <Trophy :size="13" />
-            {{ t("history.tabs.champions") }}
-          </TabsTrigger>
-          <TabsTrigger class="phase-tab" value="finals">
-            <Medal :size="13" />
-            {{ isLeagueSeries ? t("history.tabs.allSeasons") : t("history.tabs.allFinals") }}
-          </TabsTrigger>
-          <TabsTrigger v-if="isLeagueSeries" class="phase-tab" value="alltime">
-            <Table2 :size="13" />
-            {{ t("history.tabs.allTimeTable") }}
-          </TabsTrigger>
-          <TabsTrigger class="phase-tab" value="stats">
-            <BarChart3 :size="13" />
-            {{ t("history.tabs.statistics") }}
-          </TabsTrigger>
-          <TabsTrigger class="phase-tab" value="teams">
-            <Users :size="13" />
-            {{ t("history.tabs.teams") }}
-          </TabsTrigger>
-        </TabsList>
-      </TabsRoot>
+      <AppTabs v-model="tabValue">
+        <AppTab value="champions">
+          <AppIcon :icon="Trophy" />
+          {{ t("history.tabs.champions") }}
+        </AppTab>
+        <AppTab value="finals">
+          <AppIcon :icon="Medal" />
+          {{ isLeagueSeries ? t("history.tabs.allSeasons") : t("history.tabs.allFinals") }}
+        </AppTab>
+        <AppTab v-if="isLeagueSeries" value="alltime">
+          <AppIcon :icon="Table2" />
+          {{ t("history.tabs.allTimeTable") }}
+        </AppTab>
+        <AppTab value="stats">
+          <AppIcon :icon="BarChart3" />
+          {{ t("history.tabs.statistics") }}
+        </AppTab>
+        <AppTab value="teams">
+          <AppIcon :icon="Users" />
+          {{ t("history.tabs.teams") }}
+        </AppTab>
+      </AppTabs>
 
       <Swiper
         :initial-slide="activeIndex"

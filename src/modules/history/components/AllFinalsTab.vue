@@ -1,5 +1,7 @@
 <script setup lang="ts">
+import { computed } from "vue"
 import { useI18n } from "vue-i18n"
+import { AppCard, AppChip, AppTable } from "@/components/ui"
 import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
 
 export interface FinalEntry {
@@ -13,14 +15,18 @@ export interface FinalEntry {
   score: string
 }
 
-defineProps<{ finals: FinalEntry[] }>()
+const props = defineProps<{ finals: FinalEntry[] }>()
 
 const { t } = useI18n()
+
+/** Newest season first. Reversed here rather than in the template so the
+    array isn't copied on every render. */
+const rows = computed(() => [...props.finals].reverse())
 </script>
 
 <template>
-  <div class="section-box">
-    <table class="data-table">
+  <AppCard>
+    <AppTable>
       <thead>
         <tr>
           <th class="col-season">{{ t("history.table.season") }}</th>
@@ -30,9 +36,9 @@ const { t } = useI18n()
         </tr>
       </thead>
       <tbody>
-        <tr v-for="entry in [...finals].reverse()" :key="entry.season">
+        <tr v-for="entry in rows" :key="entry.season">
           <td class="col-season">
-            <span class="season-badge">S{{ entry.season }}</span>
+            <AppChip square>S{{ entry.season }}</AppChip>
           </td>
           <td>
             <strong class="team-cell">
@@ -50,30 +56,17 @@ const { t } = useI18n()
           </td>
         </tr>
       </tbody>
-    </table>
-  </div>
+    </AppTable>
+  </AppCard>
 </template>
 
 <style scoped>
-.section-box {
-  overflow: hidden;
-}
 .col-season {
   width: 72px;
 }
 .col-score {
   width: 140px;
-  font-size: 12px;
-  font-family: var(--font-ui);
-}
-.season-badge {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--text-muted);
-  background: var(--bg);
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius);
-  padding: 1px 6px;
+  font-size: var(--fs-sm);
   font-family: var(--font-ui);
 }
 </style>

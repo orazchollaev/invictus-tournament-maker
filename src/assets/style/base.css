@@ -20,6 +20,7 @@ html {
 }
 
 body {
+  height: 100%;
   font-family: var(--font-ui);
   background: var(--bg);
   color: var(--text);
@@ -28,6 +29,10 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
+}
+
+#app {
+  height: 100%;
 }
 
 a {

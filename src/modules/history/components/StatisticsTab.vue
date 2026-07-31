@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Zap, Shield, Flame, Star, Trophy } from "@lucide/vue"
 import { useI18n } from "vue-i18n"
+import { AppCard, AppChip, AppIcon } from "@/components/ui"
 import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
 
 export interface BiggestWin {
@@ -39,38 +40,36 @@ const { t } = useI18n()
 </script>
 
 <template>
-  <div class="stats-wrap">
-    <!-- Summary cards -->
-    <div class="section-box stats-section">
+  <div class="stack">
+    <AppCard padding="md">
       <div class="stats-grid">
-        <div class="stat-card">
+        <AppCard variant="filled" padding="md" class="stat-card">
           <div class="stat-value">{{ stats.totalSeasons }}</div>
           <div class="stat-label">{{ t("history.stats.completedSeasons") }}</div>
-        </div>
-        <div class="stat-card">
+        </AppCard>
+        <AppCard variant="filled" padding="md" class="stat-card">
           <div class="stat-value">{{ stats.totalMatches }}</div>
           <div class="stat-label">{{ t("history.stats.totalMatches") }}</div>
-        </div>
-        <div class="stat-card">
+        </AppCard>
+        <AppCard variant="filled" padding="md" class="stat-card">
           <div class="stat-value">{{ stats.totalGoals }}</div>
           <div class="stat-label">{{ t("history.stats.totalGoals") }}</div>
-        </div>
-        <div class="stat-card">
+        </AppCard>
+        <AppCard variant="filled" padding="md" class="stat-card">
           <div class="stat-value">{{ stats.avgGoals }}</div>
           <div class="stat-label">{{ t("history.stats.goalsPerMatch") }}</div>
-        </div>
+        </AppCard>
       </div>
-    </div>
+    </AppCard>
 
-    <!-- Records -->
-    <div
+    <AppCard
       v-if="stats.biggestWin || stats.topScoringTeam || stats.mostCleanSheets"
-      class="section-box records-section"
+      padding="md"
+      :title="t('history.stats.records')"
     >
-      <div class="section-label">{{ t("history.stats.records") }}</div>
       <div class="record-list">
         <div v-if="stats.biggestWin" class="record-row">
-          <Zap :size="12" class="record-icon" />
+          <AppIcon :icon="Zap" size="xs" class="record-icon" />
           <div class="record-key">{{ t("history.stats.biggestWin") }}</div>
           <div class="record-val">
             <TeamBadge
@@ -80,7 +79,7 @@ const { t } = useI18n()
                 flag: stats.biggestWin.winnerFlag,
               }"
             />
-            <span class="score-chip">{{ stats.biggestWin.score }}</span>
+            <AppChip square class="score-chip">{{ stats.biggestWin.score }}</AppChip>
             <TeamBadge
               :team="{
                 name: stats.biggestWin.loserName,
@@ -90,8 +89,9 @@ const { t } = useI18n()
             />
           </div>
         </div>
+
         <div v-if="stats.topScoringTeam" class="record-row">
-          <Trophy :size="12" class="record-icon" />
+          <AppIcon :icon="Trophy" size="xs" class="record-icon" />
           <div class="record-key">{{ t("history.stats.topScorer") }}</div>
           <div class="record-val">
             <TeamBadge :team="stats.topScoringTeam" />
@@ -100,8 +100,9 @@ const { t } = useI18n()
             </span>
           </div>
         </div>
+
         <div v-if="stats.mostCleanSheets" class="record-row">
-          <Shield :size="12" class="record-icon" />
+          <AppIcon :icon="Shield" size="xs" class="record-icon" />
           <div class="record-key">{{ t("history.stats.cleanSheets") }}</div>
           <div class="record-val">
             <TeamBadge :team="stats.mostCleanSheets" />
@@ -109,17 +110,16 @@ const { t } = useI18n()
           </div>
         </div>
       </div>
-    </div>
+    </AppCard>
 
-    <!-- Achievements -->
-    <div
+    <AppCard
       v-if="stats.firstChampion || stats.longestStreak || stats.currentStreak"
-      class="section-box badges-section"
+      padding="md"
+      :title="t('history.stats.achievements')"
     >
-      <div class="section-label">{{ t("history.stats.achievements") }}</div>
       <div class="badge-grid">
-        <div v-if="stats.firstChampion" class="badge-card">
-          <Star :size="14" class="badge-icon badge-star" />
+        <AppCard v-if="stats.firstChampion" variant="filled" padding="sm" class="badge-card">
+          <AppIcon :icon="Star" size="sm" class="badge-icon badge-star" />
           <div class="badge-title">{{ t("history.stats.firstChampion") }}</div>
           <div class="badge-team">
             <TeamBadge :team="stats.firstChampion" />
@@ -127,9 +127,10 @@ const { t } = useI18n()
           <div class="badge-meta">
             {{ t("history.stats.season", { n: stats.firstChampion.season }) }}
           </div>
-        </div>
-        <div v-if="stats.longestStreak" class="badge-card">
-          <Flame :size="14" class="badge-icon badge-flame" />
+        </AppCard>
+
+        <AppCard v-if="stats.longestStreak" variant="filled" padding="sm" class="badge-card">
+          <AppIcon :icon="Flame" size="sm" class="badge-icon badge-flame" />
           <div class="badge-title">{{ t("history.stats.longestStreak") }}</div>
           <div class="badge-team">
             <TeamBadge :team="stats.longestStreak" />
@@ -137,9 +138,15 @@ const { t } = useI18n()
           <div class="badge-meta">
             {{ t("history.stats.inARow", { n: stats.longestStreak.count }) }}
           </div>
-        </div>
-        <div v-if="stats.currentStreak" class="badge-card badge-card--current">
-          <Trophy :size="14" class="badge-icon badge-trophy" />
+        </AppCard>
+
+        <AppCard
+          v-if="stats.currentStreak"
+          variant="filled"
+          padding="sm"
+          class="badge-card badge-card--current"
+        >
+          <AppIcon :icon="Trophy" size="sm" class="badge-icon badge-trophy" />
           <div class="badge-title">{{ t("history.stats.defending") }}</div>
           <div class="badge-team">
             <TeamBadge :team="stats.currentStreak" />
@@ -147,134 +154,107 @@ const { t } = useI18n()
           <div class="badge-meta">
             {{ t("history.stats.consecutive", { n: stats.currentStreak.count }) }}
           </div>
-        </div>
+        </AppCard>
       </div>
-    </div>
+    </AppCard>
   </div>
 </template>
 
 <style scoped>
-.stats-wrap {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-.section-box {
-  overflow: hidden;
-}
-.stats-section {
-  padding: 16px;
-}
-.records-section,
-.badges-section {
-  padding: 14px 16px;
-}
-.section-label {
-  font-size: 10px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--text-muted);
-  margin-bottom: 10px;
-  font-family: var(--font-ui);
-}
-
-/* Stats grid */
+/* ── Summary tiles ───────────────────────────────────────────── */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 10px;
+  gap: var(--sp-3);
 }
-.stat-card {
-  background: var(--bg);
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius);
-  padding: 18px 16px;
+
+.stat-card :deep(.card-body) {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: var(--sp-1);
 }
+
 .stat-value {
-  font-size: 28px;
+  font-size: var(--fs-2xl);
   font-weight: 800;
   letter-spacing: -0.03em;
   line-height: 1;
 }
+
 .stat-label {
-  font-size: 11px;
+  font-size: var(--fs-xs);
   color: var(--text-muted);
   font-weight: 500;
   font-family: var(--font-ui);
 }
 
-/* Records */
+/* ── Records ─────────────────────────────────────────────────── */
 .record-list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: var(--sp-3);
 }
+
 .record-row {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 12px;
+  gap: var(--sp-2);
+  font-size: var(--fs-sm);
 }
+
 .record-icon {
   color: var(--text-muted);
-  flex-shrink: 0;
 }
+
 .record-key {
   min-width: 88px;
+  flex-shrink: 0;
   color: var(--text-muted);
   font-weight: 600;
   font-family: var(--font-ui);
-  font-size: 11px;
-  flex-shrink: 0;
+  font-size: var(--fs-xs);
 }
+
 .record-val {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: var(--sp-1);
   flex-wrap: wrap;
   font-weight: 500;
 }
+
 .score-chip {
-  background: var(--bg);
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius);
-  padding: 1px 6px;
   font-weight: 700;
-  font-size: 11px;
   font-variant-numeric: tabular-nums;
 }
+
 .record-num {
   color: var(--text-muted);
-  font-size: 11px;
+  font-size: var(--fs-xs);
 }
 
-/* Badges */
+/* ── Achievements ────────────────────────────────────────────── */
 .badge-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-  gap: 8px;
+  gap: var(--sp-2);
 }
-.badge-card {
-  background: var(--bg);
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius);
-  padding: 12px;
+
+.badge-card :deep(.card-body) {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--sp-1);
 }
+
 .badge-card--current {
   border-color: var(--accent);
 }
+
 .badge-icon {
   margin-bottom: 2px;
 }
 .badge-star {
-  color: var(--accent-2);
+  color: var(--medal-gold);
 }
 .badge-flame {
   color: var(--danger);
@@ -282,30 +262,31 @@ const { t } = useI18n()
 .badge-trophy {
   color: var(--accent);
 }
+
 .badge-title {
-  font-size: 10px;
+  font-size: var(--fs-xs);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--text-muted);
   font-family: var(--font-ui);
 }
+
 .badge-team {
-  font-size: 13px;
-  font-weight: 600;
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: var(--sp-1);
+  font-size: var(--fs-base);
+  font-weight: 600;
 }
+
 .badge-meta {
-  font-size: 11px;
+  font-size: var(--fs-xs);
   color: var(--text-muted);
 }
 
 @media (max-width: 600px) {
-  .stats-grid {
-    grid-template-columns: 1fr 1fr;
-  }
+  .stats-grid,
   .badge-grid {
     grid-template-columns: 1fr 1fr;
   }

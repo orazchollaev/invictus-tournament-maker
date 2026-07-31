@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Trophy } from "@lucide/vue"
 import { useI18n } from "vue-i18n"
+import { AppCard, AppTable } from "@/components/ui"
 import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
 
 export interface ChampEntry {
@@ -18,8 +19,8 @@ const { t } = useI18n()
 </script>
 
 <template>
-  <div class="section-box">
-    <table class="data-table">
+  <AppCard>
+    <AppTable>
       <thead>
         <tr>
           <th class="col-rank">#</th>
@@ -36,7 +37,7 @@ const { t } = useI18n()
           </td>
           <td class="col-num">
             <span v-if="entry.wins > 0" class="win-count">
-              <Trophy :size="11" />
+              <Trophy :size="12" />
               {{ entry.wins }}
             </span>
             <span v-else class="muted">—</span>
@@ -44,14 +45,11 @@ const { t } = useI18n()
           <td class="col-num muted">{{ entry.finals }}</td>
         </tr>
       </tbody>
-    </table>
-  </div>
+    </AppTable>
+  </AppCard>
 </template>
 
 <style scoped>
-.section-box {
-  overflow: hidden;
-}
 .col-rank {
   width: 36px;
   text-align: center;
@@ -63,7 +61,7 @@ const { t } = useI18n()
 .win-count {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--sp-1);
   color: var(--accent);
   font-weight: 700;
 }

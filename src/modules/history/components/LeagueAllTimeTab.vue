@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n"
+import { AppCard, AppTable } from "@/components/ui"
 import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
 
 export interface AllTimeRow {
@@ -25,147 +26,120 @@ const { t } = useI18n()
 </script>
 
 <template>
-  <div class="section-box">
-    <div class="at-table-wrap">
-      <table class="at-table">
-        <thead>
-          <tr>
-            <th class="col-rank">#</th>
-            <th class="col-team">{{ t("history.table.team") }}</th>
-            <th :title="t('history.table.seasonsPlayed')">Sns</th>
-            <th :title="t('history.table.titles')">Ttl</th>
-            <th :title="t('history.table.matchesPlayed')">P</th>
-            <th :title="t('history.table.won')">W</th>
-            <th :title="t('history.table.drawn')">D</th>
-            <th :title="t('history.table.lost')">L</th>
-            <th :title="t('history.table.goalsFor')">GF</th>
-            <th :title="t('history.table.goalsAgainst')">GA</th>
-            <th :title="t('history.table.goalDiff')">GD</th>
-            <th :title="t('history.table.points')" class="col-pts">Pts</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            v-for="(row, i) in rows"
-            :key="row.teamId"
-            :class="{
-              'at-pos--1': i === 0,
-              'at-pos--2': i === 1,
-              'at-pos--3': i === 2,
-              'at-pos--4': i === 3,
-            }"
-          >
-            <td class="col-rank">{{ i + 1 }}</td>
-            <td class="col-team">
-              <TeamBadge :team="row" :size="7" />
-            </td>
-            <td class="muted">{{ row.seasons }}</td>
-            <td>
-              <span v-if="row.titles > 0" class="title-count">{{ row.titles }}</span>
-              <span v-else class="muted">—</span>
-            </td>
-            <td>{{ row.played }}</td>
-            <td>{{ row.won }}</td>
-            <td>{{ row.drawn }}</td>
-            <td>{{ row.lost }}</td>
-            <td>{{ row.gf }}</td>
-            <td>{{ row.ga }}</td>
-            <td :class="{ 'gd-pos': row.gd > 0, 'gd-neg': row.gd < 0 }">
-              {{ row.gd > 0 ? "+" : "" }}{{ row.gd }}
-            </td>
-            <td class="col-pts">
-              <strong>{{ row.pts }}</strong>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
+  <AppCard>
+    <AppTable dense class="at-table">
+      <thead>
+        <tr>
+          <th class="col-rank">#</th>
+          <th class="col-team">{{ t("history.table.team") }}</th>
+          <th :title="t('history.table.seasonsPlayed')">Sns</th>
+          <th :title="t('history.table.titles')">Ttl</th>
+          <th :title="t('history.table.matchesPlayed')">P</th>
+          <th :title="t('history.table.won')">W</th>
+          <th :title="t('history.table.drawn')">D</th>
+          <th :title="t('history.table.lost')">L</th>
+          <th :title="t('history.table.goalsFor')">GF</th>
+          <th :title="t('history.table.goalsAgainst')">GA</th>
+          <th :title="t('history.table.goalDiff')">GD</th>
+          <th :title="t('history.table.points')" class="col-pts">Pts</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(row, i) in rows" :key="row.teamId" :class="`at-pos--${i + 1}`">
+          <td class="col-rank">{{ i + 1 }}</td>
+          <td class="col-team">
+            <TeamBadge :team="row" :size="7" />
+          </td>
+          <td class="muted">{{ row.seasons }}</td>
+          <td>
+            <span v-if="row.titles > 0" class="title-count">{{ row.titles }}</span>
+            <span v-else class="muted">—</span>
+          </td>
+          <td>{{ row.played }}</td>
+          <td>{{ row.won }}</td>
+          <td>{{ row.drawn }}</td>
+          <td>{{ row.lost }}</td>
+          <td>{{ row.gf }}</td>
+          <td>{{ row.ga }}</td>
+          <td :class="{ 'gd-pos': row.gd > 0, 'gd-neg': row.gd < 0 }">
+            {{ row.gd > 0 ? "+" : "" }}{{ row.gd }}
+          </td>
+          <td class="col-pts">
+            <strong>{{ row.pts }}</strong>
+          </td>
+        </tr>
+      </tbody>
+    </AppTable>
+  </AppCard>
 </template>
 
 <style scoped>
-.section-box {
-  overflow: hidden;
-}
-.at-table-wrap {
-  overflow-x: auto;
-}
-.at-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 12px;
-}
-.at-table th {
-  font-size: 10px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--text-muted);
-  padding: 4px 6px;
+/* A stats grid, so every column is right-aligned except rank and team.
+   Selectors carry the thead/tbody element to outrank AppTable's own
+   `th { text-align: left }` regardless of stylesheet order. */
+.at-table :deep(thead th),
+.at-table :deep(tbody td) {
   text-align: right;
-  border-bottom: 1px solid var(--border-light);
-  white-space: nowrap;
 }
-.at-table td {
-  padding: 5px 6px;
-  text-align: right;
-  border-bottom: 1px solid var(--border-light);
-  color: var(--text);
-}
+
 .col-rank {
-  text-align: center !important;
   width: 28px;
-  color: var(--text-muted) !important;
-  font-size: 11px !important;
+  text-align: center;
+  color: var(--text-muted);
 }
+.at-table :deep(tbody td.col-rank),
+.at-table :deep(thead th.col-rank) {
+  text-align: center;
+}
+
 .col-team {
-  text-align: left !important;
   min-width: 90px;
 }
+.at-table :deep(tbody td.col-team),
+.at-table :deep(thead th.col-team) {
+  text-align: left;
+}
+
 .col-pts {
   min-width: 32px;
 }
-.at-dot {
-  display: inline-block;
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  margin-right: 5px;
-  vertical-align: middle;
-  flex-shrink: 0;
-}
+
 .title-count {
   font-weight: 700;
   color: var(--accent);
 }
+
+/* Position bands: champion, then the two European places, then playoff. */
 .at-pos--1 td:first-child {
-  border-left: 3px solid var(--accent-2);
+  border-left: 3px solid var(--medal-gold);
 }
 .at-pos--2 td:first-child {
-  border-left: 3px solid #3b82f6;
+  border-left: 3px solid var(--pos-2);
 }
 .at-pos--3 td:first-child {
-  border-left: 3px solid #8b5cf6;
+  border-left: 3px solid var(--pos-3);
 }
 .at-pos--4 td:first-child {
   border-left: 3px solid var(--success);
 }
+
 .at-pos--1 .col-rank {
-  color: var(--accent-2) !important;
+  color: var(--medal-gold);
   font-weight: 700;
 }
 .at-pos--2 .col-rank {
-  color: #3b82f6 !important;
+  color: var(--pos-2);
   font-weight: 600;
 }
 .at-pos--3 .col-rank {
-  color: #8b5cf6 !important;
+  color: var(--pos-3);
   font-weight: 600;
 }
 .at-pos--4 .col-rank {
-  color: var(--success) !important;
+  color: var(--success);
   font-weight: 600;
 }
+
 .gd-pos {
   color: color-mix(in srgb, var(--accent) 80%, var(--text));
 }

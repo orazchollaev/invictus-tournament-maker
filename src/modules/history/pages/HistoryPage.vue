@@ -3,6 +3,7 @@ import { computed } from "vue"
 import { useRouter } from "vue-router"
 import { useTournamentStore } from "@/modules/tournament/store"
 import { useI18n } from "vue-i18n"
+import { AppCard, AppChip, AppEmptyState } from "@/components/ui"
 
 const { t } = useI18n()
 const router = useRouter()
@@ -57,32 +58,40 @@ function formatLabel(format: string) {
       <h2 class="page-title">{{ t("history.title") }}</h2>
     </div>
 
-    <p v-if="!series.length" class="empty-text">{{ t("history.empty") }}</p>
+    <AppEmptyState v-if="!series.length" :description="t('history.empty')" />
 
     <div v-else class="t-list">
-      <div
+      <AppCard
         v-for="s in series"
         :key="s.name"
-        class="t-row"
+        rail
+        interactive
+        padding="sm"
+        class="series-row"
         @click="router.push('/history/' + encodeURIComponent(s.name))"
       >
-        <div class="t-body">
-          <span class="t-name">{{ s.name }}</span>
-          <div class="t-meta-row">
-            <span class="t-badge">
-              {{ s.seasons }} {{ s.seasons === 1 ? t("common.season", 1) : t("common.season", 2) }}
-            </span>
-            <span class="t-badge accent">{{ formatLabel(s.format) }}</span>
-            <span class="t-dot">{{ t("common.teams", { n: s.teamCount }) }}</span>
-          </div>
+        <span class="t-name">{{ s.name }}</span>
+        <div class="t-meta-row">
+          <AppChip>
+            {{ s.seasons }} {{ s.seasons === 1 ? t("common.season", 1) : t("common.season", 2) }}
+          </AppChip>
+          <AppChip variant="accent">{{ formatLabel(s.format) }}</AppChip>
+          <span class="t-dot">{{ t("common.teams", { n: s.teamCount }) }}</span>
         </div>
-      </div>
+      </AppCard>
     </div>
   </div>
 </template>
 
 <style scoped>
-.t-row {
+.series-row {
   cursor: pointer;
+}
+
+.series-row :deep(.card-body) {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+  min-width: 0;
 }
 </style>
