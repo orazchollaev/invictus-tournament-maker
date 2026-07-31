@@ -1,0 +1,69 @@
+<script setup lang="ts">
+/**
+ * Page-level tabs — the underline family. Pairs with `AppTab`.
+ *
+ * This is the canonical implementation: the old global `.phase-tabs` /
+ * `.phase-tab` was already the only fully tokenised tab in the codebase,
+ * so it wins. `.gs-subtab`, the history tabs and `.bracket-mobile-tab`
+ * all fold into it.
+ *
+ * For *inline* one-of-N filters (the old `.fv-tab`, `.tier-tab`,
+ * `.view-toggle-btn`, `.mode-toggle`, `.dc-speed-btn`) use `BtnGroup`
+ * instead — that is the segmented-control role, not this one.
+ */
+import { TabsRoot, TabsList } from "reka-ui"
+
+withDefaults(
+  defineProps<{
+    modelValue: string
+    size?: "sm" | "md"
+    /** Pin below the app header while the panel scrolls. */
+    sticky?: boolean
+  }>(),
+  { size: "md" }
+)
+
+defineEmits<{ "update:modelValue": [value: string] }>()
+</script>
+
+<template>
+  <TabsRoot
+    :model-value="modelValue"
+    @update:model-value="$emit('update:modelValue', String($event))"
+  >
+    <TabsList class="tabs" :class="[`tabs--${size}`, { 'tabs--sticky': sticky }]">
+      <slot />
+    </TabsList>
+    <slot name="panel" />
+  </TabsRoot>
+</template>
+
+<style scoped>
+.tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: var(--sp-3);
+  border-bottom: 1px solid var(--border-light);
+  background: var(--bg);
+}
+
+.tabs--sticky {
+  position: sticky;
+  top: var(--sticky-top);
+  z-index: var(--z-sticky);
+}
+
+@media (max-width: 640px) {
+  .tabs {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .tabs::-webkit-scrollbar {
+    display: none;
+  }
+  .tabs--sticky {
+    top: env(safe-area-inset-top);
+  }
+}
+</style>

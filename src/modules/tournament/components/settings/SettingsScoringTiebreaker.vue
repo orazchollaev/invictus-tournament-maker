@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Tiebreaker } from "@/modules/tournament/types"
-import AppStepper from "@/components/AppStepper.vue"
-import BtnGroup from "@/components/BtnGroup.vue"
+import AppStepper from "@/components/ui/AppStepper.vue"
+import BtnGroup from "@/components/ui/BtnGroup.vue"
 import TspLockedCard from "./TspLockedCard.vue"
 import { useI18n } from "vue-i18n"
 

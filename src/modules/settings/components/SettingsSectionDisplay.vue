@@ -4,8 +4,8 @@ import { useSettingsStore } from "../store"
 import type { BracketStyle } from "../store"
 import { useI18n } from "vue-i18n"
 import { Monitor } from "@lucide/vue"
-import BtnGroup from "@/components/BtnGroup.vue"
-import ToggleSwitch from "@/components/ToggleSwitch.vue"
+import BtnGroup from "@/components/ui/BtnGroup.vue"
+import ToggleSwitch from "@/components/ui/ToggleSwitch.vue"
 import SettingDesc from "./SettingDesc.vue"
 
 const { t } = useI18n()

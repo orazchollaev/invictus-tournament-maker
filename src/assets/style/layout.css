@@ -1,0 +1,146 @@
+/* ── Page skeleton ───────────────────────────────────────────────
+   Structural chrome only. Anything that is a *component* (card, chip,
+   button, tab, table) lives in src/components/ui/, not here. */
+
+.page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--sp-6) var(--sp-4);
+}
+
+.page-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--sp-5);
+}
+
+.page-title {
+  margin: 0;
+  font-size: var(--fs-xl);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+/* ── Detail page header ──────────────────────────────────────── */
+.t-header {
+  margin-bottom: var(--sp-4);
+}
+
+.t-header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 2px;
+  margin-bottom: 2px;
+}
+
+.t-header h1 {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  margin: var(--sp-2) 0 var(--sp-1);
+  font-size: var(--fs-xl);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+/* ── Search bar ──────────────────────────────────────────────── */
+.search-row {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-3);
+}
+
+.search-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+}
+
+.search-icon {
+  position: absolute;
+  left: var(--sp-3);
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.search-input {
+  width: 100%;
+  height: 34px;
+  padding-left: var(--sp-6);
+}
+
+/* ── Back navigation ─────────────────────────────────────────── */
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1);
+  font-size: var(--fs-base);
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.back-link:hover {
+  text-decoration: none;
+}
+
+/* ── Common row helpers ──────────────────────────────────────── */
+.t-list,
+.t-list-inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.t-list-inner {
+  position: relative;
+}
+
+.btn-row {
+  display: flex;
+  gap: var(--sp-2);
+  flex-shrink: 0;
+}
+
+.modal-actions {
+  display: flex;
+  gap: var(--sp-2);
+  flex-wrap: wrap;
+}
+
+@media (max-width: 640px) {
+  .page {
+    padding: var(--sp-4) var(--sp-3);
+  }
+
+  .page-top {
+    flex-wrap: wrap;
+    gap: var(--sp-2);
+  }
+
+  .page-title,
+  .t-header h1 {
+    font-size: var(--fs-lg);
+  }
+
+  .t-header-top {
+    flex-wrap: wrap;
+    gap: var(--sp-2);
+  }
+
+  .btn-row {
+    flex-wrap: wrap;
+  }
+
+  .modal-actions {
+    flex-direction: column;
+  }
+  .modal-actions > * {
+    width: 100%;
+  }
+}

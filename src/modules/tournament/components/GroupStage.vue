@@ -2,7 +2,7 @@
 import { ref, computed } from "vue"
 import type { Team } from "@/modules/teams/types"
 import type { Tournament, GroupMatch } from "@/modules/tournament/types"
-import AppModal from "@/components/AppModal.vue"
+import AppModal from "@/components/ui/AppModal.vue"
 import { useTeamLookup } from "@/composables/useTeamLookup"
 import { Lock } from "@lucide/vue"
 import { useI18n } from "vue-i18n"

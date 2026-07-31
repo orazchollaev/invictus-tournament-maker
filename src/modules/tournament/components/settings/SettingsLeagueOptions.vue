@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed } from "vue"
 import type { LegMode, LeaguePlayoffSeedMode } from "@/modules/tournament/types"
-import AppStepper from "@/components/AppStepper.vue"
-import BtnGroup from "@/components/BtnGroup.vue"
+import AppStepper from "@/components/ui/AppStepper.vue"
+import BtnGroup from "@/components/ui/BtnGroup.vue"
 import TspLockedCard from "./TspLockedCard.vue"
 import { useLegOptions } from "@/modules/tournament/composables/useLegOptions"
 import { useI18n } from "vue-i18n"

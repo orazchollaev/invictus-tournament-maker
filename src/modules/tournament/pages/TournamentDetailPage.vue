@@ -15,7 +15,7 @@ import PlayoffManualDraw from "@/modules/tournament/components/PlayoffManualDraw
 import GroupDraw from "@/modules/tournament/components/GroupDraw.vue"
 import TournamentStats from "@/modules/tournament/components/TournamentStats.vue"
 import { DrawCeremony } from "@/modules/tournament/components/draw-ceremony"
-import AppModal from "@/components/AppModal.vue"
+import AppModal from "@/components/ui/AppModal.vue"
 import { DetailHeader, DetailPhaseTabs, DetailMultiTierModal } from "../components/detail"
 import { useTournamentDetail } from "../composables/useTournamentDetail"
 import { useTournamentTabs } from "../composables/useTournamentTabs"

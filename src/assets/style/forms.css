@@ -1,32 +1,34 @@
-/* ── Shared form primitives ──────────────────────────────────────
-   Used by Create Tournament + Tournament Settings pages (and any
-   future form-heavy page). Page-specific styles stay next to their
-   components (create-tournament.css / tournament-settings.css). */
+/* ── Form primitives ─────────────────────────────────────────────
+   MIGRATION SHIM — superseded by AppCard (form-card) and AppField
+   (form-row / form-label / form-hint). Deleted as consumers move over.
 
-/* ── Card / section ──────────────────────────────────────────── */
+   NOTE: `.form-card` was previously also redefined inside
+   TournamentSettingsPage.vue with a different radius, padding and no
+   shadow. This definition is now the only one. */
+
 .form-card {
   background: var(--surface);
   border: 1px solid var(--border-light);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--elev-1);
   padding: var(--sp-5);
   margin-bottom: var(--sp-4);
 }
 
 .form-section-title {
-  font-size: 11px;
+  font-size: var(--fs-xs);
   font-weight: 700;
   letter-spacing: 0.07em;
   text-transform: uppercase;
   color: var(--text-muted);
-  margin-bottom: 10px;
+  margin-bottom: var(--sp-3);
 }
 
 .form-section-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 10px;
+  margin-bottom: var(--sp-3);
 }
 .form-section-header .form-section-title {
   margin-bottom: 0;
@@ -36,17 +38,18 @@
 .form-rows {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: var(--sp-3);
 }
+
 .form-row {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--sp-3);
   flex-wrap: wrap;
 }
 
 .form-label {
-  font-size: 13px;
+  font-size: var(--fs-base);
   color: var(--text);
   width: 140px;
   flex-shrink: 0;
@@ -59,25 +62,25 @@
 }
 
 .form-hint {
-  font-size: 12px;
+  font-size: var(--fs-sm);
   color: var(--text-muted);
 }
 
 /* ── Hint box ────────────────────────────────────────────────── */
 .hint-box {
-  padding: 8px 10px;
+  padding: var(--sp-2) var(--sp-3);
   background: var(--bg);
   border: 1px solid var(--border-light);
   border-radius: var(--radius);
-  font-size: 11px;
+  font-size: var(--fs-xs);
   color: var(--text-muted);
   line-height: 1.6;
 }
 .hint-box--top {
-  margin-bottom: 10px;
+  margin-bottom: var(--sp-3);
 }
 .hint-box--bottom {
-  margin-top: 10px;
+  margin-top: var(--sp-3);
 }
 
 /* ── Stepper ─────────────────────────────────────────────────── */
@@ -94,7 +97,7 @@
   padding: 0;
   border: none;
   border-radius: 0;
-  font-size: 16px;
+  font-size: var(--fs-md);
   line-height: 1;
   display: flex;
   justify-content: center;
@@ -108,7 +111,7 @@
 .stepper-val {
   width: 40px;
   text-align: center;
-  font-size: 16px;
+  font-size: var(--fs-md);
   font-weight: 700;
   font-family: var(--font-ui);
 }
@@ -117,16 +120,16 @@
 .toggle-row {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--sp-3);
   cursor: pointer;
   user-select: none;
 }
 .toggle-label {
-  font-size: 14px;
+  font-size: var(--fs-base);
   font-weight: 600;
 }
 .toggle-hint {
-  font-size: 12px;
+  font-size: var(--fs-sm);
   color: var(--text-muted);
 }
 
@@ -142,10 +145,10 @@
     flex: 1 1 100%;
   }
   .form-row {
-    row-gap: 6px;
+    row-gap: var(--sp-2);
   }
   .toggle-label {
-    font-size: 12px;
+    font-size: var(--fs-sm);
     white-space: nowrap;
   }
 }

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from "vue"
-import AppModal from "@/components/AppModal.vue"
-import ColorPicker from "@/components/ColorPicker.vue"
+import AppModal from "@/components/ui/AppModal.vue"
+import ColorPicker from "@/components/ui/ColorPicker.vue"
 import FlagPicker from "./FlagPicker.vue"
 import FlagCircle from "./FlagCircle.vue"
 import { flagPrimaryColor } from "../flags"

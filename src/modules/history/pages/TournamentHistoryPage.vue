@@ -106,7 +106,10 @@ const tabValue = computed({
             :champions="champions"
             :finals-label="isLeagueSeries ? 'Runner-up' : undefined"
           />
-          <LeagueSeasonsTab v-else-if="tab === 'finals' && isLeagueSeries" :seasons="leagueSeasons" />
+          <LeagueSeasonsTab
+            v-else-if="tab === 'finals' && isLeagueSeries"
+            :seasons="leagueSeasons"
+          />
           <AllFinalsTab v-else-if="tab === 'finals'" :finals="finals" />
           <LeagueAllTimeTab v-else-if="tab === 'alltime'" :rows="allTimeRows" />
           <StatisticsTab v-else-if="tab === 'stats'" :stats="stats" />

@@ -2,7 +2,7 @@
 import { ref, computed } from "vue"
 import { History, Shuffle, Plus, Minus, ArrowLeft } from "@lucide/vue"
 import { useI18n } from "vue-i18n"
-import AppModal from "@/components/AppModal.vue"
+import AppModal from "@/components/ui/AppModal.vue"
 import type { Tournament } from "@/modules/tournament/types"
 import type { Team } from "@/modules/teams/types"
 

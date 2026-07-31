@@ -61,8 +61,7 @@ export function useTournamentCeremonies(
     tournament.value ? getLeaguePlayoffData(tournament.value) : undefined
   )
   const showLeaguePlayoffControls = computed(
-    () =>
-      tournament.value?.format === "league" && (!isMultiTier.value || activeTierIdx.value === 0)
+    () => tournament.value?.format === "league" && (!isMultiTier.value || activeTierIdx.value === 0)
   )
   const canStartLeaguePlayoffFlow = computed(() => {
     const t = tournament.value
@@ -102,7 +101,9 @@ export function useTournamentCeremonies(
     if (wcCount > 0) {
       const candidates = t.groups.flatMap((group) => {
         const s = group.standings[qpg]
-        return s ? [{ teamId: s.teamId, groupName: group.name, pts: s.pts, gd: s.gd, gf: s.gf }] : []
+        return s
+          ? [{ teamId: s.teamId, groupName: group.name, pts: s.pts, gd: s.gd, gf: s.gf }]
+          : []
       })
       candidates.sort((a, b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf)
       for (let i = 0; i < wcCount && i < candidates.length; i++) {
@@ -235,7 +236,13 @@ export function useTournamentCeremonies(
       store.startLeaguePlayoffBracket(t.id, "manual", orderedIds)
     } else if (ceremonyAction.value === "season") {
       const opts = ceremonySeasonOpts.value
-      startNewSeason(false, orderedIds, opts?.thirdPlace ?? false, opts?.playoffSeedMode, orderedIds)
+      startNewSeason(
+        false,
+        orderedIds,
+        opts?.thirdPlace ?? false,
+        opts?.playoffSeedMode,
+        orderedIds
+      )
     }
     ceremonyAction.value = null
   }

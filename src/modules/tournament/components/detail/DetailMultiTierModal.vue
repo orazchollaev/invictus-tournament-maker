@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue"
-import AppModal from "@/components/AppModal.vue"
+import AppModal from "@/components/ui/AppModal.vue"
 import type { Tournament } from "@/modules/tournament/types"
 import type { Team } from "@/modules/teams/types"
 import { useI18n } from "vue-i18n"

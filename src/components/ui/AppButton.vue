@@ -1,0 +1,204 @@
+<script setup lang="ts">
+/**
+ * The one button. Replaces `button.primary`, `button.danger`, `.btn-xs`,
+ * `.sm`, `.icon-btn` and the ~70 one-off `*-btn` classes scattered across
+ * the modules.
+ *
+ * variant  filled   solid accent — the single primary action on a surface
+ *          tonal    accent-tinted fill — secondary emphasis, safe to repeat
+ *          outlined bordered, surface fill — the default
+ *          text     no border, no fill — toolbars and dense rows
+ *          danger   destructive; pair with `filled` intent via `solid`
+ */
+withDefaults(
+  defineProps<{
+    variant?: "filled" | "tonal" | "outlined" | "text" | "danger"
+    size?: "xs" | "sm" | "md"
+    /** Square button sized for a single icon. */
+    iconOnly?: boolean
+    /** Fully rounded — for chip-like actions. */
+    pill?: boolean
+    /** Stretch to the container width. */
+    block?: boolean
+    /** Solid fill for the `danger` variant. */
+    solid?: boolean
+    disabled?: boolean
+    type?: "button" | "submit" | "reset"
+  }>(),
+  {
+    variant: "outlined",
+    size: "sm",
+    type: "button",
+  }
+)
+</script>
+
+<template>
+  <button
+    :type="type"
+    :disabled="disabled"
+    class="btn"
+    :class="[
+      `btn--${variant}`,
+      `btn--${size}`,
+      {
+        'btn--icon': iconOnly,
+        'btn--pill': pill,
+        'btn--block': block,
+        'btn--solid': solid,
+      },
+    ]"
+  >
+    <slot />
+  </button>
+</template>
+
+<style scoped>
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-1);
+  font-family: var(--font-ui);
+  font-weight: 600;
+  line-height: 1.4;
+  white-space: nowrap;
+  cursor: pointer;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--text);
+  transition:
+    background var(--dur-fast) var(--ease),
+    border-color var(--dur-fast) var(--ease),
+    box-shadow var(--dur-fast) var(--ease),
+    color var(--dur-fast) var(--ease),
+    transform var(--dur-fast) var(--ease);
+}
+
+/* ── Sizes ───────────────────────────────────────────────────── */
+.btn--xs {
+  font-size: var(--fs-xs);
+  padding: var(--sp-1) var(--sp-2);
+}
+.btn--sm {
+  font-size: var(--fs-sm);
+  padding: var(--sp-2) var(--sp-3);
+}
+.btn--md {
+  font-size: var(--fs-base);
+  padding: var(--sp-2) var(--sp-4);
+}
+
+.btn--icon {
+  padding: 0;
+  gap: 0;
+}
+.btn--icon.btn--xs {
+  width: 24px;
+  height: 24px;
+}
+.btn--icon.btn--sm {
+  width: 28px;
+  height: 28px;
+}
+.btn--icon.btn--md {
+  width: 32px;
+  height: 32px;
+}
+
+.btn--pill {
+  border-radius: var(--radius-pill);
+}
+.btn--block {
+  display: flex;
+  width: 100%;
+}
+
+/* ── Variants ────────────────────────────────────────────────── */
+.btn--outlined {
+  background: var(--surface);
+  border-color: var(--border);
+}
+.btn--outlined:hover:not(:disabled) {
+  background: var(--accent-subtle);
+  border-color: var(--accent);
+  color: var(--accent);
+  box-shadow: var(--elev-1);
+}
+
+.btn--filled {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
+  box-shadow: var(--elev-1);
+}
+.btn--filled:hover:not(:disabled) {
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+  box-shadow: var(--elev-2);
+  transform: translateY(-1px);
+}
+.btn--filled:active:not(:disabled) {
+  transform: translateY(0) scale(0.97);
+}
+
+.btn--tonal {
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 30%, transparent);
+  color: var(--accent);
+}
+.btn--tonal:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--accent) 20%, transparent);
+  border-color: var(--accent);
+}
+
+.btn--text {
+  color: var(--text-muted);
+}
+.btn--text:hover:not(:disabled) {
+  background: var(--bg-hover);
+  color: var(--text);
+}
+
+.btn--danger {
+  background: var(--surface);
+  border-color: var(--danger);
+  color: var(--danger);
+}
+.btn--danger:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--danger) 12%, var(--surface));
+  box-shadow: var(--elev-1);
+}
+.btn--danger.btn--solid {
+  background: var(--danger);
+  border-color: var(--danger);
+  color: var(--on-accent);
+}
+.btn--danger.btn--solid:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--danger) 85%, #000);
+  border-color: color-mix(in srgb, var(--danger) 85%, #000);
+}
+
+/* ── Shared states ───────────────────────────────────────────── */
+.btn:active:not(:disabled) {
+  transform: scale(0.96);
+}
+.btn:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn,
+  .btn:active:not(:disabled),
+  .btn--filled:hover:not(:disabled) {
+    transition: none;
+    transform: none;
+  }
+}
+</style>

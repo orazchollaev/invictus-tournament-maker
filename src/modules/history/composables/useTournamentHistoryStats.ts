@@ -144,7 +144,12 @@ export function useTournamentHistoryStats(completedSeasons: ComputedRef<Tourname
         const s = standings[pos]
         if (!s) return null
         const team = teamById(s.teamId)
-        return { name: team?.name ?? "?", color: team?.color ?? "#888", flag: team?.flag, pts: s.pts }
+        return {
+          name: team?.name ?? "?",
+          color: team?.color ?? "#888",
+          flag: team?.flag,
+          pts: s.pts,
+        }
       }
       return { season: t.season, first: getAt(0), second: getAt(1), third: getAt(2) }
     })
@@ -291,7 +296,12 @@ export function useTournamentHistoryStats(completedSeasons: ComputedRef<Tourname
     if (teamGoals.size) {
       const [topId, topG] = [...teamGoals.entries()].reduce((a, b) => (b[1] > a[1] ? b : a))
       const t = teamById(topId)
-      topScoringTeam = { name: t?.name ?? "?", color: t?.color ?? "#888", flag: t?.flag, goals: topG }
+      topScoringTeam = {
+        name: t?.name ?? "?",
+        color: t?.color ?? "#888",
+        flag: t?.flag,
+        goals: topG,
+      }
     }
 
     // Most clean sheets

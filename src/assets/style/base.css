@@ -43,7 +43,7 @@ a:hover {
 /* ── Accessible focus ── */
 :focus-visible {
   outline: none;
-  box-shadow: 0 0 0 3px var(--accent-subtle);
+  box-shadow: var(--focus-ring);
   border-radius: var(--radius-sm);
 }
 

@@ -3,7 +3,7 @@ import { computed } from "vue"
 import { useSettingsStore } from "../store"
 import { useI18n } from "vue-i18n"
 import { Sparkles } from "@lucide/vue"
-import BtnGroup from "@/components/BtnGroup.vue"
+import BtnGroup from "@/components/ui/BtnGroup.vue"
 import SettingDesc from "./SettingDesc.vue"
 
 const { t } = useI18n()

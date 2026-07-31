@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, watch } from "vue"
 import { Trophy, LayoutGrid, List } from "@lucide/vue"
-import AppStepper from "@/components/AppStepper.vue"
+import AppStepper from "@/components/ui/AppStepper.vue"
 
 type TournamentFormat = "bracket" | "group+bracket" | "league"
 

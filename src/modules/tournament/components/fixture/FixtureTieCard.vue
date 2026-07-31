@@ -266,7 +266,9 @@ function hasPen(result: MatchResult | null | undefined): boolean {
             <button
               class="abt ok"
               :disabled="editor.mode === 'penalty' && editor.penHome === editor.penAway"
-              @click="editor.mode === 'penalty' ? $emit('save-pens', match, 2) : $emit('save', match, 2)"
+              @click="
+                editor.mode === 'penalty' ? $emit('save-pens', match, 2) : $emit('save', match, 2)
+              "
             >
               <Check :size="11" />
             </button>

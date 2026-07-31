@@ -3,7 +3,7 @@ import { computed } from "vue"
 import { useSettingsStore } from "../store"
 import { useI18n } from "vue-i18n"
 import { Dices } from "@lucide/vue"
-import ToggleSwitch from "@/components/ToggleSwitch.vue"
+import ToggleSwitch from "@/components/ui/ToggleSwitch.vue"
 import SettingDesc from "./SettingDesc.vue"
 
 const { t } = useI18n()

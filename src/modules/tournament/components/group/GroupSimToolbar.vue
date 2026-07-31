@@ -28,16 +28,16 @@ const showSimMenu = ref(false)
         <ChevronDown :size="12" class="sim-chevron" :class="{ open: showSimMenu }" />
       </button>
       <div v-if="showSimMenu" class="sim-dropdown-panel">
-        <button :disabled="allDone" @click="(($emit('simWeek'), (showSimMenu = false)))">
+        <button :disabled="allDone" @click="($emit('simWeek'), (showSimMenu = false))">
           Sim Week
         </button>
-        <button :disabled="allDone" @click="(($emit('simAll'), (showSimMenu = false)))">
+        <button :disabled="allDone" @click="($emit('simAll'), (showSimMenu = false))">
           Simulate All
         </button>
         <template v-for="(g, gi) in groups" :key="gi">
           <button
             v-if="g.matches.some((m) => !m.result)"
-            @click="(($emit('simGroup', gi), (showSimMenu = false)))"
+            @click="($emit('simGroup', gi), (showSimMenu = false))"
           >
             Sim {{ g.name }}
           </button>
@@ -64,7 +64,12 @@ const showSimMenu = ref(false)
       </button>
     </template>
 
-    <button v-if="allDone" class="primary advance-btn" style="margin-left: auto" @click="$emit('advance')">
+    <button
+      v-if="allDone"
+      class="primary advance-btn"
+      style="margin-left: auto"
+      @click="$emit('advance')"
+    >
       <Check :size="14" />
       Advance to Knockout →
     </button>

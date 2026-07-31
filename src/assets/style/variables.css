@@ -1,35 +1,62 @@
+/* ════════════════════════════════════════════════════════════════
+   Design tokens — single source of truth.
+   Nothing outside this file may hardcode a colour, spacing step,
+   font size, duration, easing, elevation or z-index.
+   ════════════════════════════════════════════════════════════════ */
+
 :root {
+  /* ── Surfaces & text ─────────────────────────────────────────── */
   --bg: #f1f4f9;
   --surface: #ffffff;
   --border: #d7dee8;
   --border-light: #edf1f6;
   --text: #2a3345;
   --text-muted: #64748b;
+
+  /* ── Brand ───────────────────────────────────────────────────── */
   --accent: #0d9488;
   --accent-hover: #0f766e;
   --accent-subtle: color-mix(in srgb, var(--accent) 10%, transparent);
   --accent-2: #f6a823;
+  /* Text/icons drawn on top of an --accent fill. */
+  --on-accent: #ffffff;
+
+  /* ── Status ──────────────────────────────────────────────────── */
   --danger: #ef4444;
   --success: #10a37f;
+  --warning: #f6a823;
+  /* Distinct from --success: "in progress right now", not "passed". */
+  --live: #22c55e;
+  /* Drawn matches. Reads as muted today but is its own role. */
+  --draw: var(--text-muted);
+
+  /* ── Podium & ranking ────────────────────────────────────────── */
+  --gold: #c9a227;
+  --gold-soft: color-mix(in srgb, var(--gold) 20%, transparent);
+  --gold-faint: color-mix(in srgb, var(--gold) 12%, transparent);
+  --gold-glow: color-mix(in srgb, var(--gold) 40%, transparent);
+  --medal-gold: var(--accent-2);
+  --medal-silver: #94a3b8;
+  --medal-bronze: #b45309;
+  /* League table positions 2 and 3 (promotion/playoff bands). */
+  --pos-2: #3b82f6;
+  --pos-3: #8b5cf6;
+
+  /* ── Interaction ─────────────────────────────────────────────── */
+  --bg-hover: color-mix(in srgb, var(--text) 6%, transparent);
+  --state-hover: 8%;
+  --state-focus: 10%;
+  --state-pressed: 12%;
+  --focus-ring: 0 0 0 3px var(--accent-subtle);
+
+  /* ── Overlays ────────────────────────────────────────────────── */
+  --scrim: rgba(15, 23, 42, 0.45);
+  --scrim-strong: rgba(15, 23, 42, 0.62);
+
+  /* ── Type ────────────────────────────────────────────────────── */
   --font: "IBM Plex Sans Variable", sans-serif;
   --font-ui: "IBM Plex Sans Variable", sans-serif;
-
-  --sp-1: 4px;
-  --sp-2: 8px;
-  --sp-3: 12px;
-  --sp-4: 16px;
-  --sp-5: 24px;
-  --sp-6: 32px;
-  --sp-7: 48px;
-
-  --radius-sm: 6px;
-  --radius: 8px;
-  --radius-lg: 12px;
-  --radius-pill: 999px;
-
-  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06), 0 1px 3px rgba(15, 23, 42, 0.04);
-  --shadow-md: 0 2px 6px rgba(15, 23, 42, 0.08), 0 6px 16px rgba(15, 23, 42, 0.06);
-  --shadow-lg: 0 8px 24px rgba(15, 23, 42, 0.12), 0 18px 48px rgba(15, 23, 42, 0.14);
+  --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", "Roboto Mono", monospace;
 
   --fs-xs: 11px;
   --fs-sm: 12px;
@@ -39,11 +66,50 @@
   --fs-xl: 22px;
   --fs-2xl: 28px;
 
+  /* ── Spacing — strict 4px scale ──────────────────────────────── */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 24px;
+  --sp-6: 32px;
+  --sp-7: 48px;
+
+  /* ── Shape ───────────────────────────────────────────────────── */
+  --radius-sm: 6px;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --radius-pill: 999px;
+
+  /* ── Elevation ───────────────────────────────────────────────── */
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06), 0 1px 3px rgba(15, 23, 42, 0.04);
+  --shadow-md: 0 2px 6px rgba(15, 23, 42, 0.08), 0 6px 16px rgba(15, 23, 42, 0.06);
+  --shadow-lg: 0 8px 24px rgba(15, 23, 42, 0.12), 0 18px 48px rgba(15, 23, 42, 0.14);
+
+  --elev-0: none;
+  --elev-1: var(--shadow-sm);
+  --elev-2: var(--shadow-md);
+  --elev-3: var(--shadow-lg);
+
+  /* ── Motion ──────────────────────────────────────────────────── */
   --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
   --dur-fast: 0.12s;
   --dur: 0.2s;
   --dur-2: 0.25s;
   --dur-slow: 0.35s;
+
+  /* ── Layout ──────────────────────────────────────────────────── */
+  --header-height: 52px;
+  --sticky-top: calc(var(--header-height) + env(safe-area-inset-top));
+
+  /* ── Stacking order ──────────────────────────────────────────── */
+  --z-sticky: 9;
+  --z-header: 10;
+  --z-dropdown: 200;
+  --z-overlay: 300;
+  --z-modal: 1000;
+  --z-toast: 9000;
 }
 
 [data-theme="dark"] {
@@ -53,12 +119,29 @@
   --border-light: #2a2f3a;
   --text: #f1f5f9;
   --text-muted: #9aa7bd;
+
   --accent: #14b8a6;
   --accent-hover: #2dd4bf;
   --accent-subtle: color-mix(in srgb, var(--accent) 12%, transparent);
   --accent-2: #fbbf24;
+  --on-accent: #0b1114;
+
   --danger: #f87171;
   --success: #34d399;
+  --warning: #fbbf24;
+  --live: #4ade80;
+
+  --gold: #d9b843;
+  --medal-silver: #cbd5e1;
+  --medal-bronze: #d97706;
+  --pos-2: #60a5fa;
+  --pos-3: #a78bfa;
+
+  --bg-hover: color-mix(in srgb, var(--text) 10%, transparent);
+
+  --scrim: rgba(0, 0, 0, 0.55);
+  --scrim-strong: rgba(0, 0, 0, 0.7);
+
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3), 0 1px 3px rgba(0, 0, 0, 0.2);
   --shadow-md: 0 2px 6px rgba(0, 0, 0, 0.35), 0 6px 16px rgba(0, 0, 0, 0.3);
   --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.45), 0 18px 48px rgba(0, 0, 0, 0.5);

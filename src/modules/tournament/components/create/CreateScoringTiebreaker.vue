@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import AppStepper from "@/components/AppStepper.vue"
-import BtnGroup from "@/components/BtnGroup.vue"
+import AppStepper from "@/components/ui/AppStepper.vue"
+import BtnGroup from "@/components/ui/BtnGroup.vue"
 import type { Tiebreaker } from "@/modules/tournament/types"
 import { useI18n } from "vue-i18n"
 

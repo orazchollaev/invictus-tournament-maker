@@ -4,7 +4,7 @@ import { useSettingsStore } from "../store"
 import type { Theme } from "../store"
 import { useI18n } from "vue-i18n"
 import { Palette } from "@lucide/vue"
-import BtnGroup from "@/components/BtnGroup.vue"
+import BtnGroup from "@/components/ui/BtnGroup.vue"
 import SettingDesc from "./SettingDesc.vue"
 
 const { t } = useI18n()

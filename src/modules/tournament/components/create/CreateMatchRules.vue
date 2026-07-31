@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue"
 import { useI18n } from "vue-i18n"
-import BtnGroup from "@/components/BtnGroup.vue"
+import BtnGroup from "@/components/ui/BtnGroup.vue"
 import type { LegMode, PlayoffSeedMode } from "@/modules/tournament/types"
 import { useLegOptions } from "@/modules/tournament/composables/useLegOptions"
 

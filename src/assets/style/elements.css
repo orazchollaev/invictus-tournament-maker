@@ -1,3 +1,7 @@
+/* ── Bare element defaults ───────────────────────────────────────
+   Only unclassed elements. Button variants live in AppButton, table
+   styling in AppTable — the rules below are the floor, not the system. */
+
 button {
   font-family: var(--font-ui);
   font-size: var(--fs-sm);
@@ -27,23 +31,27 @@ button:hover {
   background: var(--accent-subtle);
   border-color: var(--accent);
   color: var(--accent);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--elev-1);
 }
 
+button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Legacy variants — superseded by AppButton's `variant` prop. */
 button.primary {
   background: var(--accent);
-  background-image: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.08));
-  color: #fff;
-  border-color: var(--accent-hover);
-  box-shadow: var(--shadow-sm);
+  color: var(--on-accent);
+  border-color: var(--accent);
+  box-shadow: var(--elev-1);
 }
 
 button.primary:hover {
   background: var(--accent-hover);
-  background-image: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.1));
-  color: #fff;
+  color: var(--on-accent);
   border-color: var(--accent-hover);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--elev-2);
   transform: translateY(-1px);
 }
 
@@ -60,14 +68,10 @@ button.danger:hover {
   background: color-mix(in srgb, var(--danger) 12%, var(--surface));
   color: var(--danger);
   border-color: var(--danger);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--elev-1);
 }
 
-button:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
+/* ── Form controls ───────────────────────────────────────────── */
 input,
 select {
   font-family: var(--font-ui);
@@ -78,15 +82,15 @@ select {
   background: var(--surface);
   color: var(--text);
   transition:
-    border-color var(--dur-fast),
-    box-shadow var(--dur-fast);
+    border-color var(--dur-fast) var(--ease),
+    box-shadow var(--dur-fast) var(--ease);
 }
 
 input:focus,
 select:focus {
   outline: none;
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px var(--accent-subtle);
+  box-shadow: var(--focus-ring);
 }
 
 input[type="number"]::-webkit-outer-spin-button,
@@ -95,6 +99,7 @@ input[type="number"]::-webkit-inner-spin-button {
   margin: 0;
 }
 
+/* ── Tables ──────────────────────────────────────────────────── */
 table {
   border-collapse: collapse;
   width: 100%;
@@ -119,12 +124,22 @@ th {
 @media (max-width: 640px) {
   input,
   select {
-    font-size: 16px; /* prevents iOS zoom on focus */
+    /* 16px is the iOS zoom-on-focus threshold — deliberately off-scale. */
+    font-size: 16px;
   }
 
   th,
   td {
     padding: var(--sp-1) var(--sp-2);
     font-size: var(--fs-sm);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  button,
+  button:active:not(:disabled),
+  button.primary:hover {
+    transition: none;
+    transform: none;
   }
 }

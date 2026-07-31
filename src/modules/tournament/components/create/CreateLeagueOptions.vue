@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, watch } from "vue"
-import AppStepper from "@/components/AppStepper.vue"
-import BtnGroup from "@/components/BtnGroup.vue"
+import AppStepper from "@/components/ui/AppStepper.vue"
+import BtnGroup from "@/components/ui/BtnGroup.vue"
 import type { LegMode, LeaguePlayoffSeedMode } from "@/modules/tournament/types"
 import type { Team } from "@/modules/teams/types"
 import { useLegOptions } from "@/modules/tournament/composables/useLegOptions"
