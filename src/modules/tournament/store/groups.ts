@@ -11,15 +11,7 @@ import {
   allGroupsDone,
   seedBracketFromGroups,
 } from "@/engine"
-
-function adjustedTeams(teams: Team[], t: Tournament): Team[] {
-  const adj = t.teamPowerAdjustments
-  if (!adj || Object.keys(adj).length === 0) return teams
-  return teams.map((team) => {
-    const delta = adj[team.id] ?? 0
-    return delta === 0 ? team : { ...team, power: Math.max(1, Math.min(100, team.power + delta)) }
-  })
-}
+import { adjustedTeams } from "./helpers"
 
 export function useGroupActions(tournaments: Ref<Tournament[]>, getTeams: () => Team[]) {
   function setGroupResult(

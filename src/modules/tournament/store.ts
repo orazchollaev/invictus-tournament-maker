@@ -1,20 +1,20 @@
 // modules/tournament/store.ts
+//
+// Composition root. It owns the two pieces of state and wires the action
+// slices together; the slices own the rules. Nothing here should grow a
+// third responsibility -- if an action needs more than dispatching across
+// slices, it belongs in a slice.
 import { defineStore } from "pinia"
 import { ref } from "vue"
 import type { Tournament, Tiebreaker, LegMode } from "./types"
 import {
-  recalcStandings,
-  recalcLeagueStandings,
   createMultiTierLeague,
-  allLeagueDone,
-  getLeagueWinner,
-  allTiersDone,
-  getTiersWinner,
   getLeaguePlayoffData,
   canStartLeaguePlayoff,
   seedLeaguePlayoffBracket,
 } from "@/engine"
 import { useTeamsStore } from "../teams/store"
+import { makeWithTournament, assertNoSliceCollisions } from "./store/helpers"
 import { useCrudActions } from "./store/crud"
 import { useBracketActions } from "./store/bracket"
 import { useThirdPlaceActions } from "./store/third-place"
@@ -22,6 +22,7 @@ import { useGroupActions } from "./store/groups"
 import { useDrawActions } from "./store/draw"
 import { useLeagueActions } from "./store/league"
 import { useLeaguePlayoffActions } from "./store/leaguePlayoff"
+import { useScoringActions } from "./store/scoring"
 
 export const useTournamentStore = defineStore("tournament", () => {
   const tournaments = ref<Tournament[]>([])
@@ -31,6 +32,8 @@ export const useTournamentStore = defineStore("tournament", () => {
     return useTeamsStore().teams
   }
 
+  const withTournament = makeWithTournament(tournaments)
+
   const thirdPlace = useThirdPlaceActions(tournaments, getTeams)
   const crud = useCrudActions(tournaments, active, getTeams)
   const bracket = useBracketActions(tournaments, getTeams, thirdPlace.simulateThirdPlace)
@@ -38,135 +41,19 @@ export const useTournamentStore = defineStore("tournament", () => {
   const draw = useDrawActions(tournaments, getTeams)
   const leagueActions = useLeagueActions(tournaments, getTeams)
   const leaguePlayoff = useLeaguePlayoffActions(tournaments, getTeams)
+  const scoring = useScoringActions(tournaments)
 
-  function setTiebreaker(tournamentId: string, tiebreaker: Tiebreaker) {
-    const t = tournaments.value.find((t) => t.id === tournamentId)
-    if (!t) return
-    t.tiebreaker = tiebreaker
-    const winPts = t.winPoints ?? 3
-    const drawPts = t.drawPoints ?? 1
-    const lossPts = t.lossPoints ?? 0
-    if (t.format === "league") {
-      if (t.tiers?.length) {
-        t.tiers.forEach((tier) =>
-          recalcLeagueStandings(
-            tier.league,
-            tiebreaker,
-            winPts,
-            drawPts,
-            lossPts,
-            t.teamPointAdjustments
-          )
-        )
-      } else if (t.league) {
-        recalcLeagueStandings(
-          t.league,
-          tiebreaker,
-          winPts,
-          drawPts,
-          lossPts,
-          t.teamPointAdjustments
-        )
-      }
-    } else if (t.groups) {
-      t.groups.forEach((g) =>
-        recalcStandings(g, tiebreaker, winPts, drawPts, lossPts, t.teamPointAdjustments)
-      )
-    }
-  }
-
-  function setPointsConfig(
-    tournamentId: string,
-    winPoints: number,
-    drawPoints: number,
-    lossPoints: number
-  ) {
-    const t = tournaments.value.find((t) => t.id === tournamentId)
-    if (!t) return
-    t.winPoints = winPoints
-    t.drawPoints = drawPoints
-    t.lossPoints = lossPoints
-    if (t.format === "league") {
-      if (t.tiers?.length) {
-        t.tiers.forEach((tier) =>
-          recalcLeagueStandings(
-            tier.league,
-            t.tiebreaker,
-            winPoints,
-            drawPoints,
-            lossPoints,
-            t.teamPointAdjustments
-          )
-        )
-        if (allTiersDone(t) && !getLeaguePlayoffData(t)?.enabled) t.winnerId = getTiersWinner(t)
-      } else if (t.league) {
-        recalcLeagueStandings(
-          t.league,
-          t.tiebreaker,
-          winPoints,
-          drawPoints,
-          lossPoints,
-          t.teamPointAdjustments
-        )
-        if (allLeagueDone(t) && !getLeaguePlayoffData(t)?.enabled) t.winnerId = getLeagueWinner(t)
-      }
-    } else if (t.groups) {
-      t.groups.forEach((g) =>
-        recalcStandings(g, t.tiebreaker, winPoints, drawPoints, lossPoints, t.teamPointAdjustments)
-      )
-    }
-  }
-
-  function setTeamPointAdjustment(tournamentId: string, teamId: string, value: number) {
-    const t = tournaments.value.find((t) => t.id === tournamentId)
-    if (!t) return
-    if (!t.teamPointAdjustments) t.teamPointAdjustments = {}
-    if (value === 0) {
-      delete t.teamPointAdjustments[teamId]
-    } else {
-      t.teamPointAdjustments[teamId] = value
-    }
-    const winPts = t.winPoints ?? 3
-    const drawPts = t.drawPoints ?? 1
-    const lossPts = t.lossPoints ?? 0
-    if (t.format === "league") {
-      if (t.tiers?.length) {
-        t.tiers.forEach((tier) =>
-          recalcLeagueStandings(
-            tier.league,
-            t.tiebreaker,
-            winPts,
-            drawPts,
-            lossPts,
-            t.teamPointAdjustments
-          )
-        )
-      } else if (t.league) {
-        recalcLeagueStandings(
-          t.league,
-          t.tiebreaker,
-          winPts,
-          drawPts,
-          lossPts,
-          t.teamPointAdjustments
-        )
-      }
-    } else if (t.groups) {
-      t.groups.forEach((g) =>
-        recalcStandings(g, t.tiebreaker, winPts, drawPts, lossPts, t.teamPointAdjustments)
-      )
-    }
-  }
-
-  function setTeamPowerAdjustment(tournamentId: string, teamId: string, value: number) {
-    const t = tournaments.value.find((t) => t.id === tournamentId)
-    if (!t) return
-    if (!t.teamPowerAdjustments) t.teamPowerAdjustments = {}
-    if (value === 0) {
-      delete t.teamPowerAdjustments[teamId]
-    } else {
-      t.teamPowerAdjustments[teamId] = value
-    }
+  if (import.meta.env.DEV) {
+    assertNoSliceCollisions({
+      crud,
+      bracket,
+      thirdPlace,
+      groups,
+      draw,
+      leagueActions,
+      leaguePlayoff,
+      scoring,
+    })
   }
 
   function createMultiTierLeagueTournament(
@@ -198,33 +85,36 @@ export const useTournamentStore = defineStore("tournament", () => {
     return newT.id
   }
 
+  /** One "Simulate All" plays out the whole structure, whatever it is. */
   function simulateTournament(tournamentId: string) {
-    const t = tournaments.value.find((t) => t.id === tournamentId)
-    if (!t) return
-    if (t.format === "league") {
-      if (t.tiers?.length) {
-        leagueActions.simAllTiers(tournamentId)
-      } else {
-        leagueActions.simAllLeague(tournamentId)
+    withTournament(tournamentId, (t) => {
+      if (t.format === "league") {
+        if (t.tiers?.length) {
+          leagueActions.simAllTiers(tournamentId)
+        } else {
+          leagueActions.simAllLeague(tournamentId)
+        }
+        // Auto-seed the playoff bracket once the season is done (like
+        // group -> bracket), then play it out.
+        const data = getLeaguePlayoffData(t)
+        if (data?.enabled && !data.started && canStartLeaguePlayoff(t)) {
+          seedLeaguePlayoffBracket(t, getTeams(), data.seedMode)
+        }
+        if (t.rounds.length && getLeaguePlayoffData(t)?.started) {
+          bracket.simulateAll(tournamentId)
+        }
+        return
       }
-      // Auto-seed the playoff bracket once the season is done (like group→bracket),
-      // then play it out — so one "Simulate All" runs the whole structure.
-      const data = getLeaguePlayoffData(t)
-      if (data?.enabled && !data.started && canStartLeaguePlayoff(t)) {
-        seedLeaguePlayoffBracket(t, getTeams(), data.seedMode)
+
+      if (t.format === "group+bracket") {
+        groups.simAllGroups(tournamentId)
+        // Only seed the bracket if it hasn't been seeded yet — re-seeding
+        // would rebuild rounds and wipe knockout matches already played.
+        if (!t.groupsDone) groups.advanceToBracket(tournamentId)
       }
-      if (t.rounds.length && getLeaguePlayoffData(t)?.started) {
-        bracket.simulateAll(tournamentId)
-      }
-      return
-    }
-    if (t.format === "group+bracket") {
-      groups.simAllGroups(tournamentId)
-      // Only seed the bracket if it hasn't been seeded yet — re-seeding would
-      // rebuild rounds and wipe any knockout matches already played.
-      if (!t.groupsDone) groups.advanceToBracket(tournamentId)
-    }
-    bracket.simulateAll(tournamentId)
+
+      bracket.simulateAll(tournamentId)
+    })
   }
 
   return {
@@ -237,11 +127,8 @@ export const useTournamentStore = defineStore("tournament", () => {
     ...draw,
     ...leagueActions,
     ...leaguePlayoff,
-    simulateTournament,
-    setTiebreaker,
-    setPointsConfig,
+    ...scoring,
     createMultiTierLeagueTournament,
-    setTeamPointAdjustment,
-    setTeamPowerAdjustment,
+    simulateTournament,
   }
 })
