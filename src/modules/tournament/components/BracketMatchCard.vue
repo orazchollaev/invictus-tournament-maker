@@ -6,34 +6,30 @@ import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
 import { getWinnerId } from "@/engine"
 import { Pencil, Shuffle, X, Check } from "@lucide/vue"
 
-const props = defineProps<{
-  match: Match & { _origRound: number; _origMatch: number }
-  teams: Team[]
-  isFinal?: boolean
-  isExporting?: boolean
-  dimmed?: boolean
-}>()
+const props = withDefaults(
+  defineProps<{
+    match: Match
+    teams: Team[]
+    /** "third-place" drops the champion/dim treatment and uses the bronze accent. */
+    variant?: "match" | "third-place"
+    isFinal?: boolean
+    isExporting?: boolean
+    dimmed?: boolean
+  }>(),
+  { variant: "match" }
+)
 
+/**
+ * Emits carry no round/match indices — the parent owns the bracket coordinates and
+ * already has them in scope at the call site. That keeps this card usable for the
+ * third-place match, which has no position in the round grid.
+ */
 const emit = defineEmits<{
-  "set-result": [
-    round: number,
-    match: number,
-    home: number,
-    away: number,
-    penHome?: number,
-    penAway?: number,
-  ]
-  "set-leg2-result": [
-    round: number,
-    match: number,
-    home: number,
-    away: number,
-    penHome?: number,
-    penAway?: number,
-  ]
-  "sim-match": [round: number, match: number]
-  "sim-leg1": [round: number, match: number]
-  "sim-leg2": [round: number, match: number]
+  "set-result": [home: number, away: number, penHome?: number, penAway?: number]
+  "set-leg2-result": [home: number, away: number, penHome?: number, penAway?: number]
+  "sim-match": []
+  "sim-leg1": []
+  "sim-leg2": []
   "hover-team": [teamId: string | null]
 }>()
 
@@ -89,20 +85,12 @@ function singleSave() {
     sMode.value = "penalty"
     return
   }
-  emit("set-result", props.match._origRound, props.match._origMatch, editH.value, editA.value)
+  emit("set-result", editH.value, editA.value)
   sMode.value = "off"
 }
 function singlePenSave() {
   if (editPH.value === editPA.value) return
-  emit(
-    "set-result",
-    props.match._origRound,
-    props.match._origMatch,
-    editH.value,
-    editA.value,
-    editPH.value,
-    editPA.value
-  )
+  emit("set-result", editH.value, editA.value, editPH.value, editPA.value)
   sMode.value = "off"
 }
 
@@ -127,10 +115,8 @@ function legCancel() {
   dblPick.value = "idle"
 }
 function legSave() {
-  const ri = props.match._origRound,
-    mi = props.match._origMatch
   if (editingLeg.value === 1) {
-    emit("set-result", ri, mi, editH.value, editA.value)
+    emit("set-result", editH.value, editA.value)
     editingLeg.value = null
     return
   }
@@ -141,20 +127,12 @@ function legSave() {
     editPA.value = 0
     return
   }
-  emit("set-leg2-result", ri, mi, editH.value, editA.value)
+  emit("set-leg2-result", editH.value, editA.value)
   editingLeg.value = null
 }
 function legPenSave() {
   if (editPH.value === editPA.value) return
-  emit(
-    "set-leg2-result",
-    props.match._origRound,
-    props.match._origMatch,
-    editH.value,
-    editA.value,
-    editPH.value,
-    editPA.value
-  )
+  emit("set-leg2-result", editH.value, editA.value, editPH.value, editPA.value)
   editingLeg.value = null
   legMode.value = "score"
 }
@@ -162,20 +140,31 @@ function dblSelectLeg(leg: 1 | 2) {
   if (dblPick.value === "edit") {
     legEdit(leg)
   } else {
-    if (leg === 1) emit("sim-leg1", props.match._origRound, props.match._origMatch)
-    else emit("sim-leg2", props.match._origRound, props.match._origMatch)
+    if (leg === 1) emit("sim-leg1")
+    else emit("sim-leg2")
     dblPick.value = "idle"
   }
 }
 
 const isEditing = computed(() => sMode.value !== "off" || editingLeg.value !== null)
 const isChampion = computed(() => props.isFinal && !!props.match.result)
+/** ✓ is inert while a penalty shootout is still level — a tie cannot be committed. */
+const saveDisabled = computed(() =>
+  isDouble.value
+    ? legMode.value === "penalty" && editPH.value === editPA.value
+    : sMode.value === "penalty" && editPH.value === editPA.value
+)
 </script>
 
 <template>
   <div
     class="mc"
-    :class="{ final: isFinal, dimmed, champion: isChampion }"
+    :class="{
+      final: isFinal,
+      dimmed,
+      champion: isChampion,
+      'mc--third': variant === 'third-place',
+    }"
     @mouseleave="$emit('hover-team', null)"
   >
     <!-- ── Left: team names ── -->
@@ -326,6 +315,7 @@ const isChampion = computed(() => props.isFinal && !!props.match.result)
         <template v-if="isEditing">
           <button
             class="abt ok"
+            :disabled="saveDisabled"
             @click="
               isDouble
                 ? legMode === 'penalty'
@@ -352,11 +342,7 @@ const isChampion = computed(() => props.isFinal && !!props.match.result)
         <!-- Single-leg idle -->
         <template v-else-if="!isDouble">
           <button class="abt" title="Edit" @click="singleEdit"><Pencil :size="11" /></button>
-          <button
-            class="abt"
-            title="Simulate"
-            @click="$emit('sim-match', match._origRound, match._origMatch)"
-          >
+          <button class="abt" title="Simulate" @click="$emit('sim-match')">
             <Shuffle :size="11" />
           </button>
         </template>
@@ -392,8 +378,8 @@ const isChampion = computed(() => props.isFinal && !!props.match.result)
   border: 1px solid var(--border-light);
   border-radius: var(--radius);
   background: var(--surface);
-  box-shadow: var(--shadow-sm);
-  font-size: 12px;
+  box-shadow: var(--elev-1);
+  font-size: var(--fs-sm);
   box-sizing: border-box;
   overflow: hidden;
   animation: fade-up var(--dur-slow) var(--ease) both;
@@ -403,10 +389,10 @@ const isChampion = computed(() => props.isFinal && !!props.match.result)
     filter var(--dur) var(--ease);
 }
 .mc.final {
-  border-color: #c9a227;
+  border-color: var(--gold);
   box-shadow:
-    0 0 0 1px #c9a22733,
-    0 2px 10px #c9a22720;
+    0 0 0 1px var(--gold-soft),
+    0 2px 10px var(--gold-faint);
 }
 .mc.dimmed {
   opacity: 0.22;
@@ -425,14 +411,14 @@ const isChampion = computed(() => props.isFinal && !!props.match.result)
   0%,
   100% {
     box-shadow:
-      0 0 0 1px #c9a22733,
-      0 2px 10px #c9a22720;
+      0 0 0 1px var(--gold-soft),
+      0 2px 10px var(--gold-faint);
   }
   50% {
     box-shadow:
-      0 0 0 2px #c9a22766,
-      0 0 22px #c9a22750,
-      0 0 38px #c9a22728;
+      0 0 0 2px var(--gold-glow),
+      0 0 22px var(--gold-glow),
+      0 0 38px var(--gold-soft);
   }
 }
 
@@ -455,8 +441,8 @@ const isChampion = computed(() => props.isFinal && !!props.match.result)
   box-sizing: border-box;
   overflow: hidden;
   transition:
-    background 0.1s,
-    opacity 0.1s;
+    background var(--dur-fast) var(--ease),
+    opacity var(--dur-fast) var(--ease);
 }
 .mc-row--away {
   border-bottom: none;
@@ -469,7 +455,7 @@ const isChampion = computed(() => props.isFinal && !!props.match.result)
   opacity: 0.5;
 }
 .mc.final .mc-row.winner {
-  background: color-mix(in srgb, #c9a227 12%, var(--surface));
+  background: color-mix(in srgb, var(--gold) 12%, var(--surface));
 }
 
 /* ── Score column (right of teams) ── */
@@ -491,8 +477,8 @@ const isChampion = computed(() => props.isFinal && !!props.match.result)
   border-bottom: 1px solid var(--border-light);
   box-sizing: border-box;
   transition:
-    background 0.1s,
-    opacity 0.1s;
+    background var(--dur-fast) var(--ease),
+    opacity var(--dur-fast) var(--ease);
 }
 .mc-scell--away {
   border-bottom: none;
@@ -504,13 +490,13 @@ const isChampion = computed(() => props.isFinal && !!props.match.result)
   opacity: 0.5;
 }
 .mc.final .mc-scell.winner {
-  background: color-mix(in srgb, #c9a227 12%, var(--surface));
+  background: color-mix(in srgb, var(--gold) 12%, var(--surface));
 }
 
 /* ── Score chip ── */
 .sc {
   font-weight: 700;
-  font-size: 12px;
+  font-size: var(--fs-sm);
   background: color-mix(in srgb, var(--text-muted) 10%, var(--surface));
   border-radius: var(--radius);
   padding: 1px 5px;
@@ -520,7 +506,7 @@ const isChampion = computed(() => props.isFinal && !!props.match.result)
   display: inline-flex;
   align-items: baseline;
   gap: 2px;
-  animation: score-pop 0.22s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  animation: score-pop var(--dur) var(--ease-spring) both;
 }
 .sc.tbd {
   color: var(--text-muted);
@@ -529,8 +515,8 @@ const isChampion = computed(() => props.isFinal && !!props.match.result)
   animation: none;
 }
 .mc.final .sc {
-  background: color-mix(in srgb, #c9a227 16%, var(--surface));
-  color: #b8860b;
+  background: color-mix(in srgb, var(--gold) 16%, var(--surface));
+  color: var(--gold-text);
 }
 .pen-sup {
   font-size: 9px;
@@ -540,7 +526,7 @@ const isChampion = computed(() => props.isFinal && !!props.match.result)
 
 /* Penalty edit inline (single-leg) */
 .pen-base {
-  font-size: 11px;
+  font-size: var(--fs-xs);
   font-weight: 700;
   color: var(--text-muted);
   min-width: 10px;
@@ -575,7 +561,7 @@ const isChampion = computed(() => props.isFinal && !!props.match.result)
   border: 1px solid var(--accent);
   border-radius: var(--radius);
   padding: 1px 2px;
-  font-size: 12px;
+  font-size: var(--fs-sm);
   font-weight: 700;
   color: inherit;
   flex-shrink: 0;
@@ -585,11 +571,11 @@ const isChampion = computed(() => props.isFinal && !!props.match.result)
 }
 .sinp--pen {
   width: 22px;
-  font-size: 11px;
+  font-size: var(--fs-xs);
 }
 .sinp:focus {
   outline: none;
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 20%, transparent);
+  box-shadow: 0 0 0 2px var(--accent-subtle);
 }
 .sinp::-webkit-outer-spin-button,
 .sinp::-webkit-inner-spin-button {
@@ -612,8 +598,8 @@ const isChampion = computed(() => props.isFinal && !!props.match.result)
   box-sizing: border-box;
 }
 .mc.final .mc-actions {
-  background: color-mix(in srgb, #c9a227 5%, var(--bg));
-  border-left-color: #c9a22733;
+  background: color-mix(in srgb, var(--gold) 5%, var(--bg));
+  border-left-color: var(--gold-soft);
 }
 
 /* ── Icon buttons ── */
@@ -631,9 +617,9 @@ const isChampion = computed(() => props.isFinal && !!props.match.result)
   flex-shrink: 0;
   padding: 0;
   transition:
-    color 0.1s,
-    border-color 0.1s,
-    background 0.1s;
+    color var(--dur-fast) var(--ease),
+    border-color var(--dur-fast) var(--ease),
+    background var(--dur-fast) var(--ease);
 }
 /* Leg-pick label buttons (L1 / L2) */
 .abt--leg {
@@ -670,5 +656,26 @@ const isChampion = computed(() => props.isFinal && !!props.match.result)
 .abt:disabled {
   opacity: 0.25;
   cursor: default;
+}
+
+/* ── Third-place variant ──────────────────────────────────────
+   Same anatomy, bronze accent instead of the winner-path treatment,
+   and no entry animation (it isn't part of the round cascade). */
+.mc--third {
+  border-color: color-mix(in srgb, var(--accent-2) 35%, var(--border-light));
+  box-shadow: none;
+  animation: none;
+}
+.mc--third .mc-row,
+.mc--third .mc-scell {
+  border-bottom-color: color-mix(in srgb, var(--accent-2) 25%, var(--border-light));
+}
+.mc--third .mc-row--away,
+.mc--third .mc-scell--away {
+  border-bottom: none;
+}
+.mc--third .mc-scores,
+.mc--third .mc-actions {
+  border-left-color: color-mix(in srgb, var(--accent-2) 25%, var(--border-light));
 }
 </style>

@@ -35,6 +35,8 @@
   --gold-soft: color-mix(in srgb, var(--gold) 20%, transparent);
   --gold-faint: color-mix(in srgb, var(--gold) 12%, transparent);
   --gold-glow: color-mix(in srgb, var(--gold) 40%, transparent);
+  /* Gold used as *text* — needs more contrast than the surface/border gold. */
+  --gold-text: #b8860b;
   --medal-gold: var(--accent-2);
   --medal-silver: #94a3b8;
   --medal-bronze: #b45309;
@@ -129,6 +131,7 @@
   --live: #4ade80;
 
   --gold: #d9b843;
+  --gold-text: #e8c860;
   --medal-silver: #cbd5e1;
   --medal-bronze: #d97706;
   --pos-2: #60a5fa;

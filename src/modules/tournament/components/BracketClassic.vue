@@ -3,7 +3,6 @@ import { computed, ref } from "vue"
 import type { Tournament } from "../types"
 import type { Team } from "@/modules/teams/types"
 import BracketMatchCard from "./BracketMatchCard.vue"
-import BracketThirdPlaceCard from "./BracketThirdPlaceCard.vue"
 import { type DisplayMatch, type ConnInfo, buildConnInfo } from "./bracketUtils"
 import { useSettingsStore } from "@/modules/settings/store"
 
@@ -179,11 +178,17 @@ function svgSegments(p: ConnInfo, w: number) {
                 right: 0,
                 animationDelay: `${ri * 0.08 + mi * 0.05}s`,
               }"
-              @set-result="(r, m, h, a, ph, pa) => emit('set-result', r, m, h, a, ph, pa)"
-              @set-leg2-result="(r, m, h, a, ph, pa) => emit('set-leg2-result', r, m, h, a, ph, pa)"
-              @sim-match="(r, m) => emit('sim-match', r, m)"
-              @sim-leg1="(r, m) => emit('sim-leg1', r, m)"
-              @sim-leg2="(r, m) => emit('sim-leg2', r, m)"
+              @set-result="
+                (h, a, ph, pa) =>
+                  emit('set-result', match._origRound, match._origMatch, h, a, ph, pa)
+              "
+              @set-leg2-result="
+                (h, a, ph, pa) =>
+                  emit('set-leg2-result', match._origRound, match._origMatch, h, a, ph, pa)
+              "
+              @sim-match="emit('sim-match', match._origRound, match._origMatch)"
+              @sim-leg1="emit('sim-leg1', match._origRound, match._origMatch)"
+              @sim-leg2="emit('sim-leg2', match._origRound, match._origMatch)"
               @hover-team="
                 (id) => {
                   hoveredTeamId = id
@@ -230,9 +235,11 @@ function svgSegments(p: ConnInfo, w: number) {
         <div class="round-col" :style="{ width: CARD_W + 'px' }">
           <div class="round-title tp-title">3rd Place</div>
           <div class="matches-area" :style="{ height: totalBracketH + 'px' }">
-            <BracketThirdPlaceCard
+            <BracketMatchCard
               :match="thirdPlaceMatch!"
               :teams="teams"
+              variant="third-place"
+              :is-exporting="isExporting"
               :style="{
                 position: 'absolute',
                 top: totalBracketH / 2 - CARD_H / 2 + 'px',
@@ -240,7 +247,7 @@ function svgSegments(p: ConnInfo, w: number) {
                 right: 0,
               }"
               @set-result="(h, a, ph, pa) => emit('set-third-place-result', h, a, ph, pa)"
-              @sim="emit('sim-third-place')"
+              @sim-match="emit('sim-third-place')"
             />
           </div>
         </div>
