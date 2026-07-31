@@ -73,3 +73,5 @@ export {
   seedLeaguePlayoffBracket,
   computeLeaguePlayoffPlan,
 } from "./leaguePlayoff"
+export { forEachMatch, allMatches, playedMatches, matchesForTeam, isBye } from "./matchIterator"
+export type { MatchEntry, MatchSource } from "./matchIterator"
