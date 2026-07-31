@@ -1,0 +1,30 @@
+/* Shared pan/zoom viewport chrome — used by the inline panel and the fullscreen modal.
+   The class names must stay stable: BracketMatchCard keys its champion-glow pause
+   off `.bracket-pan-layer.zooming` / `.dragging`. */
+
+.bracket-viewport {
+  overflow: hidden;
+  position: relative;
+  cursor: grab;
+  user-select: none;
+}
+
+.bracket-viewport.dragging {
+  cursor: grabbing;
+}
+
+/* The transformed layer — centered so scale grows outward from the middle. */
+.bracket-pan-layer {
+  display: inline-block;
+  transform-origin: 50% 50%;
+  /* will-change: transform is applied only while dragging/zooming (see layerStyle) —
+     keeps GPU compositing smooth during interaction without blurring the static view */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+}
+
+.bracket-pan-layer.zooming {
+  transition: transform var(--dur-fast) ease-out;
+}

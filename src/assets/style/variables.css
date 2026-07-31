@@ -105,6 +105,8 @@
   /* ── Stacking order ──────────────────────────────────────────── */
   --z-sticky: 9;
   --z-header: 10;
+  /* Fixed bottom bars sit above the header but below the floating nav (98–100). */
+  --z-bottom-bar: 90;
   --z-dropdown: 200;
   --z-overlay: 300;
   --z-modal: 1000;

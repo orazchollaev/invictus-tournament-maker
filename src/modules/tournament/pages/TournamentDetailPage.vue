@@ -132,6 +132,8 @@ const {
         :auto-height="true"
         :speed="300"
         :threshold="10"
+        :no-swiping="true"
+        no-swiping-class="swiper-no-swiping"
         @swiper="onSwiperReady"
         @slide-change="onSlideChange"
       >
