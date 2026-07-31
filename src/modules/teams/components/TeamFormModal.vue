@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, watch } from "vue"
-import AppModal from "@/components/ui/AppModal.vue"
-import ColorPicker from "@/components/ui/ColorPicker.vue"
+import { AppButton, AppField, AppIcon, AppModal, ColorPicker } from "@/components/ui"
 import FlagPicker from "./FlagPicker.vue"
 import FlagCircle from "./FlagCircle.vue"
 import { flagPrimaryColor } from "../flags"
@@ -75,8 +74,7 @@ function submit() {
     @close="emit('close')"
   >
     <div class="form">
-      <div class="field">
-        <label>{{ t("teams.form.name") }}</label>
+      <AppField layout="stack" :label="t('teams.form.name')">
         <div class="input-wrap">
           <input
             v-model="name"
@@ -85,19 +83,21 @@ function submit() {
             autofocus
             @keyup.enter="submit"
           />
-          <button
+          <AppButton
+            variant="text"
+            size="xs"
+            icon-only
             class="btn-random"
             :title="t('teams.form.randomName')"
             @click="name = randomTeamName()"
           >
-            <Shuffle :size="14" />
-          </button>
+            <AppIcon :icon="Shuffle" />
+          </AppButton>
         </div>
-      </div>
+      </AppField>
 
       <div class="field-row">
-        <div class="field">
-          <label>{{ t("teams.form.abbreviation") }}</label>
+        <AppField layout="stack" :label="t('teams.form.abbreviation')">
           <input
             v-model="abbr"
             class="input-abbr"
@@ -105,9 +105,8 @@ function submit() {
             maxlength="7"
             @keyup.enter="submit"
           />
-        </div>
-        <div class="field">
-          <label>{{ t("teams.form.power") }}</label>
+        </AppField>
+        <AppField layout="stack" :label="t('teams.form.power')">
           <input
             v-model.number="power"
             type="number"
@@ -116,32 +115,28 @@ function submit() {
             class="input-power"
             @keyup.enter="submit"
           />
-        </div>
+        </AppField>
       </div>
 
-      <div class="field">
-        <label>{{ t("teams.form.flag") }}</label>
-        <div class="flag-header">
-          <button type="button" class="btn-flag-toggle" @click="showFlagPicker = true">
-            <FlagCircle v-if="flag" :code="flag" :size="20" />
-            <span v-show="!flag">{{ t("teams.form.flagNone") }}</span>
-          </button>
-          <button v-if="flag" type="button" class="btn-flag-remove" @click="flag = undefined">
-            <X :size="12" />
-          </button>
-        </div>
-      </div>
+      <AppField layout="stack" :label="t('teams.form.flag')">
+        <AppButton class="btn-flag-toggle" @click="showFlagPicker = true">
+          <FlagCircle v-if="flag" :code="flag" :size="20" />
+          <span v-show="!flag">{{ t("teams.form.flagNone") }}</span>
+        </AppButton>
+        <AppButton v-if="flag" variant="text" size="xs" icon-only @click="flag = undefined">
+          <AppIcon :icon="X" size="xs" />
+        </AppButton>
+      </AppField>
 
-      <div class="field">
-        <label>{{ t("teams.form.color") }}</label>
+      <AppField layout="stack" :label="t('teams.form.color')">
         <ColorPicker v-model="color" />
-      </div>
+      </AppField>
 
-      <div class="form-actions">
-        <button class="primary" :disabled="!name.trim()" @click="submit">
+      <div class="modal-actions">
+        <AppButton variant="filled" :disabled="!name.trim()" @click="submit">
           {{ isEdit ? t("common.save") : t("teams.form.addTitle") }}
-        </button>
-        <button @click="modal?.close()">{{ t("common.cancel") }}</button>
+        </AppButton>
+        <AppButton @click="modal?.close()">{{ t("common.cancel") }}</AppButton>
       </div>
     </div>
   </AppModal>
@@ -161,25 +156,14 @@ function submit() {
 .form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--sp-4);
   min-width: 0;
   max-width: 100%;
 }
 
-.field {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-.field label {
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--text-muted);
-}
-
 .field-row {
   display: flex;
-  gap: 12px;
+  gap: var(--sp-3);
   align-items: flex-end;
 }
 
@@ -187,34 +171,21 @@ function submit() {
   position: relative;
   display: flex;
   align-items: center;
+  width: 100%;
 }
 
 .input-full {
   width: 100%;
-  padding-right: 32px;
+  padding-right: var(--sp-6);
 }
 
 .btn-random {
   position: absolute;
-  right: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 22px;
-  height: 22px;
-  padding: 0;
-  background: transparent;
-  border: none;
-  border-radius: var(--radius);
-  cursor: pointer;
-  color: var(--text-muted);
-  transition:
-    color 0.15s,
-    background 0.15s;
+  right: var(--sp-2);
 }
-.btn-random:hover {
-  color: var(--text);
-  background: var(--bg-hover, rgba(255, 255, 255, 0.08));
+
+.btn-flag-toggle {
+  height: 32px;
 }
 
 .input-abbr {
@@ -224,70 +195,13 @@ function submit() {
   width: 72px;
 }
 
-.form-actions {
-  display: flex;
-  gap: 8px;
-  padding-top: 4px;
-  flex-wrap: wrap;
-}
-
-.flag-header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.btn-flag-remove {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 20px;
-  height: 20px;
-  padding: 0;
-  background: transparent;
-  border: none;
-  border-radius: var(--radius);
-  cursor: pointer;
-  color: var(--text-muted);
-  transition:
-    color 0.1s,
-    background 0.1s;
-}
-.btn-flag-remove:hover {
-  color: var(--text);
-  background: color-mix(in srgb, var(--border) 60%, transparent);
-}
-
-.btn-flag-toggle {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 10px;
-  background: transparent;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  cursor: pointer;
-  font-size: 13px;
-  color: var(--text);
-  transition: background 0.1s;
-  height: 32px;
-}
-.btn-flag-toggle:hover {
-  background: var(--bg-hover, rgba(255, 255, 255, 0.08));
-}
-
 @media (max-width: 640px) {
   .field-row {
     flex-wrap: wrap;
   }
-  .input-abbr {
-    width: 100%;
-  }
+  .input-abbr,
   .input-power {
     width: 100%;
-  }
-  .form-actions > button {
-    flex: 1;
   }
 }
 </style>

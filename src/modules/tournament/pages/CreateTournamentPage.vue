@@ -405,7 +405,7 @@ function doCreate(orderedIds?: string[]) {
 }
 .btn-random:hover {
   color: var(--text);
-  background: var(--bg-hover, rgba(255, 255, 255, 0.08));
+  background: var(--bg-hover);
 }
 
 /* Step indicator */

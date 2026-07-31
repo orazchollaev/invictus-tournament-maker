@@ -191,7 +191,7 @@ const MAX = 30
   transition: background 0.12s;
 }
 .tsp-accordion-header:hover {
-  background: var(--bg-hover, rgba(128, 128, 128, 0.06));
+  background: var(--bg-hover);
 }
 
 .tsp-accordion-title-row {

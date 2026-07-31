@@ -82,9 +82,11 @@ withDefaults(
     transform var(--dur) var(--ease),
     background var(--dur-fast) var(--ease);
 }
+/* Railed cards tint their hover with the rail colour (a team's colour,
+   say) so the row reads as "this one", not just "some row". */
 .card--interactive:hover {
   border-color: var(--border);
-  background: color-mix(in srgb, var(--accent) 4%, var(--surface));
+  background: color-mix(in srgb, var(--rail-color, var(--accent)) 5%, var(--surface));
   box-shadow: var(--elev-2);
   transform: translateY(-1px);
 }

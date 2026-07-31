@@ -3,6 +3,7 @@
    button, tab, table) lives in src/components/ui/, not here. */
 
 .page {
+  height: 100%;
   max-width: 1200px;
   margin: 0 auto;
   padding: var(--sp-6) var(--sp-4);

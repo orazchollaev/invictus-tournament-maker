@@ -71,7 +71,7 @@ function close() {
     position: fixed;
     inset: 0;
     z-index: 98;
-    background: rgba(0, 0, 0, 0.25);
+    background: var(--scrim);
     backdrop-filter: blur(2px);
   }
 

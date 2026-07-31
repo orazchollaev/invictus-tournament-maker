@@ -128,7 +128,7 @@ function onNativePick(e: Event) {
 }
 
 .swatch {
-  width: 100%;
+  width: 24px;
   aspect-ratio: 1;
   border-radius: var(--radius);
   border: 2px solid transparent;

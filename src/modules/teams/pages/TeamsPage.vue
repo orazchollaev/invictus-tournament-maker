@@ -6,7 +6,7 @@ import { useSettingsStore } from "@/modules/settings/store"
 import TeamFormModal from "../components/TeamFormModal.vue"
 import TeamBadge from "../components/TeamBadge.vue"
 import type { Team } from "../types"
-import BtnGroup from "@/components/ui/BtnGroup.vue"
+import { AppButton, AppCard, AppChip, AppEmptyState, AppIcon, BtnGroup } from "@/components/ui"
 import { X, Pencil, Search, Plus, Users, List, Grid3x3 } from "@lucide/vue"
 import { MAX_TEAMS } from "@/constants"
 import { useI18n } from "vue-i18n"
@@ -19,6 +19,8 @@ const router = useRouter()
 const showAddModal = ref(false)
 const editingTeam = ref<Team | null>(null)
 const query = ref("")
+
+const isGrid = computed(() => settings.teamsListView === "grid")
 
 const viewOptions = computed(() => [
   { value: "list", label: t("tournaments.viewList"), icon: List },
@@ -39,15 +41,15 @@ const filtered = computed(() => {
         {{ t("teams.title") }}
         <span class="count">{{ store.teams.length }}/{{ MAX_TEAMS }}</span>
       </h2>
-      <button
-        class="primary"
+      <AppButton
+        variant="filled"
         :disabled="store.teams.length >= MAX_TEAMS"
         :title="store.teams.length >= MAX_TEAMS ? t('teams.limitReached', { max: MAX_TEAMS }) : ''"
         @click="showAddModal = true"
       >
-        <Plus :size="12" />
+        <AppIcon :icon="Plus" size="xs" />
         {{ t("teams.addBtn") }}
-      </button>
+      </AppButton>
     </div>
 
     <div v-if="store.teams.length" class="search-row">
@@ -60,40 +62,48 @@ const filtered = computed(() => {
 
     <div v-if="store.teams.length" class="t-list">
       <p v-if="!filtered.length" class="empty-text">{{ t("teams.noMatch", { query }) }}</p>
-      <TransitionGroup
-        name="list"
-        tag="div"
-        :class="settings.teamsListView === 'grid' ? 't-grid' : 't-list-inner'"
-      >
-        <div
+      <TransitionGroup name="list" tag="div" :class="isGrid ? 'team-grid' : 't-list-inner'">
+        <AppCard
           v-for="(team, i) in filtered"
           :key="team.id"
-          :class="settings.teamsListView === 'grid' ? 't-card' : 't-row'"
-          :style="{ '--team-color': team.color, '--i': i }"
+          rail
+          interactive
+          padding="sm"
+          class="team-card"
+          :class="{ 'team-card--grid': isGrid }"
+          :style="{ '--rail-color': team.color, '--i': i }"
           @click="router.push(`/teams/${team.id}`)"
         >
-          <div class="t-body">
-            <TeamBadge :team="team" :size="18" />
+          <TeamBadge :team="team" :size="18" class="team-card-badge" />
+          <AppChip square class="team-power">{{ team.power }}</AppChip>
+          <div class="team-actions">
+            <AppButton
+              variant="text"
+              icon-only
+              :title="t('common.edit')"
+              @click.stop="editingTeam = team"
+            >
+              <AppIcon :icon="Pencil" />
+            </AppButton>
+            <AppButton variant="danger" icon-only @click.stop="store.remove(team.id)">
+              <AppIcon :icon="X" />
+            </AppButton>
           </div>
-          <span class="t-power">{{ team.power }}</span>
-          <div class="t-actions">
-            <button class="sm icon-btn" :title="t('common.edit')" @click.stop="editingTeam = team">
-              <Pencil :size="13" />
-            </button>
-            <button class="danger sm icon-btn" @click.stop="store.remove(team.id)">
-              <X :size="13" />
-            </button>
-          </div>
-        </div>
+        </AppCard>
       </TransitionGroup>
     </div>
-    <div v-else class="empty-state">
-      <Users :size="44" class="empty-icon" />
-      <p class="empty-text">{{ t("teams.empty", { action: t("teams.addBtn") }) }}</p>
-      <button class="primary" @click="showAddModal = true">
-        {{ t("teams.addBtn") }}
-      </button>
-    </div>
+
+    <AppEmptyState
+      v-else
+      :icon="Users"
+      :description="t('teams.empty', { action: t('teams.addBtn') })"
+    >
+      <template #action>
+        <AppButton variant="filled" @click="showAddModal = true">
+          {{ t("teams.addBtn") }}
+        </AppButton>
+      </template>
+    </AppEmptyState>
 
     <TeamFormModal v-if="showAddModal" @close="showAddModal = false" />
     <TeamFormModal v-if="editingTeam" :team="editingTeam" @close="editingTeam = null" />
@@ -101,116 +111,69 @@ const filtered = computed(() => {
 </template>
 
 <style scoped>
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 60px 20px;
-  gap: 14px;
-  text-align: center;
-}
-.empty-icon {
-  color: var(--text-muted);
-  opacity: 0.25;
-}
-
 .count {
-  font-size: 13px;
+  font-size: var(--fs-base);
   font-weight: 400;
   color: var(--text-muted);
-  margin-left: 6px;
+  margin-left: var(--sp-2);
 }
 
-/* Team-colored left border + clickable */
-.t-row {
+.team-card {
   cursor: pointer;
-  border-left-color: var(--team-color, var(--border-light));
-}
-.t-row:hover {
-  border-left-color: var(--team-color, var(--accent));
-  background: color-mix(in srgb, var(--team-color, var(--accent)) 6%, var(--surface));
 }
 
-/* Row layout — Teams uses horizontal body (name + abbr inline) */
-.t-body {
-  flex-direction: row;
+/* List: badge, power and actions sit on one line. */
+.team-card :deep(.card-body) {
+  display: flex;
   align-items: center;
-  gap: 7px;
+  gap: var(--sp-2);
+  min-width: 0;
 }
-.t-power {
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--text-muted);
-  background: var(--bg);
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius);
-  padding: 2px 8px;
+
+.team-card-badge {
+  flex: 1;
+  min-width: 0;
+}
+
+.team-power {
   min-width: 34px;
-  text-align: center;
-  flex-shrink: 0;
+  justify-content: center;
+  font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
 
-@media (max-width: 640px) {
-  .t-body {
-    flex: 1;
-    min-width: 0;
-  }
+.team-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-1);
+  flex-shrink: 0;
 }
 
-.t-grid {
+/* ── Grid ────────────────────────────────────────────────────── */
+.team-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: var(--sp-3);
 }
 
 @media (min-width: 641px) {
-  .t-grid {
+  .team-grid {
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   }
 }
 
-.t-grid .t-card {
+/* Grid: stack, with the actions pinned to the card's top-right. */
+.team-card--grid {
   position: relative;
-  display: flex;
+}
+
+.team-card--grid :deep(.card-body) {
   flex-direction: column;
-  gap: var(--sp-2);
-  padding: var(--sp-3);
+  align-items: flex-start;
   padding-right: 68px;
-  background: var(--surface);
-  border: 1px solid var(--border-light);
-  border-left: 3px solid var(--team-color, var(--border-light));
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
-  min-width: 0;
-  cursor: pointer;
-  transition:
-    border-color var(--dur-fast),
-    box-shadow var(--dur),
-    transform var(--dur),
-    background var(--dur-fast);
 }
 
-.t-grid .t-card:hover {
-  border-left-color: var(--team-color, var(--accent));
-  background: color-mix(in srgb, var(--team-color, var(--accent)) 6%, var(--surface));
-  box-shadow: var(--shadow-md);
-  transform: translateY(-1px);
-}
-
-.t-grid .t-card .t-body {
-  flex-direction: row;
-  align-items: center;
-  gap: 7px;
-  flex-wrap: wrap;
-}
-
-.t-grid .t-card .t-power {
-  align-self: flex-start;
-}
-
-.t-grid .t-card .t-actions {
+.team-card--grid .team-actions {
   position: absolute;
   top: var(--sp-2);
   right: var(--sp-2);

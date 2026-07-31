@@ -120,7 +120,7 @@ function clear() {
 }
 .btn-clear:hover {
   color: var(--text);
-  background: var(--bg-hover, rgba(255, 255, 255, 0.08));
+  background: var(--bg-hover);
 }
 
 .grid {
@@ -146,7 +146,7 @@ function clear() {
     background 0.1s;
 }
 .flag-btn:hover {
-  background: var(--bg-hover, rgba(255, 255, 255, 0.08));
+  background: var(--bg-hover);
 }
 .flag-btn.selected {
   border-color: var(--accent, #3b82f6);
