@@ -176,7 +176,7 @@ function onNativePick(e: Event) {
 }
 .hex-input {
   flex: 1;
-  font-family: var(--font-mono, monospace);
+  font-family: var(--font-mono);
   font-size: 13px;
   letter-spacing: 0.04em;
   text-transform: uppercase;

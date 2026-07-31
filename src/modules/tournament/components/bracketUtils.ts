@@ -4,23 +4,9 @@ import { getWinnerId } from "@/engine"
 
 export type DisplayMatch = Match & { _origRound: number; _origMatch: number }
 
-export function connStroke(active: boolean): string {
-  return active ? "var(--accent)" : "var(--border)"
-}
-
-export function connOpacity(active: boolean): number {
-  return active ? 0.55 : 0.4
-}
-
 export function teamColor(teamId: string | null | undefined, teams: Team[]): string | null {
   if (!teamId) return null
   return teams.find((t) => t.id === teamId)?.color ?? null
-}
-
-export function winnerColor(match: Match | undefined, teams: Team[]): string | null {
-  if (!match) return null
-  const id = getWinnerId(match)
-  return teamColor(id, teams)
 }
 
 export interface ConnInfo {

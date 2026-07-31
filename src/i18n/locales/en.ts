@@ -55,7 +55,7 @@ export default {
       },
       settings: {
         title: "Customize in Settings",
-        desc: "Change the language, switch themes (Light, Dark, or World Cup 2026), tweak table rules and display options, and back up or export all your data from the Settings tab.",
+        desc: "Change the language, switch between Light and Dark themes, tweak table rules and display options, and back up or export all your data from the Settings tab.",
       },
     },
     outro: "That’s it — you can change almost anything later from a tournament’s Settings page.",

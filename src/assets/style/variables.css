@@ -44,9 +44,6 @@
 
   /* ── Interaction ─────────────────────────────────────────────── */
   --bg-hover: color-mix(in srgb, var(--text) 6%, transparent);
-  --state-hover: 8%;
-  --state-focus: 10%;
-  --state-pressed: 12%;
   --focus-ring: 0 0 0 3px var(--accent-subtle);
 
   /* ── Overlays ────────────────────────────────────────────────── */
