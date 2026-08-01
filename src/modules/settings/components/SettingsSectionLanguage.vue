@@ -46,7 +46,7 @@ const settings = useSettingsStore()
   min-width: 0;
 }
 
-/* Five language buttons are far wider than the other settings controls, so
+/* The language buttons are far wider than the other settings controls, so
    this row's control must be allowed to shrink and wrap instead of holding
    its max-content width (which is what pushed it off screen). */
 .lang-field :deep(.field-control) {
