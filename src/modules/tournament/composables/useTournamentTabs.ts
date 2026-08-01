@@ -74,15 +74,40 @@ export function useTournamentTabs(
   })
   const activeIndex = computed(() => visibleTabs.value.indexOf(activeTab.value))
 
+  /**
+   * Mounting every tab at once puts the whole bracket, the group and
+   * league tables, the stats charts and the participants table in the
+   * DOM together, and the swipe then has to composite — and autoHeight
+   * has to measure — all of it every frame. Only the slide either side
+   * of the active one can come into view mid-drag, so nothing further
+   * out needs to exist.
+   */
+  function isTabRendered(tab: MainTab) {
+    return Math.abs(visibleTabs.value.indexOf(tab) - activeIndex.value) <= 1
+  }
+
   let swiperInstance: SwiperInstance | null = null
 
   function onSwiperReady(s: SwiperInstance) {
     swiperInstance = s
   }
 
+  let pendingUrlTab: MainTab | null = null
+
   function onSlideChange(s: SwiperInstance) {
     const tab = visibleTabs.value[s.activeIndex]
-    if (tab && tab !== activeTab.value) changeTab(tab)
+    if (!tab || tab === activeTab.value) return
+    // Only the cheap part runs here — the tab highlight has to keep up
+    // with the finger. router.replace() re-renders the page, so it is
+    // held back until the slide animation has finished.
+    activeTab.value = tab
+    pendingUrlTab = tab
+  }
+
+  function onSlideChangeEnd() {
+    if (!pendingUrlTab) return
+    router.replace({ query: { tab: pendingUrlTab } })
+    pendingUrlTab = null
   }
 
   watch(activeIndex, (idx) => {
@@ -134,7 +159,9 @@ export function useTournamentTabs(
     changeTab,
     visibleTabs,
     activeIndex,
+    isTabRendered,
     onSwiperReady,
     onSlideChange,
+    onSlideChangeEnd,
   }
 }

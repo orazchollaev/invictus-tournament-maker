@@ -35,8 +35,16 @@ const isLeagueSeries = computed(() => allSeasons.value[0]?.format === "league")
 const { champions, finals, leagueSeasons, allTimeRows, stats, teamStats } =
   useTournamentHistoryStats(completedSeasons)
 
-const { activeTab, changeTab, visibleTabs, activeIndex, onSwiperReady, onSlideChange } =
-  useHistoryTabs(isLeagueSeries)
+const {
+  activeTab,
+  changeTab,
+  visibleTabs,
+  activeIndex,
+  isTabRendered,
+  onSwiperReady,
+  onSlideChange,
+  onSlideChangeEnd,
+} = useHistoryTabs(isLeagueSeries)
 
 const tabValue = computed({
   get: () => activeTab.value,
@@ -96,21 +104,24 @@ const tabValue = computed({
         :threshold="10"
         @swiper="onSwiperReady"
         @slide-change="onSlideChange"
+        @slide-change-transition-end="onSlideChangeEnd"
       >
         <SwiperSlide v-for="tab in visibleTabs" :key="tab">
-          <ChampionsTab
-            v-if="tab === 'champions'"
-            :champions="champions"
-            :finals-label="isLeagueSeries ? 'Runner-up' : undefined"
-          />
-          <LeagueSeasonsTab
-            v-else-if="tab === 'finals' && isLeagueSeries"
-            :seasons="leagueSeasons"
-          />
-          <AllFinalsTab v-else-if="tab === 'finals'" :finals="finals" />
-          <LeagueAllTimeTab v-else-if="tab === 'alltime'" :rows="allTimeRows" />
-          <StatisticsTab v-else-if="tab === 'stats'" :stats="stats" />
-          <TeamStatsTab v-else :teams="teamStats" />
+          <template v-if="isTabRendered(tab)">
+            <ChampionsTab
+              v-if="tab === 'champions'"
+              :champions="champions"
+              :finals-label="isLeagueSeries ? 'Runner-up' : undefined"
+            />
+            <LeagueSeasonsTab
+              v-else-if="tab === 'finals' && isLeagueSeries"
+              :seasons="leagueSeasons"
+            />
+            <AllFinalsTab v-else-if="tab === 'finals'" :finals="finals" />
+            <LeagueAllTimeTab v-else-if="tab === 'alltime'" :rows="allTimeRows" />
+            <StatisticsTab v-else-if="tab === 'stats'" :stats="stats" />
+            <TeamStatsTab v-else :teams="teamStats" />
+          </template>
         </SwiperSlide>
       </Swiper>
     </template>

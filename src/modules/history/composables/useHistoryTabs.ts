@@ -33,15 +33,36 @@ export function useHistoryTabs(isLeagueSeries: ComputedRef<boolean>) {
   })
   const activeIndex = computed(() => visibleTabs.value.indexOf(activeTab.value))
 
+  /**
+   * Only the slide either side of the active one can come into view
+   * mid-drag. Keeping the rest unmounted keeps every table and chart in
+   * the history out of the DOM the swipe has to composite.
+   */
+  function isTabRendered(tab: HistoryTab) {
+    return Math.abs(visibleTabs.value.indexOf(tab) - activeIndex.value) <= 1
+  }
+
   let swiperInstance: SwiperInstance | null = null
 
   function onSwiperReady(s: SwiperInstance) {
     swiperInstance = s
   }
 
+  let pendingUrlTab: HistoryTab | null = null
+
   function onSlideChange(s: SwiperInstance) {
     const tab = visibleTabs.value[s.activeIndex]
-    if (tab && tab !== activeTab.value) changeTab(tab)
+    if (!tab || tab === activeTab.value) return
+    // The tab highlight has to keep up with the finger; router.replace()
+    // re-renders the page, so it waits for the animation to finish.
+    activeTab.value = tab
+    pendingUrlTab = tab
+  }
+
+  function onSlideChangeEnd() {
+    if (!pendingUrlTab) return
+    router.replace({ query: { tab: pendingUrlTab } })
+    pendingUrlTab = null
   }
 
   watch(activeIndex, (idx) => {
@@ -69,7 +90,9 @@ export function useHistoryTabs(isLeagueSeries: ComputedRef<boolean>) {
     changeTab,
     visibleTabs,
     activeIndex,
+    isTabRendered,
     onSwiperReady,
     onSlideChange,
+    onSlideChangeEnd,
   }
 }

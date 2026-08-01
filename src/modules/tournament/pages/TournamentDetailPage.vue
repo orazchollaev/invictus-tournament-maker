@@ -51,8 +51,10 @@ const {
   changeTab,
   visibleTabs,
   activeIndex,
+  isTabRendered,
   onSwiperReady,
   onSlideChange,
+  onSlideChangeEnd,
 } = useTournamentTabs(tournament, hasAnyResults)
 
 const {
@@ -136,123 +138,128 @@ const {
         no-swiping-class="swiper-no-swiping"
         @swiper="onSwiperReady"
         @slide-change="onSlideChange"
+        @slide-change-transition-end="onSlideChangeEnd"
       >
         <SwiperSlide v-for="tab in visibleTabs" :key="tab">
-          <AppCard v-if="tab === 'league'" padding="md">
-            <div
-              v-if="
-                showLeaguePlayoffControls &&
-                leaguePlayoffData?.enabled &&
-                !hasLeaguePlayoff &&
-                canStartLeaguePlayoffFlow
-              "
-              class="lpc-actions"
-            >
-              <button
-                class="primary"
-                :disabled="!canStartLeaguePlayoffFlow"
-                @click="onStartLeaguePlayoff"
+          <template v-if="isTabRendered(tab)">
+            <AppCard v-if="tab === 'league'" padding="md">
+              <div
+                v-if="
+                  showLeaguePlayoffControls &&
+                  leaguePlayoffData?.enabled &&
+                  !hasLeaguePlayoff &&
+                  canStartLeaguePlayoffFlow
+                "
+                class="lpc-actions"
               >
-                {{ trns("leaguePlayoff.startPlayoff") }}
-              </button>
-              <span v-if="!canStartLeaguePlayoffFlow" class="lpc-hint">
-                {{ trns("leaguePlayoff.finishSeasonFirst") }}
-              </span>
-            </div>
-            <template v-if="isMultiTier && tournament.tiers">
-              <Transition name="tab" mode="out-in">
+                <button
+                  class="primary"
+                  :disabled="!canStartLeaguePlayoffFlow"
+                  @click="onStartLeaguePlayoff"
+                >
+                  {{ trns("leaguePlayoff.startPlayoff") }}
+                </button>
+                <span v-if="!canStartLeaguePlayoffFlow" class="lpc-hint">
+                  {{ trns("leaguePlayoff.finishSeasonFirst") }}
+                </span>
+              </div>
+              <template v-if="isMultiTier && tournament.tiers">
+                <Transition name="tab" mode="out-in">
+                  <LeagueView
+                    :key="activeTierIdx"
+                    :tournament="tournament"
+                    :teams="allTeams"
+                    :league-override="tournament.tiers[activeTierIdx]?.league"
+                    :relegation-count-override="
+                      activeTierIdx < tournament.tiers.length - 1
+                        ? (tournament.promotionCount ?? 0)
+                        : 0
+                    "
+                    :promotion-count="activeTierIdx > 0 ? (tournament.promotionCount ?? 0) : 0"
+                    :playoff-qualifier-count="
+                      activeTierIdx === 0 && leaguePlayoffData?.enabled
+                        ? leaguePlayoffData.qualifierCount
+                        : 0
+                    "
+                    @set-result="
+                      (mdi, mi, h, a) =>
+                        store.setTierResult(tournament!.id, activeTierIdx, mdi, mi, h, a)
+                    "
+                    @sim-match="
+                      (mdi, mi) => store.simTierMatch(tournament!.id, activeTierIdx, mdi, mi)
+                    "
+                    @sim-matchday="
+                      (mdi) => store.simTierMatchday(tournament!.id, activeTierIdx, mdi)
+                    "
+                    @sim-all="store.simAllTier(tournament!.id, activeTierIdx)"
+                  />
+                </Transition>
+              </template>
+              <template v-else>
                 <LeagueView
-                  :key="activeTierIdx"
                   :tournament="tournament"
                   :teams="allTeams"
-                  :league-override="tournament.tiers[activeTierIdx]?.league"
-                  :relegation-count-override="
-                    activeTierIdx < tournament.tiers.length - 1
-                      ? (tournament.promotionCount ?? 0)
-                      : 0
-                  "
-                  :promotion-count="activeTierIdx > 0 ? (tournament.promotionCount ?? 0) : 0"
                   :playoff-qualifier-count="
-                    activeTierIdx === 0 && leaguePlayoffData?.enabled
-                      ? leaguePlayoffData.qualifierCount
-                      : 0
+                    leaguePlayoffData?.enabled ? leaguePlayoffData.qualifierCount : 0
                   "
                   @set-result="
-                    (mdi, mi, h, a) =>
-                      store.setTierResult(tournament!.id, activeTierIdx, mdi, mi, h, a)
+                    (mdi, mi, h, a) => store.setLeagueResult(tournament!.id, mdi, mi, h, a)
                   "
-                  @sim-match="
-                    (mdi, mi) => store.simTierMatch(tournament!.id, activeTierIdx, mdi, mi)
-                  "
-                  @sim-matchday="(mdi) => store.simTierMatchday(tournament!.id, activeTierIdx, mdi)"
-                  @sim-all="store.simAllTier(tournament!.id, activeTierIdx)"
+                  @sim-match="(mdi, mi) => store.simLeagueMatch(tournament!.id, mdi, mi)"
+                  @sim-matchday="(mdi) => store.simLeagueMatchday(tournament!.id, mdi)"
+                  @sim-all="store.simAllLeague(tournament!.id)"
                 />
-              </Transition>
-            </template>
-            <template v-else>
-              <LeagueView
+              </template>
+            </AppCard>
+            <AppCard v-else-if="tab === 'groups'" padding="none">
+              <div v-if="hasWildcards" class="gs-subtab-row">
+                <button
+                  class="gs-subtab"
+                  :class="{ active: groupSubTab === 'groups' }"
+                  @click="groupSubTab = 'groups'"
+                >
+                  {{ trns("tournament.tabs.groups") }}
+                </button>
+                <button
+                  class="gs-subtab"
+                  :class="{ active: groupSubTab === 'wildcards' }"
+                  @click="groupSubTab = 'wildcards'"
+                >
+                  {{ trns("tournament.tabs.wildcards") }}
+                </button>
+              </div>
+              <div class="gs-body">
+                <GroupStage
+                  v-if="!hasWildcards || groupSubTab === 'groups'"
+                  :tournament="tournament"
+                  :teams="allTeams"
+                  @set-result="(gi, mi, h, a) => store.setGroupResult(tournament!.id, gi, mi, h, a)"
+                  @sim-match="(gi, mi) => store.simGroupMatch(tournament!.id, gi, mi)"
+                  @sim-group="(gi) => store.simGroup(tournament!.id, gi)"
+                  @sim-group-week="(gi) => store.simGroupWeek(tournament!.id, gi)"
+                  @sim-week="store.simWeek(tournament!.id)"
+                  @sim-all="store.simAllGroups(tournament!.id)"
+                  @advance="onAdvance"
+                />
+                <WildcardRankings v-else :tournament="tournament" :teams="allTeams" />
+              </div>
+            </AppCard>
+            <div v-else-if="tab === 'bracket'">
+              <BracketPanel
                 :tournament="tournament"
                 :teams="allTeams"
-                :playoff-qualifier-count="
-                  leaguePlayoffData?.enabled ? leaguePlayoffData.qualifierCount : 0
+                :title="
+                  isGroupFormat ? trns('tournament.tabs.bracket') : trns('tournament.tabs.bracket')
                 "
-                @set-result="
-                  (mdi, mi, h, a) => store.setLeagueResult(tournament!.id, mdi, mi, h, a)
-                "
-                @sim-match="(mdi, mi) => store.simLeagueMatch(tournament!.id, mdi, mi)"
-                @sim-matchday="(mdi) => store.simLeagueMatchday(tournament!.id, mdi)"
-                @sim-all="store.simAllLeague(tournament!.id)"
               />
-            </template>
-          </AppCard>
-          <AppCard v-else-if="tab === 'groups'" padding="none">
-            <div v-if="hasWildcards" class="gs-subtab-row">
-              <button
-                class="gs-subtab"
-                :class="{ active: groupSubTab === 'groups' }"
-                @click="groupSubTab = 'groups'"
-              >
-                {{ trns("tournament.tabs.groups") }}
-              </button>
-              <button
-                class="gs-subtab"
-                :class="{ active: groupSubTab === 'wildcards' }"
-                @click="groupSubTab = 'wildcards'"
-              >
-                {{ trns("tournament.tabs.wildcards") }}
-              </button>
             </div>
-            <div class="gs-body">
-              <GroupStage
-                v-if="!hasWildcards || groupSubTab === 'groups'"
-                :tournament="tournament"
-                :teams="allTeams"
-                @set-result="(gi, mi, h, a) => store.setGroupResult(tournament!.id, gi, mi, h, a)"
-                @sim-match="(gi, mi) => store.simGroupMatch(tournament!.id, gi, mi)"
-                @sim-group="(gi) => store.simGroup(tournament!.id, gi)"
-                @sim-group-week="(gi) => store.simGroupWeek(tournament!.id, gi)"
-                @sim-week="store.simWeek(tournament!.id)"
-                @sim-all="store.simAllGroups(tournament!.id)"
-                @advance="onAdvance"
-              />
-              <WildcardRankings v-else :tournament="tournament" :teams="allTeams" />
-            </div>
-          </AppCard>
-          <div v-else-if="tab === 'bracket'">
-            <BracketPanel
-              :tournament="tournament"
-              :teams="allTeams"
-              :title="
-                isGroupFormat ? trns('tournament.tabs.bracket') : trns('tournament.tabs.bracket')
-              "
-            />
-          </div>
-          <AppCard v-else-if="tab === 'stats'">
-            <TournamentStats :tournament="tournament" :teams="allTeams" />
-          </AppCard>
-          <AppCard v-else>
-            <ParticipantsTable :teams="allTeams" :tournament="tournament" />
-          </AppCard>
+            <AppCard v-else-if="tab === 'stats'">
+              <TournamentStats :tournament="tournament" :teams="allTeams" />
+            </AppCard>
+            <AppCard v-else>
+              <ParticipantsTable :teams="allTeams" :tournament="tournament" />
+            </AppCard>
+          </template>
         </SwiperSlide>
       </Swiper>
     </template>
