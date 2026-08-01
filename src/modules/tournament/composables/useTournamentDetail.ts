@@ -2,10 +2,9 @@ import { computed, watch } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import { useTeamsStore } from "@/modules/teams/store"
 import { useTournamentStore } from "@/modules/tournament/store"
-import type { PlayoffSeedMode, LegMode } from "@/modules/tournament/types"
+import type { PlayoffSeedMode } from "@/modules/tournament/types"
 import confetti from "canvas-confetti"
 import { useSettingsStore } from "@/modules/settings/store"
-import { showConfirm } from "@/composables/useDialog"
 import { useInAppReview } from "@/composables/useInAppReview"
 import { useHaptic } from "@/composables/useHaptic"
 
@@ -27,21 +26,6 @@ export function useTournamentDetail() {
     if (!tournament.value) return ""
     return new Date(tournament.value.createdAt).toLocaleDateString()
   })
-
-  async function deleteTournament() {
-    if (
-      !(await showConfirm("Delete this tournament?", { confirmLabel: "Delete", dangerous: true }))
-    )
-      return
-    store.remove(route.params.id as string)
-    router.push("/tournaments")
-  }
-
-  async function resetTournament() {
-    if (!(await showConfirm("Reset this tournament?", { confirmLabel: "Reset", dangerous: true })))
-      return
-    store.resetResults(route.params.id as string)
-  }
 
   function startNewSeason(
     seeded: boolean,
@@ -78,42 +62,6 @@ export function useTournamentDetail() {
   const tournamentId = computed(() => route.params.id as string)
 
   const hasAnyResults = computed(() => store.hasAnyResults(tournamentId.value))
-
-  const availableTeams = computed(() =>
-    teamsStore.teams.filter((t) => !tournament.value?.teamIds.includes(t.id))
-  )
-
-  function addTeam(teamId: string) {
-    store.addTeamToTournament(tournamentId.value, teamId)
-  }
-
-  function removeTeam(teamId: string) {
-    store.removeTeamFromTournament(tournamentId.value, teamId)
-  }
-
-  function redrawTournament(seeded = false, orderedIds?: string[]) {
-    store.redrawTournament(tournamentId.value, seeded, orderedIds)
-  }
-
-  function setPlayoffSeedMode(mode: PlayoffSeedMode) {
-    store.setPlayoffSeedMode(tournamentId.value, mode)
-  }
-
-  function changeGroupCount(count: number) {
-    store.changeGroupCount(tournamentId.value, count)
-  }
-
-  function changeQualifiersPerGroup(qpg: number) {
-    store.changeQualifiersPerGroup(tournamentId.value, qpg)
-  }
-
-  function changeWildcardCount(count: number) {
-    store.changeWildcardCount(tournamentId.value, count)
-  }
-
-  function changeLegMode(stage: "group" | "knockout" | "final", mode: LegMode) {
-    store.setLegMode(tournamentId.value, stage, mode)
-  }
 
   function fireTeamConfetti(color: string) {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return
@@ -171,19 +119,8 @@ export function useTournamentDetail() {
     tournament,
     winnerTeam,
     dateStr,
-    deleteTournament,
-    resetTournament,
     startNewSeason,
     startNewLeagueSeason,
     hasAnyResults,
-    availableTeams,
-    addTeam,
-    removeTeam,
-    redrawTournament,
-    setPlayoffSeedMode,
-    changeGroupCount,
-    changeQualifiersPerGroup,
-    changeWildcardCount,
-    changeLegMode,
   }
 }
