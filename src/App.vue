@@ -3,7 +3,7 @@ import { onMounted, onUnmounted, ref, watch } from "vue"
 import { useRouter } from "vue-router"
 import { App } from "@capacitor/app"
 import AppHeader from "@/components/layout/AppHeader.vue"
-import AppMobileFabNav from "@/components/layout/AppMobileFabNav.vue"
+import AppMobileBottomNav from "@/components/layout/AppMobileBottomNav.vue"
 import AppDialog from "@/components/ui/AppDialog.vue"
 import ErrorBoundary from "@/components/layout/ErrorBoundary.vue"
 import { useSettingsStore } from "@/modules/settings/store"
@@ -77,7 +77,7 @@ onUnmounted(() => {
       </ErrorBoundary>
     </main>
     <AppDialog />
-    <AppMobileFabNav />
+    <AppMobileBottomNav />
   </div>
 </template>
 
@@ -88,7 +88,7 @@ onUnmounted(() => {
 
 @media (max-width: 640px) {
   .app-main {
-    padding-bottom: env(safe-area-inset-bottom);
+    padding-bottom: calc(64px + var(--sp-4) + env(safe-area-inset-bottom));
   }
 }
 </style>
