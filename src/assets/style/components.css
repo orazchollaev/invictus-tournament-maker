@@ -2,50 +2,17 @@
    MIGRATION SHIM. Every rule below is superseded by a primitive in
    src/components/ui/ and is deleted as its consumers move over:
 
-     .section-box / .section-body  → AppCard
-     .section-box h2               → AppCard `title` / AppSectionHeader
-     .t-row                        → AppCard variant="elevated" rail interactive
-     .t-badge / .winner-badge      → AppChip
-     .phase-tabs / .phase-tab      → AppTabs + AppTab
-     .data-table                   → AppTable
+     .phase-tabs / .phase-tab  → AppTabs + AppTab (DetailPhaseTabs)
+     .data-table               → AppTable (TeamStatsTab)
+     .team-cell                → the crest+name cell inside AppTable rows
+     .notice                   → AppCard variant="filled" with a warning rail
 
-   The settings-row, status and winner-tag families are already gone.
+   The card, list-row, badge, status and settings-row families are gone.
 
    Values here are token-only so the shim and the primitive agree while
    both are live. Do not add new rules to this file. */
 
-/* ── Card surface ────────────────────────────────────────────── */
-.section-box {
-  border: 1px solid var(--border-light);
-  background: var(--surface);
-  margin-bottom: var(--sp-4);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--elev-1);
-  overflow: hidden;
-}
-
-.section-box h2 {
-  font-family: var(--font-ui);
-  font-size: var(--fs-xs);
-  font-weight: 700;
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  border-bottom: 1px solid var(--border-light);
-  border-left: 3px solid var(--accent);
-  padding: var(--sp-3) var(--sp-4);
-  background: var(--bg);
-}
-
-.section-body {
-  padding: var(--sp-4);
-}
-
-.section-box table tr:last-child td,
-.section-box table tr:last-child th {
-  border-bottom: none;
-}
-
+/* Inline warning strip — sits above a list to explain why it is empty. */
 .notice {
   background: color-mix(in srgb, var(--accent-2) 12%, var(--surface));
   border: 1px solid color-mix(in srgb, var(--accent-2) 40%, transparent);
@@ -103,118 +70,6 @@
   opacity: 0.5;
 }
 
-/* ── List rows ───────────────────────────────────────────────── */
-.t-row {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-3);
-  padding: var(--sp-3) var(--sp-4);
-  background: var(--surface);
-  border: 1px solid var(--border-light);
-  border-left: 3px solid transparent;
-  border-radius: var(--radius-lg);
-  box-shadow: var(--elev-1);
-  min-width: 0;
-  transition:
-    border-color var(--dur-fast) var(--ease),
-    box-shadow var(--dur) var(--ease),
-    transform var(--dur) var(--ease),
-    background var(--dur-fast) var(--ease);
-}
-
-.t-row:hover {
-  border-color: var(--border);
-  border-left-color: var(--accent);
-  background: color-mix(in srgb, var(--accent) 4%, var(--surface));
-  box-shadow: var(--elev-2);
-  transform: translateY(-1px);
-}
-
-.t-body {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sp-1);
-  flex: 1;
-  min-width: 0;
-}
-
-.t-name {
-  font-size: var(--fs-base);
-  font-weight: 600;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.t-meta-row {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-2);
-}
-
-.t-season {
-  font-size: var(--fs-base);
-  color: var(--text-muted);
-  background: var(--bg);
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius);
-  padding: 1px var(--sp-2);
-  font-family: var(--font-ui);
-  font-weight: 400;
-}
-
-.icon-btn {
-  width: 28px;
-  height: 28px;
-  padding: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* ── Badges & status ─────────────────────────────────────────── */
-.t-badge {
-  font-size: var(--fs-xs);
-  color: var(--text-muted);
-  background: var(--bg);
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius-pill);
-  padding: 2px var(--sp-2);
-  line-height: 1.5;
-}
-
-.t-badge.accent {
-  color: var(--accent);
-  background: color-mix(in srgb, var(--accent) 10%, transparent);
-  border-color: color-mix(in srgb, var(--accent) 25%, transparent);
-}
-
-.t-dot {
-  font-size: var(--fs-xs);
-  color: var(--text-muted);
-}
-
-.t-dot::before {
-  content: "·";
-  margin-right: var(--sp-2);
-  opacity: 0.5;
-}
-
-.winner-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--sp-1);
-  font-size: var(--fs-xs);
-  font-weight: 600;
-  color: var(--text);
-  background: var(--bg);
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius-pill);
-  padding: 2px var(--sp-2);
-  line-height: 1.5;
-  flex-shrink: 0;
-}
-
 /* ── Data tables ─────────────────────────────────────────────── */
 .data-table {
   width: 100%;
@@ -250,6 +105,7 @@
   gap: var(--sp-2);
 }
 
+/* ── Settings copy ───────────────────────────────────────────── */
 .section-intro {
   font-size: var(--fs-sm);
   color: var(--text-muted);
@@ -278,15 +134,6 @@
     font-size: var(--fs-sm);
     white-space: nowrap;
     flex-shrink: 0;
-  }
-
-  .t-row {
-    padding: var(--sp-3);
-    gap: var(--sp-2);
-  }
-
-  .section-body {
-    padding: var(--sp-3);
   }
 
   .data-table th,

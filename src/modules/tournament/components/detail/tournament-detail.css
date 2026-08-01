@@ -9,29 +9,18 @@
   font-family: var(--font-ui);
 }
 .t-meta {
-  font-size: 12px;
+  font-size: var(--fs-sm);
   color: var(--text-muted);
+  margin: 0;
 }
 .t-header-actions {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--sp-2);
 }
-.new-season-btn {
-  font-size: 12px;
-  padding: 3px 10px;
-}
-.sim-btn,
-.settings-btn {
+.header-icon-btn {
   width: 30px;
   height: 30px;
-  border-color: var(--border-light);
-  color: var(--text-muted);
-}
-.sim-btn:hover,
-.settings-btn:hover {
-  color: var(--text);
-  border-color: var(--border);
 }
 .t-winner {
   display: inline-flex;
@@ -145,11 +134,11 @@
   .t-header-actions {
     gap: 4px;
   }
+  /* Labels drop out so the header stays on one line; buttons go icon-sized. */
   .t-header-actions .btn-label {
     display: none;
   }
-  .new-season-btn {
-    padding: 5px 8px;
+  .t-header-actions .btn {
     min-width: 32px;
     justify-content: center;
   }

@@ -6,11 +6,20 @@ import { useTournamentStore } from "@/modules/tournament/store"
 import { useSettingsStore } from "@/modules/settings/store"
 import type { Tournament } from "../types"
 import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
-import BtnGroup from "@/components/ui/BtnGroup.vue"
-import AppSearchInput from "@/components/ui/AppSearchInput.vue"
+import {
+  AppButton,
+  AppCard,
+  AppEmptyState,
+  AppIcon,
+  AppSearchInput,
+  BtnGroup,
+} from "@/components/ui"
 import { Trophy, X, Plus, List, Grid3x3 } from "@lucide/vue"
 import { showConfirm } from "@/composables/useDialog"
 import { useI18n } from "vue-i18n"
+
+/** A tournament cannot be created with fewer teams than this. */
+const MIN_TEAMS = 2
 
 const { t } = useI18n()
 const router = useRouter()
@@ -23,8 +32,11 @@ const viewOptions = computed(() => [
   { value: "grid", label: t("tournaments.viewGrid"), icon: Grid3x3 },
 ])
 
-function winnerColor(tour: Tournament) {
-  return teamsStore.teams.find((tm) => tm.id === tour.winnerId)?.color ?? "#888"
+const isGrid = computed(() => settings.tournamentListView === "grid")
+const hasEnoughTeams = computed(() => teamsStore.teams.length >= MIN_TEAMS)
+
+function winnerTeam(tour: Tournament) {
+  return teamsStore.teams.find((tm) => tm.id === tour.winnerId)
 }
 
 const query = ref("")
@@ -35,7 +47,7 @@ const sortedTournaments = computed(() =>
 const filtered = computed(() => {
   const q = query.value.trim().toLowerCase()
   if (!q) return sortedTournaments.value
-  return sortedTournaments.value.filter((t) => t.name.toLowerCase().includes(q))
+  return sortedTournaments.value.filter((tn) => tn.name.toLowerCase().includes(q))
 })
 
 function formatLabel(format: string) {
@@ -59,20 +71,18 @@ async function deleteTournament(id: string) {
   <div class="page">
     <div class="page-top">
       <h2 class="page-title">{{ t("tournaments.title") }}</h2>
-      <button
-        class="primary"
-        :disabled="teamsStore.teams.length < 2"
-        :title="teamsStore.teams.length < 2 ? t('tournaments.needTeamsTitle') : ''"
+      <AppButton
+        variant="filled"
+        :disabled="!hasEnoughTeams"
+        :title="hasEnoughTeams ? '' : t('tournaments.needTeamsTitle')"
         @click="router.push('/tournaments/new')"
       >
-        <Plus :size="12" />
+        <AppIcon :icon="Plus" size="xs" />
         {{ t("tournaments.newBtn") }}
-      </button>
+      </AppButton>
     </div>
 
-    <div v-if="teamsStore.teams.length < 2" class="notice">
-      {{ t("tournaments.needTeamsNotice") }}
-    </div>
+    <div v-if="!hasEnoughTeams" class="notice">{{ t("tournaments.needTeamsNotice") }}</div>
 
     <div v-if="store.tournaments.length" class="search-row">
       <AppSearchInput v-model="query" :placeholder="t('tournaments.searchPlaceholder')" />
@@ -81,96 +91,128 @@ async function deleteTournament(id: string) {
 
     <div v-if="store.tournaments.length" class="t-list">
       <p v-if="!filtered.length" class="empty-text">{{ t("tournaments.noMatch", { query }) }}</p>
-      <TransitionGroup
-        name="list"
-        tag="div"
-        :class="settings.tournamentListView === 'grid' ? 't-grid' : 't-list-inner'"
-      >
-        <div
+      <TransitionGroup name="list" tag="div" :class="isGrid ? 'tour-grid' : 't-list-inner'">
+        <AppCard
           v-for="(tour, i) in filtered"
           :key="tour.id"
-          :class="settings.tournamentListView === 'grid' ? 't-card' : 't-row'"
+          rail
+          interactive
+          padding="sm"
+          class="tour-card"
+          :class="{ 'tour-card--grid': isGrid }"
           :style="{ '--i': i }"
           @click="router.push(`/tournaments/${tour.id}`)"
         >
-          <div class="t-body">
-            <span class="t-name">{{ tour.name }}</span>
-            <div class="t-meta-row">
-              <span class="t-meta-text">S{{ tour.season }}</span>
-              <span class="t-meta-text format-text">{{ formatLabel(tour.format) }}</span>
-              <span class="t-meta-text">{{ t("common.teams", { n: tour.teamIds.length }) }}</span>
+          <div class="tour-body">
+            <span class="tour-name">{{ tour.name }}</span>
+            <div class="tour-meta">
+              <span class="tour-meta-text">S{{ tour.season }}</span>
+              <span class="tour-meta-text format-text">{{ formatLabel(tour.format) }}</span>
+              <span class="tour-meta-text">
+                {{ t("common.teams", { n: tour.teamIds.length }) }}
+              </span>
             </div>
           </div>
 
-          <div class="t-status">
-            <span
-              v-if="store.isTournamentFinished(tour.id)"
-              class="winner-badge"
-              :style="{ '--team-color': winnerColor(tour) }"
-            >
-              <Trophy :size="11" />
-              <TeamBadge :team="teamsStore.teams.find((tm) => tm.id === tour.winnerId)" />
-            </span>
-          </div>
+          <span
+            v-if="store.isTournamentFinished(tour.id)"
+            class="tour-winner"
+            :style="{ '--team-color': winnerTeam(tour)?.color }"
+          >
+            <AppIcon :icon="Trophy" size="xs" />
+            <TeamBadge :team="winnerTeam(tour)" />
+          </span>
 
-          <button class="danger sm icon-btn del-btn" @click.stop="deleteTournament(tour.id)">
-            <X :size="13" />
-          </button>
-        </div>
+          <AppButton
+            variant="danger"
+            icon-only
+            class="tour-delete"
+            @click.stop="deleteTournament(tour.id)"
+          >
+            <AppIcon :icon="X" />
+          </AppButton>
+        </AppCard>
       </TransitionGroup>
     </div>
 
-    <div v-else-if="teamsStore.teams.length >= 2" class="empty-state">
-      <Trophy :size="44" class="empty-icon" />
-      <p class="empty-text">{{ t("tournaments.empty", { action: t("tournaments.newBtn") }) }}</p>
-      <button class="primary" @click="router.push('/tournaments/new')">
-        {{ t("tournaments.newBtn") }}
-      </button>
-    </div>
+    <AppEmptyState
+      v-else-if="hasEnoughTeams"
+      :icon="Trophy"
+      :description="t('tournaments.empty', { action: t('tournaments.newBtn') })"
+    >
+      <template #action>
+        <AppButton variant="filled" @click="router.push('/tournaments/new')">
+          {{ t("tournaments.newBtn") }}
+        </AppButton>
+      </template>
+    </AppEmptyState>
   </div>
 </template>
 
 <style scoped>
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 60px 20px;
-  gap: 14px;
-  text-align: center;
-}
-.empty-icon {
-  color: var(--text-muted);
-  opacity: 0.25;
-}
-
-.t-row {
+.tour-card {
   cursor: pointer;
 }
 
-.t-meta-row {
-  gap: 0;
+/* List: name block, winner and delete on one line. */
+.tour-card :deep(.card-body) {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  min-width: 0;
 }
 
-.t-meta-text {
-  font-size: 11px;
+.tour-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+  flex: 1;
+  min-width: 0;
+}
+
+.tour-name {
+  font-size: var(--fs-base);
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tour-meta {
+  display: flex;
+  align-items: center;
+}
+
+.tour-meta-text {
+  font-size: var(--fs-xs);
   color: var(--text-muted);
 }
-
-.t-meta-text + .t-meta-text::before {
+/* Interpunct separator between meta items. */
+.tour-meta-text + .tour-meta-text::before {
   content: "·";
-  margin: 0 6px;
+  margin: 0 var(--sp-2);
   opacity: 0.5;
 }
 
-@media (max-width: 640px) {
-  .format-text {
-    display: none;
-  }
+.tour-winner {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1);
+  flex-shrink: 0;
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  padding: 2px var(--sp-2) 2px var(--sp-2);
+  border-left: 2px solid var(--team-color, var(--accent));
+  border-radius: 0 var(--radius) var(--radius) 0;
+  background: color-mix(in srgb, var(--team-color, var(--border)) 8%, var(--bg));
 }
 
-.t-grid {
+.tour-delete {
+  flex-shrink: 0;
+}
+
+/* ── Grid ────────────────────────────────────────────────────── */
+.tour-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: var(--sp-3);
@@ -178,77 +220,36 @@ async function deleteTournament(id: string) {
 }
 
 @media (min-width: 641px) {
-  .t-grid {
+  .tour-grid {
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   }
 }
 
-.t-card {
+/* Grid: stack, with the delete button pinned to the card's top-right. */
+.tour-card--grid {
   position: relative;
-  display: flex;
+}
+
+.tour-card--grid :deep(.card-body) {
   flex-direction: column;
+  align-items: flex-start;
   gap: var(--sp-2);
-  padding: var(--sp-3);
   padding-right: 40px;
-  background: var(--surface);
-  border: 1px solid var(--border-light);
-  border-left: 3px solid transparent;
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
-  min-width: 0;
-  cursor: pointer;
-  transition:
-    border-color var(--dur-fast),
-    box-shadow var(--dur),
-    transform var(--dur),
-    background var(--dur-fast);
 }
 
-.t-card:hover {
-  border-color: var(--border);
-  border-left-color: var(--accent);
-  background: color-mix(in srgb, var(--accent) 4%, var(--surface));
-  box-shadow: var(--shadow-md);
-  transform: translateY(-1px);
-}
-
-.t-card .t-body {
-  gap: 6px;
-}
-
-.t-card .t-meta-row {
+.tour-card--grid .tour-meta {
   flex-wrap: wrap;
 }
 
-.t-card .t-status {
-  margin-top: 2px;
-}
-
-.t-card .del-btn {
+.tour-card--grid .tour-delete {
   position: absolute;
   top: var(--sp-2);
   right: var(--sp-2);
 }
 
 @media (max-width: 640px) {
-  .t-card {
-    padding: 10px;
+  .format-text {
+    display: none;
   }
-}
-
-.t-status {
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-}
-
-.winner-badge {
-  border-left: 2px solid var(--team-color, var(--accent));
-  padding-left: 6px;
-  background: color-mix(in srgb, var(--team-color, var(--border)) 8%, var(--bg));
-}
-
-.del-btn {
-  flex-shrink: 0;
 }
 </style>

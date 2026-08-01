@@ -70,13 +70,13 @@ function formatLabel(format: string) {
         class="series-row"
         @click="router.push('/history/' + encodeURIComponent(s.name))"
       >
-        <span class="t-name">{{ s.name }}</span>
-        <div class="t-meta-row">
+        <span class="series-name">{{ s.name }}</span>
+        <div class="series-meta">
           <AppChip>
             {{ s.seasons }} {{ s.seasons === 1 ? t("common.season", 1) : t("common.season", 2) }}
           </AppChip>
           <AppChip variant="accent">{{ formatLabel(s.format) }}</AppChip>
-          <span class="t-dot">{{ t("common.teams", { n: s.teamCount }) }}</span>
+          <span class="series-teams">{{ t("common.teams", { n: s.teamCount }) }}</span>
         </div>
       </AppCard>
     </div>
@@ -93,5 +93,30 @@ function formatLabel(format: string) {
   flex-direction: column;
   gap: var(--sp-1);
   min-width: 0;
+}
+
+.series-name {
+  font-size: var(--fs-base);
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.series-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+.series-teams {
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+}
+/* Interpunct before the team count, separating it from the chips. */
+.series-teams::before {
+  content: "·";
+  margin-right: var(--sp-2);
+  opacity: 0.5;
 }
 </style>

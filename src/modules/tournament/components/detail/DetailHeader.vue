@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue"
 import { ArrowLeft, Trophy, RefreshCw, Settings, Zap } from "@lucide/vue"
+import { AppButton, AppChip, AppIcon } from "@/components/ui"
 import type { Tournament } from "@/modules/tournament/types"
 import type { Team } from "@/modules/teams/types"
 import { useI18n } from "vue-i18n"
@@ -35,39 +36,39 @@ const formatLabel = computed(() => {
         {{ t("nav.tournaments") }}
       </RouterLink>
       <div class="t-header-actions">
-        <button v-if="isFinished" class="primary new-season-btn" @click="emit('openNewSeason')">
-          <RefreshCw :size="13" />
+        <AppButton v-if="isFinished" variant="filled" @click="emit('openNewSeason')">
+          <AppIcon :icon="RefreshCw" size="sm" />
           <span class="btn-label">{{ t("tournament.newSeason") }}</span>
-        </button>
-        <button
+        </AppButton>
+        <AppButton
           v-if="!isFinished"
-          class="icon-btn sim-btn"
+          icon-only
+          class="header-icon-btn"
           :title="t('tournament.simulateAll')"
           @click="emit('simulateAll')"
         >
-          <Zap :size="15" />
-        </button>
-        <button
-          class="icon-btn settings-btn"
+          <AppIcon :icon="Zap" size="md" />
+        </AppButton>
+        <AppButton
+          icon-only
+          class="header-icon-btn"
           :title="t('tournament.settings')"
           @click="emit('openSettings')"
         >
-          <Settings :size="15" />
-        </button>
+          <AppIcon :icon="Settings" size="md" />
+        </AppButton>
       </div>
     </div>
 
     <h1>
       {{ tournament.name }}
-      <span class="t-season">S{{ tournament.season }}</span>
+      <AppChip>S{{ tournament.season }}</AppChip>
     </h1>
 
-    <div class="t-meta-row">
-      <span class="t-meta">
-        {{ t("common.teams", { n: tournament.teamIds.length }) }} · {{ formatLabel }} ·
-        {{ t("tournament.header.created", { date: dateStr }) }}
-      </span>
-    </div>
+    <p class="t-meta">
+      {{ t("common.teams", { n: tournament.teamIds.length }) }} · {{ formatLabel }} ·
+      {{ t("tournament.header.created", { date: dateStr }) }}
+    </p>
 
     <Transition name="fade">
       <div v-if="tournament.winnerId && winnerTeam" class="t-winner">
