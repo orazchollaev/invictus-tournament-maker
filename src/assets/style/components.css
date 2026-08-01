@@ -6,10 +6,10 @@
      .section-box h2               → AppCard `title` / AppSectionHeader
      .t-row                        → AppCard variant="elevated" rail interactive
      .t-badge / .winner-badge      → AppChip
-     .status-live                  → AppChip variant="live"
      .phase-tabs / .phase-tab      → AppTabs + AppTab
      .data-table                   → AppTable
-     .setting-*                    → AppField layout="split"
+
+   The settings-row, status and winner-tag families are already gone.
 
    Values here are token-only so the shim and the primitive agree while
    both are live. Do not add new rules to this file. */
@@ -103,10 +103,6 @@
   opacity: 0.5;
 }
 
-.tab-lock {
-  font-size: var(--fs-xs);
-}
-
 /* ── List rows ───────────────────────────────────────────────── */
 .t-row {
   display: flex;
@@ -142,13 +138,6 @@
   min-width: 0;
 }
 
-.t-top {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-2);
-  min-width: 0;
-}
-
 .t-name {
   font-size: var(--fs-base);
   font-weight: 600;
@@ -157,15 +146,10 @@
   text-overflow: ellipsis;
 }
 
-.t-meta-row,
-.t-actions {
+.t-meta-row {
   display: flex;
   align-items: center;
   gap: var(--sp-2);
-}
-
-.t-actions {
-  flex-shrink: 0;
 }
 
 .t-season {
@@ -216,19 +200,6 @@
   opacity: 0.5;
 }
 
-.winner-tag {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--sp-1);
-  font-size: var(--fs-xs);
-  font-weight: 600;
-  padding: 2px var(--sp-2);
-  border-radius: 0 var(--radius) var(--radius) 0;
-  border-left: 3px solid var(--team-color, var(--accent));
-  background: var(--bg);
-  color: var(--text);
-}
-
 .winner-badge {
   display: inline-flex;
   align-items: center;
@@ -238,28 +209,6 @@
   color: var(--text);
   background: var(--bg);
   border: 1px solid var(--border-light);
-  border-radius: var(--radius-pill);
-  padding: 2px var(--sp-2);
-  line-height: 1.5;
-  flex-shrink: 0;
-}
-
-.winner-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--team-color, var(--text-muted));
-  flex-shrink: 0;
-}
-
-.status-live {
-  font-size: var(--fs-xs);
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--live);
-  background: color-mix(in srgb, var(--live) 12%, transparent);
-  border: 1px solid color-mix(in srgb, var(--live) 30%, transparent);
   border-radius: var(--radius-pill);
   padding: 2px var(--sp-2);
   line-height: 1.5;
@@ -301,60 +250,11 @@
   gap: var(--sp-2);
 }
 
-.modal-desc {
-  font-size: var(--fs-base);
-  color: var(--text-muted);
-  margin-bottom: var(--sp-3);
-}
-
-/* ── Settings rows ───────────────────────────────────────────── */
-.setting-group {
-  display: flex;
-  flex-direction: column;
-}
-
-.setting-row {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-4);
-  margin-bottom: var(--sp-3);
-}
-
-.setting-row:last-child {
-  margin-bottom: 0;
-}
-
-.setting-info {
-  flex: 1;
-  min-width: 0;
-}
-
-.setting-label {
-  font-size: var(--fs-base);
-  font-weight: 600;
-  color: var(--text);
-  line-height: 1.4;
-}
-
-.setting-desc {
-  font-size: var(--fs-sm);
-  color: var(--text-muted);
-  margin-top: 2px;
-  line-height: 1.4;
-}
-
 .section-intro {
   font-size: var(--fs-sm);
   color: var(--text-muted);
   margin-bottom: var(--sp-3);
   line-height: 1.5;
-}
-
-.danger-setting-row {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-4);
-  margin-top: var(--sp-3);
 }
 
 .danger-label {
@@ -393,26 +293,5 @@
   .data-table td {
     padding: var(--sp-2) var(--sp-3);
     font-size: var(--fs-sm);
-  }
-
-  .setting-row {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--sp-2);
-  }
-  .setting-info {
-    display: flex;
-    align-items: center;
-    gap: var(--sp-1);
-    width: 100%;
-  }
-  .setting-label {
-    flex: 1;
-  }
-
-  .danger-setting-row {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--sp-2);
   }
 }
