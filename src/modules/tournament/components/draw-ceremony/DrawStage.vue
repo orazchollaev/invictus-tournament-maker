@@ -106,6 +106,8 @@ function isRevealed(step: DrawStep) {
   min-width: 150px;
   padding: 12px 22px;
   transform-style: preserve-3d;
+  /* Deliberately theme-independent: this is the physical draw slip, which is
+     white card stock in light and dark alike. Not a surface — do not tokenise. */
   background: linear-gradient(to bottom, #ffffff 0%, #f3f4f8 49%, #e7e9f0 51%, #f6f7fa 100%);
   color: #1a2234;
   border: 1px solid #c2c7d4;

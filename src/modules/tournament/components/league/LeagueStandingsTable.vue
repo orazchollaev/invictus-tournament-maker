@@ -184,10 +184,10 @@ function isLastPlayoffQualifier(rank: number) {
   border-left: 3px solid var(--accent-2);
 }
 .lv-pos--2 td:first-child {
-  border-left: 3px solid #3b82f6;
+  border-left: 3px solid var(--pos-2);
 }
 .lv-pos--3 td:first-child {
-  border-left: 3px solid #8b5cf6;
+  border-left: 3px solid var(--pos-3);
 }
 .lv-pos--4 td:first-child {
   border-left: 3px solid var(--success);
@@ -197,11 +197,11 @@ function isLastPlayoffQualifier(rank: number) {
   font-weight: 700;
 }
 .lv-pos--2 .col-rank {
-  color: #3b82f6 !important;
+  color: var(--pos-2) !important;
   font-weight: 600;
 }
 .lv-pos--3 .col-rank {
-  color: #8b5cf6 !important;
+  color: var(--pos-3) !important;
   font-weight: 600;
 }
 .lv-pos--4 .col-rank {

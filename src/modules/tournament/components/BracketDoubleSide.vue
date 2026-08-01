@@ -594,7 +594,7 @@ function finalLineOpacity(side: "home" | "away"): number {
   box-sizing: border-box;
 }
 .final-title {
-  color: #c9a227 !important;
+  color: var(--gold) !important;
 }
 .tp-title {
   color: var(--accent-2);
@@ -609,14 +609,14 @@ function finalLineOpacity(side: "home" | "away"): number {
   padding: 8px 12px;
   background: linear-gradient(
     135deg,
-    color-mix(in srgb, #c9a227 14%, var(--surface)),
-    color-mix(in srgb, #c9a227 6%, var(--surface))
+    color-mix(in srgb, var(--gold) 14%, var(--surface)),
+    color-mix(in srgb, var(--gold) 6%, var(--surface))
   );
-  border: 1px solid color-mix(in srgb, #c9a227 45%, var(--border-light));
+  border: 1px solid color-mix(in srgb, var(--gold) 45%, var(--border-light));
   border-radius: var(--radius);
   box-shadow:
-    0 0 0 1px color-mix(in srgb, #c9a227 20%, transparent),
-    0 2px 12px color-mix(in srgb, #c9a227 18%, transparent);
+    0 0 0 1px color-mix(in srgb, var(--gold) 20%, transparent),
+    0 2px 12px color-mix(in srgb, var(--gold) 18%, transparent);
   animation: champ-appear 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
   box-sizing: border-box;
 }
@@ -632,7 +632,7 @@ function finalLineOpacity(side: "home" | "away"): number {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: #c9a227;
+  color: var(--gold);
   flex-shrink: 0;
 }
 

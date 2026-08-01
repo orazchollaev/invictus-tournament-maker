@@ -121,6 +121,6 @@ function clear() {
   background: var(--bg-hover);
 }
 .flag-btn.selected {
-  border-color: var(--accent, #3b82f6);
+  border-color: var(--accent);
 }
 </style>

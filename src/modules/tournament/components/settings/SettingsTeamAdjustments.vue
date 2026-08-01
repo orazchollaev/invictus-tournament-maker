@@ -297,10 +297,10 @@ const MAX = 30
   color: var(--text-muted);
 }
 .tsp-adj-val--pos {
-  color: #22c55e;
+  color: var(--live);
 }
 .tsp-adj-val--neg {
-  color: #ef4444;
+  color: var(--danger);
 }
 
 @media (max-width: 600px) {

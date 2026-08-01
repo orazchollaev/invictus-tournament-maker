@@ -231,9 +231,9 @@ onUnmounted(() => {
   gap: 5px;
   padding: 5px 10px;
   border-radius: var(--radius);
-  border: 1px solid color-mix(in srgb, #ef4444 50%, transparent);
-  background: color-mix(in srgb, #ef4444 10%, transparent);
-  color: #ef4444;
+  border: 1px solid color-mix(in srgb, var(--danger) 50%, transparent);
+  background: color-mix(in srgb, var(--danger) 10%, transparent);
+  color: var(--danger);
   font-size: 12px;
   font-weight: 600;
   white-space: nowrap;
@@ -277,7 +277,7 @@ onUnmounted(() => {
   text-decoration: none;
 }
 .github-star-btn:hover .github-star-icon {
-  color: #f0a500;
+  color: var(--warning);
 }
 .github-star-label {
   line-height: 1;

@@ -287,7 +287,7 @@ function svgSegments(p: ConnInfo, w: number) {
   flex-shrink: 0;
 }
 .final-title {
-  color: #c9a227 !important;
+  color: var(--gold) !important;
 }
 .tp-title {
   color: var(--accent-2);
