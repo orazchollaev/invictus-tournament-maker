@@ -1,18 +1,17 @@
 <script setup lang="ts">
 import type { Team } from "@/modules/teams/types"
-import type { MatchResult } from "../../types"
 import { getWinnerId } from "@/engine"
 import { teamAbbr } from "@/composables/useTeamLookup"
 import FlagCircle from "@/modules/teams/components/FlagCircle.vue"
-import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
 import { useSettingsStore } from "@/modules/settings/store"
-import { X, Shuffle, Pencil, Check } from "@lucide/vue"
+import { Shuffle } from "@lucide/vue"
+import FixtureLegRow from "./FixtureLegRow.vue"
 import type { FlatMatch, MatchEditor } from "./useMatchEditor"
 
 const settings = useSettingsStore()
 
 const props = defineProps<{ match: FlatMatch; teams: Team[]; editor: MatchEditor }>()
-defineEmits<{
+const emit = defineEmits<{
   save: [match: FlatMatch, leg: 1 | 2]
   "save-pens": [match: FlatMatch, leg: 1 | 2]
   "sim-match": [match: FlatMatch]
@@ -31,11 +30,7 @@ function getAbbr(id: string | null): string {
   return settings.showTeamAbbr ? teamAbbr(t) : t.name
 }
 
-function legWinner(result: MatchResult | null | undefined, side: "home" | "away"): boolean {
-  if (!result) return false
-  return side === "home" ? result.home > result.away : result.away > result.home
-}
-
+/** Aggregate across both legs, with shootout goals folded in when there was one. */
 function aggLabel(match: FlatMatch): string | null {
   if (!match.result || !match.leg2Result) return null
   const h = match.result.home + match.leg2Result.away
@@ -43,10 +38,7 @@ function aggLabel(match: FlatMatch): string | null {
   const a = match.result.away + match.leg2Result.home
   const aPen = (match.result?.penHome || 0) + (match.leg2Result?.penHome || 0)
 
-  if (hPen || aPen) {
-    return `${h + hPen} – ${a + aPen} with penalties`
-  }
-
+  if (hPen || aPen) return `${h + hPen} – ${a + aPen} with penalties`
   return `${h} – ${a}`
 }
 
@@ -55,12 +47,12 @@ function aggWinnerId(match: FlatMatch): string | null {
   return getWinnerId(match)
 }
 
-function hasPen(result: MatchResult | null | undefined): boolean {
-  return !!result && result.penHome !== undefined
+function onSim(leg: 1 | 2) {
+  if (leg === 1) emit("sim-leg1", props.match)
+  else emit("sim-leg2", props.match)
 }
 </script>
 
-<!-- eslint-disable vue/no-mutating-props -- `editor` is a shared reactive store object owned by FixtureView; mutating its fields is the intended contract -->
 <template>
   <div class="tie-card">
     <!-- Aggregate header -->
@@ -99,220 +91,51 @@ function hasPen(result: MatchResult | null | undefined): boolean {
       </button>
     </div>
 
-    <!-- Leg rows -->
     <div class="tie-legs">
-      <!-- Leg 1 -->
-      <div class="leg">
-        <div class="leg-label">L1</div>
-        <div class="leg-teams">
-          <div
-            class="leg-tr"
-            :class="{
-              winner: legWinner(match.result, 'home'),
-              loser: !!match.result && !legWinner(match.result, 'home'),
-            }"
-          >
-            <TeamBadge :team="getTeam(match.homeId)" />
-          </div>
-          <div
-            class="leg-tr leg-tr--away"
-            :class="{
-              winner: legWinner(match.result, 'away'),
-              loser: !!match.result && !legWinner(match.result, 'away'),
-            }"
-          >
-            <TeamBadge :team="getTeam(match.awayId)" />
-          </div>
-        </div>
-        <div v-if="match.homeId && match.awayId" class="leg-scores">
-          <div
-            class="leg-sc"
-            :class="{
-              winner: legWinner(match.result, 'home'),
-              loser: !!match.result && !legWinner(match.result, 'home'),
-            }"
-          >
-            <input
-              v-if="editor.isEditing(match, 1)"
-              v-model.number="editor.home"
-              type="number"
-              min="0"
-              class="sinp"
-            />
-            <span v-else class="sc" :class="{ tbd: !match.result }">
-              {{ match.result?.home ?? "–" }}
-            </span>
-          </div>
-          <div
-            class="leg-sc leg-sc--away"
-            :class="{
-              winner: legWinner(match.result, 'away'),
-              loser: !!match.result && !legWinner(match.result, 'away'),
-            }"
-          >
-            <input
-              v-if="editor.isEditing(match, 1)"
-              v-model.number="editor.away"
-              type="number"
-              min="0"
-              class="sinp"
-            />
-            <span v-else class="sc" :class="{ tbd: !match.result }">
-              {{ match.result?.away ?? "–" }}
-            </span>
-          </div>
-        </div>
-        <div v-if="match.homeId && match.awayId" class="leg-acts">
-          <template v-if="editor.isEditing(match, 1)">
-            <button class="abt ok" @click="$emit('save', match, 1)"><Check :size="11" /></button>
-            <button class="abt" @click="editor.cancel()"><X :size="11" /></button>
-          </template>
-          <template v-else>
-            <button class="abt" title="Edit" @click="editor.startEdit(match, 1)">
-              <Pencil :size="11" />
-            </button>
-            <button class="abt" title="Simulate leg 1" @click="$emit('sim-leg1', match)">
-              <Shuffle :size="11" />
-            </button>
-          </template>
-        </div>
-      </div>
-
-      <!-- Leg 2 -->
-      <div class="leg" :class="{ 'leg--locked': !match.result }">
-        <div class="leg-label">L2</div>
-        <div class="leg-teams">
-          <div
-            class="leg-tr"
-            :class="{
-              winner: legWinner(match.leg2Result, 'home'),
-              loser: !!match.leg2Result && !legWinner(match.leg2Result, 'home'),
-            }"
-          >
-            <TeamBadge :team="getTeam(match.awayId)" />
-          </div>
-          <div
-            class="leg-tr leg-tr--away"
-            :class="{
-              winner: legWinner(match.leg2Result, 'away'),
-              loser: !!match.leg2Result && !legWinner(match.leg2Result, 'away'),
-            }"
-          >
-            <TeamBadge :team="getTeam(match.homeId)" />
-          </div>
-        </div>
-        <div v-if="match.homeId && match.awayId" class="leg-scores">
-          <template v-if="editor.isEditing(match, 2) && editor.mode === 'penalty'">
-            <div class="leg-sc">
-              <span class="pen-base">{{ editor.home }}</span>
-              <input v-model.number="editor.penHome" type="number" min="0" class="sinp sinp--pen" />
-            </div>
-            <div class="leg-sc leg-sc--away">
-              <span class="pen-base">{{ editor.away }}</span>
-              <input v-model.number="editor.penAway" type="number" min="0" class="sinp sinp--pen" />
-            </div>
-          </template>
-          <template v-else>
-            <div
-              class="leg-sc"
-              :class="{
-                winner: legWinner(match.leg2Result, 'home'),
-                loser: !!match.leg2Result && !legWinner(match.leg2Result, 'home'),
-              }"
-            >
-              <input
-                v-if="editor.isEditing(match, 2)"
-                v-model.number="editor.home"
-                type="number"
-                min="0"
-                class="sinp"
-              />
-              <template v-else>
-                <span class="sc" :class="{ tbd: !match.leg2Result }">
-                  {{ match.leg2Result?.home ?? "–" }}
-                </span>
-                <span v-if="hasPen(match.leg2Result)" class="pen-sup">
-                  [{{ match.leg2Result!.penHome }}p]
-                </span>
-              </template>
-            </div>
-            <div
-              class="leg-sc leg-sc--away"
-              :class="{
-                winner: legWinner(match.leg2Result, 'away'),
-                loser: !!match.leg2Result && !legWinner(match.leg2Result, 'away'),
-              }"
-            >
-              <input
-                v-if="editor.isEditing(match, 2)"
-                v-model.number="editor.away"
-                type="number"
-                min="0"
-                class="sinp"
-              />
-              <template v-else>
-                <span class="sc" :class="{ tbd: !match.leg2Result }">
-                  {{ match.leg2Result?.away ?? "–" }}
-                </span>
-                <span v-if="hasPen(match.leg2Result)" class="pen-sup">
-                  [{{ match.leg2Result!.penAway }}p]
-                </span>
-              </template>
-            </div>
-          </template>
-        </div>
-        <div v-if="match.homeId && match.awayId" class="leg-acts">
-          <template v-if="editor.isEditing(match, 2)">
-            <button
-              class="abt ok"
-              :disabled="editor.mode === 'penalty' && editor.penHome === editor.penAway"
-              @click="
-                editor.mode === 'penalty' ? $emit('save-pens', match, 2) : $emit('save', match, 2)
-              "
-            >
-              <Check :size="11" />
-            </button>
-            <button class="abt" @click="editor.cancel()"><X :size="11" /></button>
-          </template>
-          <template v-else>
-            <button
-              class="abt"
-              title="Edit"
-              :disabled="!match.result"
-              @click="match.result ? editor.startEdit(match, 2) : undefined"
-            >
-              <Pencil :size="11" />
-            </button>
-            <button
-              class="abt"
-              title="Simulate leg 2"
-              :disabled="!match.result"
-              @click="match.result ? $emit('sim-leg2', match) : undefined"
-            >
-              <Shuffle :size="11" />
-            </button>
-          </template>
-        </div>
-      </div>
+      <FixtureLegRow
+        :match="match"
+        :leg="1"
+        :home-id="match.homeId"
+        :away-id="match.awayId"
+        :result="match.result"
+        :teams="teams"
+        :editor="editor"
+        @save="(leg) => emit('save', match, leg)"
+        @save-pens="(leg) => emit('save-pens', match, leg)"
+        @sim="onSim"
+      />
+      <!-- Leg 2 is played at the other venue, so the sides swap. -->
+      <FixtureLegRow
+        :match="match"
+        :leg="2"
+        :home-id="match.awayId"
+        :away-id="match.homeId"
+        :result="match.leg2Result"
+        :teams="teams"
+        :editor="editor"
+        :disabled="!match.result"
+        @save="(leg) => emit('save', match, leg)"
+        @save-pens="(leg) => emit('save-pens', match, leg)"
+        @sim="onSim"
+      />
     </div>
   </div>
 </template>
 
-<style scoped src="../match-card-shared.css"></style>
 <style scoped>
 .tie-card {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   background: var(--surface);
   overflow: hidden;
-  animation: fade-up 0.22s ease both;
+  animation: fade-up var(--dur) var(--ease) both;
 }
 
 .tie-hd {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 8px;
+  gap: var(--sp-2);
+  padding: var(--sp-2);
   background: var(--bg);
   border-bottom: 1px solid var(--border-light);
 }
@@ -320,8 +143,8 @@ function hasPen(result: MatchResult | null | undefined): boolean {
 .tie-hd-team {
   display: flex;
   align-items: center;
-  gap: 4px;
-  font-size: 11px;
+  gap: var(--sp-1);
+  font-size: var(--fs-xs);
   font-weight: 700;
   color: var(--text-muted);
   flex-shrink: 0;
@@ -348,7 +171,7 @@ function hasPen(result: MatchResult | null | undefined): boolean {
 
 .agg {
   font-family: var(--font-ui);
-  font-size: 14px;
+  font-size: var(--fs-base);
   font-weight: 800;
   color: var(--text);
   letter-spacing: -0.02em;
@@ -380,8 +203,8 @@ function hasPen(result: MatchResult | null | undefined): boolean {
   flex-shrink: 0;
   padding: 0;
   transition:
-    color 0.1s,
-    border-color 0.1s;
+    color var(--dur-fast) var(--ease),
+    border-color var(--dur-fast) var(--ease);
 }
 .tie-sim:hover {
   color: var(--accent);
@@ -393,112 +216,7 @@ function hasPen(result: MatchResult | null | undefined): boolean {
   flex-direction: column;
 }
 
-/* ── Leg row ── */
-.leg {
-  display: flex;
-  flex-direction: row;
-  border-bottom: 1px solid var(--border-light);
-  font-size: 12px;
-}
-.leg:last-child {
-  border-bottom: none;
-}
-.leg--locked {
-  opacity: 0.38;
-  pointer-events: none;
-}
-
-.leg-label {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  flex-shrink: 0;
-  font-size: 9px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--text-muted);
-  border-right: 1px solid var(--border-light);
-  background: var(--bg);
-}
-
-.leg-teams {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-}
-
-.leg-tr {
-  display: flex;
-  align-items: center;
-  height: 26px;
-  padding: 0 6px;
-  gap: 5px;
-  border-bottom: 1px solid var(--border-light);
-  overflow: hidden;
-  transition:
-    background 0.1s,
-    opacity 0.1s;
-}
-.leg-tr--away {
-  border-bottom: none;
-}
-.leg-tr.winner {
-  background: color-mix(in srgb, var(--success) 10%, var(--surface));
-  font-weight: 700;
-}
-.leg-tr.loser {
-  opacity: 0.45;
-}
-
-.leg-scores {
-  width: 52px;
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  border-left: 1px solid var(--border-light);
-}
-
-.leg-sc {
-  height: 26px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 3px;
-  padding: 0 4px;
-  border-bottom: 1px solid var(--border-light);
-  box-sizing: border-box;
-  transition:
-    background 0.1s,
-    opacity 0.1s;
-}
-.leg-sc--away {
-  border-bottom: none;
-}
-.leg-sc.winner {
-  background: color-mix(in srgb, var(--success) 10%, var(--surface));
-}
-.leg-sc.loser {
-  opacity: 0.45;
-}
-
-.leg-acts {
-  width: 28px;
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  padding: 0 4px;
-  border-left: 1px solid var(--border-light);
-  background: var(--bg);
-  box-sizing: border-box;
-}
-
-/* ── Color dot ── */
+/* ── Colour dot (fallback when a team has no flag) ── */
 .cdot {
   display: inline-block;
   width: 14px;
