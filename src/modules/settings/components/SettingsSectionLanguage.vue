@@ -18,7 +18,7 @@ const settings = useSettingsStore()
       {{ t("settings.language.label") }}
     </template>
 
-    <AppField layout="split" :label="t('settings.language.label')">
+    <AppField layout="split" class="lang-field" :label="t('settings.language.label')">
       <template #description>
         <SettingDesc>{{ t("settings.language.desc") }}</SettingDesc>
       </template>
@@ -42,6 +42,29 @@ const settings = useSettingsStore()
   display: flex;
   gap: var(--sp-2);
   flex-wrap: wrap;
-  flex-shrink: 0;
+  justify-content: flex-end;
+  min-width: 0;
+}
+
+/* Five language buttons are far wider than the other settings controls, so
+   this row's control must be allowed to shrink and wrap instead of holding
+   its max-content width (which is what pushed it off screen). */
+.lang-field :deep(.field-control) {
+  flex-shrink: 1;
+  min-width: 0;
+}
+
+@media (max-width: 640px) {
+  /* The label already takes the full first line here — give the picker its
+     own line and lay it out as a 2-column grid. */
+  .lang-field :deep(.field-control) {
+    flex: 1 1 100%;
+    margin-left: 0;
+  }
+  .lang-picker {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+  }
 }
 </style>
