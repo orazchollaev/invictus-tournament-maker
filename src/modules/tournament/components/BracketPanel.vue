@@ -6,12 +6,7 @@ import type { Team } from "@/modules/teams/types"
 import BracketDoubleSide from "./BracketDoubleSide.vue"
 import BracketClassic from "./BracketClassic.vue"
 import FixtureView from "./FixtureView.vue"
-import {
-  BracketFullscreenModal,
-  BracketMobileTabs,
-  BracketSimToolbar,
-  BracketZoomControls,
-} from "./bracket"
+import { BracketFullscreenModal, BracketSimToolbar, BracketZoomControls } from "./bracket"
 import { AppButton, AppCard, AppIcon, BtnGroup } from "@/components/ui"
 import { useTournamentStore } from "../store"
 import { useSettingsStore } from "@/modules/settings/store"
@@ -178,6 +173,17 @@ const { isExporting, exportPng } = useBracketExport({
     </template>
 
     <div class="bracket-body">
+      <BtnGroup
+        :model-value="bracketView"
+        class="view-toggle-mobile"
+        block
+        :options="[
+          { value: 'bracket', label: 'Bracket' },
+          { value: 'fixtures', label: 'Fixtures' },
+        ]"
+        @update:model-value="(v) => (bracketView = v as 'bracket' | 'fixtures')"
+      />
+
       <BracketSimToolbar
         :rounds="tournament.rounds"
         :third-place-match="thirdPlaceMatch"
@@ -224,8 +230,6 @@ const { isExporting, exportPng } = useBracketExport({
     </div>
   </AppCard>
 
-  <BracketMobileTabs v-model="bracketView" />
-
   <BracketFullscreenModal v-model:open="showFullBracket" :title="`${tournament.name} — Knockout`">
     <component
       :is="activeBracket"
@@ -243,6 +247,11 @@ const { isExporting, exportPng } = useBracketExport({
   padding: var(--sp-2) 0;
 }
 
+/* Desktop shows the same switcher in the card actions instead. */
+.view-toggle-mobile {
+  display: none;
+}
+
 .bracket-wrapper {
   height: clamp(360px, 68vh, 780px);
   min-height: 280px;
@@ -253,15 +262,20 @@ const { isExporting, exportPng } = useBracketExport({
 }
 
 @media (max-width: 640px) {
-  /* The bottom tab bar takes over; the header controls would not fit anyway. */
+  /* The in-body switcher takes over; the header controls would not fit. */
   .view-toggle,
   :deep(.zoom-controls),
   .btn-label {
     display: none;
   }
 
-  .bracket-body {
-    padding-bottom: calc(52px + env(safe-area-inset-bottom));
+  /* Scoped under .bracket-body to outrank BtnGroup's own
+     .btn-group--block { width: 100% }, which would add up with the
+     horizontal margins and push the control past the card edge. */
+  .bracket-body .view-toggle-mobile {
+    display: flex;
+    width: auto;
+    margin: 0 var(--sp-2) var(--sp-2);
   }
 
   .bracket-wrapper {

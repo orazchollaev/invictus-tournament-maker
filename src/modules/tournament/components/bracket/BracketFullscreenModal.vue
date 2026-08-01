@@ -126,7 +126,7 @@ onUnmounted(() => {
   align-items: center;
   justify-content: space-between;
   padding: var(--sp-3) var(--sp-4);
-  padding-top: calc(var(--sp-3) + env(safe-area-inset-top));
+  padding-top: calc(var(--sp-3) + var(--safe-top));
   border-bottom: 1px solid var(--border-light);
   background: var(--bg);
   font-family: var(--font);

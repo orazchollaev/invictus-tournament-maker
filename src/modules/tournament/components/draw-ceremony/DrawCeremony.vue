@@ -200,7 +200,7 @@ onUnmounted(() => {
   border-radius: var(--radius-lg);
   box-shadow: var(--elev-3);
   overflow: hidden;
-  padding-top: env(safe-area-inset-top);
+  padding-top: var(--safe-top);
   animation: dc-panel-in var(--dur-slow) cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 

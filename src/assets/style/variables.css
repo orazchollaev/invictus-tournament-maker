@@ -98,15 +98,34 @@
   --dur-2: 0.25s;
   --dur-slow: 0.35s;
 
+  /* ── Safe area ───────────────────────────────────────────────────
+     Android WebView only maps display-cutout insets into `env()`; the
+     status/navigation bars come back as 0 even though the app draws
+     edge-to-edge (forced from API 35). MainActivity measures the real
+     insets and writes --safe-area-inset-* onto <html>, so always read
+     the safe area through these tokens — never `env()` directly. */
+  --safe-top: var(--safe-area-inset-top, env(safe-area-inset-top, 0px));
+  --safe-bottom: var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px));
+  --safe-left: var(--safe-area-inset-left, env(safe-area-inset-left, 0px));
+  --safe-right: var(--safe-area-inset-right, env(safe-area-inset-right, 0px));
+
   /* ── Layout ──────────────────────────────────────────────────── */
   --header-height: 52px;
-  --sticky-top: calc(var(--header-height) + env(safe-area-inset-top));
+  --sticky-top: calc(var(--header-height) + var(--safe-top));
+
+  /* Floating mobile bottom nav. --mobile-nav-offset is the height any
+     bottom-anchored element must clear to sit above it: the pill, the
+     gap under it, and the system navigation bar. */
+  --mobile-nav-height: 58px;
+  --mobile-nav-gap: var(--sp-2);
+  --mobile-nav-offset: calc(var(--mobile-nav-height) + var(--mobile-nav-gap) + var(--safe-bottom));
 
   /* ── Stacking order ──────────────────────────────────────────── */
   --z-sticky: 9;
   --z-header: 10;
-  /* Fixed bottom bars sit above the header but below the floating nav (98–100). */
+  /* Fixed bottom bars sit above the header but below the floating nav. */
   --z-bottom-bar: 90;
+  --z-mobile-nav: 95;
   --z-dropdown: 200;
   --z-overlay: 300;
   --z-modal: 1000;

@@ -86,9 +86,20 @@ onUnmounted(() => {
   height: 100%;
 }
 
+/* .app-main is height-constrained, so page content taller than the
+   viewport overflows it rather than stretching it — a padding-bottom
+   would sit *behind* that overflow and never be scrolled to. A block
+   after the content is laid out at the end of the flow, so it is the
+   only thing that reliably reserves room under the last element. */
+.app-main::after {
+  content: "";
+  display: block;
+  height: var(--safe-bottom);
+}
+
 @media (max-width: 640px) {
-  .app-main {
-    padding-bottom: calc(64px + var(--sp-4) + env(safe-area-inset-bottom));
+  .app-main::after {
+    height: calc(var(--mobile-nav-offset) + var(--sp-4));
   }
 }
 </style>

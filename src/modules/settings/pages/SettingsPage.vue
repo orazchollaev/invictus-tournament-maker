@@ -370,7 +370,7 @@ function selectCategory(id: Category) {
 }
 @media (max-width: 640px) {
   .mobile-nav {
-    top: env(safe-area-inset-top);
+    top: var(--safe-top);
   }
 }
 

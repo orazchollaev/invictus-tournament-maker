@@ -63,7 +63,7 @@ defineEmits<{ "update:modelValue": [value: string] }>()
     display: none;
   }
   .tabs--sticky {
-    top: env(safe-area-inset-top);
+    top: var(--safe-top);
   }
 }
 </style>

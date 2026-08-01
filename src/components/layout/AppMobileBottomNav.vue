@@ -1,103 +1,104 @@
 <script setup lang="ts">
-import { Trophy, Users, History, Settings, BookOpen } from "@lucide/vue"
+import { Trophy, Users, History, BookOpen, Settings } from "@lucide/vue"
 import { useI18n } from "vue-i18n"
 import { useNavActive } from "@/composables/useNavActive"
 
 const { t } = useI18n()
 const { isNavActive } = useNavActive()
 
+/* Same order as the swipe sequence in App.vue, so swiping left/right
+   moves along the bar instead of jumping around it. */
 const items = [
   { to: "/tournaments", icon: Trophy, label: () => t("nav.tournaments") },
   { to: "/teams", icon: Users, label: () => t("nav.teams") },
   { to: "/history", icon: History, label: () => t("nav.history") },
-  { to: "/guide", icon: BookOpen, label: () => t("guide.title") },
   { to: "/settings", icon: Settings, label: () => t("nav.settings") },
+  { to: "/guide", icon: BookOpen, label: () => t("guide.title") },
 ]
 </script>
 
 <template>
-  <nav class="mobile-bottom-nav">
+  <nav class="mobile-nav">
     <RouterLink
       v-for="item in items"
       :key="item.to"
       :to="item.to"
-      class="bottom-nav-item"
+      class="mobile-nav-item"
       :class="{ 'router-link-active': isNavActive(item.to) }"
     >
-      <component :is="item.icon" class="bottom-nav-icon" :size="21" />
-      <span class="bottom-nav-label">{{ item.label() }}</span>
+      <component :is="item.icon" :size="19" class="mobile-nav-icon" />
+      <span class="mobile-nav-label">{{ item.label() }}</span>
     </RouterLink>
   </nav>
 </template>
 
 <style scoped>
-.mobile-bottom-nav {
+/* Desktop uses the site header instead. */
+.mobile-nav {
   display: none;
 }
 
 @media (max-width: 640px) {
-  .mobile-bottom-nav {
-    position: fixed;
-    left: var(--sp-3);
-    right: var(--sp-3);
-    bottom: calc(var(--sp-3) + env(safe-area-inset-bottom));
-    z-index: var(--z-bottom-bar);
+  .mobile-nav {
     display: flex;
-    align-items: stretch;
-    border-radius: var(--radius-lg);
-    background: color-mix(in srgb, var(--surface) 90%, transparent);
-    backdrop-filter: blur(20px) saturate(160%);
-    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    position: fixed;
+    left: calc(var(--safe-left) + var(--sp-3));
+    right: calc(var(--safe-right) + var(--sp-3));
+    bottom: calc(var(--safe-bottom) + var(--mobile-nav-gap));
+    z-index: var(--z-mobile-nav);
+    height: var(--mobile-nav-height);
+    padding: var(--sp-1);
+    gap: var(--sp-1);
     border: 1px solid var(--border-light);
-    box-shadow: var(--shadow-lg);
+    border-radius: var(--radius-lg);
+    background: color-mix(in srgb, var(--surface) 88%, transparent);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: var(--elev-3);
   }
 
-  .bottom-nav-item {
+  .mobile-nav-item {
     flex: 1;
+    min-width: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 3px;
-    padding: var(--sp-2) var(--sp-1);
+    gap: 2px;
     border-radius: var(--radius);
-    margin: var(--sp-1);
     color: var(--text-muted);
     text-decoration: none;
     font-size: var(--fs-xs);
     font-weight: 500;
-    line-height: 1.1;
-    text-align: center;
+    line-height: 1.2;
     transition:
-      color var(--dur-fast) var(--ease),
       background var(--dur-fast) var(--ease),
+      color var(--dur-fast) var(--ease),
       transform var(--dur-fast) var(--ease);
   }
 
-  .bottom-nav-item:active {
+  .mobile-nav-item:hover {
+    text-decoration: none;
+  }
+
+  .mobile-nav-item:active {
     transform: scale(0.94);
   }
 
-  .bottom-nav-icon {
-    transition:
-      color var(--dur-fast) var(--ease),
-      transform var(--dur-fast) var(--ease);
+  .mobile-nav-item.router-link-active {
+    background: color-mix(in srgb, var(--accent) 12%, transparent);
+    color: var(--accent);
   }
 
-  .bottom-nav-label {
+  .mobile-nav-icon {
+    flex-shrink: 0;
+  }
+
+  .mobile-nav-label {
     max-width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-  }
-
-  .bottom-nav-item.router-link-active {
-    color: var(--accent);
-    background: var(--accent-subtle);
-  }
-
-  .bottom-nav-item.router-link-active .bottom-nav-icon {
-    transform: translateY(-1px);
   }
 }
 </style>

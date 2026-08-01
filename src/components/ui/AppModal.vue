@@ -134,7 +134,7 @@ defineExpose({ close })
   height: 100%;
   display: flex;
   flex-direction: column;
-  padding-top: env(safe-area-inset-top);
+  padding-top: var(--safe-top);
   animation: drawer-in 0.25s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
