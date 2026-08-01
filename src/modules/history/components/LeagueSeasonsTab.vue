@@ -4,13 +4,7 @@ import { Trophy } from "@lucide/vue"
 import { useI18n } from "vue-i18n"
 import { AppCard, AppChip, AppTable } from "@/components/ui"
 import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
-
-export interface LeagueSeasonEntry {
-  season: number
-  first: { name: string; color: string; flag?: string; pts: number } | null
-  second: { name: string; color: string; flag?: string; pts: number } | null
-  third: { name: string; color: string; flag?: string; pts: number } | null
-}
+import type { LeagueSeasonEntry } from "../types"
 
 const props = defineProps<{ seasons: LeagueSeasonEntry[] }>()
 

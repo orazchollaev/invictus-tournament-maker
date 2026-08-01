@@ -3,36 +3,7 @@ import { Zap, Shield, Flame, Star, Trophy } from "@lucide/vue"
 import { useI18n } from "vue-i18n"
 import { AppCard, AppChip, AppIcon } from "@/components/ui"
 import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
-
-export interface BiggestWin {
-  score: string
-  winnerName: string
-  winnerColor: string
-  winnerFlag?: string
-  loserName: string
-  loserColor: string
-  loserFlag?: string
-}
-
-export interface RecordTeam {
-  name: string
-  color: string
-  flag?: string
-  count: number
-}
-
-export interface HistoryStats {
-  totalSeasons: number
-  totalMatches: number
-  totalGoals: number
-  avgGoals: string
-  topScoringTeam: { name: string; color: string; flag?: string; goals: number } | null
-  biggestWin: BiggestWin | null
-  mostCleanSheets: RecordTeam | null
-  firstChampion: { name: string; color: string; flag?: string; season: number } | null
-  longestStreak: RecordTeam | null
-  currentStreak: RecordTeam | null
-}
+import type { HistoryStats } from "../types"
 
 defineProps<{ stats: HistoryStats }>()
 

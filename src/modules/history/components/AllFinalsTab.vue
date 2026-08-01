@@ -3,17 +3,7 @@ import { computed } from "vue"
 import { useI18n } from "vue-i18n"
 import { AppCard, AppChip, AppTable } from "@/components/ui"
 import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
-
-export interface FinalEntry {
-  season: number
-  champName: string
-  champColor: string
-  champFlag?: string
-  runnerName: string
-  runnerColor: string
-  runnerFlag?: string
-  score: string
-}
+import type { FinalEntry } from "../types"
 
 const props = defineProps<{ finals: FinalEntry[] }>()
 

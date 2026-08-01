@@ -2,23 +2,7 @@
 import { useI18n } from "vue-i18n"
 import { AppCard, AppTable } from "@/components/ui"
 import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
-
-export interface AllTimeRow {
-  teamId: string
-  name: string
-  color: string
-  flag?: string
-  seasons: number
-  titles: number
-  played: number
-  won: number
-  drawn: number
-  lost: number
-  gf: number
-  ga: number
-  gd: number
-  pts: number
-}
+import type { AllTimeRow } from "../types"
 
 defineProps<{ rows: AllTimeRow[] }>()
 

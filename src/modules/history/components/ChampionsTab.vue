@@ -3,15 +3,7 @@ import { Trophy } from "@lucide/vue"
 import { useI18n } from "vue-i18n"
 import { AppCard, AppTable } from "@/components/ui"
 import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
-
-export interface ChampEntry {
-  teamId: string
-  name: string
-  color: string
-  flag?: string
-  wins: number
-  finals: number
-}
+import type { ChampEntry } from "../types"
 
 defineProps<{ champions: ChampEntry[]; finalsLabel?: string }>()
 

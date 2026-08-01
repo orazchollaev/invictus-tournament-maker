@@ -4,37 +4,7 @@ import { ChevronDown, ChevronRight, Trophy } from "@lucide/vue"
 import { useI18n } from "vue-i18n"
 import { AppCard, AppIcon } from "@/components/ui"
 import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
-
-export interface TeamSeasonRow {
-  season: number
-  played: number
-  won: number
-  drawn: number
-  lost: number
-  gf: number
-  ga: number
-  gd: number
-  cleanSheets: number
-  title: boolean
-}
-
-export interface TeamStatEntry {
-  teamId: string
-  name: string
-  color: string
-  flag?: string
-  seasons: number
-  titles: number
-  played: number
-  won: number
-  drawn: number
-  lost: number
-  gf: number
-  ga: number
-  gd: number
-  cleanSheets: number
-  seasonBreakdown: TeamSeasonRow[]
-}
+import type { TeamStatEntry } from "../types"
 
 defineProps<{ teams: TeamStatEntry[] }>()
 
