@@ -1,5 +1,17 @@
 # Changelog
 
+# [1.16.0](https://github.com/orazchollaev/invictus-tournament-maker/compare/v1.15.1...v1.16.0) (2026-08-01)
+
+### Bug Fixes
+
+- **history:** count each leg of a two-legged tie as its own match ([4044521](https://github.com/orazchollaev/invictus-tournament-maker/commit/4044521841e71626b7e6304a8d665f1d278583da))
+- **settings:** stop the language picker overflowing on mobile ([fb42720](https://github.com/orazchollaev/invictus-tournament-maker/commit/fb427200fbd64cfb96b46aacdafd3cd6b31c182e))
+- **store:** recalculate the champion whenever standings are recalculated ([2d2eead](https://github.com/orazchollaev/invictus-tournament-maker/commit/2d2eead3ca463f19f7765f337e3cb1df51bff147))
+
+### Features
+
+- add swipeable tabs via Swiper to detail/history pages, extract composables ([e45f0f9](https://github.com/orazchollaev/invictus-tournament-maker/commit/e45f0f965fc235fff5933286c8e4ce18ad361071))
+
 ## [1.15.1](https://github.com/orazchollaev/invictus-tournament-maker/compare/v1.15.0...v1.15.1) (2026-07-27)
 
 ### Bug Fixes
