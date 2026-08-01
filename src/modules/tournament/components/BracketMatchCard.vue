@@ -370,6 +370,8 @@ const saveDisabled = computed(() =>
   </div>
 </template>
 
+<style scoped src="./match-card-shared.css"></style>
+
 <style scoped>
 /* ── Card shell ── */
 .mc {
@@ -494,44 +496,9 @@ const saveDisabled = computed(() =>
 }
 
 /* ── Score chip ── */
-.sc {
-  font-weight: 700;
-  font-size: var(--fs-sm);
-  background: color-mix(in srgb, var(--text-muted) 10%, var(--surface));
-  border-radius: var(--radius);
-  padding: 1px 5px;
-  min-width: 18px;
-  text-align: center;
-  flex-shrink: 0;
-  display: inline-flex;
-  align-items: baseline;
-  gap: 2px;
-  animation: score-pop var(--dur) var(--ease-spring) both;
-}
-.sc.tbd {
-  color: var(--text-muted);
-  font-weight: 400;
-  background: transparent;
-  animation: none;
-}
 .mc.final .sc {
   background: color-mix(in srgb, var(--gold) 16%, var(--surface));
   color: var(--gold-text);
-}
-.pen-sup {
-  font-size: 9px;
-  font-weight: 400;
-  color: var(--text-muted);
-}
-
-/* Penalty edit inline (single-leg) */
-.pen-base {
-  font-size: var(--fs-xs);
-  font-weight: 700;
-  color: var(--text-muted);
-  min-width: 10px;
-  text-align: center;
-  flex-shrink: 0;
 }
 
 /* Double-leg mini breakdown (e.g. "2·1") */
@@ -553,36 +520,6 @@ const saveDisabled = computed(() =>
   min-width: 10px;
 }
 
-/* ── Number inputs ── */
-.sinp {
-  width: 26px;
-  text-align: center;
-  background: var(--bg);
-  border: 1px solid var(--accent);
-  border-radius: var(--radius);
-  padding: 1px 2px;
-  font-size: var(--fs-sm);
-  font-weight: 700;
-  color: inherit;
-  flex-shrink: 0;
-  -moz-appearance: textfield;
-  appearance: textfield;
-  box-sizing: border-box;
-}
-.sinp--pen {
-  width: 22px;
-  font-size: var(--fs-xs);
-}
-.sinp:focus {
-  outline: none;
-  box-shadow: 0 0 0 2px var(--accent-subtle);
-}
-.sinp::-webkit-outer-spin-button,
-.sinp::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
 /* ── Action column ── */
 .mc-actions {
   width: 28px;
@@ -602,26 +539,7 @@ const saveDisabled = computed(() =>
   border-left-color: var(--gold-soft);
 }
 
-/* ── Icon buttons ── */
-.abt {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 18px;
-  height: 18px;
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius);
-  background: transparent;
-  color: var(--text-muted);
-  cursor: pointer;
-  flex-shrink: 0;
-  padding: 0;
-  transition:
-    color var(--dur-fast) var(--ease),
-    border-color var(--dur-fast) var(--ease),
-    background var(--dur-fast) var(--ease);
-}
-/* Leg-pick label buttons (L1 / L2) */
+/* Leg-pick label buttons (L1 / L2) — override the shared .abt hover. */
 .abt--leg {
   width: 20px;
   font-size: 10px;
@@ -640,22 +558,6 @@ const saveDisabled = computed(() =>
   color: var(--accent);
   border-color: color-mix(in srgb, var(--accent) 40%, var(--border-light));
   background: color-mix(in srgb, var(--accent) 8%, transparent);
-}
-.abt:hover:not(:disabled):not(.abt--leg) {
-  color: var(--text);
-  border-color: var(--border);
-  background: color-mix(in srgb, var(--border) 30%, transparent);
-}
-.abt.ok {
-  color: var(--success);
-  border-color: color-mix(in srgb, var(--success) 40%, var(--border-light));
-}
-.abt.ok:hover:not(:disabled) {
-  background: color-mix(in srgb, var(--success) 10%, transparent);
-}
-.abt:disabled {
-  opacity: 0.25;
-  cursor: default;
 }
 
 /* ── Third-place variant ──────────────────────────────────────

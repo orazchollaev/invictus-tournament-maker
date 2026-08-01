@@ -119,7 +119,7 @@ function getTeam(id: string | null): Team | null {
   </div>
 </template>
 
-<style scoped src="./fixture-card-shared.css"></style>
+<style scoped src="../match-card-shared.css"></style>
 <style scoped>
 .mc {
   display: flex;

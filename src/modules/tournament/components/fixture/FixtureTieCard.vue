@@ -298,7 +298,7 @@ function hasPen(result: MatchResult | null | undefined): boolean {
   </div>
 </template>
 
-<style scoped src="./fixture-card-shared.css"></style>
+<style scoped src="../match-card-shared.css"></style>
 <style scoped>
 .tie-card {
   border: 1px solid var(--border);

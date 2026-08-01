@@ -1,10 +1,11 @@
-/* Shared bits between FixtureMatchCard and FixtureTieCard
-   (imported scoped by both — score chip, inputs, action buttons). */
+/* Score chip, number inputs and action buttons — shared by every match card
+   (BracketMatchCard, FixtureMatchCard, FixtureTieCard). Imported scoped, so
+   each component still owns its own layout. */
 
 /* ── Score chip ── */
 .sc {
   font-weight: 700;
-  font-size: 12px;
+  font-size: var(--fs-sm);
   background: color-mix(in srgb, var(--text-muted) 10%, var(--surface));
   border-radius: var(--radius);
   padding: 1px 5px;
@@ -14,7 +15,7 @@
   display: inline-flex;
   align-items: baseline;
   gap: 2px;
-  animation: score-pop 0.22s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  animation: score-pop var(--dur) var(--ease-spring) both;
 }
 .sc.tbd {
   color: var(--text-muted);
@@ -22,13 +23,15 @@
   background: transparent;
   animation: none;
 }
+
 .pen-sup {
   font-size: 9px;
   font-weight: 400;
   color: var(--text-muted);
 }
+
 .pen-base {
-  font-size: 11px;
+  font-size: var(--fs-xs);
   font-weight: 700;
   color: var(--text-muted);
   min-width: 10px;
@@ -44,7 +47,7 @@
   border: 1px solid var(--accent);
   border-radius: var(--radius);
   padding: 1px 2px;
-  font-size: 12px;
+  font-size: var(--fs-sm);
   font-weight: 700;
   color: inherit;
   flex-shrink: 0;
@@ -54,11 +57,11 @@
 }
 .sinp--pen {
   width: 22px;
-  font-size: 11px;
+  font-size: var(--fs-xs);
 }
 .sinp:focus {
   outline: none;
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 20%, transparent);
+  box-shadow: 0 0 0 2px var(--accent-subtle);
 }
 .sinp::-webkit-outer-spin-button,
 .sinp::-webkit-inner-spin-button {
@@ -81,9 +84,9 @@
   flex-shrink: 0;
   padding: 0;
   transition:
-    color 0.1s,
-    border-color 0.1s,
-    background 0.1s;
+    color var(--dur-fast) var(--ease),
+    border-color var(--dur-fast) var(--ease),
+    background var(--dur-fast) var(--ease);
 }
 .abt:hover:not(:disabled) {
   color: var(--text);
