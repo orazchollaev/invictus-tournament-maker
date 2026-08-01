@@ -2,10 +2,11 @@
 import { ref, computed } from "vue"
 import { useI18n } from "vue-i18n"
 import FlagCircle from "./FlagCircle.vue"
-import { X, Search } from "@lucide/vue"
+import { X } from "@lucide/vue"
+import { AppSearchInput } from "@/components/ui"
 import { COUNTRY_FLAGS } from "@/constants.ts"
 
-const props = defineProps<{ modelValue?: string }>()
+defineProps<{ modelValue?: string }>()
 const emit = defineEmits<{ "update:modelValue": [string | undefined] }>()
 
 const { t } = useI18n()
@@ -32,15 +33,7 @@ function clear() {
 <template>
   <div class="flag-picker">
     <div class="search-row">
-      <div class="search-wrap">
-        <Search class="search-icon" :size="14" />
-        <input
-          v-model="search"
-          class="search-input"
-          :placeholder="t('teams.form.flagSearch')"
-          autocomplete="off"
-        />
-      </div>
+      <AppSearchInput v-model="search" size="sm" :placeholder="t('teams.form.flagSearch')" />
       <button
         v-show="modelValue"
         class="btn-clear"
@@ -75,31 +68,10 @@ function clear() {
   gap: 8px;
 }
 
+/* Stretch so the clear button matches the field height. */
 .search-row {
-  display: flex;
   align-items: stretch;
-  gap: 6px;
-}
-
-.search-wrap {
-  position: relative;
-  flex: 1;
-  display: flex;
-  align-items: center;
-}
-
-.search-icon {
-  position: absolute;
-  left: 8px;
-  color: var(--text-muted);
-  pointer-events: none;
-  flex-shrink: 0;
-}
-
-.search-input {
-  width: 100%;
-  font-size: 13px;
-  padding-left: 28px;
+  gap: var(--sp-2);
 }
 
 .btn-clear {

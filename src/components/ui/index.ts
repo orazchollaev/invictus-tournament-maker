@@ -7,6 +7,7 @@ import AppField from "./AppField.vue"
 import AppIcon from "./AppIcon.vue"
 import AppModal from "./AppModal.vue"
 import AppNumberInput from "./AppNumberInput.vue"
+import AppSearchInput from "./AppSearchInput.vue"
 import AppSectionHeader from "./AppSectionHeader.vue"
 import AppStepper from "./AppStepper.vue"
 import AppTab from "./AppTab.vue"
@@ -26,6 +27,7 @@ export {
   AppIcon,
   AppModal,
   AppNumberInput,
+  AppSearchInput,
   AppSectionHeader,
   AppStepper,
   AppTab,

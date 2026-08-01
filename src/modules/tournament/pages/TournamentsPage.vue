@@ -7,7 +7,8 @@ import { useSettingsStore } from "@/modules/settings/store"
 import type { Tournament } from "../types"
 import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
 import BtnGroup from "@/components/ui/BtnGroup.vue"
-import { Trophy, X, Search, Plus, List, Grid3x3 } from "@lucide/vue"
+import AppSearchInput from "@/components/ui/AppSearchInput.vue"
+import { Trophy, X, Plus, List, Grid3x3 } from "@lucide/vue"
 import { showConfirm } from "@/composables/useDialog"
 import { useI18n } from "vue-i18n"
 
@@ -74,14 +75,7 @@ async function deleteTournament(id: string) {
     </div>
 
     <div v-if="store.tournaments.length" class="search-row">
-      <div class="search-wrap">
-        <Search :size="14" class="search-icon" />
-        <input
-          v-model="query"
-          class="search-input"
-          :placeholder="t('tournaments.searchPlaceholder')"
-        />
-      </div>
+      <AppSearchInput v-model="query" :placeholder="t('tournaments.searchPlaceholder')" />
       <BtnGroup v-model="settings.tournamentListView" :options="viewOptions" />
     </div>
 

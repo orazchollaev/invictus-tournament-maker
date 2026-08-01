@@ -6,8 +6,16 @@ import { useSettingsStore } from "@/modules/settings/store"
 import TeamFormModal from "../components/TeamFormModal.vue"
 import TeamBadge from "../components/TeamBadge.vue"
 import type { Team } from "../types"
-import { AppButton, AppCard, AppChip, AppEmptyState, AppIcon, BtnGroup } from "@/components/ui"
-import { X, Pencil, Search, Plus, Users, List, Grid3x3 } from "@lucide/vue"
+import {
+  AppButton,
+  AppCard,
+  AppChip,
+  AppEmptyState,
+  AppIcon,
+  AppSearchInput,
+  BtnGroup,
+} from "@/components/ui"
+import { X, Pencil, Plus, Users, List, Grid3x3 } from "@lucide/vue"
 import { MAX_TEAMS } from "@/constants"
 import { useI18n } from "vue-i18n"
 
@@ -53,10 +61,7 @@ const filtered = computed(() => {
     </div>
 
     <div v-if="store.teams.length" class="search-row">
-      <div class="search-wrap">
-        <Search :size="14" class="search-icon" />
-        <input v-model="query" class="search-input" :placeholder="t('teams.searchPlaceholder')" />
-      </div>
+      <AppSearchInput v-model="query" :placeholder="t('teams.searchPlaceholder')" />
       <BtnGroup v-model="settings.teamsListView" :options="viewOptions" />
     </div>
 
