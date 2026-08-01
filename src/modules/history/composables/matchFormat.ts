@@ -36,11 +36,3 @@ export function buildScore(fm: Match, winnerId: string | null): string {
   }
   return `${w}–${l}${pen}`
 }
-
-/** Goals across both legs of a knockout tie. */
-export function knockoutGoals(m: Match): number {
-  if (!m.result) return 0
-  let g = m.result.home + m.result.away
-  if (m.leg2Result) g += m.leg2Result.home + m.leg2Result.away
-  return g
-}

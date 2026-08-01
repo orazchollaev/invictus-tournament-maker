@@ -1,7 +1,6 @@
 import { computed, type ComputedRef } from "vue"
 import type { Tournament } from "@/modules/tournament/types"
 import type { HistoryStats } from "../types"
-import { knockoutGoals } from "./matchFormat"
 import { useTeamRef } from "./useTeamRef"
 
 /** A streak shorter than this is not worth reporting. */
@@ -53,15 +52,21 @@ export function useHistoryOverviewStats(completedSeasons: ComputedRef<Tournament
     }
 
     /**
-     * Knockout ties count as one match but contribute both legs' goals — kept as-is
-     * from the original implementation so the displayed history does not shift.
+     * A two-legged tie is two matches, so each played leg is counted separately.
+     * Counting the tie once while adding both legs' goals inflated `avgGoals` and
+     * disagreed with useHistoryTeamStats, which has always counted per leg.
      */
     function trackTie(m: Tournament["rounds"][number]["matches"][number]) {
       if (!m.result) return
       totalMatches++
-      totalGoals += knockoutGoals(m)
+      totalGoals += m.result.home + m.result.away
       trackLeg(m.homeId, m.awayId, m.result.home, m.result.away)
-      if (m.leg2Result) trackLeg(m.awayId, m.homeId, m.leg2Result.home, m.leg2Result.away)
+
+      if (m.leg2Result) {
+        totalMatches++
+        totalGoals += m.leg2Result.home + m.leg2Result.away
+        trackLeg(m.awayId, m.homeId, m.leg2Result.home, m.leg2Result.away)
+      }
     }
 
     for (const t of completedSeasons.value) {
