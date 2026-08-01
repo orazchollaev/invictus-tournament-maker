@@ -9,6 +9,7 @@ import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
 import { useTournamentStore } from "@/modules/tournament/store"
 import { useTeamsStore } from "@/modules/teams/store"
 import { getCachedSimResult } from "@/modules/tournament/composables/simulationCache"
+import { useSimResultExport } from "@/modules/tournament/composables/useSimResultExport"
 
 const route = useRoute()
 const router = useRouter()
@@ -57,105 +58,18 @@ const sortedStats = computed(() => {
 
 const maxWins = computed(() => Math.max(...sortedStats.value.map((s) => s.wins), 1))
 
-function handleSaveJSON() {
-  if (!result.value || !tournament.value) return
-  const payload = {
-    tournament: tournament.value.name,
-    season: tournament.value.season,
-    format: result.value.format,
-    runs: result.value.runs,
-    generatedAt: new Date().toISOString(),
-    teams: sortedStats.value.map((s) => {
-      const team = teamById(s.teamId)
-      const base = {
-        name: team?.name ?? s.teamId,
-        power: team?.power ?? 0,
-        wins: s.wins,
-        winPct: parseFloat(((s.wins / runs.value) * 100).toFixed(2)),
-      }
-      if (isBracket.value) {
-        return {
-          ...base,
-          runnerUp: s.runnerUp,
-          runnerUpPct: parseFloat(((s.runnerUp / runs.value) * 100).toFixed(2)),
-          ...(showTop4.value
-            ? {
-                top4: s.top4,
-                top4Pct: parseFloat(((s.top4 / runs.value) * 100).toFixed(2)),
-              }
-            : {}),
-          ...(hasGroups.value
-            ? {
-                groupAdvanced: s.groupAdvanced,
-                groupAdvancedPct: parseFloat(((s.groupAdvanced / runs.value) * 100).toFixed(2)),
-              }
-            : {}),
-        }
-      }
-      return {
-        ...base,
-        avgPoints: parseFloat((s.totalPoints / runs.value).toFixed(2)),
-        avgGoalsFor: parseFloat((s.totalGF / runs.value).toFixed(2)),
-        avgGoalsAgainst: parseFloat((s.totalGA / runs.value).toFixed(2)),
-        topThreePct: parseFloat(((s.topThree / runs.value) * 100).toFixed(2)),
-      }
-    }),
+const { saveJSON: handleSaveJSON, saveCSV: handleSaveCSV } = useSimResultExport(() => {
+  if (!result.value || !tournament.value) return null
+  return {
+    tournament: tournament.value,
+    result: result.value,
+    stats: sortedStats.value,
+    teamById,
+    isBracket: isBracket.value,
+    showTop4: showTop4.value,
+    hasGroups: !!hasGroups.value,
   }
-  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" })
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement("a")
-  a.href = url
-  a.download = `${tournament.value.name}_sim_${runs.value}.json`
-  a.click()
-  URL.revokeObjectURL(url)
-}
-
-function handleSaveCSV() {
-  if (!result.value || !tournament.value) return
-  const headers: string[] = ["Team", "Power", "Win%", "Wins"]
-  if (isBracket.value) {
-    headers.push("Runner-up%", "Runner-ups")
-    if (showTop4.value) headers.push("Top 4%", "Top 4")
-    if (hasGroups.value) headers.push("Group Adv.%", "Group Adv.")
-  } else {
-    headers.push("Title%", "Avg Pts", "Avg GF", "Avg GA", "Top 3%")
-  }
-  const rows = sortedStats.value.map((s) => {
-    const team = teamById(s.teamId)
-    const row: (string | number)[] = [
-      team?.name ?? s.teamId,
-      team?.power ?? 0,
-      parseFloat(((s.wins / runs.value) * 100).toFixed(2)),
-      s.wins,
-    ]
-    if (isBracket.value) {
-      row.push(parseFloat(((s.runnerUp / runs.value) * 100).toFixed(2)), s.runnerUp)
-      if (showTop4.value) {
-        row.push(parseFloat(((s.top4 / runs.value) * 100).toFixed(2)), s.top4)
-      }
-      if (hasGroups.value) {
-        row.push(parseFloat(((s.groupAdvanced / runs.value) * 100).toFixed(2)), s.groupAdvanced)
-      }
-    } else {
-      row.push(
-        parseFloat(((s.wins / runs.value) * 100).toFixed(2)),
-        parseFloat((s.totalPoints / runs.value).toFixed(2)),
-        parseFloat((s.totalGF / runs.value).toFixed(2)),
-        parseFloat((s.totalGA / runs.value).toFixed(2)),
-        parseFloat(((s.topThree / runs.value) * 100).toFixed(2))
-      )
-    }
-    return row
-  })
-  const csv = [headers, ...rows].map((r) => r.join(",")).join("\n")
-  const blob = new Blob([csv], { type: "text/csv" })
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement("a")
-  a.href = url
-  a.download = `${tournament.value.name}_sim_${runs.value}.csv`
-  a.click()
-  URL.revokeObjectURL(url)
-}
+})
 </script>
 
 <template>

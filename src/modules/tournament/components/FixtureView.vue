@@ -2,9 +2,7 @@
 import { ref, computed } from "vue"
 import type { Tournament } from "../types"
 import type { Team } from "@/modules/teams/types"
-import FixtureMatchCard from "./fixture/FixtureMatchCard.vue"
-import FixtureTieCard from "./fixture/FixtureTieCard.vue"
-import { useMatchEditor, type FlatMatch } from "./fixture/useMatchEditor"
+import { FixtureMatchCard, FixtureTieCard, useMatchEditor, type FlatMatch } from "./fixture"
 
 const props = defineProps<{ tournament: Tournament; teams: Team[] }>()
 const emit = defineEmits<{

@@ -2,8 +2,7 @@
 import { ref, computed } from "vue"
 import { useI18n } from "vue-i18n"
 import type { Team } from "@/modules/teams/types"
-import DrawList from "./draw/DrawList.vue"
-import type { DrawItem, Qualifier } from "./draw/types"
+import { DrawList, type DrawItem, type Qualifier } from "./draw"
 
 const props = defineProps<{ qualifiers: Qualifier[]; teams: Team[] }>()
 const emit = defineEmits<{

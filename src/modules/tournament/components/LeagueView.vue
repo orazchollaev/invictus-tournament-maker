@@ -2,8 +2,7 @@
 import { computed } from "vue"
 import type { League, Tournament } from "@/modules/tournament/types"
 import type { Team } from "@/modules/teams/types"
-import LeagueStandingsTable from "./league/LeagueStandingsTable.vue"
-import LeagueMatchdayPanel from "./league/LeagueMatchdayPanel.vue"
+import { LeagueMatchdayPanel, LeagueStandingsTable } from "./league"
 
 const props = defineProps<{
   tournament: Tournament

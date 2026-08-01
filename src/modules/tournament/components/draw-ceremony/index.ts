@@ -1,3 +1,5 @@
-export { default as DrawCeremony } from "./DrawCeremony.vue"
-export { default as PotEditor } from "./PotEditor.vue"
-export { default as DrawStage } from "./DrawStage.vue"
+import DrawCeremony from "./DrawCeremony.vue"
+import DrawStage from "./DrawStage.vue"
+import PotEditor from "./PotEditor.vue"
+
+export { DrawCeremony, DrawStage, PotEditor }

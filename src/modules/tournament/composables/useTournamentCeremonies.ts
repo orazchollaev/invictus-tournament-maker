@@ -13,7 +13,7 @@ import {
 import type { CeremonyContext, DrawMode, DrawPlan, Pot } from "@/engine"
 import type { PlayoffSeedMode, Tournament } from "@/modules/tournament/types"
 import type { Team } from "@/modules/teams/types"
-import type { Qualifier } from "../components/draw/types"
+import type { Qualifier } from "../components/draw"
 
 function ordinal(n: number): string {
   const s = ["th", "st", "nd", "rd"]

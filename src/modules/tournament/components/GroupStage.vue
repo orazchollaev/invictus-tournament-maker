@@ -7,8 +7,7 @@ import { useTeamLookup } from "@/composables/useTeamLookup"
 import { Lock } from "@lucide/vue"
 import { useI18n } from "vue-i18n"
 import { useGradualSim } from "../composables/useGradualSim"
-import GroupCard from "./group/GroupCard.vue"
-import GroupSimToolbar from "./group/GroupSimToolbar.vue"
+import { GroupCard, GroupSimToolbar } from "./group"
 
 const props = defineProps<{
   tournament: Tournament

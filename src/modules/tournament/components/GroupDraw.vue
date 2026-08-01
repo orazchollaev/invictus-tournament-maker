@@ -3,8 +3,7 @@ import { ref, computed } from "vue"
 import { useI18n } from "vue-i18n"
 import type { Team } from "@/modules/teams/types"
 import { useTeamLookup } from "@/composables/useTeamLookup"
-import DrawList from "./draw/DrawList.vue"
-import type { DrawItem } from "./draw/types"
+import { DrawList, type DrawItem } from "./draw"
 
 const props = defineProps<{
   teams: Team[]
