@@ -194,13 +194,16 @@ function segsL(p: ConnInfo, w: number) {
       : p.bottomColor
         ? 0.85
         : baseOp
+  // One path per strand instead of three — same elbow shape, 66% fewer path
+  // elements per connector (matters most on the 4-column double-sided layout).
   return [
-    { d: `M0,${p.ay} H${m}`, stroke: p.topColor ?? base, opacity: topOp, w: 2 },
-    { d: `M0,${p.by} H${m}`, stroke: p.bottomColor ?? base, opacity: botOp, w: 2 },
-    { d: `M${m},${p.ay} V${yMid}`, stroke: p.topColor ?? base, opacity: topOp, w: 2 },
-    { d: `M${m},${yMid} V${p.by}`, stroke: p.bottomColor ?? base, opacity: botOp, w: 2 },
-    { d: `M${m},${yMid - 1} H${w}`, stroke: p.topColor ?? base, opacity: topOp, w: 1.5 },
-    { d: `M${m},${yMid + 1} H${w}`, stroke: p.bottomColor ?? base, opacity: botOp, w: 1.5 },
+    { d: `M0,${p.ay} H${m} V${yMid - 1} H${w}`, stroke: p.topColor ?? base, opacity: topOp, w: 2 },
+    {
+      d: `M0,${p.by} H${m} V${yMid + 1} H${w}`,
+      stroke: p.bottomColor ?? base,
+      opacity: botOp,
+      w: 2,
+    },
   ]
 }
 
@@ -230,12 +233,13 @@ function segsR(p: ConnInfo, w: number) {
         ? 0.85
         : baseOp
   return [
-    { d: `M${w},${p.ay} H${m}`, stroke: p.topColor ?? base, opacity: topOp, w: 2 },
-    { d: `M${w},${p.by} H${m}`, stroke: p.bottomColor ?? base, opacity: botOp, w: 2 },
-    { d: `M${m},${p.ay} V${yMid}`, stroke: p.topColor ?? base, opacity: topOp, w: 2 },
-    { d: `M${m},${yMid} V${p.by}`, stroke: p.bottomColor ?? base, opacity: botOp, w: 2 },
-    { d: `M${m},${yMid - 1} H0`, stroke: p.topColor ?? base, opacity: topOp, w: 1.5 },
-    { d: `M${m},${yMid + 1} H0`, stroke: p.bottomColor ?? base, opacity: botOp, w: 1.5 },
+    { d: `M${w},${p.ay} H${m} V${yMid - 1} H0`, stroke: p.topColor ?? base, opacity: topOp, w: 2 },
+    {
+      d: `M${w},${p.by} H${m} V${yMid + 1} H0`,
+      stroke: p.bottomColor ?? base,
+      opacity: botOp,
+      w: 2,
+    },
   ]
 }
 

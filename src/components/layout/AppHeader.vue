@@ -6,7 +6,6 @@ import AppLogo from "./AppLogo.vue"
 import { useI18n } from "vue-i18n"
 
 const { t } = useI18n()
-const GITHUB_URL = "https://github.com/orazchollaev/invictus-tournament-maker"
 const { isNavActive } = useNavActive()
 
 const isOnline = ref(navigator.onLine)

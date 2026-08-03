@@ -39,6 +39,22 @@ export function useBracketViewport(options: BracketViewportOptions = {}) {
   let pinchDist0 = 0
   let pinchZoom0 = 1
 
+  // Coalesce pan writes to one per frame — mouse/touchmove can fire faster than the
+  // display refreshes, and each write was forcing a style recalc on the whole pan layer.
+  let panRaf = 0
+  let pendingPanX = 0
+  let pendingPanY = 0
+  function schedulePan(x: number, y: number) {
+    pendingPanX = x
+    pendingPanY = y
+    if (panRaf) return
+    panRaf = requestAnimationFrame(() => {
+      panRaf = 0
+      pan.x = pendingPanX
+      pan.y = pendingPanY
+    })
+  }
+
   const transform = computed(() => `translate3d(${pan.x}px, ${pan.y}px, 0) scale(${zoom.value})`)
 
   const layerStyle = computed(() => ({
@@ -58,8 +74,7 @@ export function useBracketViewport(options: BracketViewportOptions = {}) {
 
   function onWindowMouseMove(e: MouseEvent) {
     if (!isDragging.value) return
-    pan.x = dragStart.px + e.clientX - dragStart.x
-    pan.y = dragStart.py + e.clientY - dragStart.y
+    schedulePan(dragStart.px + e.clientX - dragStart.x, dragStart.py + e.clientY - dragStart.y)
   }
 
   function stopDrag() {
@@ -91,8 +106,10 @@ export function useBracketViewport(options: BracketViewportOptions = {}) {
       )
       zoom.value = +clamp(pinchZoom0 * (dist / pinchDist0)).toFixed(2)
     } else if (isDragging.value && e.touches.length === 1) {
-      pan.x = dragStart.px + e.touches[0].clientX - dragStart.x
-      pan.y = dragStart.py + e.touches[0].clientY - dragStart.y
+      schedulePan(
+        dragStart.px + e.touches[0].clientX - dragStart.x,
+        dragStart.py + e.touches[0].clientY - dragStart.y
+      )
     }
   }
 
@@ -175,6 +192,7 @@ export function useBracketViewport(options: BracketViewportOptions = {}) {
     window.removeEventListener("mousemove", onWindowMouseMove)
     window.removeEventListener("mouseup", stopDrag)
     clearTimeout(zoomSettleTimer)
+    cancelAnimationFrame(panRaf)
   })
 
   return {

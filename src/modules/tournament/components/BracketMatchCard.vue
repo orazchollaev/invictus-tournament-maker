@@ -4,7 +4,11 @@ import type { Match } from "../types"
 import type { Team } from "@/modules/teams/types"
 import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
 import { getWinnerId } from "@/engine"
+import { useSettingsStore } from "@/modules/settings/store"
 import { Pencil, Shuffle, X, Check } from "@lucide/vue"
+
+const settings = useSettingsStore()
+const lowQuality = computed(() => settings.bracketQuality === "low")
 
 const props = withDefaults(
   defineProps<{
@@ -164,6 +168,7 @@ const saveDisabled = computed(() =>
       dimmed,
       champion: isChampion,
       'mc--third': variant === 'third-place',
+      'mc--low-q': lowQuality,
     }"
     @mouseleave="$emit('hover-team', null)"
   >
@@ -385,10 +390,7 @@ const saveDisabled = computed(() =>
   box-sizing: border-box;
   overflow: hidden;
   animation: fade-up var(--dur-slow) var(--ease) both;
-  transition:
-    opacity var(--dur) var(--ease),
-    box-shadow var(--dur) var(--ease),
-    filter var(--dur) var(--ease);
+  transition: opacity var(--dur) var(--ease);
 }
 .mc.final {
   border-color: var(--gold);
@@ -396,9 +398,10 @@ const saveDisabled = computed(() =>
     0 0 0 1px var(--gold-soft),
     0 2px 10px var(--gold-faint);
 }
+/* Opacity-only dim — filter (saturate) isn't GPU-accelerated on most Android
+   WebViews and forces a software repaint of the whole card on every toggle. */
 .mc.dimmed {
   opacity: 0.22;
-  filter: saturate(0.15);
 }
 .mc.champion {
   animation: champion-glow 2s ease-in-out infinite;
@@ -408,6 +411,17 @@ const saveDisabled = computed(() =>
 .bracket-pan-layer.zooming .mc.champion,
 .bracket-pan-layer.dragging .mc.champion {
   animation-play-state: paused;
+}
+/* Low-quality mode (mobile/Android default candidate): drop the mount animation
+   and champion glow loop entirely — cheapest way to cut paint work on weak GPUs. */
+.mc.mc--low-q {
+  animation: none;
+}
+.mc.mc--low-q.champion {
+  animation: none;
+  box-shadow:
+    0 0 0 2px var(--gold-glow),
+    0 0 22px var(--gold-glow);
 }
 @keyframes champion-glow {
   0%,
