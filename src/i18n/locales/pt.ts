@@ -65,6 +65,7 @@ export default {
     back: "Voltar",
     close: "Fechar",
     cancel: "Cancelar",
+    optional: "Opcional",
     save: "Salvar",
     delete: "Excluir",
     edit: "Editar",

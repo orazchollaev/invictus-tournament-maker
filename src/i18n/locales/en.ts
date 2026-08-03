@@ -64,6 +64,7 @@ export default {
     back: "Back",
     close: "Close",
     cancel: "Cancel",
+    optional: "Optional",
     save: "Save",
     delete: "Delete",
     edit: "Edit",

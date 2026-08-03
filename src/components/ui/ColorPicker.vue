@@ -119,16 +119,17 @@ function onNativePick(e: Event) {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  width: 100%;
 }
 
 .presets {
-  display: grid;
-  grid-template-columns: repeat(12, 1fr);
+  display: flex;
+  flex-wrap: wrap;
   gap: 6px;
 }
 
 .swatch {
-  width: 24px;
+  width: 30px;
   aspect-ratio: 1;
   border-radius: var(--radius);
   border: 2px solid transparent;

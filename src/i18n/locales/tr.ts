@@ -66,6 +66,7 @@ export default {
     back: "Geri",
     close: "Kapat",
     cancel: "İptal",
+    optional: "İsteğe bağlı",
     save: "Kaydet",
     delete: "Sil",
     edit: "Düzenle",

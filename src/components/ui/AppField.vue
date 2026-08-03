@@ -113,6 +113,7 @@ withDefaults(
   align-items: center;
   gap: var(--sp-2);
   min-width: 0;
+  width: 100%;
 }
 
 .field-hint {

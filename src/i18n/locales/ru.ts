@@ -66,6 +66,7 @@ export default {
     back: "Назад",
     close: "Закрыть",
     cancel: "Отмена",
+    optional: "Необязательно",
     save: "Сохранить",
     delete: "Удалить",
     edit: "Изменить",

@@ -66,6 +66,7 @@ export default {
     back: "Kembali",
     close: "Tutup",
     cancel: "Batal",
+    optional: "Opsional",
     save: "Simpan",
     delete: "Hapus",
     edit: "Edit",
