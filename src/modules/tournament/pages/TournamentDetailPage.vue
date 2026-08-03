@@ -327,12 +327,8 @@ const {
           :group-count="tournament?.groups?.length ?? 2"
           @confirm="handleManualSeasonConfirm"
           @cancel="closeSeasonModal"
+          @quick-draw="handleQuickGroupDraw"
         />
-        <div class="quick-draw-row">
-          <span class="quick-draw-label">or:</span>
-          <button @click="handleQuickGroupDraw(true)">{{ trns("common.seeded") }}</button>
-          <button @click="handleQuickGroupDraw(false)">{{ trns("common.random") }}</button>
-        </div>
       </template>
       <template v-else-if="showManualSeason">
         <ManualDraw
@@ -389,20 +385,6 @@ const {
 
 .gs-body {
   padding: 8px 0;
-}
-
-.quick-draw-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 0 2px;
-  border-top: 1px solid var(--border-light);
-  margin-top: 4px;
-}
-.quick-draw-label {
-  font-size: 12px;
-  color: var(--text-muted);
-  margin-right: 2px;
 }
 
 @media (max-width: 640px) {

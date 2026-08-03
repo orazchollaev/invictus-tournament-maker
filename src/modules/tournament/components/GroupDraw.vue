@@ -13,6 +13,7 @@ const props = defineProps<{
 const emit = defineEmits<{
   confirm: [orderedIds: string[]]
   cancel: []
+  "quick-draw": [seeded: boolean]
 }>()
 
 const { t } = useI18n()
@@ -146,6 +147,12 @@ function confirm() {
       </button>
       <button @click="emit('cancel')">{{ t("common.cancel") }}</button>
     </div>
+
+    <div class="quick-draw-row">
+      <span class="quick-draw-label">or:</span>
+      <button @click="emit('quick-draw', true)">{{ t("common.seeded") }}</button>
+      <button @click="emit('quick-draw', false)">{{ t("common.random") }}</button>
+    </div>
   </div>
 </template>
 
@@ -239,6 +246,20 @@ function confirm() {
   color: var(--text-muted);
   margin-right: auto;
   font-variant-numeric: tabular-nums;
+}
+
+.quick-draw-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 0 2px;
+  border-top: 1px solid var(--border-light);
+  margin-top: 4px;
+}
+.quick-draw-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-right: 2px;
 }
 
 @media (max-width: 500px) {
