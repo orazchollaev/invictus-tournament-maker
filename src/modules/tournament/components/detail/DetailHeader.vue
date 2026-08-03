@@ -36,9 +36,8 @@ const formatLabel = computed(() => {
         {{ t("nav.tournaments") }}
       </RouterLink>
       <div class="t-header-actions">
-        <AppButton v-if="isFinished" variant="filled" @click="emit('openNewSeason')">
+        <AppButton v-if="isFinished" variant="filled" icon-only @click="emit('openNewSeason')">
           <AppIcon :icon="RefreshCw" size="sm" />
-          <span class="btn-label">{{ t("tournament.newSeason") }}</span>
         </AppButton>
         <AppButton
           v-if="!isFinished"
