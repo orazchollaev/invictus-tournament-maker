@@ -154,6 +154,7 @@ function confirm() {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  height: 100%;
 }
 
 .gd-hint {
@@ -199,7 +200,6 @@ function confirm() {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
   gap: 8px;
-  max-height: 300px;
   overflow-y: auto;
 }
 
