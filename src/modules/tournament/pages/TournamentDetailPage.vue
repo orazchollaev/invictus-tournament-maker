@@ -136,6 +136,7 @@ const {
         :threshold="10"
         :no-swiping="true"
         no-swiping-class="swiper-no-swiping"
+        css-mode
         @swiper="onSwiperReady"
         @slide-change="onSlideChange"
         @slide-change-transition-end="onSlideChangeEnd"
@@ -408,5 +409,9 @@ const {
   .page {
     padding-bottom: 40px;
   }
+}
+
+.swiper-wrapper {
+  height: auto !important;
 }
 </style>

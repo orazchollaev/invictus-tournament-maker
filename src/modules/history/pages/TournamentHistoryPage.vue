@@ -97,11 +97,11 @@ const tabValue = computed({
       </AppTabs>
 
       <Swiper
-        style="height: 100%"
         :initial-slide="activeIndex"
         :auto-height="true"
         :speed="300"
         :threshold="10"
+        css-mode
         @swiper="onSwiperReady"
         @slide-change="onSlideChange"
         @slide-change-transition-end="onSlideChangeEnd"
@@ -127,3 +127,9 @@ const tabValue = computed({
     </template>
   </div>
 </template>
+
+<style scoped>
+.swiper-wrapper {
+  height: auto !important;
+}
+</style>
