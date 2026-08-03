@@ -129,6 +129,8 @@ function run(action: () => void) {
   gap: var(--sp-1);
   min-width: 150px;
   box-shadow: var(--elev-2);
+  max-height: 200px;
+  overflow-y: auto;
 }
 .sim-dropdown-panel :deep(.btn) {
   justify-content: flex-start;

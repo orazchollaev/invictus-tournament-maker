@@ -2,87 +2,128 @@
 import { ref } from "vue"
 import type { Group } from "@/modules/tournament/types"
 import { Shuffle, Check, ChevronDown } from "@lucide/vue"
+import { AppButton, AppIcon } from "@/components/ui"
 
 defineProps<{
   groups: Group[]
   allDone: boolean
 }>()
 
-defineEmits<{
+const emit = defineEmits<{
   simWeek: []
   simAll: []
   simGroup: [groupIdx: number]
   advance: []
 }>()
 
-const showSimMenu = ref(false)
+const menuOpen = ref(false)
+
+function run(action: () => void) {
+  action()
+  menuOpen.value = false
+}
 </script>
 
 <template>
-  <div class="gs-toolbar">
-    <!-- Mobile: single dropdown trigger -->
+  <div class="sim-toolbar">
+    <!-- Mobile: one dropdown holding every sim action -->
     <div class="sim-dropdown">
-      <button class="sim-dropdown-trigger" @click="showSimMenu = !showSimMenu">
-        <Shuffle :size="14" />
+      <AppButton variant="outlined" size="sm" @click="menuOpen = !menuOpen">
+        <AppIcon :icon="Shuffle" size="md" />
         Simulate
-        <ChevronDown :size="12" class="sim-chevron" :class="{ open: showSimMenu }" />
-      </button>
-      <div v-if="showSimMenu" class="sim-dropdown-panel">
-        <button :disabled="allDone" @click="($emit('simWeek'), (showSimMenu = false))">
+        <AppIcon :icon="ChevronDown" size="sm" class="sim-chevron" :class="{ open: menuOpen }" />
+      </AppButton>
+      <div v-if="menuOpen" class="sim-dropdown-panel">
+        <AppButton
+          variant="text"
+          size="sm"
+          block
+          :disabled="allDone"
+          @click="run(() => emit('simWeek'))"
+        >
           Sim Week
-        </button>
-        <button :disabled="allDone" @click="($emit('simAll'), (showSimMenu = false))">
+        </AppButton>
+        <AppButton
+          variant="text"
+          size="sm"
+          block
+          :disabled="allDone"
+          @click="run(() => emit('simAll'))"
+        >
           Simulate All
-        </button>
+        </AppButton>
         <template v-for="(g, gi) in groups" :key="gi">
-          <button
+          <AppButton
             v-if="g.matches.some((m) => !m.result)"
-            @click="($emit('simGroup', gi), (showSimMenu = false))"
+            variant="text"
+            size="sm"
+            block
+            @click="run(() => emit('simGroup', gi))"
           >
             Sim {{ g.name }}
-          </button>
+          </AppButton>
         </template>
       </div>
     </div>
 
-    <!-- Desktop: inline buttons -->
-    <button class="gs-sim-inline" :disabled="allDone" @click="$emit('simWeek')">
-      <Shuffle :size="14" />
+    <!-- Desktop: the same actions laid out inline -->
+    <AppButton
+      variant="outlined"
+      size="sm"
+      class="sim-inline"
+      :disabled="allDone"
+      @click="emit('simWeek')"
+    >
+      <AppIcon :icon="Shuffle" size="md" />
       Sim Week
-    </button>
-    <button class="gs-sim-inline" :disabled="allDone" @click="$emit('simAll')">
-      <Shuffle :size="14" />
+    </AppButton>
+    <AppButton
+      variant="outlined"
+      size="sm"
+      class="sim-inline"
+      :disabled="allDone"
+      @click="emit('simAll')"
+    >
+      <AppIcon :icon="Shuffle" size="md" />
       Simulate All
-    </button>
+    </AppButton>
     <template v-for="(g, gi) in groups" :key="gi">
-      <button
+      <AppButton
         v-if="g.matches.some((m) => !m.result)"
-        class="gs-sim-inline"
-        @click="$emit('simGroup', gi)"
+        variant="outlined"
+        size="sm"
+        class="sim-inline"
+        @click="emit('simGroup', gi)"
       >
         Sim {{ g.name }}
-      </button>
+      </AppButton>
     </template>
 
-    <button
+    <AppButton
       v-if="allDone"
-      class="primary advance-btn"
-      style="margin-left: auto"
-      @click="$emit('advance')"
+      variant="filled"
+      size="sm"
+      class="advance-btn"
+      @click="emit('advance')"
     >
-      <Check :size="14" />
+      <AppIcon :icon="Check" size="md" />
       Advance to Knockout →
-    </button>
+    </AppButton>
   </div>
 </template>
 
 <style scoped>
-.gs-toolbar {
+.sim-toolbar {
   display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
   align-items: center;
-  padding: 0 8px;
+  padding: 0 var(--sp-2);
+  margin-bottom: var(--sp-3);
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+}
+
+.advance-btn {
+  margin-left: auto;
 }
 
 .sim-dropdown {
@@ -90,64 +131,45 @@ const showSimMenu = ref(false)
   position: relative;
 }
 
-.sim-dropdown-trigger {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-}
-
 .sim-chevron {
-  transition: transform 0.15s;
-  &.open {
-    transform: rotate(180deg);
-  }
+  transition: transform var(--dur-fast) var(--ease);
+}
+.sim-chevron.open {
+  transform: rotate(180deg);
 }
 
 .sim-dropdown-panel {
   position: absolute;
-  top: calc(100% + 4px);
+  top: calc(100% + var(--sp-1));
   left: 0;
-  z-index: 200;
+  z-index: var(--z-dropdown);
   background: var(--surface);
   border: 1px solid var(--border-light);
   border-radius: var(--radius);
-  padding: 6px;
+  padding: var(--sp-2);
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--sp-1);
   min-width: 150px;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
-
-  button {
-    width: 100%;
-    justify-content: flex-start;
-    text-align: left;
-    font-size: 13px;
-    padding: 5px 10px;
-    background: var(--bg);
-    &:hover {
-      background: color-mix(in srgb, var(--accent) 12%, var(--bg));
-    }
-  }
+  box-shadow: var(--elev-2);
+  max-height: 200px;
+  overflow-y: auto;
+}
+.sim-dropdown-panel :deep(.btn) {
+  justify-content: flex-start;
+  text-align: left;
 }
 
-@media (max-width: 600px) {
-  .gs-toolbar {
-    gap: 5px;
-    padding: 0 4px;
-
-    button {
-      padding: 4px 8px;
-      font-size: 12px;
-    }
-
-    .gs-sim-inline {
-      display: none;
-    }
-
-    .sim-dropdown {
-      display: block;
-    }
+@media (max-width: 640px) {
+  .sim-toolbar {
+    gap: var(--sp-1);
+    padding: 0 var(--sp-1);
+  }
+  .sim-inline {
+    display: none;
+  }
+  .sim-dropdown {
+    display: block;
   }
 }
 </style>
