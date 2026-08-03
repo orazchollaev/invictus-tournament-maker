@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from "vue"
-import { Settings, Star, Trophy, History, FolderGit2, Users, BookOpen, WifiOff } from "@lucide/vue"
+import { Settings, Trophy, History, Users, BookOpen } from "@lucide/vue"
 import { useNavActive } from "@/composables/useNavActive"
 import AppLogo from "./AppLogo.vue"
 import { useI18n } from "vue-i18n"
@@ -53,24 +53,6 @@ onUnmounted(() => {
       </nav>
 
       <div class="header-end">
-        <Transition name="update-btn">
-          <div v-if="!isOnline" class="offline-chip" :title="t('common.offline')">
-            <WifiOff :size="12" />
-            <span>{{ t("common.offline") }}</span>
-          </div>
-        </Transition>
-
-        <a
-          :href="GITHUB_URL"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="github-star-btn"
-          :title="t('common.starOnGithub')"
-        >
-          <FolderGit2 :size="15" />
-          <span class="github-star-label">{{ t("common.star") }}</span>
-          <Star :size="12" class="github-star-icon" />
-        </a>
         <RouterLink
           to="/guide"
           class="settings-btn guide-btn"
