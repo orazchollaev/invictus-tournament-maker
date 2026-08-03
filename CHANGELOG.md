@@ -1,5 +1,20 @@
 # Changelog
 
+# [1.17.0](https://github.com/orazchollaev/invictus-tournament-maker/compare/v1.16.0...v1.17.0) (2026-08-03)
+
+### Bug Fixes
+
+- **mobile:** keep content clear of the Android navigation bar ([460c376](https://github.com/orazchollaev/invictus-tournament-maker/commit/460c37684944d85005cd8156da4b9a605f46f29a))
+
+### Features
+
+- **langs:** added endonesian language ([2c2bb89](https://github.com/orazchollaev/invictus-tournament-maker/commit/2c2bb89434141fd7582aaf88d2b653246a97e5f8))
+- **nav:** replace mobile FAB nav with floating rounded bottom navbar ([c5d5783](https://github.com/orazchollaev/invictus-tournament-maker/commit/c5d5783021dad70205d9b4e48b3866ff021a5180))
+
+### Performance Improvements
+
+- **tabs:** only render the slides a swipe can reach ([28a7ad0](https://github.com/orazchollaev/invictus-tournament-maker/commit/28a7ad0880440ecea2b94964b888033cde90f9b4))
+
 # [1.16.0](https://github.com/orazchollaev/invictus-tournament-maker/compare/v1.15.1...v1.16.0) (2026-08-01)
 
 ### Bug Fixes
