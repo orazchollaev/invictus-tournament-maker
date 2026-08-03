@@ -36,7 +36,7 @@ const columns = computed(() => COLUMNS.filter((c) => c.cls !== "col-group" || is
 </script>
 
 <template>
-  <AppTable class="pt">
+  <AppTable class="pt swiper-no-swiping">
     <thead>
       <tr>
         <th
