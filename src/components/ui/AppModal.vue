@@ -197,7 +197,7 @@ defineExpose({ close })
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 14px;
+  padding: 10px 14px calc(10px + var(--safe-bottom));
   border-top: 1px solid var(--border-light);
   background: var(--bg);
   flex-shrink: 0;
