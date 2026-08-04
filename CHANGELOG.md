@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.17.1](https://github.com/orazchollaev/invictus-tournament-maker/compare/v1.17.0...v1.17.1) (2026-08-04)
+
+### Bug Fixes
+
+- add no swiping to participants table ([5018dcb](https://github.com/orazchollaev/invictus-tournament-maker/commit/5018dcbce3b9229d2c60e15476fbd4b517433a11))
+- **group-draw:** manual group draw height fixed ([2a12415](https://github.com/orazchollaev/invictus-tournament-maker/commit/2a124153302ba292337ecc101f0ea1f8327be11d))
+- **league:** show team names in fixture rows ([243cbc9](https://github.com/orazchollaev/invictus-tournament-maker/commit/243cbc9227c458d4a7e7e6f4e5511a13700054a8))
+
+### Features
+
+- **settings:** add special thanks line under changelog ([0f24ca8](https://github.com/orazchollaev/invictus-tournament-maker/commit/0f24ca8b44681c19143f87d9cd4c3556b1c57783))
+
+### Performance Improvements
+
+- **bracket:** better performance for bracket ([ba7e816](https://github.com/orazchollaev/invictus-tournament-maker/commit/ba7e816b529ee51e8879634d5c3cbdff7d5e5a24))
+- **swipe:** better performance for swipe tabs ([86da1d4](https://github.com/orazchollaev/invictus-tournament-maker/commit/86da1d4797921402ecc38a5b9b3cb1f86512a31c))
+
 # [1.17.0](https://github.com/orazchollaev/invictus-tournament-maker/compare/v1.16.0...v1.17.0) (2026-08-03)
 
 ### Bug Fixes
