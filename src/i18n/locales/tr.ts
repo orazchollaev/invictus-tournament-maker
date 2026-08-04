@@ -410,6 +410,7 @@ export default {
       data: "Veriler",
     },
     changelog: "Değişiklik Günlüğü",
+    specialThanks: "Özel teşekkürler: Rodrigo Hernandez",
   },
   tournament: {
     notFound: "Turnuva bulunamadı.",

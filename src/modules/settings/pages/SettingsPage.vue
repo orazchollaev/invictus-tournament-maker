@@ -128,6 +128,7 @@ function selectCategory(id: Category) {
             {{ t("settings.changelog") }}
           </a>
         </div>
+        <p class="special-thanks">{{ t("settings.specialThanks") }}</p>
       </div>
     </div>
   </div>
@@ -283,6 +284,12 @@ function selectCategory(id: Category) {
 .changelog-btn:hover {
   border-color: var(--accent);
   color: var(--accent);
+}
+.special-thanks {
+  margin: var(--sp-1) 0 0;
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+  opacity: 0.6;
 }
 
 /* ── Mobile hamburger nav (hidden on desktop) ── */

@@ -406,6 +406,7 @@ export default {
       data: "Data",
     },
     changelog: "Changelog",
+    specialThanks: "Special thanks: Rodrigo Hernandez",
   },
   tournament: {
     notFound: "Tournament not found.",
