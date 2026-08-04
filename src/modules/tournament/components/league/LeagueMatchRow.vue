@@ -99,7 +99,6 @@ function onKey(e: KeyboardEvent) {
   overflow: hidden;
 }
 
-/* Crest only — the row is too narrow for names. */
 .lv-match-team {
   flex: 1;
   display: flex;
@@ -107,9 +106,6 @@ function onKey(e: KeyboardEvent) {
   gap: var(--sp-1);
   min-width: 0;
   color: var(--text-muted);
-}
-.lv-match-team :deep(.name) {
-  display: none;
 }
 .lv-match-team--home {
   flex-direction: row-reverse;

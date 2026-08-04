@@ -392,8 +392,10 @@ const {
     padding-bottom: 40px;
   }
 }
+</style>
 
+<style>
 .swiper-wrapper {
-  height: auto !important;
+  height: 100%;
 }
 </style>
