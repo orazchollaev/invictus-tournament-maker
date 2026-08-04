@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.17.2](https://github.com/orazchollaev/invictus-tournament-maker/compare/v1.17.1...v1.17.2) (2026-08-04)
+
+### Bug Fixes
+
+- **modal:** pad drawer footer for safe-area bottom in ([ee17d77](https://github.com/orazchollaev/invictus-tournament-maker/commit/ee17d773c12c19511ac52999f6540702af907f4c))
+
 ## [1.17.1](https://github.com/orazchollaev/invictus-tournament-maker/compare/v1.17.0...v1.17.1) (2026-08-04)
 
 ### Bug Fixes
