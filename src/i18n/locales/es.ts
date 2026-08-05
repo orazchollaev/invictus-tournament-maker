@@ -23,6 +23,9 @@ export default {
     },
     playoffDrawTitle: "Sorteo de playoff",
   },
+  bracket: {
+    zoomHint: "Pellizca para hacer zoom · doble toque para restablecer",
+  },
   nav: {
     tournaments: "Torneos",
     teams: "Equipos",

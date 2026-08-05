@@ -6,7 +6,12 @@ import type { Team } from "@/modules/teams/types"
 import BracketDoubleSide from "./BracketDoubleSide.vue"
 import BracketClassic from "./BracketClassic.vue"
 import FixtureView from "./FixtureView.vue"
-import { BracketFullscreenModal, BracketSimToolbar, BracketZoomControls } from "./bracket"
+import {
+  BracketFullscreenModal,
+  BracketSimToolbar,
+  BracketZoomControls,
+  BracketZoomHint,
+} from "./bracket"
 import { AppButton, AppCard, AppIcon, BtnGroup } from "@/components/ui"
 import { useTournamentStore } from "../store"
 import { useSettingsStore } from "@/modules/settings/store"
@@ -14,6 +19,7 @@ import { useGradualSim } from "../composables/useGradualSim"
 import { useBracketActions } from "../composables/useBracketActions"
 import { useBracketExport, canNativeShare } from "../composables/useBracketExport"
 import { useBracketViewport } from "../composables/useBracketViewport"
+import { useBracketZoomHint } from "../composables/useBracketZoomHint"
 import { useHaptic } from "@/composables/useHaptic"
 import { useSwipe } from "@/composables/useSwipe"
 import { Download, Maximize2, Share2 } from "@lucide/vue"
@@ -63,13 +69,23 @@ const thirdPlaceMatch = computed(() =>
 )
 
 // ── Which bracket renderer ────────────────────────────────────
+// Double-sided converges toward a center column — the widest possible layout,
+// and "auto" would otherwise pick it for exactly the biggest brackets. That's
+// the worst case on a narrow phone: forces heavy pan/zoom just to read a card.
+// So auto always falls back to the single-direction Classic layout on mobile.
+const isMobileViewport = typeof window !== "undefined" && window.innerWidth <= 640
+
 const activeBracket = computed(() => {
   const style = settings.bracketStyle
   if (style === "double-sided") return BracketDoubleSide
   if (style === "classic") return BracketClassic
+  if (isMobileViewport) return BracketClassic
   const knockoutTeams = (props.tournament.rounds[0]?.matches.length ?? 0) * 2
   return knockoutTeams >= 17 ? BracketDoubleSide : BracketClassic
 })
+
+// ── First-time pinch-to-zoom hint (mobile only) ────────────────
+const zoomHint = useBracketZoomHint()
 
 // ── View switching ────────────────────────────────────────────
 const bracketView = ref<"bracket" | "fixtures">("bracket")
@@ -199,7 +215,12 @@ const { isExporting, exportPng } = useBracketExport({
         :class="{ dragging: isDragging }"
         @mousedown="onMouseDown"
         @wheel.prevent="onWheel"
-        @touchstart.passive="onTouchStart"
+        @touchstart.passive="
+          (e) => {
+            zoomHint.dismiss()
+            onTouchStart(e)
+          }
+        "
         @touchmove.prevent="onTouchMove"
         @touchend="onTouchEnd"
       >
@@ -217,6 +238,8 @@ const { isExporting, exportPng } = useBracketExport({
             v-bind="bracketActions"
           />
         </div>
+
+        <BracketZoomHint :show="zoomHint.show.value" @dismiss="zoomHint.dismiss" />
       </div>
 
       <div v-else ref="fixtureWrapperRef">

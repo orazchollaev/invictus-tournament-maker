@@ -24,6 +24,9 @@ export default {
     },
     playoffDrawTitle: "Жеребьевка плей-офф",
   },
+  bracket: {
+    zoomHint: "Сведите пальцы для масштабирования · двойное нажатие для сброса",
+  },
   nav: {
     tournaments: "Турниры",
     teams: "Команды",

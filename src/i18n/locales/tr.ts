@@ -23,6 +23,9 @@ export default {
     },
     playoffDrawTitle: "Play-off Kura Çekimi",
   },
+  bracket: {
+    zoomHint: "Yakınlaştırmak için sıkıştırın · sıfırlamak için çift dokunun",
+  },
   nav: {
     tournaments: "Turnuvalar",
     teams: "Takımlar",

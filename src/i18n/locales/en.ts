@@ -23,6 +23,9 @@ export default {
     },
     playoffDrawTitle: "Playoff Draw",
   },
+  bracket: {
+    zoomHint: "Pinch to zoom · double-tap to reset",
+  },
   nav: {
     tournaments: "Tournaments",
     teams: "Teams",

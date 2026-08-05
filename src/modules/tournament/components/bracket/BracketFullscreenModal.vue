@@ -3,7 +3,11 @@ import { nextTick, onUnmounted, watch } from "vue"
 import { X } from "@lucide/vue"
 import { AppButton, AppIcon } from "@/components/ui"
 import BracketZoomControls from "./BracketZoomControls.vue"
+import BracketZoomHint from "./BracketZoomHint.vue"
 import { useBracketViewport } from "../../composables/useBracketViewport"
+import { useBracketZoomHint } from "../../composables/useBracketZoomHint"
+
+const zoomHint = useBracketZoomHint()
 
 defineProps<{ title: string }>()
 
@@ -81,7 +85,12 @@ onUnmounted(() => {
           :class="{ dragging: isDragging }"
           @mousedown="onMouseDown"
           @wheel.prevent="onWheel"
-          @touchstart.passive="onTouchStart"
+          @touchstart.passive="
+            (e) => {
+              zoomHint.dismiss()
+              onTouchStart(e)
+            }
+          "
           @touchmove.prevent="onTouchMove"
           @touchend="onTouchEnd"
         >
@@ -93,6 +102,8 @@ onUnmounted(() => {
           >
             <slot />
           </div>
+
+          <BracketZoomHint :show="zoomHint.show.value" @dismiss="zoomHint.dismiss" />
         </div>
       </div>
     </div>

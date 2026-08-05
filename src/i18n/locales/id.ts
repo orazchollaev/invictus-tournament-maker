@@ -24,6 +24,9 @@ export default {
     },
     playoffDrawTitle: "Undian Playoff",
   },
+  bracket: {
+    zoomHint: "Cubit untuk memperbesar · ketuk dua kali untuk mengatur ulang",
+  },
   nav: {
     tournaments: "Turnamen",
     teams: "Tim",
