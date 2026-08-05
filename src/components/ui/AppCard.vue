@@ -102,11 +102,9 @@ withDefaults(
   gap: var(--sp-2);
   padding: var(--sp-3) var(--sp-4);
   background: var(--bg);
-  border-bottom: 1px solid var(--border-light);
-  border-left: 3px solid var(--accent);
-  /* The rail above belongs to the header strip; pull it back into the
-     card's own left edge so a railed card doesn't double up. */
+  box-shadow: inset 0px 0px 4px var(--accent);
   margin-left: -1px;
+  border-radius: 12px 12px 0 0;
 }
 
 .card-title {
@@ -163,6 +161,9 @@ withDefaults(
   .card-body--md,
   .card-body--lg {
     padding: var(--sp-3);
+  }
+  .card-header {
+    box-shadow: inset 0px 0px 2px var(--accent);
   }
   .card-header,
   .card-footer {
