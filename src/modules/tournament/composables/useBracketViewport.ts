@@ -5,6 +5,10 @@ export const MAX_ZOOM = 2.5
 const ZOOM_STEP = 0.1
 /** How long after the last wheel tick the layer stays flagged as "zooming". */
 const ZOOM_SETTLE_MS = 150
+/** Double-tap window: two touchstarts within this time + distance count as one gesture. */
+const DOUBLE_TAP_MS = 300
+const DOUBLE_TAP_DIST = 30
+const DOUBLE_TAP_ZOOM = 2
 
 function clamp(z: number, max = MAX_ZOOM) {
   return Math.min(max, Math.max(MIN_ZOOM, z))
@@ -38,6 +42,9 @@ export function useBracketViewport(options: BracketViewportOptions = {}) {
   let zoomSettleTimer = 0
   let pinchDist0 = 0
   let pinchZoom0 = 1
+  let lastTapTime = 0
+  let lastTapX = 0
+  let lastTapY = 0
 
   // Coalesce pan writes to one per frame — mouse/touchmove can fire faster than the
   // display refreshes, and each write was forcing a style recalc on the whole pan layer.
@@ -81,7 +88,20 @@ export function useBracketViewport(options: BracketViewportOptions = {}) {
     isDragging.value = false
   }
 
-  // ── Touch: 1 finger pans, 2 fingers pinch-zoom ──────────────
+  /** Anchor a zoom toggle at a screen point, same ratio math as onWheel/pinch. */
+  function zoomAt(clientX: number, clientY: number, newZoom: number) {
+    const wrapper = wrapperRef.value
+    if (!wrapper) return
+    const rect = wrapper.getBoundingClientRect()
+    const cx = clientX - rect.left - rect.width / 2
+    const cy = clientY - rect.top - rect.height / 2
+    const ratio = newZoom / zoom.value
+    pan.x = cx - (cx - pan.x) * ratio
+    pan.y = cy - (cy - pan.y) * ratio
+    zoom.value = newZoom
+  }
+
+  // ── Touch: 1 finger pans/double-taps, 2 fingers pinch-zoom ──
   function onTouchStart(e: TouchEvent) {
     if (e.touches.length === 2) {
       pinchDist0 = Math.hypot(
@@ -90,9 +110,23 @@ export function useBracketViewport(options: BracketViewportOptions = {}) {
       )
       pinchZoom0 = zoom.value
     } else if (e.touches.length === 1) {
+      const t = e.touches[0]
+      const now = performance.now()
+      const isDoubleTap =
+        now - lastTapTime < DOUBLE_TAP_MS &&
+        Math.hypot(t.clientX - lastTapX, t.clientY - lastTapY) < DOUBLE_TAP_DIST
+      lastTapTime = isDoubleTap ? 0 : now
+      lastTapX = t.clientX
+      lastTapY = t.clientY
+
+      if (isDoubleTap) {
+        zoomAt(t.clientX, t.clientY, clamp(zoom.value > 1.01 ? 1 : DOUBLE_TAP_ZOOM))
+        return
+      }
+
       isDragging.value = true
-      dragStart.x = e.touches[0].clientX
-      dragStart.y = e.touches[0].clientY
+      dragStart.x = t.clientX
+      dragStart.y = t.clientY
       dragStart.px = pan.x
       dragStart.py = pan.y
     }
