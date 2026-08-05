@@ -241,6 +241,10 @@ export default {
         light: "Açık",
         dark: "Koyu",
       },
+      primaryColor: {
+        label: "Ana Renk",
+        desc: "Uygulamanın vurgu rengi",
+      },
     },
     tableRules: {
       title: "Varsayılan Tablo Kuralları",

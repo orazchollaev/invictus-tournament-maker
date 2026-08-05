@@ -241,6 +241,10 @@ export default {
         light: "Светлая",
         dark: "Темная",
       },
+      primaryColor: {
+        label: "Основной цвет",
+        desc: "Акцентный цвет всего приложения",
+      },
     },
     tableRules: {
       title: "Правила таблицы по умолчанию",

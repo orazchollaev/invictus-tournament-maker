@@ -15,6 +15,7 @@ export type TournamentListView = "list" | "grid"
 export const useSettingsStore = defineStore("settings", () => {
   const theme = ref<Theme>("light")
   const locale = ref<Locale>("en")
+  const primaryColor = ref<string | null>(null)
   const groupLegMode = ref<LegMode>("single")
   const knockoutLegMode = ref<LegMode>("single")
   const finalLegMode = ref<LegMode>("single")
@@ -57,6 +58,23 @@ export const useSettingsStore = defineStore("settings", () => {
     { immediate: true }
   )
 
+  watch(
+    primaryColor,
+    (val) => {
+      const root = document.documentElement.style
+      if (val) {
+        root.setProperty("--accent", val)
+        root.setProperty("--accent-hover", `color-mix(in srgb, ${val} 85%, black)`)
+        root.setProperty("--accent-subtle", `color-mix(in srgb, ${val} 10%, transparent)`)
+      } else {
+        root.removeProperty("--accent")
+        root.removeProperty("--accent-hover")
+        root.removeProperty("--accent-subtle")
+      }
+    },
+    { immediate: true }
+  )
+
   watch(surpriseFactor, (val) => setSimConfig({ surpriseFactor: val }), { immediate: true })
   watch(tiebreaker, (val) => setTableConfig({ tiebreaker: val }), { immediate: true })
   watch(formFactorEnabled, (val) => setSimConfig({ formFactor: val }), { immediate: true })
@@ -65,6 +83,7 @@ export const useSettingsStore = defineStore("settings", () => {
   function resetAll() {
     theme.value = "light"
     locale.value = "en"
+    primaryColor.value = null
     groupLegMode.value = "single"
     knockoutLegMode.value = "single"
     finalLegMode.value = "single"
@@ -94,6 +113,7 @@ export const useSettingsStore = defineStore("settings", () => {
   return {
     theme,
     locale,
+    primaryColor,
     groupLegMode,
     knockoutLegMode,
     finalLegMode,

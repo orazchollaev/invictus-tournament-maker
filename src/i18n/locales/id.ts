@@ -241,6 +241,10 @@ export default {
         light: "Terang",
         dark: "Gelap",
       },
+      primaryColor: {
+        label: "Warna Utama",
+        desc: "Warna aksen untuk seluruh aplikasi",
+      },
     },
     tableRules: {
       title: "Aturan Klasemen Bawaan",

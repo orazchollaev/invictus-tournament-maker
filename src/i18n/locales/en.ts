@@ -239,6 +239,10 @@ export default {
         light: "Light",
         dark: "Dark",
       },
+      primaryColor: {
+        label: "Primary Color",
+        desc: "Accent color used across the whole app",
+      },
     },
     tableRules: {
       title: "Default Table Rules",

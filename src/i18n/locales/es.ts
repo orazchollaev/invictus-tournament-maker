@@ -240,6 +240,10 @@ export default {
         light: "Claro",
         dark: "Oscuro",
       },
+      primaryColor: {
+        label: "Color primario",
+        desc: "Color de acento de toda la aplicación",
+      },
     },
     tableRules: {
       title: "Reglas de tabla predeterminadas",

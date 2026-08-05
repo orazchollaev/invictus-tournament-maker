@@ -239,6 +239,10 @@ export default {
         light: "Claro",
         dark: "Escuro",
       },
+      primaryColor: {
+        label: "Cor primária",
+        desc: "Cor de destaque de todo o aplicativo",
+      },
     },
     tableRules: {
       title: "Regras de tabela padrão",
