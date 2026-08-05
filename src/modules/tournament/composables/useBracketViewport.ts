@@ -100,11 +100,26 @@ export function useBracketViewport(options: BracketViewportOptions = {}) {
 
   function onTouchMove(e: TouchEvent) {
     if (e.touches.length === 2) {
-      const dist = Math.hypot(
-        e.touches[0].clientX - e.touches[1].clientX,
-        e.touches[0].clientY - e.touches[1].clientY
-      )
-      zoom.value = +clamp(pinchZoom0 * (dist / pinchDist0)).toFixed(2)
+      const wrapper = wrapperRef.value
+      if (!wrapper) return
+
+      const [t0, t1] = e.touches
+      const dist = Math.hypot(t0.clientX - t1.clientX, t0.clientY - t1.clientY)
+      const newZoom = +clamp(pinchZoom0 * (dist / pinchDist0)).toFixed(2)
+      if (newZoom === zoom.value) return
+
+      // Anchor the zoom at the pinch midpoint (relative to wrapper center), same
+      // math as onWheel — recomputed every move so it tracks the fingers, not the center.
+      const rect = wrapper.getBoundingClientRect()
+      const midX = (t0.clientX + t1.clientX) / 2
+      const midY = (t0.clientY + t1.clientY) / 2
+      const cx = midX - rect.left - rect.width / 2
+      const cy = midY - rect.top - rect.height / 2
+
+      const ratio = newZoom / zoom.value
+      pan.x = cx - (cx - pan.x) * ratio
+      pan.y = cy - (cy - pan.y) * ratio
+      zoom.value = newZoom
     } else if (isDragging.value && e.touches.length === 1) {
       schedulePan(
         dragStart.px + e.touches[0].clientX - dragStart.x,
