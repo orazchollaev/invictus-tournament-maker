@@ -82,7 +82,7 @@ async function handleRedraw() {
         {{ t("tournament.settingsPage.drawMethod.regenerate") }}
       </button>
     </div>
-    <div class="hint-box">
+    <div class="hint-box" style="margin-top: 8px">
       {{
         t("tournament.create.drawHint", {
           random: t("common.random"),
