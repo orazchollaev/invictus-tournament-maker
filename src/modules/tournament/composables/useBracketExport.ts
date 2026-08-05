@@ -1,9 +1,11 @@
 import { ref, type Ref } from "vue"
 import { nextTick } from "vue"
 import { toPng } from "html-to-image"
+import { Capacitor } from "@capacitor/core"
 
 export const canNativeShare =
-  typeof navigator !== "undefined" && typeof navigator.share === "function"
+  Capacitor.isNativePlatform() ||
+  (typeof navigator !== "undefined" && typeof navigator.share === "function")
 
 export interface BracketExportOptions {
   /** The pan layer; the `.bracket` inside it is captured when present. */
@@ -31,7 +33,22 @@ export function useBracketExport(options: BracketExportOptions) {
       const dataUrl = await toPng(el, { pixelRatio: 2 })
       const filename = options.filename()
 
-      if (canNativeShare) {
+      // Android's system WebView (what Capacitor apps actually run in) has no
+      // Web Share API and no download manager wired to <a download> — both
+      // silently no-op there. Native apps must go through the Share/Filesystem
+      // plugins instead, which hand the file to a real OS share sheet.
+      if (Capacitor.isNativePlatform()) {
+        try {
+          await shareNative(dataUrl, filename, options.title())
+          return
+        } catch {
+          // user cancelled the native share sheet, or the plugin failed —
+          // nothing more we can do on-device, fall through is pointless here.
+          return
+        }
+      }
+
+      if (typeof navigator !== "undefined" && typeof navigator.share === "function") {
         try {
           const blob = await (await fetch(dataUrl)).blob()
           const file = new File([blob], filename, { type: "image/png" })
@@ -53,6 +70,23 @@ export function useBracketExport(options: BracketExportOptions) {
       restoreView()
       isExporting.value = false
     }
+  }
+
+  /** Write the PNG to cache and hand it to the native OS share sheet. */
+  async function shareNative(dataUrl: string, filename: string, title: string) {
+    const [{ Filesystem, Directory }, { Share }] = await Promise.all([
+      import("@capacitor/filesystem"),
+      import("@capacitor/share"),
+    ])
+    const base64 = dataUrl.slice(dataUrl.indexOf(",") + 1)
+
+    const written = await Filesystem.writeFile({
+      path: filename,
+      data: base64,
+      directory: Directory.Cache,
+    })
+
+    await Share.share({ title, url: written.uri, dialogTitle: title })
   }
 
   return { isExporting, exportPng }
