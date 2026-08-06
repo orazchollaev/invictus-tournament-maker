@@ -52,35 +52,35 @@ function onUpdate(value: string) {
           </TabsTrigger>
         </template>
         <template v-else>
-          <TabsTrigger class="phase-tab" value="league">
+          <TabsTrigger as="div" class="phase-tab" value="league">
             {{ t("tournament.tabs.league") }}
           </TabsTrigger>
         </template>
-        <TabsTrigger v-if="hasLeaguePlayoff" class="phase-tab" value="bracket">
+        <TabsTrigger v-if="hasLeaguePlayoff" as="div" class="phase-tab" value="bracket">
           {{ t("tournament.tabs.playoff") }}
         </TabsTrigger>
       </template>
 
       <template v-else-if="isGroupFormat">
-        <TabsTrigger class="phase-tab" value="groups">
+        <TabsTrigger as="div" class="phase-tab" value="groups">
           {{ t("tournament.tabs.groups") }}
         </TabsTrigger>
-        <TabsTrigger v-if="tournament.groupsDone" class="phase-tab" value="bracket">
+        <TabsTrigger v-if="tournament.groupsDone" as="div" class="phase-tab" value="bracket">
           {{ t("tournament.tabs.bracket") }}
         </TabsTrigger>
       </template>
 
       <template v-else>
-        <TabsTrigger class="phase-tab" value="bracket">
+        <TabsTrigger as="div" class="phase-tab" value="bracket">
           {{ t("tournament.tabs.bracket") }}
         </TabsTrigger>
       </template>
 
-      <TabsTrigger v-if="hasAnyResults" class="phase-tab" value="stats">
+      <TabsTrigger v-if="hasAnyResults" as="div" class="phase-tab" value="stats">
         {{ t("tournament.tabs.stats") }}
       </TabsTrigger>
 
-      <TabsTrigger class="phase-tab" value="participants">
+      <TabsTrigger as="div" class="phase-tab" value="participants">
         {{ t("tournament.tabs.participants") }}
       </TabsTrigger>
     </TabsList>

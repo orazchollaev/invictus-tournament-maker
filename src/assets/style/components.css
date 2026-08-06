@@ -40,13 +40,10 @@
     border-color var(--dur-fast) var(--ease);
 }
 
-.phase-tab:hover:not(:disabled) {
-  color: var(--text);
-}
-
 .phase-tab[data-state="active"] {
-  color: var(--accent);
-  /* border-bottom-color: var(--accent); */
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  color: var(--on-accent);
+  background-color: var(--accent);
 }
 
 .phase-tab.disabled,

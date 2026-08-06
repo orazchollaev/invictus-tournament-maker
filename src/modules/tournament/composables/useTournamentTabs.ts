@@ -117,8 +117,14 @@ export function useTournamentTabs(
   }
 
   let pendingUrlTab: MainTab | null = null
+  // Set while a tab click drives the slide programmatically. css-mode
+  // still fires "slide-change" for every slide the scroll passes over,
+  // so without this guard a first-tab-to-last click would flash the tab
+  // pill active on each slide in between before landing on the real one.
+  let isProgrammaticJump = false
 
   function onSlideChange(s: SwiperInstance) {
+    if (isProgrammaticJump) return
     const tab = visibleTabs.value[s.activeIndex]
     if (!tab || tab === activeTab.value) return
     // Only the cheap part runs here — the tab highlight has to keep up
@@ -129,6 +135,7 @@ export function useTournamentTabs(
   }
 
   function onSlideChangeEnd() {
+    isProgrammaticJump = false
     if (swiperInstance) settledIndex.value = swiperInstance.activeIndex
     // Only collapse the mounted window once the settled slide matches
     // the tab we actually want — if a rapid click retargeted mid-flight,
@@ -146,6 +153,7 @@ export function useTournamentTabs(
         const [lo, hi] = jumpRange.value ?? [from, from]
         jumpRange.value = [Math.min(lo, from, idx), Math.max(hi, from, idx)]
       }
+      isProgrammaticJump = true
       swiperInstance.slideTo(idx)
     }
   })
