@@ -250,9 +250,6 @@ function submit() {
   flex-shrink: 0;
   border-radius: var(--radius-pill);
   background: var(--team-color);
-  box-shadow:
-    0 0 0 1px color-mix(in srgb, var(--text) 12%, transparent) inset,
-    0 2px 10px color-mix(in srgb, var(--team-color) 45%, transparent);
   display: grid;
   place-items: center;
   transition: background var(--dur) var(--ease);
