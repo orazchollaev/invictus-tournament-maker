@@ -543,6 +543,11 @@ export default {
         title: "Nama Turnamen",
         hint: "Mengganti nama akan memperbarui semua {n} musim yang menggunakan nama ini.",
       },
+      info: {
+        created: "Dibuat {date}",
+        teams: "{n} tim",
+        champion: "Juara",
+      },
       manageTeams: {
         title: "Kelola Tim",
         addPlaceholder: "Tambah tim…",

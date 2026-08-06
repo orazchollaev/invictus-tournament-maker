@@ -539,6 +539,11 @@ export default {
         title: "Tournament Name",
         hint: "Renaming will update all {n} seasons sharing this name.",
       },
+      info: {
+        created: "Created {date}",
+        teams: "{n} teams",
+        champion: "Champion",
+      },
       manageTeams: {
         title: "Manage Teams",
         addPlaceholder: "Add team…",

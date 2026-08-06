@@ -543,6 +543,11 @@ export default {
         title: "Turnuva Adı",
         hint: "Yeniden adlandırma bu ismi paylaşan {n} sezonu da güncelleyecek.",
       },
+      info: {
+        created: "{date} tarihinde oluşturuldu",
+        teams: "{n} takım",
+        champion: "Şampiyon",
+      },
       manageTeams: {
         title: "Takımları Yönet",
         addPlaceholder: "Takım ekle…",

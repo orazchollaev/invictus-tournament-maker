@@ -24,16 +24,8 @@ import { useTournamentCeremonies } from "../composables/useTournamentCeremonies"
 const { t: trns } = useI18n()
 const router = useRouter()
 
-const {
-  store,
-  allTeams,
-  tournament,
-  winnerTeam,
-  dateStr,
-  startNewSeason,
-  startNewLeagueSeason,
-  hasAnyResults,
-} = useTournamentDetail()
+const { store, allTeams, tournament, startNewSeason, startNewLeagueSeason, hasAnyResults } =
+  useTournamentDetail()
 
 const isFinished = computed(
   () => !!tournament.value && store.isTournamentFinished(tournament.value.id)
@@ -107,9 +99,6 @@ const {
     </div>
     <template v-else>
       <DetailHeader
-        :tournament="tournament"
-        :winner-team="winnerTeam"
-        :date-str="dateStr"
         :is-finished="isFinished"
         @open-new-season="openNewSeason"
         @simulate-all="store.simulateTournament(tournament!.id)"

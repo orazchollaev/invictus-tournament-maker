@@ -542,6 +542,11 @@ export default {
         title: "Название турнира",
         hint: "Переименование обновит все {n} сезона с этим названием.",
       },
+      info: {
+        created: "Создан {date}",
+        teams: "{n} команд",
+        champion: "Чемпион",
+      },
       manageTeams: {
         title: "Управление командами",
         addPlaceholder: "Добавить команду…",

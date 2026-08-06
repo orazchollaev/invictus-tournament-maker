@@ -8,7 +8,7 @@ import ManualDraw from "@/modules/tournament/components/ManualDraw.vue"
 import GroupDraw from "@/modules/tournament/components/GroupDraw.vue"
 import TeamSelector from "@/modules/tournament/components/TeamSelector.vue"
 import { AppButton, AppCard, AppChip, AppIcon, AppModal } from "@/components/ui"
-import { ArrowLeft, Lock, Save, Settings } from "@lucide/vue"
+import { ArrowLeft, Lock, Save, Settings, Trophy } from "@lucide/vue"
 import {
   SettingsScoringTiebreaker,
   SettingsBracketOptions,
@@ -35,6 +35,11 @@ const draft = useTournamentSettingsDraft(tournamentId, tournament)
 
 const seasonCount = computed(
   () => store.tournaments.filter((tn) => tn.name === tournament.value?.name).length
+)
+
+const winnerTeam = computed(() => allTeams.value.find((tm) => tm.id === tournament.value?.winnerId))
+const dateStr = computed(() =>
+  tournament.value ? new Date(tournament.value.createdAt).toLocaleDateString() : ""
 )
 
 const localTeams = computed(() =>
@@ -116,6 +121,16 @@ function handleSave() {
           />
           <p v-if="seasonCount > 1" class="hint">
             {{ t("tournament.settingsPage.tournamentName.hint", { n: seasonCount }) }}
+          </p>
+
+          <p class="info-meta">
+            {{ t("tournament.settingsPage.info.teams", { n: totalTeams }) }} ·
+            {{ t("tournament.settingsPage.info.created", { date: dateStr }) }}
+          </p>
+          <p v-if="winnerTeam" class="info-champion">
+            <AppIcon :icon="Trophy" size="xs" />
+            <span :style="{ color: winnerTeam.color }">{{ winnerTeam.name }}</span>
+            {{ t("tournament.settingsPage.info.champion") }}
           </p>
         </AppCard>
 
@@ -271,6 +286,24 @@ function handleSave() {
   font-size: var(--fs-xs);
   color: var(--text-muted);
   line-height: 1.6;
+}
+
+.info-meta {
+  margin: var(--sp-3) 0 0;
+  font-size: var(--fs-sm);
+  color: var(--text-muted);
+}
+
+.info-champion {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin: var(--sp-2) 0 0;
+  font-size: var(--fs-sm);
+  color: var(--text-muted);
+}
+.info-champion span {
+  font-weight: 600;
 }
 
 .locked-banner {

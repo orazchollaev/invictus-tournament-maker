@@ -542,6 +542,11 @@ export default {
         title: "Nombre del torneo",
         hint: "Renombrar actualizará las {n} temporadas que comparten este nombre.",
       },
+      info: {
+        created: "Creado el {date}",
+        teams: "{n} equipos",
+        champion: "Campeón",
+      },
       manageTeams: {
         title: "Gestionar equipos",
         addPlaceholder: "Añadir equipo…",

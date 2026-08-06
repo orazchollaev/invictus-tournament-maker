@@ -541,6 +541,11 @@ export default {
         title: "Nome do torneio",
         hint: "Renomear atualizará as {n} temporadas que compartilham este nome.",
       },
+      info: {
+        created: "Criado em {date}",
+        teams: "{n} equipes",
+        champion: "Campeão",
+      },
       manageTeams: {
         title: "Gerenciar times",
         addPlaceholder: "Adicionar time…",
