@@ -4,29 +4,45 @@
    font size, duration, easing, elevation or z-index.
    ════════════════════════════════════════════════════════════════ */
 
+/* ── Palette note ────────────────────────────────────────────────
+   The chrome has to sit *behind* the team colours: those are the
+   loudest thing on screen and the only colour the user actually owns,
+   so anything the app picks for itself is held deliberately quiet.
+
+   That is why the brand teal is a deep one and the neutrals are a
+   plain grey with a faint green cast rather than the blue-grey
+   "slate" ramp. Both are hand-tuned rather than taken off a framework
+   ramp — the exact default swatches are the thing that makes an
+   interface look like it chose nothing.
+   ──────────────────────────────────────────────────────────────── */
+
 :root {
   /* ── Surfaces & text ─────────────────────────────────────────── */
-  --bg: #f1f4f9;
+  --bg: #eceeea;
   --surface: #ffffff;
-  --border: #d7dee8;
-  --border-light: #edf1f6;
-  --text: #2a3345;
-  --text-muted: #64748b;
+  --border: #cdd1cb;
+  --border-light: #e3e6e1;
+  --text: #1e211f;
+  --text-muted: #6a706c;
 
   /* ── Brand ───────────────────────────────────────────────────── */
-  --accent: #0d9488;
-  --accent-hover: #0f766e;
+  /* Deeper and a touch greener than the teal it replaces. The depth is
+     what lets team colours stay the loudest thing on the page; the hue
+     shift keeps it off the framework ramp. 5.8:1 against white, 5.0:1
+     as link text on --bg. */
+  --accent: #0b7264;
+  --accent-hover: #095c51;
   --accent-subtle: color-mix(in srgb, var(--accent) 10%, transparent);
-  --accent-2: #f6a823;
+  --accent-2: #e08b1f;
   /* Text/icons drawn on top of an --accent fill. */
   --on-accent: #ffffff;
 
   /* ── Status ──────────────────────────────────────────────────── */
-  --danger: #ef4444;
-  --success: #10a37f;
-  --warning: #f6a823;
+  --danger: #d93a30;
+  --success: #0f8f6f;
+  --warning: #e08b1f;
   /* Distinct from --success: "in progress right now", not "passed". */
-  --live: #22c55e;
+  --live: #2eb85c;
   /* Drawn matches. Reads as muted today but is its own role. */
   --draw: var(--text-muted);
 
@@ -38,19 +54,20 @@
   /* Gold used as *text* — needs more contrast than the surface/border gold. */
   --gold-text: #b8860b;
   --medal-gold: var(--accent-2);
-  --medal-silver: #94a3b8;
-  --medal-bronze: #b45309;
-  /* League table positions 2 and 3 (promotion/playoff bands). */
-  --pos-2: #3b82f6;
-  --pos-3: #8b5cf6;
+  --medal-silver: #9aa09b;
+  --medal-bronze: #a8551a;
+  /* League table positions 2 and 3 (promotion/playoff bands). Kept clear
+     of the teal --accent so a band never reads as "brand". */
+  --pos-2: #3a6fc9;
+  --pos-3: #8e57c4;
 
   /* ── Interaction ─────────────────────────────────────────────── */
   --bg-hover: color-mix(in srgb, var(--text) 6%, transparent);
   --focus-ring: 0 0 0 3px var(--accent-subtle);
 
   /* ── Overlays ────────────────────────────────────────────────── */
-  --scrim: rgba(15, 23, 42, 0.45);
-  --scrim-strong: rgba(15, 23, 42, 0.62);
+  --scrim: rgba(18, 21, 19, 0.45);
+  --scrim-strong: rgba(18, 21, 19, 0.62);
 
   /* ── Type ────────────────────────────────────────────────────── */
   --font: "IBM Plex Sans Variable", sans-serif;
@@ -81,9 +98,9 @@
   --radius-pill: 999px;
 
   /* ── Elevation ───────────────────────────────────────────────── */
-  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06), 0 1px 3px rgba(15, 23, 42, 0.04);
-  --shadow-md: 0 2px 6px rgba(15, 23, 42, 0.08), 0 6px 16px rgba(15, 23, 42, 0.06);
-  --shadow-lg: 0 8px 24px rgba(15, 23, 42, 0.12), 0 18px 48px rgba(15, 23, 42, 0.14);
+  --shadow-sm: 0 1px 2px rgba(18, 21, 19, 0.06), 0 1px 3px rgba(18, 21, 19, 0.04);
+  --shadow-md: 0 2px 6px rgba(18, 21, 19, 0.08), 0 6px 16px rgba(18, 21, 19, 0.06);
+  --shadow-lg: 0 8px 24px rgba(18, 21, 19, 0.12), 0 18px 48px rgba(18, 21, 19, 0.14);
 
   --elev-0: none;
   --elev-1: var(--shadow-sm);
@@ -133,30 +150,30 @@
 }
 
 [data-theme="dark"] {
-  --bg: #14161c;
-  --surface: #232733;
-  --border: #323845;
-  --border-light: #2a2f3a;
-  --text: #f1f5f9;
-  --text-muted: #9aa7bd;
+  --bg: #16181a;
+  --surface: #212428;
+  --border: #363a3c;
+  --border-light: #2b2f31;
+  --text: #f0f1ee;
+  --text-muted: #9aa09b;
 
-  --accent: #14b8a6;
-  --accent-hover: #2dd4bf;
+  --accent: #2fb5a1;
+  --accent-hover: #4ecbb8;
   --accent-subtle: color-mix(in srgb, var(--accent) 12%, transparent);
-  --accent-2: #fbbf24;
-  --on-accent: #0b1114;
+  --accent-2: #f0aa46;
+  --on-accent: #12141a;
 
-  --danger: #f87171;
-  --success: #34d399;
-  --warning: #fbbf24;
-  --live: #4ade80;
+  --danger: #f0736a;
+  --success: #34c39c;
+  --warning: #f0aa46;
+  --live: #4ecb78;
 
   --gold: #d9b843;
   --gold-text: #e8c860;
-  --medal-silver: #cbd5e1;
-  --medal-bronze: #d97706;
-  --pos-2: #60a5fa;
-  --pos-3: #a78bfa;
+  --medal-silver: #c9cec9;
+  --medal-bronze: #d1802b;
+  --pos-2: #78a6ea;
+  --pos-3: #b391e0;
 
   --bg-hover: color-mix(in srgb, var(--text) 10%, transparent);
 

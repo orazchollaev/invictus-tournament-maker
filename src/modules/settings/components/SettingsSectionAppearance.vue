@@ -15,17 +15,22 @@ const themes = computed<{ value: Theme; label: string }[]>(() => [
   { value: "dark", label: t("settings.appearance.theme.dark") },
 ])
 
-const DEFAULT_COLOR = "#0d9488"
+/* Must stay in sync with --accent in assets/style/variables.css: picking
+   this swatch clears the override rather than writing the same value. */
+const DEFAULT_COLOR = "#0b7264"
 
+/* Held at a common depth so no swatch reads as louder than the rest, and
+   spread far enough apart in hue that none of them reads as a near-miss of
+   the teal default. */
 const COLOR_PRESETS = [
   DEFAULT_COLOR,
-  "#22c55e",
-  "#3b82f6",
-  "#8b5cf6",
-  "#ec4899",
-  "#f97316",
-  "#ef4444",
-  "#f59e0b",
+  "#2f6fb5",
+  "#8a3fa0",
+  "#b8336a",
+  "#c2452c",
+  "#c07a17",
+  "#3f7a2e",
+  "#4a5560",
 ]
 
 function isSelected(c: string) {
