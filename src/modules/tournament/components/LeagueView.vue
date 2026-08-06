@@ -62,13 +62,13 @@ const playedMatchdays = computed(() => matchdays.value.filter((_, i) => matchday
 .lv-root {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--sp-3);
 }
 
 .lv-layout {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  gap: var(--sp-4);
   align-items: start;
 }
 

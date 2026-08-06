@@ -2,6 +2,7 @@
 import type { GroupStanding } from "@/modules/tournament/types"
 import type { Team } from "@/modules/teams/types"
 import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
+import { AppSectionHeader, AppTable } from "@/components/ui"
 
 const props = defineProps<{
   standings: GroupStanding[]
@@ -43,13 +44,12 @@ function isLastPlayoffQualifier(rank: number) {
 
 <template>
   <div class="lv-left">
-    <div class="lv-section-title">
+    <AppSectionHeader>
       League Table
       <span class="lv-progress">{{ playedMatchdays }}/{{ totalMatchdays }} matchdays</span>
-    </div>
-    <div class="lv-table-wrap">
-      <table class="lv-table">
-        <thead>
+    </AppSectionHeader>
+    <AppTable dense class="lv-table">
+      <thead>
           <tr>
             <th class="col-rank">#</th>
             <th class="col-team">Team</th>
@@ -85,8 +85,8 @@ function isLastPlayoffQualifier(rank: number) {
               <span v-if="rank === 0 && isFinished" class="lv-crown">🏆</span>
               <span v-else>{{ rank + 1 }}</span>
             </td>
-            <td class="col-team">
-              <TeamBadge :team="teamById(row.teamId)" :fallback="row.teamId" class="lv-team-name" />
+            <td class="col-team" :style="{ '--tc': teamById(row.teamId)?.color ?? 'transparent' }">
+              <TeamBadge :team="teamById(row.teamId)" :fallback="row.teamId" />
             </td>
             <td>{{ row.played }}</td>
             <td>{{ row.won }}</td>
@@ -102,8 +102,7 @@ function isLastPlayoffQualifier(rank: number) {
             </td>
           </tr>
         </TransitionGroup>
-      </table>
-    </div>
+    </AppTable>
   </div>
 </template>
 
@@ -112,71 +111,55 @@ function isLastPlayoffQualifier(rank: number) {
   min-width: 0;
 }
 
-.lv-section-title {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  margin-bottom: 8px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
+/* Header strip and table chrome come from AppSectionHeader and AppTable.
+   `.lv-section-title` and `.lv-table` were this file's private copies of both;
+   what remains is only the standings-specific part. */
 .lv-progress {
-  font-size: 10px;
   font-weight: 400;
   text-transform: none;
   letter-spacing: 0;
 }
 
-/* ─── Table ─── */
-.lv-table-wrap {
-  overflow-x: auto;
-}
-.lv-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 12px;
-}
-.lv-table th {
-  font-size: 10px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--text-muted);
-  padding: 4px 6px;
+/* Numbers right-align so columns of digits line up; see GroupCard for why
+   thead/tbody are named explicitly. */
+.lv-table :deep(thead th),
+.lv-table :deep(tbody td) {
   text-align: right;
-  border-bottom: 1px solid var(--border-light);
-  white-space: nowrap;
 }
-.lv-table td {
-  padding: 5px 6px;
-  text-align: right;
-  border-bottom: 1px solid var(--border-light);
-  color: var(--text);
-}
-.col-rank {
-  text-align: center !important;
+.lv-table .col-rank {
+  text-align: center;
   width: 24px;
-  color: var(--text-muted) !important;
-  font-size: 11px !important;
+  color: var(--text-muted);
 }
-.col-team {
-  text-align: left !important;
+/* Two vertical rules per row, and they say different things: the one on the
+   rank cell is the club's *fate* (promotion, playoff, relegation), the one
+   here is the club's *identity*. Keeping them on separate cells stops a
+   promotion band from being misread as a kit colour. */
+.lv-table .col-team {
+  position: relative;
+  text-align: left;
   min-width: 90px;
+  padding-left: 11px;
+}
+.lv-table .col-team::before {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: 3px;
+  bottom: 3px;
+  width: 3px;
+  border-radius: 1px;
+  background: var(--tc, transparent);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.18);
 }
 .col-pts {
   min-width: 32px;
-}
-.lv-team-name {
-  font-size: 12px;
 }
 .lv-row--champion td {
   background: color-mix(in srgb, var(--accent) 6%, var(--surface));
 }
 .lv-crown {
-  font-size: 11px;
+  font-size: var(--fs-xs);
 }
 
 /* ─── Position zone colors ─── */

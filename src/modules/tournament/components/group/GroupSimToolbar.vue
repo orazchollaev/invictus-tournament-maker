@@ -116,7 +116,6 @@ function run(action: () => void) {
 .sim-toolbar {
   display: flex;
   align-items: center;
-  padding: 0 var(--sp-2);
   margin-bottom: var(--sp-3);
   flex-wrap: wrap;
   gap: var(--sp-2);

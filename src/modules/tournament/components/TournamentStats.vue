@@ -5,6 +5,7 @@ import type { Team } from "@/modules/teams/types"
 import { useTournamentStats } from "../composables/useTournamentStats"
 import LeagueProgressChart from "./LeagueProgressChart.vue"
 import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
+import { AppCard, AppTable, BtnGroup } from "@/components/ui"
 
 const props = defineProps<{
   tournament: Tournament
@@ -58,6 +59,10 @@ const tabs = computed(() => {
   return []
 })
 
+/* The tier/group picker is a segmented control, so it uses the segmented
+   control — `.tier-tab` was a third hand-rolled take on BtnGroup. */
+const tierOptions = computed(() => tabs.value.map((label, i) => ({ value: String(i), label })))
+
 const chartTitle = computed(() => {
   if (isLeague.value && isMultiTier.value && props.tournament.tiers)
     return (props.tournament.tiers[activeIdx.value]?.name ?? "League") + " — Standings Progress"
@@ -71,17 +76,13 @@ const chartTitle = computed(() => {
   <div v-if="hasStats" class="stats-wrap">
     <!-- League / Group progress chart -->
     <template v-if="showChart && activeLeague">
-      <div v-if="tabs.length > 1" class="tier-tabs">
-        <button
-          v-for="(tab, ti) in tabs"
-          :key="ti"
-          class="tier-tab"
-          :class="{ active: activeIdx === ti }"
-          @click="activeIdx = ti"
-        >
-          {{ tab }}
-        </button>
-      </div>
+      <BtnGroup
+        v-if="tabs.length > 1"
+        size="xs"
+        :model-value="String(activeIdx)"
+        :options="tierOptions"
+        @update:model-value="(v) => (activeIdx = Number(v))"
+      />
       <LeagueProgressChart
         :key="activeIdx"
         :league="activeLeague"
@@ -92,9 +93,8 @@ const chartTitle = computed(() => {
 
     <div class="stats-grid">
       <!-- Top Scorers -->
-      <div class="stats-panel">
-        <div class="stats-panel-header">Top Scorers</div>
-        <table class="stats-table">
+      <AppCard variant="outlined" title="Top Scorers">
+        <AppTable dense class="stats-table">
           <thead>
             <tr>
               <th class="col-rank">#</th>
@@ -107,7 +107,7 @@ const chartTitle = computed(() => {
           <tbody>
             <tr v-for="(s, i) in topScorers" :key="s.teamId">
               <td class="col-rank">{{ i + 1 }}</td>
-              <td class="col-team">
+              <td class="col-team" :style="{ '--tc': s.color }">
                 <TeamBadge :team="s" class="team-cell" />
               </td>
               <td class="col-highlight">{{ s.gf }}</td>
@@ -115,13 +115,12 @@ const chartTitle = computed(() => {
               <td class="col-muted">{{ s.played }}</td>
             </tr>
           </tbody>
-        </table>
-      </div>
+        </AppTable>
+      </AppCard>
 
       <!-- Best Defense -->
-      <div class="stats-panel">
-        <div class="stats-panel-header">Best Defense</div>
-        <table class="stats-table">
+      <AppCard variant="outlined" title="Best Defense">
+        <AppTable dense class="stats-table">
           <thead>
             <tr>
               <th class="col-rank">#</th>
@@ -134,7 +133,7 @@ const chartTitle = computed(() => {
           <tbody>
             <tr v-for="(s, i) in bestDefense" :key="s.teamId">
               <td class="col-rank">{{ i + 1 }}</td>
-              <td class="col-team">
+              <td class="col-team" :style="{ '--tc': s.color }">
                 <TeamBadge :team="s" class="team-cell" />
               </td>
               <td class="col-highlight">{{ s.ga }}</td>
@@ -142,102 +141,57 @@ const chartTitle = computed(() => {
               <td class="col-muted">{{ s.played }}</td>
             </tr>
           </tbody>
-        </table>
-      </div>
+        </AppTable>
+      </AppCard>
     </div>
   </div>
 </template>
 
 <style scoped>
+/* Panel surface, header strip, segmented control and table chrome all come
+   from AppCard / AppSectionHeader / BtnGroup / AppTable now. This file used to
+   carry its own copy of each — `.stats-panel-header` was byte-for-byte the
+   group card's `.gs-group-header`. */
 .stats-wrap {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding: 8px;
-}
-
-.tier-tabs {
-  display: flex;
-  gap: 4px;
-  flex-wrap: wrap;
-}
-
-.tier-tab {
-  font-size: 11px;
-  padding: 3px 10px;
-  border-radius: var(--radius);
-  border: 1px solid var(--border-light);
-  background: transparent;
-  color: var(--text-muted);
-  cursor: pointer;
-  transition: all 0.15s;
-}
-
-.tier-tab.active {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: #fff;
+  gap: var(--sp-3);
 }
 
 .stats-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  gap: var(--sp-3);
 }
 
-.stats-panel {
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius);
-  overflow: hidden;
-  background: var(--surface);
-}
-
-.stats-panel-header {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-  padding: 7px 10px;
-  background: var(--bg);
-  border-bottom: 1px solid var(--border-light);
-  color: var(--text-muted);
-  border-left: 3px solid var(--accent);
-}
-
-.stats-table {
-  border-collapse: collapse;
-  width: 100%;
-  font-size: 12px;
-}
-
-.stats-table th,
-.stats-table td {
-  border: none;
-  border-bottom: 1px solid var(--border-light);
-  padding: 4px 6px;
+/* See GroupCard for why thead/tbody are named explicitly. */
+.stats-table :deep(thead th),
+.stats-table :deep(tbody td) {
   text-align: center;
 }
 
-.stats-table tbody tr:last-child td {
-  border-bottom: none;
-}
-
-.stats-table th {
-  background: var(--bg);
-  font-weight: 600;
-  font-size: 11px;
-  color: var(--text-muted);
-}
-
-.col-rank {
+.stats-table .col-rank {
   width: 18px;
   color: var(--text-muted);
-  font-size: 11px;
 }
 
-.col-team {
-  text-align: left !important;
+/* Club identity bar, same contract as the standings tables. */
+.stats-table .col-team {
+  position: relative;
+  text-align: left;
   min-width: 110px;
+  padding-left: 11px;
+}
+.stats-table .col-team::before {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: 3px;
+  bottom: 3px;
+  width: 3px;
+  border-radius: 1px;
+  background: var(--tc, transparent);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.18);
 }
 
 .col-highlight {
@@ -252,15 +206,7 @@ const chartTitle = computed(() => {
 .team-cell {
   display: flex;
   align-items: center;
-  gap: 6px;
-}
-
-.dot {
-  display: inline-block;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  flex-shrink: 0;
+  gap: var(--sp-2);
 }
 
 @media (max-width: 600px) {

@@ -4,6 +4,7 @@ import type { Team } from "@/modules/teams/types"
 import type { Group, GroupMatch } from "@/modules/tournament/types"
 import { useTeamLookup } from "@/composables/useTeamLookup"
 import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
+import { AppCard, AppTable } from "@/components/ui"
 import { Shuffle } from "@lucide/vue"
 import { useI18n } from "vue-i18n"
 
@@ -53,56 +54,44 @@ function scoreAccentColor(match: GroupMatch): string {
 </script>
 
 <template>
-  <div class="gs-group">
-    <div class="gs-group-header">{{ group.name }}</div>
-
+  <AppCard variant="outlined" :title="group.name">
     <!-- Standings -->
-    <div class="gs-table-scroll">
-      <table class="gs-table">
-        <thead>
-          <tr>
-            <th class="col-rank">#</th>
-            <th class="col-team">{{ t("common.team") }}</th>
-            <th :title="t('history.table.played')">P</th>
-            <th :title="t('history.table.won')">W</th>
-            <th :title="t('history.table.drawn')">D</th>
-            <th :title="t('history.table.lost')">L</th>
-            <th :title="t('history.table.goalsFor')">GF</th>
-            <th :title="t('history.table.goalsAgainst')">GA</th>
-            <th :title="t('history.table.goalDiff')">GD</th>
-            <th :title="t('history.table.points')">Pts</th>
-          </tr>
-        </thead>
-        <TransitionGroup tag="tbody" name="standing-row">
-          <tr
-            v-for="(row, ri) in group.standings"
-            :key="row.teamId"
-            :class="{
-              'row-qualify': ri < qualifiersPerGroup,
-              'row-wildcard': ri === qualifiersPerGroup && wildcardCount > 0,
-              'row-out': ri > qualifiersPerGroup || (ri === qualifiersPerGroup && !wildcardCount),
-            }"
-          >
-            <td class="col-rank">{{ ri + 1 }}</td>
-            <td class="col-team">
-              <TeamBadge
-                :team="teamById(row.teamId)"
-                :fallback="row.teamId"
-                class="flex team-cell"
-              />
-            </td>
-            <td>{{ row.played }}</td>
-            <td>{{ row.won }}</td>
-            <td>{{ row.drawn }}</td>
-            <td>{{ row.lost }}</td>
-            <td>{{ row.gf }}</td>
-            <td>{{ row.ga }}</td>
-            <td>{{ row.gd >= 0 ? "+" + row.gd : row.gd }}</td>
-            <td class="col-pts">{{ row.pts }}</td>
-          </tr>
-        </TransitionGroup>
-      </table>
-    </div>
+    <AppTable dense class="gs-table">
+      <thead>
+        <tr>
+          <th class="col-rank">#</th>
+          <th class="col-team">{{ t("common.team") }}</th>
+          <th :title="t('history.table.played')">P</th>
+          <th :title="t('history.table.won')">W</th>
+          <th :title="t('history.table.drawn')">D</th>
+          <th :title="t('history.table.lost')">L</th>
+          <th :title="t('history.table.goalDiff')">GD</th>
+          <th :title="t('history.table.points')">Pts</th>
+        </tr>
+      </thead>
+      <TransitionGroup tag="tbody" name="standing-row">
+        <tr
+          v-for="(row, ri) in group.standings"
+          :key="row.teamId"
+          :class="{
+            'row-qualify': ri < qualifiersPerGroup,
+            'row-wildcard': ri === qualifiersPerGroup && wildcardCount > 0,
+            'row-out': ri > qualifiersPerGroup || (ri === qualifiersPerGroup && !wildcardCount),
+          }"
+        >
+          <td class="col-rank">{{ ri + 1 }}</td>
+          <td class="col-team" :style="{ '--tc': teamById(row.teamId)?.color ?? 'transparent' }">
+            <TeamBadge :team="teamById(row.teamId)" :fallback="row.teamId" class="flex team-cell" />
+          </td>
+          <td>{{ row.played }}</td>
+          <td>{{ row.won }}</td>
+          <td>{{ row.drawn }}</td>
+          <td>{{ row.lost }}</td>
+          <td>{{ row.gd >= 0 ? "+" + row.gd : row.gd }}</td>
+          <td class="col-pts">{{ row.pts }}</td>
+        </tr>
+      </TransitionGroup>
+    </AppTable>
 
     <!-- Matches -->
     <div class="gs-matches">
@@ -122,7 +111,12 @@ function scoreAccentColor(match: GroupMatch): string {
         </div>
       </div>
       <div v-for="{ match, mi } in rounds[round] ?? []" :key="match.id" class="gs-match">
-        <TeamBadge :team="teamById(match.homeId)" reverse class="gs-team gs-team--home" />
+        <TeamBadge
+          :team="teamById(match.homeId)"
+          :size="16"
+          reverse
+          class="gs-team gs-team--home"
+        />
 
         <button
           class="gs-score-btn"
@@ -136,69 +130,51 @@ function scoreAccentColor(match: GroupMatch): string {
           {{ matchResultStr(match) }}
         </button>
 
-        <TeamBadge :team="teamById(match.awayId)" class="gs-team gs-team--away" />
+        <TeamBadge :team="teamById(match.awayId)" :size="16" class="gs-team gs-team--away" />
 
         <button v-if="!locked" class="btn-xs sim-btn" @click="$emit('simMatch', mi)">
           <Shuffle :size="13" />
         </button>
       </div>
     </div>
-  </div>
+  </AppCard>
 </template>
 
 <style scoped>
-.gs-group {
-  border: 1px solid var(--border-light);
-  background: var(--surface);
-  border-radius: var(--radius);
-  overflow: hidden;
-}
-.gs-group-header {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-  padding: 7px 10px;
-  background: var(--bg);
-  border-bottom: 1px solid var(--border-light);
-  color: var(--text-muted);
-  border-left: 3px solid var(--accent);
-}
+/* Surface, header strip and table chrome now come from AppCard, its
+   AppSectionHeader and AppTable. What is left here is only what is specific
+   to a standings grid: column widths, numeric centring and row states.
 
-.gs-table-scroll {
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-}
-.gs-table {
-  border-collapse: collapse;
-  width: 100%;
-  font-size: 12px;
-}
-.gs-table th,
-.gs-table td {
-  border: none;
-  border-bottom: 1px solid var(--border-light);
-  padding: 4px 6px;
+   thead/tbody are in the selector on purpose — AppTable's own `.table th`
+   rule carries a scope attribute, so a bare `th` here would tie on
+   specificity and be decided by stylesheet injection order. */
+.gs-table :deep(thead th),
+.gs-table :deep(tbody td) {
   text-align: center;
-}
-.gs-table tbody tr:last-child td {
-  border-bottom: none;
-}
-.gs-table th {
-  background: var(--bg);
-  font-weight: 600;
-  font-size: 11px;
-  color: var(--text-muted);
 }
 .gs-table .col-rank {
   width: 18px;
   color: var(--text-muted);
-  font-size: 11px;
 }
+/* Identity bar, same contract as the league table: fate on the rank cell,
+   club on the team cell. */
 .gs-table .col-team {
+  position: relative;
   text-align: left;
   min-width: 0;
   max-width: 120px;
+  padding-left: 11px;
+}
+.gs-table .col-team::before {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: 3px;
+  bottom: 3px;
+  width: 3px;
+  border-radius: 1px;
+  background: var(--tc, transparent);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.18);
 }
 .col-pts {
   font-weight: 700;
@@ -220,7 +196,7 @@ function scoreAccentColor(match: GroupMatch): string {
 }
 
 .gs-matches {
-  padding: 4px 8px 6px;
+  padding: var(--sp-1) var(--sp-2) var(--sp-2);
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -230,12 +206,12 @@ function scoreAccentColor(match: GroupMatch): string {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 4px 0 4px;
+  padding: var(--sp-1) 0;
   border-bottom: 1px solid var(--border-light);
-  margin-bottom: 4px;
+  margin-bottom: var(--sp-1);
 }
 .gs-round-label {
-  font-size: 10px;
+  font-size: var(--fs-xs);
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -245,19 +221,27 @@ function scoreAccentColor(match: GroupMatch): string {
   display: flex;
   gap: 3px;
 }
+/* Sizes track LeagueMatchRow exactly — same object, same treatment. They sit a
+   step above the standings table above them: the table is a dense reference
+   grid, a fixture row is the thing you read and act on. */
 .gs-match {
   display: grid;
   grid-template-columns: 1fr auto 1fr auto;
   align-items: center;
-  gap: 4px;
-  font-size: 12px;
-  padding: 2px 0;
+  gap: var(--sp-1);
+  font-size: var(--fs-base);
+  padding: var(--sp-1) 0;
 }
 .gs-team {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: var(--sp-2);
   min-width: 0;
+}
+/* TeamBadge pins its label at 12px. Everything else here scales with the row,
+   so the name has to be told to come along. */
+.gs-team :deep(.name) {
+  font-size: var(--fs-base);
 }
 .gs-team--home {
   justify-content: flex-end;
@@ -267,20 +251,27 @@ function scoreAccentColor(match: GroupMatch): string {
   justify-content: flex-start;
 }
 
+/* Matches LeagueMatchRow's .lv-score-btn — a group fixture and a league
+   fixture are the same object and must read as the same control. */
 .gs-score-btn {
   font-family: var(--font);
-  font-size: 12px;
-  font-weight: 600;
-  min-width: 48px;
+  font-size: var(--fs-md);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  min-width: 62px;
   justify-content: center;
-  padding: 2px 6px;
+  padding: var(--sp-1) var(--sp-2);
   background: var(--bg);
   border: 1px solid var(--border-light);
+  border-radius: var(--radius);
   cursor: pointer;
   flex-shrink: 0;
+  display: flex;
+  color: var(--text-muted);
 }
 .gs-score-btn:hover:not(:disabled) {
-  background: var(--border-light);
+  border-color: var(--accent);
+  color: var(--accent);
 }
 .gs-score-btn--locked {
   cursor: default;
@@ -313,24 +304,21 @@ function scoreAccentColor(match: GroupMatch): string {
   }
 
   /* Hide D, L, GF, GA — keep #, Team, P, W, GD, Pts */
-  .gs-table th:nth-child(5),
+  /* .gs-table th:nth-child(5),
   .gs-table td:nth-child(5),
   .gs-table th:nth-child(6),
-  .gs-table td:nth-child(6),
-  .gs-table th:nth-child(7),
-  .gs-table td:nth-child(7),
-  .gs-table th:nth-child(8),
-  .gs-table td:nth-child(8) {
+  .gs-table td:nth-child(6), */
+  /* .gs-table th:nth-child(7),
+  .gs-table td:nth-child(7), */
+  .gs-table th:nth-child(3),
+  .gs-table td:nth-child(3) {
     display: none;
   }
 
-  /* Bigger touch target for score and sim buttons */
-  .gs-match {
-    padding: 5px 0;
-  }
+  /* Type size is kept; only the hit areas grow. */
   .gs-score-btn {
-    min-width: 56px;
-    padding: 5px 8px;
+    min-width: 66px;
+    padding: 5px var(--sp-2);
   }
 }
 </style>

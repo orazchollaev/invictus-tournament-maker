@@ -242,36 +242,36 @@ const allDone = computed(
 </template>
 
 <style scoped>
+/* The enclosing AppCard owns the outer padding now, so nothing in here
+   hand-insets itself off the card edge any more. */
 .gs-wrap {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--sp-3);
 }
 
 .gs-locked-notice {
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 12px;
+  gap: var(--sp-2);
+  font-size: var(--fs-sm);
   color: var(--text-muted);
   background: var(--bg);
   border: 1px solid var(--border-light);
   border-left: 3px solid var(--accent);
-  padding: 6px 10px;
-  margin: 0 8px;
+  border-radius: var(--radius);
+  padding: var(--sp-2) var(--sp-3);
 }
 
 .gs-groups {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
-  gap: 12px;
-  padding: 0 8px 8px;
+  gap: var(--sp-3);
 }
 
 .gs-legend {
-  font-size: 11px;
+  font-size: var(--fs-xs);
   color: var(--text-muted);
-  padding: 0 8px;
 }
 .legend-qualify {
   color: var(--accent);
@@ -312,7 +312,6 @@ const allDone = computed(
 @media (max-width: 600px) {
   .gs-groups {
     grid-template-columns: 1fr;
-    padding: 0 4px 8px;
   }
 }
 </style>

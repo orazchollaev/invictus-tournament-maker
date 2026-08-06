@@ -8,10 +8,14 @@
  *          outlined  surface + hairline, no shadow — dense/nested cards
  *          filled    --bg fill — cards sitting *inside* another card
  *
- * `title` renders the canonical section header strip (uppercase muted
- * label with a 3px accent rule), replacing the four separate copies of
- * that pattern. Use the `header` slot when you need actions beside it.
+ * `title` renders the canonical section header strip — that is literally
+ * AppSectionHeader, rather than a second copy of it. The two had drifted:
+ * this file's own header was accent-coloured with no rule, while the
+ * component named after the pattern (and the panels across the tournament
+ * tabs) drew a muted label with a 3px accent rule. The named component wins.
  */
+import AppSectionHeader from "./AppSectionHeader.vue"
+
 withDefaults(
   defineProps<{
     variant?: "elevated" | "outlined" | "filled"
@@ -34,14 +38,12 @@ withDefaults(
     class="card"
     :class="[`card--${variant}`, { 'card--rail': rail, 'card--interactive': interactive }]"
   >
-    <div v-if="title || $slots.title || $slots.actions" class="card-header">
-      <h2 class="card-title">
-        <slot name="title">{{ title }}</slot>
-      </h2>
-      <div v-if="$slots.actions" class="card-actions">
+    <AppSectionHeader v-if="title || $slots.title || $slots.actions" class="card-header">
+      <slot name="title">{{ title }}</slot>
+      <template v-if="$slots.actions" #actions>
         <slot name="actions" />
-      </div>
-    </div>
+      </template>
+    </AppSectionHeader>
     <div class="card-body" :class="`card-body--${padding}`">
       <slot />
     </div>
@@ -92,50 +94,26 @@ withDefaults(
   border-left-color: var(--rail-color, var(--accent));
 }
 
-/* ── Header ──────────────────────────────────────────────────── */
+/* ── Header ──────────────────────────────────────────────────────
+   Everything about how the strip *looks* lives in AppSectionHeader.
+   Only the fit against the card's own edge is this file's business:
+   the accent rule has to sit flush with the card border, not 1px in. */
 .card-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--sp-2);
-  padding: var(--sp-3) var(--sp-4);
-  background: var(--bg);
   margin-left: -1px;
-  border-radius: 12px 12px 0 0;
-}
-
-.card-title {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-2);
-  margin: 0;
-  font-family: var(--font-ui);
-  font-size: var(--fs-xs);
-  font-weight: 700;
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-  color: var(--accent);
-  min-width: 0;
-}
-
-.card-actions {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-2);
-  flex-shrink: 0;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
 }
 
 .card-body--none {
   padding: 0;
 }
 .card-body--sm {
-  padding: var(--sp-3);
+  padding: var(--sp-2);
 }
 .card-body--md {
-  padding: var(--sp-4);
+  padding: var(--sp-3);
 }
 .card-body--lg {
-  padding: var(--sp-5);
+  padding: var(--sp-4);
 }
 
 .card-footer {
