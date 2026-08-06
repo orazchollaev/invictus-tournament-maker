@@ -4,6 +4,7 @@ import { AppButton, AppField, AppIcon, AppModal, ColorPicker } from "@/component
 import FlagPicker from "./FlagPicker.vue"
 import FlagCircle from "./FlagCircle.vue"
 import { flagPrimaryColor } from "../flags"
+import { teamInk } from "../color"
 import { useTeamsStore } from "../store"
 import { useModal } from "@/composables/useModal"
 import { autoAbbr } from "@/composables/useTeamLookup"
@@ -40,20 +41,13 @@ const flagName = computed(
   () => COUNTRY_FLAGS.find((c) => c.code === flag.value)?.name ?? flag.value
 )
 
-/* Crest preview. The initials sit directly on the team colour, so pick the
-   ink from the fill's luminance — a light colour like white needs dark text. */
+/* Crest preview. The initials sit directly on the team colour, so the ink
+   comes from the fill's luminance — see modules/teams/color.ts. */
 const crestAbbr = computed(() =>
   (abbr.value.trim() || abbrPlaceholder.value || "—").slice(0, 3).toUpperCase()
 )
 
-const crestInk = computed(() => {
-  const hex = color.value.replace("#", "")
-  if (hex.length !== 6) return "#ffffff"
-  const [r, g, b] = [0, 2, 4].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255)
-  const lin = (c: number) => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4)
-  const l = 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b)
-  return l > 0.45 ? "#111827" : "#ffffff"
-})
+const crestInk = computed(() => teamInk(color.value))
 
 async function onFlagSelect(code: string | undefined) {
   flag.value = code

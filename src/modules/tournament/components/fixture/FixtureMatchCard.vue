@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import { computed } from "vue"
 import type { Team } from "@/modules/teams/types"
 import { getWinnerId } from "@/engine"
+import { NO_TEAM_COLOR } from "@/modules/teams/color"
 import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
 import { X, Shuffle, Pencil, Check } from "@lucide/vue"
 import type { FlatMatch, MatchEditor } from "./useMatchEditor"
@@ -16,6 +18,12 @@ function getTeam(id: string | null): Team | null {
   if (!id) return null
   return props.teams.find((t) => t.id === id) ?? null
 }
+
+/* Each row carries its own club's colour, so a fixture list identifies the
+   teams before a single result is in — and a tournament's fixtures look like
+   *that* tournament rather than like every other one. */
+const homeColor = computed(() => getTeam(props.match.homeId)?.color ?? NO_TEAM_COLOR)
+const awayColor = computed(() => getTeam(props.match.awayId)?.color ?? NO_TEAM_COLOR)
 </script>
 
 <!-- eslint-disable vue/no-mutating-props -- `editor` is a shared reactive store object owned by FixtureView; mutating its fields is the intended contract -->
@@ -24,6 +32,7 @@ function getTeam(id: string | null): Team | null {
     <div class="mc-teams">
       <div
         class="mc-row"
+        :style="{ '--tc': homeColor }"
         :class="{
           winner: match.result && getWinnerId(match) === match.homeId,
           loser: match.result && getWinnerId(match) !== match.homeId,
@@ -33,6 +42,7 @@ function getTeam(id: string | null): Team | null {
       </div>
       <div
         class="mc-row mc-row--away"
+        :style="{ '--tc': awayColor }"
         :class="{
           winner: match.result && getWinnerId(match) === match.awayId,
           loser: match.result && getWinnerId(match) !== match.awayId,
@@ -47,6 +57,7 @@ function getTeam(id: string | null): Team | null {
         <!-- Home score cell -->
         <div
           class="mc-scell"
+          :style="{ '--tc': homeColor }"
           :class="{
             winner: match.result && getWinnerId(match) === match.homeId,
             loser: match.result && getWinnerId(match) !== match.homeId,
@@ -71,6 +82,7 @@ function getTeam(id: string | null): Team | null {
         <!-- Away score cell -->
         <div
           class="mc-scell mc-scell--away"
+          :style="{ '--tc': awayColor }"
           :class="{
             winner: match.result && getWinnerId(match) === match.awayId,
             loser: match.result && getWinnerId(match) !== match.awayId,
@@ -143,10 +155,11 @@ function getTeam(id: string | null): Team | null {
 }
 
 .mc-row {
+  position: relative;
   display: flex;
   align-items: center;
   height: 28px;
-  padding: 0 8px;
+  padding: 0 8px 0 11px;
   gap: 5px;
   border-bottom: 1px solid var(--border-light);
   box-sizing: border-box;
@@ -155,11 +168,25 @@ function getTeam(id: string | null): Team | null {
     background 0.1s,
     opacity 0.1s;
 }
+/* Club identity bar. Ringed, because a white kit on a white card is
+   otherwise invisible — see modules/teams/color.ts. */
+.mc-row::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--tc, transparent);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.18);
+}
 .mc-row--away {
   border-bottom: none;
 }
+/* Won matches take the winner's colour rather than one shared green, so a
+   fixture list reads as "who won" and not just "played / not played". */
 .mc-row.winner {
-  background: color-mix(in srgb, var(--success) 10%, var(--surface));
+  background: color-mix(in srgb, var(--tc, var(--success)) 14%, var(--surface));
   font-weight: 700;
 }
 .mc-row.loser {
@@ -191,7 +218,7 @@ function getTeam(id: string | null): Team | null {
   border-bottom: none;
 }
 .mc-scell.winner {
-  background: color-mix(in srgb, var(--success) 10%, var(--surface));
+  background: color-mix(in srgb, var(--tc, var(--success)) 14%, var(--surface));
 }
 .mc-scell.loser {
   opacity: 0.45;

@@ -100,7 +100,11 @@ async function deleteTournament(id: string) {
           padding="sm"
           class="tour-card"
           :class="{ 'tour-card--grid': isGrid }"
-          :style="{ '--i': i }"
+          :style="{
+            '--i': i,
+            '--rail-color': winnerTeam(tour)?.color,
+            '--team-color': winnerTeam(tour)?.color,
+          }"
           @click="router.push(`/tournaments/${tour.id}`)"
         >
           <div class="tour-body">
@@ -114,11 +118,7 @@ async function deleteTournament(id: string) {
             </div>
           </div>
 
-          <span
-            v-if="store.isTournamentFinished(tour.id)"
-            class="tour-winner"
-            :style="{ '--team-color': winnerTeam(tour)?.color }"
-          >
+          <span v-if="store.isTournamentFinished(tour.id)" class="tour-winner">
             <AppIcon :icon="Trophy" size="xs" />
             <TeamBadge :team="winnerTeam(tour)" />
           </span>

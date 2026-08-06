@@ -3,6 +3,7 @@ import { ref, computed } from "vue"
 import type { Match } from "../types"
 import type { Team } from "@/modules/teams/types"
 import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
+import { NO_TEAM_COLOR } from "@/modules/teams/color"
 import { getWinnerId } from "@/engine"
 import { useSettingsStore } from "@/modules/settings/store"
 import { Pencil, Shuffle, X, Check } from "@lucide/vue"
@@ -63,6 +64,15 @@ function isWinner(teamId: string | null) {
   if (!props.match.result || !teamId) return false
   return getWinnerId(props.match) === teamId
 }
+
+/* Row identity colour, matching the connector strands the bracket already
+   draws in the winner's colour — the card and the line it feeds now agree. */
+function colorOf(teamId: string | null) {
+  if (!teamId) return NO_TEAM_COLOR
+  return props.teams.find((t) => t.id === teamId)?.color ?? NO_TEAM_COLOR
+}
+const homeColor = computed(() => colorOf(props.match.homeId))
+const awayColor = computed(() => colorOf(props.match.awayId))
 
 // ── Shared edit refs ──
 const editH = ref(0)
@@ -176,6 +186,7 @@ const saveDisabled = computed(() =>
     <div class="mc-teams">
       <div
         class="mc-row"
+        :style="{ '--tc': homeColor }"
         :class="{ winner: isWinner(match.homeId), loser: match.result && !isWinner(match.homeId) }"
         @mouseenter="match.homeId && $emit('hover-team', match.homeId)"
       >
@@ -183,6 +194,7 @@ const saveDisabled = computed(() =>
       </div>
       <div
         class="mc-row mc-row--away"
+        :style="{ '--tc': awayColor }"
         :class="{ winner: isWinner(match.awayId), loser: match.result && !isWinner(match.awayId) }"
         @mouseenter="match.awayId && $emit('hover-team', match.awayId)"
       >
@@ -197,6 +209,7 @@ const saveDisabled = computed(() =>
         <!-- Home score cell -->
         <div
           class="mc-scell"
+          :style="{ '--tc': homeColor }"
           :class="{
             winner: isWinner(match.homeId),
             loser: match.result && !isWinner(match.homeId),
@@ -258,6 +271,7 @@ const saveDisabled = computed(() =>
         <!-- Away score cell -->
         <div
           class="mc-scell mc-scell--away"
+          :style="{ '--tc': awayColor }"
           :class="{
             winner: isWinner(match.awayId),
             loser: match.result && !isWinner(match.awayId),
@@ -448,10 +462,11 @@ const saveDisabled = computed(() =>
 
 /* ── Team row ── */
 .mc-row {
+  position: relative;
   display: flex;
   align-items: center;
   height: 28px;
-  padding: 0 6px;
+  padding: 0 6px 0 10px;
   gap: 4px;
   border-bottom: 1px solid var(--border-light);
   box-sizing: border-box;
@@ -460,19 +475,33 @@ const saveDisabled = computed(() =>
     background var(--dur-fast) var(--ease),
     opacity var(--dur-fast) var(--ease);
 }
+/* Club identity bar — the same colour the connector strand leaving this
+   match is drawn in, so colour reads as one continuous system across the
+   bracket instead of two unrelated cues. Ringed so a white kit stays
+   visible on a white card (see modules/teams/color.ts). */
+.mc-row::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--tc, transparent);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.18);
+}
 .mc-row--away {
   border-bottom: none;
 }
 .mc-row.winner {
-  background: color-mix(in srgb, var(--success) 10%, var(--surface));
+  background: color-mix(in srgb, var(--tc, var(--success)) 14%, var(--surface));
   font-weight: 700;
 }
 .mc-row.loser {
   opacity: 0.5;
 }
-.mc.final .mc-row.winner {
-  background: color-mix(in srgb, var(--gold) 12%, var(--surface));
-}
+/* The final keeps its gold frame, glow and score chip — that says "trophy".
+   The winning row stays the champion's own colour, so the card says who won
+   as well as what was won. Gold on gold would collapse the two. */
 
 /* ── Score column (right of teams) ── */
 .mc-scores {
@@ -500,13 +529,10 @@ const saveDisabled = computed(() =>
   border-bottom: none;
 }
 .mc-scell.winner {
-  background: color-mix(in srgb, var(--success) 10%, var(--surface));
+  background: color-mix(in srgb, var(--tc, var(--success)) 14%, var(--surface));
 }
 .mc-scell.loser {
   opacity: 0.5;
-}
-.mc.final .mc-scell.winner {
-  background: color-mix(in srgb, var(--gold) 12%, var(--surface));
 }
 
 /* ── Score chip ── */
