@@ -15,7 +15,7 @@ import PlayoffManualDraw from "@/modules/tournament/components/PlayoffManualDraw
 import GroupDraw from "@/modules/tournament/components/GroupDraw.vue"
 import TournamentStats from "@/modules/tournament/components/TournamentStats.vue"
 import { DrawCeremony } from "@/modules/tournament/components/draw-ceremony"
-import { AppCard, AppModal } from "@/components/ui"
+import { AppCard, AppModal, BtnGroup } from "@/components/ui"
 import { DetailHeader, DetailPhaseTabs, DetailMultiTierModal } from "../components/detail"
 import { useTournamentDetail } from "../composables/useTournamentDetail"
 import { useTournamentTabs } from "../composables/useTournamentTabs"
@@ -119,7 +119,6 @@ const {
 
       <Swiper
         :key="visibleTabs.join('|')"
-        style="height: 100%"
         :initial-slide="activeIndex"
         :auto-height="true"
         :speed="300"
@@ -203,22 +202,16 @@ const {
                 />
               </template>
             </AppCard>
-            <AppCard v-else-if="tab === 'groups'" padding="none">
+            <AppCard v-else-if="tab === 'groups'" padding="md">
               <div v-if="hasWildcards" class="gs-subtab-row">
-                <button
-                  class="gs-subtab"
-                  :class="{ active: groupSubTab === 'groups' }"
-                  @click="groupSubTab = 'groups'"
-                >
-                  {{ trns("tournament.tabs.groups") }}
-                </button>
-                <button
-                  class="gs-subtab"
-                  :class="{ active: groupSubTab === 'wildcards' }"
-                  @click="groupSubTab = 'wildcards'"
-                >
-                  {{ trns("tournament.tabs.wildcards") }}
-                </button>
+                <BtnGroup
+                  v-model="groupSubTab"
+                  size="xs"
+                  :options="[
+                    { value: 'groups', label: trns('tournament.tabs.groups') },
+                    { value: 'wildcards', label: trns('tournament.tabs.wildcards') },
+                  ]"
+                />
               </div>
               <div class="gs-body">
                 <GroupStage
@@ -236,19 +229,19 @@ const {
                 <WildcardRankings v-else :tournament="tournament" :teams="allTeams" />
               </div>
             </AppCard>
-            <div v-else-if="tab === 'bracket'">
-              <BracketPanel
-                :tournament="tournament"
-                :teams="allTeams"
-                :title="
-                  isGroupFormat ? trns('tournament.tabs.bracket') : trns('tournament.tabs.bracket')
-                "
-              />
-            </div>
-            <AppCard v-else-if="tab === 'stats'">
+            <!-- BracketPanel brings its own card: it needs header actions
+                 (export, zoom, view switch) that the others have no use for. -->
+            <BracketPanel
+              v-else-if="tab === 'bracket'"
+              :tournament="tournament"
+              :teams="allTeams"
+              :title="trns('tournament.tabs.bracket')"
+            />
+            <AppCard v-else-if="tab === 'stats'" padding="md">
               <TournamentStats :tournament="tournament" :teams="allTeams" />
             </AppCard>
-            <AppCard v-else>
+            <!-- padding="none": the table draws its own cell padding. -->
+            <AppCard v-else padding="none">
               <ParticipantsTable :teams="allTeams" :tournament="tournament" />
             </AppCard>
           </template>
@@ -336,57 +329,27 @@ const {
 .lpc-actions {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 12px;
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-3);
 }
 .lpc-hint {
-  font-size: 12px;
+  font-size: var(--fs-sm);
   color: var(--text-muted);
 }
 
+/* Groups/wildcards is a segmented control now — `.gs-subtab` was a fourth
+   tab style on a page that already had phase tabs and BtnGroup. */
 .gs-subtab-row {
-  display: flex;
-  gap: 2px;
-  padding: 6px 8px 0;
-  border-bottom: 1px solid var(--border-light);
-}
-.gs-subtab {
-  font-size: 11px;
-  font-weight: 600;
-  padding: 3px 10px 5px;
-  border: none;
-  border-bottom: 2px solid transparent;
-  background: transparent;
-  color: var(--text-muted);
-  cursor: pointer;
-  border-radius: 0;
-  margin-bottom: -1px;
-}
-.gs-subtab:hover {
-  color: var(--text);
-}
-.gs-subtab.active {
-  color: var(--text);
-  border-bottom-color: var(--accent);
+  margin-bottom: var(--sp-3);
 }
 
 .not-found {
   color: var(--text-muted);
 }
 
-.gs-body {
-  padding: 8px 0;
-}
-
 @media (max-width: 640px) {
   .page {
     padding-bottom: 40px;
   }
-}
-</style>
-
-<style>
-.swiper-wrapper {
-  height: 100%;
 }
 </style>

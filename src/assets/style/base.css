@@ -66,3 +66,7 @@ a:hover {
     scroll-behavior: auto !important;
   }
 }
+
+.swiper-wrapper {
+  overflow-y: hidden !important;
+}

@@ -1,6 +1,7 @@
 import { ref, computed, watch, type ComputedRef } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import type { Swiper as SwiperInstance } from "swiper/types"
+import { useSwiperAutoHeight } from "@/composables/useSwiperAutoHeight"
 import { getLeaguePlayoffData } from "@/engine"
 import type { Tournament } from "@/modules/tournament/types"
 import type { MainTab } from "../components/detail"
@@ -111,9 +112,13 @@ export function useTournamentTabs(
   }
 
   let swiperInstance: SwiperInstance | null = null
+  /* css-mode disables Swiper's built-in autoHeight, so each tab's height is
+     measured here instead — otherwise every tab is clipped to the first one. */
+  const autoHeight = useSwiperAutoHeight()
 
   function onSwiperReady(s: SwiperInstance) {
     swiperInstance = s
+    autoHeight.attach(s)
   }
 
   let pendingUrlTab: MainTab | null = null
@@ -124,6 +129,11 @@ export function useTournamentTabs(
   let isProgrammaticJump = false
 
   function onSlideChange(s: SwiperInstance) {
+    // Deliberately does *not* re-measure the tab height here. Under css-mode
+    // this fires once per slide the scroll crosses, and the wrapper is the
+    // scroll container — resizing it mid-scroll cancels the native smooth
+    // scroll and strands a multi-slide jump on an intermediate tab.
+    // useSwiperAutoHeight waits for the scroll to settle instead.
     if (isProgrammaticJump) return
     const tab = visibleTabs.value[s.activeIndex]
     if (!tab || tab === activeTab.value) return
@@ -136,6 +146,9 @@ export function useTournamentTabs(
 
   function onSlideChangeEnd() {
     isProgrammaticJump = false
+    // The lazy window collapses just below, unmounting neighbours; re-measure
+    // so the wrapper settles on the slide that is left.
+    autoHeight.sync()
     if (swiperInstance) settledIndex.value = swiperInstance.activeIndex
     // Only collapse the mounted window once the settled slide matches
     // the tab we actually want — if a rapid click retargeted mid-flight,

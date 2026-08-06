@@ -130,8 +130,7 @@ const tabValue = computed({
   </div>
 </template>
 
-<style scoped>
-.swiper-wrapper {
-  height: auto !important;
-}
-</style>
+<!-- No styles: the tab height is owned by useSwiperAutoHeight. This file used
+     to carry `.swiper-wrapper { height: auto !important }`, which never
+     matched — scoped CSS cannot reach inside a child component — so the tabs
+     were clipped regardless. -->
