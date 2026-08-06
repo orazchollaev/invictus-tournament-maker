@@ -8,7 +8,7 @@ import type { MatchResult } from "../../types"
 /** Highest score the inputs accept — guards against fat-fingered entries. */
 const MAX_GOALS = 20
 
-defineProps<{
+const props = defineProps<{
   homeTeam: Team | undefined
   awayTeam: Team | undefined
   result: MatchResult | null
@@ -30,53 +30,62 @@ function onKey(e: KeyboardEvent) {
   if (e.key === "Enter") emit("commit")
   else if (e.key === "Escape") emit("cancel")
 }
+
+// Same rule as GroupCard's scoreAccentColor: the score box picks up the
+// winner's team color, so a played match reads the same way in both tabs.
+function scoreAccentColor(): string {
+  if (!props.result) return ""
+  if (props.result.home > props.result.away) return props.homeTeam?.color ?? ""
+  if (props.result.away > props.result.home) return props.awayTeam?.color ?? ""
+  return "var(--border)"
+}
 </script>
 
 <template>
   <div class="lv-match">
     <template v-if="editing">
-      <TeamBadge :team="homeTeam" class="lv-match-team lv-match-team--home" />
-      <input
-        v-model="home"
-        class="lv-score-input"
-        type="number"
-        min="0"
-        :max="MAX_GOALS"
-        @keyup="onKey"
-      />
-      <span class="lv-match-sep">–</span>
-      <input
-        v-model="away"
-        class="lv-score-input"
-        type="number"
-        min="0"
-        :max="MAX_GOALS"
-        @keyup="onKey"
-      />
-      <TeamBadge :team="awayTeam" class="lv-match-team lv-match-team--away" />
-      <AppButton variant="filled" size="xs" @click="emit('commit')">✓</AppButton>
-      <AppButton size="xs" @click="emit('cancel')">✕</AppButton>
+      <TeamBadge :team="homeTeam" reverse class="lv-team lv-team--home" />
+      <div class="lv-score-edit">
+        <input
+          v-model="home"
+          class="lv-score-input"
+          type="number"
+          min="0"
+          :max="MAX_GOALS"
+          @keyup="onKey"
+        />
+        <span class="lv-match-sep">–</span>
+        <input
+          v-model="away"
+          class="lv-score-input"
+          type="number"
+          min="0"
+          :max="MAX_GOALS"
+          @keyup="onKey"
+        />
+      </div>
+      <TeamBadge :team="awayTeam" class="lv-team lv-team--away" />
+      <div class="lv-edit-acts">
+        <AppButton variant="filled" size="xs" @click="emit('commit')">✓</AppButton>
+        <AppButton size="xs" @click="emit('cancel')">✕</AppButton>
+      </div>
     </template>
 
     <template v-else>
-      <TeamBadge
-        :team="homeTeam"
-        class="lv-match-team lv-match-team--home"
-        :class="{ 'lv-winner': result && result.home > result.away }"
-      />
+      <TeamBadge :team="homeTeam" reverse class="lv-team lv-team--home" />
+
       <button
         class="lv-score-btn"
         :class="{ 'lv-score-btn--played': !!result }"
+        :style="result ? { borderColor: scoreAccentColor(), borderLeftWidth: '3px' } : {}"
         @click="emit('edit')"
       >
         <template v-if="result">{{ result.home }} – {{ result.away }}</template>
         <template v-else>vs</template>
       </button>
-      <TeamBadge
-        :team="awayTeam"
-        class="lv-match-team lv-match-team--away"
-        :class="{ 'lv-winner': result && result.away > result.home }"
-      />
+
+      <TeamBadge :team="awayTeam" class="lv-team lv-team--away" />
+
       <button class="lv-sim-btn" title="Simulate" @click="emit('sim')">
         <AppIcon :icon="Zap" size="xs" />
       </button>
@@ -85,34 +94,30 @@ function onKey(e: KeyboardEvent) {
 </template>
 
 <style scoped>
+/* Grid + spacing mirror GroupCard's .gs-match so a league fixture row
+   reads as the same shape as a group-stage one. */
 .lv-match {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr auto;
   align-items: center;
-  gap: var(--sp-1);
-  padding: 3px var(--sp-2);
-  background: var(--bg);
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius);
-  font-size: var(--fs-xs);
-  min-height: 28px;
+  gap: 4px;
+  font-size: 12px;
+  padding: 2px 0;
   min-width: 0;
-  overflow: hidden;
 }
 
-.lv-match-team {
-  flex: 1;
+.lv-team {
   display: flex;
   align-items: center;
-  gap: var(--sp-1);
+  gap: 5px;
   min-width: 0;
   color: var(--text-muted);
 }
-.lv-match-team--home {
-  flex-direction: row-reverse;
+.lv-team--home {
   justify-content: flex-end;
+  text-align: right;
 }
-.lv-match-team--away {
-  flex-direction: row;
+.lv-team--away {
   justify-content: flex-start;
 }
 .lv-winner {
@@ -121,20 +126,19 @@ function onKey(e: KeyboardEvent) {
 }
 
 .lv-score-btn {
-  min-width: 40px;
-  padding: 1px 5px;
-  text-align: center;
-  font-size: var(--fs-xs);
-  font-weight: 700;
+  font-family: var(--font);
+  font-size: 12px;
+  font-weight: 600;
+  min-width: 48px;
+  justify-content: center;
+  padding: 2px 6px;
+  background: var(--bg);
   border: 1px solid var(--border-light);
   border-radius: var(--radius);
-  background: transparent;
-  color: var(--text-muted);
-  font-family: var(--font-ui);
   cursor: pointer;
   flex-shrink: 0;
   display: flex;
-  justify-content: center;
+  color: var(--text-muted);
 }
 .lv-score-btn--played {
   color: var(--text);
@@ -143,6 +147,13 @@ function onKey(e: KeyboardEvent) {
 .lv-score-btn:hover {
   border-color: var(--accent);
   color: var(--accent);
+}
+
+.lv-score-edit {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  flex-shrink: 0;
 }
 
 .lv-match-sep {
@@ -157,6 +168,12 @@ function onKey(e: KeyboardEvent) {
   padding: 1px 3px;
   font-size: var(--fs-xs);
   font-weight: 700;
+  flex-shrink: 0;
+}
+
+.lv-edit-acts {
+  display: flex;
+  gap: 3px;
   flex-shrink: 0;
 }
 
@@ -179,11 +196,11 @@ function onKey(e: KeyboardEvent) {
 @media (max-width: 640px) {
   .lv-match {
     font-size: var(--fs-sm);
-    padding: var(--sp-1) var(--sp-3);
+    padding: 5px 0;
   }
   .lv-score-btn {
-    min-width: 48px;
-    padding: var(--sp-1) var(--sp-2);
+    min-width: 56px;
+    padding: 5px 8px;
     font-size: var(--fs-sm);
   }
   .lv-score-input {

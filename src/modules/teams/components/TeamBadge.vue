@@ -13,7 +13,7 @@ const props = withDefaults(
     reverse?: boolean
     fallback?: string
   }>(),
-  { size: 14, reverse: false, fallback: "TBD" }
+  { size: 12, reverse: false, fallback: "TBD" }
 )
 const team = computed(() => props.team ?? props.teams?.find((t) => t.id === props.teamId))
 </script>
@@ -42,8 +42,8 @@ const team = computed(() => props.team ?? props.teams?.find((t) => t.id === prop
   flex-direction: row-reverse;
 }
 .dot {
-  width: 14px;
-  height: 14px;
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
   flex-shrink: 0;
   box-shadow: 0 0 0 1.5px rgba(0, 0, 0, 0.15);

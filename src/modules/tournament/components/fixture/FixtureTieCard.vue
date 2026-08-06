@@ -219,8 +219,6 @@ function onSim(leg: 1 | 2) {
 /* ── Colour dot (fallback when a team has no flag) ── */
 .cdot {
   display: inline-block;
-  width: 14px;
-  height: 14px;
   border-radius: 50%;
   flex-shrink: 0;
   box-shadow: 0 0 0 1.5px rgba(0, 0, 0, 0.08);
