@@ -129,6 +129,7 @@ const {
       />
 
       <Swiper
+        :key="visibleTabs.join('|')"
         style="height: 100%"
         :initial-slide="activeIndex"
         :auto-height="true"

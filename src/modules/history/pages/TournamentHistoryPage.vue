@@ -97,6 +97,7 @@ const tabValue = computed({
       </AppTabs>
 
       <Swiper
+        :key="visibleTabs.join('|')"
         :initial-slide="activeIndex"
         :auto-height="true"
         :speed="300"

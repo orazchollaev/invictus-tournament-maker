@@ -1,18 +1,3 @@
-/* ── Legacy global component classes ─────────────────────────────
-   MIGRATION SHIM. Every rule below is superseded by a primitive in
-   src/components/ui/ and is deleted as its consumers move over:
-
-     .phase-tabs / .phase-tab  → AppTabs + AppTab (DetailPhaseTabs)
-     .data-table               → AppTable (TeamStatsTab)
-     .team-cell                → the crest+name cell inside AppTable rows
-     .notice                   → AppCard variant="filled" with a warning rail
-
-   The card, list-row, badge, status and settings-row families are gone.
-
-   Values here are token-only so the shim and the primitive agree while
-   both are live. Do not add new rules to this file. */
-
-/* Inline warning strip — sits above a list to explain why it is empty. */
 .notice {
   background: color-mix(in srgb, var(--accent-2) 12%, var(--surface));
   border: 1px solid color-mix(in srgb, var(--accent-2) 40%, transparent);
@@ -61,7 +46,7 @@
 
 .phase-tab[data-state="active"] {
   color: var(--accent);
-  border-bottom-color: var(--accent);
+  /* border-bottom-color: var(--accent); */
 }
 
 .phase-tab.disabled,
