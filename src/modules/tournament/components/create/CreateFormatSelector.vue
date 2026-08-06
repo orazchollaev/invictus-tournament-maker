@@ -2,6 +2,7 @@
 import { computed, watch } from "vue"
 import { Trophy, LayoutGrid, List } from "@lucide/vue"
 import AppStepper from "@/components/ui/AppStepper.vue"
+import { useGroupSizeHint } from "../../composables/useGroupSizeHint"
 
 type TournamentFormat = "bracket" | "group+bracket" | "league"
 
@@ -22,8 +23,9 @@ const maxWildcards = computed(() => {
   const minGroupSize = Math.floor(props.selectedCount / groupCount.value)
   return qualifiersPerGroup.value < minGroupSize ? groupCount.value : 0
 })
-const teamsPerGroup = computed(() =>
-  groupCount.value > 0 ? Math.ceil(props.selectedCount / groupCount.value) : 0
+const groupSizeHint = useGroupSizeHint(
+  () => props.selectedCount,
+  () => groupCount.value
 )
 
 watch(maxGroups, (max) => {
@@ -109,7 +111,7 @@ function setFormat(f: TournamentFormat) {
         :label="$t('tournament.create.groups')"
         :min="minGroups"
         :max="maxGroups"
-        :hint="$t('tournament.create.teamsPerGroup', { n: teamsPerGroup })"
+        :hint="groupSizeHint"
       />
 
       <AppStepper

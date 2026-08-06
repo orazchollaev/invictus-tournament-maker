@@ -7,6 +7,7 @@ import BtnGroup from "@/components/ui/BtnGroup.vue"
 import TspLockedCard from "./TspLockedCard.vue"
 import { showConfirm } from "@/composables/useDialog"
 import { useLegOptions } from "@/modules/tournament/composables/useLegOptions"
+import { useGroupSizeHint } from "@/modules/tournament/composables/useGroupSizeHint"
 import { useI18n } from "vue-i18n"
 
 const { t } = useI18n()
@@ -41,6 +42,13 @@ const maxGroups = computed(() => Math.floor(props.teamCount / 2))
 const minGroups = 2
 const maxQpg = computed(() => Math.floor(props.teamCount / localGroupCount.value))
 const minQpg = 1
+
+/* Same line as the create page's group stepper — changing the group count here
+   redraws the groups, so the resulting sizes should be just as visible. */
+const groupSizeHint = useGroupSizeHint(
+  () => props.teamCount,
+  () => localGroupCount.value
+)
 
 const drawOptions = computed(() => [
   { value: "random", label: t("common.random") },
@@ -105,6 +113,7 @@ async function handleRedraw() {
         :label="t('tournament.create.groups')"
         :min="minGroups"
         :max="maxGroups"
+        :hint="groupSizeHint"
       />
     </TspLockedCard>
   </template>
