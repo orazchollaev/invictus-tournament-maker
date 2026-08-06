@@ -42,8 +42,8 @@ const items = [
   .mobile-nav {
     display: flex;
     position: fixed;
-    left: calc(var(--safe-left) + var(--sp-3));
-    right: calc(var(--safe-right) + var(--sp-3));
+    left: calc(var(--safe-left) + var(--sp-2));
+    right: calc(var(--safe-right) + var(--sp-2));
     bottom: calc(var(--safe-bottom) + var(--mobile-nav-gap));
     z-index: var(--z-mobile-nav);
     height: var(--mobile-nav-height);

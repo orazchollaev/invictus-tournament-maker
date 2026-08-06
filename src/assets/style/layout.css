@@ -112,7 +112,7 @@
 
 @media (max-width: 640px) {
   .page {
-    padding: var(--sp-4) var(--sp-3);
+    padding: var(--sp-3) var(--sp-2);
   }
 
   .page-top {
