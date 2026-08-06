@@ -190,7 +190,7 @@ const saveDisabled = computed(() =>
         :class="{ winner: isWinner(match.homeId), loser: match.result && !isWinner(match.homeId) }"
         @mouseenter="match.homeId && $emit('hover-team', match.homeId)"
       >
-        <TeamBadge :team-id="match.homeId" :teams="teams" />
+        <TeamBadge :team-id="match.homeId" :teams="teams" :size="14" />
       </div>
       <div
         class="mc-row mc-row--away"
@@ -198,7 +198,7 @@ const saveDisabled = computed(() =>
         :class="{ winner: isWinner(match.awayId), loser: match.result && !isWinner(match.awayId) }"
         @mouseenter="match.awayId && $emit('hover-team', match.awayId)"
       >
-        <TeamBadge :team-id="match.awayId" :teams="teams" />
+        <TeamBadge :team-id="match.awayId" :teams="teams" :size="14" />
       </div>
     </div>
 

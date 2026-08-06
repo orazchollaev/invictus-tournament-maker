@@ -13,7 +13,7 @@ const props = withDefaults(
     reverse?: boolean
     fallback?: string
   }>(),
-  { size: 12, reverse: false, fallback: "TBD" }
+  { size: 14, reverse: false, fallback: "TBD" }
 )
 const team = computed(() => props.team ?? props.teams?.find((t) => t.id === props.teamId))
 </script>

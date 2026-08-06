@@ -81,7 +81,12 @@ function scoreAccentColor(match: GroupMatch): string {
         >
           <td class="col-rank">{{ ri + 1 }}</td>
           <td class="col-team" :style="{ '--tc': teamById(row.teamId)?.color ?? 'transparent' }">
-            <TeamBadge :team="teamById(row.teamId)" :fallback="row.teamId" class="flex team-cell" />
+            <TeamBadge
+              :team="teamById(row.teamId)"
+              :fallback="row.teamId"
+              class="flex team-cell"
+              :size="14"
+            />
           </td>
           <td>{{ row.played }}</td>
           <td>{{ row.won }}</td>

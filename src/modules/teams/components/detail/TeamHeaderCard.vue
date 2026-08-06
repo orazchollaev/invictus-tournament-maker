@@ -58,8 +58,8 @@ const { t } = useI18n()
 }
 
 .team-dot {
-  width: 12px;
-  height: 12px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
 }
 

@@ -66,7 +66,7 @@ const columns = computed(() => COLUMNS.filter((c) => c.cls !== "col-group" || is
           </span>
         </td>
         <td class="col-team">
-          <TeamBadge :team="row.team" class="team-cell" />
+          <TeamBadge :team="row.team" class="team-cell" :size="16" />
         </td>
         <td v-if="isGroupFormat" class="col-group">
           <AppChip square>{{ row.groupName ?? "—" }}</AppChip>
