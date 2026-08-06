@@ -44,7 +44,7 @@ function scoreAccentColor(): string {
 <template>
   <div class="lv-match">
     <template v-if="editing">
-      <TeamBadge :team="homeTeam" reverse class="lv-team lv-team--home" />
+      <TeamBadge :team="homeTeam" :size="16" reverse class="lv-team lv-team--home" />
       <div class="lv-score-edit">
         <input
           v-model="home"
@@ -64,7 +64,7 @@ function scoreAccentColor(): string {
           @keyup="onKey"
         />
       </div>
-      <TeamBadge :team="awayTeam" class="lv-team lv-team--away" />
+      <TeamBadge :team="awayTeam" :size="16" class="lv-team lv-team--away" />
       <div class="lv-edit-acts">
         <AppButton variant="filled" size="xs" @click="emit('commit')">✓</AppButton>
         <AppButton size="xs" @click="emit('cancel')">✕</AppButton>
@@ -72,7 +72,7 @@ function scoreAccentColor(): string {
     </template>
 
     <template v-else>
-      <TeamBadge :team="homeTeam" reverse class="lv-team lv-team--home" />
+      <TeamBadge :team="homeTeam" :size="16" reverse class="lv-team lv-team--home" />
 
       <button
         class="lv-score-btn"
@@ -84,7 +84,7 @@ function scoreAccentColor(): string {
         <template v-else>vs</template>
       </button>
 
-      <TeamBadge :team="awayTeam" class="lv-team lv-team--away" />
+      <TeamBadge :team="awayTeam" :size="16" class="lv-team lv-team--away" />
 
       <button class="lv-sim-btn" title="Simulate" @click="emit('sim')">
         <AppIcon :icon="Zap" size="xs" />
@@ -95,23 +95,30 @@ function scoreAccentColor(): string {
 
 <style scoped>
 /* Grid + spacing mirror GroupCard's .gs-match so a league fixture row
-   reads as the same shape as a group-stage one. */
+   reads as the same shape as a group-stage one. Sizes are deliberately a
+   step up from the standings table beside it: the table is a dense
+   reference grid, a fixture row is the thing you read and act on. */
 .lv-match {
   display: grid;
   grid-template-columns: 1fr auto 1fr auto;
   align-items: center;
-  gap: 4px;
-  font-size: 12px;
-  padding: 2px 0;
+  gap: var(--sp-1);
+  font-size: var(--fs-base);
+  padding: var(--sp-1) 0;
   min-width: 0;
 }
 
 .lv-team {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: var(--sp-2);
   min-width: 0;
   color: var(--text-muted);
+}
+/* TeamBadge pins its label at 12px. Everything else here scales with the row,
+   so the name has to be told to come along. */
+.lv-team :deep(.name) {
+  font-size: var(--fs-base);
 }
 .lv-team--home {
   justify-content: flex-end;
@@ -125,13 +132,16 @@ function scoreAccentColor(): string {
   font-weight: 600;
 }
 
+/* The score is the content of a fixture row, so it outranks the names:
+   a step larger, heavier, and tabular so columns of scores line up. */
 .lv-score-btn {
   font-family: var(--font);
-  font-size: 12px;
-  font-weight: 600;
-  min-width: 48px;
+  font-size: var(--fs-md);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  min-width: 62px;
   justify-content: center;
-  padding: 2px 6px;
+  padding: var(--sp-1) var(--sp-2);
   background: var(--bg);
   border: 1px solid var(--border-light);
   border-radius: var(--radius);
@@ -162,12 +172,15 @@ function scoreAccentColor(): string {
   flex-shrink: 0;
 }
 
+/* Matches .lv-score-btn's weight and size so committing an edit does not
+   make the row jump. */
 .lv-score-input {
-  width: 32px;
+  width: 38px;
   text-align: center;
-  padding: 1px 3px;
-  font-size: var(--fs-xs);
+  padding: 1px var(--sp-1);
+  font-size: var(--fs-md);
   font-weight: 700;
+  font-variant-numeric: tabular-nums;
   flex-shrink: 0;
 }
 
@@ -194,19 +207,17 @@ function scoreAccentColor(): string {
 }
 
 @media (max-width: 640px) {
+  /* Type size is kept; only the hit areas grow. */
   .lv-match {
-    font-size: var(--fs-sm);
-    padding: 5px 0;
+    padding: var(--sp-1) 0;
   }
   .lv-score-btn {
-    min-width: 56px;
-    padding: 5px 8px;
-    font-size: var(--fs-sm);
+    min-width: 66px;
+    padding: 5px var(--sp-2);
   }
   .lv-score-input {
-    width: 40px;
+    width: 42px;
     padding: var(--sp-1);
-    font-size: var(--fs-base);
   }
   .lv-sim-btn {
     padding: 5px 7px;
