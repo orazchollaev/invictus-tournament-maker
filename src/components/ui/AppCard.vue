@@ -82,8 +82,6 @@ withDefaults(
     transform var(--dur) var(--ease),
     background var(--dur-fast) var(--ease);
 }
-/* Railed cards tint their hover with the rail colour (a team's colour,
-   say) so the row reads as "this one", not just "some row". */
 .card--interactive:hover {
   border-color: var(--border);
   background: color-mix(in srgb, var(--rail-color, var(--accent)) 5%, var(--surface));
@@ -102,7 +100,6 @@ withDefaults(
   gap: var(--sp-2);
   padding: var(--sp-3) var(--sp-4);
   background: var(--bg);
-  box-shadow: inset 0px 0px 4px var(--accent);
   margin-left: -1px;
   border-radius: 12px 12px 0 0;
 }
@@ -117,7 +114,7 @@ withDefaults(
   font-weight: 700;
   letter-spacing: 0.07em;
   text-transform: uppercase;
-  color: var(--text-muted);
+  color: var(--accent);
   min-width: 0;
 }
 
@@ -128,7 +125,6 @@ withDefaults(
   flex-shrink: 0;
 }
 
-/* ── Body ────────────────────────────────────────────────────── */
 .card-body--none {
   padding: 0;
 }
@@ -151,7 +147,6 @@ withDefaults(
   background: var(--bg);
 }
 
-/* Tables that sit flush inside a card shouldn't double their last border. */
 .card :deep(table tr:last-child td),
 .card :deep(table tr:last-child th) {
   border-bottom: none;
@@ -161,9 +156,6 @@ withDefaults(
   .card-body--md,
   .card-body--lg {
     padding: var(--sp-3);
-  }
-  .card-header {
-    box-shadow: inset 0px 0px 2px var(--accent);
   }
   .card-header,
   .card-footer {

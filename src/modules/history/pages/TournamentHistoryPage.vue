@@ -101,6 +101,7 @@ const tabValue = computed({
         :auto-height="true"
         :speed="300"
         :threshold="10"
+        :space-between="10"
         css-mode
         @swiper="onSwiperReady"
         @slide-change="onSlideChange"

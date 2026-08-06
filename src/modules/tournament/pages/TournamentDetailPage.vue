@@ -134,6 +134,7 @@ const {
         :auto-height="true"
         :speed="300"
         :threshold="10"
+        :space-between="10"
         :no-swiping="true"
         no-swiping-class="swiper-no-swiping"
         css-mode

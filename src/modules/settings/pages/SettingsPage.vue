@@ -193,9 +193,8 @@ function selectCategory(id: Category) {
   background: var(--border-light);
 }
 .side-link--active {
-  color: var(--accent);
-  background: var(--accent-subtle);
-  border-left-color: var(--accent);
+  color: var(--accent) !important;
+  background: var(--accent-subtle) !important;
   font-weight: 600;
 }
 .side-link--active .side-link-icon {
@@ -377,7 +376,7 @@ function selectCategory(id: Category) {
 }
 @media (max-width: 640px) {
   .mobile-nav {
-    top: var(--safe-top);
+    top: calc(var(--safe-top) + 10px);
   }
 }
 

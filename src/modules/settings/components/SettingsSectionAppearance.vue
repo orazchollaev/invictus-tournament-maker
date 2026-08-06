@@ -79,7 +79,7 @@ function selectColor(c: string) {
 }
 
 .swatch {
-  width: 30px;
+  width: 26px;
   aspect-ratio: 1;
   border-radius: var(--radius);
   border: 2px solid transparent;
