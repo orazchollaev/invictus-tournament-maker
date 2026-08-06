@@ -97,6 +97,7 @@ function run(action: () => void) {
 .sim-toolbar {
   display: flex;
   align-items: center;
+  padding: 0 var(--sp-2);
   margin-bottom: var(--sp-3);
   flex-wrap: wrap;
   gap: var(--sp-2);
@@ -139,7 +140,7 @@ function run(action: () => void) {
 @media (max-width: 640px) {
   .sim-toolbar {
     gap: var(--sp-1);
-    padding: 0 var(--sp-1);
+    padding: 0 var(--sp-2);
   }
   .sim-inline {
     display: none;
