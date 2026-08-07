@@ -2,10 +2,9 @@
 import { useRouter } from "vue-router"
 import { ref, nextTick } from "vue"
 import { version } from "../../../../package.json"
-import { ArrowLeft, Globe, Monitor, Trophy, Dices, Database, Menu, ChevronDown } from "@lucide/vue"
+import { Globe, Monitor, Trophy, Dices, Database, Menu, ChevronDown } from "@lucide/vue"
 import type { Component } from "vue"
 import { useI18n } from "vue-i18n"
-import { AppButton, AppIcon } from "@/components/ui"
 import SettingsSectionLanguage from "../components/SettingsSectionLanguage.vue"
 import SettingsSectionAppearance from "../components/SettingsSectionAppearance.vue"
 import SettingsSectionTableRules from "../components/SettingsSectionTableRules.vue"
@@ -61,10 +60,6 @@ function selectCategory(id: Category) {
 <template>
   <div class="page">
     <div class="page-header">
-      <AppButton variant="text" @click="router.back()">
-        <AppIcon :icon="ArrowLeft" />
-        {{ t("common.back") }}
-      </AppButton>
       <h2>{{ t("settings.title") }}</h2>
     </div>
 

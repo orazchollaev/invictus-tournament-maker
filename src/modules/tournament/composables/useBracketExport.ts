@@ -30,7 +30,18 @@ export function useBracketExport(options: BracketExportOptions) {
 
     try {
       const el = (root.querySelector(".bracket") as HTMLElement) ?? root
-      const dataUrl = await toPng(el, { pixelRatio: 2 })
+      // Without explicit width/height, html-to-image falls back to measuring
+      // what's actually visible: on a narrow phone the bracket is many times
+      // wider than the (overflow: hidden) viewport it sits in, so only the
+      // centered slice on-screen gets rasterized — every round off to either
+      // side is silently cropped. scrollWidth/scrollHeight is the element's
+      // full un-clipped content size, forcing the whole bracket into frame
+      // regardless of how little of it is actually on-screen right now.
+      const dataUrl = await toPng(el, {
+        pixelRatio: 2,
+        width: el.scrollWidth,
+        height: el.scrollHeight,
+      })
       const filename = options.filename()
 
       // Android's system WebView (what Capacitor apps actually run in) has no

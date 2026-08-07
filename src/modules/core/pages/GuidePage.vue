@@ -2,6 +2,7 @@
 import { useRouter } from "vue-router"
 import { ArrowLeft, Users, Trophy, Play, BarChart3, History, Settings } from "@lucide/vue"
 import { useI18n } from "vue-i18n"
+import { AppButton, AppIcon } from "@/components/ui"
 
 const { t } = useI18n()
 const router = useRouter()
@@ -19,10 +20,10 @@ const STEPS = [
 <template>
   <div class="page">
     <div class="page-header">
-      <button class="back-btn" @click="router.back()">
-        <ArrowLeft :size="14" />
+      <AppButton variant="text" @click="router.back()">
+        <AppIcon :icon="ArrowLeft" />
         {{ t("common.back") }}
-      </button>
+      </AppButton>
       <h2>{{ t("guide.title") }}</h2>
     </div>
 
@@ -54,22 +55,6 @@ const STEPS = [
 }
 .page-header h2 {
   margin: 0;
-}
-.back-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  background: none;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 4px 12px;
-  font-size: 13px;
-  color: var(--text-muted);
-  cursor: pointer;
-}
-.back-btn:hover {
-  border-color: var(--accent);
-  color: var(--accent);
 }
 
 .intro {

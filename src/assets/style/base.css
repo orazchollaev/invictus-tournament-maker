@@ -68,5 +68,6 @@ a:hover {
 }
 
 .swiper-wrapper {
+  min-height: 70vh;
   overflow-y: hidden !important;
 }
