@@ -2,6 +2,7 @@ import { useTeamsStore } from "@/modules/teams/store"
 import { useTournamentStore } from "@/modules/tournament/store"
 import { showAlert, showConfirm } from "@/composables/useDialog"
 import { useI18n } from "vue-i18n"
+import { Capacitor } from "@capacitor/core"
 import { version } from "../../../../package.json"
 
 interface Dataset {
@@ -51,16 +52,49 @@ export function useDataManagement() {
     location.reload()
   }
 
-  function exportData() {
+  /** Write the JSON backup to cache and hand it to the native OS share sheet. */
+  async function shareNative(json: string, filename: string, title: string) {
+    const [{ Filesystem, Directory, Encoding }, { Share }] = await Promise.all([
+      import("@capacitor/filesystem"),
+      import("@capacitor/share"),
+    ])
+    const written = await Filesystem.writeFile({
+      path: filename,
+      data: json,
+      directory: Directory.Cache,
+      encoding: Encoding.UTF8,
+    })
+    await Share.share({ title, url: written.uri, dialogTitle: title })
+  }
+
+  async function exportData() {
     const payload = {
       teams: { teams: teamsStore.teams },
       tournament: { tournaments: tournamentStore.tournaments, active: tournamentStore.active },
     }
-    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" })
+    const json = JSON.stringify(payload, null, 2)
+    const filename = `invictus-v${version}-${new Date().toISOString().slice(0, 10)}.json`
+
+    // Same story as the bracket PNG export: Android's system WebView (what
+    // Capacitor apps run in) has no download manager wired to <a download> —
+    // it silently no-ops there. Native apps must go through the
+    // Share/Filesystem plugins instead, which hand the file to a real OS
+    // share sheet.
+    if (Capacitor.isNativePlatform()) {
+      try {
+        await shareNative(json, filename, filename)
+      } catch {
+        // user cancelled the native share sheet, or the plugin failed —
+        // nothing more we can do on-device.
+      }
+      return
+    }
+
+    const blob = new Blob([json], { type: "application/json" })
     const url = URL.createObjectURL(blob)
     const a = document.createElement("a")
     a.href = url
-    a.download = `invictus-v${version}-${new Date().toISOString().slice(0, 10)}.json`
+    a.download = filename
     a.click()
     URL.revokeObjectURL(url)
   }
