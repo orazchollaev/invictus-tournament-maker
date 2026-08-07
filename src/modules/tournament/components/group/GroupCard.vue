@@ -98,7 +98,6 @@ function scoreAccentColor(match: GroupMatch): string {
       </TransitionGroup>
     </AppTable>
 
-    <!-- Matches -->
     <div class="gs-matches">
       <div class="gs-round-nav">
         <span class="gs-round-label">Round {{ round + 1 }} / {{ rounds.length }}</span>
@@ -226,9 +225,7 @@ function scoreAccentColor(match: GroupMatch): string {
   display: flex;
   gap: 3px;
 }
-/* Sizes track LeagueMatchRow exactly — same object, same treatment. They sit a
-   step above the standings table above them: the table is a dense reference
-   grid, a fixture row is the thing you read and act on. */
+
 .gs-match {
   display: grid;
   grid-template-columns: 1fr auto 1fr auto;
@@ -243,8 +240,7 @@ function scoreAccentColor(match: GroupMatch): string {
   gap: var(--sp-2);
   min-width: 0;
 }
-/* TeamBadge pins its label at 12px. Everything else here scales with the row,
-   so the name has to be told to come along. */
+
 .gs-team :deep(.name) {
   font-size: var(--fs-base);
 }
@@ -256,8 +252,6 @@ function scoreAccentColor(match: GroupMatch): string {
   justify-content: flex-start;
 }
 
-/* Matches LeagueMatchRow's .lv-score-btn — a group fixture and a league
-   fixture are the same object and must read as the same control. */
 .gs-score-btn {
   font-family: var(--font);
   font-size: var(--fs-md);
@@ -315,8 +309,8 @@ function scoreAccentColor(match: GroupMatch): string {
   .gs-table td:nth-child(6), */
   /* .gs-table th:nth-child(7),
   .gs-table td:nth-child(7), */
-  .gs-table th:nth-child(3),
-  .gs-table td:nth-child(3) {
+  .gs-table th:nth-child(5),
+  .gs-table td:nth-child(5) {
     display: none;
   }
 
