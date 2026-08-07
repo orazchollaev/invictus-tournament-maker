@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.18.1](https://github.com/orazchollaev/invictus-tournament-maker/compare/v1.18.0...v1.18.1) (2026-08-07)
+
+### Bug Fixes
+
+- **bracket:** capture full scroll size in PNG export instead of clipped mobile viewport ([77fb1ec](https://github.com/orazchollaev/invictus-tournament-maker/commit/77fb1eccd5363455e92c33a6e8ca22c1b3842d20))
+- **settings:** share JSON export natively on mobile instead of dead <a download> ([6714050](https://github.com/orazchollaev/invictus-tournament-maker/commit/6714050af30b33d7986da7f3c96907ea02cc265b))
+- **swiper:** detect slide settle via scroll instead of dead cssMode transitionend event ([e61adca](https://github.com/orazchollaev/invictus-tournament-maker/commit/e61adca6b4c69092df51bd4eb669adf79d539284))
+
 # [1.18.0](https://github.com/orazchollaev/invictus-tournament-maker/compare/v1.17.2...v1.18.0) (2026-08-07)
 
 ### Bug Fixes
