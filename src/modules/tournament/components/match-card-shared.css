@@ -74,8 +74,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   border: 1px solid var(--border-light);
   border-radius: var(--radius);
   background: transparent;

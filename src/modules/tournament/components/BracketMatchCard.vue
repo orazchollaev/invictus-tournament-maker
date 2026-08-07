@@ -345,10 +345,10 @@ const saveDisabled = computed(() =>
                   : singleSave()
             "
           >
-            <Check :size="11" />
+            <Check :size="12" />
           </button>
           <button class="abt" @click="isDouble ? legCancel() : singleCancel()">
-            <X :size="11" />
+            <X :size="12" />
           </button>
         </template>
         <!-- Double-leg picking a leg -->
@@ -360,9 +360,9 @@ const saveDisabled = computed(() =>
         </template>
         <!-- Single-leg idle -->
         <template v-else-if="!isDouble">
-          <button class="abt" title="Edit" @click="singleEdit"><Pencil :size="11" /></button>
+          <button class="abt" title="Edit" @click="singleEdit"><Pencil :size="12" /></button>
           <button class="abt" title="Simulate" @click="$emit('sim-match')">
-            <Shuffle :size="11" />
+            <Shuffle :size="12" />
           </button>
         </template>
         <!-- Double-leg idle: ✎ 🔀 -->
@@ -373,7 +373,7 @@ const saveDisabled = computed(() =>
             title="Edit"
             @click="dblPick = dblPick === 'edit' ? 'idle' : 'edit'"
           >
-            <Pencil :size="11" />
+            <Pencil :size="12" />
           </button>
           <button
             class="abt"
@@ -381,7 +381,7 @@ const saveDisabled = computed(() =>
             title="Simulate"
             @click="dblPick = dblPick === 'sim' ? 'idle' : 'sim'"
           >
-            <Shuffle :size="11" />
+            <Shuffle :size="12" />
           </button>
         </template>
       </div>
@@ -562,7 +562,7 @@ const saveDisabled = computed(() =>
 
 /* ── Action column ── */
 .mc-actions {
-  width: 28px;
+  width: 30px;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
