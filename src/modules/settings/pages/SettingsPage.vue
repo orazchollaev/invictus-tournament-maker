@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { useRouter } from "vue-router"
 import { ref, nextTick } from "vue"
 import { version } from "../../../../package.json"
 import { Globe, Monitor, Trophy, Dices, Database, Menu, ChevronDown } from "@lucide/vue"
@@ -17,7 +16,6 @@ import SettingsSectionSampleData from "../components/SettingsSectionSampleData.v
 import SettingsSectionDataManagement from "../components/SettingsSectionDataManagement.vue"
 
 const { t } = useI18n()
-const router = useRouter()
 
 const CATEGORIES = ["general", "display", "tournament", "simulation", "data"] as const
 type Category = (typeof CATEGORIES)[number]
