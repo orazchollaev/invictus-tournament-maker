@@ -22,7 +22,6 @@ const emit = defineEmits<{
   sim: []
 }>()
 
-/** Bound as strings so an emptied input stays empty instead of snapping to 0. */
 const home = defineModel<string>("home", { required: true })
 const away = defineModel<string>("away", { required: true })
 
@@ -31,8 +30,6 @@ function onKey(e: KeyboardEvent) {
   else if (e.key === "Escape") emit("cancel")
 }
 
-// Same rule as GroupCard's scoreAccentColor: the score box picks up the
-// winner's team color, so a played match reads the same way in both tabs.
 function scoreAccentColor(): string {
   if (!props.result) return ""
   if (props.result.home > props.result.away) return props.homeTeam?.color ?? ""
@@ -94,15 +91,11 @@ function scoreAccentColor(): string {
 </template>
 
 <style scoped>
-/* Grid + spacing mirror GroupCard's .gs-match so a league fixture row
-   reads as the same shape as a group-stage one. Sizes are deliberately a
-   step up from the standings table beside it: the table is a dense
-   reference grid, a fixture row is the thing you read and act on. */
 .lv-match {
   display: grid;
   grid-template-columns: 1fr auto 1fr auto;
   align-items: center;
-  gap: var(--sp-1);
+  gap: var(--sp-2);
   font-size: var(--fs-base);
   padding: var(--sp-1) 0;
   min-width: 0;
@@ -115,8 +108,7 @@ function scoreAccentColor(): string {
   min-width: 0;
   color: var(--text-muted);
 }
-/* TeamBadge pins its label at 12px. Everything else here scales with the row,
-   so the name has to be told to come along. */
+
 .lv-team :deep(.name) {
   font-size: var(--fs-base);
 }
@@ -132,16 +124,12 @@ function scoreAccentColor(): string {
   font-weight: 600;
 }
 
-/* The score is the content of a fixture row, so it outranks the names:
-   a step larger, heavier, and tabular so columns of scores line up. */
 .lv-score-btn {
   font-family: var(--font);
   font-size: var(--fs-md);
   font-weight: 700;
   font-variant-numeric: tabular-nums;
-  min-width: 62px;
   justify-content: center;
-  padding: var(--sp-1) var(--sp-2);
   background: var(--bg);
   border: 1px solid var(--border-light);
   border-radius: var(--radius);

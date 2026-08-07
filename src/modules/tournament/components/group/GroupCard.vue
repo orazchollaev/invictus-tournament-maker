@@ -145,13 +145,6 @@ function scoreAccentColor(match: GroupMatch): string {
 </template>
 
 <style scoped>
-/* Surface, header strip and table chrome now come from AppCard, its
-   AppSectionHeader and AppTable. What is left here is only what is specific
-   to a standings grid: column widths, numeric centring and row states.
-
-   thead/tbody are in the selector on purpose — AppTable's own `.table th`
-   rule carries a scope attribute, so a bare `th` here would tie on
-   specificity and be decided by stylesheet injection order. */
 .gs-table :deep(thead th),
 .gs-table :deep(tbody td) {
   text-align: center;
@@ -160,8 +153,7 @@ function scoreAccentColor(match: GroupMatch): string {
   width: 18px;
   color: var(--text-muted);
 }
-/* Identity bar, same contract as the league table: fate on the rank cell,
-   club on the team cell. */
+
 .gs-table .col-team {
   position: relative;
   text-align: left;
@@ -230,7 +222,7 @@ function scoreAccentColor(match: GroupMatch): string {
   display: grid;
   grid-template-columns: 1fr auto 1fr auto;
   align-items: center;
-  gap: var(--sp-1);
+  gap: var(--sp-2);
   font-size: var(--fs-base);
   padding: var(--sp-1) 0;
 }
@@ -257,9 +249,7 @@ function scoreAccentColor(match: GroupMatch): string {
   font-size: var(--fs-md);
   font-weight: 700;
   font-variant-numeric: tabular-nums;
-  min-width: 62px;
   justify-content: center;
-  padding: var(--sp-1) var(--sp-2);
   background: var(--bg);
   border: 1px solid var(--border-light);
   border-radius: var(--radius);
