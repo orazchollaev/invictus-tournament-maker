@@ -1,5 +1,20 @@
 # Changelog
 
+# [1.18.0](https://github.com/orazchollaev/invictus-tournament-maker/compare/v1.17.2...v1.18.0) (2026-08-07)
+
+### Bug Fixes
+
+- add space to hint box in settings draw method section ([bf034df](https://github.com/orazchollaev/invictus-tournament-maker/commit/bf034df37a1dbf22dadc312de6bc36bfa35f3a1d))
+- bracket zoom fixed for mobile ux ([7198ce3](https://github.com/orazchollaev/invictus-tournament-maker/commit/7198ce3e4ce639fdedb47f4010c5c9566b5c0e1f))
+- **bracket:** fix native share/export not working on Android ([2cbb3f8](https://github.com/orazchollaev/invictus-tournament-maker/commit/2cbb3f86f88a254c22083f63beb442a211ed48fd))
+- **tabs:** fix swiper tab content desync on jump/rapid-click/list-change ([711f951](https://github.com/orazchollaev/invictus-tournament-maker/commit/711f9511dca8d360ca59fb223b8db2aa4885a631))
+
+### Features
+
+- **bracket:** add double-tap-to-zoom on mobile ([e3a4f9a](https://github.com/orazchollaev/invictus-tournament-maker/commit/e3a4f9a7e923af2fcfa8fc2315ea634348b58787))
+- **bracket:** mobile zoom hint + classic layout on small screens ([a625e34](https://github.com/orazchollaev/invictus-tournament-maker/commit/a625e34ab7dd2b3c922bbe40466fa48f171a4f8b))
+- **settings:** add primary color picker in general settings ([b7ded1d](https://github.com/orazchollaev/invictus-tournament-maker/commit/b7ded1d9fa015af50d3fb640c7000178257c57e3))
+
 ## [1.17.2](https://github.com/orazchollaev/invictus-tournament-maker/compare/v1.17.1...v1.17.2) (2026-08-04)
 
 ### Bug Fixes
