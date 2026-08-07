@@ -1,19 +1,16 @@
 <script setup lang="ts">
-import { Trophy, Users, History, BookOpen, Settings } from "@lucide/vue"
+import { Trophy, Users, History, Settings } from "@lucide/vue"
 import { useI18n } from "vue-i18n"
 import { useNavActive } from "@/composables/useNavActive"
 
 const { t } = useI18n()
 const { isNavActive } = useNavActive()
 
-/* Same order as the swipe sequence in App.vue, so swiping left/right
-   moves along the bar instead of jumping around it. */
 const items = [
   { to: "/tournaments", icon: Trophy, label: () => t("nav.tournaments") },
   { to: "/teams", icon: Users, label: () => t("nav.teams") },
   { to: "/history", icon: History, label: () => t("nav.history") },
   { to: "/settings", icon: Settings, label: () => t("nav.settings") },
-  { to: "/guide", icon: BookOpen, label: () => t("guide.title") },
 ]
 </script>
 
