@@ -46,7 +46,6 @@ const {
   isTabRendered,
   onSwiperReady,
   onSlideChange,
-  onSlideChangeEnd,
 } = useTournamentTabs(tournament, hasAnyResults)
 
 const {
@@ -129,7 +128,6 @@ const {
         css-mode
         @swiper="onSwiperReady"
         @slide-change="onSlideChange"
-        @slide-change-transition-end="onSlideChangeEnd"
       >
         <SwiperSlide v-for="tab in visibleTabs" :key="tab">
           <template v-if="isTabRendered(tab)">

@@ -1,4 +1,4 @@
-import { ref, computed, watch, type ComputedRef } from "vue"
+import { ref, computed, watch, onScopeDispose, type ComputedRef } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import type { Swiper as SwiperInstance } from "swiper/types"
 import { useSwiperAutoHeight } from "@/composables/useSwiperAutoHeight"
@@ -116,10 +116,34 @@ export function useTournamentTabs(
      measured here instead — otherwise every tab is clipped to the first one. */
   const autoHeight = useSwiperAutoHeight()
 
+  // css-mode never fires Swiper's "transitionEnd" — swiper-core's transitionEnd()
+  // returns immediately when params.cssMode is set, and the cssMode scroll handler
+  // (onScroll -> updateActiveIndex) never emits it either. So "slide-change-transition-end"
+  // (bound in the template) never fires: settledIndex would never advance past its
+  // initial value, isProgrammaticJump would latch true forever after the first
+  // click and silently swallow every slide-change after it. Detect settling
+  // ourselves instead, the same way useSwiperAutoHeight does: no more scroll
+  // events on the wrapper for SETTLE_MS means the scroll has stopped.
+  const SETTLE_MS = 120
+  let settleTimer: ReturnType<typeof setTimeout> | null = null
+  function scheduleSettleCheck() {
+    if (settleTimer) clearTimeout(settleTimer)
+    settleTimer = setTimeout(() => {
+      settleTimer = null
+      onSlideChangeEnd()
+    }, SETTLE_MS)
+  }
+
   function onSwiperReady(s: SwiperInstance) {
     swiperInstance = s
     autoHeight.attach(s)
+    s.wrapperEl?.addEventListener("scroll", scheduleSettleCheck, { passive: true })
   }
+
+  onScopeDispose(() => {
+    if (settleTimer) clearTimeout(settleTimer)
+    swiperInstance?.wrapperEl?.removeEventListener("scroll", scheduleSettleCheck)
+  })
 
   let pendingUrlTab: MainTab | null = null
   // Set while a tab click drives the slide programmatically. css-mode
@@ -217,6 +241,5 @@ export function useTournamentTabs(
     isTabRendered,
     onSwiperReady,
     onSlideChange,
-    onSlideChangeEnd,
   }
 }

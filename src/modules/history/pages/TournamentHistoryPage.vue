@@ -43,7 +43,6 @@ const {
   isTabRendered,
   onSwiperReady,
   onSlideChange,
-  onSlideChangeEnd,
 } = useHistoryTabs(isLeagueSeries)
 
 const tabValue = computed({
@@ -106,7 +105,6 @@ const tabValue = computed({
         css-mode
         @swiper="onSwiperReady"
         @slide-change="onSlideChange"
-        @slide-change-transition-end="onSlideChangeEnd"
       >
         <SwiperSlide v-for="tab in visibleTabs" :key="tab">
           <template v-if="isTabRendered(tab)">
