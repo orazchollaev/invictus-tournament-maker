@@ -50,58 +50,58 @@ function isLastPlayoffQualifier(rank: number) {
     </AppSectionHeader>
     <AppTable dense class="lv-table">
       <thead>
-          <tr>
-            <th class="col-rank">#</th>
-            <th class="col-team">Team</th>
-            <th title="Played">P</th>
-            <th title="Won">W</th>
-            <th title="Drawn">D</th>
-            <th title="Lost">L</th>
-            <th title="Goals For">GF</th>
-            <th title="Goals Against">GA</th>
-            <th title="Goal Difference">GD</th>
-            <th title="Points" class="col-pts">Pts</th>
-          </tr>
-        </thead>
-        <TransitionGroup tag="tbody" name="standing-row">
-          <tr
-            v-for="(row, rank) in standings"
-            :key="row.teamId"
-            :class="{
-              'lv-row--champion': rank === 0 && isFinished,
-              'lv-pos--1': rank === 0 && !promotionCount && !playoffCount(),
-              'lv-pos--2': rank === 1 && !promotionCount && !playoffCount(),
-              'lv-pos--3': rank === 2 && !promotionCount && !playoffCount(),
-              'lv-pos--4': rank === 3 && !promotionCount && !playoffCount(),
-              'lv-pos--playoff': isPlayoffQualifier(rank),
-              'lv-pos--playoff-last': isLastPlayoffQualifier(rank),
-              'lv-pos--promoted': isPromoted(rank),
-              'lv-pos--promoted-last': isLastPromoted(rank),
-              'lv-pos--relegated': isRelegated(rank),
-              'lv-pos--relegated-first': isFirstRelegated(rank),
-            }"
-          >
-            <td class="col-rank">
-              <span v-if="rank === 0 && isFinished" class="lv-crown">🏆</span>
-              <span v-else>{{ rank + 1 }}</span>
-            </td>
-            <td class="col-team" :style="{ '--tc': teamById(row.teamId)?.color ?? 'transparent' }">
-              <TeamBadge :team="teamById(row.teamId)" :fallback="row.teamId" />
-            </td>
-            <td>{{ row.played }}</td>
-            <td>{{ row.won }}</td>
-            <td>{{ row.drawn }}</td>
-            <td>{{ row.lost }}</td>
-            <td>{{ row.gf }}</td>
-            <td>{{ row.ga }}</td>
-            <td :class="{ 'gd-pos': row.gd > 0, 'gd-neg': row.gd < 0 }">
-              {{ row.gd > 0 ? "+" : "" }}{{ row.gd }}
-            </td>
-            <td class="col-pts">
-              <strong>{{ row.pts }}</strong>
-            </td>
-          </tr>
-        </TransitionGroup>
+        <tr>
+          <th class="col-rank">#</th>
+          <th class="col-team">Team</th>
+          <th title="Played">P</th>
+          <th title="Won">W</th>
+          <th title="Drawn">D</th>
+          <th title="Lost">L</th>
+          <th title="Goals For">GF</th>
+          <th title="Goals Against">GA</th>
+          <th title="Goal Difference">GD</th>
+          <th title="Points" class="col-pts">Pts</th>
+        </tr>
+      </thead>
+      <TransitionGroup tag="tbody" name="standing-row">
+        <tr
+          v-for="(row, rank) in standings"
+          :key="row.teamId"
+          :class="{
+            'lv-row--champion': rank === 0 && isFinished,
+            'lv-pos--1': rank === 0 && !promotionCount && !playoffCount(),
+            'lv-pos--2': rank === 1 && !promotionCount && !playoffCount(),
+            'lv-pos--3': rank === 2 && !promotionCount && !playoffCount(),
+            'lv-pos--4': rank === 3 && !promotionCount && !playoffCount(),
+            'lv-pos--playoff': isPlayoffQualifier(rank),
+            'lv-pos--playoff-last': isLastPlayoffQualifier(rank),
+            'lv-pos--promoted': isPromoted(rank),
+            'lv-pos--promoted-last': isLastPromoted(rank),
+            'lv-pos--relegated': isRelegated(rank),
+            'lv-pos--relegated-first': isFirstRelegated(rank),
+          }"
+        >
+          <td class="col-rank">
+            <span v-if="rank === 0 && isFinished" class="lv-crown">🏆</span>
+            <span v-else>{{ rank + 1 }}</span>
+          </td>
+          <td class="col-team" :style="{ '--tc': teamById(row.teamId)?.color ?? 'transparent' }">
+            <TeamBadge :team="teamById(row.teamId)" :fallback="row.teamId" />
+          </td>
+          <td>{{ row.played }}</td>
+          <td>{{ row.won }}</td>
+          <td>{{ row.drawn }}</td>
+          <td>{{ row.lost }}</td>
+          <td>{{ row.gf }}</td>
+          <td>{{ row.ga }}</td>
+          <td :class="{ 'gd-pos': row.gd > 0, 'gd-neg': row.gd < 0 }">
+            {{ row.gd > 0 ? "+" : "" }}{{ row.gd }}
+          </td>
+          <td class="col-pts">
+            <strong>{{ row.pts }}</strong>
+          </td>
+        </tr>
+      </TransitionGroup>
     </AppTable>
   </div>
 </template>
@@ -111,34 +111,27 @@ function isLastPlayoffQualifier(rank: number) {
   min-width: 0;
 }
 
-/* Header strip and table chrome come from AppSectionHeader and AppTable.
-   `.lv-section-title` and `.lv-table` were this file's private copies of both;
-   what remains is only the standings-specific part. */
 .lv-progress {
   font-weight: 400;
   text-transform: none;
   letter-spacing: 0;
 }
 
-/* Numbers right-align so columns of digits line up; see GroupCard for why
-   thead/tbody are named explicitly. */
 .lv-table :deep(thead th),
 .lv-table :deep(tbody td) {
-  text-align: right;
+  text-align: center;
 }
 .lv-table .col-rank {
   text-align: center;
   width: 24px;
   color: var(--text-muted);
 }
-/* Two vertical rules per row, and they say different things: the one on the
-   rank cell is the club's *fate* (promotion, playoff, relegation), the one
-   here is the club's *identity*. Keeping them on separate cells stops a
-   promotion band from being misread as a kit colour. */
+
 .lv-table .col-team {
   position: relative;
   text-align: left;
   min-width: 90px;
+  max-width: 130px;
   padding-left: 11px;
 }
 .lv-table .col-team::before {
