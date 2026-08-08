@@ -1,5 +1,15 @@
 # Changelog
 
+# [1.19.0](https://github.com/orazchollaev/invictus-tournament-maker/compare/v1.18.1...v1.19.0) (2026-08-08)
+
+### Bug Fixes
+
+- **match-score:** don't commit result until Save is pressed on Simulate ([fdcc25c](https://github.com/orazchollaev/invictus-tournament-maker/commit/fdcc25cb41874413f038a5efb52031388f3bb521))
+
+### Features
+
+- new score edit system ([3841dce](https://github.com/orazchollaev/invictus-tournament-maker/commit/3841dce583dbc209ce65520830e4f88cb2b6690a))
+
 ## [1.18.1](https://github.com/orazchollaev/invictus-tournament-maker/compare/v1.18.0...v1.18.1) (2026-08-07)
 
 ### Bug Fixes
