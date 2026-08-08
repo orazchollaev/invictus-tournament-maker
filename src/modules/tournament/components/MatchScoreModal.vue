@@ -7,7 +7,7 @@
  *
  * Bottom sheet on a phone (thumb reach), centred dialog on a desktop.
  */
-import { computed, ref, watch } from "vue"
+import { computed, nextTick, ref, watch } from "vue"
 import { DialogRoot, DialogPortal, DialogOverlay, DialogContent, DialogTitle } from "reka-ui"
 import { useI18n } from "vue-i18n"
 import { Shuffle, Trash2, X } from "@lucide/vue"
@@ -16,6 +16,7 @@ import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
 import type { Team } from "@/modules/teams/types"
 import type { MatchResult } from "../types"
 import { MAX_GOALS } from "@/constants"
+import { simulateMatch, simulatePenaltyShootout } from "@/engine"
 
 const props = withDefaults(
   defineProps<{
@@ -32,7 +33,6 @@ const props = withDefaults(
 const emit = defineEmits<{
   close: []
   save: [home: number, away: number, penHome?: number, penAway?: number]
-  simulate: []
   clear: []
 }>()
 
@@ -87,6 +87,30 @@ function save() {
   if (showPens.value) emit("save", home.value, away.value, penHome.value, penAway.value)
   else emit("save", home.value, away.value)
   close()
+}
+
+/* Simulate used to emit straight up to the store, which committed a result
+ * the instant the button was tapped — Save never got a say. It now only
+ * rolls the fields locally; nothing is written until Save is pressed. */
+function simulate() {
+  if (!props.homeTeam || !props.awayTeam) return
+  const fakeMatch = { homeId: props.homeTeam.id, awayId: props.awayTeam.id }
+  const bothTeams = [props.homeTeam, props.awayTeam]
+  const result = simulateMatch(fakeMatch as never, bothTeams)
+  home.value = result.home
+  away.value = result.away
+  if (props.requiresWinner && result.home === result.away) {
+    const pen = simulatePenaltyShootout(fakeMatch as never, bothTeams)
+    penHome.value = pen.penHome
+    penAway.value = pen.penAway
+    // The [home, away] watcher below clears pensRevealed on every score
+    // change (including this one) to force a Save press before showing the
+    // shootout — override it after that flush since this roll already
+    // decided the shootout and there's nothing left to reveal-on-Save.
+    nextTick(() => {
+      pensRevealed.value = true
+    })
+  }
 }
 
 function clear() {
@@ -181,7 +205,7 @@ function onKeydown(e: KeyboardEvent) {
         </div>
 
         <div class="ms-footer">
-          <button v-if="canSimulate" class="ms-ghost" @click="emit('simulate')">
+          <button v-if="canSimulate" class="ms-ghost" @click="simulate">
             <Shuffle :size="13" />
             <span>{{ t("matchScore.simulate") }}</span>
           </button>

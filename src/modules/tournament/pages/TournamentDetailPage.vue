@@ -329,6 +329,9 @@ const {
 </template>
 
 <style scoped>
+.page {
+}
+
 .tab-panel {
   min-width: 0;
 }
@@ -347,8 +350,6 @@ const {
   color: var(--text-muted);
 }
 
-/* Groups/wildcards is a segmented control now — `.gs-subtab` was a fourth
-   tab style on a page that already had phase tabs and BtnGroup. */
 .gs-subtab-row {
   margin-bottom: var(--sp-3);
 }

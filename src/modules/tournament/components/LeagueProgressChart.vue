@@ -170,7 +170,7 @@ watch([labels, datasets, mode], () => {
 </script>
 
 <template>
-  <AppCard v-if="hasData" variant="outlined" title="Top Scorers">
+  <AppCard v-if="hasData" variant="outlined" title="Points / Position Progress">
     <div class="chart-header">
       <div class="mode-toggle">
         <button :class="{ active: mode === 'position' }" @click="mode = 'position'">
