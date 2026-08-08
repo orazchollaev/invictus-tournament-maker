@@ -32,6 +32,9 @@ const emit = defineEmits<{
   "sim-leg1": [round: number, match: number]
   "sim-leg2": [round: number, match: number]
   "set-third-place-result": [home: number, away: number, penHome?: number, penAway?: number]
+  "clear-result": [round: number, match: number]
+  "clear-leg2-result": [round: number, match: number]
+  "clear-third-place-result": []
   "sim-third-place": []
 }>()
 
@@ -318,6 +321,8 @@ function finalLineOpacity(side: "home" | "away"): number {
             (h, a, ph, pa) =>
               emit('set-leg2-result', match._origRound, match._origMatch, h, a, ph, pa)
           "
+          @clear-result="emit('clear-result', match._origRound, match._origMatch)"
+          @clear-leg2-result="emit('clear-leg2-result', match._origRound, match._origMatch)"
           @sim-match="emit('sim-match', match._origRound, match._origMatch)"
           @sim-leg1="emit('sim-leg1', match._origRound, match._origMatch)"
           @sim-leg2="emit('sim-leg2', match._origRound, match._origMatch)"
@@ -410,6 +415,8 @@ function finalLineOpacity(side: "home" | "away"): number {
         }"
         @set-result="(h, a, ph, pa) => emit('set-result', finalRi, 0, h, a, ph, pa)"
         @set-leg2-result="(h, a, ph, pa) => emit('set-leg2-result', finalRi, 0, h, a, ph, pa)"
+        @clear-result="emit('clear-result', finalRi, 0)"
+        @clear-leg2-result="emit('clear-leg2-result', finalRi, 0)"
         @sim-match="emit('sim-match', finalRi, 0)"
         @sim-leg1="emit('sim-leg1', finalRi, 0)"
         @sim-leg2="emit('sim-leg2', finalRi, 0)"
@@ -482,6 +489,8 @@ function finalLineOpacity(side: "home" | "away"): number {
             (h, a, ph, pa) =>
               emit('set-leg2-result', match._origRound, match._origMatch, h, a, ph, pa)
           "
+          @clear-result="emit('clear-result', match._origRound, match._origMatch)"
+          @clear-leg2-result="emit('clear-leg2-result', match._origRound, match._origMatch)"
           @sim-match="emit('sim-match', match._origRound, match._origMatch)"
           @sim-leg1="emit('sim-leg1', match._origRound, match._origMatch)"
           @sim-leg2="emit('sim-leg2', match._origRound, match._origMatch)"
@@ -548,6 +557,7 @@ function finalLineOpacity(side: "home" | "away"): number {
             width: CARD_W + 'px',
           }"
           @set-result="(h, a, ph, pa) => emit('set-third-place-result', h, a, ph, pa)"
+          @clear-result="emit('clear-third-place-result')"
           @sim-match="emit('sim-third-place')"
         />
       </template>

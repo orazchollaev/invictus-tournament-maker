@@ -33,6 +33,12 @@ export function useThirdPlaceActions(tournaments: Ref<Tournament[]>, getTeams: (
     }
   }
 
+  function clearThirdPlaceResult(tournamentId: string) {
+    const t = tournaments.value.find((t) => t.id === tournamentId)
+    if (!t?.thirdPlaceMatch) return
+    t.thirdPlaceMatch.result = null
+  }
+
   function simulateThirdPlace(tournamentId: string) {
     const t = tournaments.value.find((t) => t.id === tournamentId)
     if (!t?.thirdPlaceMatch) return
@@ -48,5 +54,5 @@ export function useThirdPlaceActions(tournaments: Ref<Tournament[]>, getTeams: (
     }
   }
 
-  return { toggleThirdPlace, setThirdPlaceResult, simulateThirdPlace }
+  return { toggleThirdPlace, setThirdPlaceResult, clearThirdPlaceResult, simulateThirdPlace }
 }

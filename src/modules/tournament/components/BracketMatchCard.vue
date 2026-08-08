@@ -6,7 +6,8 @@ import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
 import { NO_TEAM_COLOR } from "@/modules/teams/color"
 import { getWinnerId } from "@/engine"
 import { useSettingsStore } from "@/modules/settings/store"
-import { Pencil, Shuffle, X, Check } from "@lucide/vue"
+import MatchScoreModal from "./MatchScoreModal.vue"
+import { Pencil } from "@lucide/vue"
 
 const settings = useSettingsStore()
 const lowQuality = computed(() => settings.bracketQuality === "low")
@@ -32,6 +33,8 @@ const props = withDefaults(
 const emit = defineEmits<{
   "set-result": [home: number, away: number, penHome?: number, penAway?: number]
   "set-leg2-result": [home: number, away: number, penHome?: number, penAway?: number]
+  "clear-result": []
+  "clear-leg2-result": []
   "sim-match": []
   "sim-leg1": []
   "sim-leg2": []
@@ -73,101 +76,68 @@ function colorOf(teamId: string | null) {
 }
 const homeColor = computed(() => colorOf(props.match.homeId))
 const awayColor = computed(() => colorOf(props.match.awayId))
+const homeTeam = computed(() => props.teams.find((t) => t.id === props.match.homeId) ?? null)
+const awayTeam = computed(() => props.teams.find((t) => t.id === props.match.awayId) ?? null)
 
-// ── Shared edit refs ──
-const editH = ref(0)
-const editA = ref(0)
-const editPH = ref(0)
-const editPA = ref(0)
-
-// ── Single-leg ──
-type SMode = "off" | "score" | "penalty"
-const sMode = ref<SMode>("off")
-
-function singleEdit() {
-  editH.value = props.match.result?.home ?? 0
-  editA.value = props.match.result?.away ?? 0
-  sMode.value = "score"
-}
-function singleCancel() {
-  sMode.value = "off"
-}
-function singleSave() {
-  if (editH.value === editA.value) {
-    editPH.value = props.match.result?.penHome ?? 0
-    editPA.value = props.match.result?.penAway ?? 0
-    sMode.value = "penalty"
-    return
-  }
-  emit("set-result", editH.value, editA.value)
-  sMode.value = "off"
-}
-function singlePenSave() {
-  if (editPH.value === editPA.value) return
-  emit("set-result", editH.value, editA.value, editPH.value, editPA.value)
-  sMode.value = "off"
-}
-
-// ── Double-leg ──
+// ── Score entry ────────────────────────────────────────────────
+// A bracket card is 28px per row and lives inside a pan/zoom layer, so it holds
+// no controls at all: it opens the shared score modal. A two-legged tie shows an
+// aggregate, which nothing can step, so the leg is picked first.
 const editingLeg = ref<null | 1 | 2>(null)
-const legMode = ref<"score" | "penalty">("score")
-// "idle" | "edit" | "sim" — which action is pending leg-pick
-const dblPick = ref<"idle" | "edit" | "sim">("idle")
+const pickingLeg = ref(false)
+const canEdit = computed(() => !props.isExporting && !!props.match.homeId && !!props.match.awayId)
 
-function legEdit(leg: 1 | 2) {
-  dblPick.value = "idle"
-  editingLeg.value = leg
-  legMode.value = "score"
-  editH.value = leg === 1 ? (props.match.result?.home ?? 0) : (props.match.leg2Result?.home ?? 0)
-  editA.value = leg === 1 ? (props.match.result?.away ?? 0) : (props.match.leg2Result?.away ?? 0)
-  editPH.value = 0
-  editPA.value = 0
-}
-function legCancel() {
-  editingLeg.value = null
-  legMode.value = "score"
-  dblPick.value = "idle"
-}
-function legSave() {
-  if (editingLeg.value === 1) {
-    emit("set-result", editH.value, editA.value)
-    editingLeg.value = null
-    return
-  }
-  const l1 = props.match.result
-  if (l1 && l1.home + editA.value === l1.away + editH.value) {
-    legMode.value = "penalty"
-    editPH.value = 0
-    editPA.value = 0
-    return
-  }
-  emit("set-leg2-result", editH.value, editA.value)
-  editingLeg.value = null
-}
-function legPenSave() {
-  if (editPH.value === editPA.value) return
-  emit("set-leg2-result", editH.value, editA.value, editPH.value, editPA.value)
-  editingLeg.value = null
-  legMode.value = "score"
-}
-function dblSelectLeg(leg: 1 | 2) {
-  if (dblPick.value === "edit") {
-    legEdit(leg)
-  } else {
-    if (leg === 1) emit("sim-leg1")
-    else emit("sim-leg2")
-    dblPick.value = "idle"
-  }
-}
-
-const isEditing = computed(() => sMode.value !== "off" || editingLeg.value !== null)
-const isChampion = computed(() => props.isFinal && !!props.match.result)
-/** ✓ is inert while a penalty shootout is still level — a tie cannot be committed. */
-const saveDisabled = computed(() =>
-  isDouble.value
-    ? legMode.value === "penalty" && editPH.value === editPA.value
-    : sMode.value === "penalty" && editPH.value === editPA.value
+/** Leg 2 is played reversed, so its rows read away-first against this card. */
+const modalHome = computed(() => (editingLeg.value === 2 ? awayTeam.value : homeTeam.value))
+const modalAway = computed(() => (editingLeg.value === 2 ? homeTeam.value : awayTeam.value))
+const modalResult = computed(() =>
+  editingLeg.value === 2 ? props.match.leg2Result : props.match.result
 )
+const modalSubtitle = computed(() => (isDouble.value ? `Leg ${editingLeg.value}` : undefined))
+
+/* Panning the bracket must not count as a tap. The layer swallows the click if
+   the pointer moved, so only a still press opens the modal. */
+const pressAt = ref<{ x: number; y: number } | null>(null)
+const TAP_SLOP = 6
+
+function onPointerDown(e: PointerEvent) {
+  pressAt.value = { x: e.clientX, y: e.clientY }
+}
+
+function onPointerUp(e: PointerEvent) {
+  const start = pressAt.value
+  pressAt.value = null
+  if (!start || !canEdit.value) return
+  if (Math.abs(e.clientX - start.x) > TAP_SLOP || Math.abs(e.clientY - start.y) > TAP_SLOP) return
+  if (isDouble.value) pickingLeg.value = true
+  else editingLeg.value = 1
+}
+
+function openLeg(leg: 1 | 2) {
+  pickingLeg.value = false
+  editingLeg.value = leg
+}
+
+function onSave(home: number, away: number, penHome?: number, penAway?: number) {
+  if (isDouble.value && editingLeg.value === 2) {
+    emit("set-leg2-result", home, away, penHome, penAway)
+  } else {
+    emit("set-result", home, away, penHome, penAway)
+  }
+}
+
+function onClear() {
+  if (isDouble.value && editingLeg.value === 2) emit("clear-leg2-result")
+  else emit("clear-result")
+}
+
+function onSimulate() {
+  if (!isDouble.value) emit("sim-match")
+  else if (editingLeg.value === 1) emit("sim-leg1")
+  else emit("sim-leg2")
+}
+
+const isChampion = computed(() => props.isFinal && !!props.match.result)
 </script>
 
 <template>
@@ -179,7 +149,10 @@ const saveDisabled = computed(() =>
       champion: isChampion,
       'mc--third': variant === 'third-place',
       'mc--low-q': lowQuality,
+      'mc--editable': canEdit,
     }"
+    @pointerdown="onPointerDown"
+    @pointerup="onPointerUp"
     @mouseleave="$emit('hover-team', null)"
   >
     <!-- ── Left: team names ── -->
@@ -202,190 +175,82 @@ const saveDisabled = computed(() =>
       </div>
     </div>
 
-    <!-- ── Right: scores + actions (only when teams assigned) ── -->
-    <template v-if="match.homeId && match.awayId">
-      <!-- Score column -->
-      <div class="mc-scores">
-        <!-- Home score cell -->
-        <div
-          class="mc-scell"
-          :style="{ '--tc': homeColor }"
-          :class="{
-            winner: isWinner(match.homeId),
-            loser: match.result && !isWinner(match.homeId),
-          }"
-        >
-          <template v-if="!isDouble">
-            <!-- Single-leg: display or input -->
-            <template v-if="sMode === 'off'">
-              <span v-if="match.result" class="sc">
-                {{ match.result.home }}
-                <span v-if="match.result.penHome !== undefined" class="pen-sup">
-                  [{{ match.result.penHome }}p]
-                </span>
-              </span>
-              <span v-else class="sc tbd">–</span>
-            </template>
-            <template v-else-if="sMode === 'score'">
-              <input v-model.number="editH" type="number" min="0" class="sinp" />
-            </template>
-            <template v-else>
-              <!-- penalty mode: static score + pen input side by side -->
-              <span class="pen-base">{{ editH }}</span>
-              <input v-model.number="editPH" type="number" min="0" class="sinp sinp--pen" />
-            </template>
-          </template>
-          <template v-else>
-            <!-- Double-leg: display or input -->
-            <template v-if="editingLeg === null">
-              <span v-if="agg !== null" class="sc">{{ agg.home }}</span>
-              <span v-else-if="match.result" class="sc">{{ match.result.home }}</span>
-              <span v-else class="sc tbd">–</span>
-              <span v-if="legs && legs.homeL1 !== null" class="leg-mini">
-                {{ legs.homeL1 }}·{{ legs.homeL2 ?? "–" }}
-                <span v-if="legs.homeP !== null" class="pen-sup">[{{ legs.homeP }}p]</span>
-              </span>
-            </template>
-            <template v-else>
-              <span class="leg-lbl">{{ legMode === "penalty" ? "P" : `L${editingLeg}` }}</span>
-              <!-- homeId goals: L1→editH, L2→editA (homeId is "away" in leg2), L2pen→editPA -->
-              <input
-                v-if="legMode === 'score' && editingLeg === 1"
-                v-model.number="editH"
-                type="number"
-                min="0"
-                class="sinp"
-              />
-              <input
-                v-else-if="legMode === 'score' && editingLeg === 2"
-                v-model.number="editA"
-                type="number"
-                min="0"
-                class="sinp"
-              />
-              <input v-else v-model.number="editPA" type="number" min="0" class="sinp" />
-            </template>
-          </template>
-        </div>
-
-        <!-- Away score cell -->
-        <div
-          class="mc-scell mc-scell--away"
-          :style="{ '--tc': awayColor }"
-          :class="{
-            winner: isWinner(match.awayId),
-            loser: match.result && !isWinner(match.awayId),
-          }"
-        >
-          <template v-if="!isDouble">
-            <template v-if="sMode === 'off'">
-              <span v-if="match.result" class="sc">
-                {{ match.result.away }}
-                <span v-if="match.result.penAway !== undefined" class="pen-sup">
-                  [{{ match.result.penAway }}p]
-                </span>
-              </span>
-              <span v-else class="sc tbd">–</span>
-            </template>
-            <template v-else-if="sMode === 'score'">
-              <input v-model.number="editA" type="number" min="0" class="sinp" />
-            </template>
-            <template v-else>
-              <span class="pen-base">{{ editA }}</span>
-              <input v-model.number="editPA" type="number" min="0" class="sinp sinp--pen" />
-            </template>
-          </template>
-          <template v-else>
-            <template v-if="editingLeg === null">
-              <span v-if="agg !== null" class="sc">{{ agg.away }}</span>
-              <span v-else-if="match.result" class="sc">{{ match.result.away }}</span>
-              <span v-else class="sc tbd">–</span>
-              <span v-if="legs && legs.awayL1 !== null" class="leg-mini">
-                {{ legs.awayL1 }}·{{ legs.awayL2 ?? "–" }}
-                <span v-if="legs.awayP !== null" class="pen-sup">[{{ legs.awayP }}p]</span>
-              </span>
-            </template>
-            <template v-else>
-              <span class="leg-lbl">{{ legMode === "penalty" ? "P" : `L${editingLeg}` }}</span>
-              <!-- awayId goals: L1→editA, L2→editH (awayId is "home" in leg2), L2pen→editPH -->
-              <input
-                v-if="legMode === 'score' && editingLeg === 1"
-                v-model.number="editA"
-                type="number"
-                min="0"
-                class="sinp"
-              />
-              <input
-                v-else-if="legMode === 'score' && editingLeg === 2"
-                v-model.number="editH"
-                type="number"
-                min="0"
-                class="sinp"
-              />
-              <input v-else v-model.number="editPH" type="number" min="0" class="sinp" />
-            </template>
-          </template>
-        </div>
+    <!-- ── Right: scores (only when teams assigned) ── -->
+    <div v-if="match.homeId && match.awayId" class="mc-scores">
+      <!-- Static "you can tap this" cue — the score cells give no other hint
+           that they open the edit modal, and hover means nothing on touch. -->
+      <Pencil v-if="canEdit && !match.result" :size="9" class="mc-edit-hint" />
+      <!-- Home score cell -->
+      <div
+        class="mc-scell"
+        :style="{ '--tc': homeColor }"
+        :class="{
+          winner: isWinner(match.homeId),
+          loser: match.result && !isWinner(match.homeId),
+        }"
+      >
+        <span v-if="agg !== null" class="sc">{{ agg.home }}</span>
+        <span v-else-if="match.result" class="sc">
+          {{ match.result.home }}
+          <span v-if="match.result.penHome !== undefined" class="pen-sup">
+            [{{ match.result.penHome }}p]
+          </span>
+        </span>
+        <span v-else class="sc tbd">–</span>
+        <span v-if="legs && legs.homeL1 !== null" class="leg-mini">
+          {{ legs.homeL1 }}·{{ legs.homeL2 ?? "–" }}
+          <span v-if="legs.homeP !== null" class="pen-sup">[{{ legs.homeP }}p]</span>
+        </span>
       </div>
 
-      <!-- Action column -->
-      <div v-if="!isExporting" class="mc-actions">
-        <!-- Editing: ✓ ✗ -->
-        <template v-if="isEditing">
-          <button
-            class="abt ok"
-            :disabled="saveDisabled"
-            @click="
-              isDouble
-                ? legMode === 'penalty'
-                  ? legPenSave()
-                  : legSave()
-                : sMode === 'penalty'
-                  ? singlePenSave()
-                  : singleSave()
-            "
-          >
-            <Check :size="12" />
-          </button>
-          <button class="abt" @click="isDouble ? legCancel() : singleCancel()">
-            <X :size="12" />
-          </button>
-        </template>
-        <!-- Double-leg picking a leg -->
-        <template v-else-if="isDouble && dblPick !== 'idle'">
-          <button class="abt abt--leg" @click="dblSelectLeg(1)">L1</button>
-          <button class="abt abt--leg" :disabled="!match.result" @click="dblSelectLeg(2)">
-            L2
-          </button>
-        </template>
-        <!-- Single-leg idle -->
-        <template v-else-if="!isDouble">
-          <button class="abt" title="Edit" @click="singleEdit"><Pencil :size="12" /></button>
-          <button class="abt" title="Simulate" @click="$emit('sim-match')">
-            <Shuffle :size="12" />
-          </button>
-        </template>
-        <!-- Double-leg idle: ✎ 🔀 -->
-        <template v-else>
-          <button
-            class="abt"
-            :class="{ active: dblPick === 'edit' }"
-            title="Edit"
-            @click="dblPick = dblPick === 'edit' ? 'idle' : 'edit'"
-          >
-            <Pencil :size="12" />
-          </button>
-          <button
-            class="abt"
-            :class="{ active: dblPick === 'sim' }"
-            title="Simulate"
-            @click="dblPick = dblPick === 'sim' ? 'idle' : 'sim'"
-          >
-            <Shuffle :size="12" />
-          </button>
-        </template>
+      <!-- Away score cell -->
+      <div
+        class="mc-scell mc-scell--away"
+        :style="{ '--tc': awayColor }"
+        :class="{
+          winner: isWinner(match.awayId),
+          loser: match.result && !isWinner(match.awayId),
+        }"
+      >
+        <span v-if="agg !== null" class="sc">{{ agg.away }}</span>
+        <span v-else-if="match.result" class="sc">
+          {{ match.result.away }}
+          <span v-if="match.result.penAway !== undefined" class="pen-sup">
+            [{{ match.result.penAway }}p]
+          </span>
+        </span>
+        <span v-else class="sc tbd">–</span>
+        <span v-if="legs && legs.awayL1 !== null" class="leg-mini">
+          {{ legs.awayL1 }}·{{ legs.awayL2 ?? "–" }}
+          <span v-if="legs.awayP !== null" class="pen-sup">[{{ legs.awayP }}p]</span>
+        </span>
       </div>
-    </template>
+    </div>
+
+    <!-- Both live inside the card so it keeps a single root element: the
+         bracket positions each card by passing `position: absolute` down as a
+         fallthrough style, which a multi-root component silently drops. -->
+    <Teleport to="body">
+      <div v-if="pickingLeg" class="leg-pick-backdrop" @click="pickingLeg = false">
+        <div class="leg-pick" @click.stop>
+          <button class="leg-pick-btn" @click="openLeg(1)">L1</button>
+          <button class="leg-pick-btn" :disabled="!match.result" @click="openLeg(2)">L2</button>
+        </div>
+      </div>
+    </Teleport>
+
+    <MatchScoreModal
+      v-if="editingLeg !== null && canEdit"
+      :home-team="modalHome"
+      :away-team="modalAway"
+      :result="modalResult"
+      :subtitle="modalSubtitle"
+      requires-winner
+      @save="onSave"
+      @simulate="onSimulate"
+      @clear="onClear"
+      @close="editingLeg = null"
+    />
   </div>
 </template>
 
@@ -405,6 +270,12 @@ const saveDisabled = computed(() =>
   overflow: hidden;
   animation: fade-up var(--dur-slow) var(--ease) both;
   transition: opacity var(--dur) var(--ease);
+}
+/* The whole card opens the score modal — the pencil, ✓/✗ and shuffle buttons
+   that used to live in a third column are all in there now, which is what gives
+   the names their width back. */
+.mc--editable {
+  cursor: pointer;
 }
 .mc.final {
   border-color: var(--gold);
@@ -505,11 +376,24 @@ const saveDisabled = computed(() =>
 
 /* ── Score column (right of teams) ── */
 .mc-scores {
+  position: relative;
   width: 54px;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
   border-left: 1px solid var(--border-light);
+  transition: background var(--dur-fast) var(--ease);
+}
+.mc--editable:hover .mc-scores {
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+}
+.mc-edit-hint {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  color: var(--text-muted);
+  opacity: 0.5;
+  pointer-events: none;
 }
 
 .mc-scell {
@@ -550,54 +434,46 @@ const saveDisabled = computed(() =>
   flex-shrink: 0;
 }
 
-/* Double-leg edit label (L1 / L2 / P) */
-.leg-lbl {
-  font-size: 9px;
-  font-weight: 700;
-  color: var(--accent);
-  text-transform: uppercase;
-  flex-shrink: 0;
-  min-width: 10px;
-}
-
-/* ── Action column ── */
-.mc-actions {
-  width: 30px;
-  flex-shrink: 0;
+/* ── Leg picker ──
+   Teleported, because the card sits inside a transformed pan layer where a
+   popover would be scaled along with the bracket. */
+.leg-pick-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 205;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4px;
-  padding: 0 4px;
-  border-left: 1px solid var(--border-light);
-  background: var(--bg);
-  box-sizing: border-box;
+  background: rgba(32, 33, 34, 0.4);
 }
-.mc.final .mc-actions {
-  background: color-mix(in srgb, var(--gold) 5%, var(--bg));
-  border-left-color: var(--gold-soft);
+.leg-pick {
+  display: flex;
+  gap: var(--sp-2);
+  padding: var(--sp-3);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
 }
-
-/* Leg-pick label buttons (L1 / L2) — override the shared .abt hover. */
-.abt--leg {
-  width: 20px;
-  font-size: 10px;
-  font-weight: 700;
+.leg-pick-btn {
+  min-width: 64px;
+  padding: var(--sp-2) var(--sp-3);
   font-family: var(--font-ui);
+  font-size: var(--fs-md);
+  font-weight: 700;
   color: var(--accent);
-  border-color: color-mix(in srgb, var(--accent) 35%, var(--border-light));
+  background: transparent;
+  border: 1px solid color-mix(in srgb, var(--accent) 35%, var(--border-light));
+  border-radius: var(--radius);
+  cursor: pointer;
 }
-.abt--leg:hover:not(:disabled) {
+.leg-pick-btn:hover:not(:disabled) {
   background: color-mix(in srgb, var(--accent) 10%, transparent);
-  color: var(--accent);
   border-color: var(--accent);
 }
-/* Active state when pick mode is open */
-.abt.active {
-  color: var(--accent);
-  border-color: color-mix(in srgb, var(--accent) 40%, var(--border-light));
-  background: color-mix(in srgb, var(--accent) 8%, transparent);
+.leg-pick-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
 }
 
 /* ── Third-place variant ──────────────────────────────────────
@@ -616,8 +492,7 @@ const saveDisabled = computed(() =>
 .mc--third .mc-scell--away {
   border-bottom: none;
 }
-.mc--third .mc-scores,
-.mc--third .mc-actions {
+.mc--third .mc-scores {
   border-left-color: color-mix(in srgb, var(--accent-2) 25%, var(--border-light));
 }
 </style>

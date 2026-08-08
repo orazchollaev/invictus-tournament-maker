@@ -1,9 +1,10 @@
 <script setup lang="ts">
+import { computed, ref } from "vue"
 import type { Team } from "@/modules/teams/types"
 import type { MatchResult } from "../../types"
 import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
-import { Check, Pencil, Shuffle, X } from "@lucide/vue"
-import type { FlatMatch, MatchEditor } from "./useMatchEditor"
+import MatchScoreModal from "../MatchScoreModal.vue"
+import type { FlatMatch } from "./types"
 
 const props = defineProps<{
   match: FlatMatch
@@ -13,19 +14,15 @@ const props = defineProps<{
   awayId: string | null
   result: MatchResult | null | undefined
   teams: Team[]
-  editor: MatchEditor
   /** Leg 2 cannot be entered before leg 1 has a result. */
   disabled?: boolean
 }>()
 
-defineEmits<{
-  save: [leg: 1 | 2]
-  "save-pens": [leg: 1 | 2]
+const emit = defineEmits<{
+  "set-result": [leg: 1 | 2, home: number, away: number, penHome?: number, penAway?: number]
+  "clear-result": [leg: 1 | 2]
   sim: [leg: 1 | 2]
 }>()
-
-/** Only the deciding leg offers a shootout. */
-const canEnterPenalties = props.leg === 2
 
 function getTeam(id: string | null): Team | null {
   if (!id) return null
@@ -45,100 +42,60 @@ function sideClass(side: "home" | "away") {
 function hasPen(): boolean {
   return !!props.result && props.result.penHome !== undefined
 }
+
+/* A leg row is 26px tall, so the score is entered in the modal. */
+const editing = ref(false)
+const canEdit = computed(() => !!props.match.homeId && !!props.match.awayId && !props.disabled)
+
+/** Only the deciding leg offers a shootout. */
+const requiresWinner = computed(() => props.leg === 2)
 </script>
 
-<!-- eslint-disable vue/no-mutating-props -- `editor` is a shared reactive store object owned by FixtureView; mutating its fields is the intended contract -->
 <template>
   <div class="leg" :class="{ 'leg--locked': disabled }">
-    <div class="leg-label">L{{ leg }}</div>
+    <button
+      class="leg-open"
+      type="button"
+      :disabled="!canEdit"
+      :aria-label="`Set leg ${leg} result`"
+      @click="editing = true"
+    >
+      <div class="leg-label">L{{ leg }}</div>
 
-    <div class="leg-teams">
-      <div class="leg-tr" :class="sideClass('home')">
-        <TeamBadge :team="getTeam(homeId)" />
-      </div>
-      <div class="leg-tr leg-tr--away" :class="sideClass('away')">
-        <TeamBadge :team="getTeam(awayId)" />
-      </div>
-    </div>
-
-    <div v-if="match.homeId && match.awayId" class="leg-scores">
-      <template
-        v-if="canEnterPenalties && editor.isEditing(match, leg) && editor.mode === 'penalty'"
-      >
-        <div class="leg-sc">
-          <span class="pen-base">{{ editor.home }}</span>
-          <input v-model.number="editor.penHome" type="number" min="0" class="sinp sinp--pen" />
+      <div class="leg-teams">
+        <div class="leg-tr" :class="sideClass('home')">
+          <TeamBadge :team="getTeam(homeId)" />
         </div>
-        <div class="leg-sc leg-sc--away">
-          <span class="pen-base">{{ editor.away }}</span>
-          <input v-model.number="editor.penAway" type="number" min="0" class="sinp sinp--pen" />
+        <div class="leg-tr leg-tr--away" :class="sideClass('away')">
+          <TeamBadge :team="getTeam(awayId)" />
         </div>
-      </template>
+      </div>
 
-      <template v-else>
+      <div v-if="match.homeId && match.awayId" class="leg-scores">
         <div class="leg-sc" :class="sideClass('home')">
-          <input
-            v-if="editor.isEditing(match, leg)"
-            v-model.number="editor.home"
-            type="number"
-            min="0"
-            class="sinp"
-          />
-          <template v-else>
-            <span class="sc" :class="{ tbd: !result }">{{ result?.home ?? "–" }}</span>
-            <span v-if="hasPen()" class="pen-sup">[{{ result!.penHome }}p]</span>
-          </template>
+          <span class="sc" :class="{ tbd: !result }">{{ result?.home ?? "–" }}</span>
+          <span v-if="hasPen()" class="pen-sup">[{{ result!.penHome }}p]</span>
         </div>
         <div class="leg-sc leg-sc--away" :class="sideClass('away')">
-          <input
-            v-if="editor.isEditing(match, leg)"
-            v-model.number="editor.away"
-            type="number"
-            min="0"
-            class="sinp"
-          />
-          <template v-else>
-            <span class="sc" :class="{ tbd: !result }">{{ result?.away ?? "–" }}</span>
-            <span v-if="hasPen()" class="pen-sup">[{{ result!.penAway }}p]</span>
-          </template>
+          <span class="sc" :class="{ tbd: !result }">{{ result?.away ?? "–" }}</span>
+          <span v-if="hasPen()" class="pen-sup">[{{ result!.penAway }}p]</span>
         </div>
-      </template>
-    </div>
+      </div>
+    </button>
 
-    <div v-if="match.homeId && match.awayId" class="leg-acts">
-      <template v-if="editor.isEditing(match, leg)">
-        <button
-          class="abt ok"
-          :disabled="editor.mode === 'penalty' && editor.penHome === editor.penAway"
-          @click="
-            editor.mode === 'penalty' && canEnterPenalties
-              ? $emit('save-pens', leg)
-              : $emit('save', leg)
-          "
-        >
-          <Check :size="11" />
-        </button>
-        <button class="abt" @click="editor.cancel()"><X :size="11" /></button>
-      </template>
-      <template v-else>
-        <button
-          class="abt"
-          title="Edit"
-          :disabled="disabled"
-          @click="disabled ? undefined : editor.startEdit(match, leg)"
-        >
-          <Pencil :size="11" />
-        </button>
-        <button
-          class="abt"
-          :title="`Simulate leg ${leg}`"
-          :disabled="disabled"
-          @click="disabled ? undefined : $emit('sim', leg)"
-        >
-          <Shuffle :size="11" />
-        </button>
-      </template>
-    </div>
+    <!-- Inside the row, so the component keeps a single root element. -->
+    <MatchScoreModal
+      v-if="editing && canEdit"
+      :home-team="getTeam(homeId)"
+      :away-team="getTeam(awayId)"
+      :result="result"
+      :subtitle="`Leg ${leg}`"
+      :requires-winner="requiresWinner"
+      @save="(h, a, ph, pa) => emit('set-result', leg, h, a, ph, pa)"
+      @simulate="emit('sim', leg)"
+      @clear="emit('clear-result', leg)"
+      @close="editing = false"
+    />
   </div>
 </template>
 

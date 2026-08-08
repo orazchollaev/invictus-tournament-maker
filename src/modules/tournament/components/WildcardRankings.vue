@@ -3,6 +3,7 @@ import { computed } from "vue"
 import type { Team } from "@/modules/teams/types"
 import type { Tournament } from "@/modules/tournament/types"
 import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
+import { AppCard, AppTable } from "@/components/ui"
 import { useTeamLookup } from "@/composables/useTeamLookup"
 import { useI18n } from "vue-i18n"
 
@@ -55,153 +56,139 @@ const candidates = computed(() => {
 </script>
 
 <template>
-  <div class="wc-wrap">
-    <div class="wc-header">
-      <span class="wc-title">Wildcard Race</span>
+  <AppCard variant="outlined" title="Wildcard Race">
+    <template #actions>
       <span class="wc-sub">
         Best {{ wildcardCount }} of {{ candidates.length }} runners-up advance
       </span>
-    </div>
+    </template>
 
-    <div class="wc-table-scroll">
-      <table class="wc-table">
-        <thead>
-          <tr>
-            <th class="col-rank">#</th>
-            <th class="col-group">Group</th>
-            <th class="col-team">{{ t("common.team") }}</th>
-            <th :title="t('history.table.played')">P</th>
-            <th :title="t('history.table.won')">W</th>
-            <th :title="t('history.table.drawn')">D</th>
-            <th :title="t('history.table.lost')">L</th>
-            <th :title="t('history.table.goalsFor')">GF</th>
-            <th :title="t('history.table.goalsAgainst')">GA</th>
-            <th :title="t('history.table.goalDiff')">GD</th>
-            <th :title="t('history.table.points')">Pts</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            v-for="(row, ri) in candidates"
-            :key="row.teamId"
-            :class="ri < wildcardCount ? 'row-advance' : 'row-out'"
-          >
-            <td class="col-rank">{{ ri + 1 }}</td>
-            <td class="col-group">{{ row.groupName }}</td>
-            <td class="col-team" style="text-align: left">
-              <TeamBadge :team="teamById(row.teamId)" :fallback="row.teamId" class="team-cell" />
-            </td>
-            <td>{{ row.played }}</td>
-            <td>{{ row.won }}</td>
-            <td>{{ row.drawn }}</td>
-            <td>{{ row.lost }}</td>
-            <td>{{ row.gf }}</td>
-            <td>{{ row.ga }}</td>
-            <td>{{ row.gd >= 0 ? "+" + row.gd : row.gd }}</td>
-            <td class="col-pts">{{ row.pts }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    <!-- Same shell/theme as the group standings table: AppTable, dense cells,
+         the accent rail on the qualifying rows. -->
+    <AppTable dense class="wc-table">
+      <thead>
+        <tr>
+          <th class="col-rank">#</th>
+          <th class="col-group">Group</th>
+          <th class="col-team">{{ t("common.team") }}</th>
+          <th :title="t('history.table.played')">P</th>
+          <th :title="t('history.table.won')">W</th>
+          <th :title="t('history.table.drawn')">D</th>
+          <th :title="t('history.table.lost')">L</th>
+          <th :title="t('history.table.goalsFor')">GF</th>
+          <th :title="t('history.table.goalsAgainst')">GA</th>
+          <th :title="t('history.table.goalDiff')">GD</th>
+          <th :title="t('history.table.points')">Pts</th>
+        </tr>
+      </thead>
+      <TransitionGroup tag="tbody" name="standing-row">
+        <tr
+          v-for="(row, ri) in candidates"
+          :key="row.teamId"
+          :class="ri < wildcardCount ? 'row-qualify' : 'row-out'"
+        >
+          <td class="col-rank">{{ ri + 1 }}</td>
+          <td class="col-group">{{ row.groupName }}</td>
+          <td class="col-team" :style="{ '--tc': teamById(row.teamId)?.color ?? 'transparent' }">
+            <TeamBadge
+              :team="teamById(row.teamId)"
+              :fallback="row.teamId"
+              class="flex team-cell"
+              :size="14"
+            />
+          </td>
+          <td>{{ row.played }}</td>
+          <td>{{ row.won }}</td>
+          <td>{{ row.drawn }}</td>
+          <td>{{ row.lost }}</td>
+          <td>{{ row.gf }}</td>
+          <td>{{ row.ga }}</td>
+          <td>{{ row.gd >= 0 ? "+" + row.gd : row.gd }}</td>
+          <td class="col-pts">{{ row.pts }}</td>
+        </tr>
+      </TransitionGroup>
+    </AppTable>
 
     <div v-if="candidates.length === 0" class="wc-empty">Group stage not started yet.</div>
-  </div>
+  </AppCard>
 </template>
 
 <style scoped>
-.wc-wrap {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.wc-header {
-  display: flex;
-  align-items: baseline;
-  gap: 10px;
-  flex-wrap: wrap;
-  padding: 0 8px;
-}
-
-.wc-title {
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.03em;
-}
-
 .wc-sub {
-  font-size: 11px;
+  font-size: var(--fs-xs);
   color: var(--text-muted);
 }
 
-.wc-table-scroll {
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  padding: 0 8px;
-}
-
-.wc-table {
-  border-collapse: collapse;
-  width: 100%;
-  font-size: 12px;
-}
-
-.wc-table th,
-.wc-table td {
-  border: none;
-  border-bottom: 1px solid var(--border-light);
-  padding: 5px 7px;
+.wc-table :deep(thead th),
+.wc-table :deep(tbody td) {
   text-align: center;
 }
-
-.wc-table tbody tr:last-child td {
-  border-bottom: none;
-}
-
-.wc-table th {
-  background: var(--bg);
-  font-weight: 600;
-  font-size: 11px;
+.wc-table .col-rank {
+  width: 18px;
   color: var(--text-muted);
 }
-
-.col-rank {
-  width: 20px;
-  color: var(--text-muted);
-  font-size: 11px;
-}
-
-.col-group {
-  font-size: 11px;
+.wc-table .col-group {
+  font-size: var(--fs-xs);
   color: var(--text-muted);
   white-space: nowrap;
 }
 
-.col-team {
+.wc-table .col-team {
+  position: relative;
   text-align: left;
-  min-width: 110px;
+  min-width: 0;
+  max-width: 120px;
+  padding-left: 11px;
 }
-
+.wc-table .col-team::before {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: 3px;
+  bottom: 3px;
+  width: 3px;
+  border-radius: 1px;
+  background: var(--tc, transparent);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.18);
+}
 .col-pts {
   font-weight: 700;
 }
 
-.row-advance {
+/* Same treatment as GroupCard's row-qualify/row-out — a wildcard slot reads
+   as "would qualify" the same way a group's real qualification line does. */
+.row-qualify {
   background: color-mix(in srgb, var(--accent) 6%, transparent);
 }
-
-.row-advance td:first-child {
+.row-qualify td:first-child {
   border-left: 3px solid var(--accent);
 }
-
 .row-out {
-  opacity: 0.6;
+  opacity: 0.65;
+}
+
+.team-cell {
+  gap: 6px;
+}
+.flex {
+  display: flex;
+  align-items: center;
 }
 
 .wc-empty {
-  font-size: 12px;
+  font-size: var(--fs-sm);
   color: var(--text-muted);
-  padding: 12px 8px;
+  padding: var(--sp-3);
   text-align: center;
+}
+
+@media (max-width: 600px) {
+  .wc-table .col-team {
+    min-width: 90px;
+  }
+  .wc-table th:nth-child(5),
+  .wc-table td:nth-child(5) {
+    display: none;
+  }
 }
 </style>

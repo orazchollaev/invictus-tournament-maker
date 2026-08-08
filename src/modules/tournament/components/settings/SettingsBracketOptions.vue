@@ -152,7 +152,6 @@ async function handleRedraw() {
     </TspLockedCard>
   </template>
 
-  <!-- Playoff Seeding -->
   <template v-if="isGroupFormat">
     <TspLockedCard
       :title="t('tournament.settingsPage.playoffSeeding.title')"
@@ -160,7 +159,7 @@ async function handleRedraw() {
       :locked-message="t('tournament.settingsPage.playoffSeeding.lockedBanner')"
     >
       <BtnGroup v-model="localPlayoffSeedMode" :options="playoffOptions" />
-      <div class="hint-box">
+      <div class="hint-box" style="margin-top: 8px">
         {{
           t("tournament.create.playoffHint", {
             cross: t("tournament.create.cross"),

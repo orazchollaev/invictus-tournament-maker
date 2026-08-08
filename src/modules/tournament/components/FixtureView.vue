@@ -2,7 +2,7 @@
 import { ref, computed } from "vue"
 import type { Tournament } from "../types"
 import type { Team } from "@/modules/teams/types"
-import { FixtureMatchCard, FixtureTieCard, useMatchEditor, type FlatMatch } from "./fixture"
+import { FixtureMatchCard, FixtureTieCard, type FlatMatch } from "./fixture"
 
 const props = defineProps<{ tournament: Tournament; teams: Team[] }>()
 const emit = defineEmits<{
@@ -26,6 +26,9 @@ const emit = defineEmits<{
   "sim-leg1": [round: number, match: number]
   "sim-leg2": [round: number, match: number]
   "set-third-place-result": [home: number, away: number, penHome?: number, penAway?: number]
+  "clear-result": [round: number, match: number]
+  "clear-leg2-result": [round: number, match: number]
+  "clear-third-place-result": []
   "sim-third-place": []
 }>()
 
@@ -41,8 +44,6 @@ const roundOptions = computed(() => {
 })
 
 const selectedRound = ref<number | "tp">(roundOptions.value[0]?.value ?? 0)
-
-const editor = useMatchEditor()
 
 const filteredMatches = computed((): FlatMatch[] => {
   if (selectedRound.value === "tp") {
@@ -63,77 +64,42 @@ const isSoloLayout = computed(() => {
   return selectedRound.value === lastRoundIdx || selectedRound.value === "tp"
 })
 
-function saveResult(match: FlatMatch, leg: 1 | 2 = 1) {
-  if (leg === 2) {
-    const l1 = match.result
-    if (l1) {
-      const aggHome = l1.home + editor.away
-      const aggAway = l1.away + editor.home
-      if (aggHome === aggAway) {
-        editor.mode = "penalty"
-        editor.penHome = 0
-        editor.penAway = 0
-        return
-      }
-    }
-    emit("set-leg2-result", match._origRound, match._origMatch, editor.home, editor.away)
-    editor.cancel()
-    return
-  }
-
-  if (match.leg2Result !== undefined) {
-    if (match._isThirdPlace) {
-      emit("set-third-place-result", editor.home, editor.away)
-    } else {
-      emit("set-result", match._origRound, match._origMatch, editor.home, editor.away)
-    }
-    editor.cancel()
-    return
-  }
-
-  if (editor.home === editor.away) {
-    editor.mode = "penalty"
-    editor.penHome = match.result?.penHome ?? 0
-    editor.penAway = match.result?.penAway ?? 0
-    return
-  }
+/** The cards own the entry UI; this only maps a card event onto coordinates. */
+function onSetResult(
+  match: FlatMatch,
+  home: number,
+  away: number,
+  penHome?: number,
+  penAway?: number
+) {
   if (match._isThirdPlace) {
-    emit("set-third-place-result", editor.home, editor.away)
+    emit("set-third-place-result", home, away, penHome, penAway)
   } else {
-    emit("set-result", match._origRound, match._origMatch, editor.home, editor.away)
+    emit("set-result", match._origRound, match._origMatch, home, away, penHome, penAway)
   }
-  editor.cancel()
 }
 
-function savePenalties(match: FlatMatch, leg: 1 | 2 = 1) {
-  if (editor.penHome === editor.penAway) return
-  if (leg === 2) {
-    emit(
-      "set-leg2-result",
-      match._origRound,
-      match._origMatch,
-      editor.home,
-      editor.away,
-      editor.penHome,
-      editor.penAway
-    )
-    editor.cancel()
-    return
-  }
-  if (match._isThirdPlace) {
-    emit("set-third-place-result", editor.home, editor.away, editor.penHome, editor.penAway)
-  } else {
-    emit(
-      "set-result",
-      match._origRound,
-      match._origMatch,
-      editor.home,
-      editor.away,
-      editor.penHome,
-      editor.penAway
-    )
-  }
-  editor.cancel()
+function onClearResult(match: FlatMatch) {
+  if (match._isThirdPlace) emit("clear-third-place-result")
+  else emit("clear-result", match._origRound, match._origMatch)
+}
+
+function onSetTieResult(
+  match: FlatMatch,
+  leg: 1 | 2,
+  home: number,
+  away: number,
+  penHome?: number,
+  penAway?: number
+) {
+  if (leg === 2)
+    emit("set-leg2-result", match._origRound, match._origMatch, home, away, penHome, penAway)
+  else onSetResult(match, home, away, penHome, penAway)
+}
+
+function onClearTieResult(match: FlatMatch, leg: 1 | 2) {
+  if (leg === 2) emit("clear-leg2-result", match._origRound, match._origMatch)
+  else onClearResult(match)
 }
 
 function simMatch(match: FlatMatch) {
@@ -167,10 +133,8 @@ function simMatch(match: FlatMatch) {
           v-if="match.leg2Result !== undefined"
           :match="match"
           :teams="teams"
-          :editor="editor"
-          @save="saveResult"
-          @save-pens="savePenalties"
-          @sim-match="(m) => $emit('sim-match', m._origRound, m._origMatch)"
+          @set-result="onSetTieResult"
+          @clear-result="onClearTieResult"
           @sim-leg1="(m) => $emit('sim-leg1', m._origRound, m._origMatch)"
           @sim-leg2="(m) => $emit('sim-leg2', m._origRound, m._origMatch)"
         />
@@ -178,9 +142,8 @@ function simMatch(match: FlatMatch) {
           v-else
           :match="match"
           :teams="teams"
-          :editor="editor"
-          @save="saveResult"
-          @save-pens="savePenalties"
+          @set-result="onSetResult"
+          @clear-result="onClearResult"
           @sim="simMatch"
         />
       </template>
@@ -226,7 +189,7 @@ function simMatch(match: FlatMatch) {
 }
 .fv-tab.active {
   background: var(--accent);
-  color: #fff;
+  color: var(--on-accent);
   border-color: var(--accent);
 }
 .fv-tab.tp-tab.active {

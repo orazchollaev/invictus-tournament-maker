@@ -23,6 +23,13 @@ export default {
     },
     playoffDrawTitle: "Sorteo de playoff",
   },
+  matchScore: {
+    penalties: "Tanda de penaltis",
+    penaltiesHint: "La eliminatoria está empatada — los penaltis deciden quién pasa.",
+    penaltiesTied: "Una tanda de penaltis no puede acabar en empate.",
+    simulate: "Simular",
+    clear: "Borrar resultado",
+  },
   bracket: {
     zoomHint: "Pellizca para hacer zoom · doble toque para restablecer",
   },

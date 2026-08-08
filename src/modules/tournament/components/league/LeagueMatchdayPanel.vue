@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch, nextTick } from "vue"
+import { ref, computed, watch } from "vue"
 import type { LeagueMatchday } from "@/modules/tournament/types"
 import type { Team } from "@/modules/teams/types"
 import { useGradualSim } from "@/modules/tournament/composables/useGradualSim"
@@ -14,6 +14,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   setResult: [matchdayIdx: number, matchIdx: number, home: number, away: number]
+  clearResult: [matchdayIdx: number, matchIdx: number]
   simMatch: [matchdayIdx: number, matchIdx: number]
 }>()
 
@@ -39,48 +40,6 @@ const doneFlags = computed(() =>
 
 function teamById(id: string) {
   return props.teams.find((t) => t.id === id)
-}
-
-// ── Score entry ─────────────────────────────────────────────
-// The target is tracked separately from the drafted scores so the inputs can be
-// bound unconditionally, even while no row is open.
-const editing = ref<{ mdIdx: number; mIdx: number } | null>(null)
-const editHome = ref("")
-const editAway = ref("")
-
-watch(editing, (val) => {
-  if (!val) return
-  nextTick(() => {
-    const input = document.querySelector<HTMLInputElement>(".lv-score-input")
-    input?.focus()
-    input?.select()
-  })
-})
-
-function startEdit(mIdx: number, curHome: number | null, curAway: number | null) {
-  editHome.value = curHome != null ? String(curHome) : ""
-  editAway.value = curAway != null ? String(curAway) : ""
-  editing.value = { mdIdx: activeIdx.value, mIdx }
-}
-
-function commitEdit() {
-  if (!editing.value) return
-  const h = parseInt(editHome.value)
-  const a = parseInt(editAway.value)
-  if (isNaN(h) || isNaN(a) || h < 0 || a < 0) {
-    editing.value = null
-    return
-  }
-  emit("setResult", editing.value.mdIdx, editing.value.mIdx, h, a)
-  editing.value = null
-}
-
-function cancelEdit() {
-  editing.value = null
-}
-
-function isEditing(mIdx: number) {
-  return editing.value?.mdIdx === activeIdx.value && editing.value?.mIdx === mIdx
 }
 
 // ── Matchday simulation ─────────────────────────────────────
@@ -123,15 +82,12 @@ async function handleSimMatchday(idx: number) {
         <LeagueMatchRow
           v-for="(match, mIdx) in activeMatchday?.matches ?? []"
           :key="match.id"
-          v-model:home="editHome"
-          v-model:away="editAway"
           :home-team="teamById(match.homeId)"
           :away-team="teamById(match.awayId)"
           :result="match.result"
-          :editing="isEditing(mIdx)"
-          @edit="startEdit(mIdx, match.result?.home ?? null, match.result?.away ?? null)"
-          @commit="commitEdit"
-          @cancel="cancelEdit"
+          :label="activeMatchday?.name"
+          @save="(h, a) => emit('setResult', activeIdx, mIdx, h, a)"
+          @clear="emit('clearResult', activeIdx, mIdx)"
           @sim="emit('simMatch', activeIdx, mIdx)"
         />
       </div>

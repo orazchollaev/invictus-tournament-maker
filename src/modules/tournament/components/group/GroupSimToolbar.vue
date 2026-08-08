@@ -28,15 +28,15 @@ function run(action: () => void) {
   <div class="sim-toolbar">
     <!-- Mobile: one dropdown holding every sim action -->
     <div class="sim-dropdown">
-      <AppButton variant="outlined" size="sm" @click="menuOpen = !menuOpen">
-        <AppIcon :icon="Shuffle" size="md" />
+      <AppButton variant="outlined" size="xs" @click="menuOpen = !menuOpen">
+        <AppIcon :icon="Shuffle" size="xs" />
         Simulate
-        <AppIcon :icon="ChevronDown" size="sm" class="sim-chevron" :class="{ open: menuOpen }" />
+        <AppIcon :icon="ChevronDown" size="xs" class="sim-chevron" :class="{ open: menuOpen }" />
       </AppButton>
       <div v-if="menuOpen" class="sim-dropdown-panel">
         <AppButton
           variant="text"
-          size="sm"
+          size="xs"
           block
           :disabled="allDone"
           @click="run(() => emit('simWeek'))"
@@ -45,7 +45,7 @@ function run(action: () => void) {
         </AppButton>
         <AppButton
           variant="text"
-          size="sm"
+          size="xs"
           block
           :disabled="allDone"
           @click="run(() => emit('simAll'))"
@@ -56,7 +56,7 @@ function run(action: () => void) {
           <AppButton
             v-if="g.matches.some((m) => !m.result)"
             variant="text"
-            size="sm"
+            size="xs"
             block
             @click="run(() => emit('simGroup', gi))"
           >
@@ -69,29 +69,29 @@ function run(action: () => void) {
     <!-- Desktop: the same actions laid out inline -->
     <AppButton
       variant="outlined"
-      size="sm"
+      size="xs"
       class="sim-inline"
       :disabled="allDone"
       @click="emit('simWeek')"
     >
-      <AppIcon :icon="Shuffle" size="md" />
+      <AppIcon :icon="Shuffle" size="xs" />
       Sim Week
     </AppButton>
     <AppButton
       variant="outlined"
-      size="sm"
+      size="xs"
       class="sim-inline"
       :disabled="allDone"
       @click="emit('simAll')"
     >
-      <AppIcon :icon="Shuffle" size="md" />
+      <AppIcon :icon="Shuffle" size="xs" />
       Simulate All
     </AppButton>
     <template v-for="(g, gi) in groups" :key="gi">
       <AppButton
         v-if="g.matches.some((m) => !m.result)"
         variant="outlined"
-        size="sm"
+        size="xs"
         class="sim-inline"
         @click="emit('simGroup', gi)"
       >
@@ -102,11 +102,11 @@ function run(action: () => void) {
     <AppButton
       v-if="allDone"
       variant="filled"
-      size="sm"
+      size="xs"
       class="advance-btn"
       @click="emit('advance')"
     >
-      <AppIcon :icon="Check" size="md" />
+      <AppIcon :icon="Check" size="xs" />
       Advance to Knockout →
     </AppButton>
   </div>
@@ -116,7 +116,6 @@ function run(action: () => void) {
 .sim-toolbar {
   display: flex;
   align-items: center;
-  margin-bottom: var(--sp-3);
   flex-wrap: wrap;
   gap: var(--sp-2);
 }
@@ -162,7 +161,6 @@ function run(action: () => void) {
 @media (max-width: 640px) {
   .sim-toolbar {
     gap: var(--sp-1);
-    padding: 0 var(--sp-1);
   }
   .sim-inline {
     display: none;

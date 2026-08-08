@@ -23,7 +23,6 @@ const isMultiTier = computed(() => (props.tournament.tiers?.length ?? 0) > 1)
 
 const activeIdx = ref(0)
 
-// Convert a flat group matches array into League-like matchdays for the chart
 function groupToLeague(groupIdx: number): League | undefined {
   const group = props.tournament.groups?.[groupIdx]
   if (!group) return undefined
@@ -59,8 +58,6 @@ const tabs = computed(() => {
   return []
 })
 
-/* The tier/group picker is a segmented control, so it uses the segmented
-   control — `.tier-tab` was a third hand-rolled take on BtnGroup. */
 const tierOptions = computed(() => tabs.value.map((label, i) => ({ value: String(i), label })))
 
 const chartTitle = computed(() => {
@@ -74,7 +71,6 @@ const chartTitle = computed(() => {
 
 <template>
   <div v-if="hasStats" class="stats-wrap">
-    <!-- League / Group progress chart -->
     <template v-if="showChart && activeLeague">
       <BtnGroup
         v-if="tabs.length > 1"
@@ -83,6 +79,7 @@ const chartTitle = computed(() => {
         :options="tierOptions"
         @update:model-value="(v) => (activeIdx = Number(v))"
       />
+
       <LeagueProgressChart
         :key="activeIdx"
         :league="activeLeague"
@@ -92,7 +89,6 @@ const chartTitle = computed(() => {
     </template>
 
     <div class="stats-grid">
-      <!-- Top Scorers -->
       <AppCard variant="outlined" title="Top Scorers">
         <AppTable dense class="stats-table">
           <thead>

@@ -17,6 +17,33 @@
   pointer-events: none;
 }
 
+/* The whole row is the affordance now — the edit, ✓/✗ and shuffle buttons all
+   moved into the score modal. */
+.leg-open {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: transparent;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  min-width: 0;
+}
+.leg-open:disabled {
+  cursor: default;
+}
+.leg-open:not(:disabled):hover .leg-scores,
+.leg-open:not(:disabled):focus-visible .leg-scores {
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+}
+.leg-open:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
 .leg-label {
   display: flex;
   align-items: center;
@@ -68,6 +95,7 @@
   display: flex;
   flex-direction: column;
   border-left: 1px solid var(--border-light);
+  transition: background var(--dur-fast) var(--ease);
 }
 
 .leg-sc {

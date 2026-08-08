@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref } from "vue"
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from "vue"
 import { useI18n } from "vue-i18n"
 import type { Tournament } from "../types"
 import type { Team } from "@/modules/teams/types"
@@ -12,7 +12,7 @@ import {
   BracketZoomControls,
   BracketZoomHint,
 } from "./bracket"
-import { AppButton, AppCard, AppIcon, BtnGroup } from "@/components/ui"
+import { AppButton, AppIcon, BtnGroup } from "@/components/ui"
 import { useTournamentStore } from "../store"
 import { useSettingsStore } from "@/modules/settings/store"
 import { useGradualSim } from "../composables/useGradualSim"
@@ -68,11 +68,6 @@ const thirdPlaceMatch = computed(() =>
   props.tournament.hasThirdPlace ? (props.tournament.thirdPlaceMatch ?? null) : null
 )
 
-// ── Which bracket renderer ────────────────────────────────────
-// Double-sided converges toward a center column — the widest possible layout,
-// and "auto" would otherwise pick it for exactly the biggest brackets. That's
-// the worst case on a narrow phone: forces heavy pan/zoom just to read a card.
-// So auto always falls back to the single-direction Classic layout on mobile.
 const isMobileViewport = typeof window !== "undefined" && window.innerWidth <= 640
 
 const activeBracket = computed(() => {
@@ -84,10 +79,8 @@ const activeBracket = computed(() => {
   return knockoutTeams >= 17 ? BracketDoubleSide : BracketClassic
 })
 
-// ── First-time pinch-to-zoom hint (mobile only) ────────────────
 const zoomHint = useBracketZoomHint()
 
-// ── View switching ────────────────────────────────────────────
 const bracketView = ref<"bracket" | "fixtures">("bracket")
 const showFullBracket = ref(false)
 
@@ -102,16 +95,25 @@ const swipeFixtures = useSwipe(fixtureWrapperRef, {
   onSwipeRight: () => (bracketView.value = "bracket"),
 })
 
+// The pan layer is centered by CSS (bracket-viewport.css), so a raw pan(0,0)
+// drops the viewport on whatever round happens to sit in the middle of a wide
+// bracket — usually neither the first round nor the final. Fit-to-screen on
+// first mount and every time the Bracket tab is switched back into so it
+// always opens showing the whole thing instead of a random middle slice.
+watch(bracketView, (v) => {
+  if (v === "bracket") nextTick(fitScreen)
+})
+
 onMounted(() => {
   swipeTabs.mount()
   swipeFixtures.mount()
+  nextTick(fitScreen)
 })
 onUnmounted(() => {
   swipeTabs.unmount()
   swipeFixtures.unmount()
 })
 
-// ── Inline pan/zoom viewport ──────────────────────────────────
 const {
   wrapperRef,
   innerRef,
@@ -147,59 +149,48 @@ const { isExporting, exportPng } = useBracketExport({
 </script>
 
 <template>
-  <AppCard padding="none">
-    <template #title>{{ title ?? "Bracket" }}</template>
-
-    <template #actions>
-      <AppButton
-        v-if="bracketView === 'bracket'"
-        variant="outlined"
-        size="xs"
-        :disabled="isExporting"
-        @click="exportPng"
-      >
-        <AppIcon :icon="canNativeShare ? Share2 : Download" size="sm" />
-        <span class="btn-label">
-          {{ isExporting ? "…" : canNativeShare ? t("common.share") : "Export PNG" }}
-        </span>
-      </AppButton>
-
-      <BracketZoomControls
-        v-if="bracketView === 'bracket'"
-        :zoom="zoom"
-        @zoom-in="zoomIn"
-        @zoom-out="zoomOut"
-        @fit="fitScreen"
-      />
-
+  <div class="bracket-panel">
+    <div class="bracket-header">
       <BtnGroup
-        :model-value="bracketView"
-        class="view-toggle"
         :options="[
           { value: 'bracket', label: 'Bracket' },
           { value: 'fixtures', label: 'Fixtures' },
         ]"
+        :model-value="bracketView"
+        size="xs"
         @update:model-value="(v) => (bracketView = v as 'bracket' | 'fixtures')"
       />
 
-      <AppButton variant="outlined" size="xs" @click="showFullBracket = true">
-        <AppIcon :icon="Maximize2" size="sm" />
-        <span class="btn-label">Full View</span>
-      </AppButton>
-    </template>
+      <div class="bracket-header-right">
+        <AppButton
+          v-if="bracketView === 'bracket'"
+          variant="outlined"
+          size="xs"
+          :disabled="isExporting"
+          @click="exportPng"
+        >
+          <AppIcon :icon="canNativeShare ? Share2 : Download" size="sm" />
+          <span class="btn-label">
+            {{ isExporting ? "…" : canNativeShare ? t("common.share") : "Export PNG" }}
+          </span>
+        </AppButton>
+
+        <BracketZoomControls
+          v-if="bracketView === 'bracket'"
+          :zoom="zoom"
+          @zoom-in="zoomIn"
+          @zoom-out="zoomOut"
+          @fit="fitScreen"
+        />
+
+        <AppButton variant="outlined" size="xs" @click="showFullBracket = true">
+          <AppIcon :icon="Maximize2" size="sm" />
+          <span class="btn-label">Full View</span>
+        </AppButton>
+      </div>
+    </div>
 
     <div class="bracket-body">
-      <BtnGroup
-        :model-value="bracketView"
-        class="view-toggle-mobile"
-        block
-        :options="[
-          { value: 'bracket', label: 'Bracket' },
-          { value: 'fixtures', label: 'Fixtures' },
-        ]"
-        @update:model-value="(v) => (bracketView = v as 'bracket' | 'fixtures')"
-      />
-
       <BracketSimToolbar
         :rounds="tournament.rounds"
         :third-place-match="thirdPlaceMatch"
@@ -251,7 +242,7 @@ const { isExporting, exportPng } = useBracketExport({
         />
       </div>
     </div>
-  </AppCard>
+  </div>
 
   <BracketFullscreenModal v-model:open="showFullBracket" :title="`${tournament.name} — Knockout`">
     <component
@@ -266,13 +257,26 @@ const { isExporting, exportPng } = useBracketExport({
 <style scoped src="./bracket/bracket-viewport.css"></style>
 
 <style scoped>
-.bracket-body {
-  padding: var(--sp-2) 0;
+.bracket-panel {
+  min-width: 0;
+}
+.bracket-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 0;
+  padding-right: 0;
+  background: transparent;
 }
 
-/* Desktop shows the same switcher in the card actions instead. */
-.view-toggle-mobile {
-  display: none;
+.bracket-header-right {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-1);
+}
+
+.bracket-body {
+  padding: var(--sp-2) 0;
 }
 
 .bracket-wrapper {
@@ -281,24 +285,12 @@ const { isExporting, exportPng } = useBracketExport({
 }
 
 .fixture-wrapper {
-  padding: 0 var(--sp-2);
 }
 
 @media (max-width: 640px) {
-  /* The in-body switcher takes over; the header controls would not fit. */
-  .view-toggle,
   :deep(.zoom-controls),
   .btn-label {
     display: none;
-  }
-
-  /* Scoped under .bracket-body to outrank BtnGroup's own
-     .btn-group--block { width: 100% }, which would add up with the
-     horizontal margins and push the control past the card edge. */
-  .bracket-body .view-toggle-mobile {
-    display: flex;
-    width: auto;
-    margin: 0 var(--sp-2) var(--sp-2);
   }
 
   .bracket-wrapper {

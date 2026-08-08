@@ -18,6 +18,7 @@ defineProps<{
     <h2 class="section-header-title">
       <slot>{{ title }}</slot>
     </h2>
+
     <div v-if="$slots.actions" class="section-header-actions">
       <slot name="actions" />
     </div>

@@ -1,5 +1,8 @@
 export const MAX_TEAMS = 128
 
+/** Highest score a match input accepts — guards against fat-fingered entries. */
+export const MAX_GOALS = 20
+
 export const COUNTRY_FLAGS: { code: string; name: string }[] = [
   { code: "AF", name: "Afghanistan" },
   { code: "AL", name: "Albania" },

@@ -139,6 +139,7 @@ const columns = computed(() => COLUMNS.filter((c) => c.cls !== "col-group" || is
 
 .col-result {
   text-align: left;
+  white-space: nowrap;
 }
 
 .rank-badge {

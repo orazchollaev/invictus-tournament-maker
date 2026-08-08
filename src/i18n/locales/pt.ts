@@ -23,6 +23,13 @@ export default {
     },
     playoffDrawTitle: "Sorteio do playoff",
   },
+  matchScore: {
+    penalties: "Disputa de pênaltis",
+    penaltiesHint: "O confronto está empatado — os pênaltis decidem quem avança.",
+    penaltiesTied: "Uma disputa de pênaltis não pode terminar empatada.",
+    simulate: "Simular",
+    clear: "Limpar resultado",
+  },
   bracket: {
     zoomHint: "Belisque para ampliar · toque duas vezes para redefinir",
   },

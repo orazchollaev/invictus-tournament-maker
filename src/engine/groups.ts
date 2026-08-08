@@ -4,6 +4,7 @@ import type {
   Group,
   GroupMatch,
   GroupStanding,
+  MatchResult,
   Tiebreaker,
   Tournament,
 } from "../modules/tournament/types"
@@ -185,8 +186,22 @@ export function setGroupMatchResult(
   home: number,
   away: number
 ) {
+  writeGroupMatchResult(tournament, groupIdx, matchIdx, { home, away })
+}
+
+/** Back to unplayed — the score modal offers this for a mis-entered result. */
+export function clearGroupMatchResult(tournament: Tournament, groupIdx: number, matchIdx: number) {
+  writeGroupMatchResult(tournament, groupIdx, matchIdx, null)
+}
+
+function writeGroupMatchResult(
+  tournament: Tournament,
+  groupIdx: number,
+  matchIdx: number,
+  result: MatchResult | null
+) {
   const group = tournament.groups![groupIdx]
-  group.matches[matchIdx].result = { home, away }
+  group.matches[matchIdx].result = result
   recalcStandings(
     group,
     tournament.tiebreaker,

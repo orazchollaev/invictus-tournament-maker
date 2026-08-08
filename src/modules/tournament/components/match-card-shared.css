@@ -1,6 +1,9 @@
-/* Score chip, number inputs and action buttons — shared by every match card
-   (BracketMatchCard, FixtureMatchCard, FixtureTieCard). Imported scoped, so
-   each component still owns its own layout. */
+/* Score chip and shootout suffix — shared by every match card
+   (BracketMatchCard, FixtureMatchCard, FixtureLegRow). Imported scoped, so
+   each component still owns its own layout.
+
+   The inputs and per-card action buttons that used to live here are gone: a
+   card only displays a result now, and MatchScoreModal owns entering one. */
 
 /* ── Score chip ── */
 .sc {
@@ -28,79 +31,4 @@
   font-size: 9px;
   font-weight: 400;
   color: var(--text-muted);
-}
-
-.pen-base {
-  font-size: var(--fs-xs);
-  font-weight: 700;
-  color: var(--text-muted);
-  min-width: 10px;
-  text-align: center;
-  flex-shrink: 0;
-}
-
-/* ── Number inputs ── */
-.sinp {
-  width: 26px;
-  text-align: center;
-  background: var(--bg);
-  border: 1px solid var(--accent);
-  border-radius: var(--radius);
-  padding: 1px 2px;
-  font-size: var(--fs-sm);
-  font-weight: 700;
-  color: inherit;
-  flex-shrink: 0;
-  -moz-appearance: textfield;
-  appearance: textfield;
-  box-sizing: border-box;
-}
-.sinp--pen {
-  width: 22px;
-  font-size: var(--fs-xs);
-}
-.sinp:focus {
-  outline: none;
-  box-shadow: 0 0 0 2px var(--accent-subtle);
-}
-.sinp::-webkit-outer-spin-button,
-.sinp::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-/* ── Action buttons ── */
-.abt {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 20px;
-  height: 20px;
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius);
-  background: transparent;
-  color: var(--text-muted);
-  cursor: pointer;
-  flex-shrink: 0;
-  padding: 0;
-  transition:
-    color var(--dur-fast) var(--ease),
-    border-color var(--dur-fast) var(--ease),
-    background var(--dur-fast) var(--ease);
-}
-.abt:hover:not(:disabled) {
-  color: var(--text);
-  border-color: var(--border);
-  background: color-mix(in srgb, var(--border) 30%, transparent);
-}
-.abt.ok {
-  color: var(--success);
-  border-color: color-mix(in srgb, var(--success) 40%, var(--border-light));
-}
-.abt.ok:hover:not(:disabled) {
-  background: color-mix(in srgb, var(--success) 10%, transparent);
-}
-.abt:disabled {
-  opacity: 0.25;
-  cursor: default;
 }

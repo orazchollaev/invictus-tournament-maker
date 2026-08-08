@@ -15,6 +15,7 @@ const props = defineProps<{
 
 defineEmits<{
   setResult: [matchdayIdx: number, matchIdx: number, home: number, away: number]
+  clearResult: [matchdayIdx: number, matchIdx: number]
   simMatch: [matchdayIdx: number, matchIdx: number]
   simMatchday: [matchdayIdx: number]
   simAll: []
@@ -52,6 +53,7 @@ const playedMatchdays = computed(() => matchdays.value.filter((_, i) => matchday
         :teams="teams"
         :tournament-id="tournament.id"
         @set-result="(md, m, h, a) => $emit('setResult', md, m, h, a)"
+        @clear-result="(md, m) => $emit('clearResult', md, m)"
         @sim-match="(md, m) => $emit('simMatch', md, m)"
       />
     </div>

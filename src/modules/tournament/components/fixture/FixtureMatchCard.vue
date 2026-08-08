@@ -1,16 +1,17 @@
 <script setup lang="ts">
-import { computed } from "vue"
+import { computed, ref } from "vue"
 import type { Team } from "@/modules/teams/types"
 import { getWinnerId } from "@/engine"
 import { NO_TEAM_COLOR } from "@/modules/teams/color"
 import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
-import { X, Shuffle, Pencil, Check } from "@lucide/vue"
-import type { FlatMatch, MatchEditor } from "./useMatchEditor"
+import MatchScoreModal from "../MatchScoreModal.vue"
+import type { FlatMatch } from "./types"
+import { Pencil } from "@lucide/vue"
 
-const props = defineProps<{ match: FlatMatch; teams: Team[]; editor: MatchEditor }>()
-defineEmits<{
-  save: [match: FlatMatch]
-  "save-pens": [match: FlatMatch]
+const props = defineProps<{ match: FlatMatch; teams: Team[] }>()
+const emit = defineEmits<{
+  "set-result": [match: FlatMatch, home: number, away: number, penHome?: number, penAway?: number]
+  "clear-result": [match: FlatMatch]
   sim: [match: FlatMatch]
 }>()
 
@@ -24,37 +25,47 @@ function getTeam(id: string | null): Team | null {
    *that* tournament rather than like every other one. */
 const homeColor = computed(() => getTeam(props.match.homeId)?.color ?? NO_TEAM_COLOR)
 const awayColor = computed(() => getTeam(props.match.awayId)?.color ?? NO_TEAM_COLOR)
+
+/* The card is 28px per row — far too little for a stepper, an input and a
+   shootout. Tapping it opens the one score modal instead. */
+const editing = ref(false)
+const canEdit = computed(() => !!props.match.homeId && !!props.match.awayId)
 </script>
 
-<!-- eslint-disable vue/no-mutating-props -- `editor` is a shared reactive store object owned by FixtureView; mutating its fields is the intended contract -->
 <template>
   <div class="mc" :class="{ 'mc--played': !!match.result }">
-    <div class="mc-teams">
-      <div
-        class="mc-row"
-        :style="{ '--tc': homeColor }"
-        :class="{
-          winner: match.result && getWinnerId(match) === match.homeId,
-          loser: match.result && getWinnerId(match) !== match.homeId,
-        }"
-      >
-        <TeamBadge :team="getTeam(match.homeId)" />
+    <button
+      class="mc-open"
+      type="button"
+      :disabled="!canEdit"
+      :aria-label="'Set result'"
+      @click="editing = true"
+    >
+      <div class="mc-teams">
+        <div
+          class="mc-row"
+          :style="{ '--tc': homeColor }"
+          :class="{
+            winner: match.result && getWinnerId(match) === match.homeId,
+            loser: match.result && getWinnerId(match) !== match.homeId,
+          }"
+        >
+          <TeamBadge :team="getTeam(match.homeId)" />
+        </div>
+        <div
+          class="mc-row mc-row--away"
+          :style="{ '--tc': awayColor }"
+          :class="{
+            winner: match.result && getWinnerId(match) === match.awayId,
+            loser: match.result && getWinnerId(match) !== match.awayId,
+          }"
+        >
+          <TeamBadge :team="getTeam(match.awayId)" />
+        </div>
       </div>
-      <div
-        class="mc-row mc-row--away"
-        :style="{ '--tc': awayColor }"
-        :class="{
-          winner: match.result && getWinnerId(match) === match.awayId,
-          loser: match.result && getWinnerId(match) !== match.awayId,
-        }"
-      >
-        <TeamBadge :team="getTeam(match.awayId)" />
-      </div>
-    </div>
 
-    <template v-if="match.homeId && match.awayId">
       <div class="mc-scores">
-        <!-- Home score cell -->
+        <Pencil v-if="canEdit && !match.result" :size="9" class="mc-edit-hint" />
         <div
           class="mc-scell"
           :style="{ '--tc': homeColor }"
@@ -63,23 +74,13 @@ const awayColor = computed(() => getTeam(props.match.awayId)?.color ?? NO_TEAM_C
             loser: match.result && getWinnerId(match) !== match.homeId,
           }"
         >
-          <template v-if="editor.isEditing(match) && editor.mode === 'score'">
-            <input v-model.number="editor.home" type="number" min="0" class="sinp" />
-          </template>
-          <template v-else-if="editor.isEditing(match) && editor.mode === 'penalty'">
-            <span class="pen-base">{{ editor.home }}</span>
-            <input v-model.number="editor.penHome" type="number" min="0" class="sinp sinp--pen" />
-          </template>
-          <template v-else>
-            <span class="sc" :class="{ tbd: !match.result }">
-              {{ match.result ? match.result.home : "–" }}
-              <span v-if="match.result?.penHome !== undefined" class="pen-sup">
-                [{{ match.result.penHome }}p]
-              </span>
+          <span class="sc" :class="{ tbd: !match.result }">
+            {{ match.result ? match.result.home : "–" }}
+            <span v-if="match.result?.penHome !== undefined" class="pen-sup">
+              [{{ match.result.penHome }}p]
             </span>
-          </template>
+          </span>
         </div>
-        <!-- Away score cell -->
         <div
           class="mc-scell mc-scell--away"
           :style="{ '--tc': awayColor }"
@@ -88,46 +89,29 @@ const awayColor = computed(() => getTeam(props.match.awayId)?.color ?? NO_TEAM_C
             loser: match.result && getWinnerId(match) !== match.awayId,
           }"
         >
-          <template v-if="editor.isEditing(match) && editor.mode === 'score'">
-            <input v-model.number="editor.away" type="number" min="0" class="sinp" />
-          </template>
-          <template v-else-if="editor.isEditing(match) && editor.mode === 'penalty'">
-            <span class="pen-base">{{ editor.away }}</span>
-            <input v-model.number="editor.penAway" type="number" min="0" class="sinp sinp--pen" />
-          </template>
-          <template v-else>
-            <span class="sc" :class="{ tbd: !match.result }">
-              {{ match.result ? match.result.away : "–" }}
-              <span v-if="match.result?.penAway !== undefined" class="pen-sup">
-                [{{ match.result.penAway }}p]
-              </span>
+          <span class="sc" :class="{ tbd: !match.result }">
+            {{ match.result ? match.result.away : "–" }}
+            <span v-if="match.result?.penAway !== undefined" class="pen-sup">
+              [{{ match.result.penAway }}p]
             </span>
-          </template>
+          </span>
         </div>
       </div>
+    </button>
 
-      <!-- Actions -->
-      <div class="mc-acts">
-        <template v-if="editor.isEditing(match)">
-          <button
-            class="abt ok"
-            :disabled="editor.mode === 'penalty' && editor.penHome === editor.penAway"
-            @click="editor.mode === 'penalty' ? $emit('save-pens', match) : $emit('save', match)"
-          >
-            <Check :size="11" />
-          </button>
-          <button class="abt" @click="editor.cancel()"><X :size="11" /></button>
-        </template>
-        <template v-else>
-          <button class="abt" title="Edit" @click="editor.startEdit(match)">
-            <Pencil :size="11" />
-          </button>
-          <button class="abt" title="Simulate" @click="$emit('sim', match)">
-            <Shuffle :size="11" />
-          </button>
-        </template>
-      </div>
-    </template>
+    <!-- Inside the card, so the component keeps a single root element and any
+         style a parent passes down still lands on it. -->
+    <MatchScoreModal
+      v-if="editing && canEdit"
+      :home-team="getTeam(match.homeId)"
+      :away-team="getTeam(match.awayId)"
+      :result="match.result"
+      requires-winner
+      @save="(h, a, ph, pa) => emit('set-result', match, h, a, ph, pa)"
+      @simulate="emit('sim', match)"
+      @clear="emit('clear-result', match)"
+      @close="editing = false"
+    />
   </div>
 </template>
 
@@ -145,6 +129,32 @@ const awayColor = computed(() => getTeam(props.match.awayId)?.color ?? NO_TEAM_C
 }
 .mc--played {
   border-color: var(--border);
+}
+
+.mc-open {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: transparent;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  text-align: left;
+  min-width: 0;
+  gap: 0;
+}
+.mc-open:disabled {
+  cursor: default;
+}
+.mc-open:not(:disabled):hover .mc-scores,
+.mc-open:not(:disabled):focus-visible .mc-scores {
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+}
+.mc-open:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
 }
 
 .mc-teams {
@@ -194,11 +204,21 @@ const awayColor = computed(() => getTeam(props.match.awayId)?.color ?? NO_TEAM_C
 }
 
 .mc-scores {
+  position: relative;
   width: 52px;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
   border-left: 1px solid var(--border-light);
+  transition: background 0.12s;
+}
+.mc-edit-hint {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  color: var(--text-muted);
+  opacity: 0.5;
+  pointer-events: none;
 }
 
 .mc-scell {
@@ -222,19 +242,5 @@ const awayColor = computed(() => getTeam(props.match.awayId)?.color ?? NO_TEAM_C
 }
 .mc-scell.loser {
   opacity: 0.45;
-}
-
-.mc-acts {
-  width: 28px;
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  padding: 0 4px;
-  border-left: 1px solid var(--border-light);
-  background: var(--bg);
-  box-sizing: border-box;
 }
 </style>

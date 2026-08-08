@@ -23,6 +23,13 @@ export default {
     },
     playoffDrawTitle: "Playoff Draw",
   },
+  matchScore: {
+    penalties: "Penalty shootout",
+    penaltiesHint: "The tie is level — a shootout decides who goes through.",
+    penaltiesTied: "A shootout cannot end level.",
+    simulate: "Simulate",
+    clear: "Clear result",
+  },
   bracket: {
     zoomHint: "Pinch to zoom · double-tap to reset",
   },

@@ -14,6 +14,7 @@ import type { ChartData, ChartOptions } from "chart.js"
 import type { League } from "../types"
 import type { Team } from "@/modules/teams/types"
 import { useLeagueProgress, type ProgressMode } from "../composables/useLeagueProgress"
+import { AppCard } from "@/components/ui"
 
 Chart.register(
   LineController,
@@ -169,9 +170,8 @@ watch([labels, datasets, mode], () => {
 </script>
 
 <template>
-  <div v-if="hasData" class="progress-chart">
+  <AppCard v-if="hasData" variant="outlined" title="Top Scorers">
     <div class="chart-header">
-      <span class="chart-title">{{ title ?? "Standings Progress" }}</span>
       <div class="mode-toggle">
         <button :class="{ active: mode === 'position' }" @click="mode = 'position'">
           Position
@@ -182,26 +182,16 @@ watch([labels, datasets, mode], () => {
     <div class="canvas-wrap">
       <canvas ref="canvasRef" />
     </div>
-  </div>
+  </AppCard>
 </template>
 
 <style scoped>
-.progress-chart {
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius);
-  background: var(--surface);
-  overflow: visible;
-}
-
 .chart-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 7px 10px;
+  padding: var(--sp-1) var(--sp-2);
   background: var(--bg);
-  border-bottom: 1px solid var(--border-light);
-  border-left: 3px solid var(--accent);
-  border-radius: var(--radius) var(--radius) 0 0;
 }
 
 .chart-title {
@@ -231,7 +221,7 @@ watch([labels, datasets, mode], () => {
 .mode-toggle button.active {
   background: var(--accent);
   border-color: var(--accent);
-  color: #fff;
+  color: var(--on-accent);
 }
 
 .canvas-wrap {

@@ -1,11 +1,8 @@
 <script setup lang="ts">
 import { ref, computed } from "vue"
 import type { Team } from "@/modules/teams/types"
-import type { Tournament, GroupMatch } from "@/modules/tournament/types"
-import AppModal from "@/components/ui/AppModal.vue"
-import { useTeamLookup } from "@/composables/useTeamLookup"
+import type { Tournament } from "@/modules/tournament/types"
 import { Lock } from "@lucide/vue"
-import { useI18n } from "vue-i18n"
 import { useGradualSim } from "../composables/useGradualSim"
 import { GroupCard, GroupSimToolbar } from "./group"
 
@@ -16,6 +13,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   setResult: [groupIdx: number, matchIdx: number, home: number, away: number]
+  clearResult: [groupIdx: number, matchIdx: number]
   simMatch: [groupIdx: number, matchIdx: number]
   simGroup: [groupIdx: number]
   simGroupWeek: [groupIdx: number]
@@ -24,15 +22,8 @@ const emit = defineEmits<{
   advance: []
 }>()
 
-const { t } = useI18n()
 const { runSequential } = useGradualSim()
 const locked = computed(() => !!props.tournament.groupsDone)
-
-const editingMatch = ref<{ gi: number; mi: number } | null>(null)
-const editHome = ref(0)
-const editAway = ref(0)
-
-const { teamById } = useTeamLookup(() => props.teams)
 
 const selectedRound = ref<number[]>([])
 
@@ -141,23 +132,6 @@ async function handleSimAll() {
   await runSequential(cbs)
 }
 
-function openEdit(gi: number, mi: number, match: GroupMatch) {
-  if (locked.value) return
-  editingMatch.value = { gi, mi }
-  editHome.value = match.result?.home ?? 0
-  editAway.value = match.result?.away ?? 0
-}
-
-function confirmEdit() {
-  if (!editingMatch.value) return
-  emit("setResult", editingMatch.value.gi, editingMatch.value.mi, editHome.value, editAway.value)
-  editingMatch.value = null
-}
-
-function cancelEdit() {
-  editingMatch.value = null
-}
-
 const allDone = computed(
   () => props.tournament.groups?.every((g) => g.matches.every((m) => m.result !== null)) ?? false
 )
@@ -165,13 +139,11 @@ const allDone = computed(
 
 <template>
   <div class="gs-wrap">
-    <!-- Locked notice -->
     <div v-if="locked" class="gs-locked-notice">
       <Lock :size="14" />
       Group stage complete — results are locked. Switch to the Knockout tab to continue.
     </div>
 
-    <!-- Toolbar (only when not locked) -->
     <GroupSimToolbar
       v-else
       :groups="tournament.groups ?? []"
@@ -209,36 +181,11 @@ const allDone = computed(
         @update:round="(r) => (selectedRound[gi] = r)"
         @sim-match="(mi) => emit('simMatch', gi, mi)"
         @sim-group-week="handleSimGroupWeek(gi)"
-        @open-edit="(mi, match) => openEdit(gi, mi, match)"
+        @set-result="(mi, h, a) => emit('setResult', gi, mi, h, a)"
+        @clear-result="(mi) => emit('clearResult', gi, mi)"
       />
     </div>
   </div>
-
-  <!-- Score edit modal -->
-  <Teleport to="body">
-    <AppModal
-      v-if="editingMatch && !locked"
-      :title="t('tournament.setResult')"
-      width="360px"
-      @close="cancelEdit"
-    >
-      <div class="score-row">
-        <span class="score-team">
-          {{ teamById(tournament.groups![editingMatch.gi].matches[editingMatch.mi].homeId)?.name }}
-        </span>
-        <input v-model.number="editHome" type="number" min="0" class="score-input" />
-        <span class="score-sep">–</span>
-        <input v-model.number="editAway" type="number" min="0" class="score-input" />
-        <span class="score-team">
-          {{ teamById(tournament.groups![editingMatch.gi].matches[editingMatch.mi].awayId)?.name }}
-        </span>
-      </div>
-      <div class="modal-actions mt">
-        <button class="primary" @click="confirmEdit">{{ t("common.save") }}</button>
-        <button @click="cancelEdit">{{ t("common.cancel") }}</button>
-      </div>
-    </AppModal>
-  </Teleport>
 </template>
 
 <style scoped>
@@ -280,33 +227,6 @@ const allDone = computed(
   color: var(--accent);
   opacity: 0.6;
   letter-spacing: -1px;
-}
-
-.score-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-.score-team {
-  flex: 1;
-  font-size: 13px;
-  font-weight: 600;
-  text-align: center;
-}
-.score-input {
-  width: 52px;
-  text-align: center;
-  font-size: 18px;
-  font-weight: 700;
-  padding: 4px;
-}
-.score-sep {
-  font-size: 16px;
-  color: var(--text-muted);
-}
-.mt {
-  margin-top: 12px;
 }
 
 @media (max-width: 600px) {

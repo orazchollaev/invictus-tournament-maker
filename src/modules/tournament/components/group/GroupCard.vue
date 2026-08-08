@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from "vue"
+import { computed, ref } from "vue"
 import type { Team } from "@/modules/teams/types"
 import type { Group, GroupMatch } from "@/modules/tournament/types"
 import { useTeamLookup } from "@/composables/useTeamLookup"
@@ -7,6 +7,7 @@ import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
 import { AppCard, AppTable } from "@/components/ui"
 import { Shuffle } from "@lucide/vue"
 import { useI18n } from "vue-i18n"
+import MatchScoreModal from "../MatchScoreModal.vue"
 
 const props = defineProps<{
   group: Group
@@ -18,14 +19,22 @@ const props = defineProps<{
 
 const round = defineModel<number>("round", { default: 0 })
 
-defineEmits<{
+const emit = defineEmits<{
   simMatch: [matchIdx: number]
   simGroupWeek: []
-  openEdit: [matchIdx: number, match: GroupMatch]
+  setResult: [matchIdx: number, home: number, away: number]
+  clearResult: [matchIdx: number]
 }>()
 
 const { t } = useI18n()
 const { teamById } = useTeamLookup(() => props.teams)
+
+/* Scores are entered in the modal: a group row is one line tall and cannot
+   hold a stepper, an input and a simulate button without crushing the names. */
+const editingIdx = ref<number | null>(null)
+const editingMatch = computed(() =>
+  editingIdx.value === null ? null : (props.group.matches[editingIdx.value] ?? null)
+)
 
 const rounds = computed((): { match: GroupMatch; mi: number }[][] => {
   const n = props.group.teamIds.length
@@ -129,18 +138,27 @@ function scoreAccentColor(match: GroupMatch): string {
             match.result ? { borderColor: scoreAccentColor(match), borderLeftWidth: '3px' } : {}
           "
           :disabled="locked"
-          @click="$emit('openEdit', mi, match)"
+          @click="editingIdx = mi"
         >
           {{ matchResultStr(match) }}
         </button>
 
         <TeamBadge :team="teamById(match.awayId)" :size="16" class="gs-team gs-team--away" />
-
-        <button v-if="!locked" class="btn-xs sim-btn" @click="$emit('simMatch', mi)">
-          <Shuffle :size="13" />
-        </button>
       </div>
     </div>
+
+    <!-- Inside the card, so the component keeps a single root element. -->
+    <MatchScoreModal
+      v-if="editingMatch && editingIdx !== null && !locked"
+      :home-team="teamById(editingMatch.homeId)"
+      :away-team="teamById(editingMatch.awayId)"
+      :result="editingMatch.result"
+      :subtitle="group.name"
+      @save="(h, a) => emit('setResult', editingIdx!, h, a)"
+      @simulate="emit('simMatch', editingIdx!)"
+      @clear="emit('clearResult', editingIdx!)"
+      @close="editingIdx = null"
+    />
   </AppCard>
 </template>
 
@@ -218,9 +236,11 @@ function scoreAccentColor(match: GroupMatch): string {
   gap: 3px;
 }
 
+/* Three columns now: the per-match simulate button moved into the modal, so
+   the names get its width back. */
 .gs-match {
   display: grid;
-  grid-template-columns: 1fr auto 1fr auto;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
   gap: var(--sp-2);
   font-size: var(--fs-base);
@@ -265,15 +285,6 @@ function scoreAccentColor(match: GroupMatch): string {
 .gs-score-btn--locked {
   cursor: default;
   pointer-events: none;
-}
-
-.sim-btn {
-  flex-shrink: 0;
-  opacity: 0.55;
-  font-size: 11px;
-}
-.sim-btn:hover {
-  opacity: 1;
 }
 
 .team-cell {

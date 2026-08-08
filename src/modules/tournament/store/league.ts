@@ -3,6 +3,8 @@ import type { Tournament } from "../types"
 import type { Team } from "@/modules/teams/types"
 import {
   setLeagueMatchResult,
+  clearLeagueMatchResult,
+  clearTierMatchResult,
   simulateLeagueMatch,
   simulateLeagueMatchday,
   simulateAllLeague,
@@ -37,6 +39,12 @@ export function useLeagueActions(tournaments: Ref<Tournament[]>, getTeams: () =>
     if (!t) return
     setLeagueMatchResult(t, matchdayIdx, matchIdx, home, away)
     if (allLeagueDone(t) && !getLeaguePlayoffData(t)?.enabled) t.winnerId = getLeagueWinner(t)
+  }
+
+  function clearLeagueResult(tournamentId: string, matchdayIdx: number, matchIdx: number) {
+    const t = getT(tournamentId)
+    if (!t) return
+    clearLeagueMatchResult(t, matchdayIdx, matchIdx)
   }
 
   function simLeagueMatch(tournamentId: string, matchdayIdx: number, matchIdx: number) {
@@ -76,6 +84,17 @@ export function useLeagueActions(tournaments: Ref<Tournament[]>, getTeams: () =>
     if (allTiersDone(t) && !getLeaguePlayoffData(t)?.enabled) t.winnerId = getTiersWinner(t)
   }
 
+  function clearTierResult(
+    tournamentId: string,
+    tierIdx: number,
+    matchdayIdx: number,
+    matchIdx: number
+  ) {
+    const t = getT(tournamentId)
+    if (!t) return
+    clearTierMatchResult(t, tierIdx, matchdayIdx, matchIdx)
+  }
+
   function simTierMatch(
     tournamentId: string,
     tierIdx: number,
@@ -111,6 +130,8 @@ export function useLeagueActions(tournaments: Ref<Tournament[]>, getTeams: () =>
 
   return {
     setLeagueResult,
+    clearLeagueResult,
+    clearTierResult,
     simLeagueMatch,
     simLeagueMatchday,
     simAllLeague,

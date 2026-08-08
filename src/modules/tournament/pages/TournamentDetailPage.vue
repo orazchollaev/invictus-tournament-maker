@@ -15,7 +15,7 @@ import PlayoffManualDraw from "@/modules/tournament/components/PlayoffManualDraw
 import GroupDraw from "@/modules/tournament/components/GroupDraw.vue"
 import TournamentStats from "@/modules/tournament/components/TournamentStats.vue"
 import { DrawCeremony } from "@/modules/tournament/components/draw-ceremony"
-import { AppCard, AppModal, BtnGroup } from "@/components/ui"
+import { AppModal, BtnGroup } from "@/components/ui"
 import { DetailHeader, DetailPhaseTabs, DetailMultiTierModal } from "../components/detail"
 import { useTournamentDetail } from "../composables/useTournamentDetail"
 import { useTournamentTabs } from "../composables/useTournamentTabs"
@@ -131,7 +131,7 @@ const {
       >
         <SwiperSlide v-for="tab in visibleTabs" :key="tab">
           <template v-if="isTabRendered(tab)">
-            <AppCard v-if="tab === 'league'" padding="md">
+            <div v-if="tab === 'league'" class="tab-panel">
               <div
                 v-if="
                   showLeaguePlayoffControls &&
@@ -174,6 +174,9 @@ const {
                       (mdi, mi, h, a) =>
                         store.setTierResult(tournament!.id, activeTierIdx, mdi, mi, h, a)
                     "
+                    @clear-result="
+                      (mdi, mi) => store.clearTierResult(tournament!.id, activeTierIdx, mdi, mi)
+                    "
                     @sim-match="
                       (mdi, mi) => store.simTierMatch(tournament!.id, activeTierIdx, mdi, mi)
                     "
@@ -194,13 +197,14 @@ const {
                   @set-result="
                     (mdi, mi, h, a) => store.setLeagueResult(tournament!.id, mdi, mi, h, a)
                   "
+                  @clear-result="(mdi, mi) => store.clearLeagueResult(tournament!.id, mdi, mi)"
                   @sim-match="(mdi, mi) => store.simLeagueMatch(tournament!.id, mdi, mi)"
                   @sim-matchday="(mdi) => store.simLeagueMatchday(tournament!.id, mdi)"
                   @sim-all="store.simAllLeague(tournament!.id)"
                 />
               </template>
-            </AppCard>
-            <AppCard v-else-if="tab === 'groups'" padding="md">
+            </div>
+            <div v-else-if="tab === 'groups'" class="tab-panel">
               <div v-if="hasWildcards" class="gs-subtab-row">
                 <BtnGroup
                   v-model="groupSubTab"
@@ -217,6 +221,7 @@ const {
                   :tournament="tournament"
                   :teams="allTeams"
                   @set-result="(gi, mi, h, a) => store.setGroupResult(tournament!.id, gi, mi, h, a)"
+                  @clear-result="(gi, mi) => store.clearGroupResult(tournament!.id, gi, mi)"
                   @sim-match="(gi, mi) => store.simGroupMatch(tournament!.id, gi, mi)"
                   @sim-group="(gi) => store.simGroup(tournament!.id, gi)"
                   @sim-group-week="(gi) => store.simGroupWeek(tournament!.id, gi)"
@@ -226,22 +231,22 @@ const {
                 />
                 <WildcardRankings v-else :tournament="tournament" :teams="allTeams" />
               </div>
-            </AppCard>
-            <!-- BracketPanel brings its own card: it needs header actions
-                 (export, zoom, view switch) that the others have no use for. -->
+            </div>
+            <!-- BracketPanel keeps its own header strip: it needs the export,
+                 zoom and view-switch controls that the others have no use for. -->
             <BracketPanel
               v-else-if="tab === 'bracket'"
               :tournament="tournament"
               :teams="allTeams"
               :title="trns('tournament.tabs.bracket')"
             />
-            <AppCard v-else-if="tab === 'stats'" padding="md">
+            <div v-else-if="tab === 'stats'" class="tab-panel">
               <TournamentStats :tournament="tournament" :teams="allTeams" />
-            </AppCard>
-            <!-- padding="none": the table draws its own cell padding. -->
-            <AppCard v-else padding="none">
+            </div>
+            <!-- The table draws its own cell padding. -->
+            <div v-else class="tab-panel tab-panel--flush">
               <ParticipantsTable :teams="allTeams" :tournament="tournament" />
-            </AppCard>
+            </div>
           </template>
         </SwiperSlide>
       </Swiper>
@@ -324,6 +329,13 @@ const {
 </template>
 
 <style scoped>
+.tab-panel {
+  min-width: 0;
+}
+.tab-panel--flush {
+  padding: 0;
+}
+
 .lpc-actions {
   display: flex;
   align-items: center;

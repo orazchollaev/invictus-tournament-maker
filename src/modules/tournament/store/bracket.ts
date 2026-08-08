@@ -57,6 +57,42 @@ export function useBracketActions(
     t.winnerId = getWinnerId(final)
   }
 
+  /**
+   * Back to unplayed. Leg 1 owns the tie, so clearing it drops leg 2 as well —
+   * the same rule `setResult` already applies when leg 1 is re-entered.
+   */
+  function clearResult(tournamentId: string, roundIdx: number, matchIdx: number) {
+    const t = tournaments.value.find((t) => t.id === tournamentId)
+    if (!t) return
+    const match = t.rounds[roundIdx].matches[matchIdx]
+    match.result = null
+    if (match.leg2Result !== undefined) match.leg2Result = null
+    clearDownstream(t, roundIdx, matchIdx)
+    if (t.thirdPlaceMatch && roundIdx === t.rounds.length - 2) {
+      t.thirdPlaceMatch.result = null
+    }
+    propagateWinners(t.rounds, getTeams())
+    updateThirdPlaceSlots(t)
+    const final = t.rounds[t.rounds.length - 1].matches[0]
+    t.winnerId = getWinnerId(final)
+  }
+
+  function clearLeg2Result(tournamentId: string, roundIdx: number, matchIdx: number) {
+    const t = tournaments.value.find((t) => t.id === tournamentId)
+    if (!t) return
+    const match = t.rounds[roundIdx].matches[matchIdx]
+    if (match.leg2Result === undefined) return
+    match.leg2Result = null
+    clearDownstream(t, roundIdx, matchIdx)
+    if (t.thirdPlaceMatch && roundIdx === t.rounds.length - 2) {
+      t.thirdPlaceMatch.result = null
+    }
+    propagateWinners(t.rounds, getTeams())
+    updateThirdPlaceSlots(t)
+    const final = t.rounds[t.rounds.length - 1].matches[0]
+    t.winnerId = getWinnerId(final)
+  }
+
   function setLeg2Result(
     tournamentId: string,
     roundIdx: number,
@@ -225,6 +261,8 @@ export function useBracketActions(
   return {
     setResult,
     setLeg2Result,
+    clearResult,
+    clearLeg2Result,
     simulateLeg1,
     simulateLeg2,
     simulateBracketMatch,

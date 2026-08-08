@@ -1,44 +1,105 @@
 <script setup lang="ts">
-/**
- * `[−][value][+]` control. The single implementation of a pattern that
- * existed four times: the global `.stepper` (forms.css), `AppStepper`'s
- * private copy, `.stepper-ctrl` (SettingsSectionNewTournament) and
- * `.stepper-btn`/`.stepper-value` (SettingsSectionSimulation).
- *
- * `editable` swaps the read-only value for a number input, which is what
- * the simulation settings need so a value can be typed directly.
- */
+import { onScopeDispose, ref, watch } from "vue"
+import { useHaptic } from "@/composables/useHaptic"
+
 const props = withDefaults(
   defineProps<{
     min: number
     max: number
     step?: number
-    /** Let the user type the value instead of only stepping it. */
     editable?: boolean
     disabled?: boolean
-    /** Width of the value cell — wider for 3-digit ranges. */
-    valueWidth?: "sm" | "md"
+    valueWidth?: "xs" | "sm" | "md"
+    size?: "sm" | "md"
+    layout?: "row" | "stack"
+    empty?: boolean
+    placeholder?: string
   }>(),
-  { step: 1, valueWidth: "sm" }
+  { step: 1, valueWidth: "sm", size: "md", layout: "row" }
 )
+
+const emit = defineEmits<{ bump: [value: number] }>()
 
 const model = defineModel<number>({ required: true })
 
+const { tap } = useHaptic()
+
 const clamp = (v: number) => Math.max(props.min, Math.min(props.max, v))
 
+const emitted = ref<number | null>(null)
+watch(model, () => (emitted.value = null))
+
 function bump(delta: number) {
-  model.value = clamp(model.value + delta * props.step)
+  const next = clamp((emitted.value ?? model.value) + delta * props.step)
+  emitted.value = next
+  model.value = next
+  emit("bump", next)
+  tap()
+}
+
+const HOLD_DELAY = 400
+const REPEAT_MS = 110
+const FAST_AFTER = 1200
+const FAST_MS = 55
+
+let holdTimer: ReturnType<typeof setTimeout> | null = null
+let repeatTimer: ReturnType<typeof setInterval> | null = null
+
+function stopHold() {
+  if (holdTimer !== null) clearTimeout(holdTimer)
+  if (repeatTimer !== null) clearInterval(repeatTimer)
+  holdTimer = null
+  repeatTimer = null
+}
+
+function atBound(delta: number): boolean {
+  return (emitted.value ?? model.value) === (delta > 0 ? props.max : props.min)
+}
+
+function startHold(delta: number) {
+  stopHold()
+  if (props.disabled) return
+  holdTimer = setTimeout(() => {
+    const startedAt = Date.now()
+    repeatTimer = setInterval(() => {
+      bump(delta)
+      // Bounds reached — nothing left to repeat.
+      if (atBound(delta)) {
+        stopHold()
+        return
+      }
+      if (Date.now() - startedAt > FAST_AFTER && repeatTimer !== null) {
+        clearInterval(repeatTimer)
+        repeatTimer = setInterval(() => {
+          bump(delta)
+          if (atBound(delta)) stopHold()
+        }, FAST_MS)
+      }
+    }, REPEAT_MS)
+  }, HOLD_DELAY)
+}
+
+onScopeDispose(stopHold)
+
+function onInputFocus(e: FocusEvent) {
+  ;(e.target as HTMLInputElement).select()
 }
 </script>
 
 <template>
-  <div class="num" :class="{ 'num--disabled': disabled }">
+  <div class="num" :class="[`num--${size}`, `num--${layout}`, { 'num--disabled': disabled }]">
     <button
+      v-if="layout === 'row'"
       type="button"
       class="num-btn"
-      :disabled="disabled || model <= min"
+      :disabled="disabled || (!empty && model <= min)"
       :aria-label="`−${step}`"
       @click="bump(-1)"
+      @pointerdown="startHold(-1)"
+      @pointerup="stopHold"
+      @pointerleave="stopHold"
+      @pointercancel="stopHold"
+      @contextmenu.prevent
     >
       −
     </button>
@@ -52,20 +113,63 @@ function bump(delta: number) {
       :min="min"
       :max="max"
       :step="step"
+      :placeholder="placeholder"
       :disabled="disabled"
+      @focus="onInputFocus"
       @change="model = clamp(model)"
     />
-    <span v-else class="num-value" :class="`num-value--${valueWidth}`">{{ model }}</span>
+    <span v-else class="num-value" :class="`num-value--${valueWidth}`">
+      {{ empty ? (placeholder ?? "") : model }}
+    </span>
 
     <button
+      v-if="layout === 'row'"
       type="button"
       class="num-btn"
-      :disabled="disabled || model >= max"
+      :disabled="disabled || (!empty && model >= max)"
       :aria-label="`+${step}`"
       @click="bump(1)"
+      @pointerdown="startHold(1)"
+      @pointerup="stopHold"
+      @pointerleave="stopHold"
+      @pointercancel="stopHold"
+      @contextmenu.prevent
     >
       +
     </button>
+
+    <!-- Stacked layout: one narrow column instead of two side cells, so a
+         score cell costs the width of the number plus ~18px. -->
+    <div v-else class="num-stack">
+      <button
+        type="button"
+        class="num-btn num-btn--up"
+        :disabled="disabled || (!empty && model >= max)"
+        :aria-label="`+${step}`"
+        @click="bump(1)"
+        @pointerdown="startHold(1)"
+        @pointerup="stopHold"
+        @pointerleave="stopHold"
+        @pointercancel="stopHold"
+        @contextmenu.prevent
+      >
+        +
+      </button>
+      <button
+        type="button"
+        class="num-btn num-btn--down"
+        :disabled="disabled || (!empty && model <= min)"
+        :aria-label="`−${step}`"
+        @click="bump(-1)"
+        @pointerdown="startHold(-1)"
+        @pointerup="stopHold"
+        @pointerleave="stopHold"
+        @pointercancel="stopHold"
+        @contextmenu.prevent
+      >
+        −
+      </button>
+    </div>
   </div>
 </template>
 
@@ -77,6 +181,10 @@ function bump(delta: number) {
   border-radius: var(--radius);
   overflow: hidden;
   flex-shrink: 0;
+  /* No double-tap zoom or text selection while hammering the buttons. */
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .num--disabled {
@@ -97,6 +205,7 @@ function bump(delta: number) {
   background: var(--surface);
   color: var(--text);
   cursor: pointer;
+  touch-action: manipulation;
 }
 
 .num-btn:first-child {
@@ -110,6 +219,10 @@ function bump(delta: number) {
   background: var(--accent-subtle);
   color: var(--accent);
 }
+.num-btn:active:not(:disabled) {
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
+  color: var(--accent);
+}
 
 .num-btn:disabled {
   opacity: 0.35;
@@ -117,6 +230,7 @@ function bump(delta: number) {
 }
 
 .num-value {
+  height: stretch;
   text-align: center;
   font-family: var(--font-ui);
   font-size: var(--fs-md);
@@ -124,6 +238,9 @@ function bump(delta: number) {
   color: var(--text);
 }
 
+.num-value--xs {
+  width: 26px;
+}
 .num-value--sm {
   width: 36px;
 }
@@ -138,6 +255,7 @@ function bump(delta: number) {
   padding: 0 var(--sp-1);
   color: var(--accent);
   -moz-appearance: textfield;
+  appearance: textfield;
 }
 .num-value--input:focus {
   outline: none;
@@ -147,5 +265,71 @@ function bump(delta: number) {
 .num-value--input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
+}
+
+/* ── Match-card variant ──
+   Same anatomy at score-cell scale: 20px buttons keep the control inside a
+   26px row while staying a real tap target. */
+.num--sm {
+  background: var(--surface);
+  border-color: var(--border-light);
+}
+.num--sm .num-btn {
+  width: 20px;
+  height: 22px;
+  font-size: var(--fs-sm);
+  background: transparent;
+  color: var(--text-muted);
+}
+.num--sm.num--row .num-btn:first-child {
+  border-right-color: var(--border-light);
+}
+.num--sm.num--row .num-btn:last-child {
+  border-left-color: var(--border-light);
+}
+.num--sm .num-value {
+  font-size: var(--fs-sm);
+  padding: 0;
+}
+.num--sm .num-value--input {
+  background: transparent;
+  color: inherit;
+}
+
+/* ── Stacked layout ──
+   `+` over `−` in a single column. A score cell then costs the number plus one
+   button width, which is what lets a bracket card keep its name column. */
+.num--stack .num-stack {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  align-self: stretch;
+  border-left: 1px solid var(--border);
+}
+.num--stack .num-btn {
+  width: 26px;
+  height: 19px;
+  border: none;
+  border-radius: 0;
+  font-size: var(--fs-md);
+  font-weight: 700;
+  line-height: 1;
+}
+.num--stack .num-btn--up {
+  border-bottom: 1px solid var(--border);
+}
+
+.num--sm.num--stack .num-stack {
+  border-left-color: var(--border-light);
+}
+/* Halves sized against the 34px match-card rows (15 + 1 + 15 + the control's
+   own 2px border = 33). Anything smaller was not a tap target. */
+.num--sm.num--stack .num-btn {
+  width: 22px;
+  height: 15px;
+  font-size: var(--fs-sm);
+}
+.num--sm.num--stack .num-btn--up {
+  border-bottom-color: var(--border-light);
 }
 </style>

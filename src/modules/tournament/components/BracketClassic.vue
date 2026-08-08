@@ -30,6 +30,9 @@ const emit = defineEmits<{
   "sim-leg1": [round: number, match: number]
   "sim-leg2": [round: number, match: number]
   "set-third-place-result": [home: number, away: number, penHome?: number, penAway?: number]
+  "clear-result": [round: number, match: number]
+  "clear-leg2-result": [round: number, match: number]
+  "clear-third-place-result": []
   "sim-third-place": []
 }>()
 
@@ -194,6 +197,8 @@ function svgSegments(p: ConnInfo, w: number) {
                 (h, a, ph, pa) =>
                   emit('set-leg2-result', match._origRound, match._origMatch, h, a, ph, pa)
               "
+              @clear-result="emit('clear-result', match._origRound, match._origMatch)"
+              @clear-leg2-result="emit('clear-leg2-result', match._origRound, match._origMatch)"
               @sim-match="emit('sim-match', match._origRound, match._origMatch)"
               @sim-leg1="emit('sim-leg1', match._origRound, match._origMatch)"
               @sim-leg2="emit('sim-leg2', match._origRound, match._origMatch)"
@@ -255,6 +260,7 @@ function svgSegments(p: ConnInfo, w: number) {
                 right: 0,
               }"
               @set-result="(h, a, ph, pa) => emit('set-third-place-result', h, a, ph, pa)"
+              @clear-result="emit('clear-third-place-result')"
               @sim-match="emit('sim-third-place')"
             />
           </div>

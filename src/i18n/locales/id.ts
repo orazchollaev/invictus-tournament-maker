@@ -24,6 +24,13 @@ export default {
     },
     playoffDrawTitle: "Undian Playoff",
   },
+  matchScore: {
+    penalties: "Adu penalti",
+    penaltiesHint: "Skor imbang — adu penalti menentukan siapa yang lolos.",
+    penaltiesTied: "Adu penalti tidak boleh berakhir imbang.",
+    simulate: "Simulasikan",
+    clear: "Hapus hasil",
+  },
   bracket: {
     zoomHint: "Cubit untuk memperbesar · ketuk dua kali untuk mengatur ulang",
   },

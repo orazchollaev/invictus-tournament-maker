@@ -3,6 +3,7 @@ import type { Tournament } from "../types"
 import type { Team } from "@/modules/teams/types"
 import {
   setGroupMatchResult,
+  clearGroupMatchResult,
   simulateGroupMatch,
   simulateGroup,
   simulateGroupWeek,
@@ -24,6 +25,12 @@ export function useGroupActions(tournaments: Ref<Tournament[]>, getTeams: () => 
     const t = tournaments.value.find((t) => t.id === tournamentId)
     if (!t) return
     setGroupMatchResult(t, groupIdx, matchIdx, home, away)
+  }
+
+  function clearGroupResult(tournamentId: string, groupIdx: number, matchIdx: number) {
+    const t = tournaments.value.find((t) => t.id === tournamentId)
+    if (!t) return
+    clearGroupMatchResult(t, groupIdx, matchIdx)
   }
 
   function simGroupMatch(tournamentId: string, groupIdx: number, matchIdx: number) {
@@ -78,6 +85,7 @@ export function useGroupActions(tournaments: Ref<Tournament[]>, getTeams: () => 
 
   return {
     setGroupResult,
+    clearGroupResult,
     simGroupMatch,
     simGroup,
     simGroupWeek,

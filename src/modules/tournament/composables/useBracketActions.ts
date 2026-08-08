@@ -19,6 +19,14 @@ export function useBracketActions(tournamentId: () => string) {
     onSimLeg2: (ri: number, mi: number) => store.simulateLeg2(tournamentId(), ri, mi),
     onSetThirdPlaceResult: (h: number, a: number, ph?: number, pa?: number) =>
       store.setThirdPlaceResult(tournamentId(), h, a, ph, pa),
-    onSimThirdPlace: () => store.simulateThirdPlace(tournamentId()),
+    // A played third-place match is left alone by the simulator, so asking for a
+    // re-roll from the modal has to drop the old result first.
+    onSimThirdPlace: () => {
+      store.clearThirdPlaceResult(tournamentId())
+      store.simulateThirdPlace(tournamentId())
+    },
+    onClearResult: (ri: number, mi: number) => store.clearResult(tournamentId(), ri, mi),
+    onClearLeg2Result: (ri: number, mi: number) => store.clearLeg2Result(tournamentId(), ri, mi),
+    onClearThirdPlaceResult: () => store.clearThirdPlaceResult(tournamentId()),
   }
 }

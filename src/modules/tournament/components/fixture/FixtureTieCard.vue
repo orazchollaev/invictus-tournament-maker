@@ -4,17 +4,22 @@ import { getWinnerId } from "@/engine"
 import { teamAbbr } from "@/composables/useTeamLookup"
 import FlagCircle from "@/modules/teams/components/FlagCircle.vue"
 import { useSettingsStore } from "@/modules/settings/store"
-import { Shuffle } from "@lucide/vue"
 import FixtureLegRow from "./FixtureLegRow.vue"
-import type { FlatMatch, MatchEditor } from "./useMatchEditor"
+import type { FlatMatch } from "./types"
 
 const settings = useSettingsStore()
 
-const props = defineProps<{ match: FlatMatch; teams: Team[]; editor: MatchEditor }>()
+const props = defineProps<{ match: FlatMatch; teams: Team[] }>()
 const emit = defineEmits<{
-  save: [match: FlatMatch, leg: 1 | 2]
-  "save-pens": [match: FlatMatch, leg: 1 | 2]
-  "sim-match": [match: FlatMatch]
+  "set-result": [
+    match: FlatMatch,
+    leg: 1 | 2,
+    home: number,
+    away: number,
+    penHome?: number,
+    penAway?: number,
+  ]
+  "clear-result": [match: FlatMatch, leg: 1 | 2]
   "sim-leg1": [match: FlatMatch]
   "sim-leg2": [match: FlatMatch]
 }>()
@@ -81,14 +86,6 @@ function onSim(leg: 1 | 2) {
         />
         <span v-else class="cdot" :style="{ background: getTeam(match.awayId)?.color ?? '#ccc' }" />
       </div>
-      <button
-        v-if="match.homeId && match.awayId"
-        class="tie-sim"
-        title="Simulate both legs"
-        @click="$emit('sim-match', match)"
-      >
-        <Shuffle :size="11" />
-      </button>
     </div>
 
     <div class="tie-legs">
@@ -99,9 +96,8 @@ function onSim(leg: 1 | 2) {
         :away-id="match.awayId"
         :result="match.result"
         :teams="teams"
-        :editor="editor"
-        @save="(leg) => emit('save', match, leg)"
-        @save-pens="(leg) => emit('save-pens', match, leg)"
+        @set-result="(leg, h, a, ph, pa) => emit('set-result', match, leg, h, a, ph, pa)"
+        @clear-result="(leg) => emit('clear-result', match, leg)"
         @sim="onSim"
       />
       <!-- Leg 2 is played at the other venue, so the sides swap. -->
@@ -112,10 +108,9 @@ function onSim(leg: 1 | 2) {
         :away-id="match.homeId"
         :result="match.leg2Result"
         :teams="teams"
-        :editor="editor"
         :disabled="!match.result"
-        @save="(leg) => emit('save', match, leg)"
-        @save-pens="(leg) => emit('save-pens', match, leg)"
+        @set-result="(leg, h, a, ph, pa) => emit('set-result', match, leg, h, a, ph, pa)"
+        @clear-result="(leg) => emit('clear-result', match, leg)"
         @sim="onSim"
       />
     </div>

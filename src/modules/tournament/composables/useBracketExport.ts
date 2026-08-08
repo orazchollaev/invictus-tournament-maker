@@ -37,10 +37,25 @@ export function useBracketExport(options: BracketExportOptions) {
       // side is silently cropped. scrollWidth/scrollHeight is the element's
       // full un-clipped content size, forcing the whole bracket into frame
       // regardless of how little of it is actually on-screen right now.
+      const rawW = el.scrollWidth
+      const rawH = el.scrollHeight
+      // A large bracket at pixelRatio 2 can exceed the canvas size a mobile
+      // WebView is willing to allocate (both a per-side and a total-area cap
+      // apply on Android/iOS); past that limit the canvas is silently
+      // truncated, which looks identical to "only a slice got exported".
+      // Scale the ratio down — never up — so the whole bracket always fits.
+      const MAX_DIM = 4096
+      const MAX_AREA = 16_000_000
+      const pixelRatio = Math.min(
+        2,
+        MAX_DIM / rawW,
+        MAX_DIM / rawH,
+        Math.sqrt(MAX_AREA / (rawW * rawH))
+      )
       const dataUrl = await toPng(el, {
-        pixelRatio: 2,
-        width: el.scrollWidth,
-        height: el.scrollHeight,
+        pixelRatio,
+        width: rawW,
+        height: rawH,
       })
       const filename = options.filename()
 

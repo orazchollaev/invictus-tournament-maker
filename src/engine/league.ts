@@ -4,6 +4,7 @@ import type {
   GroupStanding,
   League,
   LeagueTier,
+  MatchResult,
   Tiebreaker,
   Tournament,
 } from "../modules/tournament/types"
@@ -146,8 +147,26 @@ export function setLeagueMatchResult(
   home: number,
   away: number
 ) {
+  writeLeagueMatchResult(tournament, matchdayIdx, matchIdx, { home, away })
+}
+
+/** Back to unplayed — the score modal offers this for a mis-entered result. */
+export function clearLeagueMatchResult(
+  tournament: Tournament,
+  matchdayIdx: number,
+  matchIdx: number
+) {
+  writeLeagueMatchResult(tournament, matchdayIdx, matchIdx, null)
+}
+
+function writeLeagueMatchResult(
+  tournament: Tournament,
+  matchdayIdx: number,
+  matchIdx: number,
+  result: MatchResult | null
+) {
   if (!tournament.league) return
-  tournament.league.matchdays[matchdayIdx].matches[matchIdx].result = { home, away }
+  tournament.league.matchdays[matchdayIdx].matches[matchIdx].result = result
   recalcLeagueStandings(
     tournament.league,
     tournament.tiebreaker,
@@ -235,9 +254,29 @@ export function setTierMatchResult(
   home: number,
   away: number
 ) {
+  writeTierMatchResult(tournament, tierIdx, matchdayIdx, matchIdx, { home, away })
+}
+
+/** Back to unplayed — the score modal offers this for a mis-entered result. */
+export function clearTierMatchResult(
+  tournament: Tournament,
+  tierIdx: number,
+  matchdayIdx: number,
+  matchIdx: number
+) {
+  writeTierMatchResult(tournament, tierIdx, matchdayIdx, matchIdx, null)
+}
+
+function writeTierMatchResult(
+  tournament: Tournament,
+  tierIdx: number,
+  matchdayIdx: number,
+  matchIdx: number,
+  result: MatchResult | null
+) {
   const tier = getTier(tournament, tierIdx)
   if (!tier) return
-  tier.league.matchdays[matchdayIdx].matches[matchIdx].result = { home, away }
+  tier.league.matchdays[matchdayIdx].matches[matchIdx].result = result
   recalcLeagueStandings(
     tier.league,
     tournament.tiebreaker,

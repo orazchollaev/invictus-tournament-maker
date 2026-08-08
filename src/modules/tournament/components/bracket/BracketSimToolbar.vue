@@ -33,20 +33,20 @@ function run(action: () => void) {
   <div class="sim-toolbar">
     <!-- Mobile: one dropdown holding every sim action -->
     <div class="sim-dropdown">
-      <AppButton variant="outlined" size="sm" @click="menuOpen = !menuOpen">
-        <AppIcon :icon="Shuffle" size="md" />
+      <AppButton variant="outlined" size="xs" @click="menuOpen = !menuOpen">
+        <AppIcon :icon="Shuffle" size="xs" />
         Simulate
-        <AppIcon :icon="ChevronDown" size="sm" class="sim-chevron" :class="{ open: menuOpen }" />
+        <AppIcon :icon="ChevronDown" size="xs" class="sim-chevron" :class="{ open: menuOpen }" />
       </AppButton>
       <div v-if="menuOpen" class="sim-dropdown-panel">
-        <AppButton variant="text" size="sm" block @click="run(() => emit('sim-all'))">
+        <AppButton variant="text" size="xs" block @click="run(() => emit('sim-all'))">
           Simulate All
         </AppButton>
         <AppButton
           v-for="(round, ri) in rounds"
           :key="ri"
           variant="text"
-          size="sm"
+          size="xs"
           block
           @click="run(() => emit('sim-round', ri))"
         >
@@ -55,7 +55,7 @@ function run(action: () => void) {
         <AppButton
           v-if="thirdPlaceMatch"
           variant="text"
-          size="sm"
+          size="xs"
           block
           :disabled="!thirdPlaceReady()"
           @click="run(() => emit('sim-third-place'))"
@@ -66,7 +66,7 @@ function run(action: () => void) {
     </div>
 
     <!-- Desktop: the same actions laid out inline -->
-    <AppButton variant="outlined" size="sm" class="sim-inline" @click="emit('sim-all')">
+    <AppButton variant="outlined" size="xs" class="sim-inline" @click="emit('sim-all')">
       <AppIcon :icon="Shuffle" size="md" />
       Simulate All
     </AppButton>
@@ -74,7 +74,7 @@ function run(action: () => void) {
       v-for="(round, ri) in rounds"
       :key="ri"
       variant="outlined"
-      size="sm"
+      size="xs"
       class="sim-inline"
       @click="emit('sim-round', ri)"
     >
@@ -83,7 +83,7 @@ function run(action: () => void) {
     <AppButton
       v-if="thirdPlaceMatch"
       variant="outlined"
-      size="sm"
+      size="xs"
       class="sim-inline"
       :disabled="!thirdPlaceReady()"
       @click="emit('sim-third-place')"
@@ -97,7 +97,6 @@ function run(action: () => void) {
 .sim-toolbar {
   display: flex;
   align-items: center;
-  padding: 0 var(--sp-2);
   margin-bottom: var(--sp-3);
   flex-wrap: wrap;
   gap: var(--sp-2);
@@ -140,7 +139,6 @@ function run(action: () => void) {
 @media (max-width: 640px) {
   .sim-toolbar {
     gap: var(--sp-1);
-    padding: 0 var(--sp-2);
   }
   .sim-inline {
     display: none;

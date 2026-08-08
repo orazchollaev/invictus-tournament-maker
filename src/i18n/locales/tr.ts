@@ -23,6 +23,13 @@ export default {
     },
     playoffDrawTitle: "Play-off Kura Çekimi",
   },
+  matchScore: {
+    penalties: "Penaltı atışları",
+    penaltiesHint: "Eşitlik bozulmadı — turu penaltılar belirler.",
+    penaltiesTied: "Penaltı atışları berabere bitemez.",
+    simulate: "Simüle et",
+    clear: "Sonucu temizle",
+  },
   bracket: {
     zoomHint: "Yakınlaştırmak için sıkıştırın · sıfırlamak için çift dokunun",
   },
