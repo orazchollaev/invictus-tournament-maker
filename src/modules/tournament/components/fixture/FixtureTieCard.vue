@@ -52,6 +52,12 @@ function aggWinnerId(match: FlatMatch): string | null {
   return getWinnerId(match)
 }
 
+/** Leg 2's row frame is home=awayId/away=homeId, so leg 1's score offsets swapped. */
+function leg2AggregateOffset(match: FlatMatch): { home: number; away: number } | null {
+  if (!match.result) return null
+  return { home: match.result.away, away: match.result.home }
+}
+
 function onSim(leg: 1 | 2) {
   if (leg === 1) emit("sim-leg1", props.match)
   else emit("sim-leg2", props.match)
@@ -109,6 +115,7 @@ function onSim(leg: 1 | 2) {
         :result="match.leg2Result"
         :teams="teams"
         :disabled="!match.result"
+        :aggregate-offset="leg2AggregateOffset(match)"
         @set-result="(leg, h, a, ph, pa) => emit('set-result', match, leg, h, a, ph, pa)"
         @clear-result="(leg) => emit('clear-result', match, leg)"
         @sim="onSim"

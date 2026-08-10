@@ -32,6 +32,7 @@ export default {
   },
   bracket: {
     zoomHint: "Yakınlaştırmak için sıkıştırın · sıfırlamak için çift dokunun",
+    legPick: "Hangi maçı girmek istiyorsun?",
   },
   nav: {
     tournaments: "Turnuvalar",
@@ -695,5 +696,27 @@ export default {
     playoffDrawTitle: "Play-off Kurası",
     potTop: "Seri başları",
     potRest: "Diğerleri",
+  },
+  stats: {
+    round: "{round}. Tur",
+    league: "Lig",
+    group: "Grup",
+    standingsProgress: "{name} — Puan Durumu",
+    defaultStandingsProgress: "Puan Durumu",
+    topScorers: "Gol Krallığı",
+    bestDefense: "En İyi Savunma",
+    team: "Takım",
+    goalsForTitle: "Atılan Gol",
+    gf: "AG",
+    goalsAgainstTitle: "Yenilen Gol",
+    ga: "YG",
+    matchesPlayedTitle: "Oynanan Maç",
+    mp: "OM",
+  },
+  progressChart: {
+    title: "Puan / Sıra Gelişimi",
+    position: "Sıra",
+    points: "Puan",
+    pts: "puan",
   },
 } as const

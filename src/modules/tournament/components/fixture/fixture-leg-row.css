@@ -11,14 +11,11 @@
   border-bottom: none;
 }
 
-/* Leg 2 stays visible but inert until leg 1 has a result. */
 .leg--locked {
   opacity: 0.38;
   pointer-events: none;
 }
 
-/* The whole row is the affordance now — the edit, ✓/✗ and shuffle buttons all
-   moved into the score modal. */
 .leg-open {
   display: flex;
   flex-direction: row;
@@ -31,6 +28,7 @@
   text-align: left;
   cursor: pointer;
   min-width: 0;
+  gap: 0;
 }
 .leg-open:disabled {
   cursor: default;

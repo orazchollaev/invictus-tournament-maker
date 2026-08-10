@@ -1,7 +1,7 @@
 import { createI18n } from "vue-i18n"
 import en from "./locales/en"
 
-export type Locale = "en" | "tr" | "ru" | "es" | "pt" | "id"
+export type Locale = "en" | "tr" | "ru" | "es" | "pt" | "id" | "jp"
 
 export interface LocaleOption {
   value: Locale
@@ -16,6 +16,7 @@ export const LOCALES: LocaleOption[] = [
   { value: "es", label: "Español", flag: "ES" },
   { value: "pt", label: "Português", flag: "PT" },
   { value: "id", label: "Bahasa Indonesia", flag: "ID" },
+  { value: "jp", label: "日本語", flag: "JP" },
 ]
 
 export const i18n = createI18n({
@@ -34,6 +35,7 @@ const localeLoaders: Record<
   es: () => import("./locales/es"),
   pt: () => import("./locales/pt"),
   id: () => import("./locales/id"),
+  jp: () => import("./locales/jp"),
 }
 
 export async function loadLocale(locale: Locale): Promise<void> {

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from "vue"
+import { useI18n } from "vue-i18n"
 import type { Match } from "../types"
 import type { Team } from "@/modules/teams/types"
 import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
@@ -9,6 +10,7 @@ import { useSettingsStore } from "@/modules/settings/store"
 import MatchScoreModal from "./MatchScoreModal.vue"
 import { Pencil } from "@lucide/vue"
 
+const { t } = useI18n()
 const settings = useSettingsStore()
 const lowQuality = computed(() => settings.bracketQuality === "low")
 
@@ -85,6 +87,7 @@ const awayTeam = computed(() => props.teams.find((t) => t.id === props.match.awa
 // aggregate, which nothing can step, so the leg is picked first.
 const editingLeg = ref<null | 1 | 2>(null)
 const pickingLeg = ref(false)
+const closingPicker = ref(false)
 const canEdit = computed(() => !props.isExporting && !!props.match.homeId && !!props.match.awayId)
 
 /** Leg 2 is played reversed, so its rows read away-first against this card. */
@@ -94,6 +97,11 @@ const modalResult = computed(() =>
   editingLeg.value === 2 ? props.match.leg2Result : props.match.result
 )
 const modalSubtitle = computed(() => (isDouble.value ? `Leg ${editingLeg.value}` : undefined))
+/** Leg 2's modal frame is home=awayId/away=homeId, so leg 1's score offsets swapped. */
+const modalAggregateOffset = computed(() => {
+  if (editingLeg.value !== 2 || !props.match.result) return null
+  return { home: props.match.result.away, away: props.match.result.home }
+})
 
 /* Panning the bracket must not count as a tap. The layer swallows the click if
    the pointer moved, so only a still press opens the modal. */
@@ -116,6 +124,15 @@ function onPointerUp(e: PointerEvent) {
 function openLeg(leg: 1 | 2) {
   pickingLeg.value = false
   editingLeg.value = leg
+}
+
+function closePicker() {
+  if (closingPicker.value) return
+  closingPicker.value = true
+  setTimeout(() => {
+    pickingLeg.value = false
+    closingPicker.value = false
+  }, 180)
 }
 
 function onSave(home: number, away: number, penHome?: number, penAway?: number) {
@@ -227,14 +244,19 @@ const isChampion = computed(() => props.isFinal && !!props.match.result)
       </div>
     </div>
 
-    <!-- Both live inside the card so it keeps a single root element: the
-         bracket positions each card by passing `position: absolute` down as a
-         fallthrough style, which a multi-root component silently drops. -->
     <Teleport to="body">
-      <div v-if="pickingLeg" class="leg-pick-backdrop" @click="pickingLeg = false">
-        <div class="leg-pick" @click.stop>
-          <button class="leg-pick-btn" @click="openLeg(1)">L1</button>
-          <button class="leg-pick-btn" :disabled="!match.result" @click="openLeg(2)">L2</button>
+      <div
+        v-if="pickingLeg"
+        class="leg-pick-backdrop"
+        :class="{ closing: closingPicker }"
+        @pointerdown="closePicker"
+      >
+        <div class="leg-pick" :class="{ closing: closingPicker }" @pointerdown.stop>
+          <span class="leg-pick-title">{{ t("bracket.legPick") }}</span>
+          <div class="leg-pick-btns">
+            <button class="leg-pick-btn" @click="openLeg(1)">L1</button>
+            <button class="leg-pick-btn" :disabled="!match.result" @click="openLeg(2)">L2</button>
+          </div>
         </div>
       </div>
     </Teleport>
@@ -245,7 +267,8 @@ const isChampion = computed(() => props.isFinal && !!props.match.result)
       :away-team="modalAway"
       :result="modalResult"
       :subtitle="modalSubtitle"
-      requires-winner
+      :requires-winner="!isDouble || editingLeg === 2"
+      :aggregate-offset="modalAggregateOffset"
       @save="onSave"
       @simulate="onSimulate"
       @clear="onClear"
@@ -279,26 +302,14 @@ const isChampion = computed(() => props.isFinal && !!props.match.result)
 }
 .mc.final {
   border-color: var(--gold);
-  box-shadow:
-    0 0 0 1px var(--gold-soft),
-    0 2px 10px var(--gold-faint);
 }
-/* Opacity-only dim — filter (saturate) isn't GPU-accelerated on most Android
-   WebViews and forces a software repaint of the whole card on every toggle. */
 .mc.dimmed {
   opacity: 0.22;
 }
-.mc.champion {
-  animation: champion-glow 2s ease-in-out infinite;
-}
-/* Pause the glow's box-shadow animation while the bracket is being panned/zoomed —
-   box-shadow isn't compositable, so animating it fights the pan/zoom transform for paint time. */
 .bracket-pan-layer.zooming .mc.champion,
 .bracket-pan-layer.dragging .mc.champion {
   animation-play-state: paused;
 }
-/* Low-quality mode (mobile/Android default candidate): drop the mount animation
-   and champion glow loop entirely — cheapest way to cut paint work on weak GPUs. */
 .mc.mc--low-q {
   animation: none;
 }
@@ -437,23 +448,129 @@ const isChampion = computed(() => props.isFinal && !!props.match.result)
 /* ── Leg picker ──
    Teleported, because the card sits inside a transformed pan layer where a
    popover would be scaled along with the bracket. */
+@keyframes leg-pick-backdrop-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes leg-pick-backdrop-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+@keyframes leg-pick-dialog-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -46%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+@keyframes leg-pick-dialog-out {
+  from {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+  to {
+    opacity: 0;
+    transform: translate(-50%, -46%);
+  }
+}
+@keyframes leg-pick-sheet-in {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+@keyframes leg-pick-sheet-out {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(100%);
+  }
+}
+
 .leg-pick-backdrop {
   position: fixed;
   inset: 0;
-  z-index: 205;
+  z-index: calc(var(--z-modal) + 10);
   display: flex;
   align-items: center;
   justify-content: center;
   background: rgba(32, 33, 34, 0.4);
+  animation: leg-pick-backdrop-in 0.16s ease both;
+}
+.leg-pick-backdrop.closing {
+  animation: leg-pick-backdrop-out 0.18s ease both;
 }
 .leg-pick {
+  position: fixed;
+  top: 50%;
+  left: 50%;
   display: flex;
-  gap: var(--sp-2);
-  padding: var(--sp-3);
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-3);
+  min-width: 220px;
+  padding: var(--sp-4);
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-lg);
+  transform: translate(-50%, -50%);
+  animation: leg-pick-dialog-in 0.18s var(--ease) both;
+}
+.leg-pick.closing {
+  animation: leg-pick-dialog-out 0.18s var(--ease) both;
+}
+.leg-pick-title {
+  font-family: var(--font-ui);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--text-muted);
+  text-align: center;
+}
+.leg-pick-btns {
+  display: flex;
+  gap: var(--sp-2);
+}
+@media (max-width: 640px) {
+  .leg-pick-backdrop {
+    align-items: flex-end;
+  }
+  .leg-pick {
+    position: static;
+    width: 100%;
+    min-width: 0;
+    transform: none;
+    border: none;
+    border-top: 1px solid var(--border);
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    padding: var(--sp-4) var(--sp-3) calc(var(--sp-3) + var(--safe-bottom));
+    animation: leg-pick-sheet-in 0.22s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .leg-pick.closing {
+    animation: leg-pick-sheet-out 0.18s cubic-bezier(0.4, 0, 1, 1) both;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .leg-pick,
+  .leg-pick.closing,
+  .leg-pick-backdrop,
+  .leg-pick-backdrop.closing {
+    animation: none;
+  }
 }
 .leg-pick-btn {
   min-width: 64px;

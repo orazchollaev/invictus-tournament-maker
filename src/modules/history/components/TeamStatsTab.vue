@@ -18,9 +18,6 @@ function toggle(teamId: string) {
 
 <template>
   <AppCard>
-    <!-- Deliberately not AppTable: this is an expandable master/detail grid
-         with a nested table inside a full-width cell, so it needs its own
-         row and cell rules rather than the shared data-table ones. -->
     <div class="ts-wrap">
       <table class="ts-table">
         <thead>

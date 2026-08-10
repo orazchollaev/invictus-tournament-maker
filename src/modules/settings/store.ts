@@ -13,7 +13,7 @@ export type BracketQuality = "high" | "low"
 export type TournamentListView = "list" | "grid"
 
 export const useSettingsStore = defineStore("settings", () => {
-  const theme = ref<Theme>("light")
+  const theme = ref<Theme>("dark")
   const locale = ref<Locale>("en")
   const primaryColor = ref<string | null>(null)
   const groupLegMode = ref<LegMode>("single")
@@ -81,7 +81,7 @@ export const useSettingsStore = defineStore("settings", () => {
   watch(homeAdvantage, (val) => setSimConfig({ homeAdvantage: val }), { immediate: true })
 
   function resetAll() {
-    theme.value = "light"
+    theme.value = "dark"
     locale.value = "en"
     primaryColor.value = null
     groupLegMode.value = "single"

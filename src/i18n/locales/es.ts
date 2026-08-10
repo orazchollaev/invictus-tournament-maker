@@ -32,6 +32,7 @@ export default {
   },
   bracket: {
     zoomHint: "Pellizca para hacer zoom · doble toque para restablecer",
+    legPick: "¿Qué partido quieres registrar?",
   },
   nav: {
     tournaments: "Torneos",
@@ -701,5 +702,27 @@ export default {
     playoffDrawTitle: "Sorteo de Playoff",
     potTop: "Cabezas de serie",
     potRest: "Resto",
+  },
+  stats: {
+    round: "Ronda {round}",
+    league: "Liga",
+    group: "Grupo",
+    standingsProgress: "{name} — Progreso en la tabla",
+    defaultStandingsProgress: "Progreso en la tabla",
+    topScorers: "Máximos Goleadores",
+    bestDefense: "Mejor Defensa",
+    team: "Equipo",
+    goalsForTitle: "Goles a Favor",
+    gf: "GF",
+    goalsAgainstTitle: "Goles en Contra",
+    ga: "GC",
+    matchesPlayedTitle: "Partidos Jugados",
+    mp: "PJ",
+  },
+  progressChart: {
+    title: "Progreso de Puntos / Posición",
+    position: "Posición",
+    points: "Puntos",
+    pts: "pts",
   },
 } as const

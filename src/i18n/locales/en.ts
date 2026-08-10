@@ -32,6 +32,7 @@ export default {
   },
   bracket: {
     zoomHint: "Pinch to zoom · double-tap to reset",
+    legPick: "Which leg do you want to set?",
   },
   nav: {
     tournaments: "Tournaments",
@@ -695,5 +696,27 @@ export default {
     playoffDrawTitle: "Playoff Draw",
     potTop: "Top seeds",
     potRest: "Lower seeds",
+  },
+  stats: {
+    round: "Round {round}",
+    league: "League",
+    group: "Group",
+    standingsProgress: "{name} — Standings Progress",
+    defaultStandingsProgress: "Standings Progress",
+    topScorers: "Top Scorers",
+    bestDefense: "Best Defense",
+    team: "Team",
+    goalsForTitle: "Goals For",
+    gf: "GF",
+    goalsAgainstTitle: "Goals Against",
+    ga: "GA",
+    matchesPlayedTitle: "Matches Played",
+    mp: "MP",
+  },
+  progressChart: {
+    title: "Points / Position Progress",
+    position: "Position",
+    points: "Points",
+    pts: "pts",
   },
 } as const

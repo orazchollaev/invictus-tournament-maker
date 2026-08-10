@@ -1,12 +1,4 @@
 <script setup lang="ts">
-/**
- * The one place a score is entered. Every fixture surface — group card, league
- * matchday, knockout fixture list, bracket card — opens this instead of editing
- * in place: those rows are 26–34px tall and could not hold a stepper, an input
- * and a shootout without crushing the team names.
- *
- * Bottom sheet on a phone (thumb reach), centred dialog on a desktop.
- */
 import { computed, nextTick, ref, watch } from "vue"
 import { DialogRoot, DialogPortal, DialogOverlay, DialogContent, DialogTitle } from "reka-ui"
 import { useI18n } from "vue-i18n"
@@ -26,8 +18,16 @@ const props = withDefaults(
     requiresWinner?: boolean
     subtitle?: string
     canSimulate?: boolean
+    /**
+     * Leg 2 of a two-legged tie: the other leg's score, in this modal's
+     * home/away frame (which is reversed vs. leg 1). When set, "level"
+     * means level on aggregate, not level on this leg alone — e.g. a 1-0
+     * leg 1 win followed by a 0-0 leg 2 sends the first team through
+     * without a shootout.
+     */
+    aggregateOffset?: { home: number; away: number } | null
   }>(),
-  { requiresWinner: false, canSimulate: true }
+  { requiresWinner: false, canSimulate: true, aggregateOffset: null }
 )
 
 const emit = defineEmits<{
@@ -43,11 +43,16 @@ const away = ref(props.result?.away ?? 0)
 const penHome = ref(props.result?.penHome ?? 0)
 const penAway = ref(props.result?.penAway ?? 0)
 
-// Only reveal the shootout once a tied score has actually been recorded
-// (an existing tied result on open, or a first Save press below) — not the
-// instant the steppers happen to both read 0.
+/** Level check — on aggregate when aggregateOffset is set, else on this leg alone. */
+function isLevel(h: number, a: number): boolean {
+  if (props.aggregateOffset) {
+    return h + props.aggregateOffset.home === a + props.aggregateOffset.away
+  }
+  return h === a
+}
+
 const pensRevealed = ref(
-  !!(props.requiresWinner && props.result && props.result.home === props.result.away)
+  !!(props.requiresWinner && props.result && isLevel(props.result.home, props.result.away))
 )
 
 watch(
@@ -57,7 +62,7 @@ watch(
     away.value = r?.away ?? 0
     penHome.value = r?.penHome ?? 0
     penAway.value = r?.penAway ?? 0
-    pensRevealed.value = !!(props.requiresWinner && r && r.home === r.away)
+    pensRevealed.value = !!(props.requiresWinner && r && isLevel(r.home, r.away))
   }
 )
 
@@ -65,7 +70,7 @@ watch([home, away], () => {
   pensRevealed.value = false
 })
 
-const isDraw = computed(() => home.value === away.value)
+const isDraw = computed(() => isLevel(home.value, away.value))
 const showPens = computed(() => props.requiresWinner && isDraw.value && pensRevealed.value)
 const saveDisabled = computed(() => showPens.value && penHome.value === penAway.value)
 
@@ -99,7 +104,7 @@ function simulate() {
   const result = simulateMatch(fakeMatch as never, bothTeams)
   home.value = result.home
   away.value = result.away
-  if (props.requiresWinner && result.home === result.away) {
+  if (props.requiresWinner && isLevel(result.home, result.away)) {
     const pen = simulatePenaltyShootout(fakeMatch as never, bothTeams)
     penHome.value = pen.penHome
     penAway.value = pen.penAway
@@ -206,11 +211,11 @@ function onKeydown(e: KeyboardEvent) {
 
         <div class="ms-footer">
           <button v-if="canSimulate" class="ms-ghost" @click="simulate">
-            <Shuffle :size="13" />
+            <Shuffle :size="14" />
             <span>{{ t("matchScore.simulate") }}</span>
           </button>
           <button v-if="result" class="ms-ghost ms-ghost--danger" @click="clear">
-            <Trash2 :size="13" />
+            <Trash2 :size="14" />
             <span>{{ t("matchScore.clear") }}</span>
           </button>
           <div class="ms-spacer" />
@@ -281,10 +286,6 @@ function onKeydown(e: KeyboardEvent) {
 .ms-backdrop {
   position: fixed;
   inset: 0;
-  /* Above --z-overlay (300): the bracket's own fullscreen view and the
-     draw-ceremony overlay both sit at 300, and this modal opens on top of
-     either — a bracket card inside Full View was opening this behind the
-     fullscreen backdrop, looking like the tap did nothing. */
   z-index: calc(var(--z-modal) + 10);
   background: rgba(32, 33, 34, 0.5);
   animation: ms-backdrop-in 0.16s ease both;
@@ -293,7 +294,6 @@ function onKeydown(e: KeyboardEvent) {
   animation: ms-backdrop-out 0.18s ease both;
 }
 
-/* Desktop: centred dialog. */
 .ms-panel {
   position: fixed;
   z-index: calc(var(--z-modal) + 11);
@@ -366,8 +366,6 @@ function onKeydown(e: KeyboardEvent) {
   gap: var(--sp-2);
 }
 
-/* One row per team: identity on the left, the control on the right, so both
-   sides are entered with the same gesture in the same place. */
 .ms-side {
   position: relative;
   display: flex;
@@ -379,7 +377,6 @@ function onKeydown(e: KeyboardEvent) {
   border-radius: var(--radius);
   background: var(--bg);
 }
-/* Club identity bar, same rail the match cards draw. */
 .ms-side::before {
   content: "";
   position: absolute;
@@ -444,8 +441,8 @@ function onKeydown(e: KeyboardEvent) {
 .ms-ghost {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  padding: 4px 8px;
+  gap: var(--sp-1);
+  padding: var(--sp-2) var(--sp-2);
   border: 1px solid var(--border-light);
   border-radius: var(--radius);
   background: transparent;
@@ -462,7 +459,6 @@ function onKeydown(e: KeyboardEvent) {
   border-color: color-mix(in srgb, var(--danger) 40%, var(--border-light));
 }
 
-/* Phone: bottom sheet — the controls sit inside thumb reach. */
 @media (max-width: 640px) {
   .ms-panel {
     top: auto;
@@ -479,7 +475,6 @@ function onKeydown(e: KeyboardEvent) {
   .ms-panel.closing {
     animation: ms-sheet-out 0.18s cubic-bezier(0.4, 0, 1, 1) both;
   }
-  /* Bigger targets where the whole point is entering a score one-handed. */
   .ms-side {
     padding: var(--sp-3) var(--sp-3) var(--sp-3) var(--sp-4);
   }

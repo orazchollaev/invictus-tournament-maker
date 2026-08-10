@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import { ref, computed } from "vue"
+import { useI18n } from "vue-i18n"
 import type { Tournament, League } from "../types"
 import type { Team } from "@/modules/teams/types"
 import { useTournamentStats } from "../composables/useTournamentStats"
 import LeagueProgressChart from "./LeagueProgressChart.vue"
 import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
 import { AppCard, AppTable, BtnGroup } from "@/components/ui"
+
+const { t } = useI18n()
 
 const props = defineProps<{
   tournament: Tournament
@@ -31,7 +34,7 @@ function groupToLeague(groupIdx: number): League | undefined {
   const matchdays = []
   for (let i = 0; i < group.matches.length; i += mpr) {
     matchdays.push({
-      name: `Round ${Math.floor(i / mpr) + 1}`,
+      name: t("stats.round", { round: Math.floor(i / mpr) + 1 }),
       matches: group.matches.slice(i, i + mpr),
     })
   }
@@ -61,11 +64,15 @@ const tabs = computed(() => {
 const tierOptions = computed(() => tabs.value.map((label, i) => ({ value: String(i), label })))
 
 const chartTitle = computed(() => {
-  if (isLeague.value && isMultiTier.value && props.tournament.tiers)
-    return (props.tournament.tiers[activeIdx.value]?.name ?? "League") + " — Standings Progress"
-  if (isGroupBracket.value && props.tournament.groups)
-    return (props.tournament.groups[activeIdx.value]?.name ?? "Group") + " — Standings Progress"
-  return "Standings Progress"
+  if (isLeague.value && isMultiTier.value && props.tournament.tiers) {
+    const name = props.tournament.tiers[activeIdx.value]?.name ?? t("stats.league")
+    return t("stats.standingsProgress", { name })
+  }
+  if (isGroupBracket.value && props.tournament.groups) {
+    const name = props.tournament.groups[activeIdx.value]?.name ?? t("stats.group")
+    return t("stats.standingsProgress", { name })
+  }
+  return t("stats.defaultStandingsProgress")
 })
 </script>
 
@@ -89,15 +96,15 @@ const chartTitle = computed(() => {
     </template>
 
     <div class="stats-grid">
-      <AppCard variant="outlined" title="Top Scorers">
+      <AppCard variant="outlined" :title="t('stats.topScorers')">
         <AppTable dense class="stats-table">
           <thead>
             <tr>
               <th class="col-rank">#</th>
-              <th class="col-team">Team</th>
-              <th title="Goals For">GF</th>
-              <th title="Goals Against">GA</th>
-              <th title="Matches Played">MP</th>
+              <th class="col-team">{{ t("stats.team") }}</th>
+              <th :title="t('stats.goalsForTitle')">{{ t("stats.gf") }}</th>
+              <th :title="t('stats.goalsAgainstTitle')">{{ t("stats.ga") }}</th>
+              <th :title="t('stats.matchesPlayedTitle')">{{ t("stats.mp") }}</th>
             </tr>
           </thead>
           <tbody>
@@ -114,16 +121,15 @@ const chartTitle = computed(() => {
         </AppTable>
       </AppCard>
 
-      <!-- Best Defense -->
-      <AppCard variant="outlined" title="Best Defense">
+      <AppCard variant="outlined" :title="t('stats.bestDefense')">
         <AppTable dense class="stats-table">
           <thead>
             <tr>
               <th class="col-rank">#</th>
-              <th class="col-team">Team</th>
-              <th title="Goals Against">GA</th>
-              <th title="Goals For">GF</th>
-              <th title="Matches Played">MP</th>
+              <th class="col-team">{{ t("stats.team") }}</th>
+              <th :title="t('stats.goalsAgainstTitle')">{{ t("stats.ga") }}</th>
+              <th :title="t('stats.goalsForTitle')">{{ t("stats.gf") }}</th>
+              <th :title="t('stats.matchesPlayedTitle')">{{ t("stats.mp") }}</th>
             </tr>
           </thead>
           <tbody>
@@ -144,34 +150,24 @@ const chartTitle = computed(() => {
 </template>
 
 <style scoped>
-/* Panel surface, header strip, segmented control and table chrome all come
-   from AppCard / AppSectionHeader / BtnGroup / AppTable now. This file used to
-   carry its own copy of each — `.stats-panel-header` was byte-for-byte the
-   group card's `.gs-group-header`. */
 .stats-wrap {
   display: flex;
   flex-direction: column;
   gap: var(--sp-3);
 }
-
 .stats-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--sp-3);
 }
-
-/* See GroupCard for why thead/tbody are named explicitly. */
 .stats-table :deep(thead th),
 .stats-table :deep(tbody td) {
   text-align: center;
 }
-
 .stats-table .col-rank {
   width: 18px;
   color: var(--text-muted);
 }
-
-/* Club identity bar, same contract as the standings tables. */
 .stats-table .col-team {
   position: relative;
   text-align: left;
@@ -189,22 +185,18 @@ const chartTitle = computed(() => {
   background: var(--tc, transparent);
   box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.18);
 }
-
 .col-highlight {
   font-weight: 700;
   color: var(--accent);
 }
-
 .col-muted {
   color: var(--text-muted);
 }
-
 .team-cell {
   display: flex;
   align-items: center;
   gap: var(--sp-2);
 }
-
 @media (max-width: 600px) {
   .stats-grid {
     grid-template-columns: 1fr;

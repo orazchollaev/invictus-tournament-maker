@@ -1,23 +1,4 @@
-/* ════════════════════════════════════════════════════════════════
-   Design tokens — single source of truth.
-   Nothing outside this file may hardcode a colour, spacing step,
-   font size, duration, easing, elevation or z-index.
-   ════════════════════════════════════════════════════════════════ */
-
-/* ── Palette note ────────────────────────────────────────────────
-   The chrome has to sit *behind* the team colours: those are the
-   loudest thing on screen and the only colour the user actually owns,
-   so anything the app picks for itself is held deliberately quiet.
-
-   That is why the brand teal is a deep one and the neutrals are a
-   plain grey with a faint green cast rather than the blue-grey
-   "slate" ramp. Both are hand-tuned rather than taken off a framework
-   ramp — the exact default swatches are the thing that makes an
-   interface look like it chose nothing.
-   ──────────────────────────────────────────────────────────────── */
-
 :root {
-  /* ── Surfaces & text ─────────────────────────────────────────── */
   --bg: #eceeea;
   --surface: #ffffff;
   --border: #cdd1cb;
@@ -25,51 +6,36 @@
   --text: #1e211f;
   --text-muted: #6a706c;
 
-  /* ── Brand ───────────────────────────────────────────────────── */
-  /* Deeper and a touch greener than the teal it replaces. The depth is
-     what lets team colours stay the loudest thing on the page; the hue
-     shift keeps it off the framework ramp. 5.8:1 against white, 5.0:1
-     as link text on --bg. */
   --accent: #0b7264;
   --accent-hover: #095c51;
   --accent-subtle: color-mix(in srgb, var(--accent) 10%, transparent);
   --accent-2: #e08b1f;
-  /* Text/icons drawn on top of an --accent fill. */
   --on-accent: #ffffff;
 
   /* ── Status ──────────────────────────────────────────────────── */
   --danger: #d93a30;
   --success: #0f8f6f;
   --warning: #e08b1f;
-  /* Distinct from --success: "in progress right now", not "passed". */
   --live: #2eb85c;
-  /* Drawn matches. Reads as muted today but is its own role. */
   --draw: var(--text-muted);
 
-  /* ── Podium & ranking ────────────────────────────────────────── */
   --gold: #c9a227;
   --gold-soft: color-mix(in srgb, var(--gold) 20%, transparent);
   --gold-faint: color-mix(in srgb, var(--gold) 12%, transparent);
   --gold-glow: color-mix(in srgb, var(--gold) 40%, transparent);
-  /* Gold used as *text* — needs more contrast than the surface/border gold. */
   --gold-text: #b8860b;
   --medal-gold: var(--accent-2);
   --medal-silver: #9aa09b;
   --medal-bronze: #a8551a;
-  /* League table positions 2 and 3 (promotion/playoff bands). Kept clear
-     of the teal --accent so a band never reads as "brand". */
   --pos-2: #3a6fc9;
   --pos-3: #8e57c4;
 
-  /* ── Interaction ─────────────────────────────────────────────── */
   --bg-hover: color-mix(in srgb, var(--text) 6%, transparent);
   --focus-ring: 0 0 0 3px var(--accent-subtle);
 
-  /* ── Overlays ────────────────────────────────────────────────── */
   --scrim: rgba(18, 21, 19, 0.45);
   --scrim-strong: rgba(18, 21, 19, 0.62);
 
-  /* ── Type ────────────────────────────────────────────────────── */
   --font: "IBM Plex Sans Variable", sans-serif;
   --font-ui: "IBM Plex Sans Variable", sans-serif;
   --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", "Roboto Mono", monospace;

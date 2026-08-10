@@ -33,6 +33,7 @@ export default {
   },
   bracket: {
     zoomHint: "Cubit untuk memperbesar · ketuk dua kali untuk mengatur ulang",
+    legPick: "Leg mana yang ingin diatur?",
   },
   nav: {
     tournaments: "Turnamen",
@@ -700,5 +701,27 @@ export default {
     playoffDrawTitle: "Undian Playoff",
     potTop: "Unggulan atas",
     potRest: "Unggulan bawah",
+  },
+  stats: {
+    round: "Putaran {round}",
+    league: "Liga",
+    group: "Grup",
+    standingsProgress: "{name} — Perkembangan Klasemen",
+    defaultStandingsProgress: "Perkembangan Klasemen",
+    topScorers: "Top Skor",
+    bestDefense: "Pertahanan Terbaik",
+    team: "Tim",
+    goalsForTitle: "Gol Memasukkan",
+    gf: "GM",
+    goalsAgainstTitle: "Gol Kemasukan",
+    ga: "GK",
+    matchesPlayedTitle: "Main",
+    mp: "M",
+  },
+  progressChart: {
+    title: "Perkembangan Poin / Posisi",
+    position: "Posisi",
+    points: "Poin",
+    pts: "poin",
   },
 } as const

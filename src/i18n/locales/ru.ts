@@ -33,6 +33,7 @@ export default {
   },
   bracket: {
     zoomHint: "Сведите пальцы для масштабирования · двойное нажатие для сброса",
+    legPick: "Какой матч вы хотите указать?",
   },
   nav: {
     tournaments: "Турниры",
@@ -699,5 +700,27 @@ export default {
     playoffDrawTitle: "Жеребьёвка плей-офф",
     potTop: "Сеяные",
     potRest: "Остальные",
+  },
+  stats: {
+    round: "Раунд {round}",
+    league: "Лига",
+    group: "Группа",
+    standingsProgress: "{name} — Динамика таблицы",
+    defaultStandingsProgress: "Динамика таблицы",
+    topScorers: "Лучшие бомбардиры",
+    bestDefense: "Лучшая защита",
+    team: "Команда",
+    goalsForTitle: "Забитые голы",
+    gf: "ЗГ",
+    goalsAgainstTitle: "Пропущенные голы",
+    ga: "ПГ",
+    matchesPlayedTitle: "Сыграно матчей",
+    mp: "И",
+  },
+  progressChart: {
+    title: "Динамика очков / позиций",
+    position: "Позиция",
+    points: "Очки",
+    pts: "очк.",
   },
 } as const

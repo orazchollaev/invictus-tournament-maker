@@ -16,6 +16,8 @@ const props = defineProps<{
   teams: Team[]
   /** Leg 2 cannot be entered before leg 1 has a result. */
   disabled?: boolean
+  /** Leg 2 only: leg 1's score, in this row's home/away frame, to judge level on aggregate. */
+  aggregateOffset?: { home: number; away: number } | null
 }>()
 
 const emit = defineEmits<{
@@ -91,6 +93,7 @@ const requiresWinner = computed(() => props.leg === 2)
       :result="result"
       :subtitle="`Leg ${leg}`"
       :requires-winner="requiresWinner"
+      :aggregate-offset="leg === 2 ? aggregateOffset : null"
       @save="(h, a, ph, pa) => emit('set-result', leg, h, a, ph, pa)"
       @simulate="emit('sim', leg)"
       @clear="emit('clear-result', leg)"
