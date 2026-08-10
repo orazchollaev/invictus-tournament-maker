@@ -1,5 +1,11 @@
 # Changelog
 
+# [1.20.0](https://github.com/orazchollaev/invictus-tournament-maker/compare/v1.19.0...v1.20.0) (2026-08-10)
+
+### Bug Fixes
+
+- some small bugs resolved ([9058738](https://github.com/orazchollaev/invictus-tournament-maker/commit/90587380ba1b73d99f8684d0a1be0fdcba64b264))
+
 # [1.19.0](https://github.com/orazchollaev/invictus-tournament-maker/compare/v1.18.1...v1.19.0) (2026-08-08)
 
 ### Bug Fixes
