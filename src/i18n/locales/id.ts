@@ -425,7 +425,9 @@ export default {
       data: "Data",
     },
     changelog: "Catatan Perubahan",
-    specialThanks: "Terima kasih khusus: Rodrigo Hernandez",
+    about: "Tentang",
+    aboutBy: "oleh",
+    specialThanks: "Terima kasih khusus",
   },
   tournament: {
     notFound: "Turnamen tidak ditemukan.",

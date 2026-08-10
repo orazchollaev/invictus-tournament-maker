@@ -424,7 +424,9 @@ export default {
       data: "Datos",
     },
     changelog: "Registro de cambios",
-    specialThanks: "Agradecimiento especial: Rodrigo Hernandez",
+    about: "Acerca de",
+    aboutBy: "por",
+    specialThanks: "Agradecimiento especial",
   },
   tournament: {
     notFound: "Torneo no encontrado.",

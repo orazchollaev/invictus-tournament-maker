@@ -422,7 +422,9 @@ export default {
       data: "データ",
     },
     changelog: "更新履歴",
-    specialThanks: "Special thanks: Rodrigo Hernandez",
+    about: "アプリについて",
+    aboutBy: "開発:",
+    specialThanks: "Special thanks",
   },
   tournament: {
     notFound: "大会が見つかりません。",

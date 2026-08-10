@@ -424,7 +424,9 @@ export default {
       data: "Данные",
     },
     changelog: "Журнал изменений",
-    specialThanks: "Особая благодарность: Rodrigo Hernandez",
+    about: "О программе",
+    aboutBy: "от",
+    specialThanks: "Особая благодарность",
   },
   tournament: {
     notFound: "Турнир не найден.",

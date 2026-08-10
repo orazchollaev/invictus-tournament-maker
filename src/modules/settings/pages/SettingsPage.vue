@@ -4,6 +4,7 @@ import { version } from "../../../../package.json"
 import { Globe, Monitor, Trophy, Dices, Database, Menu, ChevronDown } from "@lucide/vue"
 import type { Component } from "vue"
 import { useI18n } from "vue-i18n"
+import SettingsAboutModal from "../components/SettingsAboutModal.vue"
 import SettingsSectionLanguage from "../components/SettingsSectionLanguage.vue"
 import SettingsSectionAppearance from "../components/SettingsSectionAppearance.vue"
 import SettingsSectionTableRules from "../components/SettingsSectionTableRules.vue"
@@ -44,6 +45,7 @@ const transitionName = ""
 
 const activeCategory = ref<Category>("general")
 const menuOpen = ref(false)
+const aboutOpen = ref(false)
 
 function selectCategory(id: Category) {
   menuOpen.value = false
@@ -120,10 +122,14 @@ function selectCategory(id: Category) {
           >
             {{ t("settings.changelog") }}
           </a>
+          <div class="changelog-btn" @click="aboutOpen = true">
+            {{ t("settings.about") }}
+          </div>
         </div>
-        <p class="special-thanks">{{ t("settings.specialThanks") }}</p>
       </div>
     </div>
+
+    <SettingsAboutModal v-if="aboutOpen" @close="aboutOpen = false" />
   </div>
 </template>
 
@@ -221,9 +227,6 @@ function selectCategory(id: Category) {
   transform: translateY(-6px);
 }
 
-/* ── Settings-only card density ──────────────────────────────────
-   The cards themselves are plain AppCards; settings wants tighter body
-   padding and a hairline between each row, which is local to this page. */
 .settings-panel :deep(.card-title svg) {
   color: var(--accent);
 }
@@ -239,8 +242,6 @@ function selectCategory(id: Category) {
 }
 
 @media (max-width: 640px) {
-  /* On mobile the description collapses into SettingDesc's ⓘ trigger,
-     which belongs beside the label rather than stacked under it. */
   .settings-panel :deep(.field-info) {
     display: flex;
     align-items: center;
@@ -255,6 +256,7 @@ function selectCategory(id: Category) {
 .version-row {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: var(--sp-2);
   margin-top: var(--sp-5);
 }
@@ -263,12 +265,17 @@ function selectCategory(id: Category) {
   color: var(--text-muted);
 }
 .changelog-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   font-size: var(--fs-xs);
   padding: 2px var(--sp-2);
   border-radius: var(--radius);
   border: 1px solid var(--border-light);
+  background: none;
   color: var(--text-muted);
   text-decoration: none;
+  cursor: pointer;
   transition:
     border-color var(--dur-fast) var(--ease),
     color var(--dur-fast) var(--ease);
@@ -276,12 +283,6 @@ function selectCategory(id: Category) {
 .changelog-btn:hover {
   border-color: var(--accent);
   color: var(--accent);
-}
-.special-thanks {
-  margin: var(--sp-1) 0 0;
-  font-size: var(--fs-xs);
-  color: var(--text-muted);
-  opacity: 0.6;
 }
 
 /* ── Mobile hamburger nav (hidden on desktop) ── */
