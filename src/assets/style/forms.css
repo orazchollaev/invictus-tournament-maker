@@ -1,17 +1,9 @@
-/* ── Form primitives ─────────────────────────────────────────────
-   MIGRATION SHIM — superseded by AppCard (form-card) and AppField
-   (form-row / form-label / form-hint). Deleted as consumers move over.
-
-   NOTE: `.form-card` was previously also redefined inside
-   TournamentSettingsPage.vue with a different radius, padding and no
-   shadow. This definition is now the only one. */
-
 .form-card {
   background: var(--surface);
   border: 1px solid var(--border-light);
   border-radius: var(--radius-lg);
   box-shadow: var(--elev-1);
-  padding: var(--sp-5);
+  padding: var(--sp-4);
   margin-bottom: var(--sp-4);
 }
 
@@ -83,7 +75,6 @@
   margin-top: var(--sp-3);
 }
 
-/* ── Stepper ─────────────────────────────────────────────────── */
 .stepper {
   display: inline-flex;
   align-items: center;
@@ -133,7 +124,6 @@
   color: var(--text-muted);
 }
 
-/* ── Responsive ──────────────────────────────────────────────── */
 @media (max-width: 640px) {
   .form-card {
     padding: var(--sp-3);

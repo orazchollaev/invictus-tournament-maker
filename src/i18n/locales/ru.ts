@@ -725,4 +725,9 @@ export default {
     points: "Очки",
     pts: "очк.",
   },
+  legend: {
+    qualifies: "Проходит",
+    wildcard: "Уайлд-кард (лучшие {count})",
+    eliminated: "Выбыл",
+  },
 } as const

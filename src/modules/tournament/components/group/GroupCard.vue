@@ -236,8 +236,6 @@ function scoreAccentColor(match: GroupMatch): string {
   gap: 3px;
 }
 
-/* Three columns now: the per-match simulate button moved into the modal, so
-   the names get its width back. */
 .gs-match {
   display: grid;
   grid-template-columns: 1fr auto 1fr;

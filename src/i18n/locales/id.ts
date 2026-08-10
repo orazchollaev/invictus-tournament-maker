@@ -726,4 +726,9 @@ export default {
     points: "Poin",
     pts: "poin",
   },
+  legend: {
+    qualifies: "Lolos",
+    wildcard: "Wildcard ({count} terbaik)",
+    eliminated: "Tersingkir",
+  },
 } as const

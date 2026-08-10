@@ -724,4 +724,9 @@ export default {
     points: "勝ち点",
     pts: "pt",
   },
+  legend: {
+    qualifies: "予選通過",
+    wildcard: "ワイルドカード (上位 {count})",
+    eliminated: "敗退",
+  },
 } as const

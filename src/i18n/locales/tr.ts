@@ -440,7 +440,7 @@ export default {
       league: "Lig",
       stats: "İstatistikler",
       participants: "Katılımcılar",
-      wildcards: "Jokerler",
+      wildcards: "Wildcards",
       fixtures: "Fikstür",
       playoff: "Play-off",
     },
@@ -484,7 +484,7 @@ export default {
       advance: "Elemeye yükselen takımlar",
       perGroup: "gruptan",
       reachKnockout: "elemeye ulaşır",
-      wildcards: "En iyi ikinci jokerler",
+      wildcards: "En iyi ikinci wildcards",
       total: "toplam",
       roundFormat: "Tur Formatı",
       schedule: "Program",
@@ -720,5 +720,10 @@ export default {
     position: "Sıra",
     points: "Puan",
     pts: "puan",
+  },
+  legend: {
+    qualifies: "Tur Atladı",
+    wildcard: "Wildcard (en iyi {count})",
+    eliminated: "Elendi",
   },
 } as const

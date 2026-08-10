@@ -725,4 +725,9 @@ export default {
     points: "Pontos",
     pts: "pts",
   },
+  legend: {
+    qualifies: "Qualificado",
+    wildcard: "Wildcard (melhores {count})",
+    eliminated: "Eliminado",
+  },
 } as const

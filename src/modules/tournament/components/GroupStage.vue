@@ -4,7 +4,7 @@ import type { Team } from "@/modules/teams/types"
 import type { Tournament } from "@/modules/tournament/types"
 import { Lock } from "@lucide/vue"
 import { useGradualSim } from "../composables/useGradualSim"
-import { GroupCard, GroupSimToolbar } from "./group"
+import { GroupCard, GroupLegend, GroupSimToolbar } from "./group"
 
 const props = defineProps<{
   tournament: Tournament
@@ -154,20 +154,8 @@ const allDone = computed(
       @advance="emit('advance')"
     />
 
-    <div class="gs-legend">
-      <span class="legend-qualify">■</span>
-      Qualifies
-      <template v-if="(tournament.wildcardCount ?? 0) > 0">
-        &nbsp;
-        <span class="legend-wildcard">╌</span>
-        Wildcard (best {{ tournament.wildcardCount }})
-      </template>
-      &nbsp;
-      <span class="legend-out">■</span>
-      Eliminated
-    </div>
+    <GroupLegend :wildcard-count="tournament.wildcardCount ?? 0" />
 
-    <!-- Groups grid -->
     <div class="gs-groups">
       <GroupCard
         v-for="(group, gi) in tournament.groups"
@@ -189,8 +177,6 @@ const allDone = computed(
 </template>
 
 <style scoped>
-/* The enclosing AppCard owns the outer padding now, so nothing in here
-   hand-insets itself off the card edge any more. */
 .gs-wrap {
   display: flex;
   flex-direction: column;
@@ -212,21 +198,8 @@ const allDone = computed(
 
 .gs-groups {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr));
   gap: var(--sp-3);
-}
-
-.gs-legend {
-  font-size: var(--fs-xs);
-  color: var(--text-muted);
-}
-.legend-qualify {
-  color: var(--accent);
-}
-.legend-wildcard {
-  color: var(--accent);
-  opacity: 0.6;
-  letter-spacing: -1px;
 }
 
 @media (max-width: 600px) {

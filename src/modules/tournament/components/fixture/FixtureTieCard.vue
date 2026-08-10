@@ -35,7 +35,6 @@ function getAbbr(id: string | null): string {
   return settings.showTeamAbbr ? teamAbbr(t) : t.name
 }
 
-/** Aggregate across both legs, with shootout goals folded in when there was one. */
 function aggLabel(match: FlatMatch): string | null {
   if (!match.result || !match.leg2Result) return null
   const h = match.result.home + match.leg2Result.away
@@ -43,7 +42,7 @@ function aggLabel(match: FlatMatch): string | null {
   const a = match.result.away + match.leg2Result.home
   const aPen = (match.result?.penHome || 0) + (match.leg2Result?.penHome || 0)
 
-  if (hPen || aPen) return `${h + hPen} – ${a + aPen} with penalties`
+  if (hPen || aPen) return `${h + hPen} – ${a + aPen}p`
   return `${h} – ${a}`
 }
 
@@ -136,13 +135,14 @@ function onSim(leg: 1 | 2) {
 .tie-hd {
   display: flex;
   align-items: center;
-  gap: var(--sp-2);
-  padding: var(--sp-2);
+  gap: var(--sp-1);
+  padding: var(--sp-1);
   background: var(--bg);
   border-bottom: 1px solid var(--border-light);
 }
 
 .tie-hd-team {
+  flex: 1;
   display: flex;
   align-items: center;
   gap: var(--sp-1);
@@ -156,10 +156,11 @@ function onSim(leg: 1 | 2) {
   flex-direction: row-reverse;
 }
 .tie-hd-name {
+  width: 100%;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 72px;
+  max-width: 90px;
 }
 
 .tie-hd-center {
@@ -173,7 +174,7 @@ function onSim(leg: 1 | 2) {
 
 .agg {
   font-family: var(--font-ui);
-  font-size: var(--fs-base);
+  font-size: var(--fs-sm);
   font-weight: 800;
   color: var(--text);
   letter-spacing: -0.02em;
