@@ -11,6 +11,7 @@ const props = defineProps<{
   result: MatchResult | null
   /** Matchday label, shown as the modal's subtitle. */
   label?: string
+  locked?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -37,8 +38,9 @@ function scoreAccentColor(): string {
 
     <button
       class="lv-score-btn"
-      :class="{ 'lv-score-btn--played': !!result }"
+      :class="{ 'lv-score-btn--played': !!result, 'lv-score-btn--locked': locked }"
       :style="result ? { borderColor: scoreAccentColor(), borderLeftWidth: '3px' } : {}"
+      :disabled="locked"
       @click="editing = true"
     >
       <template v-if="result">{{ result.home }} – {{ result.away }}</template>
@@ -49,7 +51,7 @@ function scoreAccentColor(): string {
 
     <!-- Inside the row, so the component keeps a single root element. -->
     <MatchScoreModal
-      v-if="editing"
+      v-if="editing && !locked"
       :home-team="homeTeam"
       :away-team="awayTeam"
       :result="result"
@@ -107,24 +109,25 @@ function scoreAccentColor(): string {
   flex-shrink: 0;
   display: flex;
   color: var(--text-muted);
+  padding: var(--sp-1) var(--sp-2);
+  min-width: 60px;
 }
 .lv-score-btn--played {
   color: var(--text);
   border-color: var(--border);
 }
-.lv-score-btn:hover {
+.lv-score-btn:hover:not(:disabled) {
   border-color: var(--accent);
   color: var(--accent);
 }
+.lv-score-btn--locked {
+  cursor: default;
+  pointer-events: none;
+}
 
 @media (max-width: 640px) {
-  /* Type size is kept; only the hit area grows. */
   .lv-match {
     padding: var(--sp-1) 0;
-  }
-  .lv-score-btn {
-    min-width: 76px;
-    padding: 7px var(--sp-2);
   }
 }
 </style>

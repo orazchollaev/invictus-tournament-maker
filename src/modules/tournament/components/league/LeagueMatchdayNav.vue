@@ -10,6 +10,7 @@ defineProps<{
   /** One flag per matchday, for the pill strip. */
   doneFlags: boolean[]
   activeIdx: number
+  locked?: boolean
 }>()
 
 defineEmits<{
@@ -33,7 +34,7 @@ defineEmits<{
       <AppIcon :icon="ChevronRight" size="sm" />
     </button>
     <button
-      v-if="!done"
+      v-if="!done && !locked"
       class="lv-sim-md-btn"
       title="Simulate matchday"
       @click="$emit('sim-matchday')"

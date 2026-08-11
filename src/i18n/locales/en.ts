@@ -437,6 +437,7 @@ export default {
       stats: "Stats",
       participants: "Participants",
       wildcards: "Wildcards",
+      standings: "Standings",
       fixtures: "Fixtures",
       playoff: "Playoff",
     },

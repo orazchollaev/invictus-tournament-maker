@@ -441,6 +441,7 @@ export default {
       stats: "İstatistikler",
       participants: "Katılımcılar",
       wildcards: "Wildcards",
+      standings: "Puan Durumu",
       fixtures: "Fikstür",
       playoff: "Play-off",
     },

@@ -438,6 +438,7 @@ export default {
       stats: "スタッツ",
       participants: "参加チーム",
       wildcards: "ワイルドカード",
+      standings: "順位表",
       fixtures: "試合日程",
       playoff: "プレーオフ",
     },

@@ -440,6 +440,7 @@ export default {
       stats: "Статистика",
       participants: "Участники",
       wildcards: "Уайлдкарды",
+      standings: "Таблица",
       fixtures: "Расписание",
       playoff: "Плей-офф",
     },

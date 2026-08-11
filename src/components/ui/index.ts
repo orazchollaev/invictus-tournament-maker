@@ -15,6 +15,7 @@ import AppTable from "./AppTable.vue"
 import AppTabs from "./AppTabs.vue"
 import BtnGroup from "./BtnGroup.vue"
 import ColorPicker from "./ColorPicker.vue"
+import SubTabBar from "./SubTabBar.vue"
 import ToggleSwitch from "./ToggleSwitch.vue"
 
 export {
@@ -35,5 +36,6 @@ export {
   AppTabs,
   BtnGroup,
   ColorPicker,
+  SubTabBar,
   ToggleSwitch,
 }

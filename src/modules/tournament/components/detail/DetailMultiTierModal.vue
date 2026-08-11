@@ -3,6 +3,7 @@ import { ref } from "vue"
 import AppModal from "@/components/ui/AppModal.vue"
 import type { Tournament } from "@/modules/tournament/types"
 import type { Team } from "@/modules/teams/types"
+import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
 import { useI18n } from "vue-i18n"
 
 const { t } = useI18n()
@@ -43,13 +44,12 @@ const emit = defineEmits<{
             }"
           >
             <span class="mt-rank">{{ rank + 1 }}</span>
-            <span
-              class="mt-dot"
-              :style="{ background: allTeams.find((t) => t.id === row.teamId)?.color ?? '#888' }"
+            <TeamBadge
+              :team="allTeams.find((t) => t.id === row.teamId)"
+              :size="14"
+              :fallback="row.teamId"
+              class="mt-name"
             />
-            <span class="mt-name">
-              {{ allTeams.find((t) => t.id === row.teamId)?.name ?? row.teamId }}
-            </span>
             <span class="mt-pts">{{ row.pts }} pts</span>
             <span
               v-if="ti > 0 && rank < (tournament.promotionCount ?? 0)"

@@ -275,6 +275,8 @@ function scoreAccentColor(match: GroupMatch): string {
   flex-shrink: 0;
   display: flex;
   color: var(--text-muted);
+  padding: var(--sp-1) var(--sp-2);
+  min-width: 60px;
 }
 .gs-score-btn:hover:not(:disabled) {
   border-color: var(--accent);
@@ -301,22 +303,9 @@ function scoreAccentColor(match: GroupMatch): string {
     min-width: 90px;
   }
 
-  /* Hide D, L, GF, GA — keep #, Team, P, W, GD, Pts */
-  /* .gs-table th:nth-child(5),
-  .gs-table td:nth-child(5),
-  .gs-table th:nth-child(6),
-  .gs-table td:nth-child(6), */
-  /* .gs-table th:nth-child(7),
-  .gs-table td:nth-child(7), */
   .gs-table th:nth-child(5),
   .gs-table td:nth-child(5) {
     display: none;
-  }
-
-  /* Type size is kept; only the hit areas grow. */
-  .gs-score-btn {
-    min-width: 66px;
-    padding: 5px var(--sp-2);
   }
 }
 </style>

@@ -439,6 +439,7 @@ export default {
       stats: "Estatísticas",
       participants: "Participantes",
       wildcards: "Wildcards",
+      standings: "Classificação",
       fixtures: "Jogos",
       playoff: "Playoff",
     },

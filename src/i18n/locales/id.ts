@@ -441,6 +441,7 @@ export default {
       stats: "Statistik",
       participants: "Peserta",
       wildcards: "Wildcard",
+      standings: "Klasemen",
       fixtures: "Jadwal",
       playoff: "Playoff",
     },

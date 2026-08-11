@@ -12,7 +12,7 @@ import {
   BracketZoomControls,
   BracketZoomHint,
 } from "./bracket"
-import { AppButton, AppIcon, BtnGroup } from "@/components/ui"
+import { AppButton, AppIcon, SubTabBar } from "@/components/ui"
 import { useTournamentStore } from "../store"
 import { useSettingsStore } from "@/modules/settings/store"
 import { useGradualSim } from "../composables/useGradualSim"
@@ -151,13 +151,12 @@ const { isExporting, exportPng } = useBracketExport({
 <template>
   <div class="bracket-panel">
     <div class="bracket-header">
-      <BtnGroup
+      <SubTabBar
         :options="[
           { value: 'bracket', label: 'Bracket' },
           { value: 'fixtures', label: 'Fixtures' },
         ]"
         :model-value="bracketView"
-        size="xs"
         @update:model-value="(v) => (bracketView = v as 'bracket' | 'fixtures')"
       />
 

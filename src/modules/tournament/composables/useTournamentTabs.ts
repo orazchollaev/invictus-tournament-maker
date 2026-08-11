@@ -1,4 +1,4 @@
-import { ref, computed, watch, onScopeDispose, type ComputedRef } from "vue"
+import { ref, computed, watch, nextTick, onScopeDispose, type ComputedRef } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import type { Swiper as SwiperInstance } from "swiper/types"
 import { useSwiperAutoHeight } from "@/composables/useSwiperAutoHeight"
@@ -182,6 +182,26 @@ export function useTournamentTabs(
     router.replace({ query: { tab: pendingUrlTab } })
     pendingUrlTab = null
   }
+
+  // visibleTabs can grow mid-session — e.g. "stats" appears the instant the
+  // first result lands, possibly mid gradual-sim. css-mode never observes
+  // the DOM on its own, so Swiper's internal slide bookkeeping goes stale
+  // unless told about the new slide. Resyncing with update() does that in
+  // place, instead of destroying and recreating the whole Swiper tree via a
+  // :key remount — which would tear down whatever's mounted in the active
+  // slide, including any in-flight simulation's timers.
+  watch(
+    () => visibleTabs.value.join("|"),
+    () => {
+      nextTick(() => {
+        if (!swiperInstance) return
+        swiperInstance.update()
+        swiperInstance.slideTo(activeIndex.value, 0)
+        settledIndex.value = activeIndex.value
+        autoHeight.sync()
+      })
+    }
+  )
 
   watch(activeIndex, (idx) => {
     if (idx >= 0 && swiperInstance && swiperInstance.activeIndex !== idx) {

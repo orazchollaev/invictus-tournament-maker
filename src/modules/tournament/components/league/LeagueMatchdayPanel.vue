@@ -10,6 +10,7 @@ const props = defineProps<{
   matchdays: LeagueMatchday[]
   teams: Team[]
   tournamentId: string
+  locked?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -73,6 +74,7 @@ async function handleSimMatchday(idx: number) {
       :done="doneFlags[activeIdx] ?? false"
       :done-flags="doneFlags"
       :active-idx="activeIdx"
+      :locked="locked"
       @prev="activeIdx--"
       @next="activeIdx++"
       @select="(idx) => (activeIdx = idx)"
@@ -86,6 +88,7 @@ async function handleSimMatchday(idx: number) {
           :away-team="teamById(match.awayId)"
           :result="match.result"
           :label="activeMatchday?.name"
+          :locked="locked"
           @save="(h, a) => emit('setResult', activeIdx, mIdx, h, a)"
           @clear="emit('clearResult', activeIdx, mIdx)"
           @sim="emit('simMatch', activeIdx, mIdx)"

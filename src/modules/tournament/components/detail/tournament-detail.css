@@ -91,12 +91,6 @@
   color: var(--text-muted);
   flex-shrink: 0;
 }
-.mt-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
 .mt-name {
   flex: 1;
   min-width: 0;

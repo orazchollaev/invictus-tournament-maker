@@ -15,7 +15,7 @@ import PlayoffManualDraw from "@/modules/tournament/components/PlayoffManualDraw
 import GroupDraw from "@/modules/tournament/components/GroupDraw.vue"
 import TournamentStats from "@/modules/tournament/components/TournamentStats.vue"
 import { DrawCeremony } from "@/modules/tournament/components/draw-ceremony"
-import { AppModal, BtnGroup } from "@/components/ui"
+import { AppModal, SubTabBar } from "@/components/ui"
 import { DetailHeader, DetailPhaseTabs, DetailMultiTierModal } from "../components/detail"
 import { useTournamentDetail } from "../composables/useTournamentDetail"
 import { useTournamentTabs } from "../composables/useTournamentTabs"
@@ -84,6 +84,7 @@ const {
   isMultiTier,
   activeTierIdx
 )
+
 </script>
 
 <template>
@@ -109,15 +110,12 @@ const {
         :active-tab="activeTab"
         :is-league-format="isLeagueFormat"
         :is-group-format="isGroupFormat"
-        :is-multi-tier="isMultiTier"
-        :active-tier-idx="activeTierIdx"
         :has-any-results="hasAnyResults"
         :has-league-playoff="hasLeaguePlayoff"
         @change-tab="changeTab"
       />
 
       <Swiper
-        :key="visibleTabs.join('|')"
         :initial-slide="activeIndex"
         :auto-height="true"
         :speed="300"
@@ -153,6 +151,15 @@ const {
                 </span>
               </div>
               <template v-if="isMultiTier && tournament.tiers">
+                <div class="gs-subtab-row">
+                  <SubTabBar
+                    :options="
+                      tournament.tiers.map((tier, ti) => ({ value: String(ti), label: tier.name }))
+                    "
+                    :model-value="String(activeTierIdx)"
+                    @update:model-value="(v) => changeTab('league', Number(v))"
+                  />
+                </div>
                 <Transition name="tab" mode="out-in">
                   <LeagueView
                     :key="activeTierIdx"
@@ -170,6 +177,7 @@ const {
                         ? leaguePlayoffData.qualifierCount
                         : 0
                     "
+                    :locked="activeTierIdx === 0 && hasLeaguePlayoff"
                     @set-result="
                       (mdi, mi, h, a) =>
                         store.setTierResult(tournament!.id, activeTierIdx, mdi, mi, h, a)
@@ -194,6 +202,7 @@ const {
                   :playoff-qualifier-count="
                     leaguePlayoffData?.enabled ? leaguePlayoffData.qualifierCount : 0
                   "
+                  :locked="hasLeaguePlayoff"
                   @set-result="
                     (mdi, mi, h, a) => store.setLeagueResult(tournament!.id, mdi, mi, h, a)
                   "
@@ -206,9 +215,8 @@ const {
             </div>
             <div v-else-if="tab === 'groups'" class="tab-panel">
               <div v-if="hasWildcards" class="gs-subtab-row">
-                <BtnGroup
+                <SubTabBar
                   v-model="groupSubTab"
-                  size="xs"
                   :options="[
                     { value: 'groups', label: trns('tournament.tabs.groups') },
                     { value: 'wildcards', label: trns('tournament.tabs.wildcards') },
@@ -335,6 +343,7 @@ const {
 .tab-panel {
   min-width: 0;
 }
+
 .tab-panel--flush {
   padding: 0;
 }
