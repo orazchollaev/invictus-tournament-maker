@@ -1,49 +1,29 @@
 <script setup lang="ts">
-import { computed, watch } from "vue"
-import { Trophy, LayoutGrid, List } from "@lucide/vue"
-import AppStepper from "@/components/ui/AppStepper.vue"
-import { useGroupSizeHint } from "../../composables/useGroupSizeHint"
+import { Trophy, LayoutGrid, List, Swords } from "@lucide/vue"
 
 type TournamentFormat = "bracket" | "group+bracket" | "league"
 
 const props = defineProps<{ selectedCount: number }>()
 
 const format = defineModel<TournamentFormat>("format", { required: true })
+const playoffEnabled = defineModel<boolean>("playoffEnabled", { required: true })
 const groupCount = defineModel<number>("groupCount", { required: true })
 const qualifiersPerGroup = defineModel<number>("qualifiersPerGroup", { required: true })
-const wildcardCount = defineModel<number>("wildcardCount", { required: true })
-
-const minGroups = 2
-const minQpg = 1
-const maxGroups = computed(() => Math.floor(props.selectedCount / 2))
-const maxQpg = computed(() =>
-  groupCount.value > 0 ? Math.floor(props.selectedCount / groupCount.value) : 2
-)
-const maxWildcards = computed(() => {
-  const minGroupSize = Math.floor(props.selectedCount / groupCount.value)
-  return qualifiersPerGroup.value < minGroupSize ? groupCount.value : 0
-})
-const groupSizeHint = useGroupSizeHint(
-  () => props.selectedCount,
-  () => groupCount.value
-)
-
-watch(maxGroups, (max) => {
-  groupCount.value = Math.max(minGroups, Math.min(groupCount.value, max))
-})
-watch(maxQpg, (max) => {
-  qualifiersPerGroup.value = Math.max(minQpg, Math.min(qualifiersPerGroup.value, max))
-})
-watch(maxWildcards, (max) => {
-  wildcardCount.value = Math.min(wildcardCount.value, max)
-})
 
 function setFormat(f: TournamentFormat) {
   format.value = f
+  if (f !== "league") playoffEnabled.value = false
   if (f === "group+bracket") {
-    groupCount.value = Math.min(4, maxGroups.value)
-    qualifiersPerGroup.value = Math.min(2, maxQpg.value)
+    const maxGroups = Math.floor(props.selectedCount / 2)
+    groupCount.value = Math.min(4, maxGroups)
+    const maxQpg = groupCount.value > 0 ? Math.floor(props.selectedCount / groupCount.value) : 2
+    qualifiersPerGroup.value = Math.min(2, maxQpg)
   }
+}
+
+function setLeague(withPlayoff: boolean) {
+  format.value = "league"
+  playoffEnabled.value = withPlayoff
 }
 </script>
 
@@ -89,9 +69,9 @@ function setFormat(f: TournamentFormat) {
 
       <button
         class="ctp-format-card"
-        :class="{ 'ctp-format-card--on': format === 'league' }"
+        :class="{ 'ctp-format-card--on': format === 'league' && !playoffEnabled }"
         :disabled="selectedCount < 2"
-        @click="setFormat('league')"
+        @click="setLeague(false)"
       >
         <List :size="28" class="ctp-format-icon" />
 
@@ -103,35 +83,23 @@ function setFormat(f: TournamentFormat) {
           {{ $t("tournament.create.formats.leagueDesc") }}
         </span>
       </button>
-    </div>
 
-    <div v-if="format === 'group+bracket'" class="ctp-gc-block">
-      <AppStepper
-        v-model="groupCount"
-        :label="$t('tournament.create.groups')"
-        :min="minGroups"
-        :max="maxGroups"
-        :hint="groupSizeHint"
-      />
+      <button
+        class="ctp-format-card"
+        :class="{ 'ctp-format-card--on': format === 'league' && playoffEnabled }"
+        :disabled="selectedCount < 2"
+        @click="setLeague(true)"
+      >
+        <Swords :size="28" class="ctp-format-icon" />
 
-      <AppStepper
-        v-model="qualifiersPerGroup"
-        :label="$t('tournament.create.advance')"
-        :min="minQpg"
-        :max="maxQpg"
-        :hint="`${$t('tournament.create.perGroup')} → ${
-          qualifiersPerGroup * groupCount
-        } ${$t('tournament.create.reachKnockout')}`"
-      />
+        <span class="ctp-format-title">
+          {{ $t("tournament.create.formats.leagueKo") }}
+        </span>
 
-      <AppStepper
-        v-if="maxWildcards > 0"
-        v-model="wildcardCount"
-        :label="$t('tournament.create.wildcards')"
-        :min="0"
-        :max="maxWildcards"
-        :hint="`→ ${qualifiersPerGroup * groupCount + wildcardCount} ${$t('tournament.create.total')}`"
-      />
+        <span class="ctp-format-desc">
+          {{ $t("tournament.create.formats.leagueKoDesc") }}
+        </span>
+      </button>
     </div>
   </div>
 </template>

@@ -1,15 +1,15 @@
-import SettingsBracketOptions from "./SettingsBracketOptions.vue"
 import SettingsDangerZone from "./SettingsDangerZone.vue"
-import SettingsLeagueOptions from "./SettingsLeagueOptions.vue"
-import SettingsScoringTiebreaker from "./SettingsScoringTiebreaker.vue"
+import SettingsGroupConfigModal from "./SettingsGroupConfigModal.vue"
+import SettingsKnockoutConfigModal from "./SettingsKnockoutConfigModal.vue"
+import SettingsLeagueConfigModal from "./SettingsLeagueConfigModal.vue"
 import SettingsSimulation from "./SettingsSimulation.vue"
 import SettingsTeamAdjustments from "./SettingsTeamAdjustments.vue"
 
 export {
-  SettingsBracketOptions,
   SettingsDangerZone,
-  SettingsLeagueOptions,
-  SettingsScoringTiebreaker,
+  SettingsGroupConfigModal,
+  SettingsKnockoutConfigModal,
+  SettingsLeagueConfigModal,
   SettingsSimulation,
   SettingsTeamAdjustments,
 }

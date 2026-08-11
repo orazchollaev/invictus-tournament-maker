@@ -17,6 +17,12 @@
   border-radius: var(--radius-pill);
 }
 
+.ctp-config-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 .tsp-locked-banner {
   display: flex;
   align-items: center;

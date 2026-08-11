@@ -1,5 +1,6 @@
 import AppButton from "./AppButton.vue"
 import AppCard from "./AppCard.vue"
+import AppConfigButton from "./AppConfigButton.vue"
 import AppChip from "./AppChip.vue"
 import AppDialog from "./AppDialog.vue"
 import AppEmptyState from "./AppEmptyState.vue"
@@ -21,6 +22,7 @@ import ToggleSwitch from "./ToggleSwitch.vue"
 export {
   AppButton,
   AppCard,
+  AppConfigButton,
   AppChip,
   AppDialog,
   AppEmptyState,

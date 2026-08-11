@@ -8,7 +8,7 @@ import ManualDraw from "../components/ManualDraw.vue"
 import GroupDraw from "../components/GroupDraw.vue"
 import TeamSelector from "../components/TeamSelector.vue"
 import { DrawCeremony } from "../components/draw-ceremony"
-import { Shuffle, ArrowLeft, ChevronDown } from "@lucide/vue"
+import { Shuffle, ArrowLeft, ChevronDown, LayoutGrid, Trophy, List } from "@lucide/vue"
 import { randomTournamentName } from "@/composables/useRandomNames"
 import type { CeremonyContext, DrawMode } from "@/engine"
 import type {
@@ -19,11 +19,16 @@ import type {
 } from "@/modules/tournament/types"
 import {
   CreateFormatSelector,
-  CreateLeagueOptions,
-  CreateMatchRules,
-  CreateScoringTiebreaker,
+  CreateGroupConfigModal,
+  CreateKnockoutConfigModal,
+  CreateLeagueConfigModal,
 } from "../components/create"
+import type { GroupConfigPayload } from "../components/create/CreateGroupConfigModal.vue"
+import type { KnockoutConfigPayload } from "../components/create/CreateKnockoutConfigModal.vue"
+import type { LeagueConfigPayload } from "../components/create/CreateLeagueConfigModal.vue"
 import { SettingsTeamAdjustments } from "../components/settings"
+import { AppConfigButton } from "@/components/ui"
+import { useI18n } from "vue-i18n"
 
 type DrawType = "random" | "seeded" | "manual"
 type TournamentFormat = "bracket" | "group+bracket" | "league"
@@ -62,10 +67,86 @@ const leaguePlayoffSeedMode = ref<LeaguePlayoffSeedMode>("seeded")
 const teamPointAdjustments = ref<Record<string, number>>({})
 const teamPowerAdjustments = ref<Record<string, number>>({})
 
+const { t } = useI18n()
+
 const allTeams = computed(() => teamsStore.teams)
 const selectedTeams = computed(() => allTeams.value.filter((t) => selected.value.includes(t.id)))
 const canCreate = computed(() => !!name.value.trim() && selected.value.length >= 2)
 const showAdjustments = ref(false)
+
+// Phase configuration modals — opened from the AppConfigButton rows below the
+// format cards. Each modal edits a local draft and only writes back to these
+// page-level refs (via its "save" event) when the user actually hits Save;
+// closing any other way (X, backdrop, Escape) discards the draft.
+const showGroupModal = ref(false)
+const showKnockoutModal = ref(false)
+const showLeagueModal = ref(false)
+const maxPlayoffQualifiers = computed(() => Math.max(2, selectedTeams.value.length))
+
+const groupConfigSummary = computed(() => {
+  const base = t("tournament.create.config.groupsAndAdvance", {
+    groups: groupCount.value,
+    advance: qualifiersPerGroup.value * groupCount.value,
+  })
+  if (wildcardCount.value <= 0) return base
+  return `${base} · ${t("tournament.create.config.wildcardsShort", { n: wildcardCount.value })}`
+})
+const knockoutConfigSummary = computed(() => {
+  if (format.value === "league") {
+    return t("tournament.create.config.playoffShort", { n: playoffQualifierCount.value })
+  }
+  const seedLabels: Record<string, string> = {
+    cross: t("tournament.create.cross"),
+    "no-same-group": t("tournament.create.noRematch"),
+    random: t("common.random"),
+    manual: t("common.manual"),
+  }
+  const drawLabel =
+    format.value === "group+bracket"
+      ? seedLabels[playoffSeedMode.value]
+      : t(`common.${drawType.value}`)
+  const thirdPlace = hasThirdPlace.value
+    ? t("tournament.create.config.thirdPlaceOn")
+    : t("tournament.create.config.noThirdPlace")
+  return `${drawLabel} · ${thirdPlace}`
+})
+const leagueConfigSummary = computed(() =>
+  tierCount.value > 1
+    ? t("tournament.create.config.divisionsShort", { n: tierCount.value })
+    : t("tournament.create.config.singleDivisionShort")
+)
+
+function applyGroupConfig(payload: GroupConfigPayload) {
+  groupCount.value = payload.groupCount
+  qualifiersPerGroup.value = payload.qualifiersPerGroup
+  wildcardCount.value = payload.wildcardCount
+  groupLegMode.value = payload.groupLegMode
+  playoffSeedMode.value = payload.playoffSeedMode
+  tiebreaker.value = payload.tiebreaker
+  winPoints.value = payload.winPoints
+  drawPoints.value = payload.drawPoints
+  lossPoints.value = payload.lossPoints
+}
+
+function applyKnockoutConfig(payload: KnockoutConfigPayload) {
+  drawType.value = payload.drawType
+  hasThirdPlace.value = payload.hasThirdPlace
+  knockoutLegMode.value = payload.knockoutLegMode
+  finalLegMode.value = payload.finalLegMode
+  playoffQualifierCount.value = payload.playoffQualifierCount
+  leaguePlayoffSeedMode.value = payload.leaguePlayoffSeedMode
+}
+
+function applyLeagueConfig(payload: LeagueConfigPayload) {
+  leagueLegMode.value = payload.leagueLegMode
+  tierCount.value = payload.tierCount
+  tierAssignments.value = payload.tierAssignments
+  promotionCount.value = payload.promotionCount
+  tiebreaker.value = payload.tiebreaker
+  winPoints.value = payload.winPoints
+  drawPoints.value = payload.drawPoints
+  lossPoints.value = payload.lossPoints
+}
 
 const tierNames = computed(() => {
   const names: string[] = []
@@ -263,53 +344,86 @@ function doCreate(orderedIds?: string[]) {
         <TeamSelector :teams="allTeams" :selected="selected" @update:selected="selected = $event" />
       </div>
 
-      <!-- Format + Group options -->
+      <!-- Format cards -->
       <CreateFormatSelector
         v-model:format="format"
+        v-model:playoff-enabled="playoffEnabled"
         v-model:group-count="groupCount"
         v-model:qualifiers-per-group="qualifiersPerGroup"
-        v-model:wildcard-count="wildcardCount"
         :selected-count="selected.length"
       />
 
-      <!-- League options -->
-      <template v-if="format === 'league'">
-        <CreateLeagueOptions
-          v-model:league-leg-mode="leagueLegMode"
-          v-model:tier-count="tierCount"
-          v-model:tier-assignments="tierAssignments"
-          v-model:promotion-count="promotionCount"
-          v-model:playoff-enabled="playoffEnabled"
-          v-model:playoff-qualifier-count="playoffQualifierCount"
-          v-model:playoff-seed-mode="leaguePlayoffSeedMode"
-          :selected-teams="selectedTeams"
-          :all-teams="allTeams"
+      <!-- Phase configuration buttons -->
+      <div class="form-card ctp-config-buttons">
+        <AppConfigButton
+          v-if="format === 'group+bracket'"
+          :icon="LayoutGrid"
+          :label="t('tournament.create.config.group')"
+          :summary="groupConfigSummary"
+          @click="showGroupModal = true"
         />
-      </template>
+        <AppConfigButton
+          v-if="format === 'league'"
+          :icon="List"
+          :label="t('tournament.create.config.league')"
+          :summary="leagueConfigSummary"
+          @click="showLeagueModal = true"
+        />
+        <AppConfigButton
+          v-if="format !== 'league' || playoffEnabled"
+          :icon="Trophy"
+          :label="t('tournament.create.config.knockout')"
+          :summary="knockoutConfigSummary"
+          @click="showKnockoutModal = true"
+        />
+      </div>
 
-      <!-- Match rules (bracket formats) -->
-      <template v-if="format !== 'league'">
-        <CreateMatchRules
-          v-model:draw-type="drawType"
-          v-model:playoff-seed-mode="playoffSeedMode"
-          v-model:has-third-place="hasThirdPlace"
-          v-model:group-leg-mode="groupLegMode"
-          v-model:knockout-leg-mode="knockoutLegMode"
-          v-model:final-leg-mode="finalLegMode"
-          :format="format"
-          :selected-count="selected.length"
-        />
-      </template>
+      <CreateGroupConfigModal
+        v-if="showGroupModal"
+        :group-count="groupCount"
+        :qualifiers-per-group="qualifiersPerGroup"
+        :wildcard-count="wildcardCount"
+        :group-leg-mode="groupLegMode"
+        :playoff-seed-mode="playoffSeedMode"
+        :tiebreaker="tiebreaker"
+        :win-points="winPoints"
+        :draw-points="drawPoints"
+        :loss-points="lossPoints"
+        :selected-count="selected.length"
+        @save="applyGroupConfig"
+        @close="showGroupModal = false"
+      />
 
-      <!-- Tiebreaker + Scoring -->
-      <template v-if="format !== 'bracket'">
-        <CreateScoringTiebreaker
-          v-model:tiebreaker="tiebreaker"
-          v-model:win-points="winPoints"
-          v-model:draw-points="drawPoints"
-          v-model:loss-points="lossPoints"
-        />
-      </template>
+      <CreateKnockoutConfigModal
+        v-if="showKnockoutModal"
+        :variant="format === 'league' ? 'leaguePlayoff' : 'bracket'"
+        :draw-type="drawType"
+        :has-third-place="hasThirdPlace"
+        :knockout-leg-mode="knockoutLegMode"
+        :final-leg-mode="finalLegMode"
+        :playoff-qualifier-count="playoffQualifierCount"
+        :league-playoff-seed-mode="leaguePlayoffSeedMode"
+        :max-playoff-qualifiers="maxPlayoffQualifiers"
+        :selected-count="selected.length"
+        @save="applyKnockoutConfig"
+        @close="showKnockoutModal = false"
+      />
+
+      <CreateLeagueConfigModal
+        v-if="showLeagueModal"
+        :league-leg-mode="leagueLegMode"
+        :tier-count="tierCount"
+        :tier-assignments="tierAssignments"
+        :promotion-count="promotionCount"
+        :tiebreaker="tiebreaker"
+        :win-points="winPoints"
+        :draw-points="drawPoints"
+        :loss-points="lossPoints"
+        :selected-teams="selectedTeams"
+        :all-teams="allTeams"
+        @save="applyLeagueConfig"
+        @close="showLeagueModal = false"
+      />
 
       <!-- Team Adjustments (collapsible, advanced) -->
       <template v-if="selected.length >= 2">
@@ -441,6 +555,12 @@ function doCreate(orderedIds?: string[]) {
 }
 
 /* Collapsible adjustments */
+.ctp-config-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 .ctp-adj-wrap {
   display: flex;
   flex-direction: column;

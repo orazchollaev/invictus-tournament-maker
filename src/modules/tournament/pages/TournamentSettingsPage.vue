@@ -7,16 +7,19 @@ import { useTournamentStore } from "@/modules/tournament/store"
 import ManualDraw from "@/modules/tournament/components/ManualDraw.vue"
 import GroupDraw from "@/modules/tournament/components/GroupDraw.vue"
 import TeamSelector from "@/modules/tournament/components/TeamSelector.vue"
-import { AppButton, AppCard, AppChip, AppIcon, AppModal } from "@/components/ui"
-import { ArrowLeft, Lock, Save, Settings, Trophy } from "@lucide/vue"
+import { AppButton, AppCard, AppChip, AppConfigButton, AppIcon, AppModal } from "@/components/ui"
+import { ArrowLeft, LayoutGrid, List, Lock, Save, Settings, Trophy } from "@lucide/vue"
 import {
-  SettingsScoringTiebreaker,
-  SettingsBracketOptions,
   SettingsDangerZone,
-  SettingsLeagueOptions,
+  SettingsGroupConfigModal,
+  SettingsKnockoutConfigModal,
+  SettingsLeagueConfigModal,
   SettingsSimulation,
   SettingsTeamAdjustments,
 } from "../components/settings"
+import type { GroupConfigPayload } from "../components/settings/SettingsGroupConfigModal.vue"
+import type { KnockoutConfigPayload } from "../components/settings/SettingsKnockoutConfigModal.vue"
+import type { LeagueConfigPayload } from "../components/settings/SettingsLeagueConfigModal.vue"
 import { useTournamentSettingsDraft } from "../composables/useTournamentSettingsDraft"
 import { useUnsavedChangesGuard } from "@/composables/useUnsavedChangesGuard"
 
@@ -52,11 +55,71 @@ const minTierSize = computed(() => Math.floor(totalTeams.value / draft.tierCount
 const maxPromotionCount = computed(() => Math.max(1, minTierSize.value - 1))
 
 const showManualDraw = ref(false)
+const showGroupModal = ref(false)
+const showKnockoutModal = ref(false)
+const showLeagueModal = ref(false)
 
 const { open: showLeaveModal, choose: chooseLeave } = useUnsavedChangesGuard({
   hasChanges: draft.hasChanges,
   onSave: draft.save,
 })
+
+const groupConfigSummary = computed(() => {
+  const base = t("tournament.create.config.groupsAndAdvance", {
+    groups: draft.groupCount.value,
+    advance: draft.qualifiersPerGroup.value * draft.groupCount.value,
+  })
+  if (draft.wildcardCount.value <= 0) return base
+  return `${base} · ${t("tournament.create.config.wildcardsShort", { n: draft.wildcardCount.value })}`
+})
+const knockoutConfigSummary = computed(() => {
+  if (draft.isLeagueFormat.value) {
+    return draft.playoffEnabled.value
+      ? t("tournament.create.config.playoffShort", { n: draft.playoffQualifierCount.value })
+      : t("tournament.create.config.playoffOff")
+  }
+  const thirdPlace = draft.hasThirdPlace.value
+    ? t("tournament.create.config.thirdPlaceOn")
+    : t("tournament.create.config.noThirdPlace")
+  return `${t(`common.${draft.drawType.value}`)} · ${thirdPlace}`
+})
+const leagueConfigSummary = computed(() =>
+  draft.tierCount.value > 1
+    ? t("tournament.create.config.divisionsShort", { n: draft.tierCount.value })
+    : t("tournament.create.config.singleDivisionShort")
+)
+
+function applyGroupConfig(payload: GroupConfigPayload) {
+  draft.groupCount.value = payload.groupCount
+  draft.qualifiersPerGroup.value = payload.qualifiersPerGroup
+  draft.wildcardCount.value = payload.wildcardCount
+  draft.playoffSeedMode.value = payload.playoffSeedMode
+  draft.groupLegMode.value = payload.groupLegMode
+  draft.tiebreaker.value = payload.tiebreaker
+  draft.winPoints.value = payload.winPoints
+  draft.drawPoints.value = payload.drawPoints
+  draft.lossPoints.value = payload.lossPoints
+}
+
+function applyKnockoutConfig(payload: KnockoutConfigPayload) {
+  draft.drawType.value = payload.drawType
+  draft.hasThirdPlace.value = payload.hasThirdPlace
+  draft.knockoutLegMode.value = payload.knockoutLegMode
+  draft.finalLegMode.value = payload.finalLegMode
+  draft.playoffEnabled.value = payload.playoffEnabled
+  draft.playoffQualifierCount.value = payload.playoffQualifierCount
+  draft.leaguePlayoffSeedMode.value = payload.playoffSeedMode
+}
+
+function applyLeagueConfig(payload: LeagueConfigPayload) {
+  draft.leagueLegMode.value = payload.leagueLegMode
+  draft.tierCount.value = payload.tierCount
+  draft.promotionCount.value = payload.promotionCount
+  draft.tiebreaker.value = payload.tiebreaker
+  draft.winPoints.value = payload.winPoints
+  draft.drawPoints.value = payload.drawPoints
+  draft.lossPoints.value = payload.lossPoints
+}
 
 function handleManualConfirm(orderedIds: string[]) {
   showManualDraw.value = false
@@ -155,48 +218,82 @@ function handleSave() {
           </p>
         </AppCard>
 
-        <SettingsBracketOptions
-          v-if="!draft.isLeagueFormat.value"
-          v-model:draw-type="draft.drawType.value"
-          v-model:local-playoff-seed-mode="draft.playoffSeedMode.value"
-          v-model:local-group-count="draft.groupCount.value"
-          v-model:local-qpg="draft.qualifiersPerGroup.value"
-          v-model:local-wildcard-count="draft.wildcardCount.value"
-          v-model:local-has-third-place="draft.hasThirdPlace.value"
-          v-model:local-group-leg-mode="draft.groupLegMode.value"
-          v-model:local-knockout-leg-mode="draft.knockoutLegMode.value"
-          v-model:local-final-leg-mode="draft.finalLegMode.value"
+        <div class="form-card ctp-config-buttons">
+          <AppConfigButton
+            v-if="draft.isGroupFormat.value"
+            :icon="LayoutGrid"
+            :label="t('tournament.create.config.group')"
+            :summary="groupConfigSummary"
+            @click="showGroupModal = true"
+          />
+          <AppConfigButton
+            v-if="draft.isLeagueFormat.value"
+            :icon="List"
+            :label="t('tournament.create.config.league')"
+            :summary="leagueConfigSummary"
+            @click="showLeagueModal = true"
+          />
+          <AppConfigButton
+            :icon="Trophy"
+            :label="t('tournament.create.config.knockout')"
+            :summary="knockoutConfigSummary"
+            @click="showKnockoutModal = true"
+          />
+        </div>
+
+        <SettingsGroupConfigModal
+          v-if="showGroupModal && draft.isGroupFormat.value"
+          :group-count="draft.groupCount.value"
+          :qualifiers-per-group="draft.qualifiersPerGroup.value"
+          :wildcard-count="draft.wildcardCount.value"
+          :playoff-seed-mode="draft.playoffSeedMode.value"
+          :group-leg-mode="draft.groupLegMode.value"
+          :tiebreaker="draft.tiebreaker.value"
+          :win-points="draft.winPoints.value"
+          :draw-points="draft.drawPoints.value"
+          :loss-points="draft.lossPoints.value"
+          :tournament="tournament"
+          :has-any-results="hasAnyResults"
+          :team-count="draft.teamIds.value.length"
+          @save="applyGroupConfig"
+          @close="showGroupModal = false"
+        />
+
+        <SettingsKnockoutConfigModal
+          v-if="showKnockoutModal"
+          :variant="draft.isLeagueFormat.value ? 'leaguePlayoff' : 'bracket'"
+          :draw-type="draft.drawType.value"
+          :has-third-place="draft.hasThirdPlace.value"
+          :knockout-leg-mode="draft.knockoutLegMode.value"
+          :final-leg-mode="draft.finalLegMode.value"
+          :playoff-enabled="draft.playoffEnabled.value"
+          :playoff-qualifier-count="draft.playoffQualifierCount.value"
+          :playoff-seed-mode="draft.leaguePlayoffSeedMode.value"
           :tournament-id="tournamentId"
           :tournament="tournament"
           :has-any-results="hasAnyResults"
-          :is-group-format="draft.isGroupFormat.value"
           :team-count="draft.teamIds.value.length"
+          :league-playoff-started="draft.originalPlayoff.value?.started ?? false"
+          @save="applyKnockoutConfig"
+          @close="showKnockoutModal = false"
           @open-manual-draw="showManualDraw = true"
         />
 
-        <SettingsLeagueOptions
-          v-if="draft.isLeagueFormat.value"
-          v-model:local-league-leg-mode="draft.leagueLegMode.value"
-          v-model:local-tier-count="draft.tierCount.value"
-          v-model:local-promotion-count="draft.promotionCount.value"
-          v-model:local-playoff-enabled="draft.playoffEnabled.value"
-          v-model:local-playoff-qualifier-count="draft.playoffQualifierCount.value"
-          v-model:local-playoff-seed-mode="draft.leaguePlayoffSeedMode.value"
+        <SettingsLeagueConfigModal
+          v-if="showLeagueModal && draft.isLeagueFormat.value"
+          :league-leg-mode="draft.leagueLegMode.value"
+          :tier-count="draft.tierCount.value"
+          :promotion-count="draft.promotionCount.value"
+          :tiebreaker="draft.tiebreaker.value"
+          :win-points="draft.winPoints.value"
+          :draw-points="draft.drawPoints.value"
+          :loss-points="draft.lossPoints.value"
           :has-any-results="hasAnyResults"
           :is-multi-tier="draft.isMultiTier.value"
-          :team-count="draft.teamIds.value.length"
           :max-tier-count="maxTierCount"
           :max-promotion-count="maxPromotionCount"
-          :league-playoff-started="draft.originalPlayoff.value?.started ?? false"
-        />
-
-        <SettingsScoringTiebreaker
-          v-if="draft.isLeagueFormat.value || draft.isGroupFormat.value"
-          v-model:local-tiebreaker="draft.tiebreaker.value"
-          v-model:local-win-points="draft.winPoints.value"
-          v-model:local-draw-points="draft.drawPoints.value"
-          v-model:local-loss-points="draft.lossPoints.value"
-          :has-any-results="hasAnyResults"
+          @save="applyLeagueConfig"
+          @close="showLeagueModal = false"
         />
 
         <SettingsTeamAdjustments
