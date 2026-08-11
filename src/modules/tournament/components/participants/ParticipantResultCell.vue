@@ -5,7 +5,6 @@ import type { ParticipantRow } from "./types"
 
 const props = defineProps<{ row: ParticipantRow }>()
 
-/** Places 1–4 get a coloured tag; below that it is plain text. */
 const TAGGED_PLACES = 4
 
 const podiumLabel = computed(() => {

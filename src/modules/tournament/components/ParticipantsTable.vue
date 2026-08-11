@@ -17,7 +17,6 @@ const { toggleSort, sortIcon, sortedRows } = useParticipantRows(
 
 const isGroupFormat = computed(() => props.tournament.format === "group+bracket")
 
-/** Header cells, in render order. `group` is dropped unless groups exist. */
 const COLUMNS: { key: SortKey; label: string; cls: string }[] = [
   { key: "result", label: "#", cls: "col-rank" },
   { key: "name", label: "Team", cls: "col-team" },

@@ -154,8 +154,6 @@ const allDone = computed(
       @advance="emit('advance')"
     />
 
-    <GroupLegend :wildcard-count="tournament.wildcardCount ?? 0" />
-
     <div class="gs-groups">
       <GroupCard
         v-for="(group, gi) in tournament.groups"
@@ -173,6 +171,8 @@ const allDone = computed(
         @clear-result="(mi) => emit('clearResult', gi, mi)"
       />
     </div>
+
+    <GroupLegend :wildcard-count="tournament.wildcardCount ?? 0" />
   </div>
 </template>
 

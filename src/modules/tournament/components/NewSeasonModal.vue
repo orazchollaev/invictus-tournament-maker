@@ -7,9 +7,7 @@ import { NewSeasonChoice, NewSeasonTeamList } from "./new-season"
 import type { Tournament } from "@/modules/tournament/types"
 import type { Team } from "@/modules/teams/types"
 
-/** A tournament needs at least two teams to draw. */
 const MIN_TEAMS = 2
-/** Matches AppModal's close animation so the emit lands after it unmounts. */
 const CLOSE_MS = 220
 
 const props = defineProps<{
