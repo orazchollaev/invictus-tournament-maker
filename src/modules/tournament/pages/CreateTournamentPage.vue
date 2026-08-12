@@ -223,6 +223,7 @@ function applyLeaguePlayoffSettings(id: string) {
     qualifierCount: playoffQualifierCount.value,
     seedMode: leaguePlayoffSeedMode.value,
   })
+  store.setLeaguePlayoffLegModes(id, knockoutLegMode.value, finalLegMode.value)
 }
 
 function doCreate(orderedIds?: string[]) {

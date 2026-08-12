@@ -162,6 +162,26 @@ function handleSave() {
           </div>
         </template>
       </TspLockedCard>
+
+      <TspLockedCard
+        v-if="playoffEnabled"
+        :title="t('tournament.settingsPage.legsPerMatch.title')"
+        :locked="leaguePlayoffStarted"
+        :locked-message="t('tournament.settingsPage.legsPerMatch.lockedBanner')"
+      >
+        <div class="form-rows">
+          <div class="form-row">
+            <span class="form-label">
+              {{ t("tournament.settingsPage.legsPerMatch.knockoutRounds") }}
+            </span>
+            <BtnGroup v-model="knockoutLegMode" :options="legOptions" />
+          </div>
+          <div class="form-row">
+            <span class="form-label">{{ t("tournament.settingsPage.legsPerMatch.final") }}</span>
+            <BtnGroup v-model="finalLegMode" :options="legOptions" />
+          </div>
+        </div>
+      </TspLockedCard>
     </template>
 
     <template #footer>

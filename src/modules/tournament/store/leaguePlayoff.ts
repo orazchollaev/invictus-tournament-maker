@@ -1,5 +1,5 @@
 import type { Ref } from "vue"
-import type { Tournament, LeaguePlayoffSeedMode } from "../types"
+import type { Tournament, LeaguePlayoffSeedMode, LegMode } from "../types"
 import type { Team } from "@/modules/teams/types"
 import {
   getLeaguePlayoffData,
@@ -37,6 +37,22 @@ export function useLeaguePlayoffActions(tournaments: Ref<Tournament[]>, getTeams
     })
   }
 
+  // Playoff bracket leg modes live on the tournament itself (same fields the
+  // bracket/group formats use) but must never trigger draw.ts's rebuildDraw —
+  // that wipes league standings. Locked once the bracket is seeded.
+  function setLeaguePlayoffLegModes(
+    tournamentId: string,
+    knockoutLegMode: LegMode,
+    finalLegMode: LegMode
+  ) {
+    const t = getT(tournamentId)
+    if (!t) return
+    const existing = getLeaguePlayoffData(t)
+    if (existing?.started) return
+    t.knockoutLegMode = knockoutLegMode
+    t.finalLegMode = finalLegMode
+  }
+
   function startLeaguePlayoffBracket(
     tournamentId: string,
     mode: LeaguePlayoffSeedMode,
@@ -55,6 +71,7 @@ export function useLeaguePlayoffActions(tournaments: Ref<Tournament[]>, getTeams
 
   return {
     changeLeaguePlayoffSettings,
+    setLeaguePlayoffLegModes,
     startLeaguePlayoffBracket,
     canStartPlayoff,
   }

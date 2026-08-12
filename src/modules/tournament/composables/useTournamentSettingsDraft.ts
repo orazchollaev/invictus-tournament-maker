@@ -201,11 +201,22 @@ export function useTournamentSettingsDraft(
     if (groupLegMode.value !== (orig.groupLegMode ?? DEFAULTS.legMode)) {
       store.setLegMode(id, "group", groupLegMode.value)
     }
-    if (knockoutLegMode.value !== (orig.knockoutLegMode ?? DEFAULTS.legMode)) {
-      store.setLegMode(id, "knockout", knockoutLegMode.value)
-    }
-    if (finalLegMode.value !== (orig.finalLegMode ?? DEFAULTS.legMode)) {
-      store.setLegMode(id, "final", finalLegMode.value)
+    // League+playoff: knockout/final legs live on the tournament but must not
+    // go through setLegMode's rebuildDraw, which would wipe league standings.
+    if (isLeagueFormat.value) {
+      if (
+        knockoutLegMode.value !== (orig.knockoutLegMode ?? DEFAULTS.legMode) ||
+        finalLegMode.value !== (orig.finalLegMode ?? DEFAULTS.legMode)
+      ) {
+        store.setLeaguePlayoffLegModes(id, knockoutLegMode.value, finalLegMode.value)
+      }
+    } else {
+      if (knockoutLegMode.value !== (orig.knockoutLegMode ?? DEFAULTS.legMode)) {
+        store.setLegMode(id, "knockout", knockoutLegMode.value)
+      }
+      if (finalLegMode.value !== (orig.finalLegMode ?? DEFAULTS.legMode)) {
+        store.setLegMode(id, "final", finalLegMode.value)
+      }
     }
     if (isLeagueFormat.value && leagueLegMode.value !== leagueLegModeOf(orig)) {
       store.setLeagueLegMode(id, leagueLegMode.value)

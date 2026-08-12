@@ -54,6 +54,7 @@ const subTab = ref<"standings" | "fixtures">("standings")
           { value: 'fixtures', label: t('tournament.tabs.fixtures') },
         ]"
       />
+      <slot name="actions" />
     </div>
     <LeagueStandingsTable
       v-if="subTab === 'standings'"
@@ -88,5 +89,8 @@ const subTab = ref<"standings" | "fixtures">("standings")
 
 .lv-subtab-row {
   margin-bottom: var(--sp-1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 </style>

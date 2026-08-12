@@ -7,7 +7,13 @@ import type {
   LeaguePlayoffSeedMode,
 } from "../modules/tournament/types"
 import { shuffle } from "./utils"
-import { buildBracketRounds, propagateWinners, packDirectSlots, spreadByeSlots } from "./bracket"
+import {
+  buildBracketRounds,
+  propagateWinners,
+  packDirectSlots,
+  spreadByeSlots,
+  seedPairOrder,
+} from "./bracket"
 import { allLeagueDone, isTierDone } from "./league"
 import type { DrawPlan, DrawStep } from "./drawCeremony"
 
@@ -62,13 +68,14 @@ export function seedLeaguePlayoffBracket(
   const matchSlotCount = size / 2
   const byeCount = size - realCount
 
-  // seeded → table order (byes to top ranks); random → shuffle; manual → drawn order.
+  // seeded → byes to top ranks, rest paired top-half vs bottom-half so rank1
+  // never meets rank2 in round 1; random → shuffle; manual → drawn order.
   const idsForSlots =
     mode === "manual" && orderedTeamIds
       ? orderedTeamIds
       : mode === "random"
         ? shuffle(qualifierIds)
-        : qualifierIds
+        : [...qualifierIds.slice(0, byeCount), ...seedPairOrder(qualifierIds.slice(byeCount))]
   const slots = packDirectSlots(idsForSlots, byeCount, matchSlotCount, teams)
 
   const rounds = buildBracketRounds(slots)
@@ -106,7 +113,7 @@ export function computeLeaguePlayoffPlan(tournament: Tournament): DrawPlan {
   // Which match slots hold a bye (spread across the tree), same as packDirectSlots.
   const byeSlotSet = new Set(spreadByeSlots(byeCount, matchSlotCount))
   const byeIds = ids.slice(0, byeCount)
-  const restIds = ids.slice(byeCount)
+  const restIds = seedPairOrder(ids.slice(byeCount))
 
   const sequence: DrawStep[] = []
   let byeIdx = 0

@@ -142,28 +142,6 @@ const {
                       :model-value="String(activeTierIdx)"
                       @update:model-value="(v) => changeTab('league', Number(v))"
                     />
-
-                    <div
-                      v-if="
-                        showLeaguePlayoffControls &&
-                        leaguePlayoffData?.enabled &&
-                        !hasLeaguePlayoff &&
-                        canStartLeaguePlayoffFlow
-                      "
-                      class="lpc-actions"
-                    >
-                      <AppButton
-                        :disabled="!canStartLeaguePlayoffFlow"
-                        size="xs"
-                        variant="filled"
-                        @click="onStartLeaguePlayoff"
-                      >
-                        {{ trns("leaguePlayoff.startPlayoff") }}
-                      </AppButton>
-                      <span v-if="!canStartLeaguePlayoffFlow" class="lpc-hint">
-                        {{ trns("leaguePlayoff.finishSeasonFirst") }}
-                      </span>
-                    </div>
                   </div>
                   <Transition name="tab" mode="out-in">
                     <LeagueView
@@ -197,7 +175,32 @@ const {
                         (mdi) => store.simTierMatchday(tournament!.id, activeTierIdx, mdi)
                       "
                       @sim-all="store.simAllTier(tournament!.id, activeTierIdx)"
-                    />
+                    >
+                      <template
+                        v-if="
+                          activeTierIdx === 0 &&
+                          showLeaguePlayoffControls &&
+                          leaguePlayoffData?.enabled &&
+                          !hasLeaguePlayoff &&
+                          canStartLeaguePlayoffFlow
+                        "
+                        #actions
+                      >
+                        <div class="lpc-actions">
+                          <AppButton
+                            :disabled="!canStartLeaguePlayoffFlow"
+                            size="xs"
+                            variant="filled"
+                            @click="onStartLeaguePlayoff"
+                          >
+                            {{ trns("leaguePlayoff.startPlayoff") }}
+                          </AppButton>
+                          <span v-if="!canStartLeaguePlayoffFlow" class="lpc-hint">
+                            {{ trns("leaguePlayoff.finishSeasonFirst") }}
+                          </span>
+                        </div>
+                      </template>
+                    </LeagueView>
                   </Transition>
                 </template>
                 <template v-else>

@@ -139,6 +139,22 @@ export function spreadByeSlots(count: number, matchSlotCount: number): number[] 
   return bracketOrder(matchSlotCount).slice(0, count)
 }
 
+// Reorders rank-sorted ids (best first) so packDirectSlots' consecutive
+// pairing puts a top-half seed against a bottom-half seed in every match,
+// instead of pairing adjacent ranks (rank1 vs rank2) directly. Mirrors the
+// pot1-vs-pot2 split buildPureBracket uses for its seeded draw.
+export function seedPairOrder(ids: string[]): string[] {
+  const half = Math.floor(ids.length / 2)
+  const top = ids.slice(0, half)
+  const bottom = ids.slice(half).reverse()
+  const result: string[] = []
+  for (let i = 0; i < top.length; i++) {
+    result.push(top[i])
+    if (bottom[i]) result.push(bottom[i])
+  }
+  return result
+}
+
 // Packs bye recipients (ids[0..byeCount-1]) + remaining ids into round-1 slots,
 // spreading byes across match slots via spreadByeSlots so they don't collide
 // into the same round-2+ subtree. Shared by group+bracket and league-playoff seeding.
