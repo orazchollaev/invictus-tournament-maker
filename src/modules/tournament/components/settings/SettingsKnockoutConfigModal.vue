@@ -2,7 +2,12 @@
 import { computed, ref } from "vue"
 import { useI18n } from "vue-i18n"
 import { useTournamentStore } from "@/modules/tournament/store"
-import type { Tournament, LegMode, DrawType, LeaguePlayoffSeedMode } from "@/modules/tournament/types"
+import type {
+  Tournament,
+  LegMode,
+  DrawType,
+  LeaguePlayoffSeedMode,
+} from "@/modules/tournament/types"
 import { AppModal, AppButton, AppStepper, BtnGroup } from "@/components/ui"
 import TspLockedCard from "./TspLockedCard.vue"
 import { showConfirm } from "@/composables/useDialog"
@@ -143,11 +148,6 @@ function handleSave() {
         :locked="leaguePlayoffStarted"
         :locked-message="t('tournament.settingsPage.leagueFormat.playoff.lockedBanner')"
       >
-        <label class="toggle-row">
-          <input v-model="playoffEnabled" type="checkbox" />
-          <span class="toggle-label">{{ t("tournament.create.playoff.enable") }}</span>
-        </label>
-
         <template v-if="playoffEnabled">
           <AppStepper
             v-model="playoffQualifierCount"
