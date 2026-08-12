@@ -1,5 +1,19 @@
 # Changelog
 
+# [1.21.0](https://github.com/orazchollaev/invictus-tournament-maker/compare/v1.20.0...v1.21.0) (2026-08-12)
+
+### Bug Fixes
+
+- fixture tie card layout fixed ([ef27263](https://github.com/orazchollaev/invictus-tournament-maker/commit/ef272636d0eab2a787664ff5b5a67f8b72197efd))
+- **league-knockout:** remove enable play off toggle ([1ac747b](https://github.com/orazchollaev/invictus-tournament-maker/commit/1ac747b4039580fe581b0afaba6f89ed029aeaec))
+
+### Features
+
+- **about:** add about section to the project ([b30b67d](https://github.com/orazchollaev/invictus-tournament-maker/commit/b30b67db6d6eda0b55851bcdf03adeb67a368b97))
+- **analytics:** integrate Firebase Analytics via Capacitor ([2416cef](https://github.com/orazchollaev/invictus-tournament-maker/commit/2416cef432b8676eec0aeb0ec3cb6aeaafe205f0))
+- **league:** new league ui and fix small bugs ([175be76](https://github.com/orazchollaev/invictus-tournament-maker/commit/175be76f1479da1151088bc599c1cbbd7d9d4151))
+- **tournament:** config-modal restructure for create/settings forms ([877b5a1](https://github.com/orazchollaev/invictus-tournament-maker/commit/877b5a1f21b43b5d0f32633e52c55b082b59d5ea))
+
 # [1.20.0](https://github.com/orazchollaev/invictus-tournament-maker/compare/v1.19.0...v1.20.0) (2026-08-10)
 
 ### Bug Fixes
