@@ -11,7 +11,7 @@ export async function initAnalytics(): Promise<void> {
 
   try {
     const { FirebaseAnalytics } = await import("@capacitor-firebase/analytics")
-    await FirebaseAnalytics.setCollectionEnabled({ enabled: true })
+    await FirebaseAnalytics.setEnabled({ enabled: true })
   } catch {
     // best-effort: silently ignore if unavailable
   }
@@ -22,7 +22,7 @@ export async function logScreenView(screenName: string): Promise<void> {
 
   try {
     const { FirebaseAnalytics } = await import("@capacitor-firebase/analytics")
-    await FirebaseAnalytics.setScreenName({ screenName })
+    await FirebaseAnalytics.setCurrentScreen({ screenName })
   } catch {
     // best-effort: silently ignore if unavailable
   }
