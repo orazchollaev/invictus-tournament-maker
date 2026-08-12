@@ -2,7 +2,6 @@
 import { ref, computed } from "vue"
 import type { Team } from "@/modules/teams/types"
 import type { Tournament } from "@/modules/tournament/types"
-import { Lock } from "@lucide/vue"
 import { useGradualSim } from "../composables/useGradualSim"
 import { GroupCard, GroupLegend, GroupSimToolbar } from "./group"
 
@@ -139,13 +138,8 @@ const allDone = computed(
 
 <template>
   <div class="gs-wrap">
-    <div v-if="locked" class="gs-locked-notice">
-      <Lock :size="14" />
-      Group stage complete — results are locked. Switch to the Knockout tab to continue.
-    </div>
-
     <GroupSimToolbar
-      v-else
+      v-if="!locked"
       :groups="tournament.groups ?? []"
       :all-done="allDone"
       @sim-week="handleSimWeek"
@@ -181,19 +175,6 @@ const allDone = computed(
   display: flex;
   flex-direction: column;
   gap: var(--sp-3);
-}
-
-.gs-locked-notice {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-2);
-  font-size: var(--fs-sm);
-  color: var(--text-muted);
-  background: var(--bg);
-  border: 1px solid var(--border-light);
-  border-left: 3px solid var(--accent);
-  border-radius: var(--radius);
-  padding: var(--sp-2) var(--sp-3);
 }
 
 .gs-groups {

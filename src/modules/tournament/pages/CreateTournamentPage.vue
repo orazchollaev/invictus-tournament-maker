@@ -29,6 +29,7 @@ import type { LeagueConfigPayload } from "../components/create/CreateLeagueConfi
 import { SettingsTeamAdjustments } from "../components/settings"
 import { AppConfigButton } from "@/components/ui"
 import { useI18n } from "vue-i18n"
+import { logEvent } from "@/composables/useAnalytics"
 
 type DrawType = "random" | "seeded" | "manual"
 type TournamentFormat = "bracket" | "group+bracket" | "league"
@@ -243,6 +244,10 @@ function doCreate(orderedIds?: string[]) {
       )
       applyAdjustments(id)
       applyLeaguePlayoffSettings(id)
+      void logEvent("create_tournament", {
+        format: "league",
+        team_count: selectedTeams.value.length,
+      })
       router.push(`/tournaments/${id}`)
       return
     }
@@ -257,6 +262,10 @@ function doCreate(orderedIds?: string[]) {
     )
     applyAdjustments(id)
     applyLeaguePlayoffSettings(id)
+    void logEvent("create_tournament", {
+      format: "league",
+      team_count: selectedTeams.value.length,
+    })
     router.push(`/tournaments/${id}`)
     return
   }
@@ -281,12 +290,14 @@ function doCreate(orderedIds?: string[]) {
     isGroup ? drawPoints.value : undefined,
     isGroup ? lossPoints.value : undefined
   )
-  // The ceremony commits its result via orderedIds (manual placement under the
-  // hood); preserve the user's real draw-method label for display.
   store.setDrawType(id, drawType.value)
   if (isGroup) store.setPlayoffSeedMode(id, playoffSeedMode.value)
   if (hasThirdPlace.value) store.toggleThirdPlace(id)
   applyAdjustments(id)
+  void logEvent("create_tournament", {
+    format: format.value,
+    team_count: selectedTeams.value.length,
+  })
   router.push(`/tournaments/${id}`)
 }
 </script>

@@ -3,7 +3,6 @@ import { computed, ref } from "vue"
 import { useI18n } from "vue-i18n"
 import type { League, Tournament } from "@/modules/tournament/types"
 import type { Team } from "@/modules/teams/types"
-import { Lock } from "@lucide/vue"
 import { LeagueMatchdayPanel, LeagueStandingsTable } from "./league"
 import { SubTabBar } from "@/components/ui"
 
@@ -47,10 +46,6 @@ const subTab = ref<"standings" | "fixtures">("standings")
 
 <template>
   <div class="lv-root">
-    <div v-if="locked" class="lv-locked-notice">
-      <Lock :size="14" />
-      Playoff underway — results are locked. Switch to the Playoff tab to continue.
-    </div>
     <div class="lv-subtab-row">
       <SubTabBar
         v-model="subTab"
@@ -89,19 +84,6 @@ const subTab = ref<"standings" | "fixtures">("standings")
   display: flex;
   flex-direction: column;
   gap: var(--sp-3);
-}
-
-.lv-locked-notice {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-2);
-  font-size: var(--fs-sm);
-  color: var(--text-muted);
-  background: var(--bg);
-  border: 1px solid var(--border-light);
-  border-left: 3px solid var(--accent);
-  border-radius: var(--radius);
-  padding: var(--sp-2) var(--sp-3);
 }
 
 .lv-subtab-row {

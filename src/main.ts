@@ -7,6 +7,7 @@ import App from "./App.vue"
 import i18n, { loadLocale } from "./i18n"
 import type { Locale } from "./i18n"
 import { initPush } from "./composables/usePush"
+import { initAnalytics, logScreenView } from "./composables/useAnalytics"
 
 import "./assets/style/index.css"
 
@@ -36,6 +37,10 @@ async function bootstrap() {
   app.mount("#app")
 
   void initPush()
+  void initAnalytics()
+  router.afterEach((to) => {
+    void logScreenView(to.path)
+  })
 }
 
 bootstrap()

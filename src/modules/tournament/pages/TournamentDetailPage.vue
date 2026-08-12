@@ -15,7 +15,7 @@ import PlayoffManualDraw from "@/modules/tournament/components/PlayoffManualDraw
 import GroupDraw from "@/modules/tournament/components/GroupDraw.vue"
 import TournamentStats from "@/modules/tournament/components/TournamentStats.vue"
 import { DrawCeremony } from "@/modules/tournament/components/draw-ceremony"
-import { AppModal, SubTabBar } from "@/components/ui"
+import { AppButton, AppModal, SubTabBar } from "@/components/ui"
 import { DetailHeader, DetailPhaseTabs, DetailMultiTierModal } from "../components/detail"
 import { useTournamentDetail } from "../composables/useTournamentDetail"
 import { useTournamentTabs } from "../composables/useTournamentTabs"
@@ -130,26 +130,6 @@ const {
           <SwiperSlide v-for="tab in visibleTabs" :key="tab">
             <template v-if="isTabRendered(tab)">
               <div v-if="tab === 'league'" class="tab-panel">
-                <div
-                  v-if="
-                    showLeaguePlayoffControls &&
-                    leaguePlayoffData?.enabled &&
-                    !hasLeaguePlayoff &&
-                    canStartLeaguePlayoffFlow
-                  "
-                  class="lpc-actions"
-                >
-                  <button
-                    class="primary"
-                    :disabled="!canStartLeaguePlayoffFlow"
-                    @click="onStartLeaguePlayoff"
-                  >
-                    {{ trns("leaguePlayoff.startPlayoff") }}
-                  </button>
-                  <span v-if="!canStartLeaguePlayoffFlow" class="lpc-hint">
-                    {{ trns("leaguePlayoff.finishSeasonFirst") }}
-                  </span>
-                </div>
                 <template v-if="isMultiTier && tournament.tiers">
                   <div class="gs-subtab-row">
                     <SubTabBar
@@ -162,6 +142,28 @@ const {
                       :model-value="String(activeTierIdx)"
                       @update:model-value="(v) => changeTab('league', Number(v))"
                     />
+
+                    <div
+                      v-if="
+                        showLeaguePlayoffControls &&
+                        leaguePlayoffData?.enabled &&
+                        !hasLeaguePlayoff &&
+                        canStartLeaguePlayoffFlow
+                      "
+                      class="lpc-actions"
+                    >
+                      <AppButton
+                        :disabled="!canStartLeaguePlayoffFlow"
+                        size="xs"
+                        variant="filled"
+                        @click="onStartLeaguePlayoff"
+                      >
+                        {{ trns("leaguePlayoff.startPlayoff") }}
+                      </AppButton>
+                      <span v-if="!canStartLeaguePlayoffFlow" class="lpc-hint">
+                        {{ trns("leaguePlayoff.finishSeasonFirst") }}
+                      </span>
+                    </div>
                   </div>
                   <Transition name="tab" mode="out-in">
                     <LeagueView
@@ -245,8 +247,6 @@ const {
                   <WildcardRankings v-else :tournament="tournament" :teams="allTeams" />
                 </div>
               </div>
-              <!-- BracketPanel keeps its own header strip: it needs the export,
-                 zoom and view-switch controls that the others have no use for. -->
               <div v-else-if="tab === 'bracket'" class="tab-panel">
                 <BracketPanel
                   :tournament="tournament"
@@ -344,9 +344,6 @@ const {
 </template>
 
 <style scoped>
-.page {
-}
-
 .tab-surface {
   border: 1px solid var(--border-light);
   border-radius: var(--radius-lg);
@@ -368,7 +365,6 @@ const {
   display: flex;
   align-items: center;
   gap: var(--sp-2);
-  margin-bottom: var(--sp-3);
 }
 .lpc-hint {
   font-size: var(--fs-sm);
@@ -377,6 +373,9 @@ const {
 
 .gs-subtab-row {
   margin-bottom: var(--sp-3);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .not-found {

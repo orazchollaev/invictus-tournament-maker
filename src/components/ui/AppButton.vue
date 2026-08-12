@@ -14,13 +14,9 @@ withDefaults(
   defineProps<{
     variant?: "filled" | "tonal" | "outlined" | "text" | "danger"
     size?: "xs" | "sm" | "md"
-    /** Square button sized for a single icon. */
     iconOnly?: boolean
-    /** Fully rounded — for chip-like actions. */
     pill?: boolean
-    /** Stretch to the container width. */
     block?: boolean
-    /** Solid fill for the `danger` variant. */
     solid?: boolean
     disabled?: boolean
     type?: "button" | "submit" | "reset"
