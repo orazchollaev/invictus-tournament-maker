@@ -7,6 +7,7 @@ import type {
   LegMode,
   DrawType,
   LeaguePlayoffSeedMode,
+  PlayoffSeedMode,
 } from "@/modules/tournament/types"
 import { AppModal, AppButton, AppStepper, BtnGroup } from "@/components/ui"
 import TspLockedCard from "./TspLockedCard.vue"
@@ -21,6 +22,7 @@ export interface KnockoutConfigPayload {
   playoffEnabled: boolean
   playoffQualifierCount: number
   playoffSeedMode: LeaguePlayoffSeedMode
+  groupPlayoffSeedMode: PlayoffSeedMode
 }
 
 const { t } = useI18n()
@@ -31,6 +33,9 @@ const props = defineProps<
   KnockoutConfigPayload & {
     /** bracket/group formats show draw+thirdPlace+legs; leaguePlayoff shows the league playoff toggle. */
     variant: "bracket" | "leaguePlayoff"
+    /** group+knockout: this modal controls the bracket pairing after groups
+     *  finish — group formation itself is configured in the Group modal. */
+    isGroupFormat?: boolean
     tournamentId: string
     tournament: Tournament
     hasAnyResults: boolean
@@ -48,6 +53,7 @@ const finalLegMode = ref(props.finalLegMode)
 const playoffEnabled = ref(props.playoffEnabled)
 const playoffQualifierCount = ref(props.playoffQualifierCount)
 const playoffSeedMode = ref(props.playoffSeedMode)
+const groupPlayoffSeedMode = ref(props.groupPlayoffSeedMode)
 
 const drawOptions = computed(() => [
   { value: "random", label: t("common.random") },
@@ -56,6 +62,12 @@ const drawOptions = computed(() => [
 ])
 const leaguePlayoffSeedOptions = computed(() => [
   { value: "seeded" as const, label: t("common.seeded") },
+  { value: "random" as const, label: t("common.random") },
+  { value: "manual" as const, label: t("common.manual") },
+])
+const groupPlayoffSeedOptions = computed(() => [
+  { value: "cross" as const, label: t("tournament.create.cross") },
+  { value: "no-same-group" as const, label: t("tournament.create.noRematch") },
   { value: "random" as const, label: t("common.random") },
   { value: "manual" as const, label: t("common.manual") },
 ])
@@ -83,6 +95,7 @@ function handleSave() {
     playoffEnabled: playoffEnabled.value,
     playoffQualifierCount: playoffQualifierCount.value,
     playoffSeedMode: playoffSeedMode.value,
+    groupPlayoffSeedMode: groupPlayoffSeedMode.value,
   })
   modalRef.value?.close()
 }
@@ -97,6 +110,7 @@ function handleSave() {
   >
     <template v-if="props.variant === 'bracket'">
       <TspLockedCard
+        v-if="!props.isGroupFormat"
         :title="t('tournament.create.drawMethod')"
         :locked="hasAnyResults"
         :locked-message="t('tournament.settingsPage.drawMethod.lockedBanner')"
@@ -107,6 +121,15 @@ function handleSave() {
             {{ t("tournament.settingsPage.drawMethod.regenerate") }}
           </button>
         </div>
+      </TspLockedCard>
+
+      <TspLockedCard
+        v-else
+        :title="t('tournament.settingsPage.playoffSeeding.title')"
+        :locked="!!tournament.groupsDone"
+        :locked-message="t('tournament.settingsPage.playoffSeeding.lockedBanner')"
+      >
+        <BtnGroup v-model="groupPlayoffSeedMode" :options="groupPlayoffSeedOptions" />
       </TspLockedCard>
 
       <TspLockedCard

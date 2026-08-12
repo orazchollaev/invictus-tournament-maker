@@ -118,11 +118,11 @@ const leagueConfigSummary = computed(() =>
 )
 
 function applyGroupConfig(payload: GroupConfigPayload) {
+  drawType.value = payload.drawType
   groupCount.value = payload.groupCount
   qualifiersPerGroup.value = payload.qualifiersPerGroup
   wildcardCount.value = payload.wildcardCount
   groupLegMode.value = payload.groupLegMode
-  playoffSeedMode.value = payload.playoffSeedMode
   tiebreaker.value = payload.tiebreaker
   winPoints.value = payload.winPoints
   drawPoints.value = payload.drawPoints
@@ -130,12 +130,13 @@ function applyGroupConfig(payload: GroupConfigPayload) {
 }
 
 function applyKnockoutConfig(payload: KnockoutConfigPayload) {
-  drawType.value = payload.drawType
+  if (format.value !== "group+bracket") drawType.value = payload.drawType
   hasThirdPlace.value = payload.hasThirdPlace
   knockoutLegMode.value = payload.knockoutLegMode
   finalLegMode.value = payload.finalLegMode
   playoffQualifierCount.value = payload.playoffQualifierCount
   leaguePlayoffSeedMode.value = payload.leaguePlayoffSeedMode
+  playoffSeedMode.value = payload.groupPlayoffSeedMode
 }
 
 function applyLeagueConfig(payload: LeagueConfigPayload) {
@@ -392,11 +393,11 @@ function doCreate(orderedIds?: string[]) {
 
       <CreateGroupConfigModal
         v-if="showGroupModal"
+        :draw-type="drawType"
         :group-count="groupCount"
         :qualifiers-per-group="qualifiersPerGroup"
         :wildcard-count="wildcardCount"
         :group-leg-mode="groupLegMode"
-        :playoff-seed-mode="playoffSeedMode"
         :tiebreaker="tiebreaker"
         :win-points="winPoints"
         :draw-points="drawPoints"
@@ -409,12 +410,14 @@ function doCreate(orderedIds?: string[]) {
       <CreateKnockoutConfigModal
         v-if="showKnockoutModal"
         :variant="format === 'league' ? 'leaguePlayoff' : 'bracket'"
+        :is-group-format="format === 'group+bracket'"
         :draw-type="drawType"
         :has-third-place="hasThirdPlace"
         :knockout-leg-mode="knockoutLegMode"
         :final-leg-mode="finalLegMode"
         :playoff-qualifier-count="playoffQualifierCount"
         :league-playoff-seed-mode="leaguePlayoffSeedMode"
+        :group-playoff-seed-mode="playoffSeedMode"
         :max-playoff-qualifiers="maxPlayoffQualifiers"
         :selected-count="selected.length"
         @save="applyKnockoutConfig"

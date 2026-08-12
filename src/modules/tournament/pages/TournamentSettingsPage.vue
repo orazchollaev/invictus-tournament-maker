@@ -90,10 +90,10 @@ const leagueConfigSummary = computed(() =>
 )
 
 function applyGroupConfig(payload: GroupConfigPayload) {
+  draft.drawType.value = payload.drawType
   draft.groupCount.value = payload.groupCount
   draft.qualifiersPerGroup.value = payload.qualifiersPerGroup
   draft.wildcardCount.value = payload.wildcardCount
-  draft.playoffSeedMode.value = payload.playoffSeedMode
   draft.groupLegMode.value = payload.groupLegMode
   draft.tiebreaker.value = payload.tiebreaker
   draft.winPoints.value = payload.winPoints
@@ -102,13 +102,14 @@ function applyGroupConfig(payload: GroupConfigPayload) {
 }
 
 function applyKnockoutConfig(payload: KnockoutConfigPayload) {
-  draft.drawType.value = payload.drawType
+  if (!draft.isGroupFormat.value) draft.drawType.value = payload.drawType
   draft.hasThirdPlace.value = payload.hasThirdPlace
   draft.knockoutLegMode.value = payload.knockoutLegMode
   draft.finalLegMode.value = payload.finalLegMode
   draft.playoffEnabled.value = payload.playoffEnabled
   draft.playoffQualifierCount.value = payload.playoffQualifierCount
   draft.leaguePlayoffSeedMode.value = payload.playoffSeedMode
+  draft.playoffSeedMode.value = payload.groupPlayoffSeedMode
 }
 
 function applyLeagueConfig(payload: LeagueConfigPayload) {
@@ -243,25 +244,28 @@ function handleSave() {
 
         <SettingsGroupConfigModal
           v-if="showGroupModal && draft.isGroupFormat.value"
+          :draw-type="draft.drawType.value"
           :group-count="draft.groupCount.value"
           :qualifiers-per-group="draft.qualifiersPerGroup.value"
           :wildcard-count="draft.wildcardCount.value"
-          :playoff-seed-mode="draft.playoffSeedMode.value"
           :group-leg-mode="draft.groupLegMode.value"
           :tiebreaker="draft.tiebreaker.value"
           :win-points="draft.winPoints.value"
           :draw-points="draft.drawPoints.value"
           :loss-points="draft.lossPoints.value"
+          :tournament-id="tournamentId"
           :tournament="tournament"
           :has-any-results="hasAnyResults"
           :team-count="draft.teamIds.value.length"
           @save="applyGroupConfig"
           @close="showGroupModal = false"
+          @open-manual-draw="showManualDraw = true"
         />
 
         <SettingsKnockoutConfigModal
           v-if="showKnockoutModal"
           :variant="draft.isLeagueFormat.value ? 'leaguePlayoff' : 'bracket'"
+          :is-group-format="draft.isGroupFormat.value"
           :draw-type="draft.drawType.value"
           :has-third-place="draft.hasThirdPlace.value"
           :knockout-leg-mode="draft.knockoutLegMode.value"
@@ -269,6 +273,7 @@ function handleSave() {
           :playoff-enabled="draft.playoffEnabled.value"
           :playoff-qualifier-count="draft.playoffQualifierCount.value"
           :playoff-seed-mode="draft.leaguePlayoffSeedMode.value"
+          :group-playoff-seed-mode="draft.playoffSeedMode.value"
           :tournament-id="tournamentId"
           :tournament="tournament"
           :has-any-results="hasAnyResults"

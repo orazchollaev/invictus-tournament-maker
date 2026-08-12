@@ -2,16 +2,18 @@
 import { computed, ref, watch } from "vue"
 import { useI18n } from "vue-i18n"
 import { AppModal, AppButton, AppStepper, BtnGroup } from "@/components/ui"
-import type { LegMode, PlayoffSeedMode, Tiebreaker } from "@/modules/tournament/types"
+import type { LegMode, Tiebreaker } from "@/modules/tournament/types"
 import { useGroupSizeHint } from "../../composables/useGroupSizeHint"
 import { useLegOptions } from "../../composables/useLegOptions"
 
+type DrawType = "random" | "seeded" | "manual"
+
 export interface GroupConfigPayload {
+  drawType: DrawType
   groupCount: number
   qualifiersPerGroup: number
   wildcardCount: number
   groupLegMode: LegMode
-  playoffSeedMode: PlayoffSeedMode
   tiebreaker: Tiebreaker
   winPoints: number
   drawPoints: number
@@ -31,11 +33,11 @@ const { multiLegOptions } = useLegOptions()
 // Local draft — nothing is written back to the caller until "Save" is
 // clicked. Closing any other way (X, backdrop, Escape) discards it.
 const modalRef = ref<InstanceType<typeof AppModal>>()
+const drawType = ref(props.drawType)
 const groupCount = ref(props.groupCount)
 const qualifiersPerGroup = ref(props.qualifiersPerGroup)
 const wildcardCount = ref(props.wildcardCount)
 const groupLegMode = ref(props.groupLegMode)
-const playoffSeedMode = ref(props.playoffSeedMode)
 const tiebreaker = ref(props.tiebreaker)
 const winPoints = ref(props.winPoints)
 const drawPoints = ref(props.drawPoints)
@@ -56,11 +58,10 @@ const groupSizeHint = useGroupSizeHint(
   () => groupCount.value
 )
 
-const playoffOptions = computed(() => [
-  { value: "cross", label: t("tournament.create.cross") },
-  { value: "no-same-group", label: t("tournament.create.noRematch") },
-  { value: "random", label: t("common.random") },
-  { value: "manual", label: t("common.manual") },
+const drawOptions = computed(() => [
+  { value: "random" as const, label: t("common.random") },
+  { value: "seeded" as const, label: t("common.seeded") },
+  { value: "manual" as const, label: t("common.manual") },
 ])
 
 watch(maxGroups, (max) => {
@@ -75,11 +76,11 @@ watch(maxWildcards, (max) => {
 
 function handleSave() {
   emit("save", {
+    drawType: drawType.value,
     groupCount: groupCount.value,
     qualifiersPerGroup: qualifiersPerGroup.value,
     wildcardCount: wildcardCount.value,
     groupLegMode: groupLegMode.value,
-    playoffSeedMode: playoffSeedMode.value,
     tiebreaker: tiebreaker.value,
     winPoints: winPoints.value,
     drawPoints: drawPoints.value,
@@ -96,6 +97,20 @@ function handleSave() {
     width="420px"
     @close="emit('close')"
   >
+    <div class="form-card">
+      <div class="form-section-title">{{ t("tournament.create.drawMethod") }}</div>
+      <BtnGroup v-model="drawType" :options="drawOptions" />
+      <div class="hint-box hint-box--bottom">
+        {{
+          t("tournament.create.drawHint", {
+            random: t("common.random"),
+            seeded: t("common.seeded"),
+            manual: t("common.manual"),
+          })
+        }}
+      </div>
+    </div>
+
     <div class="form-card">
       <div class="form-section-title">{{ t("tournament.create.groups") }}</div>
       <AppStepper
@@ -127,22 +142,7 @@ function handleSave() {
     <div class="form-card">
       <div class="form-section-title">{{ t("tournament.settingsPage.legsPerMatch.title") }}</div>
       <div class="form-row">
-        <span class="form-label">{{ t("tournament.create.groupStage") }}</span>
         <BtnGroup v-model="groupLegMode" :options="multiLegOptions" />
-      </div>
-    </div>
-
-    <div class="form-card">
-      <div class="form-section-title">{{ t("tournament.settingsPage.playoffSeeding.title") }}</div>
-      <BtnGroup v-model="playoffSeedMode" :options="playoffOptions" />
-      <div class="hint-box hint-box--bottom">
-        {{
-          t("tournament.create.playoffHint", {
-            cross: t("tournament.create.cross"),
-            noRematch: t("tournament.create.noRematch"),
-            random: t("common.random"),
-          })
-        }}
       </div>
     </div>
 

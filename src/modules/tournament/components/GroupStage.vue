@@ -26,8 +26,21 @@ const locked = computed(() => !!props.tournament.groupsDone)
 
 const selectedRound = ref<number[]>([])
 
+/** Round of the first unplayed match in the group, mirroring the league's
+ *  "open on first unplayed matchday" — so leaving and returning to the tab
+ *  lands on the current round instead of resetting to round 1. */
+function firstUnplayedRoundOf(gi: number): number {
+  const group = props.tournament.groups?.[gi]
+  if (!group) return 0
+  const mpr = Math.floor(group.teamIds.length / 2)
+  if (mpr < 1) return 0
+  const first = group.matches.findIndex((m) => !m.result)
+  if (first === -1) return Math.max(0, Math.ceil(group.matches.length / mpr) - 1)
+  return Math.floor(first / mpr)
+}
+
 function roundOf(gi: number): number {
-  return selectedRound.value[gi] ?? 0
+  return selectedRound.value[gi] ?? firstUnplayedRoundOf(gi)
 }
 
 async function handleSimGroupWeek(gi: number) {

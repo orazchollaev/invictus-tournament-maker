@@ -1,17 +1,19 @@
 <script setup lang="ts">
 import { computed, ref } from "vue"
 import { useI18n } from "vue-i18n"
-import type { Tournament, PlayoffSeedMode, LegMode, Tiebreaker } from "@/modules/tournament/types"
+import type { Tournament, LegMode, DrawType, Tiebreaker } from "@/modules/tournament/types"
 import { AppModal, AppButton, AppStepper, BtnGroup } from "@/components/ui"
 import TspLockedCard from "./TspLockedCard.vue"
+import { useTournamentStore } from "@/modules/tournament/store"
+import { showConfirm } from "@/composables/useDialog"
 import { useLegOptions } from "@/modules/tournament/composables/useLegOptions"
 import { useGroupSizeHint } from "@/modules/tournament/composables/useGroupSizeHint"
 
 export interface GroupConfigPayload {
+  drawType: DrawType
   groupCount: number
   qualifiersPerGroup: number
   wildcardCount: number
-  playoffSeedMode: PlayoffSeedMode
   groupLegMode: LegMode
   tiebreaker: Tiebreaker
   winPoints: number
@@ -20,22 +22,24 @@ export interface GroupConfigPayload {
 }
 
 const { t } = useI18n()
+const store = useTournamentStore()
 const { multiLegOptions } = useLegOptions()
 
 const props = defineProps<
   GroupConfigPayload & {
+    tournamentId: string
     tournament: Tournament
     hasAnyResults: boolean
     teamCount: number
   }
 >()
-const emit = defineEmits<{ save: [GroupConfigPayload]; close: [] }>()
+const emit = defineEmits<{ save: [GroupConfigPayload]; close: []; openManualDraw: [] }>()
 
 const modalRef = ref<InstanceType<typeof AppModal>>()
+const drawType = ref(props.drawType)
 const groupCount = ref(props.groupCount)
 const qualifiersPerGroup = ref(props.qualifiersPerGroup)
 const wildcardCount = ref(props.wildcardCount)
-const playoffSeedMode = ref(props.playoffSeedMode)
 const groupLegMode = ref(props.groupLegMode)
 const tiebreaker = ref(props.tiebreaker)
 const winPoints = ref(props.winPoints)
@@ -52,19 +56,32 @@ const groupSizeHint = useGroupSizeHint(
   () => groupCount.value
 )
 
-const playoffOptions = computed(() => [
-  { value: "cross", label: t("tournament.create.cross") },
-  { value: "no-same-group", label: t("tournament.create.noRematch") },
-  { value: "random", label: t("common.random") },
-  { value: "manual", label: t("common.manual") },
+const drawOptions = computed(() => [
+  { value: "random" as const, label: t("common.random") },
+  { value: "seeded" as const, label: t("common.seeded") },
+  { value: "manual" as const, label: t("common.manual") },
 ])
+
+async function handleRedraw() {
+  if (drawType.value === "manual") {
+    emit("openManualDraw")
+    return
+  }
+  if (
+    !(await showConfirm(t("tournament.settingsPage.drawMethod.redrawConfirm"), {
+      confirmLabel: t("tournament.settingsPage.drawMethod.redrawConfirmLabel"),
+    }))
+  )
+    return
+  store.redrawTournament(props.tournamentId, drawType.value === "seeded")
+}
 
 function handleSave() {
   emit("save", {
+    drawType: drawType.value,
     groupCount: groupCount.value,
     qualifiersPerGroup: qualifiersPerGroup.value,
     wildcardCount: wildcardCount.value,
-    playoffSeedMode: playoffSeedMode.value,
     groupLegMode: groupLegMode.value,
     tiebreaker: tiebreaker.value,
     winPoints: winPoints.value,
@@ -82,6 +99,19 @@ function handleSave() {
     width="420px"
     @close="emit('close')"
   >
+    <TspLockedCard
+      :title="t('tournament.create.drawMethod')"
+      :locked="hasAnyResults"
+      :locked-message="t('tournament.settingsPage.drawMethod.lockedBanner')"
+    >
+      <div class="form-row">
+        <BtnGroup v-model="drawType" :options="drawOptions" />
+        <button @click="handleRedraw">
+          {{ t("tournament.settingsPage.drawMethod.regenerate") }}
+        </button>
+      </div>
+    </TspLockedCard>
+
     <TspLockedCard
       :title="t('tournament.settingsPage.groupStructure.title')"
       :locked="hasAnyResults"
@@ -124,14 +154,6 @@ function handleSave() {
           })
         "
       />
-    </TspLockedCard>
-
-    <TspLockedCard
-      :title="t('tournament.settingsPage.playoffSeeding.title')"
-      :locked="!!tournament.groupsDone"
-      :locked-message="t('tournament.settingsPage.playoffSeeding.lockedBanner')"
-    >
-      <BtnGroup v-model="playoffSeedMode" :options="playoffOptions" />
     </TspLockedCard>
 
     <TspLockedCard

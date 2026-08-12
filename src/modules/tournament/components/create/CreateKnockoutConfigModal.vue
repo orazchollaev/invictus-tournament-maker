@@ -2,7 +2,7 @@
 import { computed, ref } from "vue"
 import { useI18n } from "vue-i18n"
 import { AppModal, AppButton, AppStepper, BtnGroup } from "@/components/ui"
-import type { LegMode, LeaguePlayoffSeedMode } from "@/modules/tournament/types"
+import type { LegMode, LeaguePlayoffSeedMode, PlayoffSeedMode } from "@/modules/tournament/types"
 import { useLegOptions } from "../../composables/useLegOptions"
 
 type DrawType = "random" | "seeded" | "manual"
@@ -14,12 +14,17 @@ export interface KnockoutConfigPayload {
   finalLegMode: LegMode
   playoffQualifierCount: number
   leaguePlayoffSeedMode: LeaguePlayoffSeedMode
+  groupPlayoffSeedMode: PlayoffSeedMode
 }
 
 const props = defineProps<
   KnockoutConfigPayload & {
     /** bracket/group formats show draw+thirdPlace+legs; leaguePlayoff shows qualifier count+seeding. */
     variant: "bracket" | "leaguePlayoff"
+    /** group+knockout: this modal controls the bracket pairing after groups
+     *  finish (cross/no-same-group/random/manual) — group formation itself
+     *  is configured in the Group config modal instead. */
+    isGroupFormat?: boolean
     selectedCount: number
     maxPlayoffQualifiers: number
   }
@@ -36,6 +41,7 @@ const knockoutLegMode = ref(props.knockoutLegMode)
 const finalLegMode = ref(props.finalLegMode)
 const playoffQualifierCount = ref(props.playoffQualifierCount)
 const leaguePlayoffSeedMode = ref(props.leaguePlayoffSeedMode)
+const groupPlayoffSeedMode = ref(props.groupPlayoffSeedMode)
 
 const drawOptions = computed(() => [
   { value: "random", label: t("common.random") },
@@ -49,6 +55,13 @@ const leaguePlayoffSeedOptions = computed(() => [
   { value: "manual" as const, label: t("common.manual") },
 ])
 
+const groupPlayoffSeedOptions = computed(() => [
+  { value: "cross" as const, label: t("tournament.create.cross") },
+  { value: "no-same-group" as const, label: t("tournament.create.noRematch") },
+  { value: "random" as const, label: t("common.random") },
+  { value: "manual" as const, label: t("common.manual") },
+])
+
 function handleSave() {
   emit("save", {
     drawType: drawType.value,
@@ -57,6 +70,7 @@ function handleSave() {
     finalLegMode: finalLegMode.value,
     playoffQualifierCount: playoffQualifierCount.value,
     leaguePlayoffSeedMode: leaguePlayoffSeedMode.value,
+    groupPlayoffSeedMode: groupPlayoffSeedMode.value,
   })
   modalRef.value?.close()
 }
@@ -70,7 +84,7 @@ function handleSave() {
     @close="emit('close')"
   >
     <template v-if="props.variant === 'bracket'">
-      <div class="form-card">
+      <div v-if="!props.isGroupFormat" class="form-card">
         <div class="form-section-title">{{ t("tournament.create.drawMethod") }}</div>
         <BtnGroup v-model="drawType" :options="drawOptions" />
         <div class="hint-box hint-box--bottom">
@@ -79,6 +93,20 @@ function handleSave() {
               random: t("common.random"),
               seeded: t("common.seeded"),
               manual: t("common.manual"),
+            })
+          }}
+        </div>
+      </div>
+
+      <div v-else class="form-card">
+        <div class="form-section-title">{{ t("tournament.settingsPage.playoffSeeding.title") }}</div>
+        <BtnGroup v-model="groupPlayoffSeedMode" :options="groupPlayoffSeedOptions" />
+        <div class="hint-box hint-box--bottom">
+          {{
+            t("tournament.create.playoffHint", {
+              cross: t("tournament.create.cross"),
+              noRematch: t("tournament.create.noRematch"),
+              random: t("common.random"),
             })
           }}
         </div>
