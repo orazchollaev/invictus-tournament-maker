@@ -17,7 +17,7 @@ const { t } = useI18n()
 </script>
 
 <template>
-  <AppModal v-if="open" :title="t('teamSelector.title')" width="100vw" flush @close="open = false">
+  <AppModal v-if="open" :title="t('teamSelector.title')" width="500px" flush @close="open = false">
     <TeamSelector
       class="tsfm-selector"
       :teams="teams"
@@ -33,5 +33,12 @@ const { t } = useI18n()
 <style scoped>
 .tsfm-selector {
   height: 100%;
+  padding: var(--sp-3);
+}
+
+@media (max-width: 600px) {
+  .tsfm-selector {
+    padding: 0;
+  }
 }
 </style>

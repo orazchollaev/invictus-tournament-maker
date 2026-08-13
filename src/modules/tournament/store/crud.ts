@@ -1,5 +1,12 @@
 import type { Ref } from "vue"
-import type { Tournament, LegMode, PlayoffSeedMode, DrawType, Tiebreaker } from "../types"
+import type {
+  Tournament,
+  LegMode,
+  PlayoffSeedMode,
+  DrawType,
+  Tiebreaker,
+  KnockoutStage,
+} from "../types"
 import type { Team } from "@/modules/teams/types"
 import {
   createTournament,
@@ -9,6 +16,7 @@ import {
   updateThirdPlaceSlots,
   recalcStandings,
   recalcLeagueStandings,
+  applyThirdPlaceLegMode,
 } from "@/engine"
 
 function deriveDrawType(seeded: boolean, orderedIds?: string[]): DrawType {
@@ -35,7 +43,9 @@ export function useCrudActions(
     tiebreaker?: Tiebreaker,
     winPoints?: number,
     drawPoints?: number,
-    lossPoints?: number
+    lossPoints?: number,
+    roundLegModes?: Partial<Record<KnockoutStage, LegMode>>,
+    thirdPlaceLegMode?: LegMode
   ): string {
     const allTeams = getTeams()
     const selected = allTeams.filter((t) => teamIds.includes(t.id))
@@ -57,9 +67,11 @@ export function useCrudActions(
       wildcardCount ?? 0,
       groupLegMode,
       knockoutLegMode,
-      finalLegMode
+      finalLegMode,
+      roundLegModes
     )
     t.drawType = deriveDrawType(seeded, orderedIds)
+    if (thirdPlaceLegMode) t.thirdPlaceLegMode = thirdPlaceLegMode
     if (tiebreaker) t.tiebreaker = tiebreaker
     if (winPoints !== undefined) t.winPoints = winPoints
     if (drawPoints !== undefined) t.drawPoints = drawPoints
@@ -152,14 +164,17 @@ export function useCrudActions(
       t.wildcardCount ?? 0,
       t.groupLegMode ?? "single",
       t.knockoutLegMode ?? "single",
-      t.finalLegMode ?? "single"
+      t.finalLegMode ?? "single",
+      t.roundLegModes
     )
     newT.drawType = t.drawType ?? deriveDrawType(seeded, orderedIds)
     if (playoffSeedMode) newT.playoffSeedMode = playoffSeedMode
     else if (t.playoffSeedMode) newT.playoffSeedMode = t.playoffSeedMode
+    if (t.thirdPlaceLegMode) newT.thirdPlaceLegMode = t.thirdPlaceLegMode
     if (withThirdPlace && newT.rounds.length >= 2) {
       newT.hasThirdPlace = true
       newT.thirdPlaceMatch = { id: uid(), homeId: null, awayId: null, result: null }
+      applyThirdPlaceLegMode(newT.thirdPlaceMatch, newT)
       updateThirdPlaceSlots(newT)
     }
     tournaments.value.push(newT)

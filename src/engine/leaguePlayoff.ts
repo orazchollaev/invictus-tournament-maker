@@ -13,6 +13,7 @@ import {
   packDirectSlots,
   spreadByeSlots,
   seedPairOrder,
+  applyLegModes,
 } from "./bracket"
 import { allLeagueDone, isTierDone } from "./league"
 import type { DrawPlan, DrawStep } from "./drawCeremony"
@@ -80,20 +81,7 @@ export function seedLeaguePlayoffBracket(
 
   const rounds = buildBracketRounds(slots)
 
-  if (tournament.knockoutLegMode === "double") {
-    for (let r = 0; r < rounds.length - 1; r++) {
-      rounds[r].matches.forEach((m) => {
-        const isBye = (m.homeId && !m.awayId) || (!m.homeId && m.awayId)
-        if (!isBye) m.leg2Result = null
-      })
-    }
-  }
-  if (tournament.finalLegMode === "double" && rounds.length > 0) {
-    rounds[rounds.length - 1].matches.forEach((m) => {
-      const isBye = (m.homeId && !m.awayId) || (!m.homeId && m.awayId)
-      if (!isBye) m.leg2Result = null
-    })
-  }
+  applyLegModes(rounds, tournament)
 
   propagateWinners(rounds, teams)
   tournament.rounds = rounds

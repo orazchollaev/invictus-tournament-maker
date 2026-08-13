@@ -1,7 +1,57 @@
 // engine/bracket.ts
 import type { Team } from "../modules/teams/types"
-import type { Match, Round, Tournament } from "../modules/tournament/types"
+import type { KnockoutStage, LegMode, Match, Round, Tournament } from "../modules/tournament/types"
 import { uid, getRoundName, shuffle } from "./utils"
+
+// Maps a round's distance from the final (1 = semifinal, 2 = quarterfinal, …)
+// to a named stage. Distances >= 5 all collapse into "r64" — bracket sizes
+// beyond 128 share that setting rather than needing their own stage.
+export function stageForDistance(distance: number): KnockoutStage {
+  if (distance === 1) return "semifinal"
+  if (distance === 2) return "quarterfinal"
+  if (distance === 3) return "r16"
+  if (distance === 4) return "r32"
+  return "r64"
+}
+
+export function resolveRoundLegMode(
+  t: Pick<Tournament, "knockoutLegMode" | "roundLegModes">,
+  distanceFromFinal: number
+): LegMode {
+  return t.roundLegModes?.[stageForDistance(distanceFromFinal)] ?? t.knockoutLegMode ?? "single"
+}
+
+// Marks non-bye matches in every round as double-leg per that round's resolved
+// stage setting, and the final round per finalLegMode. Shared by every bracket
+// builder/rebuild path so the per-round leg logic lives in one place.
+export function applyLegModes(
+  rounds: Round[],
+  t: Pick<Tournament, "knockoutLegMode" | "roundLegModes" | "finalLegMode">
+) {
+  for (let r = 0; r < rounds.length - 1; r++) {
+    const distance = rounds.length - 1 - r
+    const mode = resolveRoundLegMode(t, distance)
+    if (mode === "double") {
+      rounds[r].matches.forEach((m) => {
+        const isBye = (m.homeId && !m.awayId) || (!m.homeId && m.awayId)
+        if (!isBye) m.leg2Result = null
+      })
+    }
+  }
+  if (t.finalLegMode === "double" && rounds.length > 0) {
+    rounds[rounds.length - 1].matches.forEach((m) => {
+      const isBye = (m.homeId && !m.awayId) || (!m.homeId && m.awayId)
+      if (!isBye) m.leg2Result = null
+    })
+  }
+}
+
+export function applyThirdPlaceLegMode(
+  match: Match | undefined,
+  t: Pick<Tournament, "thirdPlaceLegMode">
+) {
+  if (match && t.thirdPlaceLegMode === "double") match.leg2Result = null
+}
 
 export function getLoserId(match: Match): string | null {
   const winner = getWinnerId(match)

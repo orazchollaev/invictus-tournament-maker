@@ -25,6 +25,10 @@ export {
   buildEmptyBracketRounds,
   buildPureBracket,
   updateThirdPlaceSlots,
+  stageForDistance,
+  resolveRoundLegMode,
+  applyLegModes,
+  applyThirdPlaceLegMode,
 } from "./bracket"
 export {
   buildGroupFixture,

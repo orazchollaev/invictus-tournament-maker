@@ -121,7 +121,7 @@ th {
   color: var(--text-muted);
 }
 
-@media (max-width: 640px) {
+@media (max-width: 600px) {
   input,
   select {
     /* 16px is the iOS zoom-on-focus threshold — deliberately off-scale. */

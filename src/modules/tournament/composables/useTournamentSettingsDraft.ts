@@ -2,12 +2,15 @@ import { computed, ref, type ComputedRef } from "vue"
 import { getLeaguePlayoffData } from "@/engine"
 import { useTournamentStore } from "../store"
 import type {
+  KnockoutStage,
   LeaguePlayoffSeedMode,
   LegMode,
   PlayoffSeedMode,
   Tiebreaker,
   Tournament,
 } from "../types"
+
+const KNOCKOUT_STAGES: KnockoutStage[] = ["r64", "r32", "r16", "quarterfinal", "semifinal"]
 
 export type DrawType = "random" | "seeded" | "manual"
 
@@ -73,9 +76,17 @@ export function useTournamentSettingsDraft(
   const wildcardCount = ref(t0?.wildcardCount ?? DEFAULTS.wildcardCount)
   const hasThirdPlace = ref(!!t0?.hasThirdPlace)
   const groupLegMode = ref<LegMode>(t0?.groupLegMode ?? DEFAULTS.legMode)
-  const knockoutLegMode = ref<LegMode>(t0?.knockoutLegMode ?? DEFAULTS.legMode)
   const finalLegMode = ref<LegMode>(t0?.finalLegMode ?? DEFAULTS.legMode)
   const leagueLegMode = ref<LegMode>(t0 ? leagueLegModeOf(t0) : DEFAULTS.legMode)
+  const roundLegModeOf = (t: Tournament | undefined, stage: KnockoutStage): LegMode =>
+    t?.roundLegModes?.[stage] ?? t?.knockoutLegMode ?? DEFAULTS.legMode
+  const roundLegModes = ref<Record<KnockoutStage, LegMode>>(
+    Object.fromEntries(KNOCKOUT_STAGES.map((s) => [s, roundLegModeOf(t0, s)])) as Record<
+      KnockoutStage,
+      LegMode
+    >
+  )
+  const thirdPlaceLegMode = ref<LegMode>(t0?.thirdPlaceLegMode ?? DEFAULTS.legMode)
 
   const tiebreaker = ref<Tiebreaker>(t0?.tiebreaker ?? DEFAULTS.tiebreaker)
   const promotionCount = ref(t0?.promotionCount ?? DEFAULTS.promotionCount)
@@ -136,8 +147,9 @@ export function useTournamentSettingsDraft(
       wildcardCount.value !== (orig.wildcardCount ?? DEFAULTS.wildcardCount) ||
       hasThirdPlace.value !== !!orig.hasThirdPlace ||
       groupLegMode.value !== (orig.groupLegMode ?? DEFAULTS.legMode) ||
-      knockoutLegMode.value !== (orig.knockoutLegMode ?? DEFAULTS.legMode) ||
       finalLegMode.value !== (orig.finalLegMode ?? DEFAULTS.legMode) ||
+      KNOCKOUT_STAGES.some((s) => roundLegModes.value[s] !== roundLegModeOf(orig, s)) ||
+      thirdPlaceLegMode.value !== (orig.thirdPlaceLegMode ?? DEFAULTS.legMode) ||
       (isLeagueFormat.value && leagueLegMode.value !== leagueLegModeOf(orig)) ||
       (isMultiTier.value && tierCount.value !== (orig.tiers?.length ?? DEFAULTS.tierCount)) ||
       (isMultiTier.value &&
@@ -204,18 +216,28 @@ export function useTournamentSettingsDraft(
     // League+playoff: knockout/final legs live on the tournament but must not
     // go through setLegMode's rebuildDraw, which would wipe league standings.
     if (isLeagueFormat.value) {
-      if (
-        knockoutLegMode.value !== (orig.knockoutLegMode ?? DEFAULTS.legMode) ||
-        finalLegMode.value !== (orig.finalLegMode ?? DEFAULTS.legMode)
-      ) {
-        store.setLeaguePlayoffLegModes(id, knockoutLegMode.value, finalLegMode.value)
+      const roundsChanged = KNOCKOUT_STAGES.some(
+        (s) => roundLegModes.value[s] !== roundLegModeOf(orig, s)
+      )
+      if (finalLegMode.value !== (orig.finalLegMode ?? DEFAULTS.legMode) || roundsChanged) {
+        store.setLeaguePlayoffLegModes(
+          id,
+          orig.knockoutLegMode ?? DEFAULTS.legMode,
+          finalLegMode.value,
+          roundLegModes.value
+        )
       }
     } else {
-      if (knockoutLegMode.value !== (orig.knockoutLegMode ?? DEFAULTS.legMode)) {
-        store.setLegMode(id, "knockout", knockoutLegMode.value)
-      }
       if (finalLegMode.value !== (orig.finalLegMode ?? DEFAULTS.legMode)) {
         store.setLegMode(id, "final", finalLegMode.value)
+      }
+      for (const stage of KNOCKOUT_STAGES) {
+        if (roundLegModes.value[stage] !== roundLegModeOf(orig, stage)) {
+          store.setRoundLegMode(id, stage, roundLegModes.value[stage])
+        }
+      }
+      if (thirdPlaceLegMode.value !== (orig.thirdPlaceLegMode ?? DEFAULTS.legMode)) {
+        store.setThirdPlaceLegMode(id, thirdPlaceLegMode.value)
       }
     }
     if (isLeagueFormat.value && leagueLegMode.value !== leagueLegModeOf(orig)) {
@@ -269,7 +291,8 @@ export function useTournamentSettingsDraft(
     wildcardCount,
     hasThirdPlace,
     groupLegMode,
-    knockoutLegMode,
+    roundLegModes,
+    thirdPlaceLegMode,
     finalLegMode,
     leagueLegMode,
     tiebreaker,

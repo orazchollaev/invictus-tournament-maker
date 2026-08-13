@@ -1,5 +1,5 @@
 import type { Ref } from "vue"
-import type { Tournament, LeaguePlayoffSeedMode, LegMode } from "../types"
+import type { Tournament, LeaguePlayoffSeedMode, LegMode, KnockoutStage } from "../types"
 import type { Team } from "@/modules/teams/types"
 import {
   getLeaguePlayoffData,
@@ -43,7 +43,8 @@ export function useLeaguePlayoffActions(tournaments: Ref<Tournament[]>, getTeams
   function setLeaguePlayoffLegModes(
     tournamentId: string,
     knockoutLegMode: LegMode,
-    finalLegMode: LegMode
+    finalLegMode: LegMode,
+    roundLegModes?: Partial<Record<KnockoutStage, LegMode>>
   ) {
     const t = getT(tournamentId)
     if (!t) return
@@ -51,6 +52,7 @@ export function useLeaguePlayoffActions(tournaments: Ref<Tournament[]>, getTeams
     if (existing?.started) return
     t.knockoutLegMode = knockoutLegMode
     t.finalLegMode = finalLegMode
+    t.roundLegModes = roundLegModes
   }
 
   function startLeaguePlayoffBracket(

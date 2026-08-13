@@ -7,6 +7,7 @@ import type {
   Tournament,
   PlayoffSeedMode,
   LegMode,
+  KnockoutStage,
 } from "../modules/tournament/types"
 import { uid, shuffle } from "./utils"
 import {
@@ -16,6 +17,7 @@ import {
   propagateWinners,
   spreadByeSlots,
   packDirectSlots,
+  applyLegModes,
 } from "./bracket"
 import { buildGroupFixture, recalcStandings, selectWildcards, rankTeamsByStanding } from "./groups"
 import { buildLeagueMatchdays } from "./league"
@@ -38,7 +40,8 @@ export function createTournament(
   wildcardCount = 0,
   groupLegMode: LegMode = "single",
   knockoutLegMode: LegMode = "single",
-  finalLegMode: LegMode = "single"
+  finalLegMode: LegMode = "single",
+  roundLegModes?: Partial<Record<KnockoutStage, LegMode>>
 ): Tournament {
   const format = groupCount && groupCount >= 2 ? "group+bracket" : "bracket"
 
@@ -54,28 +57,14 @@ export function createTournament(
       wildcardCount,
       groupLegMode,
       knockoutLegMode,
-      finalLegMode
+      finalLegMode,
+      roundLegModes
     )
   }
 
   // ── Pure bracket ──────────────────────────────────────────────
   const rounds = buildPureBracket(teams, seeded, orderedTeams)
-
-  // Mark knockout rounds as double-leg (skip BYE matches — one side set, other null)
-  if (knockoutLegMode === "double") {
-    for (let r = 0; r < rounds.length - 1; r++) {
-      rounds[r].matches.forEach((m) => {
-        const isBye = (m.homeId && !m.awayId) || (!m.homeId && m.awayId)
-        if (!isBye) m.leg2Result = null
-      })
-    }
-  }
-  if (finalLegMode === "double" && rounds.length > 0) {
-    rounds[rounds.length - 1].matches.forEach((m) => {
-      const isBye = (m.homeId && !m.awayId) || (!m.homeId && m.awayId)
-      if (!isBye) m.leg2Result = null
-    })
-  }
+  applyLegModes(rounds, { knockoutLegMode, roundLegModes, finalLegMode })
 
   return {
     id: uid(),
@@ -88,6 +77,7 @@ export function createTournament(
     groupLegMode,
     knockoutLegMode,
     finalLegMode,
+    roundLegModes,
     createdAt: Date.now(),
   }
 }
@@ -103,7 +93,8 @@ function createGroupBracketTournament(
   wildcardCount = 0,
   groupLegMode: LegMode = "single",
   knockoutLegMode: LegMode = "single",
-  finalLegMode: LegMode = "single"
+  finalLegMode: LegMode = "single",
+  roundLegModes?: Partial<Record<KnockoutStage, LegMode>>
 ): Tournament {
   let teamsToPlace: Team[]
   if (orderedTeams) {
@@ -158,19 +149,10 @@ function createGroupBracketTournament(
   const bracketSize = Math.pow(2, Math.ceil(Math.log2(Math.max(qualifierCount, 2))))
   const emptyRounds = buildEmptyBracketRounds(bracketSize)
 
-  // Mark knockout rounds as double-leg
-  if (knockoutLegMode === "double") {
-    for (let r = 0; r < emptyRounds.length - 1; r++) {
-      emptyRounds[r].matches.forEach((m) => {
-        m.leg2Result = null
-      })
-    }
-  }
-  if (finalLegMode === "double" && emptyRounds.length > 0) {
-    emptyRounds[emptyRounds.length - 1].matches.forEach((m) => {
-      m.leg2Result = null
-    })
-  }
+  // Mark knockout rounds as double-leg. Empty-round matches have no home/away
+  // yet, so the applyLegModes bye check is a no-op here — that's fine, byes
+  // get re-marked once seedBracketFromGroups runs applyLegModes again.
+  applyLegModes(emptyRounds, { knockoutLegMode, roundLegModes, finalLegMode })
 
   return {
     id: uid(),
@@ -187,6 +169,7 @@ function createGroupBracketTournament(
     groupLegMode,
     knockoutLegMode,
     finalLegMode,
+    roundLegModes,
     createdAt: Date.now(),
   }
 }
@@ -427,20 +410,7 @@ export function seedBracketFromGroups(
     ]
   )
 
-  if (tournament.knockoutLegMode === "double") {
-    for (let r = 0; r < rounds.length - 1; r++) {
-      rounds[r].matches.forEach((m) => {
-        const isBye = (m.homeId && !m.awayId) || (!m.homeId && m.awayId)
-        if (!isBye) m.leg2Result = null
-      })
-    }
-  }
-  if (tournament.finalLegMode === "double" && rounds.length > 0) {
-    rounds[rounds.length - 1].matches.forEach((m) => {
-      const isBye = (m.homeId && !m.awayId) || (!m.homeId && m.awayId)
-      if (!isBye) m.leg2Result = null
-    })
-  }
+  applyLegModes(rounds, tournament)
 
   propagateWinners(rounds, teams)
 

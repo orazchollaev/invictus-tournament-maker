@@ -110,7 +110,7 @@
   flex-wrap: wrap;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 600px) {
   .page {
     padding: var(--sp-3) var(--sp-2);
   }

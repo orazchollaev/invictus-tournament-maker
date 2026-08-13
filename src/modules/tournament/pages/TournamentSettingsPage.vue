@@ -106,7 +106,8 @@ function applyGroupConfig(payload: GroupConfigPayload) {
 function applyKnockoutConfig(payload: KnockoutConfigPayload) {
   if (!draft.isGroupFormat.value) draft.drawType.value = payload.drawType
   draft.hasThirdPlace.value = payload.hasThirdPlace
-  draft.knockoutLegMode.value = payload.knockoutLegMode
+  draft.roundLegModes.value = payload.roundLegModes
+  draft.thirdPlaceLegMode.value = payload.thirdPlaceLegMode
   draft.finalLegMode.value = payload.finalLegMode
   draft.playoffEnabled.value = payload.playoffEnabled
   draft.playoffQualifierCount.value = payload.playoffQualifierCount
@@ -287,7 +288,8 @@ function handleSave() {
           :is-group-format="draft.isGroupFormat.value"
           :draw-type="draft.drawType.value"
           :has-third-place="draft.hasThirdPlace.value"
-          :knockout-leg-mode="draft.knockoutLegMode.value"
+          :round-leg-modes="draft.roundLegModes.value"
+          :third-place-leg-mode="draft.thirdPlaceLegMode.value"
           :final-leg-mode="draft.finalLegMode.value"
           :playoff-enabled="draft.playoffEnabled.value"
           :playoff-qualifier-count="draft.playoffQualifierCount.value"

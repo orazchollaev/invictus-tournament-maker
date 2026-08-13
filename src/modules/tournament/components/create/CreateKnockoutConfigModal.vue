@@ -2,16 +2,34 @@
 import { computed, ref } from "vue"
 import { useI18n } from "vue-i18n"
 import { AppModal, AppButton, AppStepper, BtnGroup } from "@/components/ui"
-import type { LegMode, LeaguePlayoffSeedMode, PlayoffSeedMode } from "@/modules/tournament/types"
+import type {
+  KnockoutStage,
+  LegMode,
+  LeaguePlayoffSeedMode,
+  PlayoffSeedMode,
+} from "@/modules/tournament/types"
 import { useLegOptions } from "../../composables/useLegOptions"
+import {
+  knockoutStagesForRoundCount,
+  totalRoundsForSize,
+} from "../../composables/useKnockoutRoundStages"
 
 type DrawType = "random" | "seeded" | "manual"
+
+const STAGE_LABEL_KEYS: Record<KnockoutStage, string> = {
+  r64: "tournament.settingsPage.legsPerMatch.r64",
+  r32: "tournament.settingsPage.legsPerMatch.r32",
+  r16: "tournament.settingsPage.legsPerMatch.r16",
+  quarterfinal: "tournament.settingsPage.legsPerMatch.quarterFinal",
+  semifinal: "tournament.settingsPage.legsPerMatch.semiFinal",
+}
 
 export interface KnockoutConfigPayload {
   drawType: DrawType
   hasThirdPlace: boolean
-  knockoutLegMode: LegMode
+  roundLegModes: Record<KnockoutStage, LegMode>
   finalLegMode: LegMode
+  thirdPlaceLegMode: LegMode
   playoffQualifierCount: number
   leaguePlayoffSeedMode: LeaguePlayoffSeedMode
   groupPlayoffSeedMode: PlayoffSeedMode
@@ -27,6 +45,9 @@ const props = defineProps<
     isGroupFormat?: boolean
     selectedCount: number
     maxPlayoffQualifiers: number
+    /** estimated number of teams/qualifiers that will enter the knockout
+     *  bracket — used only to decide which round rows to show. */
+    bracketTeamCount: number
   }
 >()
 const emit = defineEmits<{ save: [KnockoutConfigPayload]; close: [] }>()
@@ -37,11 +58,18 @@ const { legOptions } = useLegOptions()
 const modalRef = ref<InstanceType<typeof AppModal>>()
 const drawType = ref(props.drawType)
 const hasThirdPlace = ref(props.hasThirdPlace)
-const knockoutLegMode = ref(props.knockoutLegMode)
+const roundLegModes = ref<Record<KnockoutStage, LegMode>>({ ...props.roundLegModes })
 const finalLegMode = ref(props.finalLegMode)
+const thirdPlaceLegMode = ref(props.thirdPlaceLegMode)
 const playoffQualifierCount = ref(props.playoffQualifierCount)
 const leaguePlayoffSeedMode = ref(props.leaguePlayoffSeedMode)
 const groupPlayoffSeedMode = ref(props.groupPlayoffSeedMode)
+
+const visibleStages = computed(() => {
+  const count =
+    props.variant === "leaguePlayoff" ? playoffQualifierCount.value : props.bracketTeamCount
+  return knockoutStagesForRoundCount(totalRoundsForSize(count))
+})
 
 const drawOptions = computed(() => [
   { value: "random", label: t("common.random") },
@@ -66,8 +94,9 @@ function handleSave() {
   emit("save", {
     drawType: drawType.value,
     hasThirdPlace: hasThirdPlace.value,
-    knockoutLegMode: knockoutLegMode.value,
+    roundLegModes: roundLegModes.value,
     finalLegMode: finalLegMode.value,
+    thirdPlaceLegMode: thirdPlaceLegMode.value,
     playoffQualifierCount: playoffQualifierCount.value,
     leaguePlayoffSeedMode: leaguePlayoffSeedMode.value,
     groupPlayoffSeedMode: groupPlayoffSeedMode.value,
@@ -99,7 +128,9 @@ function handleSave() {
       </div>
 
       <div v-else class="form-card">
-        <div class="form-section-title">{{ t("tournament.settingsPage.playoffSeeding.title") }}</div>
+        <div class="form-section-title">
+          {{ t("tournament.settingsPage.playoffSeeding.title") }}
+        </div>
         <BtnGroup v-model="groupPlayoffSeedMode" :options="groupPlayoffSeedOptions" />
         <div class="hint-box hint-box--bottom">
           {{
@@ -124,15 +155,19 @@ function handleSave() {
       <div class="form-card">
         <div class="form-section-title">{{ t("tournament.settingsPage.legsPerMatch.title") }}</div>
         <div class="form-rows">
-          <div class="form-row">
-            <span class="form-label">
-              {{ t("tournament.settingsPage.legsPerMatch.knockoutRounds") }}
-            </span>
-            <BtnGroup v-model="knockoutLegMode" :options="legOptions" />
+          <div v-for="stage in visibleStages" :key="stage" class="form-row">
+            <span class="form-label">{{ t(STAGE_LABEL_KEYS[stage]) }}</span>
+            <BtnGroup v-model="roundLegModes[stage]" :options="legOptions" />
           </div>
           <div class="form-row">
             <span class="form-label">{{ t("tournament.settingsPage.legsPerMatch.final") }}</span>
             <BtnGroup v-model="finalLegMode" :options="legOptions" />
+          </div>
+          <div v-if="hasThirdPlace" class="form-row">
+            <span class="form-label">
+              {{ t("tournament.settingsPage.legsPerMatch.thirdPlace") }}
+            </span>
+            <BtnGroup v-model="thirdPlaceLegMode" :options="legOptions" />
           </div>
         </div>
       </div>
@@ -158,11 +193,9 @@ function handleSave() {
       <div class="form-card">
         <div class="form-section-title">{{ t("tournament.settingsPage.legsPerMatch.title") }}</div>
         <div class="form-rows">
-          <div class="form-row">
-            <span class="form-label">
-              {{ t("tournament.settingsPage.legsPerMatch.knockoutRounds") }}
-            </span>
-            <BtnGroup v-model="knockoutLegMode" :options="legOptions" />
+          <div v-for="stage in visibleStages" :key="stage" class="form-row">
+            <span class="form-label">{{ t(STAGE_LABEL_KEYS[stage]) }}</span>
+            <BtnGroup v-model="roundLegModes[stage]" :options="legOptions" />
           </div>
           <div class="form-row">
             <span class="form-label">{{ t("tournament.settingsPage.legsPerMatch.final") }}</span>

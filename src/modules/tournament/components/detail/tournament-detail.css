@@ -120,7 +120,7 @@
 }
 
 /* ── Responsive ──────────────────────────────────────────────── */
-@media (max-width: 640px) {
+@media (max-width: 600px) {
   .t-header-top {
     flex-wrap: wrap;
     gap: 6px;

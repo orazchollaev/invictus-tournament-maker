@@ -160,9 +160,8 @@ function selectCategory(id: Category) {
   min-width: 0;
 }
 
-/* ── Sidebar (desktop) ── */
 .settings-sidebar {
-  flex: 0 0 200px;
+  flex: 0 0 240px;
   display: flex;
   flex-direction: column;
   gap: 2px;

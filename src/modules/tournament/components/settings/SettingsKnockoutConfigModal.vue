@@ -4,6 +4,7 @@ import { useI18n } from "vue-i18n"
 import { useTournamentStore } from "@/modules/tournament/store"
 import type {
   Tournament,
+  KnockoutStage,
   LegMode,
   DrawType,
   LeaguePlayoffSeedMode,
@@ -13,12 +14,25 @@ import { AppModal, AppButton, AppStepper, BtnGroup } from "@/components/ui"
 import TspLockedCard from "./TspLockedCard.vue"
 import { showConfirm } from "@/composables/useDialog"
 import { useLegOptions } from "@/modules/tournament/composables/useLegOptions"
+import {
+  knockoutStagesForRoundCount,
+  totalRoundsForSize,
+} from "@/modules/tournament/composables/useKnockoutRoundStages"
+
+const STAGE_LABEL_KEYS: Record<KnockoutStage, string> = {
+  r64: "tournament.settingsPage.legsPerMatch.r64",
+  r32: "tournament.settingsPage.legsPerMatch.r32",
+  r16: "tournament.settingsPage.legsPerMatch.r16",
+  quarterfinal: "tournament.settingsPage.legsPerMatch.quarterFinal",
+  semifinal: "tournament.settingsPage.legsPerMatch.semiFinal",
+}
 
 export interface KnockoutConfigPayload {
   drawType: DrawType
   hasThirdPlace: boolean
-  knockoutLegMode: LegMode
+  roundLegModes: Record<KnockoutStage, LegMode>
   finalLegMode: LegMode
+  thirdPlaceLegMode: LegMode
   playoffEnabled: boolean
   playoffQualifierCount: number
   playoffSeedMode: LeaguePlayoffSeedMode
@@ -48,12 +62,23 @@ const emit = defineEmits<{ save: [KnockoutConfigPayload]; close: []; openManualD
 const modalRef = ref<InstanceType<typeof AppModal>>()
 const drawType = ref(props.drawType)
 const hasThirdPlace = ref(props.hasThirdPlace)
-const knockoutLegMode = ref(props.knockoutLegMode)
+const roundLegModes = ref<Record<KnockoutStage, LegMode>>({ ...props.roundLegModes })
 const finalLegMode = ref(props.finalLegMode)
+const thirdPlaceLegMode = ref(props.thirdPlaceLegMode)
 const playoffEnabled = ref(props.playoffEnabled)
 const playoffQualifierCount = ref(props.playoffQualifierCount)
 const playoffSeedMode = ref(props.playoffSeedMode)
 const groupPlayoffSeedMode = ref(props.groupPlayoffSeedMode)
+
+// League+playoff bracket doesn't exist yet (rounds === []) until started, so
+// estimate rows from the qualifier count instead of the (still-empty) real bracket.
+const visibleStages = computed(() => {
+  const totalRounds =
+    props.variant === "leaguePlayoff" && !props.tournament.rounds.length
+      ? totalRoundsForSize(playoffQualifierCount.value)
+      : props.tournament.rounds.length
+  return knockoutStagesForRoundCount(totalRounds)
+})
 
 const drawOptions = computed(() => [
   { value: "random", label: t("common.random") },
@@ -90,8 +115,9 @@ function handleSave() {
   emit("save", {
     drawType: drawType.value,
     hasThirdPlace: hasThirdPlace.value,
-    knockoutLegMode: knockoutLegMode.value,
+    roundLegModes: roundLegModes.value,
     finalLegMode: finalLegMode.value,
+    thirdPlaceLegMode: thirdPlaceLegMode.value,
     playoffEnabled: playoffEnabled.value,
     playoffQualifierCount: playoffQualifierCount.value,
     playoffSeedMode: playoffSeedMode.value,
@@ -151,15 +177,19 @@ function handleSave() {
         :locked-message="t('tournament.settingsPage.legsPerMatch.lockedBanner')"
       >
         <div class="form-rows">
-          <div class="form-row">
-            <span class="form-label">
-              {{ t("tournament.settingsPage.legsPerMatch.knockoutRounds") }}
-            </span>
-            <BtnGroup v-model="knockoutLegMode" :options="legOptions" />
+          <div v-for="stage in visibleStages" :key="stage" class="form-row">
+            <span class="form-label">{{ t(STAGE_LABEL_KEYS[stage]) }}</span>
+            <BtnGroup v-model="roundLegModes[stage]" :options="legOptions" />
           </div>
           <div class="form-row">
             <span class="form-label">{{ t("tournament.settingsPage.legsPerMatch.final") }}</span>
             <BtnGroup v-model="finalLegMode" :options="legOptions" />
+          </div>
+          <div v-if="hasThirdPlace" class="form-row">
+            <span class="form-label">
+              {{ t("tournament.settingsPage.legsPerMatch.thirdPlace") }}
+            </span>
+            <BtnGroup v-model="thirdPlaceLegMode" :options="legOptions" />
           </div>
         </div>
       </TspLockedCard>
@@ -193,11 +223,9 @@ function handleSave() {
         :locked-message="t('tournament.settingsPage.legsPerMatch.lockedBanner')"
       >
         <div class="form-rows">
-          <div class="form-row">
-            <span class="form-label">
-              {{ t("tournament.settingsPage.legsPerMatch.knockoutRounds") }}
-            </span>
-            <BtnGroup v-model="knockoutLegMode" :options="legOptions" />
+          <div v-for="stage in visibleStages" :key="stage" class="form-row">
+            <span class="form-label">{{ t(STAGE_LABEL_KEYS[stage]) }}</span>
+            <BtnGroup v-model="roundLegModes[stage]" :options="legOptions" />
           </div>
           <div class="form-row">
             <span class="form-label">{{ t("tournament.settingsPage.legsPerMatch.final") }}</span>

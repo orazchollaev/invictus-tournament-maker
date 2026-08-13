@@ -14,6 +14,7 @@ import { randomTournamentName } from "@/composables/useRandomNames"
 import { useHaptic } from "@/composables/useHaptic"
 import type { CeremonyContext, DrawMode } from "@/engine"
 import type {
+  KnockoutStage,
   LegMode,
   PlayoffSeedMode,
   Tiebreaker,
@@ -55,7 +56,14 @@ const ceremonyContext = ref<CeremonyContext | null>(null)
 const hasThirdPlace = ref(false)
 const playoffSeedMode = ref<PlayoffSeedMode>(settingsStore.newSeasonPlayoffSeedMode)
 const groupLegMode = ref<LegMode>(settingsStore.groupLegMode)
-const knockoutLegMode = ref<LegMode>(settingsStore.knockoutLegMode)
+const KNOCKOUT_STAGES: KnockoutStage[] = ["r64", "r32", "r16", "quarterfinal", "semifinal"]
+const roundLegModes = ref<Record<KnockoutStage, LegMode>>(
+  Object.fromEntries(KNOCKOUT_STAGES.map((s) => [s, settingsStore.knockoutLegMode])) as Record<
+    KnockoutStage,
+    LegMode
+  >
+)
+const thirdPlaceLegMode = ref<LegMode>(settingsStore.knockoutLegMode)
 const finalLegMode = ref<LegMode>(settingsStore.finalLegMode)
 const leagueLegMode = ref<LegMode>("single")
 const tiebreaker = ref<Tiebreaker>(settingsStore.tiebreaker)
@@ -87,6 +95,15 @@ const showGroupModal = ref(false)
 const showKnockoutModal = ref(false)
 const showLeagueModal = ref(false)
 const maxPlayoffQualifiers = computed(() => Math.max(2, selectedTeams.value.length))
+// Estimated size of the knockout bracket, used only to decide which round
+// rows (r64…semifinal) the knockout config modal shows.
+const bracketTeamCount = computed(() => {
+  if (format.value === "group+bracket") {
+    return groupCount.value * qualifiersPerGroup.value + wildcardCount.value
+  }
+  if (format.value === "league") return playoffQualifierCount.value
+  return selectedTeams.value.length
+})
 
 const groupConfigSummary = computed(() => {
   const base = t("tournament.create.config.groupsAndAdvance", {
@@ -136,7 +153,8 @@ function applyGroupConfig(payload: GroupConfigPayload) {
 function applyKnockoutConfig(payload: KnockoutConfigPayload) {
   if (format.value !== "group+bracket") drawType.value = payload.drawType
   hasThirdPlace.value = payload.hasThirdPlace
-  knockoutLegMode.value = payload.knockoutLegMode
+  roundLegModes.value = payload.roundLegModes
+  thirdPlaceLegMode.value = payload.thirdPlaceLegMode
   finalLegMode.value = payload.finalLegMode
   playoffQualifierCount.value = payload.playoffQualifierCount
   leaguePlayoffSeedMode.value = payload.leaguePlayoffSeedMode
@@ -228,7 +246,12 @@ function applyLeaguePlayoffSettings(id: string) {
     qualifierCount: playoffQualifierCount.value,
     seedMode: leaguePlayoffSeedMode.value,
   })
-  store.setLeaguePlayoffLegModes(id, knockoutLegMode.value, finalLegMode.value)
+  store.setLeaguePlayoffLegModes(
+    id,
+    settingsStore.knockoutLegMode,
+    finalLegMode.value,
+    roundLegModes.value
+  )
 }
 
 function doCreate(orderedIds?: string[]) {
@@ -290,12 +313,14 @@ function doCreate(orderedIds?: string[]) {
     qpg,
     isGroup ? wildcardCount.value : 0,
     gLeg,
-    knockoutLegMode.value,
+    settingsStore.knockoutLegMode,
     finalLegMode.value,
     tiebreaker.value,
     isGroup ? winPoints.value : undefined,
     isGroup ? drawPoints.value : undefined,
-    isGroup ? lossPoints.value : undefined
+    isGroup ? lossPoints.value : undefined,
+    roundLegModes.value,
+    thirdPlaceLegMode.value
   )
   store.setDrawType(id, drawType.value)
   if (isGroup) store.setPlayoffSeedMode(id, playoffSeedMode.value)
@@ -435,12 +460,14 @@ function doCreate(orderedIds?: string[]) {
         :is-group-format="format === 'group+bracket'"
         :draw-type="drawType"
         :has-third-place="hasThirdPlace"
-        :knockout-leg-mode="knockoutLegMode"
+        :round-leg-modes="roundLegModes"
         :final-leg-mode="finalLegMode"
+        :third-place-leg-mode="thirdPlaceLegMode"
         :playoff-qualifier-count="playoffQualifierCount"
         :league-playoff-seed-mode="leaguePlayoffSeedMode"
         :group-playoff-seed-mode="playoffSeedMode"
         :max-playoff-qualifiers="maxPlayoffQualifiers"
+        :bracket-team-count="bracketTeamCount"
         :selected-count="selected.length"
         @save="applyKnockoutConfig"
         @close="showKnockoutModal = false"

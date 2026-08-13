@@ -3,6 +3,10 @@
 export type LegMode = "single" | "double" | "triple" | "quadruple"
 export type Tiebreaker = "head-to-head" | "goal-diff"
 
+// Named knockout stages, keyed by distance from the final (1 = semifinal, … 5+ = r64).
+// Independent of actual bracket size — see engine/bracket.ts:stageForDistance.
+export type KnockoutStage = "r64" | "r32" | "r16" | "quarterfinal" | "semifinal"
+
 export interface MatchResult {
   home: number
   away: number
@@ -107,8 +111,10 @@ export interface Tournament {
   thirdPlaceMatch?: Match
 
   groupLegMode?: LegMode
-  knockoutLegMode?: LegMode
+  knockoutLegMode?: LegMode // fallback default for any stage not overridden in roundLegModes
   finalLegMode?: LegMode
+  roundLegModes?: Partial<Record<KnockoutStage, LegMode>> // per-stage overrides (r64…semifinal)
+  thirdPlaceLegMode?: LegMode
 
   tiebreaker?: Tiebreaker
 

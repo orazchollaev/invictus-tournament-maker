@@ -1,7 +1,13 @@
 import type { Ref } from "vue"
-import type { Tournament } from "../types"
+import type { LegMode, Tournament } from "../types"
 import type { Team } from "@/modules/teams/types"
-import { uid, updateThirdPlaceSlots, simulateMatch, simulatePenaltyShootout } from "@/engine"
+import {
+  uid,
+  updateThirdPlaceSlots,
+  simulateMatch,
+  simulatePenaltyShootout,
+  applyThirdPlaceLegMode,
+} from "@/engine"
 
 export function useThirdPlaceActions(tournaments: Ref<Tournament[]>, getTeams: () => Team[]) {
   function toggleThirdPlace(tournamentId: string) {
@@ -13,8 +19,18 @@ export function useThirdPlaceActions(tournaments: Ref<Tournament[]>, getTeams: (
     } else {
       t.hasThirdPlace = true
       t.thirdPlaceMatch = { id: uid(), homeId: null, awayId: null, result: null }
+      applyThirdPlaceLegMode(t.thirdPlaceMatch, t)
       updateThirdPlaceSlots(t)
     }
+  }
+
+  function setThirdPlaceLegMode(tournamentId: string, mode: LegMode) {
+    const t = tournaments.value.find((t) => t.id === tournamentId)
+    if (!t) return
+    if (t.thirdPlaceMatch?.result || t.thirdPlaceMatch?.leg2Result) return
+    t.thirdPlaceLegMode = mode
+    applyThirdPlaceLegMode(t.thirdPlaceMatch, t)
+    if (mode !== "double" && t.thirdPlaceMatch) t.thirdPlaceMatch.leg2Result = undefined
   }
 
   function setThirdPlaceResult(
@@ -54,5 +70,11 @@ export function useThirdPlaceActions(tournaments: Ref<Tournament[]>, getTeams: (
     }
   }
 
-  return { toggleThirdPlace, setThirdPlaceResult, clearThirdPlaceResult, simulateThirdPlace }
+  return {
+    toggleThirdPlace,
+    setThirdPlaceLegMode,
+    setThirdPlaceResult,
+    clearThirdPlaceResult,
+    simulateThirdPlace,
+  }
 }

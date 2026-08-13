@@ -1,5 +1,5 @@
 import type { Ref } from "vue"
-import type { Tournament, PlayoffSeedMode, LegMode } from "../types"
+import type { Tournament, PlayoffSeedMode, LegMode, KnockoutStage } from "../types"
 import type { Team } from "@/modules/teams/types"
 import {
   createTournament,
@@ -7,6 +7,7 @@ import {
   buildLeagueMatchdays,
   legModeToCount,
   buildEmptyBracketRounds,
+  applyLegModes,
 } from "@/engine"
 
 export function useDrawActions(tournaments: Ref<Tournament[]>, getTeams: () => Team[]) {
@@ -89,7 +90,8 @@ export function useDrawActions(tournaments: Ref<Tournament[]>, getTeams: () => T
       t.wildcardCount ?? 0,
       t.groupLegMode ?? "single",
       t.knockoutLegMode ?? "single",
-      t.finalLegMode ?? "single"
+      t.finalLegMode ?? "single",
+      t.roundLegModes
     )
     t.rounds = fresh.rounds
     t.winnerId = null
@@ -118,19 +120,7 @@ export function useDrawActions(tournaments: Ref<Tournament[]>, getTeams: () => T
     const qualifierCount = groupCount * clampedQpg + clampedWildcards
     const bracketSize = Math.pow(2, Math.ceil(Math.log2(Math.max(qualifierCount, 2))))
     const emptyRounds = buildEmptyBracketRounds(bracketSize)
-
-    if (t.knockoutLegMode === "double") {
-      for (let r = 0; r < emptyRounds.length - 1; r++) {
-        emptyRounds[r].matches.forEach((m) => {
-          m.leg2Result = null
-        })
-      }
-    }
-    if (t.finalLegMode === "double" && emptyRounds.length > 0) {
-      emptyRounds[emptyRounds.length - 1].matches.forEach((m) => {
-        m.leg2Result = null
-      })
-    }
+    applyLegModes(emptyRounds, t)
 
     t.rounds = emptyRounds
   }
@@ -149,6 +139,13 @@ export function useDrawActions(tournaments: Ref<Tournament[]>, getTeams: () => T
     if (stage === "group") t.groupLegMode = mode
     else if (stage === "knockout") t.knockoutLegMode = mode
     else t.finalLegMode = mode
+    rebuildDraw(t)
+  }
+
+  function setRoundLegMode(tournamentId: string, stage: KnockoutStage, mode: LegMode) {
+    const t = tournaments.value.find((t) => t.id === tournamentId)
+    if (!t || hasAnyResults(tournamentId)) return
+    t.roundLegModes = { ...t.roundLegModes, [stage]: mode }
     rebuildDraw(t)
   }
 
@@ -222,6 +219,7 @@ export function useDrawActions(tournaments: Ref<Tournament[]>, getTeams: () => T
   return {
     hasAnyResults,
     setLegMode,
+    setRoundLegMode,
     setLeagueLegMode,
     changeGroupCount,
     changeQualifiersPerGroup,
