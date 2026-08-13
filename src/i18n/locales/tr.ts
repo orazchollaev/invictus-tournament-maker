@@ -691,6 +691,8 @@ export default {
     minTeams: "En az 2 takım seçin",
     sortName: "İsim",
     sortPower: "Güç",
+    title: "Takımlar",
+    fullView: "Tam ekran",
   },
   manualDraw: {
     byesTitle: "Bay Geçenler (otomatik tur atlama)",

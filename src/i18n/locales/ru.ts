@@ -695,6 +695,8 @@ export default {
     minTeams: "Выберите не менее 2 команд",
     sortName: "Имя",
     sortPower: "Сила",
+    title: "Команды",
+    fullView: "Полный экран",
   },
   manualDraw: {
     byesTitle: "Пропуски (автоматический выход)",

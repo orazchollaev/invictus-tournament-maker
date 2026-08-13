@@ -696,6 +696,8 @@ export default {
     minTeams: "Pilih setidaknya 2 tim",
     sortName: "Nama",
     sortPower: "Kekuatan",
+    title: "Tim",
+    fullView: "Layar penuh",
   },
   manualDraw: {
     byesTitle: "Bye (menang otomatis)",

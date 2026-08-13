@@ -694,6 +694,8 @@ export default {
     minTeams: "少なくとも2つのチームを選択してください",
     sortName: "名前",
     sortPower: "パワー",
+    title: "チーム",
+    fullView: "全画面表示",
   },
   manualDraw: {
     byesTitle: "不戦勝 (BYE)",

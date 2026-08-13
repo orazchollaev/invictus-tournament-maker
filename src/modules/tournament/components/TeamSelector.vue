@@ -15,8 +15,10 @@ const props = withDefaults(
     selected: string[]
     showPower?: boolean
     disabled?: boolean
+    /** Let the list grow to fill its container instead of a fixed height — used in the fullscreen modal. */
+    fullscreen?: boolean
   }>(),
-  { showPower: true, disabled: false }
+  { showPower: true, disabled: false, fullscreen: false }
 )
 
 const emit = defineEmits<{ "update:selected": [ids: string[]] }>()
@@ -85,7 +87,7 @@ function deselectAll() {
 </script>
 
 <template>
-  <div class="ts">
+  <div class="ts" :class="{ 'ts--full': fullscreen }">
     <div class="ts-header">
       <AppSearchInput
         v-model="searchQuery"
@@ -123,8 +125,8 @@ function deselectAll() {
       </AppButton>
     </div>
 
-    <!-- Fixed height so filtering does not shift the surrounding form. -->
-    <div class="ts-list">
+    <!-- Fixed height so filtering does not shift the surrounding form; grows in fullscreen. -->
+    <div class="ts-list" :class="{ 'ts-list--full': fullscreen }">
       <div
         v-for="team in sortedFilteredTeams"
         :key="team.id"
@@ -155,6 +157,10 @@ function deselectAll() {
   display: flex;
   flex-direction: column;
   gap: var(--sp-2);
+}
+
+.ts--full {
+  height: 100%;
 }
 
 .ts-header {
@@ -194,6 +200,11 @@ function deselectAll() {
   height: 240px;
   display: flex;
   flex-direction: column;
+}
+
+.ts-list--full {
+  flex: 1;
+  height: auto;
 }
 
 .ts-row {

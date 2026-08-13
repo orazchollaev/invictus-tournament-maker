@@ -7,8 +7,9 @@ import { useSettingsStore } from "@/modules/settings/store"
 import ManualDraw from "../components/ManualDraw.vue"
 import GroupDraw from "../components/GroupDraw.vue"
 import TeamSelector from "../components/TeamSelector.vue"
+import TeamSelectorFullscreenModal from "../components/TeamSelectorFullscreenModal.vue"
 import { DrawCeremony } from "../components/draw-ceremony"
-import { Shuffle, ArrowLeft, ChevronDown, LayoutGrid, Trophy, List } from "@lucide/vue"
+import { Shuffle, ArrowLeft, ChevronDown, LayoutGrid, Trophy, List, Maximize2 } from "@lucide/vue"
 import { randomTournamentName } from "@/composables/useRandomNames"
 import type { CeremonyContext, DrawMode } from "@/engine"
 import type {
@@ -27,7 +28,7 @@ import type { GroupConfigPayload } from "../components/create/CreateGroupConfigM
 import type { KnockoutConfigPayload } from "../components/create/CreateKnockoutConfigModal.vue"
 import type { LeagueConfigPayload } from "../components/create/CreateLeagueConfigModal.vue"
 import { SettingsTeamAdjustments } from "../components/settings"
-import { AppConfigButton } from "@/components/ui"
+import { AppButton, AppConfigButton, AppIcon } from "@/components/ui"
 import { useI18n } from "vue-i18n"
 import { logEvent } from "@/composables/useAnalytics"
 
@@ -41,6 +42,7 @@ const settingsStore = useSettingsStore()
 
 const name = ref("")
 const selected = ref<string[]>([])
+const showTeamsFullscreen = ref(false)
 const format = ref<TournamentFormat>("bracket")
 const drawType = ref<DrawType>(settingsStore.newSeasonDrawType)
 const groupCount = ref(4)
@@ -353,9 +355,26 @@ function doCreate(orderedIds?: string[]) {
 
       <!-- Teams -->
       <div class="form-card">
-        <div class="form-section-title">{{ $t("tournament.create.teams") }}</div>
+        <div class="form-section-header">
+          <div class="form-section-title">{{ $t("tournament.create.teams") }}</div>
+          <AppButton
+            variant="outlined"
+            size="xs"
+            :title="t('teamSelector.fullView')"
+            @click="showTeamsFullscreen = true"
+          >
+            <AppIcon :icon="Maximize2" size="sm" />
+          </AppButton>
+        </div>
         <TeamSelector :teams="allTeams" :selected="selected" @update:selected="selected = $event" />
       </div>
+
+      <TeamSelectorFullscreenModal
+        v-model:open="showTeamsFullscreen"
+        :teams="allTeams"
+        :selected="selected"
+        @update:selected="selected = $event"
+      />
 
       <!-- Format cards -->
       <CreateFormatSelector

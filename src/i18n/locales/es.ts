@@ -697,6 +697,8 @@ export default {
     minTeams: "Selecciona al menos 2 equipos",
     sortName: "Nombre",
     sortPower: "Fuerza",
+    title: "Equipos",
+    fullView: "Vista completa",
   },
   manualDraw: {
     byesTitle: "Byes (victoria automática)",

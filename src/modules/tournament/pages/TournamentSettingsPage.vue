@@ -7,8 +7,9 @@ import { useTournamentStore } from "@/modules/tournament/store"
 import ManualDraw from "@/modules/tournament/components/ManualDraw.vue"
 import GroupDraw from "@/modules/tournament/components/GroupDraw.vue"
 import TeamSelector from "@/modules/tournament/components/TeamSelector.vue"
+import TeamSelectorFullscreenModal from "@/modules/tournament/components/TeamSelectorFullscreenModal.vue"
 import { AppButton, AppCard, AppChip, AppConfigButton, AppIcon, AppModal } from "@/components/ui"
-import { ArrowLeft, LayoutGrid, List, Lock, Save, Settings, Trophy } from "@lucide/vue"
+import { ArrowLeft, LayoutGrid, List, Lock, Maximize2, Save, Settings, Trophy } from "@lucide/vue"
 import {
   SettingsDangerZone,
   SettingsGroupConfigModal,
@@ -55,6 +56,7 @@ const minTierSize = computed(() => Math.floor(totalTeams.value / draft.tierCount
 const maxPromotionCount = computed(() => Math.max(1, minTierSize.value - 1))
 
 const showManualDraw = ref(false)
+const showTeamsFullscreen = ref(false)
 const showGroupModal = ref(false)
 const showKnockoutModal = ref(false)
 const showLeagueModal = ref(false)
@@ -200,11 +202,20 @@ function handleSave() {
 
         <AppCard padding="md">
           <template #title>{{ t("tournament.settingsPage.manageTeams.title") }}</template>
-          <template v-if="hasAnyResults" #actions>
-            <AppChip>
+          <template #actions>
+            <AppChip v-if="hasAnyResults">
               <AppIcon :icon="Lock" size="xs" />
               {{ t("tournament.settingsPage.locked") }}
             </AppChip>
+            <AppButton
+              v-else
+              variant="outlined"
+              size="xs"
+              :title="t('teamSelector.fullView')"
+              @click="showTeamsFullscreen = true"
+            >
+              <AppIcon :icon="Maximize2" size="sm" />
+            </AppButton>
           </template>
 
           <TeamSelector
@@ -218,6 +229,14 @@ function handleSave() {
             {{ t("tournament.settingsPage.manageTeams.lockedBanner") }}
           </p>
         </AppCard>
+
+        <TeamSelectorFullscreenModal
+          v-if="!hasAnyResults"
+          v-model:open="showTeamsFullscreen"
+          :teams="allTeams"
+          :selected="draft.teamIds.value"
+          @update:selected="draft.teamIds.value = $event"
+        />
 
         <div class="form-card ctp-config-buttons">
           <AppConfigButton

@@ -695,6 +695,8 @@ export default {
     minTeams: "Selecione pelo menos 2 equipes",
     sortName: "Nome",
     sortPower: "Força",
+    title: "Equipes",
+    fullView: "Tela cheia",
   },
   manualDraw: {
     byesTitle: "Byes (vitória automática)",
