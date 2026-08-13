@@ -26,10 +26,19 @@ const emit = defineEmits<{
   "sim-leg1": [round: number, match: number]
   "sim-leg2": [round: number, match: number]
   "set-third-place-result": [home: number, away: number, penHome?: number, penAway?: number]
+  "set-third-place-leg2-result": [
+    home: number,
+    away: number,
+    penHome?: number,
+    penAway?: number,
+  ]
   "clear-result": [round: number, match: number]
   "clear-leg2-result": [round: number, match: number]
   "clear-third-place-result": []
+  "clear-third-place-leg2-result": []
   "sim-third-place": []
+  "sim-third-place-leg1": []
+  "sim-third-place-leg2": []
 }>()
 
 const roundOptions = computed(() => {
@@ -92,14 +101,21 @@ function onSetTieResult(
   penHome?: number,
   penAway?: number
 ) {
-  if (leg === 2)
-    emit("set-leg2-result", match._origRound, match._origMatch, home, away, penHome, penAway)
-  else onSetResult(match, home, away, penHome, penAway)
+  if (leg === 2) {
+    if (match._isThirdPlace) emit("set-third-place-leg2-result", home, away, penHome, penAway)
+    else emit("set-leg2-result", match._origRound, match._origMatch, home, away, penHome, penAway)
+  } else {
+    onSetResult(match, home, away, penHome, penAway)
+  }
 }
 
 function onClearTieResult(match: FlatMatch, leg: 1 | 2) {
-  if (leg === 2) emit("clear-leg2-result", match._origRound, match._origMatch)
-  else onClearResult(match)
+  if (leg === 2) {
+    if (match._isThirdPlace) emit("clear-third-place-leg2-result")
+    else emit("clear-leg2-result", match._origRound, match._origMatch)
+  } else {
+    onClearResult(match)
+  }
 }
 
 function simMatch(match: FlatMatch) {
@@ -107,6 +123,14 @@ function simMatch(match: FlatMatch) {
     emit("sim-third-place")
   } else {
     emit("sim-match", match._origRound, match._origMatch)
+  }
+}
+
+function simTieLeg(match: FlatMatch, leg: 1 | 2) {
+  if (match._isThirdPlace) {
+    emit(leg === 1 ? "sim-third-place-leg1" : "sim-third-place-leg2")
+  } else {
+    emit(leg === 1 ? "sim-leg1" : "sim-leg2", match._origRound, match._origMatch)
   }
 }
 </script>
@@ -135,8 +159,8 @@ function simMatch(match: FlatMatch) {
           :teams="teams"
           @set-result="onSetTieResult"
           @clear-result="onClearTieResult"
-          @sim-leg1="(m) => $emit('sim-leg1', m._origRound, m._origMatch)"
-          @sim-leg2="(m) => $emit('sim-leg2', m._origRound, m._origMatch)"
+          @sim-leg1="(m) => simTieLeg(m, 1)"
+          @sim-leg2="(m) => simTieLeg(m, 2)"
         />
         <FixtureMatchCard
           v-else

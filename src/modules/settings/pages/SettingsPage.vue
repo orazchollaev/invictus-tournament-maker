@@ -245,7 +245,7 @@ function selectCategory(id: Category) {
   border-bottom: none;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 600px) {
   .settings-panel :deep(.field-info) {
     display: flex;
     align-items: center;
@@ -372,7 +372,7 @@ function selectCategory(id: Category) {
     width: 100%;
   }
 }
-@media (max-width: 640px) {
+@media (max-width: 600px) {
   .mobile-nav {
     top: calc(var(--safe-top) + 10px);
   }

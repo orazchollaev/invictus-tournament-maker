@@ -147,6 +147,7 @@ export default {
     empty: "Belum ada tim. Klik {action} untuk memulai.",
     noMatch: 'Tidak ada tim untuk "{query}".',
     limitReached: "Batas tim tercapai ({max})",
+    sortDefault: "Bawaan",
     form: {
       addTitle: "Tambah Tim",
       editTitle: "Edit Tim",

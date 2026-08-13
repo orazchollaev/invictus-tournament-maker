@@ -141,6 +141,12 @@ export function useCrudActions(
           seedMode: t.leaguePlayoff.seedMode,
           started: false,
         }
+        // Carry the playoff bracket's leg-mode config over too — it lives on
+        // the tournament (shared with group+bracket), not on LeaguePlayoff.
+        if (t.knockoutLegMode) newT.knockoutLegMode = t.knockoutLegMode
+        if (t.finalLegMode) newT.finalLegMode = t.finalLegMode
+        if (t.roundLegModes) newT.roundLegModes = { ...t.roundLegModes }
+        if (t.thirdPlaceLegMode) newT.thirdPlaceLegMode = t.thirdPlaceLegMode
       }
       tournaments.value.push(newT)
       active.value = newT.id
@@ -251,6 +257,12 @@ export function useCrudActions(
         seedMode: prevPlayoff.seedMode,
         started: false,
       }
+      // Carry the playoff bracket's leg-mode config over too — it lives on
+      // the tournament (shared with group+bracket), not on LeaguePlayoff.
+      if (t.knockoutLegMode) newT.knockoutLegMode = t.knockoutLegMode
+      if (t.finalLegMode) newT.finalLegMode = t.finalLegMode
+      if (t.roundLegModes) newT.roundLegModes = { ...t.roundLegModes }
+      if (t.thirdPlaceLegMode) newT.thirdPlaceLegMode = t.thirdPlaceLegMode
     }
     tournaments.value.push(newT)
     active.value = newT.id

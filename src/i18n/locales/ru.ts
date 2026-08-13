@@ -147,6 +147,9 @@ export default {
     empty: "Команд пока нет. Нажмите {action}, чтобы начать.",
     noMatch: 'Команды по запросу "{query}" не найдены.',
     limitReached: "Достигнут лимит команд ({max})",
+    sortDefault: "По умолчанию",
+    sortAsc: "По возрастанию",
+    sortDesc: "По убыванию",
     form: {
       addTitle: "Добавить команду",
       editTitle: "Изменить команду",

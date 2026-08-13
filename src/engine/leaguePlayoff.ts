@@ -120,5 +120,9 @@ export function computeLeaguePlayoffPlan(tournament: Tournament): DrawPlan {
     }
   }
 
-  return { sequence, orderedIds: ids }
+  // orderedIds feeds back through the "manual" completion path, whose
+  // packDirectSlots pairs consecutively — must be bye-front + seed-paired
+  // (same layout `sequence` reveals), not the raw table-rank order, or the
+  // committed bracket pairs rank1-vs-rank2 while the animation showed rank1-vs-rank4.
+  return { sequence, orderedIds: [...byeIds, ...restIds] }
 }

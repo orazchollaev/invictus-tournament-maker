@@ -44,7 +44,9 @@ async function simRoundGradual(ri: number) {
   if (!round) return
   const cbs = round.matches
     .map((m, mi) => ({ m, mi }))
-    .filter(({ m }) => m.homeId && m.awayId && !m.result)
+    // Pending single-leg match, or a double-leg one with leg 1 already
+    // played (manually or otherwise) but leg 2 still open.
+    .filter(({ m }) => m.homeId && m.awayId && (!m.result || m.leg2Result === null))
     .map(
       ({ mi }) =>
         () =>
@@ -59,7 +61,8 @@ async function simAllGradual() {
     await simRoundGradual(ri)
   }
   const tp = props.tournament.thirdPlaceMatch
-  if (props.tournament.hasThirdPlace && tp && tp.homeId && tp.awayId && !tp.result) {
+  const tpPending = tp && (!tp.result || tp.leg2Result === null)
+  if (props.tournament.hasThirdPlace && tp && tp.homeId && tp.awayId && tpPending) {
     store.simulateThirdPlace(props.tournament.id)
   }
 }

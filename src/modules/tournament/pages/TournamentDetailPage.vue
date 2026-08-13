@@ -181,8 +181,7 @@ const {
                           activeTierIdx === 0 &&
                           showLeaguePlayoffControls &&
                           leaguePlayoffData?.enabled &&
-                          !hasLeaguePlayoff &&
-                          canStartLeaguePlayoffFlow
+                          !hasLeaguePlayoff
                         "
                         #actions
                       >
@@ -218,7 +217,30 @@ const {
                     @sim-match="(mdi, mi) => store.simLeagueMatch(tournament!.id, mdi, mi)"
                     @sim-matchday="(mdi) => store.simLeagueMatchday(tournament!.id, mdi)"
                     @sim-all="store.simAllLeague(tournament!.id)"
-                  />
+                  >
+                    <template
+                      v-if="
+                        showLeaguePlayoffControls &&
+                        leaguePlayoffData?.enabled &&
+                        !hasLeaguePlayoff
+                      "
+                      #actions
+                    >
+                      <div class="lpc-actions">
+                        <AppButton
+                          :disabled="!canStartLeaguePlayoffFlow"
+                          size="xs"
+                          variant="filled"
+                          @click="onStartLeaguePlayoff"
+                        >
+                          {{ trns("leaguePlayoff.startPlayoff") }}
+                        </AppButton>
+                        <span v-if="!canStartLeaguePlayoffFlow" class="lpc-hint">
+                          {{ trns("leaguePlayoff.finishSeasonFirst") }}
+                        </span>
+                      </div>
+                    </template>
+                  </LeagueView>
                 </template>
               </div>
               <div v-else-if="tab === 'groups'" class="tab-panel">
@@ -385,7 +407,7 @@ const {
   color: var(--text-muted);
 }
 
-@media (max-width: 640px) {
+@media (max-width: 600px) {
   .page {
     padding-bottom: 40px;
   }

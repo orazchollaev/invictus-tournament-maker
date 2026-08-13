@@ -125,7 +125,7 @@ function scoreAccentColor(): string {
   pointer-events: none;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 600px) {
   .lv-match {
     padding: var(--sp-1) 0;
   }

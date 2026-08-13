@@ -18,7 +18,6 @@ const props = withDefaults(
   defineProps<{
     match: Match
     teams: Team[]
-    /** "third-place" drops the champion/dim treatment and uses the bronze accent. */
     variant?: "match" | "third-place"
     isFinal?: boolean
     isExporting?: boolean
@@ -172,7 +171,6 @@ const isChampion = computed(() => props.isFinal && !!props.match.result)
     @pointerup="onPointerUp"
     @mouseleave="$emit('hover-team', null)"
   >
-    <!-- ── Left: team names ── -->
     <div class="mc-teams">
       <div
         class="mc-row"
@@ -545,7 +543,7 @@ const isChampion = computed(() => props.isFinal && !!props.match.result)
   display: flex;
   gap: var(--sp-2);
 }
-@media (max-width: 640px) {
+@media (max-width: 600px) {
   .leg-pick-backdrop {
     align-items: flex-end;
   }
@@ -593,9 +591,6 @@ const isChampion = computed(() => props.isFinal && !!props.match.result)
   cursor: default;
 }
 
-/* ── Third-place variant ──────────────────────────────────────
-   Same anatomy, bronze accent instead of the winner-path treatment,
-   and no entry animation (it isn't part of the round cascade). */
 .mc--third {
   border-color: color-mix(in srgb, var(--accent-2) 35%, var(--border-light));
   box-shadow: none;

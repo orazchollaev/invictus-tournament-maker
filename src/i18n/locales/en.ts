@@ -145,6 +145,9 @@ export default {
     empty: "No teams yet. Click {action} to get started.",
     noMatch: 'No teams match "{query}".',
     limitReached: "Team limit reached ({max})",
+    sortDefault: "Default",
+    sortAsc: "Ascending",
+    sortDesc: "Descending",
     form: {
       addTitle: "Add Team",
       editTitle: "Edit Team",

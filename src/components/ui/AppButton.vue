@@ -1,15 +1,4 @@
 <script setup lang="ts">
-/**
- * The one button. Replaces `button.primary`, `button.danger`, `.btn-xs`,
- * `.sm`, `.icon-btn` and the ~70 one-off `*-btn` classes scattered across
- * the modules.
- *
- * variant  filled   solid accent — the single primary action on a surface
- *          tonal    accent-tinted fill — secondary emphasis, safe to repeat
- *          outlined bordered, surface fill — the default
- *          text     no border, no fill — toolbars and dense rows
- *          danger   destructive; pair with `filled` intent via `solid`
- */
 import { useHaptic } from "@/composables/useHaptic"
 
 const { tap: hapticTap, warning: hapticWarning } = useHaptic()

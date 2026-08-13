@@ -462,7 +462,7 @@ function onKeydown(e: KeyboardEvent) {
   border-color: color-mix(in srgb, var(--danger) 40%, var(--border-light));
 }
 
-@media (max-width: 640px) {
+@media (max-width: 600px) {
   .ms-panel {
     top: auto;
     bottom: 0;

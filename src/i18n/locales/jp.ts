@@ -145,6 +145,7 @@ export default {
     empty: "まだチームがありません。「{action}」をクリックして始めましょう。",
     noMatch: '"{query}" に一致するチームはありません。',
     limitReached: "チーム数の上限に達しました ({max})",
+    sortDefault: "デフォルト",
     form: {
       addTitle: "チームを追加",
       editTitle: "チームを編集",

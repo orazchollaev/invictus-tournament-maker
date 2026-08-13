@@ -229,7 +229,7 @@ watch([labels, datasets, mode], () => {
   height: 320px;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 600px) {
   .canvas-wrap {
     height: 260px;
     padding: 8px;

@@ -57,7 +57,6 @@ function run(action: () => void) {
           variant="text"
           size="xs"
           block
-          :disabled="!thirdPlaceReady()"
           @click="run(() => emit('sim-third-place'))"
         >
           Sim 3rd Place
@@ -85,7 +84,6 @@ function run(action: () => void) {
       variant="outlined"
       size="xs"
       class="sim-inline"
-      :disabled="!thirdPlaceReady()"
       @click="emit('sim-third-place')"
     >
       Sim 3rd Place
@@ -136,7 +134,7 @@ function run(action: () => void) {
   text-align: left;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 600px) {
   .sim-toolbar {
     gap: var(--sp-1);
   }

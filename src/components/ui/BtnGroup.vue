@@ -1,20 +1,11 @@
 <script setup lang="ts">
-/**
- * Segmented control — the canonical inline "pick one of N" widget.
- *
- * This is the *other* half of the tab story: `AppTabs` owns page-level
- * navigation (underline), `BtnGroup` owns inline filters and toggles.
- * It absorbs `.fv-tab`, `.tier-tab`, `.view-toggle-btn`, `.mode-toggle`
- * and `.dc-speed-btn`, which were five separate takes on this control.
- */
 import type { Component } from "vue"
 
 withDefaults(
   defineProps<{
     options: { value: string; label: string; icon?: Component; disabled?: boolean }[]
     modelValue: string
-    size?: "xs" | "sm"
-    /** Fill the available width, splitting evenly. */
+    size?: "xs" | "sm" | "md"
     block?: boolean
   }>(),
   { size: "sm" }
@@ -46,7 +37,7 @@ defineEmits<{ "update:modelValue": [value: string] }>()
   display: inline-flex;
   gap: 2px;
   padding: 3px;
-  background: var(--border-light);
+  background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
 }
@@ -88,6 +79,11 @@ defineEmits<{ "update:modelValue": [value: string] }>()
   padding: 2px var(--sp-2);
 }
 
+.btn-group--md button {
+  font-size: var(--fs-xs);
+  padding: 6px var(--sp-2);
+}
+
 .btn-group button:hover:not(.active):not(:disabled) {
   color: var(--text);
   background: var(--bg-hover);
@@ -127,7 +123,7 @@ defineEmits<{ "update:modelValue": [value: string] }>()
   height: 22px;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 600px) {
   .btn-group {
     flex-wrap: wrap;
   }

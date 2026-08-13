@@ -1,13 +1,6 @@
-/* ── Page skeleton ───────────────────────────────────────────────
-   Structural chrome only. Anything that is a *component* (card, chip,
-   button, tab, table) lives in src/components/ui/, not here. */
-
-/* min-height, not height: with a fixed height the page box stops at the
-   viewport and taller content spills out of it, so anything laid out
-   after the content (the .app-main spacer) lands too high. */
 .page {
   min-height: 100%;
-  max-width: 1200px;
+  max-width: 1280px;
   margin: 0 auto;
   padding: var(--sp-6) var(--sp-4);
 }

@@ -147,6 +147,9 @@ export default {
     empty: "Henüz takım yok. Başlamak için {action} tıklayın.",
     noMatch: '"{query}" ile eşleşen takım yok.',
     limitReached: "Takım limiti doldu ({max})",
+    sortDefault: "Varsayılan",
+    sortAsc: "Artan",
+    sortDesc: "Azalan",
     form: {
       addTitle: "Takım Ekle",
       editTitle: "Takım Düzenle",

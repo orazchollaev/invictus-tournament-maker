@@ -145,6 +145,9 @@ export default {
     empty: "Nenhum time ainda. Clique em {action} para começar.",
     noMatch: 'Nenhum time corresponde a "{query}".',
     limitReached: "Limite de times atingido ({max})",
+    sortDefault: "Padrão",
+    sortAsc: "Crescente",
+    sortDesc: "Decrescente",
     form: {
       addTitle: "Adicionar time",
       editTitle: "Editar time",

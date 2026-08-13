@@ -146,6 +146,9 @@ export default {
     empty: "Aún no hay equipos. Haz clic en {action} para empezar.",
     noMatch: 'No hay equipos que coincidan con "{query}".',
     limitReached: "Límite de equipos alcanzado ({max})",
+    sortDefault: "Predeterminado",
+    sortAsc: "Ascendente",
+    sortDesc: "Descendente",
     form: {
       addTitle: "Añadir equipo",
       editTitle: "Editar equipo",

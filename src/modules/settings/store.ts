@@ -11,6 +11,7 @@ export type DrawType = "random" | "seeded" | "manual"
 export type BracketStyle = "double-sided" | "classic" | "auto"
 export type BracketQuality = "high" | "low"
 export type TournamentListView = "list" | "grid"
+export type TeamsSortKey = "default" | "name" | "power"
 
 export const useSettingsStore = defineStore("settings", () => {
   const theme = ref<Theme>("dark")
@@ -40,6 +41,8 @@ export const useSettingsStore = defineStore("settings", () => {
   const gradualReveal = ref(true)
   const tournamentListView = ref<TournamentListView>("list")
   const teamsListView = ref<TournamentListView>("list")
+  const teamsSortKey = ref<TeamsSortKey>("default")
+  const teamsSortAsc = ref(true)
 
   watch(
     theme,
@@ -108,6 +111,8 @@ export const useSettingsStore = defineStore("settings", () => {
     gradualReveal.value = true
     tournamentListView.value = "list"
     teamsListView.value = "list"
+    teamsSortKey.value = "default"
+    teamsSortAsc.value = true
   }
 
   return {
@@ -138,6 +143,8 @@ export const useSettingsStore = defineStore("settings", () => {
     gradualReveal,
     tournamentListView,
     teamsListView,
+    teamsSortKey,
+    teamsSortAsc,
     resetAll,
   }
 })
