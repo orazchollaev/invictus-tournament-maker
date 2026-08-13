@@ -48,23 +48,6 @@ const bracketStyleOptions = computed<{ value: BracketStyle; label: string }[]>((
       <BtnGroup v-model="settings.bracketStyle" :options="bracketStyleOptions" />
     </AppField>
 
-    <AppField layout="split" :label="t('settings.display.confetti.label')">
-      <template #description>
-        <SettingDesc>{{ t("settings.display.confetti.desc") }}</SettingDesc>
-      </template>
-      <ToggleSwitch
-        v-model="settings.confettiOnWin"
-        :aria-label="t('settings.display.confetti.label')"
-      />
-    </AppField>
-
-    <AppField layout="split" :label="t('settings.display.sound.label')">
-      <template #description>
-        <SettingDesc>{{ t("settings.display.sound.desc") }}</SettingDesc>
-      </template>
-      <ToggleSwitch v-model="settings.soundOnWin" :aria-label="t('settings.display.sound.label')" />
-    </AppField>
-
     <AppField layout="split" :label="t('settings.display.bracketHover.label')">
       <template #description>
         <SettingDesc>{{ t("settings.display.bracketHover.desc") }}</SettingDesc>
@@ -93,13 +76,6 @@ const bracketStyleOptions = computed<{ value: BracketStyle; label: string }[]>((
         v-model="settings.gradualReveal"
         :aria-label="t('settings.display.gradualReveal.label')"
       />
-    </AppField>
-
-    <AppField layout="split" :label="t('drawCeremony.settingsLabel')">
-      <template #description>
-        <SettingDesc>{{ t("drawCeremony.settingsDesc") }}</SettingDesc>
-      </template>
-      <ToggleSwitch v-model="settings.drawCeremony" :aria-label="t('drawCeremony.settingsLabel')" />
     </AppField>
   </AppCard>
 </template>

@@ -327,6 +327,9 @@ export default {
         low: "Düşük",
       },
     },
+    effects: {
+      title: "Kazanma Efektleri",
+    },
     display: {
       title: "Görüntü",
       teamAbbr: {
@@ -418,9 +421,9 @@ export default {
       btn: "Sıfırla",
     },
     nav: {
-      general: "Genel",
-      display: "Görünüm",
-      tournament: "Turnuva",
+      appearance: "Dil ve Görünüm",
+      bracket: "Bracket ve Efektler",
+      tournament: "Turnuva Kuralları",
       simulation: "Simülasyon",
       data: "Veriler",
     },

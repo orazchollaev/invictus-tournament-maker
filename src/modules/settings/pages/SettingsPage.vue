@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, nextTick } from "vue"
 import { version } from "../../../../package.json"
-import { Globe, Monitor, Trophy, Dices, Database, Menu, ChevronDown } from "@lucide/vue"
+import { Palette, LayoutGrid, Trophy, Dices, Database, Menu, ChevronDown } from "@lucide/vue"
 import type { Component } from "vue"
 import { useI18n } from "vue-i18n"
 import SettingsAboutModal from "../components/SettingsAboutModal.vue"
@@ -12,26 +12,31 @@ import SettingsSectionMatchDefaults from "../components/SettingsSectionMatchDefa
 import SettingsSectionNewTournament from "../components/SettingsSectionNewTournament.vue"
 import SettingsSectionGraphics from "../components/SettingsSectionGraphics.vue"
 import SettingsSectionDisplay from "../components/SettingsSectionDisplay.vue"
+import SettingsSectionEffects from "../components/SettingsSectionEffects.vue"
 import SettingsSectionSimulation from "../components/SettingsSectionSimulation.vue"
 import SettingsSectionSampleData from "../components/SettingsSectionSampleData.vue"
 import SettingsSectionDataManagement from "../components/SettingsSectionDataManagement.vue"
 
 const { t } = useI18n()
 
-const CATEGORIES = ["general", "display", "tournament", "simulation", "data"] as const
+// "appearance": language + theme/color, both about how the app looks & speaks.
+// "bracket": bracket rendering, performance and win-celebration effects — all
+// visual/audio feedback, kept apart from app-wide appearance.
+// "tournament": rules & defaults that shape how tournaments play out.
+const CATEGORIES = ["appearance", "bracket", "tournament", "simulation", "data"] as const
 type Category = (typeof CATEGORIES)[number]
 
 const CATEGORY_ICONS: Record<Category, Component> = {
-  general: Globe,
-  display: Monitor,
+  appearance: Palette,
+  bracket: LayoutGrid,
   tournament: Trophy,
   simulation: Dices,
   data: Database,
 }
 
 const GROUPS: Record<Category, Component[]> = {
-  general: [SettingsSectionLanguage, SettingsSectionAppearance],
-  display: [SettingsSectionDisplay, SettingsSectionGraphics],
+  appearance: [SettingsSectionLanguage, SettingsSectionAppearance],
+  bracket: [SettingsSectionDisplay, SettingsSectionGraphics, SettingsSectionEffects],
   tournament: [
     SettingsSectionTableRules,
     SettingsSectionMatchDefaults,
@@ -43,7 +48,7 @@ const GROUPS: Record<Category, Component[]> = {
 
 const transitionName = ""
 
-const activeCategory = ref<Category>("general")
+const activeCategory = ref<Category>("appearance")
 const menuOpen = ref(false)
 const aboutOpen = ref(false)
 

@@ -11,6 +11,7 @@ import TeamSelectorFullscreenModal from "../components/TeamSelectorFullscreenMod
 import { DrawCeremony } from "../components/draw-ceremony"
 import { Shuffle, ArrowLeft, ChevronDown, LayoutGrid, Trophy, List, Maximize2 } from "@lucide/vue"
 import { randomTournamentName } from "@/composables/useRandomNames"
+import { useHaptic } from "@/composables/useHaptic"
 import type { CeremonyContext, DrawMode } from "@/engine"
 import type {
   LegMode,
@@ -71,6 +72,7 @@ const teamPointAdjustments = ref<Record<string, number>>({})
 const teamPowerAdjustments = ref<Record<string, number>>({})
 
 const { t } = useI18n()
+const { success: hapticSuccess } = useHaptic()
 
 const allTeams = computed(() => teamsStore.teams)
 const selectedTeams = computed(() => allTeams.value.filter((t) => selected.value.includes(t.id)))
@@ -230,6 +232,7 @@ function applyLeaguePlayoffSettings(id: string) {
 }
 
 function doCreate(orderedIds?: string[]) {
+  hapticSuccess()
   if (format.value === "league") {
     if (tierCount.value > 1) {
       const tierDefs = teamsPerTier.value.map((ids, i) => ({

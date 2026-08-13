@@ -324,6 +324,9 @@ export default {
         low: "低",
       },
     },
+    effects: {
+      title: "勝利エフェクト",
+    },
     display: {
       title: "表示",
       teamAbbr: {
@@ -415,9 +418,9 @@ export default {
       btn: "リセット",
     },
     nav: {
-      general: "一般",
-      display: "表示",
-      tournament: "大会",
+      appearance: "言語と表示",
+      bracket: "トーナメント表とエフェクト",
+      tournament: "大会ルール",
       simulation: "シミュレーション",
       data: "データ",
     },

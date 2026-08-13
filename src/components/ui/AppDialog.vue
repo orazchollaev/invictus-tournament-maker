@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted } from "vue"
+import { onMounted, onUnmounted, watch } from "vue"
 import {
   DialogRoot,
   DialogPortal,
@@ -9,6 +9,20 @@ import {
   VisuallyHidden,
 } from "reka-ui"
 import { dialogState, resolveDialog } from "@/composables/useDialog"
+import { useHaptic } from "@/composables/useHaptic"
+
+const { tap: hapticTap, warning: hapticWarning } = useHaptic()
+
+function confirm() {
+  // Dangerous dialogs already buzzed the warning on open; the tap itself is just a commit.
+  hapticTap()
+  resolveDialog(true)
+}
+
+function cancel() {
+  hapticTap()
+  resolveDialog(false)
+}
 
 function onKeydown(e: KeyboardEvent) {
   if (!dialogState.visible) return
@@ -17,6 +31,14 @@ function onKeydown(e: KeyboardEvent) {
 
 onMounted(() => window.addEventListener("keydown", onKeydown))
 onUnmounted(() => window.removeEventListener("keydown", onKeydown))
+
+/** The moment a destructive confirm appears, not just when it's tapped. */
+watch(
+  () => dialogState.visible,
+  (visible) => {
+    if (visible && dialogState.dangerous) hapticWarning()
+  }
+)
 </script>
 
 <template>
@@ -29,11 +51,7 @@ onUnmounted(() => window.removeEventListener("keydown", onKeydown))
         </VisuallyHidden>
         <p class="dialog-msg">{{ dialogState.message }}</p>
         <div class="dialog-actions">
-          <button
-            v-if="dialogState.type === 'confirm'"
-            class="dialog-cancel"
-            @click="resolveDialog(false)"
-          >
+          <button v-if="dialogState.type === 'confirm'" class="dialog-cancel" @click="cancel">
             Cancel
           </button>
           <button
@@ -45,7 +63,7 @@ onUnmounted(() => window.removeEventListener("keydown", onKeydown))
                   ? 'danger-solid'
                   : 'primary',
             ]"
-            @click="resolveDialog(true)"
+            @click="confirm"
           >
             {{ dialogState.confirmLabel }}
           </button>

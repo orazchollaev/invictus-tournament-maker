@@ -10,7 +10,11 @@
  *          text     no border, no fill — toolbars and dense rows
  *          danger   destructive; pair with `filled` intent via `solid`
  */
-withDefaults(
+import { useHaptic } from "@/composables/useHaptic"
+
+const { tap: hapticTap, warning: hapticWarning } = useHaptic()
+
+const props = withDefaults(
   defineProps<{
     variant?: "filled" | "tonal" | "outlined" | "text" | "danger"
     size?: "xs" | "sm" | "md"
@@ -27,6 +31,13 @@ withDefaults(
     type: "button",
   }
 )
+
+/** Every tap gets a tick; destructive buttons get the heavier warning buzz. */
+function onPointerDown() {
+  if (props.disabled) return
+  if (props.variant === "danger") hapticWarning()
+  else hapticTap()
+}
 </script>
 
 <template>
@@ -44,6 +55,7 @@ withDefaults(
         'btn--solid': solid,
       },
     ]"
+    @pointerdown="onPointerDown"
   >
     <slot />
   </button>

@@ -325,6 +325,9 @@ export default {
         low: "Baixa",
       },
     },
+    effects: {
+      title: "Efeitos de Vitória",
+    },
     display: {
       title: "Exibição",
       teamAbbr: {
@@ -416,9 +419,9 @@ export default {
       btn: "Redefinir",
     },
     nav: {
-      general: "Geral",
-      display: "Exibição",
-      tournament: "Torneio",
+      appearance: "Idioma e Aparência",
+      bracket: "Chave e Efeitos",
+      tournament: "Regras do Torneio",
       simulation: "Simulação",
       data: "Dados",
     },

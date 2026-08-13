@@ -324,6 +324,9 @@ export default {
         low: "Low",
       },
     },
+    effects: {
+      title: "Win Effects",
+    },
     display: {
       title: "Display",
       teamAbbr: {
@@ -414,9 +417,9 @@ export default {
       btn: "Reset",
     },
     nav: {
-      general: "General",
-      display: "Display",
-      tournament: "Tournament",
+      appearance: "Language & Appearance",
+      bracket: "Bracket & Effects",
+      tournament: "Tournament Rules",
       simulation: "Simulation",
       data: "Data",
     },

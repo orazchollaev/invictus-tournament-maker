@@ -327,6 +327,9 @@ export default {
         low: "Rendah",
       },
     },
+    effects: {
+      title: "Efek Kemenangan",
+    },
     display: {
       title: "Tampilan",
       teamAbbr: {
@@ -418,9 +421,9 @@ export default {
       btn: "Atur Ulang",
     },
     nav: {
-      general: "Umum",
-      display: "Tampilan",
-      tournament: "Turnamen",
+      appearance: "Bahasa & Tampilan",
+      bracket: "Braket & Efek",
+      tournament: "Aturan Turnamen",
       simulation: "Simulasi",
       data: "Data",
     },

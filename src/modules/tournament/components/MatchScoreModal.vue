@@ -9,6 +9,7 @@ import type { Team } from "@/modules/teams/types"
 import type { MatchResult } from "../types"
 import { MAX_GOALS } from "@/constants"
 import { simulateMatch, simulatePenaltyShootout } from "@/engine"
+import { useHaptic } from "@/composables/useHaptic"
 
 const props = withDefaults(
   defineProps<{
@@ -37,6 +38,7 @@ const emit = defineEmits<{
 }>()
 
 const { t } = useI18n()
+const { success: hapticSuccess } = useHaptic()
 
 const home = ref(props.result?.home ?? 0)
 const away = ref(props.result?.away ?? 0)
@@ -89,6 +91,7 @@ function save() {
     return
   }
   if (saveDisabled.value) return
+  hapticSuccess()
   if (showPens.value) emit("save", home.value, away.value, penHome.value, penAway.value)
   else emit("save", home.value, away.value)
   close()
@@ -478,7 +481,7 @@ function onKeydown(e: KeyboardEvent) {
   .ms-side {
     padding: var(--sp-3) var(--sp-3) var(--sp-3) var(--sp-4);
   }
-  .ms-ghost span {
+  .ms-ghost:nth-of-type(2) span {
     display: none;
   }
 }

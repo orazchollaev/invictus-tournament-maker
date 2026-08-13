@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { SwitchRoot, SwitchThumb } from "reka-ui"
+import { useHaptic } from "@/composables/useHaptic"
 
 defineProps<{
   modelValue: boolean
@@ -7,7 +8,13 @@ defineProps<{
   disabled?: boolean
 }>()
 
-defineEmits<{ "update:modelValue": [value: boolean] }>()
+const emit = defineEmits<{ "update:modelValue": [value: boolean] }>()
+const { selection: hapticSelection } = useHaptic()
+
+function onUpdate(value: boolean) {
+  hapticSelection()
+  emit("update:modelValue", value)
+}
 </script>
 
 <template>
@@ -16,7 +23,7 @@ defineEmits<{ "update:modelValue": [value: boolean] }>()
     :model-value="modelValue"
     :aria-label="ariaLabel"
     :disabled="disabled"
-    @update:model-value="(value) => $emit('update:modelValue', value)"
+    @update:model-value="onUpdate"
   >
     <SwitchThumb class="toggle-knob" />
   </SwitchRoot>

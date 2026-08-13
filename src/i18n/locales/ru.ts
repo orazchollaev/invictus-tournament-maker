@@ -327,6 +327,9 @@ export default {
         low: "Низкое",
       },
     },
+    effects: {
+      title: "Эффекты победы",
+    },
     display: {
       title: "Отображение",
       teamAbbr: {
@@ -417,9 +420,9 @@ export default {
       btn: "Сбросить",
     },
     nav: {
-      general: "Общие",
-      display: "Интерфейс",
-      tournament: "Турнир",
+      appearance: "Язык и оформление",
+      bracket: "Сетка и эффекты",
+      tournament: "Правила турнира",
       simulation: "Симуляция",
       data: "Данные",
     },
