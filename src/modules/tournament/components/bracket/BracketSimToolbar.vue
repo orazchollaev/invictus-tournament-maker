@@ -17,12 +17,6 @@ const emit = defineEmits<{
 
 const menuOpen = ref(false)
 
-/** 3rd place can only run once both semi-finals have produced losers. */
-function thirdPlaceReady() {
-  const m = props.thirdPlaceMatch
-  return !!m && !!m.homeId && !!m.awayId && !m.result
-}
-
 function run(action: () => void) {
   action()
   menuOpen.value = false

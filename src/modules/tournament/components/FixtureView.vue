@@ -128,9 +128,11 @@ function simMatch(match: FlatMatch) {
 
 function simTieLeg(match: FlatMatch, leg: 1 | 2) {
   if (match._isThirdPlace) {
-    emit(leg === 1 ? "sim-third-place-leg1" : "sim-third-place-leg2")
+    if (leg === 1) emit("sim-third-place-leg1")
+    else emit("sim-third-place-leg2")
   } else {
-    emit(leg === 1 ? "sim-leg1" : "sim-leg2", match._origRound, match._origMatch)
+    if (leg === 1) emit("sim-leg1", match._origRound, match._origMatch)
+    else emit("sim-leg2", match._origRound, match._origMatch)
   }
 }
 </script>
