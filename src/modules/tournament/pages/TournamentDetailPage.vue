@@ -181,7 +181,8 @@ const {
                           activeTierIdx === 0 &&
                           showLeaguePlayoffControls &&
                           leaguePlayoffData?.enabled &&
-                          !hasLeaguePlayoff
+                          !hasLeaguePlayoff &&
+                          canStartLeaguePlayoffFlow
                         "
                         #actions
                       >
@@ -222,7 +223,8 @@ const {
                       v-if="
                         showLeaguePlayoffControls &&
                         leaguePlayoffData?.enabled &&
-                        !hasLeaguePlayoff
+                        !hasLeaguePlayoff &&
+                        canStartLeaguePlayoffFlow
                       "
                       #actions
                     >

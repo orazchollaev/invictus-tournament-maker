@@ -247,7 +247,7 @@ async function deleteTournament(id: string) {
   right: var(--sp-2);
 }
 
-@media (max-width: 640px) {
+@media (max-width: 600px) {
   .format-text {
     display: none;
   }
