@@ -25,6 +25,7 @@ dist-ssr
 
 # Android build files
 android/app/build/
+android/app/google-services.json
 android/.gradle/
 android/build/
 
