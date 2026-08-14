@@ -1,5 +1,22 @@
 # Changelog
 
+# [2.0.0](https://github.com/orazchollaev/invictus-tournament-maker/compare/v1.21.0...v2.0.0) (2026-08-14)
+
+### Bug Fixes
+
+- **analytics:** use correct FirebaseAnalytics plugin method names ([a3b2e1a](https://github.com/orazchollaev/invictus-tournament-maker/commit/a3b2e1a37e5f1b9c3093cde31d8e0241f1a3cadc))
+- **league-playoff:** leg mode config, seeding, playoff button position ([820f65e](https://github.com/orazchollaev/invictus-tournament-maker/commit/820f65ed2b084ba38414a421116ce43e90012513))
+- **league/play-off:** position of the start play off button fixed ([4f81c9b](https://github.com/orazchollaev/invictus-tournament-maker/commit/4f81c9b868c31b51afd67ce9d06a07b06d04b688))
+
+### Features
+
+- **settings:** update settings categories and content ([bfab736](https://github.com/orazchollaev/invictus-tournament-maker/commit/bfab73636dc5582c410a6551371fe990bb06b7a3))
+- **teams:** add sort filter to the teams page ([5f647ae](https://github.com/orazchollaev/invictus-tournament-maker/commit/5f647ae5bdff79864657bb6ceb6d5953c5a439ef))
+- **tournament:** fix league playoff draw seeding, leg-mode persistence, 3rd-place double-leg, and gradual sim ([61463f3](https://github.com/orazchollaev/invictus-tournament-maker/commit/61463f310d00b17cef323a5eba0cab7058431ce2))
+- **tournament:** fullscreen team selector modal ([dce6c69](https://github.com/orazchollaev/invictus-tournament-maker/commit/dce6c69b551725fb1832611dc1ccfc91bec29d08))
+- **tournament:** per-round knockout leg mode (r64…final, 3rd place) ([843ee7f](https://github.com/orazchollaev/invictus-tournament-maker/commit/843ee7fe00e8a35f7be50c9079f0ecbb88da4693))
+- **tournament:** split group draw from playoff seeding, fix group round persistence ([2fdcf97](https://github.com/orazchollaev/invictus-tournament-maker/commit/2fdcf97c5de1536074e66b652b3f79e5a49a7cd0))
+
 # [1.21.0](https://github.com/orazchollaev/invictus-tournament-maker/compare/v1.20.0...v1.21.0) (2026-08-12)
 
 ### Bug Fixes
