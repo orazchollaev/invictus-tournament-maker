@@ -51,6 +51,10 @@ const CONTRIBUTORS = ["Rodrigo Hernandez"]
   justify-content: center;
   gap: var(--sp-4);
   margin-bottom: var(--sp-2);
+
+  img {
+    border-radius: 12px;
+  }
 }
 .about-logo {
   color: var(--accent);
@@ -62,7 +66,6 @@ const CONTRIBUTORS = ["Rodrigo Hernandez"]
 .about-logo--shiftfn {
   height: 64px;
   width: auto;
-  border-radius: 12px;
 }
 .about-logos-x {
   font-size: var(--fs-xl);

@@ -2,7 +2,6 @@
 import { ref, onMounted, onUnmounted } from "vue"
 import { Settings, Trophy, History, Users, BookOpen } from "@lucide/vue"
 import { useNavActive } from "@/composables/useNavActive"
-import AppLogo from "./AppLogo.vue"
 import { useI18n } from "vue-i18n"
 
 const { t } = useI18n()
@@ -29,7 +28,6 @@ onUnmounted(() => {
   <header class="site-header">
     <div class="header-inner">
       <RouterLink to="/" class="brand">
-        <AppLogo class="brand-logo" />
         <span class="brand-name">Invictus</span>
       </RouterLink>
 
@@ -88,7 +86,7 @@ onUnmounted(() => {
 }
 
 .header-inner {
-  max-width: 1200px;
+  max-width: 1280px;
   margin: 0 auto;
   padding: 0 20px;
   display: flex;
@@ -114,7 +112,7 @@ onUnmounted(() => {
   color: var(--accent);
 }
 .brand-name {
-  font-size: 18px;
+  font-size: 22px;
   font-weight: 800;
   font-family: var(--font);
   background: linear-gradient(-135deg, var(--text) 20%, var(--accent) 50%, var(--text) 80%);
