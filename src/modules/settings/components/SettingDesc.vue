@@ -1,17 +1,4 @@
 <script setup lang="ts">
-/**
- * Setting description. Plain text on desktop; on mobile it collapses to
- * an ⓘ button that opens a popover.
- *
- * The popover is teleported to <body> and positioned `fixed` from the
- * trigger's rect. Two reasons it can't just be an absolutely positioned
- * sibling: the card wrapping these rows sets `overflow: hidden`, which
- * clipped it at the card edge, and an absolute box appended in-flow
- * grows the page and shifts the scroll position when it opens.
- *
- * It closes on scroll/resize rather than tracking the trigger, which
- * keeps this to a rect read on open with no observers to tear down.
- */
 import { ref, onMounted, onUnmounted } from "vue"
 import { Info } from "@lucide/vue"
 
@@ -94,7 +81,7 @@ onUnmounted(() => {
   display: none;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 600px) {
   .sd-desktop {
     display: none;
   }

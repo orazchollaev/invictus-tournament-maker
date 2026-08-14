@@ -97,6 +97,7 @@ export default {
     seeded: "Cabeça de chave",
     manual: "Manual",
     search: "Buscar",
+    filter: "Filtrar",
     create: "Criar",
     new: "Novo",
     noMatch: 'Nenhum resultado para "{query}".',

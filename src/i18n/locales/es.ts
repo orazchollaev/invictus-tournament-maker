@@ -97,6 +97,7 @@ export default {
     seeded: "Sembrado",
     manual: "Manual",
     search: "Buscar",
+    filter: "Filtrar",
     create: "Crear",
     new: "Nuevo",
     noMatch: 'No hay resultados para "{query}".',

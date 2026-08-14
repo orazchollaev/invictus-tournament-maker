@@ -111,6 +111,7 @@
   .page-top {
     flex-wrap: wrap;
     gap: var(--sp-2);
+    margin-bottom: var(--sp-4);
   }
 
   .page-title,

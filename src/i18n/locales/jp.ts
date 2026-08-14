@@ -96,6 +96,7 @@ export default {
     seeded: "シード",
     manual: "手動",
     search: "検索",
+    filter: "フィルター",
     create: "作成",
     new: "新規",
     noMatch: '"{query}" に一致する結果はありません。',

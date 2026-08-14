@@ -155,7 +155,7 @@ onUnmounted(() => {
   flex: 1;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 600px) {
   .full-bracket-modal {
     height: 100dvh;
   }

@@ -203,7 +203,7 @@ defineExpose({ close })
   flex-shrink: 0;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 600px) {
   .drawer {
     width: 100vw;
     max-width: 100vw;

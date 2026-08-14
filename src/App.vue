@@ -15,35 +15,8 @@ watch(() => settings.theme, setTheme, { immediate: true })
 
 const router = useRouter()
 const ROOT_PATHS = ["/tournaments", "/teams", "/history", "/settings"]
-const SWIPE_PATHS = ["/tournaments", "/teams", "/history", "/settings", "/guide"]
 
-let touchStartX = 0
-let touchStartY = 0
 const transitionName = ref("page")
-
-function onTouchStart(e: TouchEvent) {
-  touchStartX = e.touches[0].clientX
-  touchStartY = e.touches[0].clientY
-}
-
-function onTouchEnd(e: TouchEvent) {
-  if (window.innerWidth > 640) return
-  const dx = e.changedTouches[0].clientX - touchStartX
-  const dy = e.changedTouches[0].clientY - touchStartY
-  if (Math.abs(dx) < 70 || Math.abs(dx) < Math.abs(dy) * 1.5) return
-
-  const idx = SWIPE_PATHS.indexOf(router.currentRoute.value.path)
-  if (idx === -1) return
-  if (dx < 0 && idx < SWIPE_PATHS.length - 1) navigateSwipe(SWIPE_PATHS[idx + 1], "slide-left")
-  else if (dx > 0 && idx > 0) navigateSwipe(SWIPE_PATHS[idx - 1], "slide-right")
-}
-
-function navigateSwipe(path: string, direction: "slide-left" | "slide-right") {
-  transitionName.value = direction
-  router.push(path).then(() => {
-    setTimeout(() => (transitionName.value = "page"), 300)
-  })
-}
 
 let backButtonListener: (() => void) | null = null
 
@@ -67,7 +40,7 @@ onUnmounted(() => {
 <template>
   <div style="height: 100%">
     <AppHeader />
-    <main class="app-main" @touchstart.passive="onTouchStart" @touchend.passive="onTouchEnd">
+    <main class="app-main">
       <ErrorBoundary>
         <RouterView v-slot="{ Component }">
           <Transition :name="transitionName" mode="out-in">
@@ -86,18 +59,13 @@ onUnmounted(() => {
   height: 100%;
 }
 
-/* .app-main is height-constrained, so page content taller than the
-   viewport overflows it rather than stretching it — a padding-bottom
-   would sit *behind* that overflow and never be scrolled to. A block
-   after the content is laid out at the end of the flow, so it is the
-   only thing that reliably reserves room under the last element. */
 .app-main::after {
   content: "";
   display: block;
   height: var(--safe-bottom);
 }
 
-@media (max-width: 640px) {
+@media (max-width: 600px) {
   .app-main::after {
     height: calc(var(--mobile-nav-offset) + var(--sp-4));
   }

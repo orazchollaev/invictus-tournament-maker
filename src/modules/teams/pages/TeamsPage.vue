@@ -2,9 +2,10 @@
 import { ref, computed } from "vue"
 import { useRouter } from "vue-router"
 import { useTeamsStore } from "../store"
-import { useSettingsStore, type TeamsSortKey } from "@/modules/settings/store"
+import { useSettingsStore } from "@/modules/settings/store"
 import TeamFormModal from "../components/TeamFormModal.vue"
 import TeamBadge from "../components/TeamBadge.vue"
+import TeamsFilterMenu from "../components/TeamsFilterMenu.vue"
 import type { Team } from "../types"
 import {
   AppButton,
@@ -15,7 +16,7 @@ import {
   AppSearchInput,
   BtnGroup,
 } from "@/components/ui"
-import { X, Pencil, Plus, Users, List, Grid3x3, ArrowDown, ArrowUp } from "@lucide/vue"
+import { X, Pencil, Plus, Users, List, Grid3x3 } from "@lucide/vue"
 import { MAX_TEAMS } from "@/constants"
 import { useI18n } from "vue-i18n"
 
@@ -34,21 +35,6 @@ const viewOptions = computed(() => [
   { value: "list", label: t("tournaments.viewList"), icon: List },
   { value: "grid", label: t("tournaments.viewGrid"), icon: Grid3x3 },
 ])
-
-const sortOptions = computed(() => [
-  { value: "default", label: t("teams.sortDefault") },
-  { value: "name", label: t("teamSelector.sortName") },
-  { value: "power", label: t("teamSelector.sortPower") },
-])
-
-function onSortSelect(key: string) {
-  if (settings.teamsSortKey === key) {
-    settings.teamsSortAsc = !settings.teamsSortAsc
-    return
-  }
-  settings.teamsSortKey = key as TeamsSortKey
-  settings.teamsSortAsc = key === "name"
-}
 
 const filtered = computed(() => {
   const q = query.value.trim().toLowerCase()
@@ -86,25 +72,12 @@ const filtered = computed(() => {
 
     <div v-if="store.teams.length" class="search-row">
       <AppSearchInput v-model="query" :placeholder="t('teams.searchPlaceholder')" />
-      <div class="sort-row">
-        <AppButton
-          v-if="settings.teamsSortKey !== 'default'"
-          type="button"
-          icon-only
-          size="md"
-          :title="settings.teamsSortAsc ? t('teams.sortAsc') : t('teams.sortDesc')"
-          @click="settings.teamsSortAsc = !settings.teamsSortAsc"
-        >
-          <AppIcon :icon="settings.teamsSortAsc ? ArrowUp : ArrowDown" size="xs" />
-        </AppButton>
-        <BtnGroup
-          :model-value="settings.teamsSortKey"
-          :options="sortOptions"
-          size="md"
-          @update:model-value="onSortSelect"
-        />
-      </div>
       <BtnGroup v-model="settings.teamsListView" :options="viewOptions" />
+
+      <TeamsFilterMenu
+        v-model:sort-key="settings.teamsSortKey"
+        v-model:sort-asc="settings.teamsSortAsc"
+      />
     </div>
 
     <div v-if="store.teams.length" class="t-list">
@@ -159,7 +132,10 @@ const filtered = computed(() => {
 
 <style scoped>
 .search-row {
-  flex-wrap: wrap;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
 }
 
 .search-row :deep(.search-field) {
@@ -167,45 +143,11 @@ const filtered = computed(() => {
   min-width: 0;
 }
 
-.sort-row {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-2);
+.search-row :deep(.btn-group) {
   flex-shrink: 0;
 }
 
-.sort-dir-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 26px;
-  height: 26px;
-  padding: 0;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: var(--border-light);
-  color: var(--text-muted);
-  cursor: pointer;
-  transition:
-    color var(--dur-fast) var(--ease),
-    background var(--dur-fast) var(--ease);
-}
-
-.sort-dir-btn:hover {
-  color: var(--text);
-  background: var(--bg-hover);
-}
-
-.sort-dir-btn:focus-visible {
-  outline: none;
-  box-shadow: var(--focus-ring);
-}
-
 @media (max-width: 480px) {
-  .search-row {
-    justify-content: flex-end;
-  }
-
   .search-row :deep(.search-field) {
     flex-basis: 100%;
   }
@@ -249,7 +191,6 @@ const filtered = computed(() => {
   flex-shrink: 0;
 }
 
-/* ── Grid ────────────────────────────────────────────────────── */
 .team-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -262,7 +203,6 @@ const filtered = computed(() => {
   }
 }
 
-/* Grid: stack, with the actions pinned to the card's top-right. */
 .team-card--grid {
   position: relative;
 }

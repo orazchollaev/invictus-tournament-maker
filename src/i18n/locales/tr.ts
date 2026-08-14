@@ -98,6 +98,7 @@ export default {
     seeded: "Sıralı",
     manual: "Manuel",
     search: "Ara",
+    filter: "Filtrele",
     create: "Oluştur",
     new: "Yeni",
     noMatch: '"{query}" ile eşleşen sonuç yok.',

@@ -149,7 +149,7 @@ defineEmits<{
   font-weight: 700;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 600px) {
   .lv-nav-btn {
     padding: var(--sp-2) var(--sp-3);
   }

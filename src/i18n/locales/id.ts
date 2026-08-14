@@ -98,6 +98,7 @@ export default {
     seeded: "Unggulan",
     manual: "Manual",
     search: "Cari",
+    filter: "Filter",
     create: "Buat",
     new: "Baru",
     noMatch: 'Tidak ada hasil untuk "{query}".',

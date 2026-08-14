@@ -11,16 +11,11 @@ html {
   height: 100%;
   scrollbar-width: thin;
   scrollbar-color: var(--border) var(--bg);
-  /* scrollbar-gutter: stable; */
   user-select: none;
   padding-top: var(--safe-top);
   padding-left: var(--safe-left);
   padding-right: var(--safe-right);
 }
-
-/* No padding-bottom here on purpose: <html> has a fixed height, so a
-   bottom padding is skipped once the page scrolls past it. The bottom
-   inset is owned by .app-main's trailing spacer in App.vue instead. */
 
 body {
   height: 100%;

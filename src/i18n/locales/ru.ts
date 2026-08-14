@@ -98,6 +98,7 @@ export default {
     seeded: "Сеяный",
     manual: "Ручной",
     search: "Поиск",
+    filter: "Фильтр",
     create: "Создать",
     new: "Новый",
     noMatch: 'Нет результатов для "{query}".',

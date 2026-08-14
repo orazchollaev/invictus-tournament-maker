@@ -1,5 +1,6 @@
 allowBuilds:
   '@firebase/util': true
+  core-js: true
   protobufjs: true
   sharp: true
   vue-demi: true
