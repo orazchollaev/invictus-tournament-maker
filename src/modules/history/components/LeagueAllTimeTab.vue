@@ -32,7 +32,7 @@ const { t } = useI18n()
         <tr v-for="(row, i) in rows" :key="row.teamId" :class="`at-pos--${i + 1}`">
           <td class="col-rank">{{ i + 1 }}</td>
           <td class="col-team">
-            <TeamBadge :team="row" :size="7" />
+            <TeamBadge :team="row" :size="14" />
           </td>
           <td class="muted">{{ row.seasons }}</td>
           <td>
