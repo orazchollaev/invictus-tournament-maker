@@ -3,6 +3,7 @@ import { useTournamentStore } from "@/modules/tournament/store"
 import { showAlert, showConfirm } from "@/composables/useDialog"
 import { useI18n } from "vue-i18n"
 import { Capacitor } from "@capacitor/core"
+import { idbStorage } from "@/lib/idbStorage"
 import { version } from "../../../../package.json"
 
 interface Dataset {
@@ -24,6 +25,21 @@ export const SAMPLE_DATASETS = Object.values(globbed).sort(
 
 const DATA_KEYS = ["teams", "tournament"] as const
 
+// Short keys used in the exported backup JSON only — storage keys (idb/pinia
+// store ids) stay "teams"/"tournament". Shaves bytes off exported files,
+// which matters once tournament history gets large.
+const EXPORT_KEY_MAP: Record<(typeof DATA_KEYS)[number], string> = {
+  teams: "t",
+  tournament: "tm",
+}
+const IMPORT_KEY_MAP: Record<string, (typeof DATA_KEYS)[number]> = {
+  t: "teams",
+  tm: "tournament",
+  // accept older backups exported before keys were shortened
+  teams: "teams",
+  tournament: "tournament",
+}
+
 export function useDataManagement() {
   const { t } = useI18n()
   const teamsStore = useTeamsStore()
@@ -35,10 +51,10 @@ export function useDataManagement() {
       dangerous: true,
     })
     if (!ok) return
-    localStorage.setItem("teams", JSON.stringify({ teams: dataset.teams }))
+    await idbStorage.setItem("teams", JSON.stringify({ teams: dataset.teams }))
     if (dataset.tournaments)
-      localStorage.setItem("tournament", JSON.stringify({ tournaments: dataset.tournaments }))
-    else localStorage.setItem("tournament", JSON.stringify({ tournaments: [], active: null }))
+      await idbStorage.setItem("tournament", JSON.stringify({ tournaments: dataset.tournaments }))
+    else await idbStorage.setItem("tournament", JSON.stringify({ tournaments: [], active: null }))
     location.reload()
   }
 
@@ -48,7 +64,7 @@ export function useDataManagement() {
       dangerous: true,
     })
     if (!ok) return
-    DATA_KEYS.forEach((k) => localStorage.removeItem(k))
+    await Promise.all(DATA_KEYS.map((k) => idbStorage.removeItem(k)))
     location.reload()
   }
 
@@ -69,10 +85,13 @@ export function useDataManagement() {
 
   async function exportData() {
     const payload = {
-      teams: { teams: teamsStore.teams },
-      tournament: { tournaments: tournamentStore.tournaments, active: tournamentStore.active },
+      [EXPORT_KEY_MAP.teams]: { teams: teamsStore.teams },
+      [EXPORT_KEY_MAP.tournament]: {
+        tournaments: tournamentStore.tournaments,
+        active: tournamentStore.active,
+      },
     }
-    const json = JSON.stringify(payload, null, 2)
+    const json = JSON.stringify(payload)
     const filename = `invictus-v${version}-${new Date().toISOString().slice(0, 10)}.json`
 
     // Same story as the bracket PNG export: Android's system WebView (what
@@ -107,13 +126,15 @@ export function useDataManagement() {
       const file = input.files?.[0]
       if (!file) return
       const reader = new FileReader()
-      reader.onload = (e) => {
+      reader.onload = async (e) => {
         try {
           const parsed = JSON.parse(e.target?.result as string)
           if (typeof parsed !== "object" || parsed === null) throw new Error()
-          DATA_KEYS.forEach((k) => {
-            if (k in parsed) localStorage.setItem(k, JSON.stringify(parsed[k]))
-          })
+          const writes = Object.keys(parsed)
+            .filter((k) => k in IMPORT_KEY_MAP)
+            .map((k) => idbStorage.setItem(IMPORT_KEY_MAP[k], JSON.stringify(parsed[k])))
+          if (!writes.length) throw new Error()
+          await Promise.all(writes)
           location.reload()
         } catch {
           showAlert(t("settings.dataManagement.invalidFile"))
