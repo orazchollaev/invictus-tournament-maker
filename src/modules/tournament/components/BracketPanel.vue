@@ -38,14 +38,11 @@ const { tap: hapticTap } = useHaptic()
 
 const bracketActions = useBracketActions(() => props.tournament.id)
 
-// ── Gradual simulation ────────────────────────────────────────
 async function simRoundGradual(ri: number) {
   const round = props.tournament.rounds[ri]
   if (!round) return
   const cbs = round.matches
     .map((m, mi) => ({ m, mi }))
-    // Pending single-leg match, or a double-leg one with leg 1 already
-    // played (manually or otherwise) but leg 2 still open.
     .filter(({ m }) => m.homeId && m.awayId && (!m.result || m.leg2Result === null))
     .map(
       ({ mi }) =>
@@ -98,11 +95,6 @@ const swipeFixtures = useSwipe(fixtureWrapperRef, {
   onSwipeRight: () => (bracketView.value = "bracket"),
 })
 
-// The pan layer is centered by CSS (bracket-viewport.css), so a raw pan(0,0)
-// drops the viewport on whatever round happens to sit in the middle of a wide
-// bracket — usually neither the first round nor the final. Fit-to-screen on
-// first mount and every time the Bracket tab is switched back into so it
-// always opens showing the whole thing instead of a random middle slice.
 watch(bracketView, (v) => {
   if (v === "bracket") nextTick(fitScreen)
 })
@@ -156,8 +148,8 @@ const { isExporting, exportPng } = useBracketExport({
     <div class="bracket-header">
       <SubTabBar
         :options="[
-          { value: 'bracket', label: 'Bracket' },
-          { value: 'fixtures', label: 'Fixtures' },
+          { value: 'bracket', label: t('tournament.tabs.bracket') },
+          { value: 'fixtures', label: t('tournament.tabs.fixtures') },
         ]"
         :model-value="bracketView"
         @update:model-value="(v) => (bracketView = v as 'bracket' | 'fixtures')"
@@ -187,7 +179,7 @@ const { isExporting, exportPng } = useBracketExport({
 
         <AppButton variant="outlined" size="xs" @click="showFullBracket = true">
           <AppIcon :icon="Maximize2" size="sm" />
-          <span class="btn-label">Full View</span>
+          <span class="btn-label">{{ t("teamSelector.fullView") }}</span>
         </AppButton>
       </div>
     </div>
@@ -266,8 +258,8 @@ const { isExporting, exportPng } = useBracketExport({
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-left: 0;
-  padding-right: 0;
+  padding-inline-start: 0;
+  padding-inline-end: 0;
   background: transparent;
 }
 

@@ -60,10 +60,10 @@ const { t } = useI18n()
 <style scoped>
 /* A stats grid, so every column is right-aligned except rank and team.
    Selectors carry the thead/tbody element to outrank AppTable's own
-   `th { text-align: left }` regardless of stylesheet order. */
+   `th { text-align: start }` regardless of stylesheet order. */
 .at-table :deep(thead th),
 .at-table :deep(tbody td) {
-  text-align: right;
+  text-align: end;
 }
 
 .col-rank {
@@ -81,7 +81,7 @@ const { t } = useI18n()
 }
 .at-table :deep(tbody td.col-team),
 .at-table :deep(thead th.col-team) {
-  text-align: left;
+  text-align: start;
 }
 
 .col-pts {

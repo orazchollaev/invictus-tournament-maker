@@ -362,7 +362,7 @@ const isChampion = computed(() => props.isFinal && !!props.match.result)
 .mc-row::before {
   content: "";
   position: absolute;
-  left: 0;
+  inset-inline-start: 0;
   top: 0;
   bottom: 0;
   width: 3px;

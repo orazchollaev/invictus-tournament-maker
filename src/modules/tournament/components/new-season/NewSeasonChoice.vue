@@ -27,7 +27,7 @@ defineProps<{ icon: Component; label: string; description: string }>()
   border: 1px solid var(--border-light);
   border-radius: var(--radius);
   cursor: pointer;
-  text-align: left;
+  text-align: start;
   width: 100%;
   transition:
     border-color var(--dur-fast) var(--ease),

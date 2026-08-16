@@ -3,6 +3,7 @@ import { ref } from "vue"
 import type { Group } from "@/modules/tournament/types"
 import { Shuffle, Check, ChevronDown } from "@lucide/vue"
 import { AppButton, AppIcon } from "@/components/ui"
+import { useI18n } from "vue-i18n"
 
 defineProps<{
   groups: Group[]
@@ -16,6 +17,8 @@ const emit = defineEmits<{
   advance: []
 }>()
 
+const { t } = useI18n()
+
 const menuOpen = ref(false)
 
 function run(action: () => void) {
@@ -26,13 +29,13 @@ function run(action: () => void) {
 
 <template>
   <div class="sim-toolbar">
-    <!-- Mobile: one dropdown holding every sim action -->
     <div class="sim-dropdown">
       <AppButton variant="outlined" size="xs" @click="menuOpen = !menuOpen">
         <AppIcon :icon="Shuffle" size="xs" />
-        Simulate
+        {{ t("tournament.simulate") }}
         <AppIcon :icon="ChevronDown" size="xs" class="sim-chevron" :class="{ open: menuOpen }" />
       </AppButton>
+
       <div v-if="menuOpen" class="sim-dropdown-panel">
         <AppButton
           variant="text"
@@ -41,8 +44,9 @@ function run(action: () => void) {
           :disabled="allDone"
           @click="run(() => emit('simWeek'))"
         >
-          Sim Week
+          {{ t("tournament.simulateWeek") }}
         </AppButton>
+
         <AppButton
           variant="text"
           size="xs"
@@ -50,8 +54,9 @@ function run(action: () => void) {
           :disabled="allDone"
           @click="run(() => emit('simAll'))"
         >
-          Simulate All
+          {{ t("tournament.simulateAll") }}
         </AppButton>
+
         <template v-for="(g, gi) in groups" :key="gi">
           <AppButton
             v-if="g.matches.some((m) => !m.result)"
@@ -60,13 +65,12 @@ function run(action: () => void) {
             block
             @click="run(() => emit('simGroup', gi))"
           >
-            Sim {{ g.name }}
+            {{ t("tournament.simulateGroup", { group: g.name }) }}
           </AppButton>
         </template>
       </div>
     </div>
 
-    <!-- Desktop: the same actions laid out inline -->
     <AppButton
       variant="outlined"
       size="xs"
@@ -75,8 +79,9 @@ function run(action: () => void) {
       @click="emit('simWeek')"
     >
       <AppIcon :icon="Shuffle" size="xs" />
-      Sim Week
+      {{ t("tournament.simulateWeek") }}
     </AppButton>
+
     <AppButton
       variant="outlined"
       size="xs"
@@ -85,8 +90,9 @@ function run(action: () => void) {
       @click="emit('simAll')"
     >
       <AppIcon :icon="Shuffle" size="xs" />
-      Simulate All
+      {{ t("tournament.simulateAll") }}
     </AppButton>
+
     <template v-for="(g, gi) in groups" :key="gi">
       <AppButton
         v-if="g.matches.some((m) => !m.result)"
@@ -95,7 +101,7 @@ function run(action: () => void) {
         class="sim-inline"
         @click="emit('simGroup', gi)"
       >
-        Sim {{ g.name }}
+        {{ t("tournament.simulateGroup", { group: g.name }) }}
       </AppButton>
     </template>
 
@@ -107,7 +113,7 @@ function run(action: () => void) {
       @click="emit('advance')"
     >
       <AppIcon :icon="Check" size="xs" />
-      Advance to Knockout →
+      {{ t("tournament.advanceToKnockout") }}
     </AppButton>
   </div>
 </template>
@@ -121,7 +127,7 @@ function run(action: () => void) {
 }
 
 .advance-btn {
-  margin-left: auto;
+  margin-inline-start: auto;
 }
 
 .sim-dropdown {
@@ -132,6 +138,7 @@ function run(action: () => void) {
 .sim-chevron {
   transition: transform var(--dur-fast) var(--ease);
 }
+
 .sim-chevron.open {
   transform: rotate(180deg);
 }
@@ -139,7 +146,7 @@ function run(action: () => void) {
 .sim-dropdown-panel {
   position: absolute;
   top: calc(100% + var(--sp-1));
-  left: 0;
+  inset-inline-start: 0;
   z-index: var(--z-dropdown);
   background: var(--surface);
   border: 1px solid var(--border-light);
@@ -153,18 +160,21 @@ function run(action: () => void) {
   max-height: 200px;
   overflow-y: auto;
 }
+
 .sim-dropdown-panel :deep(.btn) {
   justify-content: flex-start;
-  text-align: left;
+  text-align: start;
 }
 
 @media (max-width: 600px) {
   .sim-toolbar {
     gap: var(--sp-1);
   }
+
   .sim-inline {
     display: none;
   }
+
   .sim-dropdown {
     display: block;
   }

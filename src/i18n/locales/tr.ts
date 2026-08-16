@@ -440,6 +440,12 @@ export default {
     notFound: "Turnuva bulunamadı.",
     newSeason: "Yeni Sezon",
     simulateAll: "Tümünü Simüle Et",
+    simulate: "Simüle Et",
+    simulateRound: "Simüle Et: {round}",
+    simulateThirdPlace: "3.'lük Maçını Simüle Et",
+    simulateWeek: "Haftayı Simüle Et",
+    simulateGroup: "{group} Simüle Et",
+    advanceToKnockout: "Eleme Aşamasına Geç",
     settings: "Ayarlar",
     tabs: {
       groups: "Gruplar",
@@ -456,7 +462,6 @@ export default {
       teams: "{n} takım",
       created: "{date} tarihinde oluşturuldu",
     },
-    advanceToKnockout: "Elemeye Geç",
     newSeasonModal: {
       useOldDraw: "Eski Kurayı Kullan",
       useOldDrawDesc: "Sezon {n} kura sıralamasını koru",

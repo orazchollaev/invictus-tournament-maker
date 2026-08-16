@@ -83,7 +83,7 @@ const clubDatasets = computed(() => SAMPLE_DATASETS.filter((ds) => ds.type === "
   background: var(--surface);
   color: var(--text);
   cursor: pointer;
-  text-align: left;
+  text-align: start;
   transition:
     border-color var(--dur-fast) var(--ease),
     background var(--dur-fast) var(--ease);

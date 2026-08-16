@@ -129,10 +129,10 @@ function isLastPlayoffQualifier(rank: number) {
 
 .lv-table .col-team {
   position: relative;
-  text-align: left;
+  text-align: start;
   min-width: 90px;
   max-width: 130px;
-  padding-left: 11px;
+  padding-inline-start: 11px;
 }
 .lv-table .col-team::before {
   content: "";

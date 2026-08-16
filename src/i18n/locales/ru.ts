@@ -439,6 +439,12 @@ export default {
     notFound: "Турнир не найден.",
     newSeason: "Новый сезон",
     simulateAll: "Симулировать всё",
+    simulate: "Симулировать",
+    simulateRound: "Симулировать: {round}",
+    simulateThirdPlace: "Симулировать матч за 3-е место",
+    simulateWeek: "Симулировать тур",
+    simulateGroup: "Симулировать {group}",
+    advanceToKnockout: "Перейти к плей-офф",
     settings: "Настройки",
     tabs: {
       groups: "Группы",
@@ -455,7 +461,6 @@ export default {
       teams: "{n} команд",
       created: "Создан {date}",
     },
-    advanceToKnockout: "Перейти к плей-офф",
     newSeasonModal: {
       useOldDraw: "Использовать жеребьёвку прошлого сезона",
       useOldDrawDesc: "Сохранить порядок сетки из сезона {n}",

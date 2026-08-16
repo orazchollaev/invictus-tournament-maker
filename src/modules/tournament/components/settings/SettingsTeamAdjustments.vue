@@ -187,7 +187,7 @@ const MAX = 30
   border: none;
   cursor: pointer;
   color: var(--text);
-  text-align: left;
+  text-align: start;
   transition: background 0.12s;
 }
 .tsp-accordion-header:hover {

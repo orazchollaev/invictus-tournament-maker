@@ -106,7 +106,7 @@
 .ctp-tier-move {
   display: inline-flex;
   gap: 2px;
-  margin-left: 2px;
+  margin-inline-start: 2px;
 }
 .ctp-tier-mv-btn {
   padding: 0 4px;

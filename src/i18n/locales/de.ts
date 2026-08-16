@@ -442,6 +442,12 @@ export default {
     notFound: "Turnier nicht gefunden.",
     newSeason: "Neue Saison",
     simulateAll: "Alle simulieren",
+    simulate: "Simulieren",
+    simulateRound: "{round} simulieren",
+    simulateThirdPlace: "Spiel um Platz 3 simulieren",
+    simulateWeek: "Spieltag simulieren",
+    simulateGroup: "{group} simulieren",
+    advanceToKnockout: "Zur K.-o.-Phase",
     settings: "Einstellungen",
     tabs: {
       groups: "Gruppen",
@@ -458,7 +464,6 @@ export default {
       teams: "{n} Teams",
       created: "Erstellt am {date}",
     },
-    advanceToKnockout: "Zur K.-o.-Runde",
     newSeasonModal: {
       useOldDraw: "Auslosung der letzten Saison verwenden",
       useOldDrawDesc: "Behält dieselbe Turnierbaum-Reihenfolge aus Saison {n} bei",

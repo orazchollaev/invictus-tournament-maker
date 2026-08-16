@@ -81,8 +81,8 @@ onUnmounted(() => {
   top: 0;
   z-index: 10;
   padding-top: var(--safe-top);
-  padding-left: var(--safe-left);
-  padding-right: var(--safe-right);
+  padding-inline-start: var(--safe-left);
+  padding-inline-end: var(--safe-right);
 }
 
 .header-inner {
@@ -143,8 +143,8 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   gap: 2px;
-  margin-left: 120px;
-  margin-right: 120px;
+  margin-inline-start: 120px;
+  margin-inline-end: 120px;
 }
 .main-nav a {
   display: inline-flex;

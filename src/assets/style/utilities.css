@@ -12,7 +12,7 @@
 }
 
 .ml-auto {
-  margin-left: auto;
+  margin-inline-start: auto;
 }
 
 .muted {
@@ -60,7 +60,7 @@
   font-weight: 600;
   letter-spacing: 0.04em;
   color: var(--text-muted);
-  margin-left: var(--sp-2);
+  margin-inline-start: var(--sp-2);
 }
 
 .color-dot {

@@ -435,6 +435,12 @@ export default {
     notFound: "البطولة غير موجودة.",
     newSeason: "موسم جديد",
     simulateAll: "محاكاة الكل",
+    simulate: "محاكاة",
+    simulateRound: "محاكاة {round}",
+    simulateThirdPlace: "محاكاة مباراة تحديد المركز الثالث",
+    simulateWeek: "محاكاة الجولة",
+    simulateGroup: "محاكاة {group}",
+    advanceToKnockout: "الانتقال إلى مرحلة خروج المغلوب",
     settings: "الإعدادات",
     tabs: {
       groups: "المجموعات",
@@ -451,7 +457,6 @@ export default {
       teams: "{n} فرق",
       created: "أُنشئت في {date}",
     },
-    advanceToKnockout: "الانتقال إلى الإقصاء",
     newSeasonModal: {
       useOldDraw: "استخدام قرعة الموسم الماضي",
       useOldDrawDesc: "الاحتفاظ بنفس ترتيب القرعة من الموسم {n}",

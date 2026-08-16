@@ -54,7 +54,7 @@ defineEmits<{ click: [] }>()
   border: 2px solid var(--border-light);
   border-radius: var(--radius-lg);
   cursor: pointer;
-  text-align: left;
+  text-align: start;
   font-family: var(--font-ui);
   transition:
     border-color var(--dur-fast),

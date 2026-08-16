@@ -647,7 +647,7 @@ function doCreate(orderedIds?: string[]) {
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: var(--text-muted);
-  text-align: left;
+  text-align: start;
   transition:
     color 0.15s,
     border-color 0.15s;

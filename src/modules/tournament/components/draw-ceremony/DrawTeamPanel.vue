@@ -52,7 +52,7 @@ const open = ref(false)
   background: var(--bg);
   border: none;
   cursor: pointer;
-  text-align: left;
+  text-align: start;
   transition: background var(--dur-fast) var(--ease);
 }
 .dc-team-toggle:hover {

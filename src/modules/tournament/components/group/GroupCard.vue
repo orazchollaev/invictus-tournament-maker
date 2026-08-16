@@ -174,10 +174,10 @@ function scoreAccentColor(match: GroupMatch): string {
 
 .gs-table .col-team {
   position: relative;
-  text-align: left;
+  text-align: start;
   min-width: 0;
   max-width: 120px;
-  padding-left: 11px;
+  padding-inline-start: 11px;
 }
 .gs-table .col-team::before {
   content: "";
@@ -256,7 +256,7 @@ function scoreAccentColor(match: GroupMatch): string {
 }
 .gs-team--home {
   justify-content: flex-end;
-  text-align: right;
+  text-align: end;
 }
 .gs-team--away {
   justify-content: flex-start;

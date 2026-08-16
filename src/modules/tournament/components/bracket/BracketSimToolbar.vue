@@ -3,8 +3,9 @@ import { ref } from "vue"
 import { ChevronDown, Shuffle } from "@lucide/vue"
 import { AppButton, AppIcon } from "@/components/ui"
 import type { Match, Round } from "../../types"
+import { useI18n } from "vue-i18n"
 
-const props = defineProps<{
+defineProps<{
   rounds: Round[]
   thirdPlaceMatch?: Match | null
 }>()
@@ -14,6 +15,8 @@ const emit = defineEmits<{
   "sim-round": [roundIdx: number]
   "sim-third-place": []
 }>()
+
+const { t } = useI18n()
 
 const menuOpen = ref(false)
 
@@ -25,17 +28,18 @@ function run(action: () => void) {
 
 <template>
   <div class="sim-toolbar">
-    <!-- Mobile: one dropdown holding every sim action -->
     <div class="sim-dropdown">
       <AppButton variant="outlined" size="xs" @click="menuOpen = !menuOpen">
         <AppIcon :icon="Shuffle" size="xs" />
-        Simulate
+        {{ t("tournament.simulate") }}
         <AppIcon :icon="ChevronDown" size="xs" class="sim-chevron" :class="{ open: menuOpen }" />
       </AppButton>
+
       <div v-if="menuOpen" class="sim-dropdown-panel">
         <AppButton variant="text" size="xs" block @click="run(() => emit('sim-all'))">
-          Simulate All
+          {{ t("tournament.simulateAll") }}
         </AppButton>
+
         <AppButton
           v-for="(round, ri) in rounds"
           :key="ri"
@@ -44,8 +48,9 @@ function run(action: () => void) {
           block
           @click="run(() => emit('sim-round', ri))"
         >
-          Sim {{ round.name }}
+          {{ t("tournament.simulateRound", { round: round.name }) }}
         </AppButton>
+
         <AppButton
           v-if="thirdPlaceMatch"
           variant="text"
@@ -53,16 +58,16 @@ function run(action: () => void) {
           block
           @click="run(() => emit('sim-third-place'))"
         >
-          Sim 3rd Place
+          {{ t("tournament.simulateThirdPlace") }}
         </AppButton>
       </div>
     </div>
 
-    <!-- Desktop: the same actions laid out inline -->
     <AppButton variant="outlined" size="xs" class="sim-inline" @click="emit('sim-all')">
       <AppIcon :icon="Shuffle" size="md" />
-      Simulate All
+      {{ t("tournament.simulateAll") }}
     </AppButton>
+
     <AppButton
       v-for="(round, ri) in rounds"
       :key="ri"
@@ -71,8 +76,9 @@ function run(action: () => void) {
       class="sim-inline"
       @click="emit('sim-round', ri)"
     >
-      Sim {{ round.name }}
+      {{ t("tournament.simulateRound", { round: round.name }) }}
     </AppButton>
+
     <AppButton
       v-if="thirdPlaceMatch"
       variant="outlined"
@@ -80,7 +86,7 @@ function run(action: () => void) {
       class="sim-inline"
       @click="emit('sim-third-place')"
     >
-      Sim 3rd Place
+      {{ t("tournament.simulateThirdPlace") }}
     </AppButton>
   </div>
 </template>
@@ -109,7 +115,7 @@ function run(action: () => void) {
 .sim-dropdown-panel {
   position: absolute;
   top: calc(100% + var(--sp-1));
-  left: 0;
+  inset-inline-start: 0;
   z-index: var(--z-dropdown);
   background: var(--surface);
   border: 1px solid var(--border-light);
@@ -125,7 +131,7 @@ function run(action: () => void) {
 }
 .sim-dropdown-panel :deep(.btn) {
   justify-content: flex-start;
-  text-align: left;
+  text-align: start;
 }
 
 @media (max-width: 600px) {

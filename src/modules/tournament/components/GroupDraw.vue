@@ -244,7 +244,7 @@ function confirm() {
 .gd-progress {
   font-size: 11px;
   color: var(--text-muted);
-  margin-right: auto;
+  margin-inline-end: auto;
   font-variant-numeric: tabular-nums;
 }
 
@@ -259,7 +259,7 @@ function confirm() {
 .quick-draw-label {
   font-size: 12px;
   color: var(--text-muted);
-  margin-right: 2px;
+  margin-inline-end: 2px;
 }
 
 @media (max-width: 500px) {

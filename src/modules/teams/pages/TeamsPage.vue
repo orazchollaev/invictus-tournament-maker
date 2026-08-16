@@ -157,7 +157,7 @@ const filtered = computed(() => {
   font-size: var(--fs-base);
   font-weight: 400;
   color: var(--text-muted);
-  margin-left: var(--sp-2);
+  margin-inline-start: var(--sp-2);
 }
 
 .team-card {
@@ -210,12 +210,12 @@ const filtered = computed(() => {
 .team-card--grid :deep(.card-body) {
   flex-direction: column;
   align-items: flex-start;
-  padding-right: 68px;
+  padding-inline-end: 68px;
 }
 
 .team-card--grid .team-actions {
   position: absolute;
   top: var(--sp-2);
-  right: var(--sp-2);
+  inset-inline-end: var(--sp-2);
 }
 </style>

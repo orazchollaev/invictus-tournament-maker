@@ -350,7 +350,7 @@ function onKeydown(e: KeyboardEvent) {
   width: 24px;
   height: 24px;
   padding: 0;
-  margin-left: auto;
+  margin-inline-start: auto;
   border: none;
   background: transparent;
   color: var(--text-muted);
@@ -383,7 +383,7 @@ function onKeydown(e: KeyboardEvent) {
 .ms-side::before {
   content: "";
   position: absolute;
-  left: 0;
+  inset-inline-start: 0;
   top: 0;
   bottom: 0;
   width: 3px;
@@ -466,7 +466,7 @@ function onKeydown(e: KeyboardEvent) {
   .ms-panel {
     top: auto;
     bottom: 0;
-    left: 0;
+    inset-inline-start: 0;
     transform: none;
     width: 100vw;
     max-width: 100vw;

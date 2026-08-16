@@ -120,7 +120,7 @@ const SCORING = [
   font-weight: 600;
   color: var(--text-muted);
   min-width: 64px;
-  text-align: right;
+  text-align: end;
 }
 
 .draw-legend {

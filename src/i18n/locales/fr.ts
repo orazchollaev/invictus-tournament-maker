@@ -441,6 +441,12 @@ export default {
     notFound: "Tournoi introuvable.",
     newSeason: "Nouvelle saison",
     simulateAll: "Tout simuler",
+    simulate: "Simuler",
+    simulateRound: "Simuler {round}",
+    simulateThirdPlace: "Simuler le match pour la 3e place",
+    simulateWeek: "Simuler la journée",
+    simulateGroup: "Simuler {group}",
+    advanceToKnockout: "Passer à l'élimination",
     settings: "Paramètres",
     tabs: {
       groups: "Groupes",
@@ -457,7 +463,6 @@ export default {
       teams: "{n} équipes",
       created: "Créé le {date}",
     },
-    advanceToKnockout: "Passer à l'élimination",
     newSeasonModal: {
       useOldDraw: "Utiliser le tirage de la saison dernière",
       useOldDrawDesc: "Conserve le même ordre du tableau de la saison {n}",

@@ -90,7 +90,7 @@ function scoreAccentColor(): string {
 }
 .lv-team--home {
   justify-content: flex-end;
-  text-align: right;
+  text-align: end;
 }
 .lv-team--away {
   justify-content: flex-start;

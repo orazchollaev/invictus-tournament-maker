@@ -438,6 +438,12 @@ export default {
     notFound: "Torneio não encontrado.",
     newSeason: "Nova temporada",
     simulateAll: "Simular tudo",
+    simulate: "Simular",
+    simulateRound: "Simular {round}",
+    simulateThirdPlace: "Simular Disputa pelo 3º Lugar",
+    simulateWeek: "Simular a Rodada",
+    simulateGroup: "Simular {group}",
+    advanceToKnockout: "Avançar para a Fase Eliminatória",
     settings: "Configurações",
     tabs: {
       groups: "Grupos",
@@ -454,7 +460,6 @@ export default {
       teams: "{n} times",
       created: "Criado em {date}",
     },
-    advanceToKnockout: "Avançar para eliminatórias",
     newSeasonModal: {
       useOldDraw: "Usar o sorteio anterior",
       useOldDrawDesc: "Manter a mesma ordem do sorteio da Temporada {n}",

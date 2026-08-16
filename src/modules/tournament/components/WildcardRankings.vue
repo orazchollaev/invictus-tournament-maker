@@ -135,10 +135,10 @@ const candidates = computed(() => {
 
 .wc-table .col-team {
   position: relative;
-  text-align: left;
+  text-align: start;
   min-width: 0;
   max-width: 120px;
-  padding-left: 11px;
+  padding-inline-start: 11px;
 }
 .wc-table .col-team::before {
   content: "";

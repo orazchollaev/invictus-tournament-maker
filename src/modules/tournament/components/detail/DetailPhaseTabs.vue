@@ -4,7 +4,7 @@ import type { MainTab } from "./types"
 import { useI18n } from "vue-i18n"
 import { TabsRoot, TabsList, TabsTrigger } from "reka-ui"
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
 defineProps<{
   tournament: Tournament
@@ -25,7 +25,11 @@ function onUpdate(value: string) {
 </script>
 
 <template>
-  <TabsRoot :model-value="activeTab" @update:model-value="onUpdate">
+  <TabsRoot
+    :model-value="activeTab"
+    :dir="locale === 'ar' ? 'rtl' : 'ltr'"
+    @update:model-value="onUpdate"
+  >
     <TabsList class="phase-tabs">
       <template v-if="isLeagueFormat">
         <TabsTrigger as="div" class="phase-tab" value="league">

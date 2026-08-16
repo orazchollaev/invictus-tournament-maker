@@ -141,7 +141,7 @@ const columns = computed(() => {
 }
 
 .col-result {
-  text-align: left;
+  text-align: start;
   white-space: nowrap;
 }
 

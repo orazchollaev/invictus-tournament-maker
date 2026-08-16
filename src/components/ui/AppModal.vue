@@ -125,7 +125,7 @@ defineExpose({ close })
 .drawer {
   position: fixed;
   top: 0;
-  right: 0;
+  inset-inline-end: 0;
   background: var(--surface);
   border-left: 1px solid var(--border);
   box-shadow: var(--shadow-lg);
@@ -171,7 +171,7 @@ defineExpose({ close })
   color: var(--text-muted);
   border-radius: var(--radius);
   cursor: pointer;
-  margin-left: auto;
+  margin-inline-start: auto;
   flex-shrink: 0;
   transition:
     background 0.12s,

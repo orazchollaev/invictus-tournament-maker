@@ -36,7 +36,7 @@ withDefaults(
 }
 
 .table :deep(th) {
-  text-align: left;
+  text-align: start;
   font-family: var(--font-ui);
   font-size: var(--fs-xs);
   font-weight: 600;

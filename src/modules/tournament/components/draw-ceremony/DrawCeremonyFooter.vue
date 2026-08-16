@@ -88,7 +88,7 @@ const speedOptions = computed(() => [
 
 /* Pushes the trailing control away from the primary actions. */
 .dc-push-right {
-  margin-left: auto;
+  margin-inline-start: auto;
 }
 
 .dc-speed {
@@ -100,7 +100,7 @@ const speedOptions = computed(() => [
 .dc-speed-label {
   font-size: var(--fs-xs);
   color: var(--text-muted);
-  margin-right: 2px;
+  margin-inline-end: 2px;
 }
 
 @media (max-width: 600px) {
@@ -109,7 +109,7 @@ const speedOptions = computed(() => [
     padding-bottom: calc(var(--sp-3) + var(--safe-bottom));
   }
   .dc-push-right {
-    margin-left: 0;
+    margin-inline-start: 0;
     width: 100%;
   }
 }

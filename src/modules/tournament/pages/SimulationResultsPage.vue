@@ -366,7 +366,7 @@ const { saveJSON: handleSaveJSON, saveCSV: handleSaveCSV } = useSimResultExport(
   font-size: 13px;
 }
 .srp-table th {
-  text-align: left;
+  text-align: start;
   padding: 7px 10px;
   font-size: 11px;
   font-weight: 700;
@@ -379,7 +379,7 @@ const { saveJSON: handleSaveJSON, saveCSV: handleSaveCSV } = useSimResultExport(
 }
 .srp-table th svg {
   vertical-align: middle;
-  margin-right: 3px;
+  margin-inline-end: 3px;
 }
 .srp-table td {
   padding: 9px 10px;
@@ -415,13 +415,13 @@ const { saveJSON: handleSaveJSON, saveCSV: handleSaveCSV } = useSimResultExport(
 }
 .col-stat {
   width: 72px;
-  text-align: right;
+  text-align: end;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
 .col-stat svg {
   vertical-align: middle;
-  margin-right: 2px;
+  margin-inline-end: 2px;
 }
 .stat-win {
   font-weight: 700;
@@ -429,7 +429,7 @@ const { saveJSON: handleSaveJSON, saveCSV: handleSaveCSV } = useSimResultExport(
 }
 .col-bar {
   min-width: 100px;
-  padding-right: 16px !important;
+  padding-inline-end: 16px !important;
 }
 
 .team-dot {

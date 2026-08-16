@@ -53,7 +53,7 @@ const settings = useSettingsStore()
 @media (max-width: 640px) {
   .lang-field :deep(.field-control) {
     flex: 1 1 100%;
-    margin-left: 0;
+    margin-inline-start: 0;
     width: 100%;
   }
 

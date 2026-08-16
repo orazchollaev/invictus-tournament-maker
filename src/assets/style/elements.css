@@ -109,7 +109,7 @@ th,
 td {
   border: 1px solid var(--border-light);
   padding: var(--sp-2) var(--sp-3);
-  text-align: left;
+  text-align: start;
 }
 
 th {

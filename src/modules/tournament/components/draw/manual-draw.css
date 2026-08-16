@@ -68,7 +68,7 @@
   gap: var(--sp-2);
   max-height: 360px;
   overflow-y: auto;
-  padding-right: 2px;
+  padding-inline-end: 2px;
 }
 
 .md-card {
@@ -116,7 +116,7 @@
 .md-progress {
   font-size: var(--fs-xs);
   color: var(--text-muted);
-  margin-right: auto;
+  margin-inline-end: auto;
   font-variant-numeric: tabular-nums;
 }
 

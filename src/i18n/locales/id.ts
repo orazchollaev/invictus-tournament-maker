@@ -438,6 +438,12 @@ export default {
     notFound: "Turnamen tidak ditemukan.",
     newSeason: "Musim Baru",
     simulateAll: "Simulasikan Semua",
+    simulate: "Simulasikan",
+    simulateRound: "Simulasikan {round}",
+    simulateThirdPlace: "Simulasikan Perebutan Tempat ke-3",
+    simulateWeek: "Simulasikan Pekan",
+    simulateGroup: "Simulasikan {group}",
+    advanceToKnockout: "Lanjut ke Babak Gugur",
     settings: "Pengaturan",
     tabs: {
       groups: "Grup",
@@ -454,7 +460,6 @@ export default {
       teams: "{n} tim",
       created: "Dibuat {date}",
     },
-    advanceToKnockout: "Maju ke Babak Gugur",
     newSeasonModal: {
       useOldDraw: "Gunakan Undian Musim Lalu",
       useOldDrawDesc: "Pertahankan urutan braket yang sama dari Musim {n}",

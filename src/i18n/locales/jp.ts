@@ -435,6 +435,12 @@ export default {
     notFound: "大会が見つかりません。",
     newSeason: "新シーズン",
     simulateAll: "すべてシミュレート",
+    simulate: "シミュレーション",
+    simulateRound: "{round}をシミュレート",
+    simulateThirdPlace: "3位決定戦をシミュレート",
+    simulateWeek: "第{week}節をシミュレート",
+    simulateGroup: "{group}をシミュレート",
+    advanceToKnockout: "ノックアウトステージへ進む",
     settings: "設定",
     tabs: {
       groups: "グループ",
@@ -451,7 +457,6 @@ export default {
       teams: "{n} チーム",
       created: "作成日: {date}",
     },
-    advanceToKnockout: "ノックアウトステージへ進む",
     newSeasonModal: {
       useOldDraw: "昨シーズンの組み合わせを使用",
       useOldDrawDesc: "シーズン {n} と同じトーナメント表の配置を維持します",

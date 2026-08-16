@@ -187,7 +187,7 @@ function selectCategory(id: Category) {
   align-items: center;
   gap: var(--sp-3);
   width: 100%;
-  text-align: left;
+  text-align: start;
   padding: var(--sp-2) var(--sp-3);
   border: none;
   border-left: 3px solid transparent;
@@ -330,7 +330,7 @@ function selectCategory(id: Category) {
 }
 .mobile-nav-label {
   flex: 1;
-  text-align: left;
+  text-align: start;
 }
 .mobile-nav-chev {
   flex-shrink: 0;
@@ -343,8 +343,8 @@ function selectCategory(id: Category) {
 .mobile-nav-menu {
   position: absolute;
   top: calc(100% + var(--sp-2));
-  left: 0;
-  right: 0;
+  inset-inline-start: 0;
+  inset-inline-end: 0;
   z-index: var(--z-dropdown);
   display: flex;
   flex-direction: column;

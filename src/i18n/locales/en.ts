@@ -436,6 +436,12 @@ export default {
     notFound: "Tournament not found.",
     newSeason: "New Season",
     simulateAll: "Simulate All",
+    simulate: "Simulate",
+    simulateRound: "Sim {round}",
+    simulateThirdPlace: "Sim 3rd Place",
+    simulateWeek: "Sim Week",
+    simulateGroup: "Sim {group}",
+    advanceToKnockout: "Advance to Knockout",
     settings: "Settings",
     tabs: {
       groups: "Groups",
@@ -452,7 +458,6 @@ export default {
       teams: "{n} teams",
       created: "Created {date}",
     },
-    advanceToKnockout: "Advance to Knockout",
     newSeasonModal: {
       useOldDraw: "Use Last Season's Draw",
       useOldDrawDesc: "Keep the same bracket order from Season {n}",

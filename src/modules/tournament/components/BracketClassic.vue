@@ -185,8 +185,8 @@ function svgSegments(p: ConnInfo, w: number) {
               :style="{
                 position: 'absolute',
                 top: cardTop(ri, mi) + 'px',
-                left: 0,
-                right: 0,
+                insetInlineStart: 0,
+                insetInlineEnd: 0,
                 animationDelay: `${ri * 0.08 + mi * 0.05}s`,
               }"
               @set-result="
@@ -256,8 +256,8 @@ function svgSegments(p: ConnInfo, w: number) {
               :style="{
                 position: 'absolute',
                 top: totalBracketH / 2 - CARD_H / 2 + 'px',
-                left: 0,
-                right: 0,
+                insetInlineStart: 0,
+                insetInlineEnd: 0,
               }"
               @set-result="(h, a, ph, pa) => emit('set-third-place-result', h, a, ph, pa)"
               @clear-result="emit('clear-third-place-result')"
@@ -320,8 +320,8 @@ function svgSegments(p: ConnInfo, w: number) {
   width: 1px;
   background: var(--border-light);
   flex-shrink: 0;
-  margin-left: 16px;
-  margin-right: 16px;
+  margin-inline-start: 16px;
+  margin-inline-end: 16px;
   opacity: 0.5;
 }
 </style>

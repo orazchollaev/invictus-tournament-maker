@@ -234,7 +234,7 @@ async function deleteTournament(id: string) {
   flex-direction: column;
   align-items: flex-start;
   gap: var(--sp-2);
-  padding-right: 40px;
+  padding-inline-end: 40px;
 }
 
 .tour-card--grid .tour-meta {
@@ -244,7 +244,7 @@ async function deleteTournament(id: string) {
 .tour-card--grid .tour-delete {
   position: absolute;
   top: var(--sp-2);
-  right: var(--sp-2);
+  inset-inline-end: var(--sp-2);
 }
 
 @media (max-width: 600px) {

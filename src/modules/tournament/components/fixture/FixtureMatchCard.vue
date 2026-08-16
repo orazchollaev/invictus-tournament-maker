@@ -141,7 +141,7 @@ const canEdit = computed(() => !!props.match.homeId && !!props.match.awayId)
   font: inherit;
   color: inherit;
   cursor: pointer;
-  text-align: left;
+  text-align: start;
   min-width: 0;
   gap: 0;
 }
@@ -183,7 +183,7 @@ const canEdit = computed(() => !!props.match.homeId && !!props.match.awayId)
 .mc-row::before {
   content: "";
   position: absolute;
-  left: 0;
+  inset-inline-start: 0;
   top: 0;
   bottom: 0;
   width: 3px;

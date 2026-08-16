@@ -136,14 +136,14 @@ function toggle(teamId: string) {
   letter-spacing: 0.05em;
   color: var(--text-muted);
   padding: var(--sp-1) var(--sp-2);
-  text-align: right;
+  text-align: end;
   border-bottom: 1px solid var(--border-light);
   white-space: nowrap;
 }
 
 .ts-table td {
   padding: var(--sp-1) var(--sp-2);
-  text-align: right;
+  text-align: end;
   border-bottom: 1px solid var(--border-light);
   color: var(--text);
 }
@@ -157,7 +157,7 @@ function toggle(teamId: string) {
 .ts-table th.col-team,
 .ts-table td.col-team {
   min-width: 90px;
-  text-align: left;
+  text-align: start;
 }
 
 .ts-table th.col-expand,
@@ -213,13 +213,13 @@ function toggle(teamId: string) {
   letter-spacing: 0.05em;
   color: var(--text-muted);
   padding: var(--sp-1) var(--sp-2);
-  text-align: right;
+  text-align: end;
   border-bottom: 1px solid var(--border-light);
 }
 
 .ts-sub-table td {
   padding: var(--sp-1) var(--sp-2);
-  text-align: right;
+  text-align: end;
   border-bottom: 1px solid var(--border-light);
   color: var(--text);
 }
@@ -231,8 +231,8 @@ function toggle(teamId: string) {
 /* Indent the season column so the sub-table reads as nested. */
 .ts-sub-table th:first-child,
 .ts-sub-table td.sub-season {
-  text-align: left;
-  padding-left: var(--sp-6);
+  text-align: start;
+  padding-inline-start: var(--sp-6);
 }
 
 .sub-season {

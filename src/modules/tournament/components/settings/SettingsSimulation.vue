@@ -186,7 +186,7 @@ function goToSimResults() {
   font-size: 13px;
   font-weight: 600;
   color: var(--accent);
-  text-align: right;
+  text-align: end;
   margin-bottom: 16px;
   font-variant-numeric: tabular-nums;
 }

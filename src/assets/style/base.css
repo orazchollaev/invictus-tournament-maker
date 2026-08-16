@@ -13,8 +13,8 @@ html {
   scrollbar-color: var(--border) var(--bg);
   user-select: none;
   padding-top: var(--safe-top);
-  padding-left: var(--safe-left);
-  padding-right: var(--safe-right);
+  padding-inline-start: var(--safe-left);
+  padding-inline-end: var(--safe-right);
 }
 
 body {

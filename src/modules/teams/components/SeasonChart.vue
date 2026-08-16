@@ -185,7 +185,7 @@ function pct(n: number, s: SeasonStat) {
 .col-pct {
   font-size: 11px;
   color: var(--text-muted);
-  text-align: right;
+  text-align: end;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;

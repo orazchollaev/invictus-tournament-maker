@@ -340,7 +340,7 @@ function submit() {
   width: 100%;
 }
 .input-full {
-  padding-right: var(--sp-6);
+  padding-inline-end: var(--sp-6);
 }
 
 .btn-random {

@@ -116,7 +116,7 @@ function formatLabel(format: string) {
 /* Interpunct before the team count, separating it from the chips. */
 .series-teams::before {
   content: "·";
-  margin-right: var(--sp-2);
+  margin-inline-end: var(--sp-2);
   opacity: 0.5;
 }
 </style>

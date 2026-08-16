@@ -170,9 +170,9 @@ const chartTitle = computed(() => {
 }
 .stats-table .col-team {
   position: relative;
-  text-align: left;
+  text-align: start;
   min-width: 110px;
-  padding-left: 11px;
+  padding-inline-start: 11px;
 }
 .stats-table .col-team::before {
   content: "";
