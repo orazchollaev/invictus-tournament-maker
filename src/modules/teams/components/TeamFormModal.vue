@@ -1,18 +1,20 @@
 <script setup lang="ts">
-import { ref, watch, computed } from "vue"
+import { ref, watch, nextTick } from "vue"
 import { AppButton, AppField, AppIcon, AppModal, ColorPicker } from "@/components/ui"
 import FlagPicker from "./FlagPicker.vue"
 import FlagCircle from "./FlagCircle.vue"
+import TeamImageSourceModal from "./TeamImageSourceModal.vue"
+import TeamImageUrlModal from "./TeamImageUrlModal.vue"
 import { flagPrimaryColor } from "../flags"
-import { teamInk } from "../color"
+import { resizeImageFile } from "../imageUtils"
 import { useTeamsStore } from "../store"
 import { useModal } from "@/composables/useModal"
 import { autoAbbr } from "@/composables/useTeamLookup"
 import { randomTeamName } from "@/composables/useRandomNames"
-import { Shuffle, X, Plus } from "@lucide/vue"
+import { showAlert } from "@/composables/useDialog"
+import { Shuffle, X } from "@lucide/vue"
 import type { Team } from "../types"
 import { useI18n } from "vue-i18n"
-import { COUNTRY_FLAGS } from "@/constants.ts"
 
 const props = defineProps<{ team?: Team }>()
 const emit = defineEmits<{ close: [] }>()
@@ -29,33 +31,70 @@ const name = ref(props.team?.name ?? "")
 const abbr = ref(props.team?.abbr ?? "")
 const color = ref(props.team?.color ?? "#3366cc")
 const flag = ref<string | undefined>(props.team?.flag)
+const image = ref<string | undefined>(props.team?.image)
 const power = ref(props.team?.power ?? 70)
 const showFlagPicker = ref(false)
+const showSourceChooser = ref(false)
+const showUrlModal = ref(false)
+const imgError = ref(false)
+const fileInput = ref<HTMLInputElement | null>(null)
 
 const abbrPlaceholder = ref(autoAbbr(name.value))
 watch(name, (v) => {
   abbrPlaceholder.value = autoAbbr(v)
 })
 
-const flagName = computed(
-  () => COUNTRY_FLAGS.find((c) => c.code === flag.value)?.name ?? flag.value
-)
-
-/* Crest preview. The initials sit directly on the team colour, so the ink
-   comes from the fill's luminance — see modules/teams/color.ts. */
-const crestAbbr = computed(() =>
-  (abbr.value.trim() || abbrPlaceholder.value || "—").slice(0, 3).toUpperCase()
-)
-
-const crestInk = computed(() => teamInk(color.value))
-
 async function onFlagSelect(code: string | undefined) {
   flag.value = code
+  image.value = undefined
   flagModal.value?.close()
   if (code) {
     const primary = await flagPrimaryColor(code)
     if (primary) color.value = primary
   }
+}
+
+function onUrlSelect(url: string) {
+  image.value = url
+  flag.value = undefined
+  imgError.value = false
+  showUrlModal.value = false
+}
+
+function onGallerySelect() {
+  showSourceChooser.value = false
+  nextTick(() => fileInput.value?.click())
+}
+
+function onChooseFlag() {
+  showSourceChooser.value = false
+  showFlagPicker.value = true
+}
+
+function onChooseUrl() {
+  showSourceChooser.value = false
+  showUrlModal.value = true
+}
+
+async function onFileChange(e: Event) {
+  const input = e.target as HTMLInputElement
+  const file = input.files?.[0]
+  input.value = ""
+  if (!file) return
+
+  try {
+    const dataUrl = await resizeImageFile(file)
+    image.value = dataUrl
+    flag.value = undefined
+    imgError.value = false
+  } catch {
+    showAlert(t("teams.form.imageInvalid"))
+  }
+}
+
+function clearImage() {
+  flag.value = undefined
+  image.value = undefined
 }
 
 function submit() {
@@ -66,6 +105,7 @@ function submit() {
       abbr: abbr.value.trim().slice(0, 7) || undefined,
       color: color.value,
       flag: flag.value,
+      image: image.value,
       power: power.value,
     })
   } else {
@@ -74,7 +114,8 @@ function submit() {
       color.value,
       power.value,
       abbr.value.trim() || undefined,
-      flag.value
+      flag.value,
+      image.value
     )
   }
   modal.value?.close()
@@ -87,13 +128,39 @@ function submit() {
     :title="isEdit ? t('teams.form.editTitle') : t('teams.form.addTitle')"
     @close="emit('close')"
   >
-    <div class="form" :style="{ '--team-color': color, '--crest-ink': crestInk }">
-      <!-- Live identity preview: everything below feeds this crest. -->
+    <div class="form" :style="{ '--team-color': color }">
+      <!-- Live identity preview: click the crest to pick a flag or a custom image. -->
       <div class="preview">
-        <div class="crest">
-          <span class="crest-abbr">{{ crestAbbr }}</span>
-          <FlagCircle v-if="flag" :code="flag" :size="20" class="crest-flag" />
+        <div
+          class="crest"
+          :class="{ 'crest--filled': flag || image }"
+          @click="showSourceChooser = true"
+        >
+          <img
+            v-if="image && !imgError"
+            :src="image"
+            class="crest-img"
+            alt=""
+            @error="imgError = true"
+          />
+          <FlagCircle v-else-if="flag" :code="flag" :size="52" class="crest-img" />
+          <button
+            v-if="flag || image"
+            type="button"
+            class="crest-clear"
+            :title="t('teams.form.imageRemove')"
+            @click.stop="clearImage"
+          >
+            <AppIcon :icon="X" size="xs" />
+          </button>
         </div>
+        <input
+          ref="fileInput"
+          type="file"
+          accept="image/*"
+          class="visually-hidden"
+          @change="onFileChange"
+        />
         <div class="preview-text">
           <p class="preview-name" :class="{ 'preview-name--empty': !name.trim() }">
             {{ name.trim() || t("teams.form.namePlaceholder") }}
@@ -128,45 +195,15 @@ function submit() {
           </div>
         </AppField>
 
-        <div class="field-row">
-          <AppField layout="stack" :label="t('teams.form.abbreviation')" class="field-grow">
-            <input
-              v-model="abbr"
-              class="input-abbr"
-              :placeholder="abbrPlaceholder"
-              maxlength="7"
-              @keyup.enter="submit"
-            />
-          </AppField>
-
-          <AppField layout="stack">
-            <template #label>
-              {{ t("teams.form.flag") }}
-              <span class="label-optional">{{ t("common.optional") }}</span>
-            </template>
-            <div class="flag-slot">
-              <button
-                type="button"
-                class="flag-btn"
-                :class="{ 'flag-btn--empty': !flag }"
-                :title="flag ? flagName : t('teams.form.flagPickerTitle')"
-                @click="showFlagPicker = true"
-              >
-                <FlagCircle v-if="flag" :code="flag" :size="30" />
-                <AppIcon v-else :icon="Plus" size="sm" />
-              </button>
-              <button
-                v-if="flag"
-                type="button"
-                class="flag-clear"
-                :title="t('teams.form.flagRemove')"
-                @click="flag = undefined"
-              >
-                <AppIcon :icon="X" size="xs" />
-              </button>
-            </div>
-          </AppField>
-        </div>
+        <AppField layout="stack" :label="t('teams.form.abbreviation')">
+          <input
+            v-model="abbr"
+            class="input-abbr"
+            :placeholder="abbrPlaceholder"
+            maxlength="7"
+            @keyup.enter="submit"
+          />
+        </AppField>
       </div>
 
       <div class="section">
@@ -214,6 +251,20 @@ function submit() {
   >
     <FlagPicker :model-value="flag" @update:model-value="onFlagSelect" />
   </AppModal>
+
+  <TeamImageSourceModal
+    v-if="showSourceChooser"
+    @close="showSourceChooser = false"
+    @select-flag="onChooseFlag"
+    @select-url="onChooseUrl"
+    @select-gallery="onGallerySelect"
+  />
+
+  <TeamImageUrlModal
+    v-if="showUrlModal"
+    @close="showUrlModal = false"
+    @update:model-value="onUrlSelect"
+  />
 </template>
 
 <style scoped>
@@ -246,23 +297,41 @@ function submit() {
   background: var(--team-color);
   display: grid;
   place-items: center;
+  cursor: pointer;
   transition: background var(--dur) var(--ease);
 }
-
-.crest-abbr {
-  font-family: var(--font-ui);
-  font-size: var(--fs-md);
-  font-weight: 700;
-  letter-spacing: 0.03em;
-  color: var(--crest-ink);
+.crest--filled {
+  background: transparent;
 }
 
-.crest-flag {
-  position: absolute;
-  right: -2px;
-  bottom: -2px;
-  box-shadow: 0 0 0 2px var(--surface);
+.crest-img {
+  width: 52px;
+  height: 52px;
   border-radius: var(--radius-pill);
+  object-fit: contain;
+  display: block;
+}
+
+.crest-clear {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-muted);
+  box-shadow: var(--elev-1);
+  cursor: pointer;
+}
+.crest-clear:hover {
+  color: var(--danger);
+  border-color: var(--danger);
 }
 
 .preview-text {
@@ -303,28 +372,11 @@ function submit() {
   border-top: 1px solid var(--border-light);
 }
 
-.field-row {
-  display: flex;
-  gap: var(--sp-3);
-  align-items: flex-end;
-}
-
-.field-grow {
-  flex: 1;
-  min-width: 0;
-}
-
 .label-row {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
   gap: var(--sp-2);
-}
-
-.label-optional {
-  font-weight: 400;
-  font-size: var(--fs-xs);
-  color: var(--text-muted);
 }
 
 /* ── Name & abbreviation ──────────────────────────────────────── */
@@ -348,41 +400,16 @@ function submit() {
   right: var(--sp-1);
 }
 
-/* ── Flag ─────────────────────────────────────────────────────── */
-.flag-slot {
-  position: relative;
-  flex-shrink: 0;
-}
-
-.flag-btn {
-  width: 38px;
-  height: 38px;
-  padding: 0;
-  justify-content: center;
-  border-radius: var(--radius-pill);
-  color: var(--text-muted);
-}
-.flag-btn--empty {
-  border-style: dashed;
-}
-
-.flag-clear {
+.visually-hidden {
   position: absolute;
-  top: -5px;
-  right: -5px;
-  width: 18px;
-  height: 18px;
+  width: 1px;
+  height: 1px;
   padding: 0;
-  justify-content: center;
-  border-radius: var(--radius-pill);
-  background: var(--surface);
-  color: var(--text-muted);
-  box-shadow: var(--elev-1);
-}
-.flag-clear:hover {
-  color: var(--danger);
-  border-color: var(--danger);
-  background: var(--surface);
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 /* ── Power slider ─────────────────────────────────────────────── */

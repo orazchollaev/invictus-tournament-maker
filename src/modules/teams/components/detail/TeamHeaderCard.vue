@@ -1,14 +1,25 @@
 <script setup lang="ts">
+import { ref, watch } from "vue"
 import { ArrowLeft } from "@lucide/vue"
 import { useI18n } from "vue-i18n"
 import { AppButton, AppCard, AppIcon } from "@/components/ui"
 import FlagCircle from "../FlagCircle.vue"
 import type { Team } from "../../types"
 
-defineProps<{ team: Team }>()
+const props = defineProps<{ team: Team }>()
 defineEmits<{ back: [] }>()
 
 const { t } = useI18n()
+
+// A custom crest URL can go dead; fall back to the plain dot instead of a
+// broken-image icon, same behaviour as TeamBadge.
+const imgError = ref(false)
+watch(
+  () => props.team.image,
+  () => {
+    imgError.value = false
+  }
+)
 </script>
 
 <template>
@@ -19,7 +30,14 @@ const { t } = useI18n()
         {{ t("common.back") }}
       </AppButton>
 
-      <FlagCircle v-if="team.flag" :code="team.flag" :size="40" class="team-flag" />
+      <img
+        v-if="team.image && !imgError"
+        :src="team.image"
+        class="team-image"
+        alt=""
+        @error="imgError = true"
+      />
+      <FlagCircle v-else-if="team.flag" :code="team.flag" :size="40" class="team-flag" />
       <span
         v-else
         class="team-dot"
@@ -53,7 +71,8 @@ const { t } = useI18n()
 }
 
 .team-flag,
-.team-dot {
+.team-dot,
+.team-image {
   flex-shrink: 0;
 }
 
@@ -61,6 +80,14 @@ const { t } = useI18n()
   width: 40px;
   height: 40px;
   border-radius: 50%;
+}
+
+.team-image {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: contain;
+  display: block;
 }
 
 .team-title {
