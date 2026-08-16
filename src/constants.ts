@@ -1,4 +1,4 @@
-export const MAX_TEAMS = 128
+export const MAX_TEAMS = 256
 
 export const MAX_GOALS = 20
 
