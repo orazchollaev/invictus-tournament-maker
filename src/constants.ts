@@ -1,6 +1,5 @@
 export const MAX_TEAMS = 128
 
-/** Highest score a match input accepts — guards against fat-fingered entries. */
 export const MAX_GOALS = 20
 
 export const COUNTRY_FLAGS: { code: string; name: string }[] = [
@@ -155,6 +154,7 @@ export const COUNTRY_FLAGS: { code: string; name: string }[] = [
   { code: "SM", name: "San Marino" },
   { code: "ST", name: "São Tomé and Príncipe" },
   { code: "SA", name: "Saudi Arabia" },
+  { code: "gb-sct", name: "Scotland" },
   { code: "SN", name: "Senegal" },
   { code: "RS", name: "Serbia" },
   { code: "SC", name: "Seychelles" },
