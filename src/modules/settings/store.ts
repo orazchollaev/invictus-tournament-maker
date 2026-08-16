@@ -12,6 +12,8 @@ export type BracketStyle = "double-sided" | "classic" | "auto"
 export type BracketQuality = "high" | "low"
 export type TournamentListView = "list" | "grid"
 export type TeamsSortKey = "default" | "name" | "power"
+export type TournamentsSortKey = "default" | "name" | "season"
+export type HistorySortKey = "default" | "name" | "seasons"
 
 export const useSettingsStore = defineStore("settings", () => {
   const theme = ref<Theme>("dark")
@@ -43,6 +45,10 @@ export const useSettingsStore = defineStore("settings", () => {
   const teamsListView = ref<TournamentListView>("list")
   const teamsSortKey = ref<TeamsSortKey>("default")
   const teamsSortAsc = ref(true)
+  const tournamentsSortKey = ref<TournamentsSortKey>("default")
+  const tournamentsSortAsc = ref(true)
+  const historySortKey = ref<HistorySortKey>("default")
+  const historySortAsc = ref(true)
 
   watch(
     theme,
@@ -115,6 +121,10 @@ export const useSettingsStore = defineStore("settings", () => {
     teamsListView.value = "list"
     teamsSortKey.value = "default"
     teamsSortAsc.value = true
+    tournamentsSortKey.value = "default"
+    tournamentsSortAsc.value = true
+    historySortKey.value = "default"
+    historySortAsc.value = true
   }
 
   return {
@@ -147,6 +157,10 @@ export const useSettingsStore = defineStore("settings", () => {
     teamsListView,
     teamsSortKey,
     teamsSortAsc,
+    tournamentsSortKey,
+    tournamentsSortAsc,
+    historySortKey,
+    historySortAsc,
     resetAll,
   }
 })

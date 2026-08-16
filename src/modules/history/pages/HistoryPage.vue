@@ -1,13 +1,17 @@
 <script setup lang="ts">
-import { computed } from "vue"
+import { ref, computed } from "vue"
 import { useRouter } from "vue-router"
 import { useTournamentStore } from "@/modules/tournament/store"
+import { useSettingsStore } from "@/modules/settings/store"
 import { useI18n } from "vue-i18n"
-import { AppCard, AppChip, AppEmptyState } from "@/components/ui"
+import { AppCard, AppChip, AppEmptyState, AppSearchInput } from "@/components/ui"
+import HistoryFilterMenu from "../components/HistoryFilterMenu.vue"
 
 const { t } = useI18n()
 const router = useRouter()
 const store = useTournamentStore()
+const settings = useSettingsStore()
+const query = ref("")
 
 interface SeriesEntry {
   name: string
@@ -42,7 +46,22 @@ const series = computed<SeriesEntry[]>(() => {
       if (finished) existing.champId = tour.winnerId
     }
   }
-  return [...map.values()].sort((a, b) => a.name.localeCompare(b.name))
+  return [...map.values()]
+})
+
+const filtered = computed(() => {
+  const q = query.value.trim().toLowerCase()
+  const list = q ? series.value.filter((s) => s.name.toLowerCase().includes(q)) : [...series.value]
+
+  if (settings.historySortKey === "seasons") {
+    list.sort((a, b) => (settings.historySortAsc ? a.seasons - b.seasons : b.seasons - a.seasons))
+  } else if (settings.historySortKey === "name" && !settings.historySortAsc) {
+    list.sort((a, b) => b.name.localeCompare(a.name))
+  } else {
+    list.sort((a, b) => a.name.localeCompare(b.name))
+  }
+
+  return list
 })
 
 function formatLabel(format: string) {
@@ -60,26 +79,38 @@ function formatLabel(format: string) {
 
     <AppEmptyState v-if="!series.length" :description="t('history.empty')" />
 
-    <div v-else class="t-list">
-      <AppCard
-        v-for="s in series"
-        :key="s.name"
-        rail
-        interactive
-        padding="sm"
-        class="series-row"
-        @click="router.push('/history/' + encodeURIComponent(s.name))"
-      >
-        <span class="series-name">{{ s.name }}</span>
-        <div class="series-meta">
-          <AppChip>
-            {{ s.seasons }} {{ s.seasons === 1 ? t("common.season", 1) : t("common.season", 2) }}
-          </AppChip>
-          <AppChip variant="accent">{{ formatLabel(s.format) }}</AppChip>
-          <span class="series-teams">{{ t("common.teams", { n: s.teamCount }) }}</span>
-        </div>
-      </AppCard>
-    </div>
+    <template v-else>
+      <div class="search-row">
+        <AppSearchInput v-model="query" :placeholder="t('tournaments.searchPlaceholder')" />
+        <HistoryFilterMenu
+          v-model:sort-key="settings.historySortKey"
+          v-model:sort-asc="settings.historySortAsc"
+        />
+      </div>
+
+      <p v-if="!filtered.length" class="empty-text">{{ t("tournaments.noMatch", { query }) }}</p>
+
+      <div v-if="filtered.length" class="t-list">
+        <AppCard
+          v-for="s in filtered"
+          :key="s.name"
+          rail
+          interactive
+          padding="sm"
+          class="series-row"
+          @click="router.push('/history/' + encodeURIComponent(s.name))"
+        >
+          <span class="series-name">{{ s.name }}</span>
+          <div class="series-meta">
+            <AppChip>
+              {{ s.seasons }} {{ s.seasons === 1 ? t("common.season", 1) : t("common.season", 2) }}
+            </AppChip>
+            <AppChip variant="accent">{{ formatLabel(s.format) }}</AppChip>
+            <span class="series-teams">{{ t("common.teams", { n: s.teamCount }) }}</span>
+          </div>
+        </AppCard>
+      </div>
+    </template>
   </div>
 </template>
 

@@ -6,6 +6,7 @@ import { useTournamentStore } from "@/modules/tournament/store"
 import { useSettingsStore } from "@/modules/settings/store"
 import type { Tournament } from "../types"
 import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
+import TournamentsFilterMenu from "../components/TournamentsFilterMenu.vue"
 import {
   AppButton,
   AppCard,
@@ -40,14 +41,24 @@ function winnerTeam(tour: Tournament) {
 }
 
 const query = ref("")
-const sortedTournaments = computed(() =>
-  [...store.tournaments].sort((a, b) => b.createdAt - a.createdAt)
-)
 
 const filtered = computed(() => {
   const q = query.value.trim().toLowerCase()
-  if (!q) return sortedTournaments.value
-  return sortedTournaments.value.filter((tn) => tn.name.toLowerCase().includes(q))
+  const list = q
+    ? store.tournaments.filter((tn) => tn.name.toLowerCase().includes(q))
+    : [...store.tournaments]
+
+  if (settings.tournamentsSortKey === "name") {
+    list.sort((a, b) =>
+      settings.tournamentsSortAsc ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name)
+    )
+  } else if (settings.tournamentsSortKey === "season") {
+    list.sort((a, b) => (settings.tournamentsSortAsc ? a.season - b.season : b.season - a.season))
+  } else {
+    list.sort((a, b) => b.createdAt - a.createdAt)
+  }
+
+  return list
 })
 
 function formatLabel(format: string) {
@@ -87,6 +98,11 @@ async function deleteTournament(id: string) {
     <div v-if="store.tournaments.length" class="search-row">
       <AppSearchInput v-model="query" :placeholder="t('tournaments.searchPlaceholder')" />
       <BtnGroup v-model="settings.tournamentListView" :options="viewOptions" />
+
+      <TournamentsFilterMenu
+        v-model:sort-key="settings.tournamentsSortKey"
+        v-model:sort-asc="settings.tournamentsSortAsc"
+      />
     </div>
 
     <div v-if="store.tournaments.length" class="t-list">
