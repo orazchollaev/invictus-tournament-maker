@@ -4,7 +4,7 @@ import { createPersistedStatePlugin } from "pinia-plugin-persistedstate-2"
 
 import router from "./router"
 import App from "./App.vue"
-import i18n, { loadLocale } from "./i18n"
+import i18n, { isRtl, loadLocale } from "./i18n"
 import type { Locale } from "./i18n"
 import { initPush } from "./composables/usePush"
 import { initAnalytics, logScreenView } from "./composables/useAnalytics"
@@ -26,6 +26,8 @@ async function bootstrap() {
       if (locale && locale !== "en") {
         await loadLocale(locale)
         i18n.global.locale.value = locale
+        document.documentElement.setAttribute("lang", locale)
+        document.documentElement.setAttribute("dir", isRtl(locale) ? "rtl" : "ltr")
       }
     }
   } catch {}

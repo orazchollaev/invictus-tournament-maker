@@ -158,7 +158,7 @@ function run(action: () => void) {
   text-align: left;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 600px) {
   .sim-toolbar {
     gap: var(--sp-1);
   }

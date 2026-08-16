@@ -121,11 +121,25 @@ function selectCategory(id: Category) {
           </RouterLink>
           <a
             class="changelog-btn"
-            href="https://github.com/orazchollaev/invictus-tournament-maker/blob/main/CHANGELOG.md"
+            href="https://www.youtube.com/@ShiftFnDev"
             target="_blank"
             rel="noopener"
           >
-            {{ t("settings.changelog") }}
+            <svg
+              class="tutorials-icon"
+              viewBox="0 0 24 24"
+              width="14"
+              height="14"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <rect x="2" y="5" width="20" height="14" rx="5" />
+              <path d="m10 9 5 3-5 3z" fill="currentColor" stroke="none" />
+            </svg>
+            {{ t("settings.tutorials") }}
           </a>
           <div class="changelog-btn" @click="aboutOpen = true">
             {{ t("settings.about") }}
@@ -287,6 +301,9 @@ function selectCategory(id: Category) {
 .changelog-btn:hover {
   border-color: var(--accent);
   color: var(--accent);
+}
+.tutorials-icon {
+  flex-shrink: 0;
 }
 
 /* ── Mobile hamburger nav (hidden on desktop) ── */

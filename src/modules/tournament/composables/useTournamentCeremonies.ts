@@ -14,6 +14,7 @@ import type { CeremonyContext, DrawMode, DrawPlan, Pot } from "@/engine"
 import type { PlayoffSeedMode, Tournament } from "@/modules/tournament/types"
 import type { Team } from "@/modules/teams/types"
 import type { Qualifier } from "../components/draw"
+import { logEvent } from "@/composables/useAnalytics"
 
 function ordinal(n: number): string {
   const s = ["th", "st", "nd", "rd"]
@@ -137,6 +138,11 @@ export function useTournamentCeremonies(
   async function openNewSeason() {
     const t = tournament.value
     if (!t) return
+    void logEvent("create_tournament", {
+      format: t.format,
+      teams: t.teamIds.length,
+      season: t.season + 1,
+    })
 
     // Multi-tier league new season
     if (t.format === "league" && isMultiTier.value) {

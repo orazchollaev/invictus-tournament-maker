@@ -289,7 +289,7 @@ const { isExporting, exportPng } = useBracketExport({
 .fixture-wrapper {
 }
 
-@media (max-width: 640px) {
+@media (max-width: 600px) {
   :deep(.zoom-controls),
   .btn-label {
     display: none;

@@ -1,17 +1,20 @@
 <script setup lang="ts">
 import { computed } from "vue"
-import { eliminationLabel, leaguePlaceTag, ordinalSuffix } from "./formatters"
+import { useI18n } from "vue-i18n"
+import { eliminationLabel, leaguePlaceTag, placeLabel } from "./formatters"
 import type { ParticipantRow } from "./types"
 
 const props = defineProps<{ row: ParticipantRow }>()
+
+const { t, locale } = useI18n()
 
 const TAGGED_PLACES = 4
 
 const podiumLabel = computed(() => {
   const r = props.row
-  if (r.isSecondPlace) return "2nd Place"
-  if (r.isThirdPlace) return "3rd Place"
-  if (r.isFourthPlace) return "4th Place"
+  if (r.isSecondPlace) return placeLabel(2, t, locale.value)
+  if (r.isThirdPlace) return placeLabel(3, t, locale.value)
+  if (r.isFourthPlace) return placeLabel(4, t, locale.value)
   return null
 })
 </script>
@@ -22,25 +25,25 @@ const podiumLabel = computed(() => {
     class="place-tag place-tag--solid"
     :style="{ background: row.team.color }"
   >
-    1st Place
+    {{ placeLabel(1, t, locale) }}
   </span>
 
   <template v-else-if="row.leaguePosition !== null && row.leaguePosition > 1">
     <span v-if="row.tierLabel && row.posInTier !== null" class="tier-pos">
       <span class="tier-name-tag">{{ row.tierLabel }}</span>
-      {{ ordinalSuffix(row.posInTier) }} Place
+      {{ placeLabel(row.posInTier, t, locale) }}
     </span>
     <span
       v-else-if="row.leaguePosition <= TAGGED_PLACES"
       class="place-tag"
       :style="{
-        borderColor: leaguePlaceTag(row.leaguePosition).color,
-        color: leaguePlaceTag(row.leaguePosition).color,
+        borderColor: leaguePlaceTag(row.leaguePosition, t, locale).color,
+        color: leaguePlaceTag(row.leaguePosition, t, locale).color,
       }"
     >
-      {{ leaguePlaceTag(row.leaguePosition).label }}
+      {{ leaguePlaceTag(row.leaguePosition, t, locale).label }}
     </span>
-    <span v-else class="muted-text">{{ ordinalSuffix(row.leaguePosition) }} Place</span>
+    <span v-else class="muted-text">{{ placeLabel(row.leaguePosition, t, locale) }}</span>
   </template>
 
   <span
@@ -52,7 +55,7 @@ const podiumLabel = computed(() => {
   </span>
 
   <span v-else-if="row.eliminatedRound !== null" class="muted-text">
-    {{ eliminationLabel(row) }}
+    {{ eliminationLabel(row, t) }}
   </span>
 
   <span v-else class="muted-text">—</span>

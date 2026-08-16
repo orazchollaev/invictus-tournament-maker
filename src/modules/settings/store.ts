@@ -3,7 +3,7 @@ import { ref, watch } from "vue"
 import type { LegMode, PlayoffSeedMode } from "@/modules/tournament/types"
 import { setSimConfig, setTableConfig } from "@/engine"
 import type { Tiebreaker } from "@/modules/tournament/types"
-import { i18n, loadLocale } from "@/i18n"
+import { i18n, isRtl, loadLocale } from "@/i18n"
 import type { Locale } from "@/i18n"
 
 export type Theme = "light" | "dark"
@@ -57,6 +57,8 @@ export const useSettingsStore = defineStore("settings", () => {
     async (val) => {
       await loadLocale(val)
       i18n.global.locale.value = val
+      document.documentElement.setAttribute("lang", val)
+      document.documentElement.setAttribute("dir", isRtl(val) ? "rtl" : "ltr")
     },
     { immediate: true }
   )

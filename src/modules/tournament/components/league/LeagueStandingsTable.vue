@@ -222,7 +222,7 @@ function isLastPlayoffQualifier(rank: number) {
   color: var(--danger);
 }
 
-@media (max-width: 640px) {
+@media (max-width: 600px) {
   .lv-table th:nth-child(5),
   .lv-table td:nth-child(5),
   .lv-table th:nth-child(6),

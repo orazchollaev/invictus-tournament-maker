@@ -57,7 +57,7 @@ defineProps<{
   flex-shrink: 0;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 600px) {
   .section-header {
     padding: var(--sp-2) var(--sp-3);
   }

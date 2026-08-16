@@ -71,7 +71,7 @@ withDefaults(
   font-size: var(--fs-sm);
 }
 
-@media (max-width: 640px) {
+@media (max-width: 600px) {
   .table :deep(th),
   .table :deep(td) {
     padding: var(--sp-2) var(--sp-3);

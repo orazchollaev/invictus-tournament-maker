@@ -262,7 +262,7 @@ onUnmounted(() => {
   transition: width var(--dur-slow) var(--ease);
 }
 
-@media (max-width: 640px) {
+@media (max-width: 600px) {
   .dc-backdrop {
     padding: 0;
   }

@@ -130,7 +130,7 @@ withDefaults(
   border-bottom: none;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 600px) {
   .card-body--md,
   .card-body--lg {
     padding: var(--sp-3);

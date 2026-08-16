@@ -103,7 +103,7 @@ const speedOptions = computed(() => [
   margin-right: 2px;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 600px) {
   .dc-footer {
     flex-wrap: wrap-reverse;
     padding-bottom: calc(var(--sp-3) + var(--safe-bottom));

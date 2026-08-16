@@ -1,6 +1,15 @@
 import type { ParticipantRow, TeamStats } from "./types"
 
-export function ordinalSuffix(n: number): string {
+/** Translate function shape, matching vue-i18n's `t`. */
+type Translate = (key: string, params?: Record<string, unknown>) => string
+
+/** English keeps real ordinal suffixes; other locales use a plain marker the message wraps. */
+export function ordinalSuffix(n: number, locale: string): string {
+  if (locale === "es" || locale === "pt") return `${n}º`
+  if (locale === "ru") return `${n}-й`
+  if (locale === "tr") return `${n}.`
+  if (locale !== "en") return `${n}`
+
   const mod10 = n % 10
   const mod100 = n % 100
   if (mod100 >= 11 && mod100 <= 13) return `${n}th`
@@ -17,13 +26,21 @@ const PLACE_COLORS: Record<number, string> = {
   4: "var(--live)",
 }
 
-export function leaguePlaceTag(pos: number): { label: string; color: string } {
-  return { label: `${ordinalSuffix(pos)} Place`, color: PLACE_COLORS[pos] ?? "var(--text-muted)" }
+export function placeLabel(pos: number, t: Translate, locale: string): string {
+  return t("participants.place", { ordinal: ordinalSuffix(pos, locale) })
 }
 
-export function eliminationLabel(row: ParticipantRow): string {
+export function leaguePlaceTag(
+  pos: number,
+  t: Translate,
+  locale: string
+): { label: string; color: string } {
+  return { label: placeLabel(pos, t, locale), color: PLACE_COLORS[pos] ?? "var(--text-muted)" }
+}
+
+export function eliminationLabel(row: ParticipantRow, t: Translate): string {
   if (!row.eliminatedRound) return ""
-  return `Eliminated · ${row.eliminatedRound}`
+  return t("participants.eliminated", { round: row.eliminatedRound })
 }
 
 export function goalDiff(s: TeamStats): string {

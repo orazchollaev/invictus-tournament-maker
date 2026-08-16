@@ -53,7 +53,7 @@ defineEmits<{ "update:modelValue": [value: string] }>()
   z-index: var(--z-sticky);
 }
 
-@media (max-width: 640px) {
+@media (max-width: 600px) {
   .tabs {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, toRef } from "vue"
+import { useI18n } from "vue-i18n"
 import type { Team } from "@/modules/teams/types"
 import type { Tournament } from "../types"
 import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
@@ -10,6 +11,8 @@ import { useParticipantRows } from "../composables/useParticipantRows"
 
 const props = defineProps<{ teams: Team[]; tournament: Tournament }>()
 
+const { t } = useI18n()
+
 const { toggleSort, sortIcon, sortedRows } = useParticipantRows(
   toRef(props, "tournament"),
   toRef(props, "teams")
@@ -17,21 +20,22 @@ const { toggleSort, sortIcon, sortedRows } = useParticipantRows(
 
 const isGroupFormat = computed(() => props.tournament.format === "group+bracket")
 
-const COLUMNS: { key: SortKey; label: string; cls: string }[] = [
-  { key: "result", label: "#", cls: "col-rank" },
-  { key: "name", label: "Team", cls: "col-team" },
-  { key: "group", label: "Group", cls: "col-group" },
-  { key: "wins", label: "W", cls: "col-stat" },
-  { key: "draws", label: "D", cls: "col-stat" },
-  { key: "losses", label: "L", cls: "col-stat" },
-  { key: "gf", label: "GF", cls: "col-stat" },
-  { key: "ga", label: "GA", cls: "col-stat" },
-  { key: "gd", label: "GD", cls: "col-gd" },
-  { key: "power", label: "PWR", cls: "col-power" },
-  { key: "result", label: "Result", cls: "col-result" },
-]
-
-const columns = computed(() => COLUMNS.filter((c) => c.cls !== "col-group" || isGroupFormat.value))
+const columns = computed(() => {
+  const cols: { key: SortKey; label: string; cls: string }[] = [
+    { key: "result", label: t("participants.rank"), cls: "col-rank" },
+    { key: "name", label: t("participants.team"), cls: "col-team" },
+    { key: "group", label: t("participants.group"), cls: "col-group" },
+    { key: "wins", label: t("participants.wins"), cls: "col-stat" },
+    { key: "draws", label: t("participants.draws"), cls: "col-stat" },
+    { key: "losses", label: t("participants.losses"), cls: "col-stat" },
+    { key: "gf", label: t("participants.gf"), cls: "col-stat" },
+    { key: "ga", label: t("participants.ga"), cls: "col-stat" },
+    { key: "gd", label: t("participants.gd"), cls: "col-gd" },
+    { key: "power", label: t("participants.power"), cls: "col-power" },
+    { key: "result", label: t("participants.result"), cls: "col-result" },
+  ]
+  return cols.filter((c) => c.cls !== "col-group" || isGroupFormat.value)
+})
 </script>
 
 <template>

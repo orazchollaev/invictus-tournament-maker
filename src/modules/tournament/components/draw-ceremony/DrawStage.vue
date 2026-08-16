@@ -247,7 +247,7 @@ function isRevealed(step: DrawStep) {
   transform: translateY(-7px) scale(0.92);
 }
 
-@media (max-width: 640px) {
+@media (max-width: 600px) {
   .ds-board {
     grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
     height: 60vh;

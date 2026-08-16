@@ -68,20 +68,19 @@ export function useTournamentDetail() {
     const end = Date.now() + 2500
 
     const frame = () => {
-      // Left
       confetti({
         particleCount: 2,
         angle: 60,
-        spread: 50,
+        spread: 20,
         origin: { x: 0, y: 0.6 },
         colors: [color, "#ffffff"],
         zIndex: 9999,
       })
-      // Right
+
       confetti({
         particleCount: 2,
         angle: 120,
-        spread: 50,
+        spread: 20,
         origin: { x: 1, y: 0.6 },
         colors: [color, "#ffffff"],
         zIndex: 9999,

@@ -1,12 +1,18 @@
 import { createI18n } from "vue-i18n"
 import en from "./locales/en"
 
-export type Locale = "en" | "tr" | "ru" | "es" | "pt" | "id" | "jp"
+export type Locale = "en" | "tr" | "ru" | "es" | "pt" | "id" | "jp" | "de" | "fr" | "ar"
 
 export interface LocaleOption {
   value: Locale
   label: string
   flag: string
+}
+
+export const RTL_LOCALES: readonly Locale[] = ["ar"]
+
+export function isRtl(locale: Locale): boolean {
+  return RTL_LOCALES.includes(locale)
 }
 
 export const LOCALES: LocaleOption[] = [
@@ -17,6 +23,9 @@ export const LOCALES: LocaleOption[] = [
   { value: "pt", label: "Português", flag: "PT" },
   { value: "id", label: "Bahasa Indonesia", flag: "ID" },
   { value: "jp", label: "日本語", flag: "JP" },
+  { value: "de", label: "Deutsch", flag: "DE" },
+  { value: "fr", label: "Français", flag: "FR" },
+  { value: "ar", label: "العربية", flag: "SA" },
 ]
 
 export const i18n = createI18n({
@@ -36,13 +45,21 @@ const localeLoaders: Record<
   pt: () => import("./locales/pt"),
   id: () => import("./locales/id"),
   jp: () => import("./locales/jp"),
+  de: () => import("./locales/de"),
+  fr: () => import("./locales/fr"),
+  ar: () => import("./locales/ar"),
 }
 
 export async function loadLocale(locale: Locale): Promise<void> {
   if (locale === "en") return
-  if ((i18n.global.availableLocales as readonly string[]).includes(locale)) return
+
+  if ((i18n.global.availableLocales as readonly string[]).includes(locale)) {
+    return
+  }
+
   const messages = await localeLoaders[locale]()
-  //@typescript-eslint/no-explicit-any
+
+  // @typescript-eslint/no-explicit-any
   i18n.global.setLocaleMessage(locale, messages.default as any)
 }
 

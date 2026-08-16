@@ -2,7 +2,7 @@ import { Capacitor } from "@capacitor/core"
 
 const REVIEW_COUNT_KEY = "invictus_completions"
 const REVIEW_DONE_KEY = "invictus_review_done"
-const TRIGGER_THRESHOLD = 3
+const TRIGGER_THRESHOLD = 1
 
 export function useInAppReview() {
   async function onTournamentCompleted() {

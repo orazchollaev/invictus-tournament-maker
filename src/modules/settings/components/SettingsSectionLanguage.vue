@@ -29,8 +29,7 @@ const settings = useSettingsStore()
           :variant="settings.locale === loc.value ? 'tonal' : 'outlined'"
           @click="settings.locale = loc.value"
         >
-          <FlagCircle :code="loc.flag" :size="18" />
-          {{ loc.label }}
+          <FlagCircle :code="loc.flag" :size="22" />
         </AppButton>
       </div>
     </AppField>
@@ -46,25 +45,28 @@ const settings = useSettingsStore()
   min-width: 0;
 }
 
-/* The language buttons are far wider than the other settings controls, so
-   this row's control must be allowed to shrink and wrap instead of holding
-   its max-content width (which is what pushed it off screen). */
 .lang-field :deep(.field-control) {
   flex-shrink: 1;
   min-width: 0;
 }
 
 @media (max-width: 640px) {
-  /* The label already takes the full first line here — give the picker its
-     own line and lay it out as a 2-column grid. */
   .lang-field :deep(.field-control) {
     flex: 1 1 100%;
     margin-left: 0;
+    width: 100%;
   }
+
   .lang-picker {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
     width: 100%;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: var(--sp-2);
+  }
+
+  .lang-picker > * {
+    width: 100%;
+    min-width: 0;
   }
 }
 </style>

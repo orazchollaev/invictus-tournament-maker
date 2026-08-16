@@ -123,7 +123,7 @@ withDefaults(
   color: var(--text-muted);
 }
 
-@media (max-width: 640px) {
+@media (max-width: 600px) {
   .field {
     flex-direction: column;
     align-items: flex-start;
