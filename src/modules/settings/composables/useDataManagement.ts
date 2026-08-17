@@ -40,6 +40,36 @@ const IMPORT_KEY_MAP: Record<string, (typeof DATA_KEYS)[number]> = {
   tournament: "tournament",
 }
 
+// gzip magic bytes — used to tell a compressed backup apart from plain JSON
+// on import, no explicit version flag needed.
+const GZIP_MAGIC = [0x1f, 0x8b]
+
+function isGzip(bytes: Uint8Array): boolean {
+  return bytes[0] === GZIP_MAGIC[0] && bytes[1] === GZIP_MAGIC[1]
+}
+
+async function gzipCompress(text: string): Promise<ArrayBuffer> {
+  const stream = new Blob([text]).stream().pipeThrough(new CompressionStream("gzip"))
+  return new Response(stream).arrayBuffer()
+}
+
+async function gzipDecompress(bytes: Uint8Array): Promise<string> {
+  const stream = new Blob([bytes.slice().buffer])
+    .stream()
+    .pipeThrough(new DecompressionStream("gzip"))
+  return new Response(stream).text()
+}
+
+/** btoa() chokes on large arrays passed via spread — chunk it. */
+function bytesToBase64(bytes: Uint8Array): string {
+  let binary = ""
+  const chunkSize = 0x8000
+  for (let i = 0; i < bytes.length; i += chunkSize) {
+    binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize))
+  }
+  return btoa(binary)
+}
+
 export function useDataManagement() {
   const { t } = useI18n()
   const teamsStore = useTeamsStore()
@@ -68,17 +98,18 @@ export function useDataManagement() {
     location.reload()
   }
 
-  /** Write the JSON backup to cache and hand it to the native OS share sheet. */
-  async function shareNative(json: string, filename: string, title: string) {
-    const [{ Filesystem, Directory, Encoding }, { Share }] = await Promise.all([
+  /** Write the backup to cache and hand it to the native OS share sheet. */
+  async function shareNative(base64Data: string, filename: string, title: string) {
+    const [{ Filesystem, Directory }, { Share }] = await Promise.all([
       import("@capacitor/filesystem"),
       import("@capacitor/share"),
     ])
+    // No `encoding` option — that writes the base64 payload as raw binary,
+    // same as the bracket PNG export.
     const written = await Filesystem.writeFile({
       path: filename,
-      data: json,
+      data: base64Data,
       directory: Directory.Cache,
-      encoding: Encoding.UTF8,
     })
     await Share.share({ title, url: written.uri, dialogTitle: title })
   }
@@ -92,7 +123,14 @@ export function useDataManagement() {
       },
     }
     const json = JSON.stringify(payload)
-    const filename = `invictus-v${version}-${new Date().toISOString().slice(0, 10)}.json`
+
+    // Team crests can now carry base64 images, so a plain JSON export can get
+    // big fast — gzip it when the runtime supports it (CompressionStream,
+    // widely available since ~2020). importData() sniffs the gzip magic
+    // bytes, so both compressed and old plain-JSON backups keep working.
+    const canCompress = typeof CompressionStream !== "undefined"
+    const buf = canCompress ? await gzipCompress(json) : null
+    const filename = `invictus-v${version}-${new Date().toISOString().slice(0, 10)}.json${buf ? ".gz" : ""}`
 
     // Same story as the bracket PNG export: Android's system WebView (what
     // Capacitor apps run in) has no download manager wired to <a download> —
@@ -101,7 +139,10 @@ export function useDataManagement() {
     // share sheet.
     if (Capacitor.isNativePlatform()) {
       try {
-        await shareNative(json, filename, filename)
+        const base64Data = bytesToBase64(
+          new Uint8Array(buf ?? new TextEncoder().encode(json).buffer)
+        )
+        await shareNative(base64Data, filename, filename)
       } catch {
         // user cancelled the native share sheet, or the plugin failed —
         // nothing more we can do on-device.
@@ -109,7 +150,9 @@ export function useDataManagement() {
       return
     }
 
-    const blob = new Blob([json], { type: "application/json" })
+    const blob = buf
+      ? new Blob([buf], { type: "application/gzip" })
+      : new Blob([json], { type: "application/json" })
     const url = URL.createObjectURL(blob)
     const a = document.createElement("a")
     a.href = url
@@ -121,14 +164,23 @@ export function useDataManagement() {
   function importData() {
     const input = document.createElement("input")
     input.type = "file"
-    input.accept = ".json,application/json"
+    input.accept = ".json,.gz,application/json,application/gzip"
     input.onchange = () => {
       const file = input.files?.[0]
       if (!file) return
       const reader = new FileReader()
       reader.onload = async (e) => {
         try {
-          const parsed = JSON.parse(e.target?.result as string)
+          const bytes = new Uint8Array(e.target?.result as ArrayBuffer)
+          let text: string
+          if (isGzip(bytes)) {
+            if (typeof DecompressionStream === "undefined") throw new Error()
+            text = await gzipDecompress(bytes)
+          } else {
+            text = new TextDecoder().decode(bytes)
+          }
+
+          const parsed = JSON.parse(text)
           if (typeof parsed !== "object" || parsed === null) throw new Error()
           const writes = Object.keys(parsed)
             .filter((k) => k in IMPORT_KEY_MAP)
@@ -140,7 +192,7 @@ export function useDataManagement() {
           showAlert(t("settings.dataManagement.invalidFile"))
         }
       }
-      reader.readAsText(file)
+      reader.readAsArrayBuffer(file)
     }
     input.click()
   }
