@@ -37,6 +37,7 @@ export default {
   nav: {
     tournaments: "Torneos",
     teams: "Equipos",
+    players: "Jugadores",
     history: "Historia",
     settings: "Configuración",
   },
@@ -47,6 +48,10 @@ export default {
       teams: {
         title: "Añade tus equipos",
         desc: "Abre la pestaña Equipos y toca “+ Añadir equipo” para configurar un nombre, abreviatura, nivel de fuerza y color. ¿Tienes prisa? Ve a Configuración → Datos de muestra para cargar una lista de equipos predefinida.",
+      },
+      players: {
+        title: "Añade jugadores (opcional)",
+        desc: "Abre la página de un equipo para formar su plantilla — nombre, posición y potencia de cada jugador. Activa “Usar potencia de jugadores” en Configuración → Simulación para que la plantilla influya en los resultados.",
       },
       create: {
         title: "Crea un torneo",
@@ -194,6 +199,42 @@ export default {
       seasonN: "Temporada {n}",
       noMatchesPlayed: "Aún no se han jugado partidos.",
       noMatchesTournament: "No hay partidos para este torneo.",
+    },
+  },
+  players: {
+    title: "Jugadores",
+    squadTitle: "Plantilla",
+    emptyOnTeam: "Aún no hay jugadores en esta plantilla.",
+    addBtn: "Añadir jugador",
+    searchPlaceholder: "Buscar jugadores…",
+    empty: "Aún no hay jugadores. Haz clic en {action} para empezar.",
+    emptyNoTeams: "Crea primero un equipo y luego añade sus jugadores.",
+    needTeamFirst: "Crea primero un equipo",
+    noMatch: "Ningún jugador coincide con los filtros.",
+    sortDefault: "Predeterminado",
+    positions: {
+      GK: "Portero",
+      DEF: "Defensa",
+      MID: "Centrocampista",
+      FWD: "Delantero",
+    },
+    filter: {
+      teamLabel: "Equipo",
+      sortLabel: "Ordenar por",
+      allTeams: "Todos los equipos",
+      searchPlaceholder: "Buscar equipo…",
+      noResults: "No se encontraron equipos",
+    },
+    form: {
+      addTitle: "Añadir jugador",
+      editTitle: "Editar jugador",
+      name: "Nombre",
+      namePlaceholder: "Nombre del jugador",
+      randomName: "Nombre aleatorio",
+      team: "Equipo",
+      teamPlaceholder: "Seleccionar equipo…",
+      position: "Posición",
+      power: "Potencia",
     },
   },
   history: {
@@ -398,6 +439,10 @@ export default {
       formFactor: {
         label: "Factor forma",
         desc: "Ajusta dinámicamente la fuerza del equipo según los últimos 5 resultados. Un equipo en racha gana hasta {plus} de fuerza, uno perdiendo consecutivamente baja hasta {minus}.",
+      },
+      usePlayerPower: {
+        label: "Usar potencia de jugadores",
+        desc: "Combina la potencia de un equipo con la potencia media de los jugadores de su plantilla. Desactivado = solo se usa la potencia propia del equipo.",
       },
     },
     sampleData: {

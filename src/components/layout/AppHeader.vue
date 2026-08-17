@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from "vue"
-import { Settings, Trophy, History, Users, BookOpen } from "@lucide/vue"
+import { Settings, Trophy, History, Users, UserRound, BookOpen } from "@lucide/vue"
 import { useNavActive } from "@/composables/useNavActive"
 import { useI18n } from "vue-i18n"
 
@@ -42,6 +42,10 @@ onUnmounted(() => {
         <RouterLink to="/teams" :class="{ 'router-link-active': isNavActive('/teams') }">
           <Users :size="16" />
           {{ t("nav.teams") }}
+        </RouterLink>
+        <RouterLink to="/players" :class="{ 'router-link-active': isNavActive('/players') }">
+          <UserRound :size="16" />
+          {{ t("nav.players") }}
         </RouterLink>
         <RouterLink to="/history" :class="{ 'router-link-active': isNavActive('/history') }">
           <History :size="16" class="nav-icon" />

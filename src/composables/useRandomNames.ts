@@ -74,12 +74,39 @@ const TOURNAMENT_NAMES = [
   "Eclipse Tournament",
 ]
 
+const PLAYER_NAMES = [
+  "Alex Turner",
+  "Marco Rossi",
+  "Liam Carter",
+  "Diego Fernandez",
+  "Kenji Sato",
+  "Lucas Silva",
+  "Noah Williams",
+  "Mateo Garcia",
+  "Ethan Brooks",
+  "Hugo Martin",
+  "Omar Hassan",
+  "Leon Mueller",
+  "Jonas Berg",
+  "Bruno Costa",
+  "Aiden Walsh",
+  "Rafael Santos",
+  "Felix Novak",
+  "Tomas Novotny",
+  "Adrian Kowalski",
+  "Milan Petrov",
+]
+
 function pickRandom<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)]
 }
 
 export function randomTeamName(): string {
   return pickRandom(TEAM_NAMES)
+}
+
+export function randomPlayerName(): string {
+  return pickRandom(PLAYER_NAMES)
 }
 
 export function randomTournamentName(): string {

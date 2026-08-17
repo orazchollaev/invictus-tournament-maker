@@ -38,6 +38,7 @@ export default {
   nav: {
     tournaments: "Turnamen",
     teams: "Tim",
+    players: "Pemain",
     history: "Riwayat",
     settings: "Pengaturan",
   },
@@ -49,6 +50,10 @@ export default {
       teams: {
         title: "Tambahkan tim Anda",
         desc: "Buka tab Tim dan ketuk “+ Tambah Tim” untuk mengatur nama, singkatan, peringkat kekuatan, dan warna. Sedang terburu-buru? Buka Pengaturan → Data Sampel untuk memuat daftar tim yang sudah jadi.",
+      },
+      players: {
+        title: "Tambahkan pemain (opsional)",
+        desc: "Buka halaman tim untuk membangun skuadnya — nama, posisi, dan kekuatan setiap pemain. Aktifkan “Gunakan Kekuatan Pemain” di Pengaturan → Simulasi agar kekuatan skuad memengaruhi hasil pertandingan.",
       },
       create: {
         title: "Buat turnamen",
@@ -193,6 +198,42 @@ export default {
       seasonN: "Musim {n}",
       noMatchesPlayed: "Belum ada pertandingan yang dimainkan.",
       noMatchesTournament: "Tidak ada pertandingan untuk turnamen ini.",
+    },
+  },
+  players: {
+    title: "Pemain",
+    squadTitle: "Skuad",
+    emptyOnTeam: "Belum ada pemain di skuad ini.",
+    addBtn: "Tambah Pemain",
+    searchPlaceholder: "Cari pemain…",
+    empty: "Belum ada pemain. Klik {action} untuk memulai.",
+    emptyNoTeams: "Buat tim terlebih dahulu, lalu tambahkan pemainnya.",
+    needTeamFirst: "Buat tim terlebih dahulu",
+    noMatch: "Tidak ada pemain yang cocok dengan filter.",
+    sortDefault: "Default",
+    positions: {
+      GK: "Kiper",
+      DEF: "Bek",
+      MID: "Gelandang",
+      FWD: "Penyerang",
+    },
+    filter: {
+      teamLabel: "Tim",
+      sortLabel: "Urutkan berdasarkan",
+      allTeams: "Semua tim",
+      searchPlaceholder: "Cari tim…",
+      noResults: "Tim tidak ditemukan",
+    },
+    form: {
+      addTitle: "Tambah Pemain",
+      editTitle: "Edit Pemain",
+      name: "Nama",
+      namePlaceholder: "Nama pemain",
+      randomName: "Nama acak",
+      team: "Tim",
+      teamPlaceholder: "Pilih tim…",
+      position: "Posisi",
+      power: "Kekuatan",
     },
   },
   history: {
@@ -397,6 +438,10 @@ export default {
       formFactor: {
         label: "Faktor Performa",
         desc: "Secara dinamis menyesuaikan kekuatan tim berdasarkan 5 hasil pertandingan terakhir. Tim dengan rentetan kemenangan mendapat tambahan kekuatan hingga {plus}, tim yang terus kalah turun hingga {minus}.",
+      },
+      usePlayerPower: {
+        label: "Gunakan Kekuatan Pemain",
+        desc: "Menggabungkan kekuatan tim dengan rata-rata kekuatan pemain skuadnya. Nonaktif = hanya kekuatan tim itu sendiri yang digunakan.",
       },
     },
     sampleData: {

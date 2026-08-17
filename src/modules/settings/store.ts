@@ -1,10 +1,11 @@
 import { defineStore } from "pinia"
 import { ref, watch } from "vue"
 import type { LegMode, PlayoffSeedMode } from "@/modules/tournament/types"
-import { setSimConfig, setTableConfig } from "@/engine"
+import { setSimConfig, setTableConfig, setPowerResolver } from "@/engine"
 import type { Tiebreaker } from "@/modules/tournament/types"
 import { i18n, isRtl, loadLocale } from "@/i18n"
 import type { Locale } from "@/i18n"
+import { usePlayersStore } from "@/modules/players/store"
 
 export type Theme = "light" | "dark"
 export type DrawType = "random" | "seeded" | "manual"
@@ -12,6 +13,7 @@ export type BracketStyle = "double-sided" | "classic" | "auto"
 export type BracketQuality = "high" | "low"
 export type TournamentListView = "list" | "grid"
 export type TeamsSortKey = "default" | "name" | "power"
+export type PlayersSortKey = "default" | "name" | "power"
 export type TournamentsSortKey = "default" | "name" | "season"
 export type HistorySortKey = "default" | "name" | "seasons"
 
@@ -33,6 +35,7 @@ export const useSettingsStore = defineStore("settings", () => {
   const tiebreaker = ref<Tiebreaker>("goal-diff")
   const formFactorEnabled = ref(false)
   const homeAdvantage = ref(6)
+  const usePlayerPower = ref(false)
   const bracketStyle = ref<BracketStyle>("auto")
   const bracketQuality = ref<BracketQuality>("high")
   const bracketHighlightOnHover = ref(true)
@@ -45,6 +48,9 @@ export const useSettingsStore = defineStore("settings", () => {
   const teamsListView = ref<TournamentListView>("list")
   const teamsSortKey = ref<TeamsSortKey>("default")
   const teamsSortAsc = ref(true)
+  const playersListView = ref<TournamentListView>("list")
+  const playersSortKey = ref<PlayersSortKey>("default")
+  const playersSortAsc = ref(true)
   const tournamentsSortKey = ref<TournamentsSortKey>("default")
   const tournamentsSortAsc = ref(true)
   const historySortKey = ref<HistorySortKey>("default")
@@ -91,6 +97,27 @@ export const useSettingsStore = defineStore("settings", () => {
   watch(formFactorEnabled, (val) => setSimConfig({ formFactor: val }), { immediate: true })
   watch(homeAdvantage, (val) => setSimConfig({ homeAdvantage: val }), { immediate: true })
 
+  // When on, a team's effective power for simulation/seeding is the average
+  // of its own power and its squad's average player power — so adding
+  // players actually does something. Off = team.power only (unchanged).
+  const playersStore = usePlayersStore()
+  watch(
+    usePlayerPower,
+    (enabled) => {
+      if (!enabled) {
+        setPowerResolver(null)
+        return
+      }
+      setPowerResolver((team) => {
+        const squad = playersStore.byTeam(team.id)
+        if (!squad.length) return team.power
+        const avgSquadPower = squad.reduce((sum, p) => sum + p.power, 0) / squad.length
+        return Math.round((team.power + avgSquadPower) / 2)
+      })
+    },
+    { immediate: true }
+  )
+
   function resetAll() {
     theme.value = "dark"
     locale.value = "en"
@@ -109,6 +136,7 @@ export const useSettingsStore = defineStore("settings", () => {
     tiebreaker.value = "goal-diff"
     formFactorEnabled.value = false
     homeAdvantage.value = 6
+    usePlayerPower.value = false
     bracketStyle.value = "auto"
     bracketQuality.value = "high"
     bracketHighlightOnHover.value = true
@@ -121,6 +149,9 @@ export const useSettingsStore = defineStore("settings", () => {
     teamsListView.value = "list"
     teamsSortKey.value = "default"
     teamsSortAsc.value = true
+    playersListView.value = "list"
+    playersSortKey.value = "default"
+    playersSortAsc.value = true
     tournamentsSortKey.value = "default"
     tournamentsSortAsc.value = true
     historySortKey.value = "default"
@@ -145,6 +176,7 @@ export const useSettingsStore = defineStore("settings", () => {
     tiebreaker,
     formFactorEnabled,
     homeAdvantage,
+    usePlayerPower,
     bracketStyle,
     bracketQuality,
     bracketHighlightOnHover,
@@ -157,6 +189,9 @@ export const useSettingsStore = defineStore("settings", () => {
     teamsListView,
     teamsSortKey,
     teamsSortAsc,
+    playersListView,
+    playersSortKey,
+    playersSortAsc,
     tournamentsSortKey,
     tournamentsSortAsc,
     historySortKey,

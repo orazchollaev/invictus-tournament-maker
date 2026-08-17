@@ -37,6 +37,7 @@ export default {
   nav: {
     tournaments: "Tournaments",
     teams: "Teams",
+    players: "Players",
     history: "History",
     settings: "Settings",
   },
@@ -47,6 +48,10 @@ export default {
       teams: {
         title: "Add your teams",
         desc: "Open the Teams tab and tap “+ Add Team” to set a name, abbreviation, power rating and color. In a hurry? Go to Settings → Sample Data to load a ready-made team list instead.",
+      },
+      players: {
+        title: "Add players (optional)",
+        desc: "Open a team's page to build its squad — name, position and power per player. Turn on “Use Player Power” in Settings → Simulation to factor squad strength into match results.",
       },
       create: {
         title: "Create a tournament",
@@ -193,6 +198,42 @@ export default {
       seasonN: "Season {n}",
       noMatchesPlayed: "No matches played yet.",
       noMatchesTournament: "No matches for this tournament.",
+    },
+  },
+  players: {
+    title: "Players",
+    squadTitle: "Squad",
+    emptyOnTeam: "No players in this squad yet.",
+    addBtn: "Add Player",
+    searchPlaceholder: "Search players…",
+    empty: "No players yet. Click {action} to get started.",
+    emptyNoTeams: "Create a team first, then add its players.",
+    needTeamFirst: "Create a team first",
+    noMatch: "No players match the filters.",
+    sortDefault: "Default",
+    positions: {
+      GK: "Goalkeeper",
+      DEF: "Defender",
+      MID: "Midfielder",
+      FWD: "Forward",
+    },
+    filter: {
+      teamLabel: "Team",
+      sortLabel: "Sort by",
+      allTeams: "All teams",
+      searchPlaceholder: "Search team…",
+      noResults: "No teams found",
+    },
+    form: {
+      addTitle: "Add Player",
+      editTitle: "Edit Player",
+      name: "Name",
+      namePlaceholder: "Player name",
+      randomName: "Random name",
+      team: "Team",
+      teamPlaceholder: "Select team…",
+      position: "Position",
+      power: "Power",
     },
   },
   history: {
@@ -396,6 +437,10 @@ export default {
       formFactor: {
         label: "Form Factor",
         desc: "Dynamically adjusts team strength based on last 5 match results. A team on a winning streak gains up to {plus} power, a team losing consistently drops up to {minus}.",
+      },
+      usePlayerPower: {
+        label: "Use Player Power",
+        desc: "Blend a team's power with its squad's average player power. Off = only the team's own power is used.",
       },
     },
     sampleData: {

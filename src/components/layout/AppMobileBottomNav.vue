@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Trophy, Users, History, Settings } from "@lucide/vue"
+import { Trophy, Users, UserRound, History, Settings } from "@lucide/vue"
 import { useI18n } from "vue-i18n"
 import { useNavActive } from "@/composables/useNavActive"
 
@@ -9,6 +9,7 @@ const { isNavActive } = useNavActive()
 const items = [
   { to: "/tournaments", icon: Trophy, label: () => t("nav.tournaments") },
   { to: "/teams", icon: Users, label: () => t("nav.teams") },
+  { to: "/players", icon: UserRound, label: () => t("nav.players") },
   { to: "/history", icon: History, label: () => t("nav.history") },
   { to: "/settings", icon: Settings, label: () => t("nav.settings") },
 ]
@@ -23,7 +24,7 @@ const items = [
       class="mobile-nav-item"
       :class="{ 'router-link-active': isNavActive(item.to) }"
     >
-      <component :is="item.icon" :size="19" class="mobile-nav-icon" />
+      <component :is="item.icon" :size="20" class="mobile-nav-icon" />
       <span class="mobile-nav-label">{{ item.label() }}</span>
     </RouterLink>
   </nav>

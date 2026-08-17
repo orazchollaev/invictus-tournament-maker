@@ -37,6 +37,7 @@ export default {
   nav: {
     tournaments: "大会",
     teams: "チーム",
+    players: "選手",
     history: "履歴",
     settings: "設定",
   },
@@ -47,6 +48,10 @@ export default {
       teams: {
         title: "チームを追加する",
         desc: "「チーム」タブを開き、「+ チームを追加」をタップして、名前、略称、パワー（総合力）、カラーを設定します。お急ぎの場合は、設定 → サンプルデータから、事前に用意されたチームリストを読み込むこともできます。",
+      },
+      players: {
+        title: "選手を追加する（任意）",
+        desc: "チームのページを開いてスカッドを編成します — 各選手の名前、ポジション、パワーを設定します。設定 → シミュレーションで「選手のパワーを使用」をオンにすると、スカッドの強さが試合結果に反映されます。",
       },
       create: {
         title: "大会を作成する",
@@ -191,6 +196,42 @@ export default {
       seasonN: "シーズン {n}",
       noMatchesPlayed: "まだ試合を行っていません。",
       noMatchesTournament: "この大会での試合はありません。",
+    },
+  },
+  players: {
+    title: "選手",
+    squadTitle: "スカッド",
+    emptyOnTeam: "このスカッドにはまだ選手がいません。",
+    addBtn: "選手を追加",
+    searchPlaceholder: "選手を検索…",
+    empty: "まだ選手がいません。{action} をクリックして始めましょう。",
+    emptyNoTeams: "まずチームを作成してから、選手を追加してください。",
+    needTeamFirst: "まずチームを作成してください",
+    noMatch: "フィルターに一致する選手がいません。",
+    sortDefault: "デフォルト",
+    positions: {
+      GK: "ゴールキーパー",
+      DEF: "ディフェンダー",
+      MID: "ミッドフィールダー",
+      FWD: "フォワード",
+    },
+    filter: {
+      teamLabel: "チーム",
+      sortLabel: "並び替え",
+      allTeams: "すべてのチーム",
+      searchPlaceholder: "チームを検索…",
+      noResults: "チームが見つかりません",
+    },
+    form: {
+      addTitle: "選手を追加",
+      editTitle: "選手を編集",
+      name: "名前",
+      namePlaceholder: "選手名",
+      randomName: "ランダムな名前",
+      team: "チーム",
+      teamPlaceholder: "チームを選択…",
+      position: "ポジション",
+      power: "パワー",
     },
   },
   history: {
@@ -394,6 +435,10 @@ export default {
       formFactor: {
         label: "好不調（フォーム）要素",
         desc: "過去5試合の結果に基づいてチームの強さを動的に調整します。連勝中のチームは最大 {plus} パワーを得て、連敗中のチームは最大 {minus} パワーを失います。",
+      },
+      usePlayerPower: {
+        label: "選手のパワーを使用",
+        desc: "チームのパワーをスカッドの平均選手パワーと組み合わせます。オフ = チーム自身のパワーのみ使用します。",
       },
     },
     sampleData: {

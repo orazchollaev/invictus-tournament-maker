@@ -73,5 +73,17 @@ const surpriseFactorLabel = computed(() => {
         :aria-label="t('settings.simulation.formFactor.label')"
       />
     </AppField>
+
+    <AppField layout="split" :label="t('settings.simulation.usePlayerPower.label')">
+      <template #description>
+        <SettingDesc>
+          {{ t("settings.simulation.usePlayerPower.desc") }}
+        </SettingDesc>
+      </template>
+      <ToggleSwitch
+        v-model="settings.usePlayerPower"
+        :aria-label="t('settings.simulation.usePlayerPower.label')"
+      />
+    </AppField>
   </AppCard>
 </template>

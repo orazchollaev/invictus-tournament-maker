@@ -231,7 +231,7 @@ async function deleteTournament(id: string) {
 .tour-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: var(--sp-3);
+  gap: var(--sp-2);
   position: relative;
 }
 

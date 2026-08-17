@@ -10,6 +10,7 @@ import type {
   KnockoutStage,
 } from "../modules/tournament/types"
 import { uid, shuffle } from "./utils"
+import { resolvePower } from "./power"
 import {
   buildBracketRounds,
   buildEmptyBracketRounds,
@@ -100,7 +101,7 @@ function createGroupBracketTournament(
   if (orderedTeams) {
     teamsToPlace = [...orderedTeams]
   } else if (seeded) {
-    const sorted = [...teams].sort((a, b) => b.power - a.power)
+    const sorted = [...teams].sort((a, b) => resolvePower(b) - resolvePower(a))
     teamsToPlace = []
     for (let i = 0; i < sorted.length; i += groupCount) {
       teamsToPlace.push(...shuffle(sorted.slice(i, i + groupCount)))

@@ -12,6 +12,7 @@ import {
   TeamFormRow,
   TeamHeaderCard,
   TeamMatchList,
+  TeamSquadCard,
   TeamStatsGrid,
   TeamTrophyList,
 } from "../components/detail"
@@ -67,6 +68,8 @@ const filteredMatches = computed(() => {
       <TeamHeaderCard :team="team" @back="router.back()" />
 
       <TeamStatsGrid :stats="stats" :titles="tournamentWins.length" />
+
+      <TeamSquadCard :team-id="team.id" :team-color="team.color" />
 
       <TeamFormRow v-if="matches.length" :form="recentForm" :get-team-name="getTeamName" />
 

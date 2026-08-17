@@ -1,6 +1,15 @@
 <script setup lang="ts">
 import { useRouter } from "vue-router"
-import { ArrowLeft, Users, Trophy, Play, BarChart3, History, Settings } from "@lucide/vue"
+import {
+  ArrowLeft,
+  Users,
+  UserRound,
+  Trophy,
+  Play,
+  BarChart3,
+  History,
+  Settings,
+} from "@lucide/vue"
 import { useI18n } from "vue-i18n"
 import { AppButton, AppIcon } from "@/components/ui"
 
@@ -9,6 +18,7 @@ const router = useRouter()
 
 const STEPS = [
   { key: "teams", icon: Users },
+  { key: "players", icon: UserRound },
   { key: "create", icon: Trophy },
   { key: "play", icon: Play },
   { key: "simulate", icon: BarChart3 },

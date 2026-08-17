@@ -37,6 +37,7 @@ export default {
   nav: {
     tournaments: "Turnuvalar",
     teams: "Takımlar",
+    players: "Oyuncular",
     history: "Geçmiş",
     settings: "Ayarlar",
   },
@@ -48,6 +49,10 @@ export default {
       teams: {
         title: "Takımlarınızı ekleyin",
         desc: "Takımlar sekmesini açın ve isim, kısaltma, güç reytingi ve renk belirlemek için “+ Takım Ekle” seçeneğine dokunun. Aceleniz mi var? Hazır bir takım listesi yüklemek için Ayarlar → Örnek Veri bölümüne gidin.",
+      },
+      players: {
+        title: "Oyuncu ekleyin (opsiyonel)",
+        desc: "Bir takımın sayfasını açıp kadrosunu oluşturun — her oyuncu için isim, mevki ve güç girin. Maç sonuçlarına kadro gücü de yansısın istiyorsanız Ayarlar → Simülasyon'dan “Oyuncu Gücünü Kullan”ı açın.",
       },
       create: {
         title: "Bir turnuva oluşturun",
@@ -195,6 +200,42 @@ export default {
       seasonN: "Sezon {n}",
       noMatchesPlayed: "Henüz maç oynanmadı.",
       noMatchesTournament: "Bu turnuvada maç yok.",
+    },
+  },
+  players: {
+    title: "Oyuncular",
+    squadTitle: "Kadro",
+    emptyOnTeam: "Bu kadroda henüz oyuncu yok.",
+    addBtn: "Oyuncu Ekle",
+    searchPlaceholder: "Oyuncu ara…",
+    empty: "Henüz oyuncu yok. Başlamak için {action} tıklayın.",
+    emptyNoTeams: "Önce bir takım oluşturun, sonra oyuncularını ekleyin.",
+    needTeamFirst: "Önce bir takım oluşturun",
+    noMatch: "Filtrelere uyan oyuncu yok.",
+    sortDefault: "Varsayılan",
+    positions: {
+      GK: "Kaleci",
+      DEF: "Defans",
+      MID: "Orta Saha",
+      FWD: "Forvet",
+    },
+    filter: {
+      teamLabel: "Takım",
+      sortLabel: "Sırala",
+      allTeams: "Tüm takımlar",
+      searchPlaceholder: "Takım ara…",
+      noResults: "Takım bulunamadı",
+    },
+    form: {
+      addTitle: "Oyuncu Ekle",
+      editTitle: "Oyuncuyu Düzenle",
+      name: "Ad",
+      namePlaceholder: "Oyuncu adı",
+      randomName: "Rastgele isim",
+      team: "Takım",
+      teamPlaceholder: "Takım seçin…",
+      position: "Mevki",
+      power: "Güç",
     },
   },
   history: {
@@ -399,6 +440,10 @@ export default {
       formFactor: {
         label: "Form Faktörü",
         desc: "Son 5 maç sonucuna göre takım gücünü dinamik olarak ayarlar. Galibiyet serisi yapan takım {plus} güç kazanır, sürekli kaybeden takım {minus} düşer.",
+      },
+      usePlayerPower: {
+        label: "Oyuncu Gücünü Kullan",
+        desc: "Takımın gücünü, kadronun ortalama oyuncu gücüyle harmanlar. Kapalıysa sadece takımın kendi gücü kullanılır.",
       },
     },
     sampleData: {

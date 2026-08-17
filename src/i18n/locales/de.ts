@@ -40,6 +40,7 @@ export default {
   nav: {
     tournaments: "Turniere",
     teams: "Teams",
+    players: "Spieler",
     history: "Verlauf",
     settings: "Einstellungen",
   },
@@ -51,6 +52,10 @@ export default {
       teams: {
         title: "Teams hinzufügen",
         desc: "Öffne den Tab „Teams“ und tippe auf „+ Team hinzufügen“, um Name, Kürzel, Stärke und Farbe festzulegen. Es muss schnell gehen? Lade unter Einstellungen → Beispieldaten stattdessen eine fertige Teamliste.",
+      },
+      players: {
+        title: "Spieler hinzufügen (optional)",
+        desc: "Öffne die Seite eines Teams, um seinen Kader aufzubauen — Name, Position und Stärke pro Spieler. Aktiviere „Spielerstärke verwenden“ unter Einstellungen → Simulation, damit die Kaderstärke die Ergebnisse beeinflusst.",
       },
       create: {
         title: "Turnier erstellen",
@@ -197,6 +202,42 @@ export default {
       seasonN: "Saison {n}",
       noMatchesPlayed: "Noch keine Spiele absolviert.",
       noMatchesTournament: "Keine Spiele für dieses Turnier.",
+    },
+  },
+  players: {
+    title: "Spieler",
+    squadTitle: "Kader",
+    emptyOnTeam: "Noch keine Spieler in diesem Kader.",
+    addBtn: "Spieler hinzufügen",
+    searchPlaceholder: "Spieler suchen…",
+    empty: "Noch keine Spieler. Klicke auf {action}, um loszulegen.",
+    emptyNoTeams: "Erstelle zuerst ein Team, dann füge seine Spieler hinzu.",
+    needTeamFirst: "Zuerst ein Team erstellen",
+    noMatch: "Keine Spieler entsprechen den Filtern.",
+    sortDefault: "Standard",
+    positions: {
+      GK: "Torwart",
+      DEF: "Verteidiger",
+      MID: "Mittelfeldspieler",
+      FWD: "Stürmer",
+    },
+    filter: {
+      teamLabel: "Team",
+      sortLabel: "Sortieren nach",
+      allTeams: "Alle Teams",
+      searchPlaceholder: "Team suchen…",
+      noResults: "Keine Teams gefunden",
+    },
+    form: {
+      addTitle: "Spieler hinzufügen",
+      editTitle: "Spieler bearbeiten",
+      name: "Name",
+      namePlaceholder: "Spielername",
+      randomName: "Zufälliger Name",
+      team: "Team",
+      teamPlaceholder: "Team auswählen…",
+      position: "Position",
+      power: "Stärke",
     },
   },
   history: {
@@ -401,6 +442,10 @@ export default {
       formFactor: {
         label: "Formfaktor",
         desc: "Passt die Teamstärke dynamisch anhand der letzten 5 Spielergebnisse an. Ein Team in einer Siegesserie gewinnt bis zu {plus} Stärke, ein Team in einer Verlustserie verliert bis zu {minus}.",
+      },
+      usePlayerPower: {
+        label: "Spielerstärke verwenden",
+        desc: "Vermischt die Stärke eines Teams mit der durchschnittlichen Spielerstärke seines Kaders. Aus = nur die eigene Stärke des Teams wird verwendet.",
       },
     },
     sampleData: {

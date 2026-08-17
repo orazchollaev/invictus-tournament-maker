@@ -13,6 +13,7 @@ import type { Tournament } from "../modules/tournament/types"
 import { shuffleWith } from "./utils"
 import { selectWildcards } from "./groups"
 import { crossPlayoffOrder } from "./tournament"
+import { resolvePower } from "./power"
 
 export type DrawMode = "random" | "seeded"
 export type CeremonyKind = "bracket" | "group" | "playoff"
@@ -54,7 +55,7 @@ export function buildPots(ctx: CeremonyContext): Pot[] {
     return [{ label: "Pot", teamIds: teams.map((t) => t.id) }]
   }
 
-  const sorted = [...teams].sort((a, b) => b.power - a.power)
+  const sorted = [...teams].sort((a, b) => resolvePower(b) - resolvePower(a))
 
   if (kind === "group") {
     const gc = Math.max(2, ctx.groupCount ?? 2)

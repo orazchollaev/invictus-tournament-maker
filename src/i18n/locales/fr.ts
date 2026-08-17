@@ -38,6 +38,7 @@ export default {
   nav: {
     tournaments: "Tournois",
     teams: "Équipes",
+    players: "Joueurs",
     history: "Historique",
     settings: "Paramètres",
   },
@@ -48,6 +49,10 @@ export default {
       teams: {
         title: "Ajoutez vos équipes",
         desc: "Ouvrez l'onglet « Équipes » et appuyez sur « + Ajouter une équipe » pour définir un nom, une abréviation, une puissance et une couleur. Pressé ? Chargez plutôt une liste d'équipes prête à l'emploi depuis Paramètres → Données d'exemple.",
+      },
+      players: {
+        title: "Ajoutez des joueurs (facultatif)",
+        desc: "Ouvrez la page d'une équipe pour constituer son effectif — nom, poste et puissance pour chaque joueur. Activez « Utiliser la puissance des joueurs » dans Paramètres → Simulation pour que la force de l'effectif influence les résultats.",
       },
       create: {
         title: "Créez un tournoi",
@@ -195,6 +200,42 @@ export default {
       seasonN: "Saison {n}",
       noMatchesPlayed: "Aucun match joué pour l'instant.",
       noMatchesTournament: "Aucun match pour ce tournoi.",
+    },
+  },
+  players: {
+    title: "Joueurs",
+    squadTitle: "Effectif",
+    emptyOnTeam: "Aucun joueur dans cet effectif pour le moment.",
+    addBtn: "Ajouter un joueur",
+    searchPlaceholder: "Rechercher des joueurs…",
+    empty: "Aucun joueur pour le moment. Cliquez sur {action} pour commencer.",
+    emptyNoTeams: "Créez d'abord une équipe, puis ajoutez ses joueurs.",
+    needTeamFirst: "Créez d'abord une équipe",
+    noMatch: "Aucun joueur ne correspond aux filtres.",
+    sortDefault: "Par défaut",
+    positions: {
+      GK: "Gardien",
+      DEF: "Défenseur",
+      MID: "Milieu",
+      FWD: "Attaquant",
+    },
+    filter: {
+      teamLabel: "Équipe",
+      sortLabel: "Trier par",
+      allTeams: "Toutes les équipes",
+      searchPlaceholder: "Rechercher une équipe…",
+      noResults: "Aucune équipe trouvée",
+    },
+    form: {
+      addTitle: "Ajouter un joueur",
+      editTitle: "Modifier le joueur",
+      name: "Nom",
+      namePlaceholder: "Nom du joueur",
+      randomName: "Nom aléatoire",
+      team: "Équipe",
+      teamPlaceholder: "Sélectionner une équipe…",
+      position: "Poste",
+      power: "Puissance",
     },
   },
   history: {
@@ -399,6 +440,10 @@ export default {
       formFactor: {
         label: "Facteur de forme",
         desc: "Ajuste dynamiquement la force de l'équipe selon les 5 derniers résultats. Une équipe en série de victoires gagne jusqu'à {plus} de puissance, une équipe en série de défaites en perd jusqu'à {minus}.",
+      },
+      usePlayerPower: {
+        label: "Utiliser la puissance des joueurs",
+        desc: "Combine la puissance d'une équipe avec la puissance moyenne des joueurs de son effectif. Désactivé = seule la puissance propre de l'équipe est utilisée.",
       },
     },
     sampleData: {

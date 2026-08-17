@@ -9,6 +9,7 @@ import AppIcon from "./AppIcon.vue"
 import AppModal from "./AppModal.vue"
 import AppNumberInput from "./AppNumberInput.vue"
 import AppSearchInput from "./AppSearchInput.vue"
+import AppSelect from "./AppSelect.vue"
 import AppSectionHeader from "./AppSectionHeader.vue"
 import AppStepper from "./AppStepper.vue"
 import AppTab from "./AppTab.vue"
@@ -16,6 +17,7 @@ import AppTable from "./AppTable.vue"
 import AppTabs from "./AppTabs.vue"
 import BtnGroup from "./BtnGroup.vue"
 import ColorPicker from "./ColorPicker.vue"
+import SortFilterMenu from "./SortFilterMenu.vue"
 import SubTabBar from "./SubTabBar.vue"
 import ToggleSwitch from "./ToggleSwitch.vue"
 
@@ -31,6 +33,7 @@ export {
   AppModal,
   AppNumberInput,
   AppSearchInput,
+  AppSelect,
   AppSectionHeader,
   AppStepper,
   AppTab,
@@ -38,6 +41,7 @@ export {
   AppTabs,
   BtnGroup,
   ColorPicker,
+  SortFilterMenu,
   SubTabBar,
   ToggleSwitch,
 }

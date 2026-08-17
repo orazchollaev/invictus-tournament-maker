@@ -2,6 +2,7 @@ import { defineStore } from "pinia"
 import { ref } from "vue"
 import type { Team } from "./types"
 import { useTournamentStore } from "@/modules/tournament/store"
+import { usePlayersStore } from "@/modules/players/store"
 import { MAX_TEAMS } from "@/constants"
 import { showAlert } from "@/composables/useDialog"
 
@@ -20,6 +21,7 @@ const COLORS = [
 
 export const useTeamsStore = defineStore("teams", () => {
   const { tournaments } = useTournamentStore()
+  const playersStore = usePlayersStore()
 
   const teams = ref<Team[]>([
     { id: "1", name: "Team 1", color: "#e63946", power: 82 },
@@ -60,6 +62,7 @@ export const useTeamsStore = defineStore("teams", () => {
     }
 
     teams.value = teams.value.filter((t) => t.id !== id)
+    playersStore.removeByTeam(id)
   }
 
   function update(id: string, data: Partial<Omit<Team, "id">>) {

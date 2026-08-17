@@ -2,6 +2,7 @@
 import type { Team } from "../modules/teams/types"
 import type { KnockoutStage, LegMode, Match, Round, Tournament } from "../modules/tournament/types"
 import { uid, getRoundName, shuffle } from "./utils"
+import { resolvePower } from "./power"
 
 // Maps a round's distance from the final (1 = semifinal, 2 = quarterfinal, …)
 // to a named stage. Distances >= 5 all collapse into "r64" — bracket sizes
@@ -248,7 +249,7 @@ export function buildPureBracket(teams: Team[], seeded: boolean, orderedTeams?: 
       seededOrder.push(home, away)
     }
   } else if (seeded) {
-    const sorted = [...teams].sort((a, b) => b.power - a.power)
+    const sorted = [...teams].sort((a, b) => resolvePower(b) - resolvePower(a))
     const r2Size = size / 2
     const r2Slots = bracketOrder(r2Size)
     const byeTeams = sorted.slice(0, byes)

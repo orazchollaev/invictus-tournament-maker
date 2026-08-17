@@ -17,6 +17,7 @@ export type {
 } from "./drawCeremony"
 export { simulateMatch, simulatePenaltyShootout, setSimConfig } from "./simulation"
 export { setTableConfig } from "./tableConfig"
+export { setPowerResolver, resolvePower } from "./power"
 export {
   getWinnerId,
   getLoserId,

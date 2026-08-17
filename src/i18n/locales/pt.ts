@@ -37,6 +37,7 @@ export default {
   nav: {
     tournaments: "Torneios",
     teams: "Times",
+    players: "Jogadores",
     history: "Histórico",
     settings: "Configurações",
   },
@@ -47,6 +48,10 @@ export default {
       teams: {
         title: "Adicione as suas equipas",
         desc: "Abra o separador Equipas e toque em “+ Adicionar Equipa” para definir um nome, abreviatura, nível de força e cor. Com pressa? Vá a Definições → Dados de Exemplo para carregar uma lista de equipas já pronta.",
+      },
+      players: {
+        title: "Adicione jogadores (opcional)",
+        desc: "Abra a página de uma equipa para montar o seu elenco — nome, posição e poder de cada jogador. Ative “Usar poder dos jogadores” em Definições → Simulação para que o elenco influencie os resultados.",
       },
       create: {
         title: "Crie um torneio",
@@ -193,6 +198,42 @@ export default {
       seasonN: "Temporada {n}",
       noMatchesPlayed: "Nenhuma partida jogada ainda.",
       noMatchesTournament: "Nenhuma partida neste torneio.",
+    },
+  },
+  players: {
+    title: "Jogadores",
+    squadTitle: "Elenco",
+    emptyOnTeam: "Ainda não há jogadores neste elenco.",
+    addBtn: "Adicionar Jogador",
+    searchPlaceholder: "Pesquisar jogadores…",
+    empty: "Ainda não há jogadores. Clique em {action} para começar.",
+    emptyNoTeams: "Crie um time primeiro e depois adicione seus jogadores.",
+    needTeamFirst: "Crie um time primeiro",
+    noMatch: "Nenhum jogador corresponde aos filtros.",
+    sortDefault: "Padrão",
+    positions: {
+      GK: "Goleiro",
+      DEF: "Zagueiro",
+      MID: "Meio-campista",
+      FWD: "Atacante",
+    },
+    filter: {
+      teamLabel: "Time",
+      sortLabel: "Ordenar por",
+      allTeams: "Todos os times",
+      searchPlaceholder: "Pesquisar time…",
+      noResults: "Nenhum time encontrado",
+    },
+    form: {
+      addTitle: "Adicionar Jogador",
+      editTitle: "Editar Jogador",
+      name: "Nome",
+      namePlaceholder: "Nome do jogador",
+      randomName: "Nome aleatório",
+      team: "Time",
+      teamPlaceholder: "Selecionar time…",
+      position: "Posição",
+      power: "Poder",
     },
   },
   history: {
@@ -397,6 +438,10 @@ export default {
       formFactor: {
         label: "Fator forma",
         desc: "Ajusta dinamicamente a força do time com base nos últimos 5 resultados. Um time em sequência vitoriosa ganha até {plus} de força, um time perdendo consecutivamente perde até {minus}.",
+      },
+      usePlayerPower: {
+        label: "Usar poder dos jogadores",
+        desc: "Combina o poder de um time com o poder médio dos jogadores do elenco. Desativado = usa apenas o poder próprio do time.",
       },
     },
     sampleData: {

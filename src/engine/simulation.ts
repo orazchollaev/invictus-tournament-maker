@@ -1,6 +1,7 @@
 // engine/simulation.ts
 import type { Team } from "../modules/teams/types"
 import type { Match, GroupMatch } from "../modules/tournament/types"
+import { resolvePower } from "./power"
 
 let _surpriseFactor = 50 // 0 = power dominates, 100 = pure chaos
 let _formFactorEnabled = false
@@ -87,8 +88,8 @@ export function simulateMatch(
   const homeTeam = lookup.get(match.homeId as string)
   const awayTeam = lookup.get(match.awayId as string)
 
-  const baseHp = homeTeam?.power ?? 50
-  const baseAp = awayTeam?.power ?? 50
+  const baseHp = resolvePower(homeTeam)
+  const baseAp = resolvePower(awayTeam)
   const hp = Math.max(
     1,
     Math.min(100, baseHp + (formAdjustments?.get(match.homeId as string) ?? 0))
@@ -130,8 +131,8 @@ export function simulatePenaltyShootout(
   const lookup = getTeamLookup(teams)
   const homeTeam = lookup.get(match.homeId as string)
   const awayTeam = lookup.get(match.awayId as string)
-  const hp = homeTeam?.power ?? 50
-  const ap = awayTeam?.power ?? 50
+  const hp = resolvePower(homeTeam)
+  const ap = resolvePower(awayTeam)
 
   const hRate = 0.65 + (hp / 100) * 0.15
   const aRate = 0.65 + (ap / 100) * 0.15

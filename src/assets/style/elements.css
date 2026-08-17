@@ -125,7 +125,7 @@ th {
   input,
   select {
     /* 16px is the iOS zoom-on-focus threshold — deliberately off-scale. */
-    font-size: 16px;
+    font-size: var(--fs-md);
   }
 
   th,
