@@ -1,5 +1,6 @@
 import { useTeamsStore } from "@/modules/teams/store"
 import { useTournamentStore } from "@/modules/tournament/store"
+import { usePlayersStore } from "@/modules/players/store"
 import { showAlert, showConfirm } from "@/composables/useDialog"
 import { useI18n } from "vue-i18n"
 import { Capacitor } from "@capacitor/core"
@@ -23,21 +24,24 @@ export const SAMPLE_DATASETS = Object.values(globbed).sort(
   (a, b) => (a.order ?? 999) - (b.order ?? 999)
 )
 
-const DATA_KEYS = ["teams", "tournament"] as const
+const DATA_KEYS = ["teams", "tournament", "players"] as const
 
 // Short keys used in the exported backup JSON only — storage keys (idb/pinia
-// store ids) stay "teams"/"tournament". Shaves bytes off exported files,
-// which matters once tournament history gets large.
+// store ids) stay "teams"/"tournament"/"players". Shaves bytes off exported
+// files, which matters once tournament history gets large.
 const EXPORT_KEY_MAP: Record<(typeof DATA_KEYS)[number], string> = {
   teams: "t",
   tournament: "tm",
+  players: "p",
 }
 const IMPORT_KEY_MAP: Record<string, (typeof DATA_KEYS)[number]> = {
   t: "teams",
   tm: "tournament",
+  p: "players",
   // accept older backups exported before keys were shortened
   teams: "teams",
   tournament: "tournament",
+  players: "players",
 }
 
 // gzip magic bytes — used to tell a compressed backup apart from plain JSON
@@ -74,6 +78,7 @@ export function useDataManagement() {
   const { t } = useI18n()
   const teamsStore = useTeamsStore()
   const tournamentStore = useTournamentStore()
+  const playersStore = usePlayersStore()
 
   async function loadDataset(dataset: Dataset) {
     const ok = await showConfirm(t("settings.sampleData.loadConfirm", { name: dataset.label }), {
@@ -85,6 +90,9 @@ export function useDataManagement() {
     if (dataset.tournaments)
       await idbStorage.setItem("tournament", JSON.stringify({ tournaments: dataset.tournaments }))
     else await idbStorage.setItem("tournament", JSON.stringify({ tournaments: [], active: null }))
+    // Datasets carry teams, not players — dropping stale players avoids
+    // orphaned entries pointing at team ids that no longer exist.
+    await idbStorage.removeItem("players")
     location.reload()
   }
 
@@ -121,6 +129,7 @@ export function useDataManagement() {
         tournaments: tournamentStore.tournaments,
         active: tournamentStore.active,
       },
+      [EXPORT_KEY_MAP.players]: { players: playersStore.players },
     }
     const json = JSON.stringify(payload)
 

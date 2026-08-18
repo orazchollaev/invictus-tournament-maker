@@ -35,7 +35,7 @@ export const useSettingsStore = defineStore("settings", () => {
   const tiebreaker = ref<Tiebreaker>("goal-diff")
   const formFactorEnabled = ref(false)
   const homeAdvantage = ref(6)
-  const usePlayerPower = ref(false)
+  const usePlayerPower = ref(true)
   const bracketStyle = ref<BracketStyle>("auto")
   const bracketQuality = ref<BracketQuality>("high")
   const bracketHighlightOnHover = ref(true)
@@ -97,9 +97,6 @@ export const useSettingsStore = defineStore("settings", () => {
   watch(formFactorEnabled, (val) => setSimConfig({ formFactor: val }), { immediate: true })
   watch(homeAdvantage, (val) => setSimConfig({ homeAdvantage: val }), { immediate: true })
 
-  // When on, a team's effective power for simulation/seeding is the average
-  // of its own power and its squad's average player power — so adding
-  // players actually does something. Off = team.power only (unchanged).
   const playersStore = usePlayersStore()
   watch(
     usePlayerPower,
@@ -136,7 +133,7 @@ export const useSettingsStore = defineStore("settings", () => {
     tiebreaker.value = "goal-diff"
     formFactorEnabled.value = false
     homeAdvantage.value = 6
-    usePlayerPower.value = false
+    usePlayerPower.value = true
     bracketStyle.value = "auto"
     bracketQuality.value = "high"
     bracketHighlightOnHover.value = true
