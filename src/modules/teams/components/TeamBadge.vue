@@ -16,10 +16,8 @@ const props = withDefaults(
   { size: 16, reverse: false, fallback: "TBD" }
 )
 const team = computed(() => props.team ?? props.teams?.find((t) => t.id === props.teamId))
+const dotBorderWidth = computed(() => Math.max(1, Math.round(props.size / 6)))
 
-// A custom crest URL can go dead; fall back to the plain dot instead of a
-// broken-image icon. Reset whenever the underlying image changes so a stale
-// error from a previous team doesn't stick around in reused list rows.
 const imgError = ref(false)
 watch(
   () => team.value?.image,
@@ -44,9 +42,10 @@ watch(
       v-else
       class="dot"
       :style="{
-        background: team?.color ?? '#ccc',
+        '--dot-color': team?.color ?? '#ccc',
         width: size + 2 + 'px',
         height: size + 2 + 'px',
+        borderWidth: dotBorderWidth + 'px',
       }"
     />
     <TeamNameAuto :team="team" :fallback="fallback" class="name" />
@@ -69,7 +68,9 @@ watch(
   height: 12px;
   border-radius: 50%;
   flex-shrink: 0;
-  box-shadow: 0 0 0 1.5px rgba(0, 0, 0, 0.15);
+  border-style: solid;
+  border-color: color-mix(in srgb, var(--dot-color) 65%, #000);
+  background: var(--dot-color);
 }
 .crest-img {
   border-radius: 50%;
