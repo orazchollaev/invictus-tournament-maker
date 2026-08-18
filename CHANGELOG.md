@@ -1,5 +1,19 @@
 # Changelog
 
+# [2.1.0](https://github.com/orazchollaev/invictus-tournament-maker/compare/v2.0.0...v2.1.0) (2026-08-18)
+
+### Features
+
+- **flags:** add scotland flag ([4089782](https://github.com/orazchollaev/invictus-tournament-maker/commit/4089782d70d257fe26d2b7c1a5bb891f904e87d5))
+- **langs:** add arabic language and expand translations ([4bfac45](https://github.com/orazchollaev/invictus-tournament-maker/commit/4bfac45d01b0dde9ade32d7ffa83ab92883d9703))
+- **langs:** add deutsch language and french language ([d57cd90](https://github.com/orazchollaev/invictus-tournament-maker/commit/d57cd901fe3d632f66c19f0e3ecf776de4ac57e3))
+- **players:** add new players system ([df7fec9](https://github.com/orazchollaev/invictus-tournament-maker/commit/df7fec963729313b92070c2823dfa3514ad98ed0))
+- **players:** include players in backup export/import and clear on dataset switch/clear ([3b6a333](https://github.com/orazchollaev/invictus-tournament-maker/commit/3b6a3331c350cd4da24baaae37a4770cbadeba6f))
+- **storage:** migrate persisted state from localStorage to IndexedDB ([918bd46](https://github.com/orazchollaev/invictus-tournament-maker/commit/918bd467210e9184ffa7471512204542dea2ca3e))
+- **teams:** increase max teams from 128 to 256 ([2faeb79](https://github.com/orazchollaev/invictus-tournament-maker/commit/2faeb79b992fcebd7063ae21424ed9ea2d7821b3))
+- **teams:** unified crest picker (flag/url/gallery) + wire image everywhere ([02d6698](https://github.com/orazchollaev/invictus-tournament-maker/commit/02d66981ca046d1ed7db2d1cacf5cd05ab0f5739))
+- **ui:** add sort/search filter to tournaments and history ([4f7a8c2](https://github.com/orazchollaev/invictus-tournament-maker/commit/4f7a8c2c7344bebf4a819ea649ad4624914e4880))
+
 # [2.0.0](https://github.com/orazchollaev/invictus-tournament-maker/compare/v1.21.0...v2.0.0) (2026-08-14)
 
 ### Bug Fixes
