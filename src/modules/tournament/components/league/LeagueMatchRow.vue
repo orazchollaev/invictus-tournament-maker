@@ -4,6 +4,7 @@ import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
 import type { Team } from "@/modules/teams/types"
 import type { MatchResult } from "../../types"
 import MatchScoreModal from "../MatchScoreModal.vue"
+import MatchStatsButton from "../match-stats/MatchStatsButton.vue"
 
 const props = defineProps<{
   homeTeam: Team | undefined
@@ -49,6 +50,17 @@ function scoreAccentColor(): string {
 
     <TeamBadge :team="awayTeam" :size="16" class="lv-team lv-team--away" />
 
+    <!-- Always a column, filled or not, so rows stay aligned down the list. -->
+    <span class="lv-report">
+      <MatchStatsButton
+        :home-team="homeTeam"
+        :away-team="awayTeam"
+        :result="result"
+        :subtitle="label"
+        size="xs"
+      />
+    </span>
+
     <!-- Inside the row, so the component keeps a single root element. -->
     <MatchScoreModal
       v-if="editing && !locked"
@@ -69,12 +81,18 @@ function scoreAccentColor(): string {
    names get its width back. */
 .lv-match {
   display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  grid-template-columns: 1fr auto 1fr 18px;
   align-items: center;
   gap: var(--sp-2);
   font-size: var(--fs-base);
   padding: var(--sp-1) 0;
   min-width: 0;
+}
+
+.lv-report {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
 }
 
 .lv-team {

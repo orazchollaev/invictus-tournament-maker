@@ -4,6 +4,7 @@ import type { Team } from "@/modules/teams/types"
 import type { MatchResult } from "../../types"
 import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
 import MatchScoreModal from "../MatchScoreModal.vue"
+import MatchStatsButton from "../match-stats/MatchStatsButton.vue"
 import type { FlatMatch } from "./types"
 
 const props = defineProps<{
@@ -85,6 +86,16 @@ const requiresWinner = computed(() => props.leg === 2)
       </div>
     </button>
 
+    <span v-if="result?.stats" class="leg-report">
+      <MatchStatsButton
+        :home-team="getTeam(homeId)"
+        :away-team="getTeam(awayId)"
+        :result="result"
+        :subtitle="`Leg ${leg}`"
+        size="xs"
+      />
+    </span>
+
     <!-- Inside the row, so the component keeps a single root element. -->
     <MatchScoreModal
       v-if="editing && canEdit"
@@ -104,3 +115,11 @@ const requiresWinner = computed(() => props.leg === 2)
 
 <style scoped src="../match-card-shared.css"></style>
 <style scoped src="./fixture-leg-row.css"></style>
+<style scoped>
+.leg-report {
+  display: flex;
+  align-items: center;
+  padding-inline: var(--sp-1);
+  border-inline-start: 1px solid var(--border-light);
+}
+</style>

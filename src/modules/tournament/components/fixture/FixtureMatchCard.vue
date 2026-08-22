@@ -5,6 +5,7 @@ import { getWinnerId } from "@/engine"
 import { NO_TEAM_COLOR } from "@/modules/teams/color"
 import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
 import MatchScoreModal from "../MatchScoreModal.vue"
+import MatchStatsButton from "../match-stats/MatchStatsButton.vue"
 import type { FlatMatch } from "./types"
 import { Pencil } from "@lucide/vue"
 
@@ -99,6 +100,17 @@ const canEdit = computed(() => !!props.match.homeId && !!props.match.awayId)
       </div>
     </button>
 
+    <!-- A played match gets its own rail, outside the edit button, so tapping
+         the report never risks opening the score editor by mistake. -->
+    <span v-if="match.result?.stats" class="mc-report">
+      <MatchStatsButton
+        :home-team="getTeam(match.homeId)"
+        :away-team="getTeam(match.awayId)"
+        :result="match.result"
+        size="xs"
+      />
+    </span>
+
     <!-- Inside the card, so the component keeps a single root element and any
          style a parent passes down still lands on it. -->
     <MatchScoreModal
@@ -127,6 +139,13 @@ const canEdit = computed(() => !!props.match.homeId && !!props.match.awayId)
   overflow: hidden;
   animation: fade-up 0.22s ease both;
 }
+.mc-report {
+  display: flex;
+  align-items: center;
+  padding-inline: var(--sp-1);
+  border-inline-start: 1px solid var(--border-light);
+}
+
 .mc--played {
   border-color: var(--border);
 }

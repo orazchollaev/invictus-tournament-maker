@@ -8,6 +8,7 @@ import { AppCard, AppTable } from "@/components/ui"
 import { Shuffle } from "@lucide/vue"
 import { useI18n } from "vue-i18n"
 import MatchScoreModal from "../MatchScoreModal.vue"
+import MatchStatsButton from "../match-stats/MatchStatsButton.vue"
 
 const props = defineProps<{
   group: Group
@@ -144,6 +145,16 @@ function scoreAccentColor(match: GroupMatch): string {
         </button>
 
         <TeamBadge :team="teamById(match.awayId)" :size="16" class="gs-team gs-team--away" />
+
+        <span class="gs-report">
+          <MatchStatsButton
+            :home-team="teamById(match.homeId)"
+            :away-team="teamById(match.awayId)"
+            :result="match.result"
+            :subtitle="group.name"
+            size="xs"
+          />
+        </span>
       </div>
     </div>
 
@@ -236,9 +247,15 @@ function scoreAccentColor(match: GroupMatch): string {
   gap: 3px;
 }
 
+.gs-report {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
 .gs-match {
   display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  grid-template-columns: 1fr auto 1fr 18px;
   align-items: center;
   gap: var(--sp-2);
   font-size: var(--fs-base);
