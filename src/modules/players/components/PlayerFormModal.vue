@@ -26,6 +26,7 @@ const name = ref(props.player?.name ?? "")
 const teamId = ref(props.player?.teamId ?? props.teamId ?? teamsStore.teams[0]?.id ?? "")
 const position = ref<PlayerPosition>(props.player?.position ?? "MID")
 const power = ref(props.player?.power ?? 70)
+const shirtNumber = ref<number | null>(props.player?.number ?? null)
 
 const positionOptions = computed(() => [
   { value: "GK" as const, label: t("players.positions.GK") },
@@ -44,9 +45,16 @@ function submit() {
       teamId: teamId.value,
       position: position.value,
       power: power.value,
+      number: shirtNumber.value ?? undefined,
     })
   } else {
-    store.add(teamId.value, name.value.trim(), position.value, power.value)
+    store.add(
+      teamId.value,
+      name.value.trim(),
+      position.value,
+      power.value,
+      shirtNumber.value ?? undefined
+    )
   }
   modal.value?.close()
 }
@@ -103,9 +111,24 @@ function submit() {
           />
         </AppField>
 
-        <AppField layout="stack" :label="t('players.form.position')">
-          <AppSelect v-model="position" :options="positionOptions" />
-        </AppField>
+        <div class="row-split">
+          <AppField layout="stack" :label="t('players.form.position')">
+            <AppSelect v-model="position" :options="positionOptions" />
+          </AppField>
+
+          <AppField layout="stack" :label="t('players.form.number')">
+            <input
+              v-model.number="shirtNumber"
+              class="input-full"
+              type="number"
+              min="1"
+              max="99"
+              inputmode="numeric"
+              :placeholder="t('players.form.numberPlaceholder')"
+              @keyup.enter="submit"
+            />
+          </AppField>
+        </div>
       </div>
 
       <div class="section">
@@ -205,6 +228,14 @@ function submit() {
   gap: var(--sp-2);
 }
 
+/* Position and shirt number are both short — one row instead of two. */
+.row-split {
+  display: grid;
+  grid-template-columns: 1fr 92px;
+  gap: var(--sp-3);
+  align-items: start;
+}
+
 /* ── Inputs ────────────────────────────────────────────────────── */
 .input-wrap {
   position: relative;
@@ -250,20 +281,12 @@ function submit() {
 .power-slider::-webkit-slider-runnable-track {
   height: 6px;
   border-radius: var(--radius-pill);
-  background: linear-gradient(
-    to right,
-    var(--player-color) var(--pct),
-    var(--border) var(--pct)
-  );
+  background: linear-gradient(to right, var(--player-color) var(--pct), var(--border) var(--pct));
 }
 .power-slider::-moz-range-track {
   height: 6px;
   border-radius: var(--radius-pill);
-  background: linear-gradient(
-    to right,
-    var(--player-color) var(--pct),
-    var(--border) var(--pct)
-  );
+  background: linear-gradient(to right, var(--player-color) var(--pct), var(--border) var(--pct));
 }
 
 .power-slider::-webkit-slider-thumb {

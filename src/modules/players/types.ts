@@ -6,4 +6,7 @@ export interface Player {
   name: string
   position: PlayerPosition
   power: number // 1-99
+  number?: number // shirt number, 1-99
 }
+
+export const PLAYER_POSITIONS: PlayerPosition[] = ["GK", "DEF", "MID", "FWD"]
