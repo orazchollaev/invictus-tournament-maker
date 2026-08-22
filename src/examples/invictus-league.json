@@ -1,0 +1,762 @@
+{
+  "label": "Invictus League",
+  "description": "8 clubs with full 11-player squads",
+  "order": 10,
+  "type": "club",
+  "teams": [
+    {
+      "id": "inv-01",
+      "name": "Aurora FC",
+      "color": "#1E88E5",
+      "power": 88
+    },
+    {
+      "id": "inv-02",
+      "name": "Ironvale United",
+      "color": "#37474F",
+      "power": 86
+    },
+    {
+      "id": "inv-03",
+      "name": "Solaris CF",
+      "color": "#FB8C00",
+      "power": 85
+    },
+    {
+      "id": "inv-04",
+      "name": "Verdant Athletic",
+      "color": "#2E7D32",
+      "power": 83
+    },
+    {
+      "id": "inv-05",
+      "name": "Northgate Rovers",
+      "color": "#6A1B9A",
+      "power": 82
+    },
+    {
+      "id": "inv-06",
+      "name": "Crimson Bay",
+      "color": "#C62828",
+      "power": 80
+    },
+    {
+      "id": "inv-07",
+      "name": "Harbour City SC",
+      "color": "#00838F",
+      "power": 79
+    },
+    {
+      "id": "inv-08",
+      "name": "Stonebridge FC",
+      "color": "#8D6E63",
+      "power": 77
+    }
+  ],
+  "players": [
+    {
+      "id": "inv-01-p01",
+      "teamId": "inv-01",
+      "name": "Kasper Lindqvist",
+      "position": "GK",
+      "power": 89,
+      "number": 1
+    },
+    {
+      "id": "inv-01-p02",
+      "teamId": "inv-01",
+      "name": "Mikkel Aarø",
+      "position": "DEF",
+      "power": 86,
+      "number": 2
+    },
+    {
+      "id": "inv-01-p03",
+      "teamId": "inv-01",
+      "name": "Rasmus Holt",
+      "position": "DEF",
+      "power": 90,
+      "number": 3
+    },
+    {
+      "id": "inv-01-p04",
+      "teamId": "inv-01",
+      "name": "Elias Vandberg",
+      "position": "DEF",
+      "power": 87,
+      "number": 4
+    },
+    {
+      "id": "inv-01-p05",
+      "teamId": "inv-01",
+      "name": "Nils Ekstrand",
+      "position": "DEF",
+      "power": 84,
+      "number": 5
+    },
+    {
+      "id": "inv-01-p06",
+      "teamId": "inv-01",
+      "name": "Jonas Vikstrøm",
+      "position": "MID",
+      "power": 91,
+      "number": 6
+    },
+    {
+      "id": "inv-01-p07",
+      "teamId": "inv-01",
+      "name": "Teodor Rask",
+      "position": "MID",
+      "power": 88,
+      "number": 7
+    },
+    {
+      "id": "inv-01-p08",
+      "teamId": "inv-01",
+      "name": "Aksel Brenner",
+      "position": "MID",
+      "power": 85,
+      "number": 8
+    },
+    {
+      "id": "inv-01-p09",
+      "teamId": "inv-01",
+      "name": "Viggo Sandell",
+      "position": "FWD",
+      "power": 93,
+      "number": 9
+    },
+    {
+      "id": "inv-01-p10",
+      "teamId": "inv-01",
+      "name": "Emil Norgaard",
+      "position": "FWD",
+      "power": 89,
+      "number": 10
+    },
+    {
+      "id": "inv-01-p11",
+      "teamId": "inv-01",
+      "name": "Lukas Hedman",
+      "position": "FWD",
+      "power": 83,
+      "number": 11
+    },
+    {
+      "id": "inv-02-p01",
+      "teamId": "inv-02",
+      "name": "Harry Bardsley",
+      "position": "GK",
+      "power": 84,
+      "number": 1
+    },
+    {
+      "id": "inv-02-p02",
+      "teamId": "inv-02",
+      "name": "Callum Whitcombe",
+      "position": "DEF",
+      "power": 88,
+      "number": 2
+    },
+    {
+      "id": "inv-02-p03",
+      "teamId": "inv-02",
+      "name": "Dean Ashworth",
+      "position": "DEF",
+      "power": 85,
+      "number": 3
+    },
+    {
+      "id": "inv-02-p04",
+      "teamId": "inv-02",
+      "name": "Ryan Marsden",
+      "position": "DEF",
+      "power": 82,
+      "number": 4
+    },
+    {
+      "id": "inv-02-p05",
+      "teamId": "inv-02",
+      "name": "Owen Trelawney",
+      "position": "DEF",
+      "power": 89,
+      "number": 5
+    },
+    {
+      "id": "inv-02-p06",
+      "teamId": "inv-02",
+      "name": "Scott Pemberton",
+      "position": "MID",
+      "power": 86,
+      "number": 6
+    },
+    {
+      "id": "inv-02-p07",
+      "teamId": "inv-02",
+      "name": "Liam Garrick",
+      "position": "MID",
+      "power": 83,
+      "number": 7
+    },
+    {
+      "id": "inv-02-p08",
+      "teamId": "inv-02",
+      "name": "Joel Hattersley",
+      "position": "MID",
+      "power": 91,
+      "number": 8
+    },
+    {
+      "id": "inv-02-p09",
+      "teamId": "inv-02",
+      "name": "Nathan Cobbold",
+      "position": "FWD",
+      "power": 87,
+      "number": 9
+    },
+    {
+      "id": "inv-02-p10",
+      "teamId": "inv-02",
+      "name": "Reece Farrow",
+      "position": "FWD",
+      "power": 81,
+      "number": 10
+    },
+    {
+      "id": "inv-02-p11",
+      "teamId": "inv-02",
+      "name": "Kyle Denholm",
+      "position": "FWD",
+      "power": 87,
+      "number": 11
+    },
+    {
+      "id": "inv-03-p01",
+      "teamId": "inv-03",
+      "name": "Iker Valbuena",
+      "position": "GK",
+      "power": 87,
+      "number": 1
+    },
+    {
+      "id": "inv-03-p02",
+      "teamId": "inv-03",
+      "name": "Rubén Castedo",
+      "position": "DEF",
+      "power": 84,
+      "number": 2
+    },
+    {
+      "id": "inv-03-p03",
+      "teamId": "inv-03",
+      "name": "Álvaro Merino",
+      "position": "DEF",
+      "power": 81,
+      "number": 3
+    },
+    {
+      "id": "inv-03-p04",
+      "teamId": "inv-03",
+      "name": "Nuno Bragança",
+      "position": "DEF",
+      "power": 88,
+      "number": 4
+    },
+    {
+      "id": "inv-03-p05",
+      "teamId": "inv-03",
+      "name": "Joan Ferrer",
+      "position": "DEF",
+      "power": 85,
+      "number": 5
+    },
+    {
+      "id": "inv-03-p06",
+      "teamId": "inv-03",
+      "name": "Sergio Alcaraz",
+      "position": "MID",
+      "power": 82,
+      "number": 6
+    },
+    {
+      "id": "inv-03-p07",
+      "teamId": "inv-03",
+      "name": "Diogo Peixoto",
+      "position": "MID",
+      "power": 90,
+      "number": 7
+    },
+    {
+      "id": "inv-03-p08",
+      "teamId": "inv-03",
+      "name": "Marc Ferrán",
+      "position": "MID",
+      "power": 86,
+      "number": 8
+    },
+    {
+      "id": "inv-03-p09",
+      "teamId": "inv-03",
+      "name": "Xavi Rosales",
+      "position": "FWD",
+      "power": 80,
+      "number": 9
+    },
+    {
+      "id": "inv-03-p10",
+      "teamId": "inv-03",
+      "name": "Tomás Adrião",
+      "position": "FWD",
+      "power": 86,
+      "number": 10
+    },
+    {
+      "id": "inv-03-p11",
+      "teamId": "inv-03",
+      "name": "Hugo Salinas",
+      "position": "FWD",
+      "power": 83,
+      "number": 11
+    },
+    {
+      "id": "inv-04-p01",
+      "teamId": "inv-04",
+      "name": "Declan Moriarty",
+      "position": "GK",
+      "power": 82,
+      "number": 1
+    },
+    {
+      "id": "inv-04-p02",
+      "teamId": "inv-04",
+      "name": "Fergal Doheny",
+      "position": "DEF",
+      "power": 79,
+      "number": 2
+    },
+    {
+      "id": "inv-04-p03",
+      "teamId": "inv-04",
+      "name": "Struan Baird",
+      "position": "DEF",
+      "power": 86,
+      "number": 3
+    },
+    {
+      "id": "inv-04-p04",
+      "teamId": "inv-04",
+      "name": "Cormac Nolan",
+      "position": "DEF",
+      "power": 83,
+      "number": 4
+    },
+    {
+      "id": "inv-04-p05",
+      "teamId": "inv-04",
+      "name": "Ewan Mackle",
+      "position": "DEF",
+      "power": 80,
+      "number": 5
+    },
+    {
+      "id": "inv-04-p06",
+      "teamId": "inv-04",
+      "name": "Padraig Quill",
+      "position": "MID",
+      "power": 88,
+      "number": 6
+    },
+    {
+      "id": "inv-04-p07",
+      "teamId": "inv-04",
+      "name": "Ross Lamont",
+      "position": "MID",
+      "power": 84,
+      "number": 7
+    },
+    {
+      "id": "inv-04-p08",
+      "teamId": "inv-04",
+      "name": "Cian Hegarty",
+      "position": "MID",
+      "power": 78,
+      "number": 8
+    },
+    {
+      "id": "inv-04-p09",
+      "teamId": "inv-04",
+      "name": "Ruairi Kavanagh",
+      "position": "FWD",
+      "power": 84,
+      "number": 9
+    },
+    {
+      "id": "inv-04-p10",
+      "teamId": "inv-04",
+      "name": "Angus Petrie",
+      "position": "FWD",
+      "power": 81,
+      "number": 10
+    },
+    {
+      "id": "inv-04-p11",
+      "teamId": "inv-04",
+      "name": "Donal Sheridan",
+      "position": "FWD",
+      "power": 85,
+      "number": 11
+    },
+    {
+      "id": "inv-05-p01",
+      "teamId": "inv-05",
+      "name": "Miloš Radan",
+      "position": "GK",
+      "power": 78,
+      "number": 1
+    },
+    {
+      "id": "inv-05-p02",
+      "teamId": "inv-05",
+      "name": "Tomasz Wierzbicki",
+      "position": "DEF",
+      "power": 85,
+      "number": 2
+    },
+    {
+      "id": "inv-05-p03",
+      "teamId": "inv-05",
+      "name": "Andrei Lupescu",
+      "position": "DEF",
+      "power": 82,
+      "number": 3
+    },
+    {
+      "id": "inv-05-p04",
+      "teamId": "inv-05",
+      "name": "Jakub Halász",
+      "position": "DEF",
+      "power": 79,
+      "number": 4
+    },
+    {
+      "id": "inv-05-p05",
+      "teamId": "inv-05",
+      "name": "Dragan Petrić",
+      "position": "DEF",
+      "power": 87,
+      "number": 5
+    },
+    {
+      "id": "inv-05-p06",
+      "teamId": "inv-05",
+      "name": "Lukáš Berger",
+      "position": "MID",
+      "power": 83,
+      "number": 6
+    },
+    {
+      "id": "inv-05-p07",
+      "teamId": "inv-05",
+      "name": "Marek Zielonka",
+      "position": "MID",
+      "power": 77,
+      "number": 7
+    },
+    {
+      "id": "inv-05-p08",
+      "teamId": "inv-05",
+      "name": "Ivan Kadlec",
+      "position": "MID",
+      "power": 83,
+      "number": 8
+    },
+    {
+      "id": "inv-05-p09",
+      "teamId": "inv-05",
+      "name": "Bogdan Vasiliu",
+      "position": "FWD",
+      "power": 80,
+      "number": 9
+    },
+    {
+      "id": "inv-05-p10",
+      "teamId": "inv-05",
+      "name": "Paweł Nowicki",
+      "position": "FWD",
+      "power": 84,
+      "number": 10
+    },
+    {
+      "id": "inv-05-p11",
+      "teamId": "inv-05",
+      "name": "Stefan Kovač",
+      "position": "FWD",
+      "power": 81,
+      "number": 11
+    },
+    {
+      "id": "inv-06-p01",
+      "teamId": "inv-06",
+      "name": "Emiliano Bustos",
+      "position": "GK",
+      "power": 83,
+      "number": 1
+    },
+    {
+      "id": "inv-06-p02",
+      "teamId": "inv-06",
+      "name": "Rafael Quintero",
+      "position": "DEF",
+      "power": 80,
+      "number": 2
+    },
+    {
+      "id": "inv-06-p03",
+      "teamId": "inv-06",
+      "name": "Matías Olmedo",
+      "position": "DEF",
+      "power": 77,
+      "number": 3
+    },
+    {
+      "id": "inv-06-p04",
+      "teamId": "inv-06",
+      "name": "Thiago Rezende",
+      "position": "DEF",
+      "power": 85,
+      "number": 4
+    },
+    {
+      "id": "inv-06-p05",
+      "teamId": "inv-06",
+      "name": "Julián Paredes",
+      "position": "DEF",
+      "power": 81,
+      "number": 5
+    },
+    {
+      "id": "inv-06-p06",
+      "teamId": "inv-06",
+      "name": "Nicolás Arrieta",
+      "position": "MID",
+      "power": 75,
+      "number": 6
+    },
+    {
+      "id": "inv-06-p07",
+      "teamId": "inv-06",
+      "name": "Caio Bittencourt",
+      "position": "MID",
+      "power": 81,
+      "number": 7
+    },
+    {
+      "id": "inv-06-p08",
+      "teamId": "inv-06",
+      "name": "Facundo Reyna",
+      "position": "MID",
+      "power": 78,
+      "number": 8
+    },
+    {
+      "id": "inv-06-p09",
+      "teamId": "inv-06",
+      "name": "Bruno Maldonado",
+      "position": "FWD",
+      "power": 82,
+      "number": 9
+    },
+    {
+      "id": "inv-06-p10",
+      "teamId": "inv-06",
+      "name": "Santiago Vera",
+      "position": "FWD",
+      "power": 79,
+      "number": 10
+    },
+    {
+      "id": "inv-06-p11",
+      "teamId": "inv-06",
+      "name": "Léo Marchetti",
+      "position": "FWD",
+      "power": 76,
+      "number": 11
+    },
+    {
+      "id": "inv-07-p01",
+      "teamId": "inv-07",
+      "name": "Kenji Morikawa",
+      "position": "GK",
+      "power": 79,
+      "number": 1
+    },
+    {
+      "id": "inv-07-p02",
+      "teamId": "inv-07",
+      "name": "Daichi Ueno",
+      "position": "DEF",
+      "power": 76,
+      "number": 2
+    },
+    {
+      "id": "inv-07-p03",
+      "teamId": "inv-07",
+      "name": "Ji-hoon Baek",
+      "position": "DEF",
+      "power": 84,
+      "number": 3
+    },
+    {
+      "id": "inv-07-p04",
+      "teamId": "inv-07",
+      "name": "Arif Rahmat",
+      "position": "DEF",
+      "power": 80,
+      "number": 4
+    },
+    {
+      "id": "inv-07-p05",
+      "teamId": "inv-07",
+      "name": "Nathan Tuilagi",
+      "position": "DEF",
+      "power": 74,
+      "number": 5
+    },
+    {
+      "id": "inv-07-p06",
+      "teamId": "inv-07",
+      "name": "Haruto Sasaki",
+      "position": "MID",
+      "power": 80,
+      "number": 6
+    },
+    {
+      "id": "inv-07-p07",
+      "teamId": "inv-07",
+      "name": "Min-jae Ryu",
+      "position": "MID",
+      "power": 77,
+      "number": 7
+    },
+    {
+      "id": "inv-07-p08",
+      "teamId": "inv-07",
+      "name": "Wira Santoso",
+      "position": "MID",
+      "power": 81,
+      "number": 8
+    },
+    {
+      "id": "inv-07-p09",
+      "teamId": "inv-07",
+      "name": "Sora Nishimura",
+      "position": "FWD",
+      "power": 78,
+      "number": 9
+    },
+    {
+      "id": "inv-07-p10",
+      "teamId": "inv-07",
+      "name": "Tae-yang Oh",
+      "position": "FWD",
+      "power": 75,
+      "number": 10
+    },
+    {
+      "id": "inv-07-p11",
+      "teamId": "inv-07",
+      "name": "Jared Fifita",
+      "position": "FWD",
+      "power": 82,
+      "number": 11
+    },
+    {
+      "id": "inv-08-p01",
+      "teamId": "inv-08",
+      "name": "Amadou Sylla",
+      "position": "GK",
+      "power": 74,
+      "number": 1
+    },
+    {
+      "id": "inv-08-p02",
+      "teamId": "inv-08",
+      "name": "Kwame Boateng",
+      "position": "DEF",
+      "power": 82,
+      "number": 2
+    },
+    {
+      "id": "inv-08-p03",
+      "teamId": "inv-08",
+      "name": "Youssef Hammadi",
+      "position": "DEF",
+      "power": 78,
+      "number": 3
+    },
+    {
+      "id": "inv-08-p04",
+      "teamId": "inv-08",
+      "name": "Sipho Ndlovu",
+      "position": "DEF",
+      "power": 72,
+      "number": 4
+    },
+    {
+      "id": "inv-08-p05",
+      "teamId": "inv-08",
+      "name": "Ibrahim Cissé",
+      "position": "DEF",
+      "power": 78,
+      "number": 5
+    },
+    {
+      "id": "inv-08-p06",
+      "teamId": "inv-08",
+      "name": "Chidi Okonkwo",
+      "position": "MID",
+      "power": 75,
+      "number": 6
+    },
+    {
+      "id": "inv-08-p07",
+      "teamId": "inv-08",
+      "name": "Riyad Benali",
+      "position": "MID",
+      "power": 79,
+      "number": 7
+    },
+    {
+      "id": "inv-08-p08",
+      "teamId": "inv-08",
+      "name": "Tafari Mekonnen",
+      "position": "MID",
+      "power": 76,
+      "number": 8
+    },
+    {
+      "id": "inv-08-p09",
+      "teamId": "inv-08",
+      "name": "Musa Diallo",
+      "position": "FWD",
+      "power": 73,
+      "number": 9
+    },
+    {
+      "id": "inv-08-p10",
+      "teamId": "inv-08",
+      "name": "Samuel Adeyemi",
+      "position": "FWD",
+      "power": 80,
+      "number": 10
+    },
+    {
+      "id": "inv-08-p11",
+      "teamId": "inv-08",
+      "name": "Lebo Motaung",
+      "position": "FWD",
+      "power": 77,
+      "number": 11
+    }
+  ]
+}

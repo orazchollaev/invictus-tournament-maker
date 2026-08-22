@@ -13,6 +13,15 @@ interface Dataset {
   order?: number
   type: "country" | "club"
   teams: { id: string; name: string; color: string; power: number }[]
+  /** Optional squads. Player.teamId must match an id in `teams`. */
+  players?: {
+    id: string
+    teamId: string
+    name: string
+    position: "GK" | "DEF" | "MID" | "FWD"
+    power: number
+    number?: number
+  }[]
   tournaments?: any[]
 }
 
@@ -90,9 +99,14 @@ export function useDataManagement() {
     if (dataset.tournaments)
       await idbStorage.setItem("tournament", JSON.stringify({ tournaments: dataset.tournaments }))
     else await idbStorage.setItem("tournament", JSON.stringify({ tournaments: [], active: null }))
-    // Datasets carry teams, not players — dropping stale players avoids
-    // orphaned entries pointing at team ids that no longer exist.
-    await idbStorage.removeItem("players")
+    // A dataset either ships its own squads or has none. Either way the
+    // previous dataset's players go — leaving them behind would orphan
+    // entries pointing at team ids that no longer exist.
+    if (dataset.players?.length) {
+      await idbStorage.setItem("players", JSON.stringify({ players: dataset.players }))
+    } else {
+      await idbStorage.removeItem("players")
+    }
     location.reload()
   }
 

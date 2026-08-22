@@ -30,7 +30,12 @@ const clubDatasets = computed(() => SAMPLE_DATASETS.filter((ds) => ds.type === "
         class="dataset-card"
         @click="loadDataset(ds)"
       >
-        <span class="dataset-name">{{ ds.label }}</span>
+        <span class="dataset-name">
+          {{ ds.label }}
+          <span v-if="ds.players?.length" class="dataset-squads">
+            {{ t("settings.sampleData.withSquads") }}
+          </span>
+        </span>
         <span class="dataset-desc">{{ ds.description }}</span>
       </button>
     </div>
@@ -44,7 +49,12 @@ const clubDatasets = computed(() => SAMPLE_DATASETS.filter((ds) => ds.type === "
         class="dataset-card"
         @click="loadDataset(ds)"
       >
-        <span class="dataset-name">{{ ds.label }}</span>
+        <span class="dataset-name">
+          {{ ds.label }}
+          <span v-if="ds.players?.length" class="dataset-squads">
+            {{ t("settings.sampleData.withSquads") }}
+          </span>
+        </span>
         <span class="dataset-desc">{{ ds.description }}</span>
       </button>
     </div>
@@ -102,8 +112,27 @@ const clubDatasets = computed(() => SAMPLE_DATASETS.filter((ds) => ds.type === "
 }
 
 .dataset-name {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
   font-size: var(--fs-base);
   font-weight: 600;
+}
+
+/* Only some datasets ship squads, and that is the reason to pick one now
+   that players carry match stats — so the card says so up front. */
+.dataset-squads {
+  flex-shrink: 0;
+  padding: 1px var(--sp-2);
+  border-radius: var(--radius-pill);
+  background: var(--accent-subtle);
+  border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+  color: var(--accent);
+  font-family: var(--font-ui);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
 .dataset-desc {
