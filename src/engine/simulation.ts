@@ -27,6 +27,23 @@ export function isFormFactorEnabled(): boolean {
   return _formFactorEnabled
 }
 
+/**
+ * Read the live simulation settings. The match-stats generator needs the
+ * surprise factor: at low surprise a power gap should show up as a lopsided
+ * match, and at high surprise the same gap should barely register.
+ */
+export function getSimConfig(): {
+  surpriseFactor: number
+  formFactor: boolean
+  homeAdvantage: number
+} {
+  return {
+    surpriseFactor: _surpriseFactor,
+    formFactor: _formFactorEnabled,
+    homeAdvantage: _homeAdvantage,
+  }
+}
+
 type PlayedMatch = { homeId: string; awayId: string; result: { home: number; away: number } | null }
 
 export function computeFormAdjustments(

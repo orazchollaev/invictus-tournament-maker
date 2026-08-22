@@ -1,4 +1,5 @@
 // modules/tournament/types.ts
+import type { PlayerPosition } from "@/modules/players/types"
 
 export type LegMode = "single" | "double" | "triple" | "quadruple"
 export type Tiebreaker = "head-to-head" | "goal-diff"
@@ -7,11 +8,70 @@ export type Tiebreaker = "head-to-head" | "goal-diff"
 // Independent of actual bracket size — see engine/bracket.ts:stageForDistance.
 export type KnockoutStage = "r64" | "r32" | "r16" | "quarterfinal" | "semifinal"
 
+// ─── Match events & statistics ───────────────────────────────────
+// Events hang off MatchResult, which is the one shape shared by every
+// container: knockout legs, group matches, league matches, third place.
+// One optional field therefore covers all formats.
+
+export type MatchEventType = "goal" | "ownGoal" | "penGoal" | "penMiss" | "yellow" | "red"
+
+export interface MatchEvent {
+  minute: number // 1-90, or 90+ for stoppage time
+  type: MatchEventType
+  side: "home" | "away" // the side the event is credited to
+  playerId: string | null // null = an unfilled squad slot, never aggregated
+  assistId?: string | null
+}
+
+export interface PlayerMatchLine {
+  playerId: string | null
+  side: "home" | "away"
+  position: PlayerPosition
+  goals: number
+  assists: number
+  yellow: number
+  red: number
+  saves?: number // goalkeepers only
+  conceded?: number // goalkeepers only
+  cleanSheet?: boolean // goalkeepers and defenders
+  rating: number // 1.0-10.0, one decimal
+}
+
+/** Team-level colour, simulated from the power gap and the score. */
+export interface TeamMatchStats {
+  possession: number // home share, 0-100; away is the remainder
+  shots: [number, number]
+  onTarget: [number, number]
+  corners: [number, number]
+  fouls: [number, number]
+}
+
+/** One kick of a penalty shootout, in the order it was taken. */
+export interface ShootoutKick {
+  order: number // 1-based, alternating home/away
+  side: "home" | "away"
+  playerId: string | null
+  scored: boolean
+}
+
+export interface MatchStats {
+  events: MatchEvent[]
+  lines: PlayerMatchLine[]
+  team: TeamMatchStats
+  /** Only set when the tie went to a shootout. */
+  shootout?: ShootoutKick[]
+}
+
 export interface MatchResult {
   home: number
   away: number
   penHome?: number
   penAway?: number
+  /**
+   * undefined — not generated yet; `ensureMatchStats` will fill it.
+   * null      — played before v2.2.0; deliberately never generated.
+   */
+  stats?: MatchStats | null
 }
 
 export interface Match {

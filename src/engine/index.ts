@@ -15,7 +15,7 @@ export type {
   CeremonyKind,
   CeremonyContext,
 } from "./drawCeremony"
-export { simulateMatch, simulatePenaltyShootout, setSimConfig } from "./simulation"
+export { simulateMatch, simulatePenaltyShootout, setSimConfig, getSimConfig } from "./simulation"
 export { setTableConfig } from "./tableConfig"
 export { setPowerResolver, resolvePower } from "./power"
 export {
@@ -83,3 +83,17 @@ export {
 } from "./leaguePlayoff"
 export { forEachMatch, allMatches, playedMatches, matchesForTeam, isBye } from "./matchIterator"
 export type { MatchEntry, MatchSource } from "./matchIterator"
+export {
+  buildLineup,
+  generateMatchStats,
+  generateTeamStats,
+  computeRating,
+  ensureMatchStats,
+  markLegacyMatchStats,
+  FORMATION,
+  LINEUP_SIZE,
+  UNKNOWN_POWER,
+  MIN_RATING,
+  MAX_RATING,
+} from "./events"
+export type { Lineup, LineupSlot, MatchOutcome, RatingInput } from "./events"
