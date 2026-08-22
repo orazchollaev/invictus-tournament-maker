@@ -5,6 +5,7 @@ import { useTournamentStore } from "@/modules/tournament/store"
 import { usePlayersStore } from "@/modules/players/store"
 import { MAX_TEAMS } from "@/constants"
 import { showAlert } from "@/composables/useDialog"
+import { uid } from "@/engine"
 
 const COLORS = [
   "#e63946",
@@ -44,7 +45,7 @@ export const useTeamsStore = defineStore("teams", () => {
   ) {
     if (teams.value.length >= MAX_TEAMS) return
     const entry: import("./types").Team = {
-      id: Date.now().toString(),
+      id: uid(),
       name,
       color,
       power: clampPower(power),
