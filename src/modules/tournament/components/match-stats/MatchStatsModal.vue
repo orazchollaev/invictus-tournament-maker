@@ -192,6 +192,7 @@ const activeTab = ref<ReportTab>("timeline")
 }
 
 .score-side {
+  font-size: var(--fs-md) !important;
   min-width: 0;
 }
 .score-side--away {
