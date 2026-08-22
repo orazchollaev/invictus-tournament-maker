@@ -3,9 +3,9 @@ import { useRoute, useRouter } from "vue-router"
 import type { Swiper as SwiperInstance } from "swiper/types"
 import { useSwiperAutoHeight } from "@/composables/useSwiperAutoHeight"
 
-export type HistoryTab = "champions" | "finals" | "alltime" | "stats" | "teams"
+export type HistoryTab = "champions" | "finals" | "alltime" | "stats" | "teams" | "players"
 
-const VALID_TABS: HistoryTab[] = ["champions", "finals", "alltime", "stats", "teams"]
+const VALID_TABS: HistoryTab[] = ["champions", "finals", "alltime", "stats", "teams", "players"]
 
 export function useHistoryTabs(isLeagueSeries: ComputedRef<boolean>) {
   const route = useRoute()
@@ -29,7 +29,7 @@ export function useHistoryTabs(isLeagueSeries: ComputedRef<boolean>) {
   const visibleTabs = computed<HistoryTab[]>(() => {
     const tabs: HistoryTab[] = ["champions", "finals"]
     if (isLeagueSeries.value) tabs.push("alltime")
-    tabs.push("stats", "teams")
+    tabs.push("stats", "teams", "players")
     return tabs
   })
   const activeIndex = computed(() => visibleTabs.value.indexOf(activeTab.value))

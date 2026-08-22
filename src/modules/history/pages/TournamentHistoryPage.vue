@@ -2,7 +2,7 @@
 import { computed } from "vue"
 import { useRoute, RouterLink } from "vue-router"
 import { useTournamentStore } from "@/modules/tournament/store"
-import { ArrowLeft, Trophy, Medal, BarChart3, Table2, Users } from "@lucide/vue"
+import { ArrowLeft, Trophy, Medal, BarChart3, Table2, Users, Goal } from "@lucide/vue"
 import { useI18n } from "vue-i18n"
 import { Swiper, SwiperSlide } from "swiper/vue"
 import "swiper/css"
@@ -13,7 +13,9 @@ import LeagueSeasonsTab from "../components/LeagueSeasonsTab.vue"
 import LeagueAllTimeTab from "../components/LeagueAllTimeTab.vue"
 import StatisticsTab from "../components/StatisticsTab.vue"
 import TeamStatsTab from "../components/TeamStatsTab.vue"
+import PlayersTab from "../components/PlayersTab.vue"
 import { useTournamentHistoryStats } from "../composables/useTournamentHistoryStats"
+import { useHistoryPlayerStats } from "../composables/useHistoryPlayerStats"
 import { useHistoryTabs, type HistoryTab } from "../composables/useHistoryTabs"
 
 const route = useRoute()
@@ -34,6 +36,8 @@ const isLeagueSeries = computed(() => allSeasons.value[0]?.format === "league")
 
 const { champions, finals, leagueSeasons, allTimeRows, stats, teamStats } =
   useTournamentHistoryStats(completedSeasons)
+
+const { playerRows } = useHistoryPlayerStats(completedSeasons)
 
 const {
   activeTab,
@@ -93,6 +97,10 @@ const tabValue = computed({
           <AppIcon :icon="Users" />
           {{ t("history.tabs.teams") }}
         </AppTab>
+        <AppTab value="players">
+          <AppIcon :icon="Goal" />
+          {{ t("history.tabs.players") }}
+        </AppTab>
       </AppTabs>
 
       <Swiper
@@ -120,7 +128,8 @@ const tabValue = computed({
             <AllFinalsTab v-else-if="tab === 'finals'" :finals="finals" />
             <LeagueAllTimeTab v-else-if="tab === 'alltime'" :rows="allTimeRows" />
             <StatisticsTab v-else-if="tab === 'stats'" :stats="stats" />
-            <TeamStatsTab v-else :teams="teamStats" />
+            <TeamStatsTab v-else-if="tab === 'teams'" :teams="teamStats" />
+            <PlayersTab v-else :players="playerRows" />
           </template>
         </SwiperSlide>
       </Swiper>
