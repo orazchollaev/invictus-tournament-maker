@@ -14,6 +14,10 @@ export default createRouter({
     { path: "/teams/:id", component: () => import("../modules/teams/pages/TeamDetailPage.vue") },
 
     { path: "/players", component: () => import("../modules/players/pages/PlayersPage.vue") },
+    {
+      path: "/players/:id",
+      component: () => import("../modules/players/pages/PlayerDetailPage.vue"),
+    },
 
     {
       path: "/tournaments",

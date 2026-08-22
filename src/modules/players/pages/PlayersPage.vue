@@ -95,9 +95,11 @@ const filtered = computed(() => {
           :key="player.id"
           rail
           padding="sm"
+          interactive
           class="player-card"
           :class="{ 'player-card--grid': isGrid }"
           :style="{ '--rail-color': teamOf(player)?.color ?? '#999', '--i': i }"
+          @click="$router.push(`/players/${player.id}`)"
         >
           <div class="player-card-main">
             <PlayerAvatar

@@ -37,7 +37,7 @@ const editingPlayer = ref<Player | null>(null)
     <div v-if="squad.length" class="squad-list">
       <div v-for="p in squad" :key="p.id" class="squad-row">
         <PlayerAvatar :name="p.name" :color="teamColor" :size="24" />
-        <span class="squad-name">{{ p.name }}</span>
+        <RouterLink :to="`/players/${p.id}`" class="squad-name">{{ p.name }}</RouterLink>
         <AppChip
           square
           size="xs"
@@ -103,6 +103,11 @@ const editingPlayer = ref<Player | null>(null)
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  color: inherit;
+  text-decoration: none;
+}
+.squad-name:hover {
+  color: var(--accent);
 }
 
 .squad-position {
