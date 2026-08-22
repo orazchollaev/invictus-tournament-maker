@@ -9,6 +9,7 @@ import type { Locale } from "./i18n"
 import { initPush } from "./composables/usePush"
 import { initAnalytics, logScreenView } from "./composables/useAnalytics"
 import { idbStorage } from "./lib/idbStorage"
+import { useTournamentStore } from "./modules/tournament/store"
 
 import "./assets/style/index.css"
 
@@ -37,6 +38,16 @@ async function bootstrap() {
   app.use(pinia)
   app.use(router)
   app.use(i18n)
+
+  // Matches played before v2.2.0 get stamped as legacy so the event engine
+  // never invents scorers for them. Has to wait for the persisted state to
+  // hydrate, or there would be nothing to stamp.
+  const tournamentStore = useTournamentStore()
+  try {
+    await tournamentStore.$persistedState.isReady()
+  } catch {}
+  tournamentStore.migrateLegacyMatchStats()
+
   app.mount("#app")
 
   void initPush()

@@ -12,8 +12,11 @@ import {
   getLeaguePlayoffData,
   canStartLeaguePlayoff,
   seedLeaguePlayoffBracket,
+  ensureMatchStats,
+  markLegacyMatchStats,
 } from "@/engine"
 import { useTeamsStore } from "../teams/store"
+import { usePlayersStore } from "../players/store"
 import { makeWithTournament, assertNoSliceCollisions } from "./store/helpers"
 import { useCrudActions } from "./store/crud"
 import { useBracketActions } from "./store/bracket"
@@ -27,12 +30,47 @@ import { useScoringActions } from "./store/scoring"
 export const useTournamentStore = defineStore("tournament", () => {
   const tournaments = ref<Tournament[]>([])
   const active = ref<string | null>(null)
+  /** Set once the pre-v2.2.0 archive has been stamped — see migrateLegacyMatchStats. */
+  const statsMigrated = ref(false)
 
   function getTeams() {
     return useTeamsStore().teams
   }
 
   const withTournament = makeWithTournament(tournaments)
+
+  /**
+   * Fill in match events for anything just played. Results are committed
+   * from a dozen actions across every slice, so rather than teach each one
+   * about players, every action is wrapped and the tournament it touched is
+   * swept afterwards. The sweep skips matches that already have stats, so
+   * the repeat cost is one pass over the match list.
+   */
+  function ensureStatsFor(tournamentId: string) {
+    const t = tournaments.value.find((x) => x.id === tournamentId)
+    if (!t) return
+    ensureMatchStats(t, getTeams(), usePlayersStore().players)
+  }
+
+  type ActionSlice = Record<string, (...args: never[]) => unknown>
+
+  /**
+   * Every slice action takes the tournament id first, so the wrapper knows
+   * what to sweep. Actions that take something else first (crud.create takes
+   * a name) simply find no tournament and sweep nothing — which is correct,
+   * since a tournament being created has no results yet.
+   */
+  function withStats<T extends ActionSlice>(slice: T): T {
+    const wrapped: ActionSlice = {}
+    for (const [name, action] of Object.entries(slice)) {
+      wrapped[name] = (...args: never[]) => {
+        const out = action(...args)
+        if (typeof args[0] === "string") ensureStatsFor(args[0])
+        return out
+      }
+    }
+    return wrapped as T
+  }
 
   const thirdPlace = useThirdPlaceActions(tournaments, getTeams)
   const crud = useCrudActions(tournaments, active, getTeams)
@@ -115,20 +153,34 @@ export const useTournamentStore = defineStore("tournament", () => {
 
       bracket.simulateAll(tournamentId)
     })
+    ensureStatsFor(tournamentId)
+  }
+
+  /**
+   * One-time upgrade pass: stamp every match already played before v2.2.0
+   * so the sweep never invents events for history the user played under the
+   * old engine. Runs after the persisted state has hydrated.
+   */
+  function migrateLegacyMatchStats() {
+    if (statsMigrated.value) return
+    tournaments.value.forEach(markLegacyMatchStats)
+    statsMigrated.value = true
   }
 
   return {
     tournaments,
     active,
-    ...crud,
-    ...bracket,
-    ...thirdPlace,
-    ...groups,
-    ...draw,
-    ...leagueActions,
-    ...leaguePlayoff,
-    ...scoring,
+    statsMigrated,
+    ...withStats(crud),
+    ...withStats(bracket),
+    ...withStats(thirdPlace),
+    ...withStats(groups),
+    ...withStats(draw),
+    ...withStats(leagueActions),
+    ...withStats(leaguePlayoff),
+    ...withStats(scoring),
     createMultiTierLeagueTournament,
     simulateTournament,
+    migrateLegacyMatchStats,
   }
 })
