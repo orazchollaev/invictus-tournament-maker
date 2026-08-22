@@ -1,9 +1,13 @@
 /* One leg of a two-legged tie. Lives in its own file because FixtureTieCard
-   draws the surrounding card and FixtureLegRow draws the row itself. */
+   draws the surrounding card and FixtureLegRow draws the row itself.
+
+   One line per leg: leg number, the two sides, the score between them. The
+   card header above already names both teams, so a leg does not repeat them
+   at full width — it only says which way round this one was played. */
 
 .leg {
   display: flex;
-  flex-direction: row;
+  align-items: stretch;
   border-bottom: 1px solid var(--border-light);
   font-size: var(--fs-sm);
 }
@@ -11,125 +15,116 @@
   border-bottom: none;
 }
 
+/* Leg 2 before leg 1 is entered. Readable, not invisible — you should still
+   be able to see who it is between. */
 .leg--locked {
-  opacity: 0.38;
+  opacity: 0.5;
   pointer-events: none;
 }
 
 .leg-open {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  padding: 0;
+  display: grid;
+  grid-template-columns: 22px 1fr auto 1fr;
+  align-items: center;
+  gap: var(--sp-2);
+  flex: 1;
+  min-width: 0;
+  padding: var(--sp-2) var(--sp-2) var(--sp-2) 0;
   border: none;
   background: transparent;
   font: inherit;
   color: inherit;
   text-align: start;
   cursor: pointer;
-  min-width: 0;
-  gap: 0;
 }
 .leg-open:disabled {
   cursor: default;
 }
-.leg-open:not(:disabled):hover .leg-scores,
-.leg-open:not(:disabled):focus-visible .leg-scores {
-  background: color-mix(in srgb, var(--accent) 8%, transparent);
+.leg-open:not(:disabled):hover {
+  background: var(--bg-hover);
 }
 .leg-open:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: -2px;
 }
 
-.leg-label {
-  height: 100%;
+/* Leg number reads as a marker, not as content — same weight as the round
+   labels elsewhere in the fixture list. */
+.leg-no {
+  align-self: stretch;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  flex-shrink: 0;
+  font-family: var(--font-mono);
   font-size: 9px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
+  font-weight: 700;
+  letter-spacing: 0.04em;
   color: var(--text-muted);
-  border-right: 1px solid var(--border-light);
   background: var(--bg);
+  border-inline-end: 1px solid var(--border-light);
 }
 
-.leg-teams {
-  flex: 1;
+.leg-side {
   min-width: 0;
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  transition: opacity var(--dur-fast) var(--ease);
+}
+.leg-side--home {
+  justify-content: flex-end;
+}
+/* The beaten side steps back rather than disappearing. */
+.leg-side.dim {
+  opacity: 0.5;
 }
 
-.leg-tr {
-  display: flex;
-  align-items: center;
-  height: 26px;
-  padding: 0 6px;
-  gap: 5px;
-  border-bottom: 1px solid var(--border-light);
-  overflow: hidden;
-  transition:
-    background var(--dur-fast) var(--ease),
-    opacity var(--dur-fast) var(--ease);
-}
-.leg-tr--away {
-  border-bottom: none;
-}
-.leg-tr.winner {
-  background: color-mix(in srgb, var(--success) 10%, var(--surface));
+.leg-score {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 3px;
+  flex-shrink: 0;
+  padding: 1px var(--sp-2);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--text-muted) 10%, var(--surface));
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  font-variant-numeric: tabular-nums;
   font-weight: 700;
 }
-.leg-tr.loser {
-  opacity: 0.45;
+.leg-score--tbd {
+  background: transparent;
+  color: var(--text-muted);
+  font-family: var(--font-ui);
+  font-weight: 400;
+  letter-spacing: 0.04em;
 }
 
-.leg-scores {
-  width: 52px;
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  border-left: 1px solid var(--border-light);
-  transition: background var(--dur-fast) var(--ease);
+.sc-half {
+  color: var(--text-muted);
+}
+/* Only the winning half carries full contrast, so the result is legible
+   before either number is read. */
+.sc-half.lead {
+  color: var(--text);
 }
 
-.leg-sc {
-  height: 26px;
+.sc-sep {
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+.leg-report {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 3px;
-  padding: 0 4px;
-  border-bottom: 1px solid var(--border-light);
-  box-sizing: border-box;
-  transition:
-    background var(--dur-fast) var(--ease),
-    opacity var(--dur-fast) var(--ease);
-}
-.leg-sc--away {
-  border-bottom: none;
-}
-.leg-sc.winner {
-  background: color-mix(in srgb, var(--success) 10%, var(--surface));
-}
-.leg-sc.loser {
-  opacity: 0.45;
+  padding-inline: var(--sp-2);
+  border-inline-start: 1px solid var(--border-light);
 }
 
-.leg-acts {
-  width: 28px;
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  padding: 0 4px;
-  border-left: 1px solid var(--border-light);
-  background: var(--bg);
-  box-sizing: border-box;
+@media (max-width: 380px) {
+  .leg-open {
+    gap: var(--sp-1);
+  }
+  .leg-report {
+    padding-inline: var(--sp-1);
+  }
 }

@@ -26,12 +26,7 @@ const emit = defineEmits<{
   "sim-leg1": [round: number, match: number]
   "sim-leg2": [round: number, match: number]
   "set-third-place-result": [home: number, away: number, penHome?: number, penAway?: number]
-  "set-third-place-leg2-result": [
-    home: number,
-    away: number,
-    penHome?: number,
-    penAway?: number,
-  ]
+  "set-third-place-leg2-result": [home: number, away: number, penHome?: number, penAway?: number]
   "clear-result": [round: number, match: number]
   "clear-leg2-result": [round: number, match: number]
   "clear-third-place-result": []
@@ -157,6 +152,7 @@ function simTieLeg(match: FlatMatch, leg: 1 | 2) {
       <template v-for="match in filteredMatches" :key="match.id">
         <FixtureTieCard
           v-if="match.leg2Result !== undefined"
+          class="fv-wide"
           :match="match"
           :teams="teams"
           @set-result="onSetTieResult"
@@ -228,6 +224,14 @@ function simTieLeg(match: FlatMatch, leg: 1 | 2) {
   grid-template-columns: 1fr 1fr;
   gap: 6px;
   padding: 0 0 8px 0;
+}
+
+/* A two-legged tie names both teams twice over and carries an aggregate
+   between them. In half a phone's width that leaves about 60px per name,
+   which is an ellipsis and nothing else — so a tie takes the full row and
+   the single-match cards keep pairing up beside each other. */
+.fv-grid .fv-wide {
+  grid-column: 1 / -1;
 }
 .fv-grid.solo {
   grid-template-columns: 1fr;

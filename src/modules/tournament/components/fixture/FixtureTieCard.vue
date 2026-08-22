@@ -4,10 +4,12 @@ import { getWinnerId } from "@/engine"
 import { teamAbbr } from "@/composables/useTeamLookup"
 import FlagCircle from "@/modules/teams/components/FlagCircle.vue"
 import { useSettingsStore } from "@/modules/settings/store"
+import { useI18n } from "vue-i18n"
 import FixtureLegRow from "./FixtureLegRow.vue"
 import type { FlatMatch } from "./types"
 
 const settings = useSettingsStore()
+const { t } = useI18n()
 
 const props = defineProps<{ match: FlatMatch; teams: Team[] }>()
 const emit = defineEmits<{
@@ -65,29 +67,41 @@ function onSim(leg: 1 | 2) {
 
 <template>
   <div class="tie-card">
-    <!-- Aggregate header -->
+    <!-- Who the tie is between, and where it stands on aggregate. The legs
+         below never repeat this at full width. -->
     <div class="tie-hd">
-      <div class="tie-hd-team">
+      <div
+        class="tie-hd-team"
+        :class="{ through: aggWinnerId(match) === match.homeId }"
+        :style="{ '--tc': getTeam(match.homeId)?.color ?? 'var(--border)' }"
+      >
         <FlagCircle
           v-if="getTeam(match.homeId)?.flag"
           :code="getTeam(match.homeId)!.flag!"
-          :size="14"
+          :size="16"
         />
         <span v-else class="cdot" :style="{ background: getTeam(match.homeId)?.color ?? '#ccc' }" />
         <span class="tie-hd-name">{{ getAbbr(match.homeId) }}</span>
       </div>
+
       <div class="tie-hd-center">
         <span v-if="aggLabel(match)" class="agg" :class="{ 'agg--decided': aggWinnerId(match) }">
           {{ aggLabel(match) }}
         </span>
-        <span v-else class="agg agg--tbd">agg</span>
+        <span v-else class="agg agg--tbd">–</span>
+        <span class="agg-label">{{ t("tournament.aggregate") }}</span>
       </div>
-      <div class="tie-hd-team tie-hd-team--r">
+
+      <div
+        class="tie-hd-team tie-hd-team--r"
+        :class="{ through: aggWinnerId(match) === match.awayId }"
+        :style="{ '--tc': getTeam(match.awayId)?.color ?? 'var(--border)' }"
+      >
         <span class="tie-hd-name">{{ getAbbr(match.awayId) }}</span>
         <FlagCircle
           v-if="getTeam(match.awayId)?.flag"
           :code="getTeam(match.awayId)!.flag!"
-          :size="14"
+          :size="16"
         />
         <span v-else class="cdot" :style="{ background: getTeam(match.awayId)?.color ?? '#ccc' }" />
       </div>
@@ -132,86 +146,79 @@ function onSim(leg: 1 | 2) {
   animation: fade-up var(--dur) var(--ease) both;
 }
 
+/* Names get the room here — the centre column is sized to the aggregate
+   score rather than taking a third of the card, which is what used to
+   squeeze both names into an ellipsis. */
 .tie-hd {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  gap: var(--sp-1);
-  padding: var(--sp-1);
+  gap: var(--sp-2);
+  padding: var(--sp-2);
   background: var(--bg);
   border-bottom: 1px solid var(--border-light);
 }
 
 .tie-hd-team {
-  flex: 1;
   display: flex;
   align-items: center;
-  gap: var(--sp-1);
-  font-size: var(--fs-xs);
-  font-weight: 700;
-  color: var(--text-muted);
-  flex-shrink: 0;
+  gap: var(--sp-2);
   min-width: 0;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--text);
 }
 .tie-hd-team--r {
   flex-direction: row-reverse;
 }
+/* The side that went through carries its club colour. */
+.tie-hd-team.through {
+  font-weight: 700;
+}
+.tie-hd-team.through .tie-hd-name {
+  color: var(--tc);
+}
+
 .tie-hd-name {
-  width: 100%;
+  min-width: 0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 90px;
 }
 
 .tie-hd-center {
-  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 1px;
-  min-width: 0;
+  flex-shrink: 0;
 }
 
 .agg {
-  font-family: var(--font-ui);
-  font-size: var(--fs-sm);
-  font-weight: 800;
+  font-family: var(--font-mono);
+  font-size: var(--fs-md);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
   color: var(--text);
-  letter-spacing: -0.02em;
   white-space: nowrap;
+  line-height: 1.1;
 }
 .agg--decided {
   color: var(--accent);
 }
 .agg--tbd {
+  color: var(--text-muted);
+  opacity: 0.6;
+}
+
+/* Says what the number is, once, instead of the placeholder having to. */
+.agg-label {
+  font-family: var(--font-ui);
   font-size: 9px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   color: var(--text-muted);
-  opacity: 0.5;
-}
-
-.tie-sim {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 22px;
-  height: 22px;
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius);
-  background: transparent;
-  color: var(--text-muted);
-  cursor: pointer;
-  flex-shrink: 0;
-  padding: 0;
-  transition:
-    color var(--dur-fast) var(--ease),
-    border-color var(--dur-fast) var(--ease);
-}
-.tie-sim:hover {
-  color: var(--accent);
-  border-color: var(--accent);
 }
 
 .tie-legs {
@@ -220,8 +227,12 @@ function onSim(leg: 1 | 2) {
 }
 
 /* ── Colour dot (fallback when a team has no flag) ── */
+/* Sized here rather than inherited — it had no dimensions at all before, so
+   a team without a flag showed nothing where its badge should be. */
 .cdot {
   display: inline-block;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   flex-shrink: 0;
   box-shadow: 0 0 0 1.5px rgba(0, 0, 0, 0.08);
