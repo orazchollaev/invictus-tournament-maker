@@ -2,9 +2,10 @@
 import { computed, nextTick, ref, watch } from "vue"
 import { DialogRoot, DialogPortal, DialogOverlay, DialogContent, DialogTitle } from "reka-ui"
 import { useI18n } from "vue-i18n"
-import { Shuffle, Trash2, X } from "@lucide/vue"
+import { ChartColumn, Shuffle, Trash2, X } from "@lucide/vue"
 import { AppNumberInput } from "@/components/ui"
 import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
+import MatchStatsModal from "./match-stats/MatchStatsModal.vue"
 import type { Team } from "@/modules/teams/types"
 import type { MatchResult } from "../types"
 import { MAX_GOALS } from "@/constants"
@@ -129,6 +130,11 @@ function clear() {
 function onKeydown(e: KeyboardEvent) {
   if (e.key === "Enter") save()
 }
+
+/* The report describes the result that was actually committed, so it is
+ * offered only for a saved score — never for digits still being typed. */
+const showStats = ref(false)
+const canShowStats = computed(() => !!props.result?.stats)
 </script>
 
 <template>
@@ -213,6 +219,15 @@ function onKeydown(e: KeyboardEvent) {
         </div>
 
         <div class="ms-footer">
+          <button
+            v-if="canShowStats"
+            class="ms-ghost ms-ghost--stats"
+            :title="t('matchStats.title')"
+            @click="showStats = true"
+          >
+            <ChartColumn :size="14" />
+            <span>{{ t("matchStats.buttonLabel") }}</span>
+          </button>
           <button v-if="canSimulate" class="ms-ghost" @click="simulate">
             <Shuffle :size="14" />
             <span>{{ t("matchScore.simulate") }}</span>
@@ -230,6 +245,15 @@ function onKeydown(e: KeyboardEvent) {
       </DialogContent>
     </DialogPortal>
   </DialogRoot>
+
+  <MatchStatsModal
+    v-if="showStats && result"
+    :home-team="homeTeam"
+    :away-team="awayTeam"
+    :result="result"
+    :subtitle="subtitle"
+    @close="showStats = false"
+  />
 </template>
 
 <style scoped>
@@ -462,6 +486,18 @@ function onKeydown(e: KeyboardEvent) {
   border-color: color-mix(in srgb, var(--danger) 40%, var(--border-light));
 }
 
+/* The match report is the new thing here, so it is the one footer button
+   that carries colour before it is hovered. */
+.ms-ghost--stats {
+  color: var(--accent);
+  border-color: color-mix(in srgb, var(--accent) 35%, var(--border-light));
+  background: var(--accent-subtle);
+}
+.ms-ghost--stats:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
 @media (max-width: 600px) {
   .ms-panel {
     top: auto;
@@ -481,7 +517,9 @@ function onKeydown(e: KeyboardEvent) {
   .ms-side {
     padding: var(--sp-3) var(--sp-3) var(--sp-3) var(--sp-4);
   }
-  .ms-ghost:nth-of-type(2) span {
+  /* Three ghost buttons do not fit a phone footer — the destructive one
+     keeps only its icon, which is unambiguous on its own. */
+  .ms-ghost--danger span {
     display: none;
   }
 }
