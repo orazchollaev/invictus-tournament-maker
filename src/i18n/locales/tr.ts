@@ -499,6 +499,7 @@ export default {
     specialThanks: "Özel teşekkürler",
   },
   tournament: {
+    aggregate: "Toplam",
     notFound: "Turnuva bulunamadı.",
     newSeason: "Yeni Sezon",
     simulateAll: "Tümünü Simüle Et",

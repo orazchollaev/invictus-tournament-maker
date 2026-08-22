@@ -500,6 +500,7 @@ export default {
     specialThanks: "Remerciements particuliers",
   },
   tournament: {
+    aggregate: "Cumul",
     notFound: "Tournoi introuvable.",
     newSeason: "Nouvelle saison",
     simulateAll: "Tout simuler",

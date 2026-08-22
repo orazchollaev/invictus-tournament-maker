@@ -497,6 +497,7 @@ export default {
     specialThanks: "Agradecimento especial",
   },
   tournament: {
+    aggregate: "Agregado",
     notFound: "Torneio não encontrado.",
     newSeason: "Nova temporada",
     simulateAll: "Simular tudo",

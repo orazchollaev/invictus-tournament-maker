@@ -497,6 +497,7 @@ export default {
     specialThanks: "Terima kasih khusus",
   },
   tournament: {
+    aggregate: "Agregat",
     notFound: "Turnamen tidak ditemukan.",
     newSeason: "Musim Baru",
     simulateAll: "Simulasikan Semua",

@@ -501,6 +501,7 @@ export default {
     specialThanks: "Besonderer Dank",
   },
   tournament: {
+    aggregate: "Gesamt",
     notFound: "Turnier nicht gefunden.",
     newSeason: "Neue Saison",
     simulateAll: "Alle simulieren",

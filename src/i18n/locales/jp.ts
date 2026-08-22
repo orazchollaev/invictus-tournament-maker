@@ -494,6 +494,7 @@ export default {
     specialThanks: "Special thanks",
   },
   tournament: {
+    aggregate: "合計",
     notFound: "大会が見つかりません。",
     newSeason: "新シーズン",
     simulateAll: "すべてシミュレート",

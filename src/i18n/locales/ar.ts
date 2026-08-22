@@ -494,6 +494,7 @@ export default {
     specialThanks: "شكر خاص",
   },
   tournament: {
+    aggregate: "المجموع",
     notFound: "البطولة غير موجودة.",
     newSeason: "موسم جديد",
     simulateAll: "محاكاة الكل",
