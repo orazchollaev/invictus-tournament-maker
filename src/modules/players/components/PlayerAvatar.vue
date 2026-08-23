@@ -7,21 +7,26 @@ const props = withDefaults(
     name: string
     color: string
     size?: number
+    number?: number | null
   }>(),
   { size: 28 }
 )
 
-const initial = computed(() => props.name.trim().charAt(0).toUpperCase() || "?")
+const initial = computed(() => props.number ?? (props.name.trim().charAt(0).toUpperCase() || "?"))
+
+// Two-digit numbers need to shrink a touch to keep clear of the circle edge.
+const fontScale = computed(() => (props.number != null && props.number >= 10 ? 0.34 : 0.42))
 </script>
 
 <template>
   <span
     class="player-avatar"
+    :class="{ 'player-avatar--number': number != null }"
     :style="{
       background: color,
       width: size + 'px',
       height: size + 'px',
-      fontSize: size * 0.42 + 'px',
+      fontSize: size * fontScale + 'px',
     }"
   >
     {{ initial }}
@@ -40,5 +45,9 @@ const initial = computed(() => props.name.trim().charAt(0).toUpperCase() || "?")
   font-family: var(--font-ui);
   text-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);
   box-shadow: 0 0 0 1.5px rgba(0, 0, 0, 0.15);
+}
+
+.player-avatar--number {
+  font-family: var(--font-mono);
 }
 </style>

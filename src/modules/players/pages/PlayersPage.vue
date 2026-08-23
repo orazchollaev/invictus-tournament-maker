@@ -105,6 +105,7 @@ const filtered = computed(() => {
             <PlayerAvatar
               :name="player.name"
               :color="teamOf(player)?.color ?? '#999'"
+              :number="player.number"
               :size="28"
               class="player-card-avatar"
             />

@@ -69,7 +69,12 @@ function submit() {
   >
     <div class="form" :style="{ '--player-color': selectedTeam?.color ?? '#999' }">
       <div class="preview">
-        <PlayerAvatar :name="name" :color="selectedTeam?.color ?? '#999'" :size="52" />
+        <PlayerAvatar
+          :name="name"
+          :color="selectedTeam?.color ?? '#999'"
+          :number="shirtNumber"
+          :size="52"
+        />
         <div class="preview-text">
           <p class="preview-name" :class="{ 'preview-name--empty': !name.trim() }">
             {{ name.trim() || t("players.form.namePlaceholder") }}
