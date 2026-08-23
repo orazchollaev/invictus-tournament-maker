@@ -205,10 +205,17 @@ export function useDataManagement() {
 
           const parsed = JSON.parse(text)
           if (typeof parsed !== "object" || parsed === null) throw new Error()
+          const importedKeys = Object.keys(parsed)
+            .filter((k) => k in IMPORT_KEY_MAP)
+            .map((k) => IMPORT_KEY_MAP[k])
           const writes = Object.keys(parsed)
             .filter((k) => k in IMPORT_KEY_MAP)
             .map((k) => idbStorage.setItem(IMPORT_KEY_MAP[k], JSON.stringify(parsed[k])))
           if (!writes.length) throw new Error()
+          // A backup with no players section still replaces the team roster —
+          // leaving the old squad in place would orphan it against team ids
+          // that no longer exist. Same rule loadDataset() already follows.
+          if (!importedKeys.includes("players")) writes.push(idbStorage.removeItem("players"))
           await Promise.all(writes)
           location.reload()
         } catch {
