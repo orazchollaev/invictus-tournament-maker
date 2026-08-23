@@ -1,5 +1,51 @@
 # Changelog
 
+## [2.2.0](https://github.com/orazchollaev/invictus-tournament-maker/compare/v2.1.0...v2.2.0) (2026-08-23)
+
+### 🚀 New Features
+
+- **engine:** add match event and stats generation ([e8df876](https://github.com/orazchollaev/invictus-tournament-maker/commit/e8df876f7322c74d072c4f76ed79f5a0f099547b))
+- **examples:** add invictus league dataset with squads ([8b90d00](https://github.com/orazchollaev/invictus-tournament-maker/commit/8b90d00ea86c5ba3d75aa60ce6ccb859e82d886a))
+- **history:** add all-time players tab ([ec23750](https://github.com/orazchollaev/invictus-tournament-maker/commit/ec2375081dc2f4d62a361d9ab4f626903105b382))
+- **i18n:** add aggregate and penalties tab strings ([093ad01](https://github.com/orazchollaev/invictus-tournament-maker/commit/093ad015827c0ccd451066020df288dfb783f0b2))
+- **i18n:** add match report and player stats strings ([f7a37a0](https://github.com/orazchollaev/invictus-tournament-maker/commit/f7a37a01c7c933034c7ecfa1fc5347f8c18f94a9))
+- **match-stats:** add match report modal ([10d0ad4](https://github.com/orazchollaev/invictus-tournament-maker/commit/10d0ad4c956037b2191e80cb8c59b7a62079bd7f))
+- **match-stats:** open report from match rows ([4061165](https://github.com/orazchollaev/invictus-tournament-maker/commit/4061165f0ffb9543f37ed224e6bd3c7077801904))
+- **players:** add player detail page ([81032e4](https://github.com/orazchollaev/invictus-tournament-maker/commit/81032e41d4b6401b6a41de96092d93b9e63e1884))
+- **players:** add shirt number and uid ids ([555faee](https://github.com/orazchollaev/invictus-tournament-maker/commit/555faeeb02b6875691c2aa015102d4c03fd3ea6b))
+- **players:** avatar shows shirt number, fallback initial ([6407947](https://github.com/orazchollaev/invictus-tournament-maker/commit/640794739a05440968e4ba621b58fb36e07663f6))
+- **players:** number picker modal for shirt number ([ad25432](https://github.com/orazchollaev/invictus-tournament-maker/commit/ad254326f6f0308aaca2fdb805b60e30d5d49d4d))
+- **stats:** split stats tab into team and player ([1f545fd](https://github.com/orazchollaev/invictus-tournament-maker/commit/1f545fde75abaa683fa89982f7730881dfb42f72))
+- **tournament:** generate match stats on every result ([ffe2fcb](https://github.com/orazchollaev/invictus-tournament-maker/commit/ffe2fcb9cbce3138a273736b4937cca05d5e355b))
+- **ui:** add AppStatBar comparison bar ([481b4c4](https://github.com/orazchollaev/invictus-tournament-maker/commit/481b4c46897b1f9e33ebe24bae637e3f32d18247))
+
+### 🐛 Bug Fixes
+
+- **fixtures:** redesign two-legged tie card for narrow screens ([5d59ee8](https://github.com/orazchollaev/invictus-tournament-maker/commit/5d59ee8063ca61139f8dd41815baa348ecab8b65))
+- **settings:** clear stale players when import backup lacks players section ([8d942a9](https://github.com/orazchollaev/invictus-tournament-maker/commit/8d942a91aae364123503f6b98d2c655b30a56dd8))
+- **teams:** use uid instead of timestamp for team ids ([5932a04](https://github.com/orazchollaev/invictus-tournament-maker/commit/5932a0451a86d8877b3ebe65fc127a7c3e68e183))
+
+### ♻️ Refactoring
+
+- **teams:** swiper tabs on team detail page, drop card wrappers and color-wash overlay ([74260ae](https://github.com/orazchollaev/invictus-tournament-maker/commit/74260ae8039e9e5ae54f9266363ce5f5cbe9eb74))
+
+### 🔧 Maintenance
+
+- **gradle:** change gradle version ([dea48c1](https://github.com/orazchollaev/invictus-tournament-maker/commit/dea48c188f5bdd8c14ac130e3aa7afa10c09d92e))
+- **release-it:** change config ([6a9c089](https://github.com/orazchollaev/invictus-tournament-maker/commit/6a9c089c75ec2f0cc993ca013e7132aadc2a51e1))
+
+### 📚 Documentation
+
+- player match events design spec ([3778d53](https://github.com/orazchollaev/invictus-tournament-maker/commit/3778d53fbb1be8b947831679ac88ac4058c3e170))
+
+### 🎨 Styles
+
+- **match-stats:** enlarge team names in report header ([9254954](https://github.com/orazchollaev/invictus-tournament-maker/commit/9254954c973dabd73fa45e76214a4381ae294c04))
+
+### ✅ Tests
+
+- **engine:** cover match event engine ([9b94a0c](https://github.com/orazchollaev/invictus-tournament-maker/commit/9b94a0c00b8a0a8c827e5553f3083116f7cde25d))
+
 # [2.1.0](https://github.com/orazchollaev/invictus-tournament-maker/compare/v2.0.0...v2.1.0) (2026-08-18)
 
 ### Features
