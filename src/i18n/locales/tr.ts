@@ -229,6 +229,8 @@ export default {
     form: {
       number: "Numara",
       numberPlaceholder: "—",
+      numberPickerTitle: "Forma Numarası Seç",
+      numberClear: "Numara Yok",
       addTitle: "Oyuncu Ekle",
       editTitle: "Oyuncuyu Düzenle",
       name: "Ad",

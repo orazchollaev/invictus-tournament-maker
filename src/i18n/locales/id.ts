@@ -227,6 +227,8 @@ export default {
     form: {
       number: "Nomor",
       numberPlaceholder: "—",
+      numberPickerTitle: "Pilih Nomor Punggung",
+      numberClear: "Tanpa nomor",
       addTitle: "Tambah Pemain",
       editTitle: "Edit Pemain",
       name: "Nama",

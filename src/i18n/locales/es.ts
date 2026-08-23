@@ -228,6 +228,8 @@ export default {
     form: {
       number: "Dorsal",
       numberPlaceholder: "—",
+      numberPickerTitle: "Seleccionar dorsal",
+      numberClear: "Sin número",
       addTitle: "Añadir jugador",
       editTitle: "Editar jugador",
       name: "Nombre",

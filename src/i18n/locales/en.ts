@@ -227,6 +227,8 @@ export default {
     form: {
       number: "Number",
       numberPlaceholder: "—",
+      numberPickerTitle: "Select Shirt Number",
+      numberClear: "No number",
       addTitle: "Add Player",
       editTitle: "Edit Player",
       name: "Name",

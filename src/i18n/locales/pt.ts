@@ -227,6 +227,8 @@ export default {
     form: {
       number: "Número",
       numberPlaceholder: "—",
+      numberPickerTitle: "Selecionar número",
+      numberClear: "Sem número",
       addTitle: "Adicionar Jogador",
       editTitle: "Editar Jogador",
       name: "Nome",

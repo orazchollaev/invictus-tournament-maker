@@ -225,6 +225,8 @@ export default {
     form: {
       number: "背番号",
       numberPlaceholder: "—",
+      numberPickerTitle: "背番号を選択",
+      numberClear: "番号なし",
       addTitle: "選手を追加",
       editTitle: "選手を編集",
       name: "名前",

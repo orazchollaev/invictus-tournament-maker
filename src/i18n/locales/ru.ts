@@ -229,6 +229,8 @@ export default {
     form: {
       number: "Номер",
       numberPlaceholder: "—",
+      numberPickerTitle: "Выберите номер",
+      numberClear: "Без номера",
       addTitle: "Добавить игрока",
       editTitle: "Редактировать игрока",
       name: "Имя",

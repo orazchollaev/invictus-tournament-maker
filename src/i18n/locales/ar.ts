@@ -227,6 +227,8 @@ export default {
     form: {
       number: "الرقم",
       numberPlaceholder: "—",
+      numberPickerTitle: "اختر الرقم",
+      numberClear: "بلا رقم",
       addTitle: "إضافة لاعب",
       editTitle: "تعديل اللاعب",
       name: "الاسم",

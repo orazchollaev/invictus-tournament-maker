@@ -3,6 +3,7 @@ import { ref, computed } from "vue"
 import { AppButton, AppField, AppIcon, AppModal, AppSelect } from "@/components/ui"
 import PlayerAvatar from "./PlayerAvatar.vue"
 import TeamSelect from "./TeamSelect.vue"
+import NumberPickerModal from "./NumberPickerModal.vue"
 import { usePlayersStore } from "../store"
 import { useTeamsStore } from "@/modules/teams/store"
 import { useModal } from "@/composables/useModal"
@@ -117,15 +118,9 @@ function submit() {
           </AppField>
 
           <AppField layout="stack" :label="t('players.form.number')">
-            <input
-              v-model.number="shirtNumber"
-              class="input-full"
-              type="number"
-              min="1"
-              max="99"
-              inputmode="numeric"
+            <NumberPickerModal
+              v-model="shirtNumber"
               :placeholder="t('players.form.numberPlaceholder')"
-              @keyup.enter="submit"
             />
           </AppField>
         </div>

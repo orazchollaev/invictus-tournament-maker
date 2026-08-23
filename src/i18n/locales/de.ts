@@ -231,6 +231,8 @@ export default {
     form: {
       number: "Nummer",
       numberPlaceholder: "—",
+      numberPickerTitle: "Trikotnummer wählen",
+      numberClear: "Keine Nummer",
       addTitle: "Spieler hinzufügen",
       editTitle: "Spieler bearbeiten",
       name: "Name",
