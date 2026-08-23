@@ -180,6 +180,10 @@ export default {
       randomName: "Nom aléatoire",
     },
     detail: {
+      tabs: {
+        overview: "Aperçu",
+        matches: "Matchs",
+      },
       powerRating: "Indice de puissance",
       allStats: "Toutes les statistiques",
       played: "Joués",

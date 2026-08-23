@@ -3,7 +3,7 @@
  * inline add/edit/remove, reusing the players module's own store/modal. */
 import { ref, computed } from "vue"
 import { useI18n } from "vue-i18n"
-import { AppButton, AppCard, AppChip, AppIcon } from "@/components/ui"
+import { AppButton, AppChip, AppIcon, AppSectionHeader } from "@/components/ui"
 import { Pencil, Plus, X } from "@lucide/vue"
 import { usePlayersStore } from "@/modules/players/store"
 import PlayerAvatar from "@/modules/players/components/PlayerAvatar.vue"
@@ -22,17 +22,16 @@ const editingPlayer = ref<Player | null>(null)
 </script>
 
 <template>
-  <AppCard>
-    <template #title>
-      {{ t("players.squadTitle") }}
-      <span class="count">({{ squad.length }})</span>
-    </template>
-    <template #actions>
-      <AppButton variant="text" size="xs" @click="showAddModal = true">
-        <AppIcon :icon="Plus" size="xs" />
-        {{ t("players.addBtn") }}
-      </AppButton>
-    </template>
+  <div class="section">
+    <AppSectionHeader :title="t('players.squadTitle')">
+      <template #actions>
+        <span class="count">{{ squad.length }}</span>
+        <AppButton variant="text" size="xs" @click="showAddModal = true">
+          <AppIcon :icon="Plus" size="xs" />
+          {{ t("players.addBtn") }}
+        </AppButton>
+      </template>
+    </AppSectionHeader>
 
     <div v-if="squad.length" class="squad-list">
       <div v-for="p in squad" :key="p.id" class="squad-row">
@@ -73,15 +72,16 @@ const editingPlayer = ref<Player | null>(null)
 
     <PlayerFormModal v-if="showAddModal" :team-id="teamId" @close="showAddModal = false" />
     <PlayerFormModal v-if="editingPlayer" :player="editingPlayer" @close="editingPlayer = null" />
-  </AppCard>
+  </div>
 </template>
 
 <style scoped>
 .count {
-  font-size: var(--fs-sm);
+  font-size: var(--fs-xs);
   font-weight: 400;
+  text-transform: none;
+  letter-spacing: normal;
   color: var(--text-muted);
-  margin-inline-start: var(--sp-1);
 }
 
 .squad-row {

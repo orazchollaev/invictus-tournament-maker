@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n"
-import { AppCard } from "@/components/ui"
+import { AppSectionHeader } from "@/components/ui"
 import type { MatchRow } from "../../composables/useTeamMatchHistory"
 
 defineProps<{
@@ -12,37 +12,52 @@ const { t } = useI18n()
 </script>
 
 <template>
-  <AppCard padding="md">
-    <template #title>
-      {{ t("teams.detail.recentForm") }}
-      <span class="count">({{ t("teams.detail.last5") }})</span>
-    </template>
+  <div class="section">
+    <AppSectionHeader :title="t('teams.detail.recentForm')">
+      <template #actions>
+        <span class="count">{{ t("teams.detail.last5") }}</span>
+      </template>
+    </AppSectionHeader>
 
-    <div class="form-row">
-      <div
-        v-for="(m, i) in form"
-        :key="i"
-        class="form-bubble"
-        :class="`form-bubble--${m.outcome.toLowerCase()}`"
-        :title="`${m.outcome} vs ${getTeamName(m.opponentId)} ${m.goalsFor}–${m.goalsAgainst}${m.penGoalsFor !== null ? ` (pen. ${m.penGoalsFor}–${m.penGoalsAgainst})` : ''}`"
-      >
-        {{ m.outcome }}
+    <div class="section-body">
+      <div class="form-row">
+        <div
+          v-for="(m, i) in form"
+          :key="i"
+          class="form-bubble"
+          :class="`form-bubble--${m.outcome.toLowerCase()}`"
+          :title="`${m.outcome} vs ${getTeamName(m.opponentId)} ${m.goalsFor}–${m.goalsAgainst}${m.penGoalsFor !== null ? ` (pen. ${m.penGoalsFor}–${m.penGoalsAgainst})` : ''}`"
+        >
+          {{ m.outcome }}
+        </div>
+      </div>
+
+      <div class="form-labels">
+        <span v-for="(m, i) in form" :key="i" class="form-label">
+          {{ m.goalsFor }}–{{ m.goalsAgainst }}
+          <template v-if="m.penGoalsFor !== null">
+            <br />
+            <span class="pen-tag">p.</span>
+          </template>
+        </span>
       </div>
     </div>
-
-    <div class="form-labels">
-      <span v-for="(m, i) in form" :key="i" class="form-label">
-        {{ m.goalsFor }}–{{ m.goalsAgainst }}
-        <template v-if="m.penGoalsFor !== null">
-          <br />
-          <span class="pen-tag">p.</span>
-        </template>
-      </span>
-    </div>
-  </AppCard>
+  </div>
 </template>
 
 <style scoped>
+.section-body {
+  padding: var(--sp-3) var(--sp-4);
+}
+
+.count {
+  font-size: var(--fs-xs);
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: normal;
+  color: var(--text-muted);
+}
+
 .form-row {
   display: flex;
   align-items: center;

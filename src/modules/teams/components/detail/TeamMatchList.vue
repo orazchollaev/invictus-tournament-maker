@@ -1,11 +1,12 @@
 <script setup lang="ts">
+import { computed } from "vue"
 import { useI18n } from "vue-i18n"
-import { AppCard } from "@/components/ui"
+import { AppSectionHeader, AppSelect } from "@/components/ui"
 import TeamBadge from "../TeamBadge.vue"
 import type { Team } from "../../types"
 import type { MatchRow, RoundPhase } from "../../composables/useTeamMatchHistory"
 
-defineProps<{
+const props = defineProps<{
   matches: MatchRow[]
   teams: Team[]
   tournamentOptions: { key: string; label: string }[]
@@ -15,24 +16,27 @@ const selected = defineModel<string>("selected", { required: true })
 
 const { t } = useI18n()
 
+const tournamentSelectOptions = computed(() => [
+  { value: "all", label: t("teams.detail.allTournaments") },
+  ...props.tournamentOptions.map((opt) => ({ value: opt.key, label: opt.label })),
+])
+
 const PHASE_LABEL: Record<RoundPhase, string> = { group: "GS", league: "LG", knockout: "KO" }
 </script>
 
 <template>
-  <AppCard>
-    <template #title>
-      {{ t("teams.detail.matchHistory") }}
-      <span class="count">{{ t("teams.detail.matchCount", { n: matches.length }) }}</span>
-    </template>
-
-    <template v-if="tournamentOptions.length > 1" #actions>
-      <select v-model="selected" class="tour-select">
-        <option value="all">{{ t("teams.detail.allTournaments") }}</option>
-        <option v-for="opt in tournamentOptions" :key="opt.key" :value="opt.key">
-          {{ opt.label }}
-        </option>
-      </select>
-    </template>
+  <div class="section">
+    <AppSectionHeader :title="t('teams.detail.matchHistory')">
+      <template #actions>
+        <span class="count">{{ t("teams.detail.matchCount", { n: matches.length }) }}</span>
+        <AppSelect
+          v-if="tournamentOptions.length > 1"
+          v-model="selected"
+          class="tour-select"
+          :options="tournamentSelectOptions"
+        />
+      </template>
+    </AppSectionHeader>
 
     <div v-if="matches.length" class="match-list">
       <div v-for="(m, i) in matches" :key="i" class="match-row">
@@ -69,26 +73,25 @@ const PHASE_LABEL: Record<RoundPhase, string> = { group: "GS", league: "LG", kno
           : t("teams.detail.noMatchesTournament")
       }}
     </p>
-  </AppCard>
+  </div>
 </template>
 
 <style scoped>
-.tour-select {
-  font-size: var(--fs-sm);
-  font-family: var(--font-ui);
-  color: var(--text);
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 2px var(--sp-2);
-  cursor: pointer;
+.count {
+  font-size: var(--fs-xs);
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: normal;
+  color: var(--text-muted);
 }
-.tour-select:focus {
-  border-color: var(--accent);
+
+/* Narrow trigger — this select only ever needs to fit a tournament name. */
+.tour-select {
+  width: auto;
+  min-width: 140px;
 }
 
 .match-list {
-  max-height: 420px;
   overflow-y: auto;
 }
 

@@ -178,6 +178,10 @@ export default {
       randomName: "Nama acak",
     },
     detail: {
+      tabs: {
+        overview: "Ikhtisar",
+        matches: "Pertandingan",
+      },
       powerRating: "Peringkat kekuatan",
       allStats: "Semua Statistik",
       played: "Main",

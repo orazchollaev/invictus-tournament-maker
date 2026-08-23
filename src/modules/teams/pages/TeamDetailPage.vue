@@ -2,11 +2,21 @@
 import { computed, ref } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import { useI18n } from "vue-i18n"
+import { Swiper, SwiperSlide } from "swiper/vue"
+import "swiper/css"
+import { ArrowLeft, BarChart3, CalendarDays, Users } from "@lucide/vue"
 import { useTeamsStore } from "../store"
 import { useTournamentStore } from "@/modules/tournament/store"
 import { useTeamLookup } from "@/composables/useTeamLookup"
-import { AppButton, AppCard, AppEmptyState, AppIcon } from "@/components/ui"
-import { ArrowLeft } from "@lucide/vue"
+import {
+  AppButton,
+  AppCard,
+  AppEmptyState,
+  AppIcon,
+  AppSectionHeader,
+  AppTab,
+  AppTabs,
+} from "@/components/ui"
 import SeasonChart from "../components/SeasonChart.vue"
 import {
   TeamFormRow,
@@ -17,7 +27,7 @@ import {
   TeamTrophyList,
 } from "../components/detail"
 import { useTeamMatchHistory } from "../composables/useTeamMatchHistory"
-import { useTeamColorOverlay } from "../composables/useTeamColorOverlay"
+import { useTeamDetailTabs, type TeamTab } from "../composables/useTeamDetailTabs"
 
 const route = useRoute()
 const router = useRouter()
@@ -28,8 +38,6 @@ const { getTeamName } = useTeamLookup(() => teamsStore.teams)
 
 const teamId = computed(() => route.params.id as string)
 const team = computed(() => teamsStore.teams.find((t) => t.id === teamId.value))
-
-useTeamColorOverlay(team)
 
 const { matches, stats, recentForm, tournamentOptions, seasonStats } = useTeamMatchHistory(
   computed(() => tournamentStore.tournaments),
@@ -49,6 +57,21 @@ const filteredMatches = computed(() => {
     (m) => m.tournamentName === name && m.tournamentSeason === Number(season)
   )
 })
+
+const {
+  activeTab,
+  changeTab,
+  visibleTabs,
+  activeIndex,
+  isTabRendered,
+  onSwiperReady,
+  onSlideChange,
+} = useTeamDetailTabs()
+
+const tabValue = computed({
+  get: () => activeTab.value,
+  set: (v) => changeTab(v as TeamTab),
+})
 </script>
 
 <template>
@@ -67,38 +90,122 @@ const filteredMatches = computed(() => {
     <div v-else class="stack" :style="{ '--rail-color': team.color }">
       <TeamHeaderCard :team="team" @back="router.back()" />
 
-      <TeamStatsGrid :stats="stats" :titles="tournamentWins.length" />
+      <AppTabs v-model="tabValue">
+        <AppTab value="overview">
+          <AppIcon :icon="BarChart3" />
+          {{ t("teams.detail.tabs.overview") }}
+        </AppTab>
+        <AppTab value="squad">
+          <AppIcon :icon="Users" />
+          {{ t("players.squadTitle") }}
+        </AppTab>
+        <AppTab value="matches">
+          <AppIcon :icon="CalendarDays" />
+          {{ t("teams.detail.tabs.matches") }}
+        </AppTab>
+      </AppTabs>
 
-      <TeamSquadCard :team-id="team.id" :team-color="team.color" />
+      <div class="tab-surface">
+        <Swiper
+          :initial-slide="activeIndex"
+          :auto-height="true"
+          :speed="300"
+          :threshold="10"
+          :space-between="10"
+          css-mode
+          @swiper="onSwiperReady"
+          @slide-change="onSlideChange"
+        >
+          <SwiperSlide v-for="tab in visibleTabs" :key="tab">
+            <template v-if="isTabRendered(tab)">
+              <div v-if="tab === 'overview'" class="tab-panel">
+                <TeamStatsGrid :stats="stats" :titles="tournamentWins.length" />
 
-      <TeamFormRow v-if="matches.length" :form="recentForm" :get-team-name="getTeamName" />
+                <TeamFormRow
+                  v-if="matches.length"
+                  :form="recentForm"
+                  :get-team-name="getTeamName"
+                />
 
-      <AppCard v-if="seasonStats.length >= 1" padding="md">
-        <template #title>
-          {{ t("teams.detail.seasonHistory") }}
-          <span class="count">
-            ({{ seasonStats.length }}
-            {{ seasonStats.length === 1 ? t("common.season", 1) : t("common.season", 2) }})
-          </span>
-        </template>
-        <SeasonChart :stats="seasonStats" />
-      </AppCard>
+                <div v-if="seasonStats.length >= 1" class="section">
+                  <AppSectionHeader :title="t('teams.detail.seasonHistory')">
+                    <template #actions>
+                      <span class="count">
+                        {{ seasonStats.length }}
+                        {{
+                          seasonStats.length === 1 ? t("common.season", 1) : t("common.season", 2)
+                        }}
+                      </span>
+                    </template>
+                  </AppSectionHeader>
+                  <div class="section-body">
+                    <SeasonChart :stats="seasonStats" />
+                  </div>
+                </div>
 
-      <TeamTrophyList v-if="tournamentWins.length" :wins="tournamentWins" />
+                <TeamTrophyList v-if="tournamentWins.length" :wins="tournamentWins" />
+              </div>
 
-      <TeamMatchList
-        v-model:selected="selectedTournamentKey"
-        :matches="filteredMatches"
-        :teams="teamsStore.teams"
-        :tournament-options="tournamentOptions"
-      />
+              <div v-else-if="tab === 'squad'" class="tab-panel tab-panel--flush">
+                <TeamSquadCard :team-id="team.id" :team-color="team.color" />
+              </div>
+
+              <div v-else class="tab-panel tab-panel--flush">
+                <TeamMatchList
+                  v-model:selected="selectedTournamentKey"
+                  :matches="filteredMatches"
+                  :teams="teamsStore.teams"
+                  :tournament-options="tournamentOptions"
+                />
+              </div>
+            </template>
+          </SwiperSlide>
+        </Swiper>
+      </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-/* Every card header on this page picks up the team's colour. */
-.stack :deep(.card-header) {
-  border-left-color: var(--rail-color, var(--accent));
+.tab-surface {
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  overflow: hidden;
+}
+
+.tab-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  min-width: 0;
+  padding: var(--sp-3);
+}
+
+.tab-panel--flush {
+  padding: 0;
+}
+
+.section-body {
+  padding: var(--sp-3) var(--sp-4);
+}
+
+.count {
+  font-size: var(--fs-xs);
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: normal;
+  color: var(--text-muted);
+}
+
+@media (max-width: 600px) {
+  .page {
+    padding-bottom: 40px;
+  }
+
+  .tab-panel {
+    padding: var(--sp-2);
+    gap: var(--sp-2);
+  }
 }
 </style>

@@ -182,6 +182,10 @@ export default {
       randomName: "Zufälliger Name",
     },
     detail: {
+      tabs: {
+        overview: "Übersicht",
+        matches: "Spiele",
+      },
       powerRating: "Stärkebewertung",
       allStats: "Alle Statistiken",
       played: "Spiele",

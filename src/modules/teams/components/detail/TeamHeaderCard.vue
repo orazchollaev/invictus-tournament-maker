@@ -11,8 +11,6 @@ defineEmits<{ back: [] }>()
 
 const { t } = useI18n()
 
-// A custom crest URL can go dead; fall back to the plain dot instead of a
-// broken-image icon, same behaviour as TeamBadge.
 const imgError = ref(false)
 watch(
   () => props.team.image,
@@ -42,8 +40,8 @@ watch(
         v-else
         class="team-dot"
         :style="{
+          '--dot-color': team?.color ?? '#ccc',
           background: team.color,
-          boxShadow: `0 0 10px color-mix(in srgb, ${team.color} 55%, transparent)`,
         }"
       />
 
@@ -80,6 +78,9 @@ watch(
   width: 40px;
   height: 40px;
   border-radius: 50%;
+  border-width: 4px;
+  border-style: solid;
+  border-color: color-mix(in srgb, var(--dot-color) 65%, #000);
 }
 
 .team-image {

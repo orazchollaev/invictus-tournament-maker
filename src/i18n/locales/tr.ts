@@ -180,6 +180,10 @@ export default {
       randomName: "Rastgele isim",
     },
     detail: {
+      tabs: {
+        overview: "Genel Bakış",
+        matches: "Maçlar",
+      },
       powerRating: "Güç derecesi",
       allStats: "Tüm İstatistikler",
       played: "Oynanan",

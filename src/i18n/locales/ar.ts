@@ -178,6 +178,10 @@ export default {
       randomName: "اسم عشوائي",
     },
     detail: {
+      tabs: {
+        overview: "نظرة عامة",
+        matches: "المباريات",
+      },
       powerRating: "تقييم القوة",
       allStats: "كل الإحصاءات",
       played: "لعب",

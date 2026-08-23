@@ -1,13 +1,4 @@
 <script setup lang="ts">
-/**
- * The uppercase muted label with a 3px accent rule. Existed as four
- * separate copies (`.section-box h2`, `.stats-panel-header`,
- * `.chart-header`, `.srp-card-title`) with four different paddings —
- * plus `.gs-group-header`, which the tournament group cards carried.
- *
- * `AppCard` renders this internally when given a `title`; use this
- * component directly only when the header sits outside a card.
- */
 defineProps<{
   title?: string
 }>()
@@ -33,9 +24,9 @@ defineProps<{
   gap: var(--sp-2);
   padding: var(--sp-3) var(--sp-4);
   background: var(--bg);
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
 }
 
-/* Flex, because titles routinely carry a leading icon alongside the label. */
 .section-header-title {
   display: flex;
   align-items: center;

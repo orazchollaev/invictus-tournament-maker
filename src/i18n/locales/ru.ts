@@ -180,6 +180,10 @@ export default {
       randomName: "Случайное название",
     },
     detail: {
+      tabs: {
+        overview: "Обзор",
+        matches: "Матчи",
+      },
       powerRating: "Рейтинг силы",
       allStats: "Общая статистика",
       played: "Сыграно",

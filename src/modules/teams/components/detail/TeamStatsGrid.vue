@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Trophy } from "@lucide/vue"
 import { useI18n } from "vue-i18n"
-import { AppCard } from "@/components/ui"
+import { AppSectionHeader } from "@/components/ui"
 
 defineProps<{
   stats: {
@@ -20,7 +20,8 @@ const { t } = useI18n()
 </script>
 
 <template>
-  <AppCard padding="md" :title="t('teams.detail.allStats')">
+  <div class="section">
+    <AppSectionHeader :title="t('teams.detail.allStats')" />
     <div class="stats-grid">
       <div class="stat-cell">
         <span class="stat-value">{{ stats.played }}</span>
@@ -59,14 +60,13 @@ const { t } = useI18n()
         <span class="stat-label">{{ t("teams.detail.titles") }}</span>
       </div>
     </div>
-  </AppCard>
+  </div>
 </template>
 
 <style scoped>
 .stats-grid {
   display: flex;
   flex-wrap: wrap;
-  border: 1px solid var(--border-light);
 }
 
 .stat-cell {

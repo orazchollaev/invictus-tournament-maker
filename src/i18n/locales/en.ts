@@ -178,6 +178,10 @@ export default {
       randomName: "Random name",
     },
     detail: {
+      tabs: {
+        overview: "Overview",
+        matches: "Matches",
+      },
       powerRating: "Power rating",
       allStats: "All Statistics",
       played: "Played",

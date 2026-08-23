@@ -176,6 +176,10 @@ export default {
       randomName: "ランダムな名前",
     },
     detail: {
+      tabs: {
+        overview: "概要",
+        matches: "試合",
+      },
       powerRating: "総合力",
       allStats: "全スタッツ",
       played: "試合数",

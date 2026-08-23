@@ -179,6 +179,10 @@ export default {
       randomName: "Nombre aleatorio",
     },
     detail: {
+      tabs: {
+        overview: "Resumen",
+        matches: "Partidos",
+      },
       powerRating: "Índice de poder",
       allStats: "Todas las estadísticas",
       played: "Jugados",
