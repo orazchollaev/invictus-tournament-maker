@@ -24,7 +24,10 @@ export type CeremonySpeed = "normal" | "fast"
 // pots are locked: editing is disabled, validation is skipped, and the reveal
 // always replays the supplied plan instead of computing one from the pots.
 export function useDrawCeremony(ctx: CeremonyContext, initialPots?: Pot[], fixedPlan?: DrawPlan) {
-  const locked = !!fixedPlan
+  // Swiss pots come straight from the configured pot count and every team is
+  // drawn exactly once, so there is nothing for the user to edit — same as a
+  // fixed plan.
+  const locked = !!fixedPlan || ctx.kind === "swiss"
   let basePots: Pot[] = (initialPots ?? buildPots(ctx)).map((p) => ({
     label: p.label,
     teamIds: [...p.teamIds],

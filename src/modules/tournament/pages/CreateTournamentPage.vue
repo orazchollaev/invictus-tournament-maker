@@ -19,23 +19,26 @@ import type {
   PlayoffSeedMode,
   Tiebreaker,
   LeaguePlayoffSeedMode,
+  TournamentFormat,
 } from "@/modules/tournament/types"
 import {
   CreateFormatSelector,
   CreateGroupConfigModal,
   CreateKnockoutConfigModal,
   CreateLeagueConfigModal,
+  CreateSwissConfigModal,
 } from "../components/create"
 import type { GroupConfigPayload } from "../components/create/CreateGroupConfigModal.vue"
 import type { KnockoutConfigPayload } from "../components/create/CreateKnockoutConfigModal.vue"
 import type { LeagueConfigPayload } from "../components/create/CreateLeagueConfigModal.vue"
+import type { SwissConfigPayload } from "../components/create/CreateSwissConfigModal.vue"
+import { randomSeed, validateSwissConfig } from "@/engine"
 import { SettingsTeamAdjustments } from "../components/settings"
 import { AppButton, AppConfigButton, AppIcon } from "@/components/ui"
 import { useI18n } from "vue-i18n"
 import { logEvent } from "@/composables/useAnalytics"
 
 type DrawType = "random" | "seeded" | "manual"
-type TournamentFormat = "bracket" | "group+bracket" | "league"
 
 const router = useRouter()
 const teamsStore = useTeamsStore()
@@ -53,6 +56,9 @@ const wildcardCount = ref(0)
 const showManualDraw = ref(false)
 const showCeremony = ref(false)
 const ceremonyContext = ref<CeremonyContext | null>(null)
+// Picked when a Swiss ceremony opens so the animated reveal and the fixture
+// that gets committed on completion come from one seed; cleared after create.
+const pendingSwissSeed = ref<number | null>(null)
 const hasThirdPlace = ref(false)
 const playoffSeedMode = ref<PlayoffSeedMode>(settingsStore.newSeasonPlayoffSeedMode)
 const groupLegMode = ref<LegMode>(settingsStore.groupLegMode)
@@ -66,6 +72,12 @@ const roundLegModes = ref<Record<KnockoutStage, LegMode>>(
 const thirdPlaceLegMode = ref<LegMode>(settingsStore.knockoutLegMode)
 const finalLegMode = ref<LegMode>(settingsStore.finalLegMode)
 const leagueLegMode = ref<LegMode>("single")
+// Swiss defaults mirror the Champions League league phase.
+const swissOpponentCount = ref(8)
+const swissPotCount = ref(4)
+const swissLegMode = ref<LegMode>("single")
+const swissBalanceHomeAway = ref(true)
+const swissDrawType = ref<"random" | "seeded">("seeded")
 const tiebreaker = ref<Tiebreaker>(settingsStore.tiebreaker)
 const winPoints = ref(settingsStore.winPoints)
 const drawPoints = ref(settingsStore.drawPoints)
@@ -84,7 +96,20 @@ const { success: hapticSuccess } = useHaptic()
 
 const allTeams = computed(() => teamsStore.teams)
 const selectedTeams = computed(() => allTeams.value.filter((t) => selected.value.includes(t.id)))
-const canCreate = computed(() => !!name.value.trim() && selected.value.length >= 2)
+// Swiss is the one format whose settings can describe an impossible fixture,
+// so creation stays blocked until the shape validates.
+const swissErrors = computed(() =>
+  format.value === "swiss"
+    ? validateSwissConfig(
+        selectedTeams.value.length,
+        swissOpponentCount.value,
+        swissDrawType.value === "seeded" ? swissPotCount.value : 1
+      )
+    : []
+)
+const canCreate = computed(
+  () => !!name.value.trim() && selected.value.length >= 2 && swissErrors.value.length === 0
+)
 const showAdjustments = ref(false)
 
 // Phase configuration modals — opened from the AppConfigButton rows below the
@@ -94,6 +119,7 @@ const showAdjustments = ref(false)
 const showGroupModal = ref(false)
 const showKnockoutModal = ref(false)
 const showLeagueModal = ref(false)
+const showSwissModal = ref(false)
 const maxPlayoffQualifiers = computed(() => Math.max(2, selectedTeams.value.length))
 // Estimated size of the knockout bracket, used only to decide which round
 // rows (r64…semifinal) the knockout config modal shows.
@@ -101,7 +127,7 @@ const bracketTeamCount = computed(() => {
   if (format.value === "group+bracket") {
     return groupCount.value * qualifiersPerGroup.value + wildcardCount.value
   }
-  if (format.value === "league") return playoffQualifierCount.value
+  if (format.value === "league" || format.value === "swiss") return playoffQualifierCount.value
   return selectedTeams.value.length
 })
 
@@ -114,7 +140,7 @@ const groupConfigSummary = computed(() => {
   return `${base} · ${t("tournament.create.config.wildcardsShort", { n: wildcardCount.value })}`
 })
 const knockoutConfigSummary = computed(() => {
-  if (format.value === "league") {
+  if (format.value === "league" || format.value === "swiss") {
     return t("tournament.create.config.playoffShort", { n: playoffQualifierCount.value })
   }
   const seedLabels: Record<string, string> = {
@@ -131,6 +157,16 @@ const knockoutConfigSummary = computed(() => {
     ? t("tournament.create.config.thirdPlaceOn")
     : t("tournament.create.config.noThirdPlace")
   return `${drawLabel} · ${thirdPlace}`
+})
+const swissConfigSummary = computed(() => {
+  const opponents = t("tournament.create.config.swissOpponentsShort", {
+    n: swissOpponentCount.value,
+  })
+  const draw =
+    swissDrawType.value === "seeded" && swissPotCount.value > 1
+      ? t("tournament.create.config.swissPotsShort", { n: swissPotCount.value })
+      : t("common.random")
+  return opponents + " · " + draw
 })
 const leagueConfigSummary = computed(() =>
   tierCount.value > 1
@@ -161,6 +197,19 @@ function applyKnockoutConfig(payload: KnockoutConfigPayload) {
   playoffSeedMode.value = payload.groupPlayoffSeedMode
 }
 
+function applySwissConfig(payload: SwissConfigPayload) {
+  swissOpponentCount.value = payload.opponentCount
+  swissPotCount.value = payload.potCount
+  swissLegMode.value = payload.legMode
+  swissBalanceHomeAway.value = payload.balanceHomeAway
+  swissDrawType.value = payload.drawType === "random" ? "random" : "seeded"
+  drawType.value = swissDrawType.value
+  tiebreaker.value = payload.tiebreaker
+  winPoints.value = payload.winPoints
+  drawPoints.value = payload.drawPoints
+  lossPoints.value = payload.lossPoints
+}
+
 function applyLeagueConfig(payload: LeagueConfigPayload) {
   leagueLegMode.value = payload.leagueLegMode
   tierCount.value = payload.tierCount
@@ -189,7 +238,38 @@ const teamsPerTier = computed(() => {
   return buckets
 })
 
+/**
+ * Picks a Swiss shape that is actually buildable for this many teams,
+ * preferring the Champions League defaults (8 opponents, 4 pots) and stepping
+ * down from there. Without this, selecting Swiss with, say, 10 teams would
+ * leave the form in an invalid state the user has to go and fix by hand.
+ */
+function pickSwissDefaults(teamCount: number) {
+  for (let opp = Math.min(8, teamCount - 1); opp >= 2; opp--) {
+    for (const pots of [4, 3, 2, 1]) {
+      if (!validateSwissConfig(teamCount, opp, pots).length) return { opp, pots }
+    }
+  }
+  return { opp: 0, pots: 1 }
+}
+
+function applySwissDefaults() {
+  const { opp, pots } = pickSwissDefaults(selectedTeams.value.length)
+  if (!opp) return
+  swissOpponentCount.value = opp
+  swissPotCount.value = pots
+}
+
 watch(format, (f) => {
+  if (f === "swiss") {
+    drawType.value = swissDrawType.value
+    applySwissDefaults()
+    playoffQualifierCount.value = Math.max(
+      2,
+      Math.min(playoffQualifierCount.value, selectedTeams.value.length)
+    )
+    return
+  }
   if (f === "league") return
   drawType.value =
     f === "group+bracket" ? settingsStore.newSeasonGroupDrawType : settingsStore.newSeasonDrawType
@@ -198,10 +278,27 @@ watch(format, (f) => {
   }
 })
 
+// Changing the roster changes what shapes are possible, so re-pick rather
+// than leaving a now-invalid config behind.
+watch(
+  () => selected.value.length,
+  (count) => {
+    if (format.value !== "swiss") return
+    if (swissErrors.value.length) applySwissDefaults()
+    playoffQualifierCount.value = Math.max(2, Math.min(playoffQualifierCount.value, count))
+  }
+)
+
 function handleCreate() {
   if (!canCreate.value) return
   if (format.value === "league") {
     doCreate()
+    return
+  }
+  // Swiss has no manual draw, so it goes straight to the ceremony or creation.
+  if (format.value === "swiss") {
+    if (settingsStore.drawCeremony) openCeremony()
+    else doCreate()
     return
   }
   if (drawType.value === "manual") {
@@ -216,6 +313,22 @@ function handleCreate() {
 }
 
 function openCeremony() {
+  if (format.value === "swiss") {
+    pendingSwissSeed.value = randomSeed()
+    ceremonyContext.value = {
+      kind: "swiss",
+      teams: selectedTeams.value,
+      drawMode: swissDrawType.value as DrawMode,
+      swiss: {
+        opponentCount: swissOpponentCount.value,
+        potCount: swissDrawType.value === "seeded" ? swissPotCount.value : 1,
+        balanceHomeAway: swissBalanceHomeAway.value,
+        seed: pendingSwissSeed.value,
+      },
+    }
+    showCeremony.value = true
+    return
+  }
   ceremonyContext.value = {
     kind: format.value === "group+bracket" ? "group" : "bracket",
     teams: selectedTeams.value,
@@ -256,6 +369,34 @@ function applyLeaguePlayoffSettings(id: string) {
 
 function doCreate(orderedIds?: string[]) {
   hapticSuccess()
+  if (format.value === "swiss") {
+    const id = store.createSwiss(name.value.trim(), selected.value, {
+      opponentCount: swissOpponentCount.value,
+      potCount: swissPotCount.value,
+      balanceHomeAway: swissBalanceHomeAway.value,
+      legMode: swissLegMode.value,
+      drawType: swissDrawType.value,
+      seed: pendingSwissSeed.value ?? randomSeed(),
+      playoffEnabled: true,
+      playoffQualifierCount: playoffQualifierCount.value,
+      playoffSeedMode: leaguePlayoffSeedMode.value,
+      knockoutLegMode: settingsStore.knockoutLegMode,
+      finalLegMode: finalLegMode.value,
+      roundLegModes: roundLegModes.value,
+      tiebreaker: tiebreaker.value,
+      winPoints: winPoints.value,
+      drawPoints: drawPoints.value,
+      lossPoints: lossPoints.value,
+    })
+    pendingSwissSeed.value = null
+    applyAdjustments(id)
+    void logEvent("create_tournament", {
+      format: "swiss",
+      team_count: selectedTeams.value.length,
+    })
+    router.push("/tournaments/" + id)
+    return
+  }
   if (format.value === "league") {
     if (tierCount.value > 1) {
       const tierDefs = teamsPerTier.value.map((ids, i) => ({
@@ -430,7 +571,17 @@ function doCreate(orderedIds?: string[]) {
           @click="showLeagueModal = true"
         />
         <AppConfigButton
-          v-if="format !== 'league' || playoffEnabled"
+          v-if="format === 'swiss'"
+          :icon="Shuffle"
+          :label="t('tournament.create.config.swiss')"
+          :summary="swissConfigSummary"
+          @click="showSwissModal = true"
+        />
+        <p v-for="key in swissErrors" :key="key" class="ctp-swiss-error">
+          {{ t(`tournament.create.swissConfig.errors.${key}`, { teams: selected.length }) }}
+        </p>
+        <AppConfigButton
+          v-if="(format !== 'league' && format !== 'swiss') || playoffEnabled"
           :icon="Trophy"
           :label="t('tournament.create.config.knockout')"
           :summary="knockoutConfigSummary"
@@ -456,7 +607,7 @@ function doCreate(orderedIds?: string[]) {
 
       <CreateKnockoutConfigModal
         v-if="showKnockoutModal"
-        :variant="format === 'league' ? 'leaguePlayoff' : 'bracket'"
+        :variant="format === 'league' || format === 'swiss' ? 'leaguePlayoff' : 'bracket'"
         :is-group-format="format === 'group+bracket'"
         :draw-type="drawType"
         :has-third-place="hasThirdPlace"
@@ -471,6 +622,22 @@ function doCreate(orderedIds?: string[]) {
         :selected-count="selected.length"
         @save="applyKnockoutConfig"
         @close="showKnockoutModal = false"
+      />
+
+      <CreateSwissConfigModal
+        v-if="showSwissModal"
+        :opponent-count="swissOpponentCount"
+        :pot-count="swissPotCount"
+        :leg-mode="swissLegMode"
+        :balance-home-away="swissBalanceHomeAway"
+        :draw-type="swissDrawType"
+        :tiebreaker="tiebreaker"
+        :win-points="winPoints"
+        :draw-points="drawPoints"
+        :loss-points="lossPoints"
+        :team-count="selected.length"
+        @save="applySwissConfig"
+        @close="showSwissModal = false"
       />
 
       <CreateLeagueConfigModal
@@ -536,6 +703,13 @@ function doCreate(orderedIds?: string[]) {
 </template>
 
 <style scoped>
+.ctp-swiss-error {
+  margin: 0;
+  padding: 0 var(--sp-2);
+  font-size: var(--fs-sm);
+  color: var(--danger);
+}
+
 .ctp-header {
   display: flex;
   flex-direction: column;

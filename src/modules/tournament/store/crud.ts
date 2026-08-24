@@ -12,12 +12,17 @@ import {
   createTournament,
   createLeague,
   createMultiTierLeague,
+  createSwissTournament,
+  isLeagueLike,
+  isSwiss,
+  randomSeed,
   uid,
   updateThirdPlaceSlots,
   recalcStandings,
   recalcLeagueStandings,
   applyThirdPlaceLegMode,
 } from "@/engine"
+import type { CreateSwissOptions } from "@/engine"
 
 function deriveDrawType(seeded: boolean, orderedIds?: string[]): DrawType {
   if (orderedIds) return "manual"
@@ -106,6 +111,19 @@ export function useCrudActions(
     return t.id
   }
 
+  function createSwiss(name: string, teamIds: string[], opts: CreateSwissOptions): string {
+    const allTeams = getTeams()
+    const selected = allTeams.filter((t) => teamIds.includes(t.id))
+    const season =
+      tournaments.value
+        .filter((t) => t.name === name)
+        .reduce((max, t) => Math.max(max, t.season), 0) + 1
+    const t = createSwissTournament(name, selected, season, opts)
+    tournaments.value.push(t)
+    active.value = t.id
+    return t.id
+  }
+
   function newSeason(
     id: string,
     seeded = false,
@@ -124,6 +142,34 @@ export function useCrudActions(
       tournaments.value
         .filter((tr) => tr.name === t.name)
         .reduce((max, tr) => Math.max(max, tr.season), 0) + 1
+
+    // Swiss new season — same shape, fresh draw (new seed), results cleared.
+    if (isSwiss(t) && t.swiss) {
+      const teamIds = overrideTeamIds ?? t.teamIds
+      const swissTeams = allTeams.filter((tm) => teamIds.includes(tm.id))
+      const newT = createSwissTournament(t.name, swissTeams, season, {
+        opponentCount: t.swiss.opponentCount,
+        potCount: t.swiss.potCount,
+        balanceHomeAway: t.swiss.balanceHomeAway,
+        seed: randomSeed(),
+        legMode: t.league?.legMode ?? "single",
+        drawType: t.drawType === "random" ? "random" : "seeded",
+        playoffEnabled: t.leaguePlayoff?.enabled ?? false,
+        playoffQualifierCount: t.leaguePlayoff?.qualifierCount,
+        playoffSeedMode: t.leaguePlayoff?.seedMode,
+        knockoutLegMode: t.knockoutLegMode,
+        finalLegMode: t.finalLegMode,
+        roundLegModes: t.roundLegModes ? { ...t.roundLegModes } : undefined,
+        tiebreaker: t.tiebreaker,
+        winPoints: t.winPoints,
+        drawPoints: t.drawPoints,
+        lossPoints: t.lossPoints,
+      })
+      if (t.thirdPlaceLegMode) newT.thirdPlaceLegMode = t.thirdPlaceLegMode
+      tournaments.value.push(newT)
+      active.value = newT.id
+      return newT.id
+    }
 
     // League new season
     if (t.format === "league") {
@@ -290,7 +336,7 @@ export function useCrudActions(
   function resetResults(tournamentId: string) {
     const t = tournaments.value.find((t) => t.id === tournamentId)
     if (!t) return
-    if (t.format === "league") {
+    if (isLeagueLike(t)) {
       const winPts = t.winPoints ?? 3
       const drawPts = t.drawPoints ?? 1
       const lossPts = t.lossPoints ?? 0
@@ -348,7 +394,7 @@ export function useCrudActions(
   function isTournamentFinished(tournamentId: string): boolean {
     const t = tournaments.value.find((t) => t.id === tournamentId)
     if (!t) return false
-    if (t.format === "league") {
+    if (isLeagueLike(t)) {
       if (t.tiers?.length) {
         return (
           !!t.winnerId &&
@@ -383,6 +429,7 @@ export function useCrudActions(
   return {
     create,
     createLeagueTournament,
+    createSwiss,
     newSeason,
     newMultiTierSeason,
     setPromotionCount,

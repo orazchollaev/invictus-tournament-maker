@@ -6,13 +6,13 @@ include ':capacitor-community-in-app-review'
 project(':capacitor-community-in-app-review').projectDir = new File('../node_modules/.pnpm/@capacitor-community+in-app_b74e024309c2f9d4b767af1293910ee2/node_modules/@capacitor-community/in-app-review/android')
 
 include ':capacitor-firebase-analytics'
-project(':capacitor-firebase-analytics').projectDir = new File('../node_modules/.pnpm/@capacitor-firebase+analyti_1e75f0ce18e9bb6f0db37c76faac4285/node_modules/@capacitor-firebase/analytics/android')
+project(':capacitor-firebase-analytics').projectDir = new File('../node_modules/.pnpm/@capacitor-firebase+analyti_b52d57a96e154a37c6b02306a15f49a6/node_modules/@capacitor-firebase/analytics/android')
 
 include ':capacitor-app'
 project(':capacitor-app').projectDir = new File('../node_modules/.pnpm/@capacitor+app@8.1.1_@capacitor+core@8.5.0/node_modules/@capacitor/app/android')
 
 include ':capacitor-filesystem'
-project(':capacitor-filesystem').projectDir = new File('../node_modules/.pnpm/@capacitor+filesystem@8.1.2_@capacitor+core@8.5.0/node_modules/@capacitor/filesystem/android')
+project(':capacitor-filesystem').projectDir = new File('../node_modules/.pnpm/@capacitor+filesystem@8.1.3_@capacitor+core@8.5.0/node_modules/@capacitor/filesystem/android')
 
 include ':capacitor-push-notifications'
 project(':capacitor-push-notifications').projectDir = new File('../node_modules/.pnpm/@capacitor+push-notifications@8.1.2_@capacitor+core@8.5.0/node_modules/@capacitor/push-notifications/android')

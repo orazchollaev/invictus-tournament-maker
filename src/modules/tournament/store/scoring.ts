@@ -6,6 +6,7 @@ import {
   allLeagueDone,
   getLeagueWinner,
   allTiersDone,
+  isLeagueLike,
   getTiersWinner,
   getLeaguePlayoffData,
 } from "@/engine"
@@ -26,7 +27,7 @@ export function recalcAllStandings(t: Tournament) {
   const lossPts = t.lossPoints ?? 0
   const adj = t.teamPointAdjustments
 
-  if (t.format === "league") {
+  if (isLeagueLike(t)) {
     if (t.tiers?.length) {
       t.tiers.forEach((tier) =>
         recalcLeagueStandings(tier.league, t.tiebreaker, winPts, drawPts, lossPts, adj)

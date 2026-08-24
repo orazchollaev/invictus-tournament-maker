@@ -6,7 +6,22 @@ export {
   validatePots,
   computeDrawPlan,
   computeCrossDrawPlan,
+  swissPlan,
 } from "./drawCeremony"
+export { isSwiss, isPureLeague, isLeagueLike, isGroupFormat, isBracketOnly } from "./formats"
+export {
+  SWISS_MIN_TEAMS,
+  buildSwissPots,
+  validateSwissConfig,
+  clampSwissOpponentCount,
+  buildSwissPairings,
+  assignHomeAway,
+  packSwissRounds,
+  buildSwissMatchdays,
+  buildSwissLeague,
+  createSwissTournament,
+} from "./swiss"
+export type { SwissPairing, SwissDrawInput, CreateSwissOptions } from "./swiss"
 export type {
   Pot,
   DrawStep,

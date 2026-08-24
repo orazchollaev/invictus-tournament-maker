@@ -1,5 +1,5 @@
 import { computed, ref, type ComputedRef } from "vue"
-import { getLeaguePlayoffData } from "@/engine"
+import { getLeaguePlayoffData, isLeagueLike, isSwiss } from "@/engine"
 import { useTournamentStore } from "../store"
 import type {
   KnockoutStage,
@@ -30,6 +30,9 @@ const DEFAULTS = {
   winPoints: 3,
   drawPoints: 1,
   lossPoints: 0,
+  swissOpponentCount: 8,
+  swissPotCount: 4,
+  swissBalanceHomeAway: true,
 }
 
 function leagueLegModeOf(t: Tournament): LegMode {
@@ -106,7 +109,14 @@ export function useTournamentSettingsDraft(
   const teamPointAdjustments = ref<Record<string, number>>({ ...(t0?.teamPointAdjustments ?? {}) })
   const teamPowerAdjustments = ref<Record<string, number>>({ ...(t0?.teamPowerAdjustments ?? {}) })
 
-  const isLeagueFormat = computed(() => original.value?.format === "league")
+  const swissOpponentCount = ref(t0?.swiss?.opponentCount ?? DEFAULTS.swissOpponentCount)
+  const swissPotCount = ref(t0?.swiss?.potCount ?? DEFAULTS.swissPotCount)
+  const swissBalanceHomeAway = ref(t0?.swiss?.balanceHomeAway ?? DEFAULTS.swissBalanceHomeAway)
+
+  // Swiss shares the league's table, playoff and scoring settings, so it takes
+  // the same branches everywhere below; only the fixture shape is its own.
+  const isLeagueFormat = computed(() => !!original.value && isLeagueLike(original.value))
+  const isSwissFormat = computed(() => !!original.value && isSwiss(original.value))
   const isGroupFormat = computed(() => original.value?.format === "group+bracket")
   const isMultiTier = computed(() => (original.value?.tiers?.length ?? 0) > 1)
   const usesStandings = computed(() => isLeagueFormat.value || isGroupFormat.value)
@@ -127,6 +137,16 @@ export function useTournamentSettingsDraft(
       drawPoints.value !== (original.value?.drawPoints ?? DEFAULTS.drawPoints) ||
       lossPoints.value !== (original.value?.lossPoints ?? DEFAULTS.lossPoints)
   )
+
+  const swissChanged = computed(() => {
+    const s = original.value?.swiss
+    if (!s) return false
+    return (
+      swissOpponentCount.value !== s.opponentCount ||
+      swissPotCount.value !== s.potCount ||
+      swissBalanceHomeAway.value !== s.balanceHomeAway
+    )
+  })
 
   const trimmedName = computed(() => name.value.trim())
   const nameChanged = computed(
@@ -155,6 +175,7 @@ export function useTournamentSettingsDraft(
       (isMultiTier.value &&
         promotionCount.value !== (orig.promotionCount ?? DEFAULTS.promotionCount)) ||
       (isLeagueFormat.value && playoffChanged.value) ||
+      (isSwissFormat.value && swissChanged.value) ||
       tiebreaker.value !== (orig.tiebreaker ?? DEFAULTS.tiebreaker) ||
       (usesStandings.value && pointsChanged.value) ||
       (usesStandings.value &&
@@ -244,6 +265,19 @@ export function useTournamentSettingsDraft(
       store.setLeagueLegMode(id, leagueLegMode.value)
     }
 
+    // The draw type decides whether Swiss uses pots at all, so a change to it
+    // has to redraw the fixture — setDrawType alone only records the field.
+    if (isSwissFormat.value) {
+      const drawTypeChanged = drawType.value !== (orig.drawType ?? DEFAULTS.drawType)
+      if (swissChanged.value || drawTypeChanged) {
+        store.changeSwissConfig(id, {
+          opponentCount: swissOpponentCount.value,
+          potCount: swissPotCount.value,
+          balanceHomeAway: swissBalanceHomeAway.value,
+        })
+      }
+    }
+
     if (isMultiTier.value && tierCount.value !== (orig.tiers?.length ?? DEFAULTS.tierCount)) {
       store.rebuildTiers(id, tierCount.value)
     }
@@ -306,9 +340,13 @@ export function useTournamentSettingsDraft(
     lossPoints,
     teamPointAdjustments,
     teamPowerAdjustments,
+    swissOpponentCount,
+    swissPotCount,
+    swissBalanceHomeAway,
     // derived
     originalPlayoff,
     isLeagueFormat,
+    isSwissFormat,
     isGroupFormat,
     isMultiTier,
     hasChanges,

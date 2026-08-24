@@ -4,6 +4,7 @@ import { useI18n } from "vue-i18n"
 import type { Tournament, League } from "../../types"
 import type { Team } from "@/modules/teams/types"
 import { useTournamentStats } from "../../composables/useTournamentStats"
+import { isLeagueLike } from "@/engine"
 import LeagueProgressChart from "../LeagueProgressChart.vue"
 import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
 import { AppCard, AppTable, BtnGroup } from "@/components/ui"
@@ -20,7 +21,7 @@ const { topScorers, bestDefense, hasStats } = useTournamentStats(
   () => props.teams
 )
 
-const isLeague = computed(() => props.tournament.format === "league")
+const isLeague = computed(() => isLeagueLike(props.tournament))
 const isGroupBracket = computed(() => props.tournament.format === "group+bracket")
 const isMultiTier = computed(() => (props.tournament.tiers?.length ?? 0) > 1)
 

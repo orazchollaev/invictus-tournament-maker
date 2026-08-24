@@ -3,6 +3,7 @@ import type { Tournament } from "@/modules/tournament/types"
 import type { ChampEntry, FinalEntry } from "../types"
 import { buildScore } from "./matchFormat"
 import { useTeamRef } from "./useTeamRef"
+import { isLeagueLike } from "@/engine"
 
 /** Title/runner-up tallies and the season-by-season list of finals. */
 export function useChampions(completedSeasons: ComputedRef<Tournament[]>) {
@@ -22,7 +23,9 @@ export function useChampions(completedSeasons: ComputedRef<Tournament[]>) {
       if (!t.winnerId) continue
       const wId = t.winnerId
 
-      const isLeague = t.format === "league" && (!!t.league || !!t.tiers?.length)
+      // Swiss counts as a league here: its champion comes from one table
+      // (plus an optional playoff final), never from a group stage.
+      const isLeague = isLeagueLike(t) && (!!t.league || !!t.tiers?.length)
 
       const w = map.get(wId)
       if (w) {

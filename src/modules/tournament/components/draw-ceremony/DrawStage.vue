@@ -12,6 +12,8 @@ const props = defineProps<{
   sequence: DrawStep[]
   teams: Team[]
   speed: CeremonySpeed
+  /** Swiss draws one team at a time and reveals its whole opponent list. */
+  swiss?: boolean
 }>()
 
 const { teamById } = useTeamLookup(() => props.teams)
@@ -30,6 +32,17 @@ const slots = computed(() => {
   }
   return order.map((label) => ({ label, steps: map.get(label)! }))
 })
+
+// Swiss board: one panel per team holding the opponents it drew. Grouping by
+// targetLabel would collapse the whole field into a single panel, since every
+// Swiss step shares the same label.
+const swissSlots = computed(() =>
+  props.sequence.map((step) => ({
+    step,
+    team: teamById(step.teamId),
+    opponentIds: step.opponentIds ?? [],
+  }))
+)
 
 const revealedIds = computed(() => new Set(props.revealed.map((r) => r.teamId)))
 function isRevealed(step: DrawStep) {
@@ -50,12 +63,42 @@ function isRevealed(step: DrawStep) {
           <div class="ds-paper">
             <TeamBadge :team="teamById(current.teamId)" :size="24" class="ds-paper-face" />
           </div>
-          <div class="ds-target">{{ current.targetLabel }}</div>
+          <div v-if="swiss" class="ds-opponents">
+            <TeamBadge
+              v-for="oid in current.opponentIds ?? []"
+              :key="oid"
+              :team="teamById(oid)"
+              :size="11"
+              class="ds-opponent"
+            />
+          </div>
+          <div v-else class="ds-target">{{ current.targetLabel }}</div>
         </div>
       </Transition>
     </div>
 
-    <div class="ds-board">
+    <div v-if="swiss" class="ds-board">
+      <div v-for="slot in swissSlots" :key="slot.step.teamId" class="ds-slot">
+        <div class="ds-slot-label ds-slot-label--team">
+          <TeamBadge :team="slot.team" :size="11" />
+        </div>
+        <div class="ds-slot-rows">
+          <div v-for="(oid, i) in slot.opponentIds" :key="i" class="ds-row">
+            <Transition name="ds-pop">
+              <TeamBadge
+                v-if="isRevealed(slot.step)"
+                :team="teamById(oid)"
+                :size="12"
+                class="ds-slot-team"
+              />
+              <span v-else class="ds-row-empty" />
+            </Transition>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div v-else class="ds-board">
       <div v-for="slot in slots" :key="slot.label" class="ds-slot">
         <div class="ds-slot-label">{{ slot.label }}</div>
         <div class="ds-slot-rows">
@@ -126,6 +169,25 @@ function isRevealed(step: DrawStep) {
   letter-spacing: 0.01em;
   white-space: nowrap;
 }
+.ds-opponents {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px 10px;
+  max-width: 380px;
+}
+.ds-opponent {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.ds-slot-label--team {
+  padding: 4px 8px;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--text);
+}
+
 .ds-target {
   font-size: 11px;
   font-weight: 600;

@@ -2,6 +2,7 @@
 import { computed } from "vue"
 import { useRoute, RouterLink } from "vue-router"
 import { useTournamentStore } from "@/modules/tournament/store"
+import { isLeagueLike } from "@/engine"
 import { ArrowLeft, Trophy, Medal, BarChart3, Table2, Users, Goal } from "@lucide/vue"
 import { useI18n } from "vue-i18n"
 import { Swiper, SwiperSlide } from "swiper/vue"
@@ -32,7 +33,8 @@ const completedSeasons = computed(() =>
   allSeasons.value.filter((t) => store.isTournamentFinished(t.id))
 )
 
-const isLeagueSeries = computed(() => allSeasons.value[0]?.format === "league")
+const first = computed(() => allSeasons.value[0])
+const isLeagueSeries = computed(() => !!first.value && isLeagueLike(first.value))
 
 const { champions, finals, leagueSeasons, allTimeRows, stats, teamStats } =
   useTournamentHistoryStats(completedSeasons)

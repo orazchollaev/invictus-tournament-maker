@@ -9,18 +9,30 @@ import GroupDraw from "@/modules/tournament/components/GroupDraw.vue"
 import TeamSelector from "@/modules/tournament/components/TeamSelector.vue"
 import TeamSelectorFullscreenModal from "@/modules/tournament/components/TeamSelectorFullscreenModal.vue"
 import { AppButton, AppCard, AppChip, AppConfigButton, AppIcon, AppModal } from "@/components/ui"
-import { ArrowLeft, LayoutGrid, List, Lock, Maximize2, Save, Settings, Trophy } from "@lucide/vue"
+import {
+  ArrowLeft,
+  LayoutGrid,
+  List,
+  Lock,
+  Maximize2,
+  Save,
+  Settings,
+  Shuffle,
+  Trophy,
+} from "@lucide/vue"
 import {
   SettingsDangerZone,
   SettingsGroupConfigModal,
   SettingsKnockoutConfigModal,
   SettingsLeagueConfigModal,
+  SettingsSwissConfigModal,
   SettingsSimulation,
   SettingsTeamAdjustments,
 } from "../components/settings"
 import type { GroupConfigPayload } from "../components/settings/SettingsGroupConfigModal.vue"
 import type { KnockoutConfigPayload } from "../components/settings/SettingsKnockoutConfigModal.vue"
 import type { LeagueConfigPayload } from "../components/settings/SettingsLeagueConfigModal.vue"
+import type { SwissConfigPayload } from "../components/settings/SettingsSwissConfigModal.vue"
 import { useTournamentSettingsDraft } from "../composables/useTournamentSettingsDraft"
 import { useUnsavedChangesGuard } from "@/composables/useUnsavedChangesGuard"
 
@@ -60,6 +72,7 @@ const showTeamsFullscreen = ref(false)
 const showGroupModal = ref(false)
 const showKnockoutModal = ref(false)
 const showLeagueModal = ref(false)
+const showSwissModal = ref(false)
 
 const { open: showLeaveModal, choose: chooseLeave } = useUnsavedChangesGuard({
   hasChanges: draft.hasChanges,
@@ -84,6 +97,16 @@ const knockoutConfigSummary = computed(() => {
     ? t("tournament.create.config.thirdPlaceOn")
     : t("tournament.create.config.noThirdPlace")
   return `${t(`common.${draft.drawType.value}`)} · ${thirdPlace}`
+})
+const swissConfigSummary = computed(() => {
+  const opponents = t("tournament.create.config.swissOpponentsShort", {
+    n: draft.swissOpponentCount.value,
+  })
+  const draw =
+    draft.drawType.value === "seeded" && draft.swissPotCount.value > 1
+      ? t("tournament.create.config.swissPotsShort", { n: draft.swissPotCount.value })
+      : t("common.random")
+  return `${opponents} · ${draw}`
 })
 const leagueConfigSummary = computed(() =>
   draft.tierCount.value > 1
@@ -113,6 +136,18 @@ function applyKnockoutConfig(payload: KnockoutConfigPayload) {
   draft.playoffQualifierCount.value = payload.playoffQualifierCount
   draft.leaguePlayoffSeedMode.value = payload.playoffSeedMode
   draft.playoffSeedMode.value = payload.groupPlayoffSeedMode
+}
+
+function applySwissConfig(payload: SwissConfigPayload) {
+  draft.swissOpponentCount.value = payload.opponentCount
+  draft.swissPotCount.value = payload.potCount
+  draft.leagueLegMode.value = payload.legMode
+  draft.swissBalanceHomeAway.value = payload.balanceHomeAway
+  draft.drawType.value = payload.drawType
+  draft.tiebreaker.value = payload.tiebreaker
+  draft.winPoints.value = payload.winPoints
+  draft.drawPoints.value = payload.drawPoints
+  draft.lossPoints.value = payload.lossPoints
 }
 
 function applyLeagueConfig(payload: LeagueConfigPayload) {
@@ -248,11 +283,18 @@ function handleSave() {
             @click="showGroupModal = true"
           />
           <AppConfigButton
-            v-if="draft.isLeagueFormat.value"
+            v-if="draft.isLeagueFormat.value && !draft.isSwissFormat.value"
             :icon="List"
             :label="t('tournament.create.config.league')"
             :summary="leagueConfigSummary"
             @click="showLeagueModal = true"
+          />
+          <AppConfigButton
+            v-if="draft.isSwissFormat.value"
+            :icon="Shuffle"
+            :label="t('tournament.create.config.swiss')"
+            :summary="swissConfigSummary"
+            @click="showSwissModal = true"
           />
           <AppConfigButton
             :icon="Trophy"
@@ -305,8 +347,25 @@ function handleSave() {
           @open-manual-draw="showManualDraw = true"
         />
 
+        <SettingsSwissConfigModal
+          v-if="showSwissModal && draft.isSwissFormat.value"
+          :opponent-count="draft.swissOpponentCount.value"
+          :pot-count="draft.swissPotCount.value"
+          :leg-mode="draft.leagueLegMode.value"
+          :balance-home-away="draft.swissBalanceHomeAway.value"
+          :draw-type="draft.drawType.value === 'random' ? 'random' : 'seeded'"
+          :tiebreaker="draft.tiebreaker.value"
+          :win-points="draft.winPoints.value"
+          :draw-points="draft.drawPoints.value"
+          :loss-points="draft.lossPoints.value"
+          :team-count="draft.teamIds.value.length"
+          :has-any-results="hasAnyResults"
+          @save="applySwissConfig"
+          @close="showSwissModal = false"
+        />
+
         <SettingsLeagueConfigModal
-          v-if="showLeagueModal && draft.isLeagueFormat.value"
+          v-if="showLeagueModal && draft.isLeagueFormat.value && !draft.isSwissFormat.value"
           :league-leg-mode="draft.leagueLegMode.value"
           :tier-count="draft.tierCount.value"
           :promotion-count="draft.promotionCount.value"

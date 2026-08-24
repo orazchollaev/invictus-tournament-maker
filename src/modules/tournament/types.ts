@@ -136,6 +136,25 @@ export interface LeaguePlayoff {
   started: boolean // true once the playoff bracket has been seeded — locks settings
 }
 
+/**
+ * Swiss league-phase settings (only when format === "swiss").
+ *
+ * The fixture itself lives in the ordinary `league` container, so every league
+ * helper (standings, tiebreakers, result entry, simulation, playoff seeding,
+ * match iteration, history) works on a Swiss tournament unchanged. Only the
+ * fixture *generation* differs: instead of a full round-robin, each team faces
+ * `opponentCount` distinct opponents drawn from pots.
+ *
+ * Legs per opponent are read from `league.legMode`; the draw method from
+ * `drawType` ("random" | "seeded" — Swiss has no manual draw).
+ */
+export interface SwissConfig {
+  opponentCount: number // how many DISTINCT opponents each team faces
+  potCount: number // 1 = no pots; >1 = power-ranked pots with an equal quota each
+  balanceHomeAway: boolean // best-effort even split of home/away games
+  seed: number // RNG seed the draw was generated with, so it can be reproduced
+}
+
 export interface LeagueTier {
   name: string // "Division 1", "Division 2", …
   teamIds: string[]
@@ -144,7 +163,7 @@ export interface LeagueTier {
 }
 
 // ─── Tournament ──────────────────────────────────────────────────
-export type TournamentFormat = "bracket" | "group+bracket" | "league"
+export type TournamentFormat = "bracket" | "group+bracket" | "league" | "swiss"
 
 export type PlayoffSeedMode = "cross" | "no-same-group" | "random" | "manual"
 export type DrawType = "random" | "seeded" | "manual"
@@ -181,6 +200,9 @@ export interface Tournament {
   // league (only when format === "league")
   league?: League
   leaguePlayoff?: LeaguePlayoff // single-tier league playoff (mirrors LeagueTier.playoff)
+
+  // swiss (only when format === "swiss") — the fixture lives in `league` above
+  swiss?: SwissConfig
 
   // wildcard slots: best N teams at rank `qualifiersPerGroup` across all groups
   wildcardCount?: number

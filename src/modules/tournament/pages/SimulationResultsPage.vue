@@ -30,7 +30,9 @@ function teamById(id: string) {
 const isBracket = computed(
   () => result.value?.format === "bracket" || result.value?.format === "group+bracket"
 )
-const isLeague = computed(() => result.value?.format === "league")
+const isLeague = computed(
+  () => result.value?.format === "league" || result.value?.format === "swiss"
+)
 const hasGroups = computed(() => result.value?.hasGroups)
 const showTop4 = computed(() => (result.value?.bracketRounds ?? 0) >= 3)
 

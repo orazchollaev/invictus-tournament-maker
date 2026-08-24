@@ -6,6 +6,12 @@ import { getWinnerId, propagateWinners } from "./bracket"
 import { simulateAllGroups } from "./groups"
 import { seedBracketFromGroups } from "./tournament"
 import { recalcLeagueStandings } from "./league"
+import {
+  getLeaguePlayoffData,
+  getLeaguePlayoffQualifierIds,
+  seedLeaguePlayoffBracket,
+} from "./leaguePlayoff"
+import { isLeagueLike } from "./formats"
 
 export interface TeamSimStats {
   teamId: string
@@ -110,7 +116,7 @@ function resetForRun(t: Tournament) {
         s.played = s.won = s.drawn = s.lost = s.gf = s.ga = s.gd = s.pts = 0
       })
     }
-  } else if (t.format === "league") {
+  } else if (isLeagueLike(t)) {
     if (t.league) {
       for (const md of t.league.matchdays) {
         for (const m of md.matches) m.result = null
@@ -129,8 +135,50 @@ function resetForRun(t: Tournament) {
         })
       }
     }
+    resetLeaguePlayoff(t)
   }
   t.winnerId = null
+}
+
+/** The playoff bracket is re-seeded from scratch every run, so clear it. */
+function resetLeaguePlayoff(t: Tournament) {
+  const data = getLeaguePlayoffData(t)
+  if (!data?.enabled) return
+  data.started = false
+  t.rounds = []
+}
+
+/**
+ * Plays the knockout stage that a league-like phase feeds into and records the
+ * outcome. Swiss always ends this way, and a league with the playoff enabled
+ * does too — in both cases the champion is the bracket winner, not the team
+ * that topped the table.
+ */
+function runLeaguePlayoff(t: Tournament, teams: Team[], stats: Map<string, TeamSimStats>): boolean {
+  const data = getLeaguePlayoffData(t)
+  if (!data?.enabled) return false
+
+  resetLeaguePlayoff(t)
+  for (const id of getLeaguePlayoffQualifierIds(t)) {
+    const s = stats.get(id)
+    if (s) s.groupAdvanced++
+  }
+
+  seedLeaguePlayoffBracket(t, teams, data.seedMode)
+  const { winnerId, runnerUpId, top4Ids } = simBracketInPlace(t, teams)
+  if (winnerId) {
+    const s = stats.get(winnerId)
+    if (s) s.wins++
+  }
+  if (runnerUpId) {
+    const s = stats.get(runnerUpId)
+    if (s) s.runnerUp++
+  }
+  for (const id of top4Ids) {
+    const s = stats.get(id)
+    if (s) s.top4++
+  }
+  return true
 }
 
 function runOnce(t: Tournament, teams: Team[], stats: Map<string, TeamSimStats>) {
@@ -176,7 +224,10 @@ function runOnce(t: Tournament, teams: Team[], stats: Map<string, TeamSimStats>)
       const s = stats.get(id)
       if (s) s.top4++
     }
-  } else if (t.format === "league") {
+  } else if (isLeagueLike(t)) {
+    // With a playoff, the table only decides who qualifies; the bracket below
+    // decides the champion, so rank 1 must not also be credited with a win.
+    const hasPlayoff = !!getLeaguePlayoffData(t)?.enabled
     if (t.tiers?.length) {
       for (const tier of t.tiers) {
         for (const md of tier.league.matchdays) {
@@ -197,7 +248,7 @@ function runOnce(t: Tournament, teams: Team[], stats: Map<string, TeamSimStats>)
       topTier.forEach((s, rank) => {
         const st = stats.get(s.teamId)
         if (!st) return
-        if (rank === 0) st.wins++
+        if (rank === 0 && !hasPlayoff) st.wins++
         if (rank < 3) st.topThree++
         st.totalPoints += s.pts
         st.totalGF += s.gf
@@ -220,13 +271,14 @@ function runOnce(t: Tournament, teams: Team[], stats: Map<string, TeamSimStats>)
       t.league.standings.forEach((s, rank) => {
         const st = stats.get(s.teamId)
         if (!st) return
-        if (rank === 0) st.wins++
+        if (rank === 0 && !hasPlayoff) st.wins++
         if (rank < 3) st.topThree++
         st.totalPoints += s.pts
         st.totalGF += s.gf
         st.totalGA += s.ga
       })
     }
+    runLeaguePlayoff(t, teams, stats)
   }
 }
 
@@ -258,7 +310,8 @@ function buildTemplate(tournament: Tournament): Tournament {
         s.played = s.won = s.drawn = s.lost = s.gf = s.ga = s.gd = s.pts = 0
       })
     }
-  } else if (clone.format === "league") {
+  } else if (isLeagueLike(clone)) {
+    resetLeaguePlayoff(clone)
     if (clone.league) {
       for (const md of clone.league.matchdays) {
         for (const m of md.matches) m.result = null
@@ -284,6 +337,11 @@ function buildTemplate(tournament: Tournament): Tournament {
 
 function getBracketRounds(tournament: Tournament): number {
   if (tournament.format === "bracket") return tournament.rounds.length
+  if (isLeagueLike(tournament)) {
+    const data = getLeaguePlayoffData(tournament)
+    if (!data?.enabled) return 0
+    return Math.ceil(Math.log2(Math.max(data.qualifierCount, 2)))
+  }
   if (tournament.format === "group+bracket") {
     const qpg = tournament.qualifiersPerGroup ?? 2
     const gc = tournament.groups?.length ?? 2

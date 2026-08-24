@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { Trophy, LayoutGrid, List, Swords } from "@lucide/vue"
-
-type TournamentFormat = "bracket" | "group+bracket" | "league"
+import { Trophy, LayoutGrid, List, Swords, Shuffle } from "@lucide/vue"
+import type { TournamentFormat } from "@/modules/tournament/types"
+import { SWISS_MIN_TEAMS } from "@/engine"
 
 const props = defineProps<{ selectedCount: number }>()
 
@@ -12,7 +12,9 @@ const qualifiersPerGroup = defineModel<number>("qualifiersPerGroup", { required:
 
 function setFormat(f: TournamentFormat) {
   format.value = f
-  if (f !== "league") playoffEnabled.value = false
+  // A Swiss phase always ends in a knockout stage, or it would have no winner.
+  if (f === "swiss") playoffEnabled.value = true
+  else if (f !== "league") playoffEnabled.value = false
   if (f === "group+bracket") {
     const maxGroups = Math.floor(props.selectedCount / 2)
     groupCount.value = Math.min(4, maxGroups)
@@ -98,6 +100,23 @@ function setLeague(withPlayoff: boolean) {
 
         <span class="ctp-format-desc">
           {{ $t("tournament.create.formats.leagueKoDesc") }}
+        </span>
+      </button>
+
+      <button
+        class="ctp-format-card"
+        :class="{ 'ctp-format-card--on': format === 'swiss' }"
+        :disabled="selectedCount < SWISS_MIN_TEAMS"
+        @click="setFormat('swiss')"
+      >
+        <Shuffle :size="28" class="ctp-format-icon" />
+
+        <span class="ctp-format-title">
+          {{ $t("tournament.create.formats.swiss") }}
+        </span>
+
+        <span class="ctp-format-desc">
+          {{ $t("tournament.create.formats.swissDesc") }}
         </span>
       </button>
     </div>

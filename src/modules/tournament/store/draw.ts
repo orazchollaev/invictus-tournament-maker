@@ -1,11 +1,16 @@
 import type { Ref } from "vue"
-import type { Tournament, PlayoffSeedMode, LegMode, KnockoutStage } from "../types"
+import type { Tournament, PlayoffSeedMode, LegMode, KnockoutStage, SwissConfig } from "../types"
 import type { Team } from "@/modules/teams/types"
 import {
   createTournament,
   createLeague,
   buildLeagueMatchdays,
+  buildSwissLeague,
+  clampSwissOpponentCount,
+  isLeagueLike,
+  isSwiss,
   legModeToCount,
+  randomSeed,
   buildEmptyBracketRounds,
   applyLegModes,
 } from "@/engine"
@@ -48,6 +53,27 @@ export function useDrawActions(tournaments: Ref<Tournament[]>, getTeams: () => T
   ) {
     const allTeams = getTeams()
     const selected = allTeams.filter((tm) => t.teamIds.includes(tm.id))
+
+    // Swiss redraws its opponent graph from a fresh seed; the config (opponent
+    // count, pots, leg mode) is what stays fixed, not the fixture.
+    if (isSwiss(t) && t.swiss) {
+      // Adding or removing a team can invalidate the configured opponent count;
+      // keep the stored config in step with the fixture that actually gets built.
+      t.swiss = {
+        ...t.swiss,
+        opponentCount: clampSwissOpponentCount(selected.length, t.swiss.opponentCount),
+        seed: randomSeed(),
+      }
+      t.league = buildSwissLeague(selected, {
+        ...t.swiss,
+        legMode: t.league?.legMode ?? "single",
+        drawType: t.drawType === "random" ? "random" : "seeded",
+      })
+      if (t.leaguePlayoff) t.leaguePlayoff.started = false
+      t.rounds = []
+      t.winnerId = null
+      return
+    }
 
     if (t.format === "league" && t.tiers?.length) {
       for (const tier of t.tiers) {
@@ -201,9 +227,21 @@ export function useDrawActions(tournaments: Ref<Tournament[]>, getTeams: () => T
     t.playoffSeedMode = mode
   }
 
+  /**
+   * Swiss shape changes (opponent count, pots, home/away balance). Only
+   * possible before any result exists, since every one of them redraws the
+   * fixture from scratch.
+   */
+  function changeSwissConfig(tournamentId: string, patch: Partial<SwissConfig>) {
+    const t = tournaments.value.find((t) => t.id === tournamentId)
+    if (!t || !isSwiss(t) || !t.swiss || hasAnyResults(tournamentId)) return
+    t.swiss = { ...t.swiss, ...patch }
+    rebuildDraw(t)
+  }
+
   function setLeagueLegMode(tournamentId: string, mode: LegMode) {
     const t = tournaments.value.find((t) => t.id === tournamentId)
-    if (!t || t.format !== "league" || hasAnyResults(tournamentId)) return
+    if (!t || !isLeagueLike(t) || hasAnyResults(tournamentId)) return
     if (t.tiers?.length) {
       for (const tier of t.tiers) {
         tier.league.legMode = mode
@@ -221,6 +259,7 @@ export function useDrawActions(tournaments: Ref<Tournament[]>, getTeams: () => T
     setLegMode,
     setRoundLegMode,
     setLeagueLegMode,
+    changeSwissConfig,
     changeGroupCount,
     changeQualifiersPerGroup,
     changeWildcardCount,

@@ -9,14 +9,15 @@
 // that no team can be drawn twice.
 
 import type { Team } from "../modules/teams/types"
-import type { Tournament } from "../modules/tournament/types"
-import { shuffleWith } from "./utils"
+import type { SwissConfig, Tournament } from "../modules/tournament/types"
+import { makeRng, shuffleWith } from "./utils"
 import { selectWildcards } from "./groups"
 import { crossPlayoffOrder } from "./tournament"
 import { resolvePower } from "./power"
+import { buildSwissPairings, buildSwissPots } from "./swiss"
 
 export type DrawMode = "random" | "seeded"
-export type CeremonyKind = "bracket" | "group" | "playoff"
+export type CeremonyKind = "bracket" | "group" | "playoff" | "swiss"
 
 export interface Pot {
   label: string
@@ -27,6 +28,8 @@ export interface DrawStep {
   teamId: string
   potIdx: number
   targetLabel: string
+  /** Swiss only: the opponents revealed alongside the drawn team. */
+  opponentIds?: string[]
 }
 
 export interface DrawPlan {
@@ -39,6 +42,7 @@ export interface CeremonyContext {
   teams: Team[] // participants (creation/new-season); flat qualified teams for playoff
   drawMode: DrawMode
   groupCount?: number // group kind only
+  swiss?: SwissConfig // swiss kind only
 }
 
 function groupName(g: number): string {
@@ -50,6 +54,12 @@ function groupName(g: number): string {
 // Initial pots for creation / new-season (bracket & group kinds).
 export function buildPots(ctx: CeremonyContext): Pot[] {
   const { kind, teams, drawMode } = ctx
+
+  // Swiss pots are the draw's own constraint (each team takes a fixed quota per
+  // pot), so they follow the configured pot count rather than the draw mode.
+  if (kind === "swiss") {
+    return buildSwissPots(teams, drawMode === "random" ? 1 : (ctx.swiss?.potCount ?? 1))
+  }
 
   if (drawMode === "random") {
     return [{ label: "Pot", teamIds: teams.map((t) => t.id) }]
@@ -120,7 +130,49 @@ export function computeDrawPlan(pots: Pot[], ctx: CeremonyContext, rng: () => nu
   if (ctx.kind === "group") {
     return groupPlan(pots, Math.max(2, ctx.groupCount ?? 2), rng)
   }
+  if (ctx.kind === "swiss") {
+    return swissPlan(pots, ctx.swiss?.opponentCount ?? 0, ctx.swiss?.seed ?? 0)
+  }
   return bracketPlan(pots, ctx.drawMode, rng)
+}
+
+/**
+ * Swiss reveal: pot by pot, each team is drawn once and its whole opponent list
+ * comes out with it — the shape of the real Champions League draw.
+ *
+ * The plan is derived from a pairing built with the config's own `seed`, which
+ * is the same seed `buildSwissLeague` uses when the tournament is committed, so
+ * the animation and the stored fixture can never diverge. `orderedIds` is only
+ * the reveal order; unlike the bracket kinds nothing downstream re-derives the
+ * fixture from it.
+ */
+export function swissPlan(pots: Pot[], opponentCount: number, seed: number): DrawPlan {
+  const potIds = pots.map((p) => p.teamIds)
+  const pairs = buildSwissPairings(potIds, opponentCount, makeRng(seed))
+
+  const opponents = new Map<string, string[]>()
+  for (const ids of potIds) for (const id of ids) opponents.set(id, [])
+  for (const [home, away] of pairs ?? []) {
+    opponents.get(home)?.push(away)
+    opponents.get(away)?.push(home)
+  }
+
+  const sequence: DrawStep[] = []
+  const orderedIds: string[] = []
+  pots.forEach((pot, potIdx) => {
+    for (const teamId of pot.teamIds) {
+      const list = opponents.get(teamId) ?? []
+      orderedIds.push(teamId)
+      sequence.push({
+        teamId,
+        potIdx,
+        targetLabel: `${list.length}`,
+        opponentIds: list,
+      })
+    }
+  })
+
+  return { sequence, orderedIds }
 }
 
 function groupPlan(pots: Pot[], gc: number, rng: () => number): DrawPlan {

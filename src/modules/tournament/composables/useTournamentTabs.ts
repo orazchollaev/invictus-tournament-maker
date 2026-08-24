@@ -2,7 +2,7 @@ import { ref, computed, watch, nextTick, onScopeDispose, type ComputedRef } from
 import { useRoute, useRouter } from "vue-router"
 import type { Swiper as SwiperInstance } from "swiper/types"
 import { useSwiperAutoHeight } from "@/composables/useSwiperAutoHeight"
-import { getLeaguePlayoffData } from "@/engine"
+import { getLeaguePlayoffData, isLeagueLike } from "@/engine"
 import type { Tournament } from "@/modules/tournament/types"
 import type { MainTab } from "../components/detail"
 
@@ -27,7 +27,7 @@ export function useTournamentTabs(
 
   function defaultTab(): MainTab {
     const fmt = tournament.value?.format
-    if (fmt === "league") return "league"
+    if (fmt === "league" || fmt === "swiss") return "league"
     if (fmt === "group+bracket") return "groups"
     return "bracket"
   }
@@ -43,7 +43,9 @@ export function useTournamentTabs(
   const hasWildcards = computed(
     () => isGroupFormat.value && (tournament.value?.wildcardCount ?? 0) > 0
   )
-  const isLeagueFormat = computed(() => tournament.value?.format === "league")
+  // Swiss reuses the league tab (and its table); only the label differs.
+  const isLeagueFormat = computed(() => !!tournament.value && isLeagueLike(tournament.value))
+  const isSwissFormat = computed(() => tournament.value?.format === "swiss")
 
   const leaguePlayoffData = computed(() =>
     tournament.value ? getLeaguePlayoffData(tournament.value) : undefined
@@ -253,6 +255,7 @@ export function useTournamentTabs(
     isGroupFormat,
     hasWildcards,
     isLeagueFormat,
+    isSwissFormat,
     leaguePlayoffData,
     hasLeaguePlayoff,
     changeTab,

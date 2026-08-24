@@ -7,6 +7,8 @@ import {
   buildPlayoffPots,
   computeCrossDrawPlan,
   getLeaguePlayoffData,
+  isLeagueLike,
+  isSwiss,
   getLeaguePlayoffQualifierIds,
   computeLeaguePlayoffPlan,
 } from "@/engine"
@@ -62,7 +64,10 @@ export function useTournamentCeremonies(
     tournament.value ? getLeaguePlayoffData(tournament.value) : undefined
   )
   const showLeaguePlayoffControls = computed(
-    () => tournament.value?.format === "league" && (!isMultiTier.value || activeTierIdx.value === 0)
+    () =>
+      !!tournament.value &&
+      isLeagueLike(tournament.value) &&
+      (!isMultiTier.value || activeTierIdx.value === 0)
   )
   const canStartLeaguePlayoffFlow = computed(() => {
     const t = tournament.value
@@ -143,6 +148,13 @@ export function useTournamentCeremonies(
       teams: t.teamIds.length,
       season: t.season + 1,
     })
+
+    // Swiss redraws its own opponent graph inside the store (fresh seed), so
+    // there is nothing for a draw ceremony to decide here — same as a league.
+    if (isSwiss(t)) {
+      startNewLeagueSeason(t.teamIds)
+      return
+    }
 
     // Multi-tier league new season
     if (t.format === "league" && isMultiTier.value) {

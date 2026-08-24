@@ -3,6 +3,7 @@ import SettingsGroupConfigModal from "./SettingsGroupConfigModal.vue"
 import SettingsKnockoutConfigModal from "./SettingsKnockoutConfigModal.vue"
 import SettingsLeagueConfigModal from "./SettingsLeagueConfigModal.vue"
 import SettingsSimulation from "./SettingsSimulation.vue"
+import SettingsSwissConfigModal from "./SettingsSwissConfigModal.vue"
 import SettingsTeamAdjustments from "./SettingsTeamAdjustments.vue"
 
 export {
@@ -11,5 +12,6 @@ export {
   SettingsKnockoutConfigModal,
   SettingsLeagueConfigModal,
   SettingsSimulation,
+  SettingsSwissConfigModal,
   SettingsTeamAdjustments,
 }

@@ -1,6 +1,6 @@
 import type { Team } from "@/modules/teams/types"
 import type { Tournament } from "../../types"
-import { getLeaguePlayoffData, getLoserId, getWinnerId } from "@/engine"
+import { getLeaguePlayoffData, getLoserId, getWinnerId, isLeagueLike } from "@/engine"
 import { EMPTY_STATS, NO_FINISH, type ParticipantRow, type TeamStats } from "./types"
 
 /** Rows sort after every ranked team when the tournament gives them no placing. */
@@ -32,8 +32,7 @@ export function buildFinishContext(t: Tournament): FinishContext {
     secondPlaceId: finalMatch ? getLoserId(finalMatch) : null,
     thirdPlaceId: tpMatch ? getWinnerId(tpMatch) : null,
     fourthPlaceId: tpMatch ? getLoserId(tpMatch) : null,
-    playoffActive:
-      t.format === "league" && t.rounds.length > 0 && !!getLeaguePlayoffData(t)?.started,
+    playoffActive: isLeagueLike(t) && t.rounds.length > 0 && !!getLeaguePlayoffData(t)?.started,
   }
 }
 
@@ -134,7 +133,8 @@ function groupBracketFinish(ctx: FinishContext, teamId: string): Finish {
 export function buildFinish(ctx: FinishContext, teamId: string): Finish {
   const t = ctx.tournament
 
-  if (t.format === "league" && (t.tiers?.length || t.league)) {
+  // Swiss finishes off the same single table as a league.
+  if (isLeagueLike(t) && (t.tiers?.length || t.league)) {
     return leagueFinish(ctx, teamId)
   }
 

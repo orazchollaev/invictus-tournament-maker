@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed } from "vue"
 import type { Tournament } from "@/modules/tournament/types"
 import type { MainTab } from "./types"
 import { useI18n } from "vue-i18n"
@@ -6,7 +7,7 @@ import { TabsRoot, TabsList, TabsTrigger } from "reka-ui"
 
 const { t, locale } = useI18n()
 
-defineProps<{
+const props = defineProps<{
   tournament: Tournament
   activeTab: MainTab
   isLeagueFormat: boolean
@@ -14,6 +15,13 @@ defineProps<{
   hasAnyResults: boolean
   hasLeaguePlayoff: boolean
 }>()
+
+// Swiss shares the league tab and table, so only its label changes.
+const leagueTabLabel = computed(() =>
+  props.tournament.format === "swiss"
+    ? t("tournament.tabs.swissPhase")
+    : t("tournament.tabs.league")
+)
 
 const emit = defineEmits<{
   changeTab: [tab: MainTab]
@@ -33,7 +41,7 @@ function onUpdate(value: string) {
     <TabsList class="phase-tabs">
       <template v-if="isLeagueFormat">
         <TabsTrigger as="div" class="phase-tab" value="league">
-          {{ t("tournament.tabs.league") }}
+          {{ leagueTabLabel }}
         </TabsTrigger>
         <TabsTrigger v-if="hasLeaguePlayoff" as="div" class="phase-tab" value="bracket">
           {{ t("tournament.tabs.playoff") }}

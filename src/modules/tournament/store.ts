@@ -11,6 +11,7 @@ import {
   createMultiTierLeague,
   getLeaguePlayoffData,
   canStartLeaguePlayoff,
+  isLeagueLike,
   seedLeaguePlayoffBracket,
   ensureMatchStats,
   markLegacyMatchStats,
@@ -126,7 +127,7 @@ export const useTournamentStore = defineStore("tournament", () => {
   /** One "Simulate All" plays out the whole structure, whatever it is. */
   function simulateTournament(tournamentId: string) {
     withTournament(tournamentId, (t) => {
-      if (t.format === "league") {
+      if (isLeagueLike(t)) {
         if (t.tiers?.length) {
           leagueActions.simAllTiers(tournamentId)
         } else {
