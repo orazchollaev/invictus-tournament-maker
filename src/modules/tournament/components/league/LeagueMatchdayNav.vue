@@ -26,20 +26,26 @@ defineEmits<{
     <button class="lv-nav-btn" :disabled="isFirst" @click="$emit('prev')">
       <AppIcon :icon="ChevronLeft" size="sm" />
     </button>
-    <span class="lv-md-title">
-      {{ title }}
-      <span v-if="done" class="lv-done-badge">✓</span>
-    </span>
+
+    <div class="lv-md-title-wrap">
+      <span class="lv-md-title">
+        {{ title }}
+        <span v-if="done" class="lv-done-badge">✓</span>
+      </span>
+      <button
+        v-if="!locked"
+        class="lv-sim-md-btn"
+        :disabled="done"
+        title="Simulate matchday"
+        @click="$emit('sim-matchday')"
+      >
+        <AppIcon :icon="Zap" size="xs" />
+        <span>Simulate</span>
+      </button>
+    </div>
+
     <button class="lv-nav-btn" :disabled="isLast" @click="$emit('next')">
       <AppIcon :icon="ChevronRight" size="sm" />
-    </button>
-    <button
-      v-if="!done && !locked"
-      class="lv-sim-md-btn"
-      title="Simulate matchday"
-      @click="$emit('sim-matchday')"
-    >
-      <AppIcon :icon="Zap" size="xs" />
     </button>
   </div>
 
@@ -63,34 +69,49 @@ defineEmits<{
   display: flex;
   align-items: center;
   gap: var(--sp-2);
-  margin-bottom: var(--sp-2);
+  margin-bottom: var(--sp-3);
 }
 
 .lv-nav-btn {
   display: flex;
   align-items: center;
-  padding: 2px var(--sp-1);
+  justify-content: center;
+  width: 30px;
+  height: 30px;
   border: 1px solid var(--border-light);
-  border-radius: var(--radius);
-  background: transparent;
+  border-radius: 50%;
+  background: var(--surface);
   color: var(--text-muted);
   cursor: pointer;
   flex-shrink: 0;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
 }
 .lv-nav-btn:not(:disabled):hover {
-  color: var(--text);
-  border-color: var(--border);
+  color: var(--accent);
+  border-color: var(--accent);
 }
 .lv-nav-btn:disabled {
-  opacity: 0.4;
+  opacity: 0.3;
   cursor: default;
+}
+
+.lv-md-title-wrap {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
 }
 
 .lv-md-title {
   font-size: var(--fs-sm);
   font-weight: 700;
-  flex: 1;
   text-align: center;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .lv-done-badge {
@@ -102,33 +123,45 @@ defineEmits<{
 .lv-sim-md-btn {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  padding: 3px var(--sp-2);
-  border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
-  border-radius: var(--radius);
+  gap: 4px;
+  padding: 2px var(--sp-2);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  border: none;
+  border-radius: var(--radius-full, 999px);
   color: var(--accent);
-  background: color-mix(in srgb, var(--accent) 8%, var(--surface));
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
   cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.15s;
 }
-.lv-sim-md-btn:hover {
-  background: color-mix(in srgb, var(--accent) 16%, var(--surface));
+.lv-sim-md-btn:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--accent) 20%, transparent);
+}
+.lv-sim-md-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
 }
 
 /* ─── Matchday pills ─── */
 .lv-md-pills {
   display: flex;
-  flex-wrap: wrap;
-  gap: 3px;
-  padding-bottom: 2px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  gap: 4px;
+  padding: 2px 2px var(--sp-1);
+  margin-top: var(--sp-1);
+  scrollbar-width: thin;
 }
 
 .lv-pill {
-  min-width: 22px;
-  height: 22px;
-  padding: 0 3px;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 4px;
   font-size: var(--fs-xs);
+  font-weight: 600;
   border: 1px solid var(--border-light);
-  border-radius: var(--radius);
+  border-radius: 7px;
   background: transparent;
   color: var(--text-muted);
   cursor: pointer;
@@ -136,6 +169,11 @@ defineEmits<{
   display: flex;
   justify-content: center;
   align-items: center;
+  transition: color 0.15s, border-color 0.15s, background 0.15s, transform 0.1s;
+}
+.lv-pill:hover {
+  color: var(--text);
+  border-color: var(--border);
 }
 .lv-pill.done {
   color: var(--accent);
@@ -144,14 +182,16 @@ defineEmits<{
 }
 .lv-pill.active {
   border-color: var(--accent);
-  background: color-mix(in srgb, var(--accent) 14%, var(--surface));
-  color: var(--accent);
+  background: var(--accent);
+  color: var(--on-accent);
   font-weight: 700;
+  transform: scale(1.08);
 }
 
 @media (max-width: 600px) {
   .lv-nav-btn {
-    padding: var(--sp-2) var(--sp-3);
+    width: 34px;
+    height: 34px;
   }
 }
 </style>
