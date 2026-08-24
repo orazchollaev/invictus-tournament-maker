@@ -249,10 +249,10 @@ function selectCategory(id: Category) {
   color: var(--accent);
 }
 .settings-panel :deep(.card-body) {
-  padding: var(--sp-1) var(--sp-4);
+  padding: var(--sp-2) var(--sp-3);
 }
 .settings-panel :deep(.field) {
-  padding: var(--sp-4) 0;
+  padding: var(--sp-2) 0;
   border-bottom: 1px solid var(--border-light);
 }
 .settings-panel :deep(.field:last-child) {
