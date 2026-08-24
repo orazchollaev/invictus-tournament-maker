@@ -136,7 +136,7 @@ onUnmounted(() => {
             :sequence="sequence"
             :teams="localTeams"
             :speed="speed"
-            :swiss="context.kind === 'swiss'"
+            :kind="context.kind"
           />
         </template>
       </div>
