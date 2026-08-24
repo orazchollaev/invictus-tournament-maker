@@ -60,19 +60,23 @@ defineExpose({ errors })
       :hint="t('tournament.create.swissConfig.opponentsHint')"
     />
 
-    <div class="form-row">
-      <span class="form-label form-label--md">{{ t("tournament.create.swissConfig.legs") }}</span>
-      <BtnGroup v-model="legMode" :options="multiLegOptions" />
-    </div>
+    <div class="form-rows">
+      <div class="form-row">
+        <span class="form-label form-label--md">
+          {{ t("tournament.create.swissConfig.legs") }}
+        </span>
+        <BtnGroup v-model="legMode" :options="multiLegOptions" />
+      </div>
 
-    <div class="form-row">
-      <span class="form-label form-label--md">
-        {{ t("tournament.create.swissConfig.homeAwayBalance") }}
-      </span>
-      <ToggleSwitch
-        v-model="balanceHomeAway"
-        :aria-label="t('tournament.create.swissConfig.homeAwayBalance')"
-      />
+      <div class="form-row">
+        <span class="form-label form-label--md">
+          {{ t("tournament.create.swissConfig.homeAwayBalance") }}
+        </span>
+        <ToggleSwitch
+          v-model="balanceHomeAway"
+          :aria-label="t('tournament.create.swissConfig.homeAwayBalance')"
+        />
+      </div>
     </div>
   </TspLockedCard>
 
@@ -97,6 +101,7 @@ defineExpose({ errors })
     <AppStepper
       v-if="isSeededDraw"
       v-model="potCount"
+      style="margin-top: var(--sp-3)"
       :label="t('tournament.create.swissConfig.pots')"
       :min="1"
       :max="maxPotCount"
@@ -114,7 +119,9 @@ defineExpose({ errors })
   <div class="form-card">
     <div class="form-section-title">{{ t("tournament.create.tiebreaker") }}</div>
     <div class="form-row">
-      <span class="form-label">{{ t("tournament.settingsPage.tiebreaker.method") }}</span>
+      <span class="form-label form-label--md">
+        {{ t("tournament.settingsPage.tiebreaker.method") }}
+      </span>
       <BtnGroup
         v-model="tiebreaker"
         :options="[
