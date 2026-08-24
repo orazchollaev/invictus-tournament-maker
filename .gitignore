@@ -29,5 +29,6 @@ android/app/google-services.json
 android/.gradle/
 android/build/
 
-.claude
+.claude/
 .vscode
+.freebuff/
