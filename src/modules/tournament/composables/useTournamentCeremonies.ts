@@ -11,6 +11,7 @@ import {
   isSwiss,
   getLeaguePlayoffQualifierIds,
   computeLeaguePlayoffPlan,
+  randomSeed,
 } from "@/engine"
 import type { CeremonyContext, DrawMode, DrawPlan, Pot } from "@/engine"
 import type { PlayoffSeedMode, Tournament } from "@/modules/tournament/types"
@@ -54,7 +55,7 @@ export function useTournamentCeremonies(
   const ceremonyContext = ref<CeremonyContext | null>(null)
   const ceremonyPots = ref<Pot[] | undefined>(undefined)
   const ceremonyFixedPlan = ref<DrawPlan | undefined>(undefined)
-  const ceremonyAction = ref<"playoff" | "season" | "leaguePlayoff" | null>(null)
+  const ceremonyAction = ref<"playoff" | "season" | "leaguePlayoff" | "swissSeason" | null>(null)
   const ceremonySeasonOpts = ref<{
     thirdPlace: boolean
     playoffSeedMode?: PlayoffSeedMode
@@ -150,9 +151,14 @@ export function useTournamentCeremonies(
     })
 
     // Swiss redraws its own opponent graph inside the store (fresh seed), so
-    // there is nothing for a draw ceremony to decide here — same as a league.
+    // there are no pots for the user to edit — but it still gets the reveal
+    // ceremony when enabled, same as CreateTournamentPage's swiss flow.
     if (isSwiss(t)) {
-      startNewLeagueSeason(t.teamIds)
+      if (settings.drawCeremony) {
+        openSwissSeasonCeremony(t)
+      } else {
+        startNewLeagueSeason(t.teamIds)
+      }
       return
     }
 
@@ -210,6 +216,27 @@ export function useTournamentCeremonies(
     showCeremony.value = true
   }
 
+  function openSwissSeasonCeremony(t: Tournament) {
+    if (!t.swiss) {
+      startNewLeagueSeason(t.teamIds)
+      return
+    }
+    ceremonyContext.value = {
+      kind: "swiss",
+      teams: tournamentTeams.value,
+      drawMode: (t.drawType === "random" ? "random" : "seeded") as DrawMode,
+      swiss: {
+        ...t.swiss,
+        seed: randomSeed(),
+      },
+    }
+    ceremonyPots.value = undefined
+    ceremonyFixedPlan.value = undefined
+    ceremonySeasonOpts.value = undefined
+    ceremonyAction.value = "swissSeason"
+    showCeremony.value = true
+  }
+
   function onCeremonyUseOldDraw() {
     showCeremony.value = false
     const t = tournament.value
@@ -250,6 +277,8 @@ export function useTournamentCeremonies(
     if (!t) return
     if (ceremonyAction.value === "playoff") {
       store.advanceToBracketManual(t.id, orderedIds)
+    } else if (ceremonyAction.value === "swissSeason") {
+      startNewLeagueSeason(t.teamIds)
     } else if (ceremonyAction.value === "leaguePlayoff") {
       store.startLeaguePlayoffBracket(t.id, "manual", orderedIds)
     } else if (ceremonyAction.value === "season") {
