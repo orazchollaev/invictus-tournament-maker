@@ -1,13 +1,9 @@
 <script setup lang="ts">
 /**
- * One leg of a two-legged tie, on one line.
- *
- * It used to stack the two teams vertically, which meant a tie repeated both
- * names four times — twice in the card header, twice per leg — inside a 26px
- * row that truncated them anyway. The header already answers "who is playing";
- * a leg only has to answer "which way round, and what was the score". So this
- * is the same shape LeagueMatchRow uses for a single fixture: side, score,
- * side — with the leg number in front of it.
+ * One leg of a two-legged tie, styled as the same row FixtureMatchCard uses
+ * for a single fixture — side, score button, side — with just a small leg
+ * marker in front, so a tie reads as two ordinary fixtures stacked, not a
+ * different kind of card.
  */
 import { computed, ref } from "vue"
 import type { Team } from "@/modules/teams/types"
@@ -45,13 +41,13 @@ function getTeam(id: string | null): Team | null {
 const homeTeam = computed(() => getTeam(props.homeId))
 const awayTeam = computed(() => getTeam(props.awayId))
 
-function isLegWinner(side: "home" | "away"): boolean {
+function scoreAccentColor(): string {
   const r = props.result
-  if (!r) return false
-  return side === "home" ? r.home > r.away : r.away > r.home
+  if (!r) return ""
+  if (r.home > r.away) return homeTeam.value?.color ?? ""
+  if (r.away > r.home) return awayTeam.value?.color ?? ""
+  return "var(--border)"
 }
-
-const hasPen = computed(() => !!props.result && props.result.penHome !== undefined)
 
 const editing = ref(false)
 const canEdit = computed(() => !!props.match.homeId && !!props.match.awayId && !props.disabled)
@@ -61,36 +57,30 @@ const requiresWinner = computed(() => props.leg === 2)
 </script>
 
 <template>
-  <div class="leg" :class="{ 'leg--locked': disabled, 'leg--played': !!result }">
+  <div class="leg" :class="{ 'leg--locked': disabled }">
+    <span class="leg-no">L{{ leg }}</span>
+
+    <TeamBadge :team="homeTeam" :size="16" reverse class="fx-team fx-team--home" />
+
     <button
-      class="leg-open"
-      type="button"
+      class="fx-score-btn"
+      :class="{ 'fx-score-btn--played': !!result }"
+      :style="result ? { borderColor: scoreAccentColor(), borderLeftWidth: '3px' } : {}"
       :disabled="!canEdit"
-      :aria-label="`Set leg ${leg} result`"
       @click="editing = true"
     >
-      <span class="leg-no">L{{ leg }}</span>
-
-      <span class="leg-side leg-side--home" :class="{ dim: !!result && !isLegWinner('home') }">
-        <TeamBadge :team="homeTeam" :size="15" reverse />
-      </span>
-
-      <span class="leg-score" :class="{ 'leg-score--tbd': !result }">
-        <template v-if="result">
-          <span class="sc-half" :class="{ lead: isLegWinner('home') }">{{ result.home }}</span>
-          <span class="sc-sep">–</span>
-          <span class="sc-half" :class="{ lead: isLegWinner('away') }">{{ result.away }}</span>
-          <span v-if="hasPen" class="pen-sup">({{ result!.penHome }}-{{ result!.penAway }}p)</span>
-        </template>
-        <template v-else>vs</template>
-      </span>
-
-      <span class="leg-side leg-side--away" :class="{ dim: !!result && !isLegWinner('away') }">
-        <TeamBadge :team="awayTeam" :size="15" />
-      </span>
+      <template v-if="result">
+        {{ result.home }} – {{ result.away }}
+        <span v-if="result.penHome !== undefined" class="pen-sup">
+          ({{ result.penHome }}-{{ result.penAway }}p)
+        </span>
+      </template>
+      <template v-else>vs</template>
     </button>
 
-    <span class="leg-report">
+    <TeamBadge :team="awayTeam" :size="16" class="fx-team fx-team--away" />
+
+    <span class="fx-report">
       <MatchStatsButton
         :home-team="homeTeam"
         :away-team="awayTeam"
@@ -100,7 +90,6 @@ const requiresWinner = computed(() => props.leg === 2)
       />
     </span>
 
-    <!-- Inside the row, so the component keeps a single root element. -->
     <MatchScoreModal
       v-if="editing && canEdit"
       :home-team="homeTeam"
@@ -117,5 +106,33 @@ const requiresWinner = computed(() => props.leg === 2)
   </div>
 </template>
 
-<style scoped src="../match-card-shared.css"></style>
-<style scoped src="./fixture-leg-row.css"></style>
+<style scoped src="./fixture-row.css"></style>
+<style scoped>
+.leg {
+  display: grid;
+  grid-template-columns: 18px 1fr auto 1fr 18px;
+  align-items: center;
+  gap: var(--sp-2);
+  font-size: var(--fs-base);
+  padding: var(--sp-1);
+  min-width: 0;
+}
+
+/* Leg 2 before leg 1 is entered. Readable, not invisible — you should still
+   be able to see who it is between. */
+.leg--locked {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* Leg number reads as a marker, not as content — same weight as the round
+   labels elsewhere in the fixture list. */
+.leg-no {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  text-align: center;
+}
+</style>

@@ -147,12 +147,12 @@ function simTieLeg(match: FlatMatch, leg: 1 | 2) {
       </button>
     </div>
 
-    <!-- Match grid -->
+    <!-- Match list -->
     <div class="fv-grid" :class="{ solo: isSoloLayout }">
       <template v-for="match in filteredMatches" :key="match.id">
         <FixtureTieCard
           v-if="match.leg2Result !== undefined"
-          class="fv-wide"
+          class="fv-tie"
           :match="match"
           :teams="teams"
           @set-result="onSetTieResult"
@@ -219,24 +219,19 @@ function simTieLeg(match: FlatMatch, leg: 1 | 2) {
   border-color: var(--accent-2);
 }
 
+/* One column, full width — the same list shape Group and League fixtures
+   use, rather than a card grid unique to this view. */
 .fv-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
+  flex-direction: column;
   gap: 6px;
   padding: 0 0 8px 0;
+  max-width: 520px;
+  margin: 0 auto;
 }
 
-/* A two-legged tie names both teams twice over and carries an aggregate
-   between them. In half a phone's width that leaves about 60px per name,
-   which is an ellipsis and nothing else — so a tie takes the full row and
-   the single-match cards keep pairing up beside each other. */
-.fv-grid .fv-wide {
-  grid-column: 1 / -1;
-}
-.fv-grid.solo {
-  grid-template-columns: 1fr;
-  max-width: 440px;
-  margin: 0 auto;
+.fv-grid .fv-tie {
+  margin: 2px 0;
 }
 
 .fv-empty {

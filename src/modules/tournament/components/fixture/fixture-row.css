@@ -1,0 +1,64 @@
+/* Shared row look for FixtureMatchCard and FixtureLegRow — one team, the
+   score button, the other team. Kept in one file so a single match and a
+   tie's two legs render as the same visual language. */
+
+.fx-team {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  min-width: 0;
+  color: var(--text-muted);
+}
+.fx-team--home {
+  justify-content: flex-end;
+  text-align: end;
+}
+.fx-team--away {
+  justify-content: flex-start;
+}
+/* The beaten side steps back rather than disappearing. */
+.fx-team.dim {
+  opacity: 0.5;
+}
+
+.fx-score-btn {
+  font-family: var(--font);
+  font-size: var(--fs-md);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  justify-content: center;
+  background: var(--bg);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius);
+  cursor: pointer;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  color: var(--text-muted);
+  padding: var(--sp-1) var(--sp-2);
+  min-width: 60px;
+}
+.fx-score-btn--played {
+  color: var(--text);
+  border-color: var(--border);
+}
+.fx-score-btn:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.fx-score-btn:disabled {
+  cursor: default;
+  opacity: 0.5;
+}
+
+.fx-report {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.pen-sup {
+  font-size: 9px;
+  font-weight: 600;
+  margin-left: 2px;
+}

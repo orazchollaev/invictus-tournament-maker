@@ -1,13 +1,10 @@
 <script setup lang="ts">
-import { computed, ref } from "vue"
+import { ref } from "vue"
 import type { Team } from "@/modules/teams/types"
-import { getWinnerId } from "@/engine"
-import { NO_TEAM_COLOR } from "@/modules/teams/color"
 import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
 import MatchScoreModal from "../MatchScoreModal.vue"
 import MatchStatsButton from "../match-stats/MatchStatsButton.vue"
 import type { FlatMatch } from "./types"
-import { Pencil } from "@lucide/vue"
 
 const props = defineProps<{ match: FlatMatch; teams: Team[] }>()
 const emit = defineEmits<{
@@ -21,88 +18,42 @@ function getTeam(id: string | null): Team | null {
   return props.teams.find((t) => t.id === id) ?? null
 }
 
-/* Each row carries its own club's colour, so a fixture list identifies the
-   teams before a single result is in — and a tournament's fixtures look like
-   *that* tournament rather than like every other one. */
-const homeColor = computed(() => getTeam(props.match.homeId)?.color ?? NO_TEAM_COLOR)
-const awayColor = computed(() => getTeam(props.match.awayId)?.color ?? NO_TEAM_COLOR)
-
-/* The card is 28px per row — far too little for a stepper, an input and a
-   shootout. Tapping it opens the one score modal instead. */
+/* Same one-line row shape Group and League fixtures use — the score button is
+   the whole edit affordance, so entry happens in the shared modal. */
 const editing = ref(false)
-const canEdit = computed(() => !!props.match.homeId && !!props.match.awayId)
+
+function scoreAccentColor(): string {
+  const r = props.match.result
+  if (!r) return ""
+  if (r.home > r.away) return getTeam(props.match.homeId)?.color ?? ""
+  if (r.away > r.home) return getTeam(props.match.awayId)?.color ?? ""
+  return "var(--border)"
+}
 </script>
 
 <template>
-  <div class="mc" :class="{ 'mc--played': !!match.result }">
+  <div class="fm-match">
+    <TeamBadge :team="getTeam(match.homeId)" :size="16" reverse class="fx-team fx-team--home" />
+
     <button
-      class="mc-open"
-      type="button"
-      :disabled="!canEdit"
-      :aria-label="'Set result'"
+      class="fx-score-btn"
+      :class="{ 'fx-score-btn--played': !!match.result }"
+      :style="match.result ? { borderColor: scoreAccentColor(), borderLeftWidth: '3px' } : {}"
+      :disabled="!match.homeId || !match.awayId"
       @click="editing = true"
     >
-      <div class="mc-teams">
-        <div
-          class="mc-row"
-          :style="{ '--tc': homeColor }"
-          :class="{
-            winner: match.result && getWinnerId(match) === match.homeId,
-            loser: match.result && getWinnerId(match) !== match.homeId,
-          }"
-        >
-          <TeamBadge :team="getTeam(match.homeId)" />
-        </div>
-        <div
-          class="mc-row mc-row--away"
-          :style="{ '--tc': awayColor }"
-          :class="{
-            winner: match.result && getWinnerId(match) === match.awayId,
-            loser: match.result && getWinnerId(match) !== match.awayId,
-          }"
-        >
-          <TeamBadge :team="getTeam(match.awayId)" />
-        </div>
-      </div>
-
-      <div class="mc-scores">
-        <Pencil v-if="canEdit && !match.result" :size="9" class="mc-edit-hint" />
-        <div
-          class="mc-scell"
-          :style="{ '--tc': homeColor }"
-          :class="{
-            winner: match.result && getWinnerId(match) === match.homeId,
-            loser: match.result && getWinnerId(match) !== match.homeId,
-          }"
-        >
-          <span class="sc" :class="{ tbd: !match.result }">
-            {{ match.result ? match.result.home : "–" }}
-            <span v-if="match.result?.penHome !== undefined" class="pen-sup">
-              [{{ match.result.penHome }}p]
-            </span>
-          </span>
-        </div>
-        <div
-          class="mc-scell mc-scell--away"
-          :style="{ '--tc': awayColor }"
-          :class="{
-            winner: match.result && getWinnerId(match) === match.awayId,
-            loser: match.result && getWinnerId(match) !== match.awayId,
-          }"
-        >
-          <span class="sc" :class="{ tbd: !match.result }">
-            {{ match.result ? match.result.away : "–" }}
-            <span v-if="match.result?.penAway !== undefined" class="pen-sup">
-              [{{ match.result.penAway }}p]
-            </span>
-          </span>
-        </div>
-      </div>
+      <template v-if="match.result">
+        {{ match.result.home }} – {{ match.result.away }}
+        <span v-if="match.result.penHome !== undefined" class="pen-sup">
+          ({{ match.result.penHome }}-{{ match.result.penAway }}p)
+        </span>
+      </template>
+      <template v-else>vs</template>
     </button>
 
-    <!-- A played match gets its own rail, outside the edit button, so tapping
-         the report never risks opening the score editor by mistake. -->
-    <span v-if="match.result?.stats" class="mc-report">
+    <TeamBadge :team="getTeam(match.awayId)" :size="16" class="fx-team fx-team--away" />
+
+    <span class="fx-report">
       <MatchStatsButton
         :home-team="getTeam(match.homeId)"
         :away-team="getTeam(match.awayId)"
@@ -111,10 +62,8 @@ const canEdit = computed(() => !!props.match.homeId && !!props.match.awayId)
       />
     </span>
 
-    <!-- Inside the card, so the component keeps a single root element and any
-         style a parent passes down still lands on it. -->
     <MatchScoreModal
-      v-if="editing && canEdit"
+      v-if="editing && match.homeId && match.awayId"
       :home-team="getTeam(match.homeId)"
       :away-team="getTeam(match.awayId)"
       :result="match.result"
@@ -127,139 +76,18 @@ const canEdit = computed(() => !!props.match.homeId && !!props.match.awayId)
   </div>
 </template>
 
-<style scoped src="../match-card-shared.css"></style>
+<style scoped src="./fixture-row.css"></style>
 <style scoped>
-.mc {
-  display: flex;
-  flex-direction: row;
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius);
-  background: var(--surface);
-  font-size: 12px;
-  overflow: hidden;
-  animation: fade-up 0.22s ease both;
-}
-.mc-report {
-  display: flex;
+/* Mirrors LeagueMatchRow / GroupCard's .gs-match — the same row shape across
+   League, Group and Bracket fixture lists, instead of a boxed card that only
+   this view used. */
+.fm-match {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr 18px;
   align-items: center;
-  padding-inline: var(--sp-1);
-  border-inline-start: 1px solid var(--border-light);
-}
-
-.mc--played {
-  border-color: var(--border);
-}
-
-.mc-open {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  padding: 0;
-  border: none;
-  background: transparent;
-  font: inherit;
-  color: inherit;
-  cursor: pointer;
-  text-align: start;
+  gap: var(--sp-2);
+  font-size: var(--fs-base);
+  padding: var(--sp-1);
   min-width: 0;
-  gap: 0;
-}
-.mc-open:disabled {
-  cursor: default;
-}
-.mc-open:not(:disabled):hover .mc-scores,
-.mc-open:not(:disabled):focus-visible .mc-scores {
-  background: color-mix(in srgb, var(--accent) 8%, transparent);
-}
-.mc-open:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: -2px;
-}
-
-.mc-teams {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-}
-
-.mc-row {
-  position: relative;
-  display: flex;
-  align-items: center;
-  height: 28px;
-  padding: 0 8px 0 11px;
-  gap: 5px;
-  border-bottom: 1px solid var(--border-light);
-  box-sizing: border-box;
-  overflow: hidden;
-  transition:
-    background 0.1s,
-    opacity 0.1s;
-}
-/* Club identity bar. Ringed, because a white kit on a white card is
-   otherwise invisible — see modules/teams/color.ts. */
-.mc-row::before {
-  content: "";
-  position: absolute;
-  inset-inline-start: 0;
-  top: 0;
-  bottom: 0;
-  width: 3px;
-  background: var(--tc, transparent);
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.18);
-}
-.mc-row--away {
-  border-bottom: none;
-}
-/* Won matches take the winner's colour rather than one shared green, so a
-   fixture list reads as "who won" and not just "played / not played". */
-.mc-row.winner {
-  background: color-mix(in srgb, var(--tc, var(--success)) 14%, var(--surface));
-  font-weight: 700;
-}
-.mc-row.loser {
-  opacity: 0.45;
-}
-
-.mc-scores {
-  position: relative;
-  width: 52px;
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  border-left: 1px solid var(--border-light);
-  transition: background 0.12s;
-}
-.mc-edit-hint {
-  position: absolute;
-  top: 2px;
-  right: 2px;
-  color: var(--text-muted);
-  opacity: 0.5;
-  pointer-events: none;
-}
-
-.mc-scell {
-  height: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 3px;
-  padding: 0 4px;
-  border-bottom: 1px solid var(--border-light);
-  box-sizing: border-box;
-  transition:
-    background 0.1s,
-    opacity 0.1s;
-}
-.mc-scell--away {
-  border-bottom: none;
-}
-.mc-scell.winner {
-  background: color-mix(in srgb, var(--tc, var(--success)) 14%, var(--surface));
-}
-.mc-scell.loser {
-  opacity: 0.45;
 }
 </style>
