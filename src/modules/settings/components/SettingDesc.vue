@@ -1,6 +1,9 @@
 <script setup lang="ts">
+import { useI18n } from "vue-i18n"
 import { ref, onMounted, onUnmounted } from "vue"
 import { Info } from "@lucide/vue"
+
+const { t } = useI18n()
 
 const open = ref(false)
 const btn = ref<HTMLElement>()
@@ -49,7 +52,7 @@ onUnmounted(() => {
     ref="btn"
     type="button"
     class="sd-btn"
-    aria-label="Info"
+    :aria-label="t('common.info')"
     :aria-expanded="open"
     @click.stop="toggle"
   >
@@ -122,5 +125,18 @@ onUnmounted(() => {
   color: var(--text-muted);
   line-height: 1.5;
   box-shadow: var(--elev-2);
+}
+
+/* The info dot is 20px by design — grow only what the finger hits. */
+.sd-btn {
+  position: relative;
+}
+.sd-btn::after {
+  content: "";
+  position: absolute;
+  inset: 50% auto auto 50%;
+  width: max(100%, var(--tap-min));
+  height: max(100%, var(--tap-min));
+  transform: translate(-50%, -50%);
 }
 </style>

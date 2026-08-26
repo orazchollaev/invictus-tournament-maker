@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue"
 import { useI18n } from "vue-i18n"
+import { useEngineLabels } from "@/composables/useEngineLabels"
 import type { Team } from "@/modules/teams/types"
 import type { CeremonyKind, DrawStep } from "@/engine"
 import type { CeremonySpeed } from "../../composables/useDrawCeremony"
@@ -17,6 +18,7 @@ const props = defineProps<{
 }>()
 
 const { t } = useI18n()
+const { engineLabel } = useEngineLabels()
 const { teamById } = useTeamLookup(() => props.teams)
 
 const leaveMs = computed(() => (props.speed === "fast" ? 90 : 240))
@@ -92,7 +94,7 @@ function isBye(label: string) {
               class="ds-opponent"
             />
           </div>
-          <div v-else class="ds-target">{{ current.targetLabel }}</div>
+          <div v-else class="ds-target">{{ engineLabel(current.targetLabel) }}</div>
         </div>
       </Transition>
     </div>
@@ -122,7 +124,7 @@ function isBye(label: string) {
     <!-- Group: one card per group, rows tinted by the team's pot -->
     <div v-else-if="kind === 'group'" class="ds-board ds-board--groups">
       <div v-for="slot in slots" :key="slot.label" class="ds-slot ds-group">
-        <div class="ds-slot-label">{{ slot.label }}</div>
+        <div class="ds-slot-label">{{ engineLabel(slot.label) }}</div>
         <div class="ds-slot-rows">
           <div v-for="(step, i) in slot.steps" :key="i" class="ds-row ds-row--pot">
             <Transition name="ds-pop">
@@ -145,7 +147,9 @@ function isBye(label: string) {
         class="ds-match"
         :class="{ 'ds-match--bye': isBye(slot.label) }"
       >
-        <div class="ds-match-label">{{ isBye(slot.label) ? t("manualDraw.bye") : slot.label }}</div>
+        <div class="ds-match-label">
+          {{ isBye(slot.label) ? t("manualDraw.bye") : engineLabel(slot.label) }}
+        </div>
 
         <template v-if="isBye(slot.label)">
           <div class="ds-match-rows ds-match-rows--single">
@@ -173,7 +177,6 @@ function isBye(label: string) {
                 <span v-else class="ds-row-empty" />
               </Transition>
             </div>
-            <span class="ds-vs">{{ t("common.vs") }}</span>
           </div>
         </template>
       </div>
@@ -212,10 +215,11 @@ function isBye(label: string) {
   padding: 12px 22px;
   transform-style: preserve-3d;
   /* Deliberately theme-independent: this is the physical draw slip, which is
-     white card stock in light and dark alike. Not a surface — do not tokenise. */
-  background: linear-gradient(to bottom, #ffffff 0%, #f3f4f8 49%, #e7e9f0 51%, #f6f7fa 100%);
-  color: #1a2234;
-  border: 1px solid #c2c7d4;
+     white card stock in light and dark alike. The --paper-* tokens are defined
+     once, outside the dark block, precisely so they do not follow the theme. */
+  background: var(--paper-face);
+  color: var(--paper-text);
+  border: 1px solid var(--paper-border);
   border-radius: 3px;
   transform-origin: top center;
   overflow: hidden;
@@ -490,10 +494,10 @@ function isBye(label: string) {
 }
 .ds-match-row {
   position: relative;
-  height: 26px;
+  height: 30px;
   border-bottom: 1px dashed var(--border-light);
 }
-.ds-match-row:last-child {
+.ds-match-row:last-of-type {
   border-bottom: none;
 }
 .ds-match-rows--single .ds-row-empty,
@@ -504,21 +508,6 @@ function isBye(label: string) {
   position: absolute;
   inset: 0;
   gap: 7px;
-}
-.ds-vs {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 8px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  background: var(--bg);
-  border: 1px solid var(--border-light);
-  border-radius: 999px;
-  padding: 1px 5px;
 }
 
 @media (max-width: 600px) {

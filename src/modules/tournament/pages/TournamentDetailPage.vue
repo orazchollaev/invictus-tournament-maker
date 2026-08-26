@@ -318,7 +318,7 @@ const {
 
     <AppModal
       v-if="showPlayoffManualDraw && tournament"
-      title="Playoff Draw"
+      :title="trns('leaguePlayoff.playoffDrawTitle')"
       :width="'min(680px, calc(100vw - 32px))'"
       @close="showPlayoffManualDraw = false"
     >
@@ -346,7 +346,7 @@ const {
 
     <AppModal
       v-if="showSeasonModal"
-      :title="`New Season — ${tournament?.name}`"
+      :title="`${trns('tournament.newSeason')} — ${tournament?.name}`"
       :width="showManualSeason && isGroupFormat ? 'min(680px, calc(100vw - 32px))' : undefined"
       @close="closeSeasonModal"
     >

@@ -4,6 +4,7 @@ import { ChevronDown, Shuffle } from "@lucide/vue"
 import { AppButton, AppIcon } from "@/components/ui"
 import type { Match, Round } from "../../types"
 import { useI18n } from "vue-i18n"
+import { useEngineLabels } from "@/composables/useEngineLabels"
 
 defineProps<{
   rounds: Round[]
@@ -17,6 +18,7 @@ const emit = defineEmits<{
 }>()
 
 const { t } = useI18n()
+const { engineLabel } = useEngineLabels()
 
 const menuOpen = ref(false)
 
@@ -48,7 +50,7 @@ function run(action: () => void) {
           block
           @click="run(() => emit('sim-round', ri))"
         >
-          {{ t("tournament.simulateRound", { round: round.name }) }}
+          {{ t("tournament.simulateRound", { round: engineLabel(round.name) }) }}
         </AppButton>
 
         <AppButton
@@ -76,7 +78,7 @@ function run(action: () => void) {
       class="sim-inline"
       @click="emit('sim-round', ri)"
     >
-      {{ t("tournament.simulateRound", { round: round.name }) }}
+      {{ t("tournament.simulateRound", { round: engineLabel(round.name) }) }}
     </AppButton>
 
     <AppButton

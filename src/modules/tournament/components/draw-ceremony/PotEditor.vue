@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n"
+import { useEngineLabels } from "@/composables/useEngineLabels"
 import { VueDraggable } from "vue-draggable-plus"
 import type { Team } from "@/modules/teams/types"
 import type { Pot } from "@/engine"
@@ -16,6 +17,7 @@ const props = defineProps<{
 defineEmits<{ reset: [] }>()
 
 const { t } = useI18n()
+const { engineLabel } = useEngineLabels()
 const { teamById } = useTeamLookup(() => props.teams)
 </script>
 
@@ -37,7 +39,7 @@ const { teamById } = useTeamLookup(() => props.teams)
     <div class="pe-pots">
       <div v-for="(pot, i) in pots" :key="i" class="pe-pot">
         <div class="pe-pot-head">
-          <span class="pe-pot-label">{{ pot.label }}</span>
+          <span class="pe-pot-label">{{ engineLabel(pot.label) }}</span>
           <span class="pe-pot-count">{{ pot.teamIds.length }}</span>
         </div>
         <VueDraggable

@@ -5,6 +5,7 @@ import type { Team } from "@/modules/teams/types"
 import { useGradualSim } from "@/modules/tournament/composables/useGradualSim"
 import LeagueMatchRow from "./LeagueMatchRow.vue"
 import LeagueMatchdayNav from "./LeagueMatchdayNav.vue"
+import { useEngineLabels } from "@/composables/useEngineLabels"
 
 const props = defineProps<{
   matchdays: LeagueMatchday[]
@@ -12,6 +13,8 @@ const props = defineProps<{
   tournamentId: string
   locked?: boolean
 }>()
+
+const { engineLabel } = useEngineLabels()
 
 const emit = defineEmits<{
   setResult: [matchdayIdx: number, matchIdx: number, home: number, away: number]
@@ -68,7 +71,7 @@ async function handleSimMatchday(idx: number) {
 <template>
   <div class="lv-right">
     <LeagueMatchdayNav
-      :title="activeMatchday?.name ?? ''"
+      :title="engineLabel(activeMatchday?.name)"
       :is-first="activeIdx === 0"
       :is-last="activeIdx === matchdays.length - 1"
       :done="doneFlags[activeIdx] ?? false"
@@ -87,7 +90,7 @@ async function handleSimMatchday(idx: number) {
           :home-team="teamById(match.homeId)"
           :away-team="teamById(match.awayId)"
           :result="match.result"
-          :label="activeMatchday?.name"
+          :label="engineLabel(activeMatchday?.name)"
           :locked="locked"
           @save="(h, a) => emit('setResult', activeIdx, mIdx, h, a)"
           @clear="emit('clearResult', activeIdx, mIdx)"

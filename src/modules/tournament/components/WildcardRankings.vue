@@ -6,6 +6,7 @@ import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
 import { AppCard, AppTable } from "@/components/ui"
 import { useTeamLookup } from "@/composables/useTeamLookup"
 import { useI18n } from "vue-i18n"
+import { useEngineLabels } from "@/composables/useEngineLabels"
 
 const props = defineProps<{
   tournament: Tournament
@@ -13,6 +14,7 @@ const props = defineProps<{
 }>()
 
 const { t } = useI18n()
+const { engineLabel } = useEngineLabels()
 const { teamById } = useTeamLookup(() => props.teams)
 
 const rankIdx = computed(() => props.tournament.qualifiersPerGroup ?? 2)
@@ -38,7 +40,7 @@ const candidates = computed(() => {
     if (!s) continue
     rows.push({
       teamId: s.teamId,
-      groupName: group.name,
+      groupName: engineLabel(group.name),
       played: s.played,
       won: s.won,
       drawn: s.drawn,
@@ -56,7 +58,7 @@ const candidates = computed(() => {
 </script>
 
 <template>
-  <AppCard variant="outlined" title="Wildcard Race">
+  <AppCard variant="outlined" :title="t('tournament.wildcardRace')">
     <template #actions>
       <span class="wc-sub">
         Best {{ wildcardCount }} of {{ candidates.length }} runners-up advance
@@ -69,7 +71,7 @@ const candidates = computed(() => {
       <thead>
         <tr>
           <th class="col-rank">#</th>
-          <th class="col-group">Group</th>
+          <th class="col-group">{{ t("participants.group") }}</th>
           <th class="col-team">{{ t("common.team") }}</th>
           <th :title="t('history.table.played')">P</th>
           <th :title="t('history.table.won')">W</th>
@@ -109,7 +111,9 @@ const candidates = computed(() => {
       </TransitionGroup>
     </AppTable>
 
-    <div v-if="candidates.length === 0" class="wc-empty">Group stage not started yet.</div>
+    <div v-if="candidates.length === 0" class="empty-inline">
+      {{ t("tournament.groupStageNotStarted") }}
+    </div>
   </AppCard>
 </template>
 
@@ -173,13 +177,6 @@ const candidates = computed(() => {
 .flex {
   display: flex;
   align-items: center;
-}
-
-.wc-empty {
-  font-size: var(--fs-sm);
-  color: var(--text-muted);
-  padding: var(--sp-3);
-  text-align: center;
 }
 
 @media (max-width: 600px) {

@@ -1,3 +1,4 @@
+import { createEngineLabel } from "@/composables/useEngineLabels"
 import type { ParticipantRow, TeamStats } from "./types"
 
 /** Translate function shape, matching vue-i18n's `t`. */
@@ -40,7 +41,7 @@ export function leaguePlaceTag(
 
 export function eliminationLabel(row: ParticipantRow, t: Translate): string {
   if (!row.eliminatedRound) return ""
-  return t("participants.eliminated", { round: row.eliminatedRound })
+  return t("participants.eliminated", { round: createEngineLabel(t)(row.eliminatedRound) })
 }
 
 export function goalDiff(s: TeamStats): string {

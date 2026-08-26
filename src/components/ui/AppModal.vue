@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useI18n } from "vue-i18n"
 import { ref } from "vue"
 import {
   DialogRoot,
@@ -10,6 +11,8 @@ import {
   VisuallyHidden,
 } from "reka-ui"
 import { X } from "@lucide/vue"
+
+const { t } = useI18n()
 
 withDefaults(
   defineProps<{
@@ -57,7 +60,7 @@ defineExpose({ close })
               <DialogTitle>{{ title }}</DialogTitle>
             </VisuallyHidden>
           </slot>
-          <DialogClose class="drawer-close" aria-label="Close">
+          <DialogClose class="drawer-close" :aria-label="t('common.close')">
             <X :size="14" />
           </DialogClose>
         </div>
@@ -211,5 +214,18 @@ defineExpose({ close })
   .drawer-body {
     padding: 12px;
   }
+}
+
+/* Painted at 24px to sit in the header; the hit area is a full tap target. */
+.drawer-close {
+  position: relative;
+}
+.drawer-close::after {
+  content: "";
+  position: absolute;
+  inset: 50% auto auto 50%;
+  width: max(100%, var(--tap-min));
+  height: max(100%, var(--tap-min));
+  transform: translate(-50%, -50%);
 }
 </style>

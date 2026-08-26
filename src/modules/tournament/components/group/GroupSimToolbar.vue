@@ -4,6 +4,7 @@ import type { Group } from "@/modules/tournament/types"
 import { Shuffle, Check, ChevronDown } from "@lucide/vue"
 import { AppButton, AppIcon } from "@/components/ui"
 import { useI18n } from "vue-i18n"
+import { useEngineLabels } from "@/composables/useEngineLabels"
 
 defineProps<{
   groups: Group[]
@@ -18,6 +19,7 @@ const emit = defineEmits<{
 }>()
 
 const { t } = useI18n()
+const { engineLabel } = useEngineLabels()
 
 const menuOpen = ref(false)
 
@@ -65,7 +67,7 @@ function run(action: () => void) {
             block
             @click="run(() => emit('simGroup', gi))"
           >
-            {{ t("tournament.simulateGroup", { group: g.name }) }}
+            {{ t("tournament.simulateGroup", { group: engineLabel(g.name) }) }}
           </AppButton>
         </template>
       </div>
@@ -101,7 +103,7 @@ function run(action: () => void) {
         class="sim-inline"
         @click="emit('simGroup', gi)"
       >
-        {{ t("tournament.simulateGroup", { group: g.name }) }}
+        {{ t("tournament.simulateGroup", { group: engineLabel(g.name) }) }}
       </AppButton>
     </template>
 

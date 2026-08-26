@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useI18n } from "vue-i18n"
+
 export interface SeasonStat {
   label: string
   wins: number
@@ -7,6 +9,8 @@ export interface SeasonStat {
 }
 
 defineProps<{ stats: SeasonStat[] }>()
+
+const { t } = useI18n()
 
 function winRate(s: SeasonStat) {
   const total = s.wins + s.draws + s.losses
@@ -22,14 +26,14 @@ function pct(n: number, s: SeasonStat) {
 <template>
   <div class="season-chart">
     <div class="chart-header">
-      <span class="col-label">Season</span>
+      <span class="col-label">{{ t("history.table.season") }}</span>
       <span class="col-bar" />
       <span class="col-wdl">
-        <span class="wdl-w">W</span>
-        <span class="wdl-d">D</span>
-        <span class="wdl-l">L</span>
+        <span class="wdl-w" :title="t('history.table.won')">W</span>
+        <span class="wdl-d" :title="t('history.table.drawn')">D</span>
+        <span class="wdl-l" :title="t('history.table.lost')">L</span>
       </span>
-      <span class="col-pct">Win%</span>
+      <span class="col-pct" :title="t('teams.detail.winRate')">%</span>
     </div>
 
     <div v-for="s in stats" :key="s.label" class="chart-row">

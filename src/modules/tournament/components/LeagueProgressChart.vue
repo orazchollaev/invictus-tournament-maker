@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useI18n } from "vue-i18n"
 import { ref, watch, onMounted, onBeforeUnmount, computed } from "vue"
 import {
   Chart,
@@ -15,6 +16,8 @@ import type { League } from "../types"
 import type { Team } from "@/modules/teams/types"
 import { useLeagueProgress, type ProgressMode } from "../composables/useLeagueProgress"
 import { AppCard } from "@/components/ui"
+
+const { t } = useI18n()
 
 Chart.register(
   LineController,
@@ -170,13 +173,15 @@ watch([labels, datasets, mode], () => {
 </script>
 
 <template>
-  <AppCard v-if="hasData" variant="outlined" title="Points / Position Progress">
+  <AppCard v-if="hasData" variant="outlined" :title="t('progressChart.title')">
     <div class="chart-header">
       <div class="mode-toggle">
         <button :class="{ active: mode === 'position' }" @click="mode = 'position'">
-          Position
+          {{ t("progressChart.position") }}
         </button>
-        <button :class="{ active: mode === 'points' }" @click="mode = 'points'">Points</button>
+        <button :class="{ active: mode === 'points' }" @click="mode = 'points'">
+          {{ t("progressChart.points") }}
+        </button>
       </div>
     </div>
     <div class="canvas-wrap">

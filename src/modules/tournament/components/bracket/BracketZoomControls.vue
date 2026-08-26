@@ -1,7 +1,10 @@
 <script setup lang="ts">
+import { useI18n } from "vue-i18n"
 import { Expand, Minus, Plus } from "@lucide/vue"
 import { AppButton, AppIcon } from "@/components/ui"
 import { MAX_ZOOM, MIN_ZOOM } from "../../composables/useBracketViewport"
+
+const { t } = useI18n()
 
 defineProps<{ zoom: number }>()
 defineEmits<{ "zoom-in": []; "zoom-out": []; fit: [] }>()
@@ -33,7 +36,7 @@ defineEmits<{ "zoom-in": []; "zoom-out": []; fit: [] }>()
       size="xs"
       icon-only
       class="fit-btn"
-      title="Fit to screen"
+      :title="t('bracket.fitScreen')"
       @click="$emit('fit')"
     >
       <AppIcon :icon="Expand" size="sm" />

@@ -1,3 +1,4 @@
+import { useEngineLabels } from "@/composables/useEngineLabels"
 import { computed } from "vue"
 import type { League, GroupMatch, GroupStanding } from "../types"
 import type { Team } from "@/modules/teams/types"
@@ -66,7 +67,8 @@ export function useLeagueProgress(
   teams: () => Team[],
   mode: () => ProgressMode
 ) {
-  const labels = computed(() => league()?.matchdays.map((md) => md.name) ?? [])
+  const { engineLabel } = useEngineLabels()
+  const labels = computed(() => league()?.matchdays.map((md) => engineLabel(md.name)) ?? [])
 
   const datasets = computed<ProgressDataset[]>(() => {
     const l = league()

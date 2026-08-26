@@ -516,7 +516,11 @@ function doCreate(orderedIds?: string[]) {
             placeholder="e.g. Spring Championship 2025"
             @keyup.enter="handleCreate"
           />
-          <button class="btn-random" title="Random name" @click="name = randomTournamentName()">
+          <button
+            class="btn-random"
+            :title="t('tournament.create.randomName')"
+            @click="name = randomTournamentName()"
+          >
             <Shuffle :size="14" />
           </button>
         </div>

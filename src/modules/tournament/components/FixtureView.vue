@@ -3,8 +3,12 @@ import { ref, computed } from "vue"
 import type { Tournament } from "../types"
 import type { Team } from "@/modules/teams/types"
 import { FixtureMatchCard, FixtureTieCard, type FlatMatch } from "./fixture"
+import { useI18n } from "vue-i18n"
+import { useEngineLabels } from "@/composables/useEngineLabels"
 
 const props = defineProps<{ tournament: Tournament; teams: Team[] }>()
+const { t } = useI18n()
+const { engineLabel } = useEngineLabels()
 const emit = defineEmits<{
   "set-result": [
     round: number,
@@ -38,11 +42,11 @@ const emit = defineEmits<{
 
 const roundOptions = computed(() => {
   const opts: { label: string; value: number | "tp" }[] = props.tournament.rounds.map((r, i) => ({
-    label: r.name,
+    label: engineLabel(r.name),
     value: i,
   }))
   if (props.tournament.hasThirdPlace && props.tournament.thirdPlaceMatch) {
-    opts.push({ label: "3rd Place", value: "tp" })
+    opts.push({ label: t("history.table.thirdPlace"), value: "tp" })
   }
   return opts
 })
@@ -170,7 +174,9 @@ function simTieLeg(match: FlatMatch, leg: 1 | 2) {
         />
       </template>
 
-      <div v-if="filteredMatches.length === 0" class="fv-empty">No matches yet.</div>
+      <div v-if="filteredMatches.length === 0" class="empty-inline fv-empty">
+        {{ t("tournament.noFixtures") }}
+      </div>
     </div>
   </div>
 </template>
@@ -234,11 +240,8 @@ function simTieLeg(match: FlatMatch, leg: 1 | 2) {
   margin: 2px 0;
 }
 
+/* Only the grid span is local — the rest comes from .empty-inline. */
 .fv-empty {
   grid-column: 1 / -1;
-  text-align: center;
-  font-size: 13px;
-  color: var(--text-muted);
-  padding: 24px 0;
 }
 </style>

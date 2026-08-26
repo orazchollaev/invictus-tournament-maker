@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ChevronLeft, ChevronRight, Zap } from "@lucide/vue"
 import { AppIcon } from "@/components/ui"
+import { useI18n } from "vue-i18n"
 
 defineProps<{
   title: string
@@ -13,6 +14,8 @@ defineProps<{
   locked?: boolean
 }>()
 
+const { t } = useI18n()
+
 defineEmits<{
   prev: []
   next: []
@@ -23,7 +26,12 @@ defineEmits<{
 
 <template>
   <div class="lv-md-nav">
-    <button class="lv-nav-btn" :disabled="isFirst" @click="$emit('prev')">
+    <button
+      class="lv-nav-btn"
+      :disabled="isFirst"
+      :aria-label="t('common.back')"
+      @click="$emit('prev')"
+    >
       <AppIcon :icon="ChevronLeft" size="sm" />
     </button>
 
@@ -36,15 +44,20 @@ defineEmits<{
         v-if="!locked"
         class="lv-sim-md-btn"
         :disabled="done"
-        title="Simulate matchday"
+        :title="t('tournament.simulateMatchday')"
         @click="$emit('sim-matchday')"
       >
         <AppIcon :icon="Zap" size="xs" />
-        <span>Simulate</span>
+        <span>{{ t("common.simulate") }}</span>
       </button>
     </div>
 
-    <button class="lv-nav-btn" :disabled="isLast" @click="$emit('next')">
+    <button
+      class="lv-nav-btn"
+      :disabled="isLast"
+      :aria-label="t('common.next')"
+      @click="$emit('next')"
+    >
       <AppIcon :icon="ChevronRight" size="sm" />
     </button>
   </div>
@@ -84,7 +97,10 @@ defineEmits<{
   color: var(--text-muted);
   cursor: pointer;
   flex-shrink: 0;
-  transition: color 0.15s, border-color 0.15s, background 0.15s;
+  transition:
+    color 0.15s,
+    border-color 0.15s,
+    background 0.15s;
 }
 .lv-nav-btn:not(:disabled):hover {
   color: var(--accent);
@@ -169,7 +185,11 @@ defineEmits<{
   display: flex;
   justify-content: center;
   align-items: center;
-  transition: color 0.15s, border-color 0.15s, background 0.15s, transform 0.1s;
+  transition:
+    color 0.15s,
+    border-color 0.15s,
+    background 0.15s,
+    transform 0.1s;
 }
 .lv-pill:hover {
   color: var(--text);
@@ -193,5 +213,19 @@ defineEmits<{
     width: 34px;
     height: 34px;
   }
+}
+
+/* Painted at 30px at the ends of the nav row, with nothing beside them — the
+   hit area can grow to a full tap target without stealing neighbouring taps. */
+.lv-nav-btn {
+  position: relative;
+}
+.lv-nav-btn::after {
+  content: "";
+  position: absolute;
+  inset: 50% auto auto 50%;
+  width: max(100%, var(--tap-min));
+  height: max(100%, var(--tap-min));
+  transform: translate(-50%, -50%);
 }
 </style>

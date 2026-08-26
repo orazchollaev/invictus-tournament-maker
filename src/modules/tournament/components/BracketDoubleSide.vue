@@ -7,9 +7,13 @@ import BracketMatchCard from "./BracketMatchCard.vue"
 import { getWinnerId } from "@/engine"
 import { type DisplayMatch, type ConnInfo, buildConnInfo, teamColor } from "./bracketUtils"
 import { useSettingsStore } from "@/modules/settings/store"
+import { useI18n } from "vue-i18n"
+import { useEngineLabels } from "@/composables/useEngineLabels"
 
 const props = defineProps<{ tournament: Tournament; teams: Team[]; isExporting?: boolean }>()
 const settings = useSettingsStore()
+const { t } = useI18n()
+const { engineLabel } = useEngineLabels()
 const hoveredTeamId = ref<string | null>(null)
 const emit = defineEmits<{
   "set-result": [
@@ -296,7 +300,7 @@ function finalLineOpacity(side: "home" | "away"): number {
           class="round-title"
           :style="{ position: 'absolute', top: 0, left: lColX(n - 1) + 'px', width: CARD_W + 'px' }"
         >
-          {{ allRounds[n - 1].name }}
+          {{ engineLabel(allRounds[n - 1].name) }}
         </div>
 
         <BracketMatchCard
@@ -397,7 +401,7 @@ function finalLineOpacity(side: "home" | "away"): number {
         class="round-title final-title"
         :style="{ position: 'absolute', top: 0, left: finalX + 'px', width: CARD_W + 'px' }"
       >
-        {{ allRounds[finalRi].name }}
+        {{ engineLabel(allRounds[finalRi].name) }}
       </div>
       <BracketMatchCard
         v-if="displayRounds[finalRi]?.[0]"
@@ -464,7 +468,7 @@ function finalLineOpacity(side: "home" | "away"): number {
           class="round-title"
           :style="{ position: 'absolute', top: 0, left: rColX(n - 1) + 'px', width: CARD_W + 'px' }"
         >
-          {{ allRounds[n - 1].name }}
+          {{ engineLabel(allRounds[n - 1].name) }}
         </div>
 
         <BracketMatchCard
@@ -576,7 +580,7 @@ function finalLineOpacity(side: "home" | "away"): number {
           }"
         >
           <span class="champ-trophy">🏆</span>
-          <span class="champ-label">Champion</span>
+          <span class="champ-label">{{ t("tournament.champion") }}</span>
           <TeamBadge :team-id="champion.id" :teams="teams" class="champ-badge" />
         </div>
       </template>

@@ -1,6 +1,7 @@
 import { ref, computed, type ComputedRef, type Ref } from "vue"
 import { useRouter } from "vue-router"
 import { useI18n } from "vue-i18n"
+import { useEngineLabels } from "@/composables/useEngineLabels"
 import { useTournamentStore } from "@/modules/tournament/store"
 import { useSettingsStore } from "@/modules/settings/store"
 import {
@@ -43,6 +44,7 @@ export function useTournamentCeremonies(
   const store = useTournamentStore()
   const settings = useSettingsStore()
   const { t: trns } = useI18n()
+  const { engineLabel } = useEngineLabels()
 
   const showSeasonModal = ref(false)
   const showManualSeason = ref(false)
@@ -100,7 +102,7 @@ export function useTournamentCeremonies(
         const team = allTeams.value.find((tm) => tm.id === standing.teamId)
         result.push({
           teamId: standing.teamId,
-          label: `${group.name} · ${ordinal(rank + 1)}`,
+          label: `${engineLabel(group.name)} · ${ordinal(rank + 1)}`,
           teamName: team?.name ?? standing.teamId,
         })
       }

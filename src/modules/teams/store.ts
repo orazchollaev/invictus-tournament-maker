@@ -5,6 +5,7 @@ import { useTournamentStore } from "@/modules/tournament/store"
 import { usePlayersStore } from "@/modules/players/store"
 import { MAX_TEAMS } from "@/constants"
 import { showAlert } from "@/composables/useDialog"
+import { i18n } from "@/i18n"
 import { uid } from "@/engine"
 
 const COLORS = [
@@ -58,7 +59,7 @@ export const useTeamsStore = defineStore("teams", () => {
 
   function remove(id: string) {
     if (isTeamInTournament(id)) {
-      showAlert("This team cannot be deleted because it is used in a tournament")
+      showAlert(i18n.global.t("teams.deleteInUse"))
       return
     }
 

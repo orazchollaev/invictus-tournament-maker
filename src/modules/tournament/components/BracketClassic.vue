@@ -5,9 +5,11 @@ import type { Team } from "@/modules/teams/types"
 import BracketMatchCard from "./BracketMatchCard.vue"
 import { type DisplayMatch, type ConnInfo, buildConnInfo } from "./bracketUtils"
 import { useSettingsStore } from "@/modules/settings/store"
+import { useEngineLabels } from "@/composables/useEngineLabels"
 
 const props = defineProps<{ tournament: Tournament; teams: Team[]; isExporting?: boolean }>()
 const settings = useSettingsStore()
+const { engineLabel } = useEngineLabels()
 const hoveredTeamId = ref<string | null>(null)
 const emit = defineEmits<{
   "set-result": [
@@ -171,7 +173,7 @@ function svgSegments(p: ConnInfo, w: number) {
       <template v-for="(roundMatches, ri) in displayRounds" :key="'round-' + ri">
         <div class="round-col" :style="{ width: CARD_W + 'px' }">
           <div class="round-title" :class="{ 'final-title': ri === displayRounds.length - 1 }">
-            {{ allRounds[ri].name }}
+            {{ engineLabel(allRounds[ri].name) }}
           </div>
           <div class="matches-area" :style="{ height: totalBracketH + 'px' }">
             <BracketMatchCard

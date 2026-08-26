@@ -1,5 +1,8 @@
 <script setup lang="ts">
+import { useI18n } from "vue-i18n"
 import { ref, watch } from "vue"
+
+const { t } = useI18n()
 
 const props = defineProps<{ modelValue: string }>()
 const emit = defineEmits<{ "update:modelValue": [string] }>()
@@ -90,7 +93,7 @@ function onNativePick(e: Event) {
       <span
         class="preview"
         :style="{ background: modelValue }"
-        title="Open color picker"
+        :title="t('common.pickColor')"
         @click="openNativePicker"
       />
       <input
