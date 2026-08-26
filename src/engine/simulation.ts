@@ -85,14 +85,39 @@ function poisson(lambda: number): number {
   return Math.min(k - 1, 6)
 }
 
-const teamLookupCache = new WeakMap<Team[], Map<string, Team>>()
+interface TeamLookupEntry {
+  lookup: Map<string, Team>
+  length: number
+  first: Team | undefined
+  last: Team | undefined
+}
 
+const teamLookupCache = new WeakMap<Team[], TeamLookupEntry>()
+
+/**
+ * id → Team, cached per array instance. Teams are normally edited in place
+ * (`Object.assign`), so the cache stays valid; the length + end-identity probe
+ * catches the array being pushed to, spliced, or having entries swapped out.
+ * `lookup.size` is deliberately not compared against `teams.length` — duplicate
+ * ids would make that check fail forever and rebuild on every single call.
+ */
 function getTeamLookup(teams: Team[]): Map<string, Team> {
-  let lookup = teamLookupCache.get(teams)
-  if (!lookup || lookup.size !== teams.length) {
-    lookup = new Map(teams.map((t) => [t.id, t]))
-    teamLookupCache.set(teams, lookup)
+  const cached = teamLookupCache.get(teams)
+  if (
+    cached &&
+    cached.length === teams.length &&
+    cached.first === teams[0] &&
+    cached.last === teams[teams.length - 1]
+  ) {
+    return cached.lookup
   }
+  const lookup = new Map(teams.map((t) => [t.id, t]))
+  teamLookupCache.set(teams, {
+    lookup,
+    length: teams.length,
+    first: teams[0],
+    last: teams[teams.length - 1],
+  })
   return lookup
 }
 
@@ -125,8 +150,11 @@ export function simulateMatch(
   let hLambda = base * (1 + strength * strengthMult) * randomFactor
   let aLambda = base * (1 - strength * strengthMult) * randomFactor
 
-  if (strength > 0.55 && Math.random() < 0.008) {
-    return Math.random() < 0.5 ? { home: 0, away: 3 } : { home: 3, away: 0 }
+  // Rare shock result: a heavy favourite gets run over. Mirrored on both sides
+  // so it fires for a strong away team too, and the underdog is always the one
+  // that wins — otherwise half of these "upsets" were the favourite cruising.
+  if (Math.abs(strength) > 0.55 && Math.random() < 0.008) {
+    return strength > 0 ? { home: 0, away: 3 } : { home: 3, away: 0 }
   }
 
   const chaos = Math.random()
