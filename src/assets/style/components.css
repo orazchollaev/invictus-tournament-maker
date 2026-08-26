@@ -99,6 +99,19 @@
   color: var(--danger);
 }
 
+/* ── Inline empty state ──────────────────────────────────────────
+   One-line zero state inside a dense panel: a table body, a picker list, a
+   timeline. `AppEmptyState` is the full-panel version with icon, title and
+   animation; this is its compact sibling. Nine components used to hand-roll
+   this rule and had already drifted apart on padding, font size and colour. */
+.empty-inline {
+  margin: 0;
+  padding: var(--sp-4) var(--sp-3);
+  text-align: center;
+  font-size: var(--fs-sm);
+  color: var(--text-muted);
+}
+
 /* ── Responsive ──────────────────────────────────────────────── */
 @media (max-width: 600px) {
   .phase-tabs {

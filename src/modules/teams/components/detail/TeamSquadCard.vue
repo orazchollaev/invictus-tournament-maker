@@ -68,7 +68,7 @@ const editingPlayer = ref<Player | null>(null)
         </div>
       </div>
     </div>
-    <p v-else class="squad-empty">{{ t("players.emptyOnTeam") }}</p>
+    <p v-else class="empty-inline">{{ t("players.emptyOnTeam") }}</p>
 
     <PlayerFormModal v-if="showAddModal" :team-id="teamId" @close="showAddModal = false" />
     <PlayerFormModal v-if="editingPlayer" :player="editingPlayer" @close="editingPlayer = null" />
@@ -129,13 +129,5 @@ const editingPlayer = ref<Player | null>(null)
   align-items: center;
   gap: var(--sp-1);
   flex-shrink: 0;
-}
-
-.squad-empty {
-  padding: var(--sp-4) var(--sp-3);
-  margin: 0;
-  text-align: center;
-  font-size: var(--fs-sm);
-  color: var(--text-muted);
 }
 </style>

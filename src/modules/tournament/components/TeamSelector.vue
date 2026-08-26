@@ -140,7 +140,7 @@ function deselectAll() {
         <TeamBadge :team-id="team.id" :teams="teams" />
         <span v-if="showPower" class="ts-power">{{ team.power }}</span>
       </div>
-      <p v-if="!sortedFilteredTeams.length" class="ts-empty">
+      <p v-if="!sortedFilteredTeams.length" class="empty-inline">
         {{ t("teamSelector.emptyAvailable") }}
       </p>
     </div>
@@ -249,14 +249,6 @@ function deselectAll() {
   color: var(--text-muted);
   font-weight: 600;
   flex-shrink: 0;
-}
-
-.ts-empty {
-  padding: var(--sp-5) var(--sp-3);
-  margin: 0;
-  text-align: center;
-  font-size: var(--fs-sm);
-  color: var(--text-muted);
 }
 
 .ts-warn {

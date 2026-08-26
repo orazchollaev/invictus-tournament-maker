@@ -47,7 +47,7 @@ defineEmits<{ act: [teamId: string] }>()
             <AppIcon :icon="action === 'add' ? Plus : Minus" size="sm" />
           </button>
         </div>
-        <div v-if="teams.length === 0" key="__empty" class="empty">{{ emptyText }}</div>
+        <div v-if="teams.length === 0" key="__empty" class="empty-inline">{{ emptyText }}</div>
       </TransitionGroup>
     </div>
   </div>
@@ -144,13 +144,6 @@ defineEmits<{ act: [teamId: string] }>()
 .action-btn:disabled {
   opacity: 0.25;
   cursor: not-allowed;
-}
-
-.empty {
-  font-size: var(--fs-sm);
-  color: var(--text-muted);
-  padding: var(--sp-3);
-  font-style: italic;
 }
 
 /* ── Row enter/leave/move ── */

@@ -145,7 +145,7 @@ function open(playerId: string) {
         </tbody>
       </AppTable>
 
-      <p v-if="!rows.length" class="ps-empty">{{ emptyHint }}</p>
+      <p v-if="!rows.length" class="empty-inline">{{ emptyHint }}</p>
     </AppCard>
   </div>
 </template>
@@ -224,13 +224,5 @@ function open(playerId: string) {
 }
 .ps-row:hover {
   background: var(--bg-hover);
-}
-
-.ps-empty {
-  margin: 0;
-  padding: var(--sp-4);
-  text-align: center;
-  font-size: var(--fs-sm);
-  color: var(--text-muted);
 }
 </style>

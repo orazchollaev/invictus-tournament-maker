@@ -5,6 +5,7 @@ import { useI18n } from "vue-i18n"
 
 import { ArrowLeft, Download, BarChart2, Trophy, Medal, Users } from "@lucide/vue"
 import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
+import { AppButton, AppEmptyState } from "@/components/ui"
 
 import { useTournamentStore } from "@/modules/tournament/store"
 import { useTeamsStore } from "@/modules/teams/store"
@@ -78,13 +79,13 @@ const { saveJSON: handleSaveJSON, saveCSV: handleSaveCSV } = useSimResultExport(
   <div class="page srp">
     <!-- Not found -->
     <template v-if="!result || !tournament">
-      <div class="srp-empty">
-        <BarChart2 :size="32" class="srp-empty-icon" />
-        <p>{{ t("tournament.simulationResults.noResults") }}</p>
-        <button @click="router.push(`/tournaments/${tournamentId}/settings`)">
-          {{ t("tournament.simulationResults.runFirst") }}
-        </button>
-      </div>
+      <AppEmptyState :icon="BarChart2" :title="t('tournament.simulationResults.noResults')">
+        <template #action>
+          <AppButton @click="router.push(`/tournaments/${tournamentId}/settings`)">
+            {{ t("tournament.simulationResults.runFirst") }}
+          </AppButton>
+        </template>
+      </AppEmptyState>
     </template>
 
     <template v-else>
@@ -262,19 +263,6 @@ const { saveJSON: handleSaveJSON, saveCSV: handleSaveCSV } = useSimResultExport(
 <style scoped>
 .srp {
   padding-bottom: 40px;
-}
-
-.srp-empty {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 14px;
-  padding: 60px 20px;
-  color: var(--text-muted);
-  text-align: center;
-}
-.srp-empty-icon {
-  opacity: 0.3;
 }
 
 .srp-header {

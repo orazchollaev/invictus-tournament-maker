@@ -87,7 +87,7 @@ function onOpenChange(open: boolean) {
               <AppIcon :icon="Check" size="xs" />
             </SelectItemIndicator>
           </SelectItem>
-          <p v-if="!filteredTeams.length && !allowAll" class="tsel-empty">
+          <p v-if="!filteredTeams.length && !allowAll" class="empty-inline">
             {{ t("players.filter.noResults") }}
           </p>
         </SelectViewport>
@@ -168,14 +168,6 @@ function onOpenChange(open: boolean) {
 
 .tsel-viewport {
   overflow-y: auto;
-}
-
-.tsel-empty {
-  padding: var(--sp-3);
-  margin: 0;
-  text-align: center;
-  font-size: var(--fs-sm);
-  color: var(--text-muted);
 }
 
 .tsel-item {

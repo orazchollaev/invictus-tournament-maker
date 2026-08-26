@@ -66,7 +66,7 @@ const PHASE_LABEL: Record<RoundPhase, string> = { group: "GS", league: "LG", kno
       </div>
     </div>
 
-    <p v-else class="empty-text match-empty">
+    <p v-else class="empty-inline">
       {{
         selected === "all"
           ? t("teams.detail.noMatchesPlayed")
@@ -93,10 +93,6 @@ const PHASE_LABEL: Record<RoundPhase, string> = { group: "GS", league: "LG", kno
 
 .match-list {
   overflow-y: auto;
-}
-
-.match-empty {
-  padding: var(--sp-3);
 }
 
 .match-row {

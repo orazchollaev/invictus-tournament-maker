@@ -68,7 +68,7 @@ const rows = computed(() =>
     </li>
   </ol>
 
-  <p v-else class="tl-empty">{{ t("matchStats.noEvents") }}</p>
+  <p v-else class="empty-inline">{{ t("matchStats.noEvents") }}</p>
 </template>
 
 <style scoped>
@@ -193,14 +193,6 @@ const rows = computed(() =>
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-.tl-empty {
-  margin: 0;
-  padding: var(--sp-4) 0;
-  text-align: center;
-  font-size: var(--fs-sm);
-  color: var(--text-muted);
 }
 
 @media (max-width: 420px) {
