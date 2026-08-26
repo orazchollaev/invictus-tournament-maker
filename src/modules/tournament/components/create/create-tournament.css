@@ -108,11 +108,12 @@
   gap: 2px;
   margin-inline-start: 2px;
 }
+/* An 18px row was not tappable; 24px is the floor for a painted tap target. */
 .ctp-tier-mv-btn {
-  padding: 0 4px;
+  padding: 0 var(--sp-2);
   font-size: 11px;
-  line-height: 18px;
-  height: 18px;
+  line-height: 24px;
+  height: 24px;
   border-color: transparent;
   background: transparent;
   color: var(--text-muted);

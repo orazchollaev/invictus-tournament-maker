@@ -33,6 +33,16 @@
   --bg-hover: color-mix(in srgb, var(--text) 6%, transparent);
   --focus-ring: 0 0 0 3px var(--accent-subtle);
 
+  /* ── Draw slip ───────────────────────────────────────────────────
+     The draw-ceremony paper is a physical object, not a surface: it is
+     white card stock in light and dark alike, so these are intentionally
+     NOT redefined in the dark block. They live here rather than inline so
+     the one place that renders paper reads from the palette like everything
+     else. */
+  --paper-face: linear-gradient(to bottom, #ffffff 0%, #f3f4f8 49%, #e7e9f0 51%, #f6f7fa 100%);
+  --paper-text: #1a2234;
+  --paper-border: #c2c7d4;
+
   --scrim: rgba(18, 21, 19, 0.45);
   --scrim-strong: rgba(18, 21, 19, 0.62);
 
@@ -56,6 +66,25 @@
   --sp-5: 24px;
   --sp-6: 32px;
   --sp-7: 48px;
+
+  /* ── Touch ───────────────────────────────────────────────────────
+     Minimum comfortable tap size on a phone. Icon buttons are painted much
+     smaller than this by design, so they grow their *hit area* instead, with
+     an invisible centred pseudo-element:
+
+       .some-icon-btn { position: relative; }
+       .some-icon-btn::after {
+         content: "";
+         position: absolute;
+         inset: 50% auto auto 50%;
+         width: max(100%, var(--tap-min));
+         height: max(100%, var(--tap-min));
+         transform: translate(-50%, -50%);
+       }
+
+     Only for controls that stand alone — in a tight cluster the expanded
+     boxes would overlap and steal each other's taps. */
+  --tap-min: 44px;
 
   /* ── Shape ───────────────────────────────────────────────────── */
   --radius-sm: 6px;

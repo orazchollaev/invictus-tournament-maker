@@ -118,9 +118,10 @@ defineEmits<{ "update:modelValue": [value: string] }>()
   width: 26px;
   height: 26px;
 }
+/* 24px is the floor a tap target may be painted at (WCAG 2.5.8). */
 .btn-group--xs button.icon-only {
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
 }
 
 @media (max-width: 600px) {

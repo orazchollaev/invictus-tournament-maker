@@ -298,4 +298,17 @@ onUnmounted(() => {
     display: none;
   }
 }
+
+/* 32px icon in a 52px header; the hit area covers the header height. */
+.settings-btn {
+  position: relative;
+}
+.settings-btn::after {
+  content: "";
+  position: absolute;
+  inset: 50% auto auto 50%;
+  width: max(100%, var(--tap-min));
+  height: max(100%, var(--tap-min));
+  transform: translate(-50%, -50%);
+}
 </style>

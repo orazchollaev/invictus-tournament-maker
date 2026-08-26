@@ -78,7 +78,9 @@ function clear() {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
+  /* Stretches to the search field height; widened so the tap target is not
+     a 28px sliver on a phone. */
+  width: 36px;
   padding: 0;
   background: transparent;
   border: 1px solid var(--border);

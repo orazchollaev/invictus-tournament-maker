@@ -275,4 +275,17 @@ onUnmounted(() => {
     border: none;
   }
 }
+
+/* Painted at 24px over the stage; the hit area is a full tap target. */
+.dc-close {
+  position: relative;
+}
+.dc-close::after {
+  content: "";
+  position: absolute;
+  inset: 50% auto auto 50%;
+  width: max(100%, var(--tap-min));
+  height: max(100%, var(--tap-min));
+  transform: translate(-50%, -50%);
+}
 </style>

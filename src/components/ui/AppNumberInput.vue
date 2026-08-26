@@ -275,8 +275,9 @@ function onInputFocus(e: FocusEvent) {
   border-color: var(--border-light);
 }
 .num--sm .num-btn {
-  width: 20px;
-  height: 22px;
+  /* 24px floor — the small variant used to paint a 20x22 target. */
+  width: 24px;
+  height: 24px;
   font-size: var(--fs-sm);
   background: transparent;
   color: var(--text-muted);
@@ -306,8 +307,10 @@ function onInputFocus(e: FocusEvent) {
   align-self: stretch;
   border-left: 1px solid var(--border);
 }
+/* Stacked halves are height-capped by the match-card row they sit in, so the
+   extra target area has to come from the width. */
 .num--stack .num-btn {
-  width: 26px;
+  width: 34px;
   height: 19px;
   border: none;
   border-radius: 0;
@@ -325,7 +328,7 @@ function onInputFocus(e: FocusEvent) {
 /* Halves sized against the 34px match-card rows (15 + 1 + 15 + the control's
    own 2px border = 33). Anything smaller was not a tap target. */
 .num--sm.num--stack .num-btn {
-  width: 22px;
+  width: 30px;
   height: 15px;
   font-size: var(--fs-sm);
 }
