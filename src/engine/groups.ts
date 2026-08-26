@@ -16,7 +16,8 @@ function h2hStats(
   ids: Set<string>,
   matches: GroupMatch[],
   winPts = 3,
-  drawPts = 1
+  drawPts = 1,
+  lossPts = 0
 ): Map<string, { pts: number; gd: number; gf: number }> {
   const stats = new Map<string, { pts: number; gd: number; gf: number }>()
   for (const id of ids) stats.set(id, { pts: 0, gd: 0, gf: 0 })
@@ -29,9 +30,13 @@ function h2hStats(
     h.gd += home - away
     a.gf += away
     a.gd += away - home
-    if (home > away) h.pts += winPts
-    else if (away > home) a.pts += winPts
-    else {
+    if (home > away) {
+      h.pts += winPts
+      a.pts += lossPts
+    } else if (away > home) {
+      a.pts += winPts
+      h.pts += lossPts
+    } else {
       h.pts += drawPts
       a.pts += drawPts
     }
@@ -44,7 +49,8 @@ function sortStandings(
   matches: GroupMatch[],
   tiebreaker?: Tiebreaker,
   winPts = 3,
-  drawPts = 1
+  drawPts = 1,
+  lossPts = 0
 ) {
   standings.sort((a, b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf)
 
@@ -58,7 +64,7 @@ function sortStandings(
     if (j - i > 1) {
       const group = standings.slice(i, j)
       const ids = new Set(group.map((s) => s.teamId))
-      const h2h = h2hStats(ids, matches, winPts, drawPts)
+      const h2h = h2hStats(ids, matches, winPts, drawPts, lossPts)
       group.sort((a, b) => {
         const ha = h2h.get(a.teamId)!
         const hb = h2h.get(b.teamId)!
@@ -176,7 +182,7 @@ export function recalcStandings(
     }
   }
 
-  sortStandings(group.standings, group.matches, tiebreaker, winPts, drawPts)
+  sortStandings(group.standings, group.matches, tiebreaker, winPts, drawPts, lossPts)
 }
 
 export function setGroupMatchResult(

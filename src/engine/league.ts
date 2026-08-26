@@ -16,7 +16,8 @@ function h2hLeagueStats(
   ids: Set<string>,
   matchdays: League["matchdays"],
   winPts = 3,
-  drawPts = 1
+  drawPts = 1,
+  lossPts = 0
 ): Map<string, { pts: number; gd: number; gf: number }> {
   const stats = new Map<string, { pts: number; gd: number; gf: number }>()
   for (const id of ids) stats.set(id, { pts: 0, gd: 0, gf: 0 })
@@ -30,9 +31,13 @@ function h2hLeagueStats(
       h.gd += home - away
       a.gf += away
       a.gd += away - home
-      if (home > away) h.pts += winPts
-      else if (away > home) a.pts += winPts
-      else {
+      if (home > away) {
+        h.pts += winPts
+        a.pts += lossPts
+      } else if (away > home) {
+        a.pts += winPts
+        h.pts += lossPts
+      } else {
         h.pts += drawPts
         a.pts += drawPts
       }
@@ -46,7 +51,8 @@ function sortLeagueStandings(
   matchdays: League["matchdays"],
   tiebreaker?: Tiebreaker,
   winPts = 3,
-  drawPts = 1
+  drawPts = 1,
+  lossPts = 0
 ) {
   standings.sort((a, b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf)
 
@@ -59,7 +65,7 @@ function sortLeagueStandings(
     if (j - i > 1) {
       const group = standings.slice(i, j)
       const ids = new Set(group.map((s) => s.teamId))
-      const h2h = h2hLeagueStats(ids, matchdays, winPts, drawPts)
+      const h2h = h2hLeagueStats(ids, matchdays, winPts, drawPts, lossPts)
       group.sort((a, b) => {
         const ha = h2h.get(a.teamId)!
         const hb = h2h.get(b.teamId)!
@@ -137,7 +143,7 @@ export function recalcLeagueStandings(
       if (adj) s.pts += adj
     }
   }
-  sortLeagueStandings(league.standings, league.matchdays, tiebreaker, winPts, drawPts)
+  sortLeagueStandings(league.standings, league.matchdays, tiebreaker, winPts, drawPts, lossPts)
 }
 
 export function setLeagueMatchResult(
