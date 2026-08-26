@@ -7,6 +7,7 @@ import {
   updateThirdPlaceSlots,
   simulateMatch,
   simulatePenaltyShootout,
+  tournamentFormAdjustments,
 } from "@/engine"
 
 export function useBracketActions(
@@ -14,6 +15,18 @@ export function useBracketActions(
   getTeams: () => Team[],
   simulateThirdPlace: (tournamentId: string) => void
 ) {
+  /**
+   * A semi-final changing invalidates the third-place tie. Both legs go, not
+   * just leg 1 — otherwise a double-legged third-place match keeps a stale
+   * second leg played by the old pair of losers.
+   */
+  function clearThirdPlace(t: Tournament) {
+    const m = t.thirdPlaceMatch
+    if (!m) return
+    m.result = null
+    if (m.leg2Result !== undefined) m.leg2Result = null
+  }
+
   function clearDownstream(t: Tournament, fromRound: number, fromMatch: number) {
     let matchIdx = fromMatch
     for (let r = fromRound + 1; r < t.rounds.length; r++) {
@@ -48,9 +61,7 @@ export function useBracketActions(
       match.leg2Result = null
     }
     clearDownstream(t, roundIdx, matchIdx)
-    if (t.thirdPlaceMatch && roundIdx === t.rounds.length - 2) {
-      t.thirdPlaceMatch.result = null
-    }
+    if (roundIdx === t.rounds.length - 2) clearThirdPlace(t)
     propagateWinners(t.rounds, getTeams())
     updateThirdPlaceSlots(t)
     const final = t.rounds[t.rounds.length - 1].matches[0]
@@ -68,9 +79,7 @@ export function useBracketActions(
     match.result = null
     if (match.leg2Result !== undefined) match.leg2Result = null
     clearDownstream(t, roundIdx, matchIdx)
-    if (t.thirdPlaceMatch && roundIdx === t.rounds.length - 2) {
-      t.thirdPlaceMatch.result = null
-    }
+    if (roundIdx === t.rounds.length - 2) clearThirdPlace(t)
     propagateWinners(t.rounds, getTeams())
     updateThirdPlaceSlots(t)
     const final = t.rounds[t.rounds.length - 1].matches[0]
@@ -84,9 +93,7 @@ export function useBracketActions(
     if (match.leg2Result === undefined) return
     match.leg2Result = null
     clearDownstream(t, roundIdx, matchIdx)
-    if (t.thirdPlaceMatch && roundIdx === t.rounds.length - 2) {
-      t.thirdPlaceMatch.result = null
-    }
+    if (roundIdx === t.rounds.length - 2) clearThirdPlace(t)
     propagateWinners(t.rounds, getTeams())
     updateThirdPlaceSlots(t)
     const final = t.rounds[t.rounds.length - 1].matches[0]
@@ -112,25 +119,29 @@ export function useBracketActions(
       ...(penHome !== undefined && penAway !== undefined ? { penHome, penAway } : {}),
     }
     clearDownstream(t, roundIdx, matchIdx)
-    if (t.thirdPlaceMatch && roundIdx === t.rounds.length - 2) {
-      t.thirdPlaceMatch.result = null
-    }
+    if (roundIdx === t.rounds.length - 2) clearThirdPlace(t)
     propagateWinners(t.rounds, getTeams())
     updateThirdPlaceSlots(t)
     const final = t.rounds[t.rounds.length - 1].matches[0]
     t.winnerId = getWinnerId(final)
   }
 
-  function simulateDoubleLegMatch(t: Tournament, ri: number, mi: number, allTeams: Team[]) {
+  function simulateDoubleLegMatch(
+    t: Tournament,
+    ri: number,
+    mi: number,
+    allTeams: Team[],
+    form?: Map<string, number>
+  ) {
     const match = t.rounds[ri].matches[mi]
     if (!match.homeId || !match.awayId) return
     if (!match.result) {
-      match.result = simulateMatch(match, allTeams)
+      match.result = simulateMatch(match, allTeams, form)
     }
     if (match.leg2Result === null) {
       // Leg 2: awayId plays at home
       const leg2Sim = { id: match.id, homeId: match.awayId, awayId: match.homeId }
-      const r2 = simulateMatch(leg2Sim as any, allTeams)
+      const r2 = simulateMatch(leg2Sim as any, allTeams, form)
       const aggHome = match.result.home + r2.away
       const aggAway = match.result.away + r2.home
       if (aggHome !== aggAway) {
@@ -150,10 +161,10 @@ export function useBracketActions(
     if (!match.homeId || !match.awayId) return
     if (match.leg2Result === undefined) return
     const allTeams = getTeams()
-    match.result = simulateMatch(match, allTeams)
+    match.result = simulateMatch(match, allTeams, tournamentFormAdjustments(t))
     match.leg2Result = null
     clearDownstream(t, ri, mi)
-    if (t.thirdPlaceMatch && ri === t.rounds.length - 2) t.thirdPlaceMatch.result = null
+    if (ri === t.rounds.length - 2) clearThirdPlace(t)
     propagateWinners(t.rounds, allTeams)
     updateThirdPlaceSlots(t)
     t.winnerId = getWinnerId(t.rounds[t.rounds.length - 1].matches[0])
@@ -167,7 +178,7 @@ export function useBracketActions(
     if (match.leg2Result === undefined) return
     const allTeams = getTeams()
     const leg2Sim = { id: match.id, homeId: match.awayId, awayId: match.homeId }
-    const r2 = simulateMatch(leg2Sim as any, allTeams)
+    const r2 = simulateMatch(leg2Sim as any, allTeams, tournamentFormAdjustments(t))
     const aggHome = match.result.home + r2.away
     const aggAway = match.result.away + r2.home
     if (aggHome !== aggAway) {
@@ -188,14 +199,16 @@ export function useBracketActions(
     if (!match.homeId || !match.awayId) return
     const allTeams = getTeams()
 
+    const form = tournamentFormAdjustments(t)
+
     if (match.leg2Result !== undefined) {
-      simulateDoubleLegMatch(t, ri, mi, allTeams)
+      simulateDoubleLegMatch(t, ri, mi, allTeams, form)
       propagateWinners(t.rounds, allTeams)
       updateThirdPlaceSlots(t)
       const final = t.rounds[t.rounds.length - 1].matches[0]
       t.winnerId = getWinnerId(final)
     } else {
-      const result = simulateMatch(match, allTeams)
+      const result = simulateMatch(match, allTeams, form)
       if (result.home === result.away) {
         const pen = simulatePenaltyShootout(match, allTeams)
         setResult(tournamentId, ri, mi, result.home, result.away, pen.penHome, pen.penAway)
@@ -209,13 +222,14 @@ export function useBracketActions(
     const t = tournaments.value.find((t) => t.id === tournamentId)
     if (!t) return
     const allTeams = getTeams()
+    const form = tournamentFormAdjustments(t)
     propagateWinners(t.rounds, allTeams)
     t.rounds[roundIdx].matches.forEach((match, mi) => {
       if (!match.result && match.homeId && match.awayId) {
         if (match.leg2Result !== undefined) {
-          simulateDoubleLegMatch(t, roundIdx, mi, allTeams)
+          simulateDoubleLegMatch(t, roundIdx, mi, allTeams, form)
         } else {
-          const result = simulateMatch(match, allTeams)
+          const result = simulateMatch(match, allTeams, form)
           match.result =
             result.home === result.away
               ? { ...result, ...simulatePenaltyShootout(match, allTeams) }
@@ -223,7 +237,7 @@ export function useBracketActions(
         }
       } else if (match.result && match.leg2Result === null && match.homeId && match.awayId) {
         // Leg 1 done, simulate leg 2
-        simulateDoubleLegMatch(t, roundIdx, mi, allTeams)
+        simulateDoubleLegMatch(t, roundIdx, mi, allTeams, form)
       }
     })
     propagateWinners(t.rounds, allTeams)
@@ -237,13 +251,16 @@ export function useBracketActions(
     if (!t) return
     const allTeams = getTeams()
     for (let r = 0; r < t.rounds.length; r++) {
+      // Recomputed per round so a run of wins earlier in the bracket feeds into
+      // the next round, the way it does matchday by matchday in a league.
+      const form = tournamentFormAdjustments(t)
       propagateWinners(t.rounds, allTeams)
       t.rounds[r].matches.forEach((match, mi) => {
         if (!match.homeId || !match.awayId) return
         if (match.leg2Result !== undefined) {
-          simulateDoubleLegMatch(t, r, mi, allTeams)
+          simulateDoubleLegMatch(t, r, mi, allTeams, form)
         } else if (!match.result) {
-          const result = simulateMatch(match, allTeams)
+          const result = simulateMatch(match, allTeams, form)
           match.result =
             result.home === result.away
               ? { ...result, ...simulatePenaltyShootout(match, allTeams) }
