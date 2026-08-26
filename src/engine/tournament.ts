@@ -255,7 +255,8 @@ export function seedBracketFromGroups(
       tournament.tiebreaker,
       tournament.winPoints ?? 3,
       tournament.drawPoints ?? 1,
-      tournament.lossPoints ?? 0
+      tournament.lossPoints ?? 0,
+      tournament.teamPointAdjustments
     )
   )
 
