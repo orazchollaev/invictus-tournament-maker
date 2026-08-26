@@ -12,6 +12,15 @@ import {
   seedLeaguePlayoffBracket,
 } from "./leaguePlayoff"
 import { isLeagueLike } from "./formats"
+import { tournamentFormAdjustments } from "./form"
+
+/**
+ * Form adjustments for a Monte Carlo run. Every run replays the tournament from
+ * an empty template, so there is no in-run history worth recomputing per match;
+ * instead the projection starts from the form the teams actually carry right
+ * now, measured once from the real tournament and held fixed across all runs.
+ */
+type Form = Map<string, number> | undefined
 
 export interface TeamSimStats {
   teamId: string
@@ -33,14 +42,14 @@ export interface MonteCarloResult {
   bracketRounds: number
 }
 
-function simDoubleLegInPlace(match: any, teams: Team[]) {
+function simDoubleLegInPlace(match: any, teams: Team[], form: Form) {
   if (!match.homeId || !match.awayId) return
   if (!match.result) {
-    match.result = simulateMatch(match, teams)
+    match.result = simulateMatch(match, teams, form)
   }
   if (match.leg2Result === null) {
     const leg2 = { id: match.id, homeId: match.awayId, awayId: match.homeId }
-    const r2 = simulateMatch(leg2 as any, teams)
+    const r2 = simulateMatch(leg2 as any, teams, form)
     const aggHome = match.result.home + r2.away
     const aggAway = match.result.away + r2.home
     if (aggHome !== aggAway) {
@@ -54,7 +63,8 @@ function simDoubleLegInPlace(match: any, teams: Team[]) {
 
 function simBracketInPlace(
   t: Tournament,
-  teams: Team[]
+  teams: Team[],
+  form: Form
 ): { winnerId: string | null; runnerUpId: string | null; top4Ids: string[] } {
   const rounds = t.rounds
   for (let r = 0; r < rounds.length; r++) {
@@ -62,9 +72,9 @@ function simBracketInPlace(
     rounds[r].matches.forEach((match) => {
       if (!match.homeId || !match.awayId) return
       if (match.leg2Result !== undefined) {
-        simDoubleLegInPlace(match, teams)
+        simDoubleLegInPlace(match, teams, form)
       } else if (!match.result) {
-        const result = simulateMatch(match, teams)
+        const result = simulateMatch(match, teams, form)
         match.result =
           result.home === result.away
             ? { ...result, ...simulatePenaltyShootout(match, teams) }
@@ -154,7 +164,12 @@ function resetLeaguePlayoff(t: Tournament) {
  * does too — in both cases the champion is the bracket winner, not the team
  * that topped the table.
  */
-function runLeaguePlayoff(t: Tournament, teams: Team[], stats: Map<string, TeamSimStats>): boolean {
+function runLeaguePlayoff(
+  t: Tournament,
+  teams: Team[],
+  stats: Map<string, TeamSimStats>,
+  form: Form
+): boolean {
   const data = getLeaguePlayoffData(t)
   if (!data?.enabled) return false
 
@@ -165,7 +180,7 @@ function runLeaguePlayoff(t: Tournament, teams: Team[], stats: Map<string, TeamS
   }
 
   seedLeaguePlayoffBracket(t, teams, data.seedMode)
-  const { winnerId, runnerUpId, top4Ids } = simBracketInPlace(t, teams)
+  const { winnerId, runnerUpId, top4Ids } = simBracketInPlace(t, teams, form)
   if (winnerId) {
     const s = stats.get(winnerId)
     if (s) s.wins++
@@ -181,9 +196,9 @@ function runLeaguePlayoff(t: Tournament, teams: Team[], stats: Map<string, TeamS
   return true
 }
 
-function runOnce(t: Tournament, teams: Team[], stats: Map<string, TeamSimStats>) {
+function runOnce(t: Tournament, teams: Team[], stats: Map<string, TeamSimStats>, form: Form) {
   if (t.format === "bracket") {
-    const { winnerId, runnerUpId, top4Ids } = simBracketInPlace(t, teams)
+    const { winnerId, runnerUpId, top4Ids } = simBracketInPlace(t, teams, form)
     if (winnerId) {
       const s = stats.get(winnerId)
       if (s) s.wins++
@@ -211,7 +226,7 @@ function runOnce(t: Tournament, teams: Team[], stats: Map<string, TeamSimStats>)
       }
     }
 
-    const { winnerId, runnerUpId, top4Ids } = simBracketInPlace(t, teams)
+    const { winnerId, runnerUpId, top4Ids } = simBracketInPlace(t, teams, form)
     if (winnerId) {
       const s = stats.get(winnerId)
       if (s) s.wins++
@@ -232,7 +247,7 @@ function runOnce(t: Tournament, teams: Team[], stats: Map<string, TeamSimStats>)
       for (const tier of t.tiers) {
         for (const md of tier.league.matchdays) {
           for (const m of md.matches) {
-            if (!m.result) m.result = simulateMatch(m as any, teams)
+            if (!m.result) m.result = simulateMatch(m as any, teams, form)
           }
         }
         recalcLeagueStandings(
@@ -257,7 +272,7 @@ function runOnce(t: Tournament, teams: Team[], stats: Map<string, TeamSimStats>)
     } else if (t.league) {
       for (const md of t.league.matchdays) {
         for (const m of md.matches) {
-          if (!m.result) m.result = simulateMatch(m as any, teams)
+          if (!m.result) m.result = simulateMatch(m as any, teams, form)
         }
       }
       recalcLeagueStandings(
@@ -278,7 +293,7 @@ function runOnce(t: Tournament, teams: Team[], stats: Map<string, TeamSimStats>)
         st.totalGA += s.ga
       })
     }
-    runLeaguePlayoff(t, teams, stats)
+    runLeaguePlayoff(t, teams, stats, form)
   }
 }
 
@@ -360,6 +375,8 @@ export async function runMonteCarloSimulations(
   cancelSignal: { cancelled: boolean }
 ): Promise<MonteCarloResult | null> {
   const template = buildTemplate(tournament)
+  // Measured from the real tournament, before buildTemplate wipes its results.
+  const form = tournamentFormAdjustments(tournament)
 
   const statsMap = new Map<string, TeamSimStats>()
   for (const teamId of tournament.teamIds) {
@@ -385,7 +402,7 @@ export async function runMonteCarloSimulations(
     const end = Math.min(completed + BATCH, n)
     for (let i = completed; i < end; i++) {
       resetForRun(template)
-      runOnce(template, teams, statsMap)
+      runOnce(template, teams, statsMap, form)
     }
     completed = end
     onProgress(completed)

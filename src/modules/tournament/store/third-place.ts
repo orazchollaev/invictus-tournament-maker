@@ -7,6 +7,7 @@ import {
   simulateMatch,
   simulatePenaltyShootout,
   applyThirdPlaceLegMode,
+  tournamentFormAdjustments,
 } from "@/engine"
 
 export function useThirdPlaceActions(tournaments: Ref<Tournament[]>, getTeams: () => Team[]) {
@@ -91,7 +92,7 @@ export function useThirdPlaceActions(tournaments: Ref<Tournament[]>, getTeams: (
     if (!t?.thirdPlaceMatch) return
     const m = t.thirdPlaceMatch
     if (!m.homeId || !m.awayId || m.leg2Result === undefined) return
-    m.result = simulateMatch(m, getTeams())
+    m.result = simulateMatch(m, getTeams(), tournamentFormAdjustments(t))
     m.leg2Result = null
   }
 
@@ -103,7 +104,7 @@ export function useThirdPlaceActions(tournaments: Ref<Tournament[]>, getTeams: (
     const allTeams = getTeams()
     // Leg 2: awayId plays at home
     const leg2Sim = { id: m.id, homeId: m.awayId, awayId: m.homeId }
-    const r2 = simulateMatch(leg2Sim as any, allTeams)
+    const r2 = simulateMatch(leg2Sim as any, allTeams, tournamentFormAdjustments(t))
     const aggHome = m.result.home + r2.away
     const aggAway = m.result.away + r2.home
     if (aggHome !== aggAway) {
@@ -128,7 +129,7 @@ export function useThirdPlaceActions(tournaments: Ref<Tournament[]>, getTeams: (
     }
     if (m.result) return
     const allTeams = getTeams()
-    const result = simulateMatch(m, allTeams)
+    const result = simulateMatch(m, allTeams, tournamentFormAdjustments(t))
     if (result.home === result.away) {
       const pen = simulatePenaltyShootout(m, allTeams)
       setThirdPlaceResult(tournamentId, result.home, result.away, pen.penHome, pen.penAway)

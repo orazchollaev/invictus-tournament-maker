@@ -30,7 +30,15 @@ export type {
   CeremonyKind,
   CeremonyContext,
 } from "./drawCeremony"
-export { simulateMatch, simulatePenaltyShootout, setSimConfig, getSimConfig } from "./simulation"
+export {
+  simulateMatch,
+  simulatePenaltyShootout,
+  setSimConfig,
+  getSimConfig,
+  isFormFactorEnabled,
+  computeFormAdjustments,
+} from "./simulation"
+export { tournamentFormAdjustments } from "./form"
 export { setTableConfig } from "./tableConfig"
 export { setPowerResolver, resolvePower } from "./power"
 export {
