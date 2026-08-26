@@ -1,5 +1,13 @@
 export default {
   drawCeremony: {
+    potLabel: "포트 {n}",
+    potSingle: "포트",
+    byeSlot: "부전승 {n}",
+    matchSlot: "경기 {n}",
+    wildcardsPot: "와일드카드",
+    groupWinnersPot: "조 1위",
+    runnersUpPot: "조 2위",
+    rankPot: "{n}위",
     title: "추첨식",
     potsHint: "팀을 조 사이로 드래그한 후 추첨을 시작하세요.",
     crossLocked: "크로스 대진 — 매치업이 고정되어 있습니다. 추첨을 시작해 공개하세요.",
@@ -31,6 +39,7 @@ export default {
     clear: "결과 지우기",
   },
   bracket: {
+    fitScreen: "화면에 맞추기",
     zoomHint: "핀치로 확대 · 더블탭으로 초기화",
     legPick: "어느 경기를 설정하시겠습니까?",
   },
@@ -77,6 +86,11 @@ export default {
     outro: "이게 전부입니다 — 대부분은 토너먼트 설정 페이지에서 나중에 다시 바꿀 수 있어요.",
   },
   common: {
+    next: "다음",
+    remove: "제거",
+    simulate: "시뮬레이션",
+    info: "정보",
+    pickColor: "색상 선택기 열기",
     back: "뒤로",
     close: "닫기",
     cancel: "취소",
@@ -145,6 +159,7 @@ export default {
     deleteLabel: "삭제",
   },
   teams: {
+    deleteInUse: "이 팀은 대회에서 사용 중이므로 삭제할 수 없습니다.",
     title: "팀",
     notFound: "팀을 찾을 수 없습니다.",
     addBtn: "팀 추가",
@@ -503,6 +518,12 @@ export default {
     specialThanks: "특별 감사",
   },
   tournament: {
+    noFixtures: "아직 경기가 없습니다.",
+    groupStageNotStarted: "조별 리그가 아직 시작되지 않았습니다.",
+    matchdayProgress: "{played}/{total} 라운드",
+    champion: "우승",
+    simulateMatchday: "라운드 시뮬레이션",
+    wildcardRace: "와일드카드 경쟁",
     aggregate: "합산",
     notFound: "토너먼트를 찾을 수 없습니다.",
     newSeason: "새 시즌",
@@ -954,5 +975,16 @@ export default {
     result: "결과",
     place: "{ordinal}위",
     eliminated: "탈락 · {round}",
+  },
+  rounds: {
+    matchday: "{n}라운드",
+    final: "결승",
+    semiFinals: "준결승",
+    quarterFinals: "8강",
+    roundOf: "{n}강",
+  },
+  notFound: {
+    message: "페이지를 찾을 수 없습니다",
+    goHome: "홈으로",
   },
 } as const

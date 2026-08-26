@@ -1,5 +1,13 @@
 export default {
   drawCeremony: {
+    potLabel: "Topf {n}",
+    potSingle: "Topf",
+    byeSlot: "FREILOS {n}",
+    matchSlot: "Spiel {n}",
+    wildcardsPot: "Wildcards",
+    groupWinnersPot: "Gruppensieger",
+    runnersUpPot: "Gruppenzweite",
+    rankPot: "Platz {n}",
     title: "Auslosung",
     potsHint: "Ziehe die Teams zwischen die Lostöpfe und starte anschließend die Auslosung.",
     crossLocked:
@@ -34,6 +42,7 @@ export default {
     clear: "Ergebnis löschen",
   },
   bracket: {
+    fitScreen: "An Bildschirm anpassen",
     zoomHint: "Zum Zoomen auseinanderziehen · doppelt tippen zum Zurücksetzen",
     legPick: "Welches Spiel möchtest du festlegen?",
   },
@@ -81,6 +90,11 @@ export default {
     outro: "Das war’s — fast alles kannst du später in den Turniereinstellungen ändern.",
   },
   common: {
+    next: "Weiter",
+    remove: "Entfernen",
+    simulate: "Simulieren",
+    info: "Info",
+    pickColor: "Farbwähler öffnen",
     back: "Zurück",
     close: "Schließen",
     cancel: "Abbrechen",
@@ -149,6 +163,7 @@ export default {
     deleteLabel: "Löschen",
   },
   teams: {
+    deleteInUse: "Dieses Team kann nicht gelöscht werden, da es in einem Turnier verwendet wird.",
     title: "Teams",
     notFound: "Team nicht gefunden.",
     addBtn: "Team hinzufügen",
@@ -508,6 +523,12 @@ export default {
     specialThanks: "Besonderer Dank",
   },
   tournament: {
+    noFixtures: "Noch keine Spiele.",
+    groupStageNotStarted: "Die Gruppenphase hat noch nicht begonnen.",
+    matchdayProgress: "{played}/{total} Spieltage",
+    champion: "Meister",
+    simulateMatchday: "Spieltag simulieren",
+    wildcardRace: "Wildcard-Rennen",
     aggregate: "Gesamt",
     notFound: "Turnier nicht gefunden.",
     newSeason: "Neue Saison",
@@ -967,5 +988,16 @@ export default {
     result: "Ergebnis",
     place: "{ordinal} Platz",
     eliminated: "Ausgeschieden · {round}",
+  },
+  rounds: {
+    matchday: "{n}. Spieltag",
+    final: "Finale",
+    semiFinals: "Halbfinale",
+    quarterFinals: "Viertelfinale",
+    roundOf: "Runde der letzten {n}",
+  },
+  notFound: {
+    message: "Seite nicht gefunden",
+    goHome: "Zur Startseite",
   },
 } as const

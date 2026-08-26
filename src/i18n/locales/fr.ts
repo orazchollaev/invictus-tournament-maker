@@ -1,5 +1,13 @@
 export default {
   drawCeremony: {
+    potLabel: "Chapeau {n}",
+    potSingle: "Chapeau",
+    byeSlot: "EXEMPT {n}",
+    matchSlot: "Match {n}",
+    wildcardsPot: "Wildcards",
+    groupWinnersPot: "Premiers de groupe",
+    runnersUpPot: "Deuxièmes de groupe",
+    rankPot: "Rang {n}",
     title: "Cérémonie du tirage",
     potsHint: "Faites glisser les équipes entre les chapeaux, puis lancez le tirage.",
     crossLocked: "Tirage croisé — les affiches sont fixes. Lancez le tirage pour les révéler.",
@@ -32,6 +40,7 @@ export default {
     clear: "Effacer le résultat",
   },
   bracket: {
+    fitScreen: "Ajuster à l'écran",
     zoomHint: "Pincez pour zoomer · appuyez deux fois pour réinitialiser",
     legPick: "Quelle manche voulez-vous définir ?",
   },
@@ -79,6 +88,11 @@ export default {
       "C’est tout — vous pourrez modifier presque tout plus tard depuis les paramètres du tournoi.",
   },
   common: {
+    next: "Suivant",
+    remove: "Retirer",
+    simulate: "Simuler",
+    info: "Info",
+    pickColor: "Ouvrir le sélecteur de couleur",
     back: "Retour",
     close: "Fermer",
     cancel: "Annuler",
@@ -147,6 +161,7 @@ export default {
     deleteLabel: "Supprimer",
   },
   teams: {
+    deleteInUse: "Cette équipe ne peut pas être supprimée car elle est utilisée dans un tournoi.",
     title: "Équipes",
     notFound: "Équipe introuvable.",
     addBtn: "Ajouter une équipe",
@@ -507,6 +522,12 @@ export default {
     specialThanks: "Remerciements particuliers",
   },
   tournament: {
+    noFixtures: "Aucun match pour le moment.",
+    groupStageNotStarted: "La phase de groupes n’a pas encore commencé.",
+    matchdayProgress: "{played}/{total} journées",
+    champion: "Champion",
+    simulateMatchday: "Simuler la journée",
+    wildcardRace: "Course à la wildcard",
     aggregate: "Cumul",
     notFound: "Tournoi introuvable.",
     newSeason: "Nouvelle saison",
@@ -966,5 +987,16 @@ export default {
     result: "Résultat",
     place: "{ordinal} place",
     eliminated: "Éliminé · {round}",
+  },
+  rounds: {
+    matchday: "Journée {n}",
+    final: "Finale",
+    semiFinals: "Demi-finales",
+    quarterFinals: "Quarts de finale",
+    roundOf: "Tour des {n}",
+  },
+  notFound: {
+    message: "Page introuvable",
+    goHome: "Retour à l'accueil",
   },
 } as const

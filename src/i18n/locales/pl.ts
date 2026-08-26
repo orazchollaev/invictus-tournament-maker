@@ -1,5 +1,13 @@
 export default {
   drawCeremony: {
+    potLabel: "Koszyk {n}",
+    potSingle: "Koszyk",
+    byeSlot: "WOLNY LOS {n}",
+    matchSlot: "Mecz {n}",
+    wildcardsPot: "Dzikie karty",
+    groupWinnersPot: "Zwycięzcy grup",
+    runnersUpPot: "Wicemistrzowie grup",
+    rankPot: "Miejsce {n}",
     title: "Ceremonia losowania",
     potsHint: "Przeciągaj drużyny między koszykami, a następnie rozpocznij losowanie.",
     crossLocked: "Losowanie krzyżowe — pary są ustalone. Rozpocznij losowanie, aby je ujawnić.",
@@ -31,6 +39,7 @@ export default {
     clear: "Wyczyść wynik",
   },
   bracket: {
+    fitScreen: "Dopasuj do ekranu",
     zoomHint: "Uszczypnij, aby powiększyć · dwukrotnie dotknij, aby zresetować",
     legPick: "Który mecz chcesz ustawić?",
   },
@@ -77,6 +86,11 @@ export default {
     outro: "To wszystko — prawie wszystko możesz później zmienić na stronie ustawień turnieju.",
   },
   common: {
+    next: "Dalej",
+    remove: "Usuń",
+    simulate: "Symuluj",
+    info: "Informacja",
+    pickColor: "Otwórz próbnik kolorów",
     back: "Wstecz",
     close: "Zamknij",
     cancel: "Anuluj",
@@ -145,6 +159,7 @@ export default {
     deleteLabel: "Usuń",
   },
   teams: {
+    deleteInUse: "Tej drużyny nie można usunąć, ponieważ jest używana w turnieju.",
     title: "Drużyny",
     notFound: "Nie znaleziono drużyny.",
     addBtn: "Dodaj drużynę",
@@ -504,6 +519,12 @@ export default {
     specialThanks: "Specjalne podziękowania",
   },
   tournament: {
+    noFixtures: "Brak meczów.",
+    groupStageNotStarted: "Faza grupowa jeszcze się nie rozpoczęła.",
+    matchdayProgress: "{played}/{total} kolejek",
+    champion: "Mistrz",
+    simulateMatchday: "Symuluj kolejkę",
+    wildcardRace: "Wyścig o dziką kartę",
     aggregate: "Wynik łączny",
     notFound: "Nie znaleziono turnieju.",
     newSeason: "Nowy sezon",
@@ -958,5 +979,16 @@ export default {
     result: "Wynik",
     place: "{ordinal} miejsce",
     eliminated: "Odpadł · {round}",
+  },
+  rounds: {
+    matchday: "Kolejka {n}",
+    final: "Finał",
+    semiFinals: "Półfinały",
+    quarterFinals: "Ćwierćfinały",
+    roundOf: "Runda {n}",
+  },
+  notFound: {
+    message: "Nie znaleziono strony",
+    goHome: "Wróć na stronę główną",
   },
 } as const

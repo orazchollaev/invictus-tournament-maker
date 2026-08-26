@@ -1,5 +1,13 @@
 export default {
   drawCeremony: {
+    potLabel: "Pot {n}",
+    potSingle: "Pot",
+    byeSlot: "BYE {n}",
+    matchSlot: "Match {n}",
+    wildcardsPot: "Wildcards",
+    groupWinnersPot: "Group Winners",
+    runnersUpPot: "Runners-up",
+    rankPot: "Rank {n}",
     title: "Draw Ceremony",
     potsHint: "Drag teams between pots, then start the draw.",
     crossLocked: "Cross draw — matchups are fixed. Start the draw to reveal them.",
@@ -31,6 +39,7 @@ export default {
     clear: "Clear result",
   },
   bracket: {
+    fitScreen: "Fit to screen",
     zoomHint: "Pinch to zoom · double-tap to reset",
     legPick: "Which leg do you want to set?",
   },
@@ -77,6 +86,11 @@ export default {
     outro: "That’s it — you can change almost anything later from a tournament’s Settings page.",
   },
   common: {
+    next: "Next",
+    remove: "Remove",
+    simulate: "Simulate",
+    info: "Info",
+    pickColor: "Open color picker",
     back: "Back",
     close: "Close",
     cancel: "Cancel",
@@ -145,6 +159,7 @@ export default {
     deleteLabel: "Delete",
   },
   teams: {
+    deleteInUse: "This team cannot be deleted because it is used in a tournament.",
     title: "Teams",
     notFound: "Team not found.",
     addBtn: "Add Team",
@@ -502,6 +517,12 @@ export default {
     specialThanks: "Special thanks",
   },
   tournament: {
+    noFixtures: "No matches yet.",
+    groupStageNotStarted: "Group stage not started yet.",
+    matchdayProgress: "{played}/{total} matchdays",
+    champion: "Champion",
+    simulateMatchday: "Simulate matchday",
+    wildcardRace: "Wildcard Race",
     aggregate: "Aggregate",
     notFound: "Tournament not found.",
     newSeason: "New Season",
@@ -954,5 +975,16 @@ export default {
     result: "Result",
     place: "{ordinal} Place",
     eliminated: "Eliminated · {round}",
+  },
+  rounds: {
+    matchday: "Matchday {n}",
+    final: "Final",
+    semiFinals: "Semi-Finals",
+    quarterFinals: "Quarter-Finals",
+    roundOf: "Round of {n}",
+  },
+  notFound: {
+    message: "Page not found",
+    goHome: "Go home",
   },
 } as const

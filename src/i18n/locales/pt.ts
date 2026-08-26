@@ -1,5 +1,13 @@
 export default {
   drawCeremony: {
+    potLabel: "Pote {n}",
+    potSingle: "Pote",
+    byeSlot: "BYE {n}",
+    matchSlot: "Jogo {n}",
+    wildcardsPot: "Curingas",
+    groupWinnersPot: "Primeiros de grupo",
+    runnersUpPot: "Segundos de grupo",
+    rankPot: "Posição {n}",
     title: "Sorteio",
     potsHint: "Arraste as equipes entre os potes e depois inicie o sorteio.",
     crossLocked: "Sorteio cruzado — os confrontos são fixos. Inicie o sorteio para revelá-los.",
@@ -31,6 +39,7 @@ export default {
     clear: "Limpar resultado",
   },
   bracket: {
+    fitScreen: "Ajustar à tela",
     zoomHint: "Belisque para ampliar · toque duas vezes para redefinir",
     legPick: "Qual jogo você quer definir?",
   },
@@ -78,6 +87,11 @@ export default {
       "E já está — pode alterar quase tudo mais tarde a partir da página de Definições de um torneio.",
   },
   common: {
+    next: "Seguinte",
+    remove: "Remover",
+    simulate: "Simular",
+    info: "Informação",
+    pickColor: "Abrir seletor de cor",
     back: "Voltar",
     close: "Fechar",
     cancel: "Cancelar",
@@ -116,6 +130,7 @@ export default {
     setResult: "Inserir resultado",
     moveUp: "Mover para cima",
     moveDown: "Mover para baixo",
+    vs: "vs",
     share: "Compartilhar",
     or: "ou",
     offline: "Offline",
@@ -145,6 +160,7 @@ export default {
     deleteLabel: "Excluir",
   },
   teams: {
+    deleteInUse: "Esta equipa não pode ser eliminada porque está a ser usada num torneio.",
     title: "Times",
     notFound: "Time não encontrado.",
     addBtn: "Adicionar time",
@@ -504,6 +520,12 @@ export default {
     specialThanks: "Agradecimento especial",
   },
   tournament: {
+    noFixtures: "Ainda não há jogos.",
+    groupStageNotStarted: "A fase de grupos ainda não começou.",
+    matchdayProgress: "{played}/{total} jornadas",
+    champion: "Campeão",
+    simulateMatchday: "Simular jornada",
+    wildcardRace: "Corrida pelo curinga",
     aggregate: "Agregado",
     notFound: "Torneio não encontrado.",
     newSeason: "Nova temporada",
@@ -958,5 +980,16 @@ export default {
     result: "Resultado",
     place: "{ordinal} Lugar",
     eliminated: "Eliminado · {round}",
+  },
+  rounds: {
+    matchday: "Jornada {n}",
+    final: "Final",
+    semiFinals: "Meias-finais",
+    quarterFinals: "Quartos de final",
+    roundOf: "Fase de {n}",
+  },
+  notFound: {
+    message: "Página não encontrada",
+    goHome: "Ir para o início",
   },
 } as const

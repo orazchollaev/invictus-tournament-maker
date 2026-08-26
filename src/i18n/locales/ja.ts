@@ -1,5 +1,13 @@
 export default {
   drawCeremony: {
+    potLabel: "ポット{n}",
+    potSingle: "ポット",
+    byeSlot: "不戦勝 {n}",
+    matchSlot: "試合 {n}",
+    wildcardsPot: "ワイルドカード",
+    groupWinnersPot: "グループ1位",
+    runnersUpPot: "グループ2位",
+    rankPot: "{n}位",
     title: "抽選会",
     potsHint: "チームをポット間でドラッグし、抽選を開始してください。",
     crossLocked: "クロス抽選 — 対戦カードは固定されています。抽選を開始して公開してください。",
@@ -32,7 +40,9 @@ export default {
     clear: "結果をクリア",
   },
   bracket: {
+    fitScreen: "画面に合わせる",
     zoomHint: "ピンチでズーム · ダブルタップでリセット",
+    legPick: "どちらの試合のスコアを入力しますか？",
   },
   nav: {
     tournaments: "大会",
@@ -77,6 +87,11 @@ export default {
     outro: "以上です。大会の設定ページから後でほとんどの設定を変更することができます。",
   },
   common: {
+    next: "次へ",
+    remove: "削除",
+    simulate: "シミュレート",
+    info: "情報",
+    pickColor: "カラーピッカーを開く",
     back: "戻る",
     close: "閉じる",
     cancel: "キャンセル",
@@ -145,6 +160,7 @@ export default {
     deleteLabel: "削除",
   },
   teams: {
+    deleteInUse: "このチームは大会で使用中のため削除できません。",
     title: "チーム",
     notFound: "チームが見つかりません。",
     addBtn: "チームを追加",
@@ -153,6 +169,8 @@ export default {
     noMatch: '"{query}" に一致するチームはありません。',
     limitReached: "チーム数の上限に達しました ({max})",
     sortDefault: "デフォルト",
+    sortAsc: "昇順",
+    sortDesc: "降順",
     form: {
       addTitle: "チームを追加",
       editTitle: "チームを編集",
@@ -498,9 +516,15 @@ export default {
     tutorials: "チュートリアル",
     about: "アプリについて",
     aboutBy: "開発:",
-    specialThanks: "Special thanks",
+    specialThanks: "スペシャルサンクス",
   },
   tournament: {
+    noFixtures: "まだ試合がありません。",
+    groupStageNotStarted: "グループステージはまだ始まっていません。",
+    matchdayProgress: "{played}/{total} 節",
+    champion: "優勝",
+    simulateMatchday: "この節をシミュレート",
+    wildcardRace: "ワイルドカード争い",
     aggregate: "合計",
     notFound: "大会が見つかりません。",
     newSeason: "新シーズン",
@@ -508,7 +532,7 @@ export default {
     simulate: "シミュレーション",
     simulateRound: "{round}をシミュレート",
     simulateThirdPlace: "3位決定戦をシミュレート",
-    simulateWeek: "第{week}節をシミュレート",
+    simulateWeek: "節をシミュレート",
     simulateGroup: "{group}をシミュレート",
     advanceToKnockout: "ノックアウトステージへ進む",
     settings: "設定",
@@ -955,5 +979,16 @@ export default {
     result: "結果",
     place: "{ordinal}位",
     eliminated: "敗退 · {round}",
+  },
+  rounds: {
+    matchday: "第{n}節",
+    final: "決勝",
+    semiFinals: "準決勝",
+    quarterFinals: "準々決勝",
+    roundOf: "ベスト{n}",
+  },
+  notFound: {
+    message: "ページが見つかりません",
+    goHome: "ホームへ戻る",
   },
 } as const

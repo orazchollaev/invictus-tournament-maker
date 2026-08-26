@@ -1,5 +1,13 @@
 export default {
   drawCeremony: {
+    potLabel: "पॉट {n}",
+    potSingle: "पॉट",
+    byeSlot: "बाई {n}",
+    matchSlot: "मैच {n}",
+    wildcardsPot: "वाइल्डकार्ड",
+    groupWinnersPot: "ग्रुप विजेता",
+    runnersUpPot: "उपविजेता",
+    rankPot: "रैंक {n}",
     title: "ड्रॉ समारोह",
     potsHint: "टीमों को पॉट्स के बीच खींचें, फिर ड्रॉ शुरू करें।",
     crossLocked: "क्रॉस ड्रॉ — मुकाबले तय हैं। उन्हें दिखाने के लिए ड्रॉ शुरू करें।",
@@ -31,6 +39,7 @@ export default {
     clear: "परिणाम साफ़ करें",
   },
   bracket: {
+    fitScreen: "स्क्रीन में फ़िट करें",
     zoomHint: "ज़ूम करने के लिए पिंच करें · रीसेट करने के लिए डबल-टैप करें",
     legPick: "आप कौन-सा लेग सेट करना चाहते हैं?",
   },
@@ -77,6 +86,11 @@ export default {
     outro: "बस इतना ही — बाद में आप टूर्नामेंट की Settings पेज से लगभग सब कुछ बदल सकते हैं।",
   },
   common: {
+    next: "आगे",
+    remove: "हटाएँ",
+    simulate: "सिम्युलेट करें",
+    info: "जानकारी",
+    pickColor: "रंग चयनकर्ता खोलें",
     back: "वापस",
     close: "बंद करें",
     cancel: "रद्द करें",
@@ -145,6 +159,7 @@ export default {
     deleteLabel: "हटाएँ",
   },
   teams: {
+    deleteInUse: "यह टीम हटाई नहीं जा सकती क्योंकि यह किसी टूर्नामेंट में उपयोग हो रही है।",
     title: "टीमें",
     notFound: "टीम नहीं मिली।",
     addBtn: "टीम जोड़ें",
@@ -252,7 +267,7 @@ export default {
       seasonsShort: "सीज़न",
     },
     title: "इतिहास",
-    empty: "No tournaments yet.",
+    empty: "अभी तक कोई टूर्नामेंट नहीं।",
     noCompletedSeasons: "अभी कोई पूरा हुआ सीज़न नहीं है।",
     tabs: {
       players: "खिलाड़ी",
@@ -504,6 +519,12 @@ export default {
     specialThanks: "विशेष धन्यवाद",
   },
   tournament: {
+    noFixtures: "अभी तक कोई मैच नहीं।",
+    groupStageNotStarted: "ग्रुप स्टेज अभी शुरू नहीं हुआ है।",
+    matchdayProgress: "{played}/{total} मैचडे",
+    champion: "चैंपियन",
+    simulateMatchday: "मैचडे सिम्युलेट करें",
+    wildcardRace: "वाइल्डकार्ड की दौड़",
     aggregate: "कुल स्कोर",
     notFound: "टूर्नामेंट नहीं मिला।",
     newSeason: "नया सीज़न",
@@ -638,7 +659,7 @@ export default {
       drawHint:
         "{random} — टीमें संयोग से रखी जाती हैं · {seeded} — शीर्ष टीमों को अलग रखा जाता है · {manual} — आप उन्हें व्यवस्थित करते हैं",
       playoffHint:
-        "{cross} — A1 vs B2, B1 vs A2 · {noRematch} — avoids same-group matchups in Round 1 · {random} — fully random",
+        "{cross} — A1 बनाम B2, B1 बनाम A2 · {noRematch} — राउंड 1 में एक ही ग्रुप के मुकाबले टालता है · {random} — पूरी तरह यादृच्छिक",
       cross: "क्रॉस",
       noRematch: "दोबारा मुकाबला नहीं",
       options: "विकल्प",
@@ -958,5 +979,16 @@ export default {
     result: "परिणाम",
     place: "{ordinal} स्थान",
     eliminated: "बाहर · {round}",
+  },
+  rounds: {
+    matchday: "मैचडे {n}",
+    final: "फाइनल",
+    semiFinals: "सेमीफाइनल",
+    quarterFinals: "क्वार्टर फाइनल",
+    roundOf: "राउंड ऑफ {n}",
+  },
+  notFound: {
+    message: "पेज नहीं मिला",
+    goHome: "होम पर जाएँ",
   },
 } as const

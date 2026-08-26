@@ -1,5 +1,13 @@
 export default {
   drawCeremony: {
+    potLabel: "Torba {n}",
+    potSingle: "Torba",
+    byeSlot: "BAY {n}",
+    matchSlot: "Maç {n}",
+    wildcardsPot: "Joker Takımlar",
+    groupWinnersPot: "Grup Birincileri",
+    runnersUpPot: "Grup İkincileri",
+    rankPot: "{n}. Sıra",
     title: "Kura Çekimi",
     potsHint: "Takımları torbalar arasında sürükleyin, ardından kurayı başlatın.",
     crossLocked: "Çapraz kura — eşleşmeler sabittir. Göstermek için kurayı başlatın.",
@@ -31,6 +39,7 @@ export default {
     clear: "Sonucu temizle",
   },
   bracket: {
+    fitScreen: "Ekrana sığdır",
     zoomHint: "Yakınlaştırmak için sıkıştırın · sıfırlamak için çift dokunun",
     legPick: "Hangi maçı girmek istiyorsun?",
   },
@@ -79,6 +88,11 @@ export default {
       "İşte bu kadar — daha sonra bir turnuvanın Ayarlar sayfasından neredeyse her şeyi değiştirebilirsiniz.",
   },
   common: {
+    next: "İleri",
+    remove: "Kaldır",
+    simulate: "Simüle Et",
+    info: "Bilgi",
+    pickColor: "Renk seçiciyi aç",
     back: "Geri",
     close: "Kapat",
     cancel: "İptal",
@@ -147,6 +161,7 @@ export default {
     deleteLabel: "Sil",
   },
   teams: {
+    deleteInUse: "Bu takım bir turnuvada kullanıldığı için silinemez.",
     title: "Takımlar",
     notFound: "Takım bulunamadı.",
     addBtn: "Takım Ekle",
@@ -506,6 +521,12 @@ export default {
     specialThanks: "Özel teşekkürler",
   },
   tournament: {
+    noFixtures: "Henüz maç yok.",
+    groupStageNotStarted: "Grup aşaması henüz başlamadı.",
+    matchdayProgress: "{played}/{total} hafta",
+    champion: "Şampiyon",
+    simulateMatchday: "Haftayı simüle et",
+    wildcardRace: "Joker Yarışı",
     aggregate: "Toplam",
     notFound: "Turnuva bulunamadı.",
     newSeason: "Yeni Sezon",
@@ -748,6 +769,10 @@ export default {
           title: "Bölümler",
           lockedBanner: "Maçlar başladıktan sonra bölümler değiştirilemez.",
         },
+        playoff: {
+          title: "Playoff",
+          lockedBanner: "Playoff başladıktan sonra playoff ayarları değiştirilemez.",
+        },
       },
       tiebreaker: {
         method: "Yöntem",
@@ -954,5 +979,16 @@ export default {
     result: "Sonuç",
     place: "{ordinal} Sıra",
     eliminated: "Elendi · {round}",
+  },
+  rounds: {
+    matchday: "{n}. Hafta",
+    final: "Final",
+    semiFinals: "Yarı Final",
+    quarterFinals: "Çeyrek Final",
+    roundOf: "Son {n}",
+  },
+  notFound: {
+    message: "Sayfa bulunamadı",
+    goHome: "Ana sayfaya dön",
   },
 } as const

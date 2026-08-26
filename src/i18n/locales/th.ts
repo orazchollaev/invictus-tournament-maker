@@ -1,5 +1,13 @@
 export default {
   drawCeremony: {
+    potLabel: "โถ {n}",
+    potSingle: "โถ",
+    byeSlot: "บาย {n}",
+    matchSlot: "แมตช์ {n}",
+    wildcardsPot: "ไวลด์การ์ด",
+    groupWinnersPot: "แชมป์กลุ่ม",
+    runnersUpPot: "รองแชมป์กลุ่ม",
+    rankPot: "อันดับ {n}",
     title: "พิธีจับสลาก",
     potsHint: "ลากทีมระหว่างโถ แล้วเริ่มจับสลาก",
     crossLocked: "จับสลากแบบไขว้ — คู่แข่งขันถูกกำหนดไว้แล้ว เริ่มจับสลากเพื่อเปิดเผย",
@@ -31,6 +39,7 @@ export default {
     clear: "ล้างผลการแข่งขัน",
   },
   bracket: {
+    fitScreen: "พอดีหน้าจอ",
     zoomHint: "หยิกนิ้วเพื่อซูม · แตะสองครั้งเพื่อรีเซ็ต",
     legPick: "ต้องการตั้งค่านัดไหน?",
   },
@@ -77,6 +86,11 @@ export default {
     outro: "แค่นี้เอง — เกือบทุกอย่างสามารถเปลี่ยนได้ภายหลังจากหน้าตั้งค่าทัวร์นาเมนต์",
   },
   common: {
+    next: "ถัดไป",
+    remove: "ลบ",
+    simulate: "จำลอง",
+    info: "ข้อมูล",
+    pickColor: "เปิดตัวเลือกสี",
     back: "ย้อนกลับ",
     close: "ปิด",
     cancel: "ยกเลิก",
@@ -145,6 +159,7 @@ export default {
     deleteLabel: "ลบ",
   },
   teams: {
+    deleteInUse: "ลบทีมนี้ไม่ได้ เพราะกำลังถูกใช้ในทัวร์นาเมนต์",
     title: "ทีม",
     notFound: "ไม่พบทีม",
     addBtn: "เพิ่มทีม",
@@ -503,6 +518,12 @@ export default {
     specialThanks: "ขอบคุณเป็นพิเศษ",
   },
   tournament: {
+    noFixtures: "ยังไม่มีการแข่งขัน",
+    groupStageNotStarted: "รอบแบ่งกลุ่มยังไม่เริ่ม",
+    matchdayProgress: "{played}/{total} นัด",
+    champion: "แชมป์",
+    simulateMatchday: "จำลองนัดนี้",
+    wildcardRace: "การชิงไวลด์การ์ด",
     aggregate: "คะแนนรวม",
     notFound: "ไม่พบทัวร์นาเมนต์",
     newSeason: "ฤดูกาลใหม่",
@@ -955,5 +976,16 @@ export default {
     result: "ผลการแข่งขัน",
     place: "อันดับที่ {ordinal}",
     eliminated: "ตกรอบ · {round}",
+  },
+  rounds: {
+    matchday: "นัดที่ {n}",
+    final: "รอบชิงชนะเลิศ",
+    semiFinals: "รอบรองชนะเลิศ",
+    quarterFinals: "รอบก่อนรองชนะเลิศ",
+    roundOf: "รอบ {n} ทีม",
+  },
+  notFound: {
+    message: "ไม่พบหน้านี้",
+    goHome: "กลับหน้าแรก",
   },
 } as const

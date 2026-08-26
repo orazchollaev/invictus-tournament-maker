@@ -1,5 +1,13 @@
 export default {
   drawCeremony: {
+    potLabel: "Pot {n}",
+    potSingle: "Pot",
+    byeSlot: "BYE {n}",
+    matchSlot: "Pertandingan {n}",
+    wildcardsPot: "Wildcard",
+    groupWinnersPot: "Juara Grup",
+    runnersUpPot: "Runner-up",
+    rankPot: "Peringkat {n}",
     title: "Upacara Undian",
     potsHint: "Tarik tim antar pot, lalu mulai undian.",
     crossLocked:
@@ -32,6 +40,7 @@ export default {
     clear: "Hapus hasil",
   },
   bracket: {
+    fitScreen: "Sesuaikan layar",
     zoomHint: "Cubit untuk memperbesar · ketuk dua kali untuk mengatur ulang",
     legPick: "Leg mana yang ingin diatur?",
   },
@@ -79,6 +88,11 @@ export default {
     outro: "Selesai — Anda dapat mengubah hampir apa saja nanti dari halaman Pengaturan turnamen.",
   },
   common: {
+    next: "Berikutnya",
+    remove: "Hapus",
+    simulate: "Simulasikan",
+    info: "Info",
+    pickColor: "Buka pemilih warna",
     back: "Kembali",
     close: "Tutup",
     cancel: "Batal",
@@ -147,6 +161,7 @@ export default {
     deleteLabel: "Hapus",
   },
   teams: {
+    deleteInUse: "Tim ini tidak dapat dihapus karena sedang dipakai di sebuah turnamen.",
     title: "Tim",
     notFound: "Tim tidak ditemukan.",
     addBtn: "Tambah Tim",
@@ -155,6 +170,8 @@ export default {
     noMatch: 'Tidak ada tim untuk "{query}".',
     limitReached: "Batas tim tercapai ({max})",
     sortDefault: "Bawaan",
+    sortAsc: "Menaik",
+    sortDesc: "Menurun",
     form: {
       addTitle: "Tambah Tim",
       editTitle: "Edit Tim",
@@ -504,6 +521,12 @@ export default {
     specialThanks: "Terima kasih khusus",
   },
   tournament: {
+    noFixtures: "Belum ada pertandingan.",
+    groupStageNotStarted: "Babak grup belum dimulai.",
+    matchdayProgress: "{played}/{total} pekan",
+    champion: "Juara",
+    simulateMatchday: "Simulasikan pekan",
+    wildcardRace: "Perebutan Wildcard",
     aggregate: "Agregat",
     notFound: "Turnamen tidak ditemukan.",
     newSeason: "Musim Baru",
@@ -957,5 +980,16 @@ export default {
     result: "Hasil",
     place: "Peringkat ke-{ordinal}",
     eliminated: "Tersingkir · {round}",
+  },
+  rounds: {
+    matchday: "Pekan {n}",
+    final: "Final",
+    semiFinals: "Semifinal",
+    quarterFinals: "Perempat Final",
+    roundOf: "Babak {n} Besar",
+  },
+  notFound: {
+    message: "Halaman tidak ditemukan",
+    goHome: "Ke beranda",
   },
 } as const

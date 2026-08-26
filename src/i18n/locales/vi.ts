@@ -1,5 +1,13 @@
 export default {
   drawCeremony: {
+    potLabel: "Nhóm {n}",
+    potSingle: "Nhóm",
+    byeSlot: "MIỄN ĐẤU {n}",
+    matchSlot: "Trận {n}",
+    wildcardsPot: "Suất đặc cách",
+    groupWinnersPot: "Nhất bảng",
+    runnersUpPot: "Nhì bảng",
+    rankPot: "Hạng {n}",
     title: "Lễ bốc thăm",
     potsHint: "Kéo các đội giữa các nhóm hạt giống, sau đó bắt đầu bốc thăm.",
     crossLocked: "Bốc thăm chéo — các cặp đấu đã được cố định. Bắt đầu bốc thăm để hiển thị.",
@@ -31,6 +39,7 @@ export default {
     clear: "Xóa kết quả",
   },
   bracket: {
+    fitScreen: "Vừa màn hình",
     zoomHint: "Chụm để phóng to · chạm hai lần để đặt lại",
     legPick: "Bạn muốn thiết lập lượt đấu nào?",
   },
@@ -78,6 +87,11 @@ export default {
       "Vậy là xong — bạn có thể thay đổi hầu hết mọi thứ sau này từ trang Cài đặt của giải đấu.",
   },
   common: {
+    next: "Tiếp",
+    remove: "Xóa",
+    simulate: "Mô phỏng",
+    info: "Thông tin",
+    pickColor: "Mở bảng chọn màu",
     back: "Quay lại",
     close: "Đóng",
     cancel: "Hủy",
@@ -146,6 +160,7 @@ export default {
     deleteLabel: "Xóa",
   },
   teams: {
+    deleteInUse: "Không thể xóa đội này vì đội đang được dùng trong một giải đấu.",
     title: "Đội",
     notFound: "Không tìm thấy đội.",
     addBtn: "Thêm đội",
@@ -253,7 +268,7 @@ export default {
       seasonsShort: "Mùa",
     },
     title: "Lịch sử",
-    empty: "No tournaments yet.",
+    empty: "Chưa có giải đấu nào.",
     noCompletedSeasons: "Chưa có mùa giải nào hoàn tất.",
     tabs: {
       players: "Cầu thủ",
@@ -505,6 +520,12 @@ export default {
     specialThanks: "Đặc biệt cảm ơn",
   },
   tournament: {
+    noFixtures: "Chưa có trận đấu nào.",
+    groupStageNotStarted: "Vòng bảng chưa bắt đầu.",
+    matchdayProgress: "{played}/{total} vòng",
+    champion: "Vô địch",
+    simulateMatchday: "Mô phỏng vòng đấu",
+    wildcardRace: "Cuộc đua suất đặc cách",
     aggregate: "Tổng tỷ số",
     notFound: "Không tìm thấy giải đấu.",
     newSeason: "Mùa giải mới",
@@ -638,7 +659,7 @@ export default {
       drawHint:
         "{random} — đội được xếp ngẫu nhiên · {seeded} — giữ các đội mạnh tách nhau · {manual} — bạn tự sắp xếp",
       playoffHint:
-        "{cross} — A1 vs B2, B1 vs A2 · {noRematch} — avoids same-group matchups in Round 1 · {random} — fully random",
+        "{cross} — A1 gặp B2, B1 gặp A2 · {noRematch} — tránh các cặp cùng bảng ở vòng 1 · {random} — hoàn toàn ngẫu nhiên",
       cross: "Chéo",
       noRematch: "Không tái đấu",
       options: "Tùy chọn",
@@ -740,7 +761,7 @@ export default {
         hintTriple: "3 lượt gặp",
         hintQuad: "4 lượt gặp (2 sân nhà & 2 sân khách)",
         lockedBanner: "Không thể thay đổi thể thức sau khi trận đấu bắt đầu.",
-        numberOfDivisions: "Number of Divisions",
+        numberOfDivisions: "Số hạng đấu",
         minTeams: "tối thiểu 2 đội mỗi hạng",
         slotsSwapped: "các suất được đổi giữa các hạng liền kề",
         divisions: {
@@ -810,7 +831,7 @@ export default {
     deselectAll: "Deselect all",
     emptySelected: "Chưa chọn đội",
     emptyAvailable: "Không tìm thấy đội",
-    minTeams: "Select at least 2 teams",
+    minTeams: "Chọn ít nhất 2 đội",
     sortName: "Tên",
     sortPower: "Sức mạnh",
     title: "Đội",
@@ -842,7 +863,7 @@ export default {
   },
   matchStats: {
     shootoutShort: "Penalties",
-    shootoutTitle: "Penalty Shootout",
+    shootoutTitle: "Loạt sút luân lưu",
     manOfTheMatch: "Cầu thủ xuất sắc nhất trận",
     title: "Báo cáo trận đấu",
     buttonLabel: "Báo cáo",
@@ -899,7 +920,7 @@ export default {
   playerDetail: {
     yellowCards: "Thẻ vàng",
     redCards: "Thẻ đỏ",
-    notFound: "Player not found.",
+    notFound: "Không tìm thấy cầu thủ.",
     careerTitle: "Sự nghiệp",
     honoursTitle: "Danh hiệu",
     apps: "Số trận",
@@ -958,5 +979,16 @@ export default {
     result: "Kết quả",
     place: "Hạng {ordinal}",
     eliminated: "Bị loại · {round}",
+  },
+  rounds: {
+    matchday: "Vòng {n}",
+    final: "Chung kết",
+    semiFinals: "Bán kết",
+    quarterFinals: "Tứ kết",
+    roundOf: "Vòng {n} đội",
+  },
+  notFound: {
+    message: "Không tìm thấy trang",
+    goHome: "Về trang chủ",
   },
 } as const

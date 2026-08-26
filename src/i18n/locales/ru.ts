@@ -1,5 +1,13 @@
 export default {
   drawCeremony: {
+    potLabel: "Корзина {n}",
+    potSingle: "Корзина",
+    byeSlot: "БАЙ {n}",
+    matchSlot: "Матч {n}",
+    wildcardsPot: "Уайлд-кард",
+    groupWinnersPot: "Победители групп",
+    runnersUpPot: "Вторые места",
+    rankPot: "Место {n}",
     title: "Жеребьёвка",
     potsHint: "Перетащите команды между корзинами, затем начните жеребьёвку.",
     crossLocked:
@@ -32,6 +40,7 @@ export default {
     clear: "Очистить результат",
   },
   bracket: {
+    fitScreen: "Вписать в экран",
     zoomHint: "Сведите пальцы для масштабирования · двойное нажатие для сброса",
     legPick: "Какой матч вы хотите указать?",
   },
@@ -79,6 +88,11 @@ export default {
     outro: "Вот и всё — позже вы сможете изменить практически всё на странице настроек турнира.",
   },
   common: {
+    next: "Далее",
+    remove: "Удалить",
+    simulate: "Симуляция",
+    info: "Информация",
+    pickColor: "Открыть выбор цвета",
     back: "Назад",
     close: "Закрыть",
     cancel: "Отмена",
@@ -147,6 +161,7 @@ export default {
     deleteLabel: "Удалить",
   },
   teams: {
+    deleteInUse: "Эту команду нельзя удалить: она участвует в турнире.",
     title: "Команды",
     notFound: "Команда не найдена.",
     addBtn: "Добавить команду",
@@ -505,6 +520,12 @@ export default {
     specialThanks: "Особая благодарность",
   },
   tournament: {
+    noFixtures: "Матчей пока нет.",
+    groupStageNotStarted: "Групповой этап ещё не начался.",
+    matchdayProgress: "{played}/{total} туров",
+    champion: "Чемпион",
+    simulateMatchday: "Симулировать тур",
+    wildcardRace: "Гонка уайлд-кард",
     aggregate: "По сумме",
     notFound: "Турнир не найден.",
     newSeason: "Новый сезон",
@@ -958,5 +979,16 @@ export default {
     result: "Счёт",
     place: "{ordinal} место",
     eliminated: "Выбыл · {round}",
+  },
+  rounds: {
+    matchday: "Тур {n}",
+    final: "Финал",
+    semiFinals: "Полуфинал",
+    quarterFinals: "Четвертьфинал",
+    roundOf: "1/{k} финала",
+  },
+  notFound: {
+    message: "Страница не найдена",
+    goHome: "На главную",
   },
 } as const

@@ -1,5 +1,13 @@
 export default {
   drawCeremony: {
+    potLabel: "Bombo {n}",
+    potSingle: "Bombo",
+    byeSlot: "BYE {n}",
+    matchSlot: "Partido {n}",
+    wildcardsPot: "Comodines",
+    groupWinnersPot: "Primeros de grupo",
+    runnersUpPot: "Segundos de grupo",
+    rankPot: "Puesto {n}",
     title: "Sorteo",
     potsHint: "Arrastra los equipos entre bombos y luego inicia el sorteo.",
     crossLocked: "Sorteo cruzado: los enfrentamientos son fijos. Inicia el sorteo para revelarlos.",
@@ -31,6 +39,7 @@ export default {
     clear: "Borrar resultado",
   },
   bracket: {
+    fitScreen: "Ajustar a pantalla",
     zoomHint: "Pellizca para hacer zoom · doble toque para restablecer",
     legPick: "¿Qué partido quieres registrar?",
   },
@@ -78,6 +87,11 @@ export default {
       "Eso es todo — puedes cambiar casi cualquier cosa más tarde desde la página de Configuración de un torneo.",
   },
   common: {
+    next: "Siguiente",
+    remove: "Quitar",
+    simulate: "Simular",
+    info: "Información",
+    pickColor: "Abrir selector de color",
     back: "Volver",
     close: "Cerrar",
     cancel: "Cancelar",
@@ -146,6 +160,7 @@ export default {
     deleteLabel: "Eliminar",
   },
   teams: {
+    deleteInUse: "Este equipo no se puede eliminar porque se usa en un torneo.",
     title: "Equipos",
     notFound: "Equipo no encontrado.",
     addBtn: "Añadir equipo",
@@ -505,6 +520,12 @@ export default {
     specialThanks: "Agradecimiento especial",
   },
   tournament: {
+    noFixtures: "Todavía no hay partidos.",
+    groupStageNotStarted: "La fase de grupos aún no ha comenzado.",
+    matchdayProgress: "{played}/{total} jornadas",
+    champion: "Campeón",
+    simulateMatchday: "Simular jornada",
+    wildcardRace: "Carrera por el comodín",
     aggregate: "Global",
     notFound: "Torneo no encontrado.",
     newSeason: "Nueva temporada",
@@ -960,5 +981,16 @@ export default {
     result: "Resultado",
     place: "{ordinal} Lugar",
     eliminated: "Eliminado · {round}",
+  },
+  rounds: {
+    matchday: "Jornada {n}",
+    final: "Final",
+    semiFinals: "Semifinales",
+    quarterFinals: "Cuartos de final",
+    roundOf: "Ronda de {n}",
+  },
+  notFound: {
+    message: "Página no encontrada",
+    goHome: "Ir al inicio",
   },
 } as const

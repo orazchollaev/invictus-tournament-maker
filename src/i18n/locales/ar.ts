@@ -1,5 +1,13 @@
 export default {
   drawCeremony: {
+    potLabel: "التصنيف {n}",
+    potSingle: "التصنيف",
+    byeSlot: "تأهل تلقائي {n}",
+    matchSlot: "المباراة {n}",
+    wildcardsPot: "البطاقات الحرة",
+    groupWinnersPot: "متصدرو المجموعات",
+    runnersUpPot: "أصحاب المركز الثاني",
+    rankPot: "المركز {n}",
     title: "مراسم القرعة",
     potsHint: "اسحب الفرق بين المجموعات ثم ابدأ القرعة.",
     crossLocked: "قرعة متقاطعة — المواجهات محددة مسبقًا. ابدأ القرعة لإظهارها.",
@@ -31,6 +39,7 @@ export default {
     clear: "مسح النتيجة",
   },
   bracket: {
+    fitScreen: "ملاءمة الشاشة",
     zoomHint: "ضم بإصبعين للتكبير · اضغط مرتين لإعادة الضبط",
     legPick: "أي مباراة تريد تحديدها؟",
   },
@@ -77,6 +86,11 @@ export default {
     outro: "هذا كل شيء — يمكنك تغيير أي شيء تقريبًا لاحقًا من إعدادات البطولة.",
   },
   common: {
+    next: "التالي",
+    remove: "إزالة",
+    simulate: "محاكاة",
+    info: "معلومات",
+    pickColor: "فتح منتقي الألوان",
     back: "رجوع",
     close: "إغلاق",
     cancel: "إلغاء",
@@ -145,6 +159,7 @@ export default {
     deleteLabel: "حذف",
   },
   teams: {
+    deleteInUse: "لا يمكن حذف هذا الفريق لأنه مستخدم في بطولة.",
     title: "الفرق",
     notFound: "الفريق غير موجود.",
     addBtn: "إضافة فريق",
@@ -501,6 +516,12 @@ export default {
     specialThanks: "شكر خاص",
   },
   tournament: {
+    noFixtures: "لا توجد مباريات بعد.",
+    groupStageNotStarted: "لم يبدأ دور المجموعات بعد.",
+    matchdayProgress: "{played}/{total} جولة",
+    champion: "البطل",
+    simulateMatchday: "محاكاة الجولة",
+    wildcardRace: "سباق البطاقات الحرة",
     aggregate: "المجموع",
     notFound: "البطولة غير موجودة.",
     newSeason: "موسم جديد",
@@ -952,5 +973,16 @@ export default {
     result: "النتيجة",
     place: "المركز {ordinal}",
     eliminated: "خرج · {round}",
+  },
+  rounds: {
+    matchday: "الجولة {n}",
+    final: "النهائي",
+    semiFinals: "نصف النهائي",
+    quarterFinals: "ربع النهائي",
+    roundOf: "دور الـ{n}",
+  },
+  notFound: {
+    message: "الصفحة غير موجودة",
+    goHome: "العودة للرئيسية",
   },
 } as const
