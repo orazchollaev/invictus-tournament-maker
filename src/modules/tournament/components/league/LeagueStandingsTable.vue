@@ -3,6 +3,8 @@ import type { GroupStanding } from "@/modules/tournament/types"
 import type { Team } from "@/modules/teams/types"
 import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
 import { AppSectionHeader, AppTable } from "@/components/ui"
+import { useI18n } from "vue-i18n"
+import { LEAGUE_COLUMNS, formatGoalDiff } from "../standingsColumns"
 
 const props = defineProps<{
   standings: GroupStanding[]
@@ -14,6 +16,8 @@ const props = defineProps<{
   playoffQualifierCount?: number
   relegationCount: number
 }>()
+
+const { t } = useI18n()
 
 function teamById(id: string) {
   return props.teams.find((t) => t.id === id)
@@ -45,22 +49,24 @@ function isLastPlayoffQualifier(rank: number) {
 <template>
   <div class="lv-left">
     <AppSectionHeader>
-      League Table
-      <span class="lv-progress">{{ playedMatchdays }}/{{ totalMatchdays }} matchdays</span>
+      {{ t("tournament.tabs.standings") }}
+      <span class="lv-progress">
+        {{ t("tournament.matchdayProgress", { played: playedMatchdays, total: totalMatchdays }) }}
+      </span>
     </AppSectionHeader>
     <AppTable dense class="lv-table">
       <thead>
         <tr>
           <th class="col-rank">#</th>
-          <th class="col-team">Team</th>
-          <th title="Played">P</th>
-          <th title="Won">W</th>
-          <th title="Drawn">D</th>
-          <th title="Lost">L</th>
-          <th title="Goals For">GF</th>
-          <th title="Goals Against">GA</th>
-          <th title="Goal Difference">GD</th>
-          <th title="Points" class="col-pts">Pts</th>
+          <th class="col-team">{{ t("common.team") }}</th>
+          <th
+            v-for="col in LEAGUE_COLUMNS"
+            :key="col.key"
+            :title="t(col.titleKey)"
+            :class="{ 'col-pts': col.key === 'pts' }"
+          >
+            {{ col.abbr }}
+          </th>
         </tr>
       </thead>
       <TransitionGroup tag="tbody" name="standing-row">
@@ -95,7 +101,7 @@ function isLastPlayoffQualifier(rank: number) {
           <td>{{ row.gf }}</td>
           <td>{{ row.ga }}</td>
           <td :class="{ 'gd-pos': row.gd > 0, 'gd-neg': row.gd < 0 }">
-            {{ row.gd > 0 ? "+" : "" }}{{ row.gd }}
+            {{ formatGoalDiff(row.gd) }}
           </td>
           <td class="col-pts">
             <strong>{{ row.pts }}</strong>

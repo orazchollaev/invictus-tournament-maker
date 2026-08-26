@@ -7,6 +7,8 @@ import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
 import { AppCard, AppTable } from "@/components/ui"
 import { Shuffle } from "@lucide/vue"
 import { useI18n } from "vue-i18n"
+import { GROUP_COLUMNS, formatGoalDiff } from "../standingsColumns"
+import { useEngineLabels } from "@/composables/useEngineLabels"
 import MatchScoreModal from "../MatchScoreModal.vue"
 import MatchStatsButton from "../match-stats/MatchStatsButton.vue"
 
@@ -28,6 +30,7 @@ const emit = defineEmits<{
 }>()
 
 const { t } = useI18n()
+const { engineLabel } = useEngineLabels()
 const { teamById } = useTeamLookup(() => props.teams)
 
 /* Scores are entered in the modal: a group row is one line tall and cannot
@@ -64,19 +67,21 @@ function scoreAccentColor(match: GroupMatch): string {
 </script>
 
 <template>
-  <AppCard variant="outlined" :title="group.name">
+  <AppCard variant="outlined" :title="engineLabel(group.name)">
     <!-- Standings -->
     <AppTable dense class="gs-table">
       <thead>
         <tr>
           <th class="col-rank">#</th>
           <th class="col-team">{{ t("common.team") }}</th>
-          <th :title="t('history.table.played')">P</th>
-          <th :title="t('history.table.won')">W</th>
-          <th :title="t('history.table.drawn')">D</th>
-          <th :title="t('history.table.lost')">L</th>
-          <th :title="t('history.table.goalDiff')">GD</th>
-          <th :title="t('history.table.points')">Pts</th>
+          <th
+            v-for="col in GROUP_COLUMNS"
+            :key="col.key"
+            :title="t(col.titleKey)"
+            :class="{ 'col-pts': col.key === 'pts' }"
+          >
+            {{ col.abbr }}
+          </th>
         </tr>
       </thead>
       <TransitionGroup tag="tbody" name="standing-row">
@@ -102,7 +107,7 @@ function scoreAccentColor(match: GroupMatch): string {
           <td>{{ row.won }}</td>
           <td>{{ row.drawn }}</td>
           <td>{{ row.lost }}</td>
-          <td>{{ row.gd >= 0 ? "+" + row.gd : row.gd }}</td>
+          <td>{{ formatGoalDiff(row.gd) }}</td>
           <td class="col-pts">{{ row.pts }}</td>
         </tr>
       </TransitionGroup>
@@ -151,7 +156,7 @@ function scoreAccentColor(match: GroupMatch): string {
             :home-team="teamById(match.homeId)"
             :away-team="teamById(match.awayId)"
             :result="match.result"
-            :subtitle="group.name"
+            :subtitle="engineLabel(group.name)"
             size="xs"
           />
         </span>
@@ -164,7 +169,7 @@ function scoreAccentColor(match: GroupMatch): string {
       :home-team="teamById(editingMatch.homeId)"
       :away-team="teamById(editingMatch.awayId)"
       :result="editingMatch.result"
-      :subtitle="group.name"
+      :subtitle="engineLabel(group.name)"
       @save="(h, a) => emit('setResult', editingIdx!, h, a)"
       @simulate="emit('simMatch', editingIdx!)"
       @clear="emit('clearResult', editingIdx!)"

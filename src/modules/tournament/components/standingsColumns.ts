@@ -1,0 +1,54 @@
+import type { GroupStanding } from "../types"
+
+/**
+ * The group card and the league table are two renderings of the same standings
+ * row. They used to hardcode their own header abbreviations and tooltips, which
+ * is how the league table ended up with untranslated English headers while the
+ * group card was localised. One definition, both tables read it.
+ *
+ * `key` is the field on the standings row, `abbr` the column header, and
+ * `titleKey` the i18n key for its tooltip.
+ */
+export interface StandingsColumn {
+  key: keyof Pick<GroupStanding, "played" | "won" | "drawn" | "lost" | "gf" | "ga" | "gd" | "pts">
+  abbr: string
+  titleKey: string
+}
+
+const COLUMNS: Record<string, StandingsColumn> = {
+  played: { key: "played", abbr: "P", titleKey: "history.table.played" },
+  won: { key: "won", abbr: "W", titleKey: "history.table.won" },
+  drawn: { key: "drawn", abbr: "D", titleKey: "history.table.drawn" },
+  lost: { key: "lost", abbr: "L", titleKey: "history.table.lost" },
+  gf: { key: "gf", abbr: "GF", titleKey: "history.table.goalsFor" },
+  ga: { key: "ga", abbr: "GA", titleKey: "history.table.goalsAgainst" },
+  gd: { key: "gd", abbr: "GD", titleKey: "history.table.goalDiff" },
+  pts: { key: "pts", abbr: "Pts", titleKey: "history.table.points" },
+}
+
+/** Full table — the league view, which has the width for goals for/against. */
+export const LEAGUE_COLUMNS: StandingsColumn[] = [
+  COLUMNS.played,
+  COLUMNS.won,
+  COLUMNS.drawn,
+  COLUMNS.lost,
+  COLUMNS.gf,
+  COLUMNS.ga,
+  COLUMNS.gd,
+  COLUMNS.pts,
+]
+
+/** Compact table — group cards sit several to a screen, so GF/GA are dropped. */
+export const GROUP_COLUMNS: StandingsColumn[] = [
+  COLUMNS.played,
+  COLUMNS.won,
+  COLUMNS.drawn,
+  COLUMNS.lost,
+  COLUMNS.gd,
+  COLUMNS.pts,
+]
+
+/** Signed goal difference, the way both tables show it. */
+export function formatGoalDiff(gd: number): string {
+  return gd > 0 ? `+${gd}` : `${gd}`
+}
