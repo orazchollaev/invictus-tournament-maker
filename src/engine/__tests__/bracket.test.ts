@@ -173,15 +173,32 @@ describe("buildPureBracket", () => {
     expect(byeIds.sort()).toEqual(["t1", "t2", "t3"])
   })
 
-  it("respects an explicit ordered list with bye-front packing", () => {
+  it("reads an explicit ordered list as bye-front and spreads the byes", () => {
     const teams = makeTeams(5)
     const rounds = buildPureBracket(teams, false, teams)
     const r1 = rounds[0].matches
 
-    expect([r1[0].homeId, r1[0].awayId]).toEqual(["t1", null])
-    expect([r1[1].homeId, r1[1].awayId]).toEqual(["t2", null])
-    expect([r1[2].homeId, r1[2].awayId]).toEqual(["t3", null])
-    expect([r1[3].homeId, r1[3].awayId]).toEqual(["t4", "t5"])
+    // Drawn order is [bye, bye, bye, home, away]; the three byes go to t1-t3
+    // and the one real fixture pairs the remaining two, in drawn order.
+    const byeIds = r1.filter((m) => !m.homeId || !m.awayId).map((m) => m.homeId ?? m.awayId)
+    expect(byeIds.slice().sort()).toEqual(["t1", "t2", "t3"])
+    const fixtures = r1.filter((m) => m.homeId && m.awayId)
+    expect(fixtures).toHaveLength(1)
+    expect([fixtures[0].homeId, fixtures[0].awayId]).toEqual(["t4", "t5"])
+  })
+
+  it("keeps byes out of the same round-2 slot in an ordered draw", () => {
+    // 6 teams → bracket of 8, 2 byes. Front-packing them into slots 0 and 1
+    // would put both bye teams in the same semi-final; they must land in
+    // different halves of the tree instead.
+    const teams = makeTeams(6)
+    const rounds = buildPureBracket(teams, false, teams)
+    const byeSlots = rounds[0].matches
+      .map((m, i) => (!m.homeId || !m.awayId ? i : -1))
+      .filter((i) => i >= 0)
+
+    expect(byeSlots).toHaveLength(2)
+    expect(Math.floor(byeSlots[0] / 2)).not.toBe(Math.floor(byeSlots[1] / 2))
   })
 })
 

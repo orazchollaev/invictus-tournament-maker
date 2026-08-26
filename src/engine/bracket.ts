@@ -241,13 +241,16 @@ export function buildPureBracket(teams: Team[], seeded: boolean, orderedTeams?: 
   let seededOrder: (Team | null)[]
 
   if (orderedTeams) {
-    seededOrder = []
-    let idx = 0
-    for (let i = 0; i < size / 2; i++) {
-      const home = orderedTeams[idx++] ?? null
-      const away = byes > 0 && i < byes ? null : (orderedTeams[idx++] ?? null)
-      seededOrder.push(home, away)
-    }
+    // Drawn order arrives bye-front (`[...byeTeams, home, away, home, away, …]`),
+    // the same layout the league-playoff draw produces. Pack it through the
+    // shared helper so byes land in different subtrees instead of colliding
+    // into the same round-2 slot.
+    seededOrder = packDirectSlots(
+      orderedTeams.map((t) => t.id),
+      byes,
+      size / 2,
+      teams
+    )
   } else if (seeded) {
     const sorted = [...teams].sort((a, b) => resolvePower(b) - resolvePower(a))
     const r2Size = size / 2
