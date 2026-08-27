@@ -394,7 +394,7 @@ const isChampion = computed(() => props.isFinal && !!props.match.result)
   transition: background var(--dur-fast) var(--ease);
 }
 .mc--editable:hover .mc-scores {
-  background: color-mix(in srgb, var(--accent) 8%, transparent);
+  /* background: color-mix(in srgb, var(--accent) 8%, transparent); */
 }
 .mc-edit-hint {
   position: absolute;
