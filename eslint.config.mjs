@@ -5,6 +5,8 @@ import unusedImports from "eslint-plugin-unused-imports"
 import prettierConfig from "eslint-config-prettier"
 
 export default tseslint.config(
+  { ignores: ["android/**"] },
+
   ...vue.configs["flat/recommended"],
 
   {
