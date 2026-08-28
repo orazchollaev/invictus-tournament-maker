@@ -586,7 +586,8 @@ export default {
         leagueKo: "Championnat + Élimination",
         leagueKoDesc: "Saison régulière, puis barrages des meilleures équipes",
         swiss: "Système Suisse",
-        swissDesc: "Un seul classement, mais chaque équipe n'affronte qu'une partie du plateau",
+        swissDesc:
+          "Un seul classement, mais chaque équipe n'affronte qu'une partie du plateau (à la façon de la Ligue des champions)",
       },
       swissConfig: {
         phase: "Phase de Ligue",

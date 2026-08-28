@@ -585,7 +585,8 @@ export default {
         leagueKo: "Liga + Sistem Gugur",
         leagueKoDesc: "Musim reguler, lalu tim teratas playoff",
         swiss: "Sistem Swiss",
-        swissDesc: "Satu klasemen, tetapi tiap tim hanya melawan sebagian peserta",
+        swissDesc:
+          "Satu klasemen, tetapi tiap tim hanya melawan sebagian peserta (gaya Liga Champions)",
       },
       swissConfig: {
         phase: "Fase Liga",

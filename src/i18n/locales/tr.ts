@@ -585,7 +585,8 @@ export default {
         leagueKo: "Lig + Eleme",
         leagueKoDesc: "Normal sezon, ardından en iyi takımlar play-off oynar",
         swiss: "İsviçre Sistemi",
-        swissDesc: "Tek puan tablosu, her takım sahanın yalnızca bir kısmıyla oynar",
+        swissDesc:
+          "Tek puan tablosu, her takım sahanın yalnızca bir kısmıyla oynar (Şampiyonlar Ligi tarzı)",
       },
       swissConfig: {
         phase: "Lig Aşaması",

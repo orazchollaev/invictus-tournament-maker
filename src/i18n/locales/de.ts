@@ -587,7 +587,8 @@ export default {
         leagueKo: "Liga + K.-o.",
         leagueKoDesc: "Reguläre Saison, dann Playoff der besten Teams",
         swiss: "Schweizer System",
-        swissDesc: "Eine Tabelle, aber jedes Team spielt nur gegen einen Teil des Feldes",
+        swissDesc:
+          "Eine Tabelle, aber jedes Team spielt nur gegen einen Teil des Feldes (im Champions-League-Stil)",
       },
       swissConfig: {
         phase: "Ligaphase",

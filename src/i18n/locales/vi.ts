@@ -584,7 +584,8 @@ export default {
         leagueKo: "League + Loại trực tiếp",
         leagueKoDesc: "Mùa giải chính, sau đó các đội đứng đầu đá play-off",
         swiss: "Hệ thống Swiss",
-        swissDesc: "Một bảng xếp hạng, nhưng mỗi đội chỉ gặp một số đối thủ",
+        swissDesc:
+          "Một bảng xếp hạng, nhưng mỗi đội chỉ gặp một số đối thủ (kiểu Champions League)",
       },
       swissConfig: {
         phase: "Giai đoạn League",

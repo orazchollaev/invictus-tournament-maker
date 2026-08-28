@@ -582,7 +582,7 @@ export default {
         leagueKo: "리그 + 토너먼트",
         leagueKoDesc: "정규 시즌 후 상위팀 플레이오프",
         swiss: "스위스 시스템",
-        swissDesc: "하나의 순위표지만 각 팀은 일부 상대만 만납니다",
+        swissDesc: "하나의 순위표지만 각 팀은 일부 상대만 만납니다 (챔피언스리그 방식)",
       },
       swissConfig: {
         phase: "리그 단계",

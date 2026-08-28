@@ -583,7 +583,8 @@ export default {
         leagueKo: "Liga + faza pucharowa",
         leagueKoDesc: "Sezon zasadniczy, potem play-off najlepszych drużyn",
         swiss: "System szwajcarski",
-        swissDesc: "Jedna tabela, ale każda drużyna gra tylko z częścią stawki",
+        swissDesc:
+          "Jedna tabela, ale każda drużyna gra tylko z częścią stawki (w stylu Ligi Mistrzów)",
       },
       swissConfig: {
         phase: "Faza ligowa",

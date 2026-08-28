@@ -581,7 +581,7 @@ export default {
         leagueKo: "League + Knockout",
         leagueKoDesc: "Regular season, then top teams playoff",
         swiss: "Swiss System",
-        swissDesc: "One table, but each team faces only some of the field",
+        swissDesc: "One table, but each team faces only some of the field (Champions League–style)",
       },
       swissConfig: {
         phase: "League Phase",

@@ -584,7 +584,8 @@ export default {
         leagueKo: "Liga + Eliminatorias",
         leagueKoDesc: "Temporada regular y luego los mejores disputan un playoff",
         swiss: "Sistema Suizo",
-        swissDesc: "Una sola tabla, pero cada equipo se enfrenta solo a parte del campo",
+        swissDesc:
+          "Una sola tabla, pero cada equipo se enfrenta solo a parte del campo (al estilo de la Champions League)",
       },
       swissConfig: {
         phase: "Fase de Liga",
