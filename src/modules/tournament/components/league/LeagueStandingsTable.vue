@@ -4,7 +4,7 @@ import type { Team } from "@/modules/teams/types"
 import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
 import { AppSectionHeader, AppTable } from "@/components/ui"
 import { useI18n } from "vue-i18n"
-import { LEAGUE_COLUMNS, formatGoalDiff } from "../standingsColumns"
+import { LEAGUE_COLUMNS, formatGoalDiff } from "../shared/standingsColumns"
 
 const props = defineProps<{
   standings: GroupStanding[]

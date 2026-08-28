@@ -1,4 +1,4 @@
-import type { Match } from "../types"
+import type { Match } from "../../types"
 import type { Team } from "@/modules/teams/types"
 import { getWinnerId } from "@/engine"
 
@@ -18,7 +18,6 @@ export interface ConnInfo {
   bottomColor: string | null
   forwardColor: string | null
   dimmed: boolean
-  // per-side hover state for strand-level dimming
   hoverActive: boolean
   topHovered: boolean
   bottomHovered: boolean

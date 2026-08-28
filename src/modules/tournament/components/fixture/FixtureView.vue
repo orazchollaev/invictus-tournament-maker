@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { ref, computed } from "vue"
-import type { Tournament } from "../types"
+import type { Tournament } from "../../types"
 import type { Team } from "@/modules/teams/types"
-import { FixtureMatchCard, FixtureTieCard, type FlatMatch } from "./fixture"
+import FixtureMatchCard from "./FixtureMatchCard.vue"
+import FixtureTieCard from "./FixtureTieCard.vue"
+import type { FlatMatch } from "./types"
 import { useI18n } from "vue-i18n"
 import { useEngineLabels } from "@/composables/useEngineLabels"
 

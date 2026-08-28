@@ -3,7 +3,7 @@ import { ref } from "vue"
 import { useI18n } from "vue-i18n"
 import { ChevronDown } from "@lucide/vue"
 import { AppChip, AppIcon } from "@/components/ui"
-import TeamSelector from "../TeamSelector.vue"
+import TeamSelector from "../shared/TeamSelector.vue"
 import type { Team } from "@/modules/teams/types"
 
 defineProps<{ availableTeams: Team[]; selected: string[] }>()

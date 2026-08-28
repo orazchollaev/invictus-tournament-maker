@@ -5,7 +5,7 @@ import type { Tournament, League } from "../../types"
 import type { Team } from "@/modules/teams/types"
 import { useTournamentStats } from "../../composables/useTournamentStats"
 import { isLeagueLike } from "@/engine"
-import LeagueProgressChart from "../LeagueProgressChart.vue"
+import LeagueProgressChart from "../league/LeagueProgressChart.vue"
 import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
 import { AppCard, AppTable, BtnGroup } from "@/components/ui"
 

@@ -2,12 +2,13 @@
 import { computed, toRef } from "vue"
 import { useI18n } from "vue-i18n"
 import type { Team } from "@/modules/teams/types"
-import type { Tournament } from "../types"
+import type { Tournament } from "../../types"
 import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
 import { AppChip, AppTable } from "@/components/ui"
-import { ParticipantResultCell, finishRank, goalDiff } from "./participants"
-import type { SortKey } from "./participants"
-import { useParticipantRows } from "../composables/useParticipantRows"
+import ParticipantResultCell from "./ParticipantResultCell.vue"
+import { finishRank, goalDiff } from "./formatters"
+import type { SortKey } from "./types"
+import { useParticipantRows } from "../../composables/useParticipantRows"
 
 const props = defineProps<{ teams: Team[]; tournament: Tournament }>()
 

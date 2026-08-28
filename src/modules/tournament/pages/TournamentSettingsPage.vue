@@ -4,10 +4,9 @@ import { useRoute, useRouter } from "vue-router"
 import { useI18n } from "vue-i18n"
 import { useTeamsStore } from "@/modules/teams/store"
 import { useTournamentStore } from "@/modules/tournament/store"
-import ManualDraw from "@/modules/tournament/components/ManualDraw.vue"
-import GroupDraw from "@/modules/tournament/components/GroupDraw.vue"
-import TeamSelector from "@/modules/tournament/components/TeamSelector.vue"
-import TeamSelectorFullscreenModal from "@/modules/tournament/components/TeamSelectorFullscreenModal.vue"
+import { ManualDraw } from "@/modules/tournament/components/draw"
+import { GroupDraw } from "@/modules/tournament/components/group"
+import { TeamSelector, TeamSelectorFullscreenModal } from "@/modules/tournament/components/shared"
 import { AppButton, AppCard, AppChip, AppConfigButton, AppIcon, AppModal } from "@/components/ui"
 import {
   ArrowLeft,

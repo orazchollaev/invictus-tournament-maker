@@ -2,31 +2,38 @@
 import { ref, computed } from "vue"
 import { useI18n } from "vue-i18n"
 import type { Team } from "@/modules/teams/types"
-import { useTeamLookup } from "@/composables/useTeamLookup"
-import { DrawList, type DrawItem } from "./draw"
+import DrawList from "./DrawList.vue"
+import type { DrawItem, Qualifier } from "./types"
 
-const props = defineProps<{ teams: Team[] }>()
+const props = defineProps<{ qualifiers: Qualifier[]; teams: Team[] }>()
 const emit = defineEmits<{
   confirm: [orderedIds: string[]]
   cancel: []
 }>()
 
 const { t } = useI18n()
-const { teamById } = useTeamLookup(() => props.teams)
 
-const count = props.teams.length
-const size = Math.pow(2, Math.ceil(Math.log2(count)))
+const qualifiers = props.qualifiers
+const qualifierById = new Map(qualifiers.map((q) => [q.teamId, q]))
+const count = qualifiers.length
+const size = Math.pow(2, Math.ceil(Math.log2(Math.max(count, 2))))
 const byeCount = size - count
 const matchCount = size / 2 - byeCount
 
-const pool = ref<string[]>(props.teams.map((tm) => tm.id))
+const pool = ref<string[]>(qualifiers.map((q) => q.teamId))
 const byeList = ref<string[]>([])
 const homeLists = ref<string[][]>(Array.from({ length: matchCount }, () => []))
 const awayLists = ref<string[][]>(Array.from({ length: matchCount }, () => []))
 const armed = ref<string | null>(null)
 
-function resolve(id: string): DrawItem {
-  return { id, team: teamById(id)! }
+function resolve(teamId: string): DrawItem {
+  const q = qualifierById.get(teamId)!
+  const team = props.teams.find((tm) => tm.id === teamId)
+  return {
+    id: teamId,
+    team: team ?? { id: teamId, name: q.teamName, color: "#888" },
+    subLabel: q.label,
+  }
 }
 
 function removeFromAll(id: string) {
@@ -81,7 +88,7 @@ function unassign(list: string[], id: string) {
   if (armed.value === id) armed.value = null
 }
 
-const assignedCount = computed(() => props.teams.length - pool.value.length)
+const assignedCount = computed(() => qualifiers.length - pool.value.length)
 const complete = computed(
   () =>
     byeList.value.length === byeCount &&
@@ -180,7 +187,7 @@ function confirm() {
     <!-- Actions -->
     <div class="md-actions">
       <span class="md-progress">
-        {{ t("manualDraw.progress", { done: assignedCount, total: teams.length }) }}
+        {{ t("manualDraw.progress", { done: assignedCount, total: qualifiers.length }) }}
       </span>
       <button class="primary" :disabled="!complete" @click="confirm">
         {{ t("manualDraw.confirmDraw") }}
@@ -190,4 +197,4 @@ function confirm() {
   </div>
 </template>
 
-<style scoped src="./draw/manual-draw.css"></style>
+<style scoped src="./manual-draw.css"></style>

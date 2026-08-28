@@ -12,9 +12,9 @@ import {
   Legend,
 } from "chart.js"
 import type { ChartData, ChartOptions } from "chart.js"
-import type { League } from "../types"
+import type { League } from "../../types"
 import type { Team } from "@/modules/teams/types"
-import { useLeagueProgress, type ProgressMode } from "../composables/useLeagueProgress"
+import { useLeagueProgress, type ProgressMode } from "../../composables/useLeagueProgress"
 import { AppCard } from "@/components/ui"
 
 const { t } = useI18n()

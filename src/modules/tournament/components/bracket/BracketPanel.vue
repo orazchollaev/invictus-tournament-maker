@@ -1,25 +1,23 @@
 <script setup lang="ts">
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from "vue"
 import { useI18n } from "vue-i18n"
-import type { Tournament } from "../types"
+import type { Tournament } from "../../types"
 import type { Team } from "@/modules/teams/types"
 import BracketDoubleSide from "./BracketDoubleSide.vue"
 import BracketClassic from "./BracketClassic.vue"
-import FixtureView from "./FixtureView.vue"
-import {
-  BracketFullscreenModal,
-  BracketSimToolbar,
-  BracketZoomControls,
-  BracketZoomHint,
-} from "./bracket"
+import FixtureView from "../fixture/FixtureView.vue"
+import BracketFullscreenModal from "./BracketFullscreenModal.vue"
+import BracketSimToolbar from "./BracketSimToolbar.vue"
+import BracketZoomControls from "./BracketZoomControls.vue"
+import BracketZoomHint from "./BracketZoomHint.vue"
 import { AppButton, AppIcon, SubTabBar } from "@/components/ui"
-import { useTournamentStore } from "../store"
+import { useTournamentStore } from "../../store"
 import { useSettingsStore } from "@/modules/settings/store"
-import { useGradualSim } from "../composables/useGradualSim"
-import { useBracketActions } from "../composables/useBracketActions"
-import { useBracketExport, canNativeShare } from "../composables/useBracketExport"
-import { useBracketViewport } from "../composables/useBracketViewport"
-import { useBracketZoomHint } from "../composables/useBracketZoomHint"
+import { useGradualSim } from "../../composables/useGradualSim"
+import { useBracketActions } from "../../composables/useBracketActions"
+import { useBracketExport, canNativeShare } from "../../composables/useBracketExport"
+import { useBracketViewport } from "../../composables/useBracketViewport"
+import { useBracketZoomHint } from "../../composables/useBracketZoomHint"
 import { useHaptic } from "@/composables/useHaptic"
 import { useSwipe } from "@/composables/useSwipe"
 import { Download, Maximize2, Share2 } from "@lucide/vue"
@@ -248,7 +246,7 @@ const { isExporting, exportPng } = useBracketExport({
   </BracketFullscreenModal>
 </template>
 
-<style scoped src="./bracket/bracket-viewport.css"></style>
+<style scoped src="./bracket-viewport.css"></style>
 
 <style scoped>
 .bracket-panel {

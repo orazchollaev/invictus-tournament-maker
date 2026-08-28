@@ -7,9 +7,9 @@ import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
 import { AppCard, AppTable } from "@/components/ui"
 import { Shuffle } from "@lucide/vue"
 import { useI18n } from "vue-i18n"
-import { GROUP_COLUMNS, formatGoalDiff } from "../standingsColumns"
+import { GROUP_COLUMNS, formatGoalDiff } from "../shared/standingsColumns"
 import { useEngineLabels } from "@/composables/useEngineLabels"
-import MatchScoreModal from "../MatchScoreModal.vue"
+import MatchScoreModal from "../match-stats/MatchScoreModal.vue"
 import MatchStatsButton from "../match-stats/MatchStatsButton.vue"
 
 const props = defineProps<{

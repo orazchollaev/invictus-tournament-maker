@@ -8,10 +8,10 @@ import { computed, ref } from "vue"
 import { useI18n } from "vue-i18n"
 import { ChartColumn, Users } from "@lucide/vue"
 import { SubTabBar } from "@/components/ui"
-import type { Tournament } from "../types"
+import type { Tournament } from "../../types"
 import type { Team } from "@/modules/teams/types"
-import TeamStatsPanel from "./stats/TeamStatsPanel.vue"
-import PlayerStatsPanel from "./stats/PlayerStatsPanel.vue"
+import TeamStatsPanel from "./TeamStatsPanel.vue"
+import PlayerStatsPanel from "./PlayerStatsPanel.vue"
 
 const props = defineProps<{
   tournament: Tournament

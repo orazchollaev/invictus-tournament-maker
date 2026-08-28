@@ -3,7 +3,8 @@ import { computed, ref } from "vue"
 import { useI18n } from "vue-i18n"
 import type { League, Tournament } from "@/modules/tournament/types"
 import type { Team } from "@/modules/teams/types"
-import { LeagueMatchdayPanel, LeagueStandingsTable } from "./league"
+import LeagueMatchdayPanel from "./LeagueMatchdayPanel.vue"
+import LeagueStandingsTable from "./LeagueStandingsTable.vue"
 import { SubTabBar } from "@/components/ui"
 
 const { t } = useI18n()

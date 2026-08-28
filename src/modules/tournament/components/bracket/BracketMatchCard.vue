@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { ref, computed } from "vue"
 import { useI18n } from "vue-i18n"
-import type { Match } from "../types"
+import type { Match } from "../../types"
 import type { Team } from "@/modules/teams/types"
 import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
 import { NO_TEAM_COLOR } from "@/modules/teams/color"
 import { getWinnerId } from "@/engine"
 import { useSettingsStore } from "@/modules/settings/store"
-import MatchScoreModal from "./MatchScoreModal.vue"
+import MatchScoreModal from "../match-stats/MatchScoreModal.vue"
 import { Pencil } from "@lucide/vue"
 
 const { t } = useI18n()
@@ -355,10 +355,6 @@ const isChampion = computed(() => props.isFinal && !!props.match.result)
     background var(--dur-fast) var(--ease),
     opacity var(--dur-fast) var(--ease);
 }
-/* Club identity bar — the same colour the connector strand leaving this
-   match is drawn in, so colour reads as one continuous system across the
-   bracket instead of two unrelated cues. Ringed so a white kit stays
-   visible on a white card (see modules/teams/color.ts). */
 .mc-row::before {
   content: "";
   position: absolute;
@@ -379,11 +375,7 @@ const isChampion = computed(() => props.isFinal && !!props.match.result)
 .mc-row.loser {
   opacity: 0.5;
 }
-/* The final keeps its gold frame, glow and score chip — that says "trophy".
-   The winning row stays the champion's own colour, so the card says who won
-   as well as what was won. Gold on gold would collapse the two. */
 
-/* ── Score column (right of teams) ── */
 .mc-scores {
   position: relative;
   width: 54px;
@@ -394,7 +386,6 @@ const isChampion = computed(() => props.isFinal && !!props.match.result)
   transition: background var(--dur-fast) var(--ease);
 }
 .mc--editable:hover .mc-scores {
-  /* background: color-mix(in srgb, var(--accent) 8%, transparent); */
 }
 .mc-edit-hint {
   position: absolute;
