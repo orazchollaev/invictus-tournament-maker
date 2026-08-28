@@ -1,5 +1,50 @@
 # Changelog
 
+## [2.3.0](https://github.com/orazchollaev/invictus-tournament-maker/compare/v2.2.0...v2.3.0) (2026-08-28)
+
+### 🚀 New Features
+
+- **i18n:** add the new keys and fill the gaps in all 15 locales ([54846f1](https://github.com/orazchollaev/invictus-tournament-maker/commit/54846f1a0e288c1e3dd64dfa1aa657b67a908e19))
+- **i18n:** added thai, vietnamien, polska, korean and indian languages ([41fd064](https://github.com/orazchollaev/invictus-tournament-maker/commit/41fd064e712df3d1f3588890b5a859d981bbe925))
+- **i18n:** localise engine labels and drop hardcoded English from the UI ([22eaba3](https://github.com/orazchollaev/invictus-tournament-maker/commit/22eaba3f3bf380d4111c87412ac2d9872ea9b1a8))
+- **sim:** apply the form factor to knockout, third place and Monte Carlo ([578b76c](https://github.com/orazchollaev/invictus-tournament-maker/commit/578b76cbca5c68eae1c28fd01a21820519dbf7af))
+- **tournament:** added swiss system ([b512ba1](https://github.com/orazchollaev/invictus-tournament-maker/commit/b512ba116355b31f5c58ad0123e1d94f93712679))
+
+### 🐛 Bug Fixes
+
+- **bracket:** clear both third-place legs and apply form on knockout sim ([5f60946](https://github.com/orazchollaev/invictus-tournament-maker/commit/5f60946f6a380f314a307e02d9738da3515029c1))
+- **bracket:** spread byes across the tree in drawn brackets ([fd0319b](https://github.com/orazchollaev/invictus-tournament-maker/commit/fd0319be8fb936e49cc70cf11d87cc31e548119b))
+- **playoff:** apply point deductions when seeding from groups ([e9bc311](https://github.com/orazchollaev/invictus-tournament-maker/commit/e9bc3111abd416f7d8feae978e7ce5920da21b00))
+- **sim:** make shock results symmetric and refresh stale team lookup ([cd2e33b](https://github.com/orazchollaev/invictus-tournament-maker/commit/cd2e33b2065d337d8dd783561c6044d9ae381511))
+- **standings:** count loss points in the head-to-head tiebreak ([f7961ce](https://github.com/orazchollaev/invictus-tournament-maker/commit/f7961cec03eb4946e59a29ffbf6d109b7cf81c9e))
+- **tournament:** show draw ceremony for swiss new season ([3ac3e1a](https://github.com/orazchollaev/invictus-tournament-maker/commit/3ac3e1a9ca8ece8f0d42e45a17de9eed7d9b0788))
+
+### ♻️ Refactoring
+
+- **standings:** share one column definition between group and league tables ([059033e](https://github.com/orazchollaev/invictus-tournament-maker/commit/059033e9a90e6c6c8a862d91424419c93873a3a4))
+- **tournament:** split components into feature subfolders ([fde7b35](https://github.com/orazchollaev/invictus-tournament-maker/commit/fde7b350cdcf1791e620b8a8c9a31bab3686e5d6))
+- **ui:** unify inline empty states behind one shared style ([5c3d64b](https://github.com/orazchollaev/invictus-tournament-maker/commit/5c3d64b6d29e44c1183d92a97b49f8d6678c3fc4))
+
+### 🔧 Maintenance
+
+- add .freebuff to .gitignore and untrack it ([a234dd1](https://github.com/orazchollaev/invictus-tournament-maker/commit/a234dd176d1832716c58e9b71f6bc8abde9bd39d))
+- **deps:** ts version downgrade ([fe994da](https://github.com/orazchollaev/invictus-tournament-maker/commit/fe994da6bd469c61ed214ff2a43787bf22e99259))
+- **gradle:** update gradle version ([c08ae59](https://github.com/orazchollaev/invictus-tournament-maker/commit/c08ae592b25ce36349ea757841580833a0f5eda6))
+- **lint:** exclude android/ from eslint and prettier ([1d767ad](https://github.com/orazchollaev/invictus-tournament-maker/commit/1d767ad3fcf6c99068a21d0504f813c7bb92188a))
+
+### 📚 Documentation
+
+- **i18n:** note Swiss format is Champions League–style, not true Swiss ([f902144](https://github.com/orazchollaev/invictus-tournament-maker/commit/f902144695ecdcd372439b505740868fb3401be4))
+
+### 🎨 Styles
+
+- **draw-ceremony:** distinct board layouts per format + refined paper unfold ([2b427c1](https://github.com/orazchollaev/invictus-tournament-maker/commit/2b427c1455432a2e0154853773ac39320c955103))
+- fix settings card body paddings ([c574f9a](https://github.com/orazchollaev/invictus-tournament-maker/commit/c574f9ac40cde9c1eb120ca3a079db9110fc86d7))
+- **fixture:** unify bracket fixture rows with group/league ([96b4555](https://github.com/orazchollaev/invictus-tournament-maker/commit/96b45559685f89d82fc2fbaf5653161301cc9495))
+- **league:** tidy matchday nav layout ([a063e4a](https://github.com/orazchollaev/invictus-tournament-maker/commit/a063e4ac50c7d679a7e015cf0f4ec3942ea87b4d))
+- resolved small desktop style issues ([50104cc](https://github.com/orazchollaev/invictus-tournament-maker/commit/50104ccc95a1e74e510ae5da0a97ae52bb52d6e1))
+- **ui:** grow small tap targets and add tap and draw-slip tokens ([79e7054](https://github.com/orazchollaev/invictus-tournament-maker/commit/79e7054d59500903851398fb465a83183147f610))
+
 ## [2.2.0](https://github.com/orazchollaev/invictus-tournament-maker/compare/v2.1.0...v2.2.0) (2026-08-23)
 
 ### 🚀 New Features
