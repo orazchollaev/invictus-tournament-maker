@@ -154,6 +154,14 @@ function onSimulate() {
 }
 
 const isChampion = computed(() => props.isFinal && !!props.match.result)
+
+/**
+ * Whether the tie needed extra time. A two-legged tie is settled in leg 2, so
+ * that is the leg that carries the score at ninety.
+ */
+const wentToExtraTime = computed(() =>
+  props.match.leg2Result !== undefined ? !!props.match.leg2Result?.ft : !!props.match.result?.ft
+)
 </script>
 
 <template>
@@ -195,6 +203,7 @@ const isChampion = computed(() => props.isFinal && !!props.match.result)
       <!-- Static "you can tap this" cue — the score cells give no other hint
            that they open the edit modal, and hover means nothing on touch. -->
       <Pencil v-if="canEdit && !match.result" :size="9" class="mc-edit-hint" />
+      <span v-else-if="wentToExtraTime" class="mc-aet">{{ t("matchStats.aet") }}</span>
       <!-- Home score cell -->
       <div
         class="mc-scell"
@@ -266,6 +275,8 @@ const isChampion = computed(() => props.isFinal && !!props.match.result)
       :result="modalResult"
       :subtitle="modalSubtitle"
       :requires-winner="!isDouble || editingLeg === 2"
+      :match-id="match.id"
+      :leg="editingLeg"
       :aggregate-offset="modalAggregateOffset"
       @save="onSave"
       @simulate="onSimulate"
@@ -393,6 +404,20 @@ const isChampion = computed(() => props.isFinal && !!props.match.result)
   right: 2px;
   color: var(--text-muted);
   opacity: 0.5;
+  pointer-events: none;
+}
+
+/* Sits where the edit hint would be, and never at the same time as it — a
+   played tie has nothing left to hint at. */
+.mc-aet {
+  position: absolute;
+  top: 1px;
+  right: 2px;
+  font-size: 8px;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  color: var(--text-muted);
+  opacity: 0.7;
   pointer-events: none;
 }
 

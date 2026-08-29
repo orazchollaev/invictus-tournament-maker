@@ -1,7 +1,8 @@
 // engine/monteCarlo.ts
 import type { Team } from "../modules/teams/types"
 import type { Tournament } from "../modules/tournament/types"
-import { simulateMatch, simulatePenaltyShootout } from "./simulation"
+import { simulateMatch } from "./simulation"
+import { decideKnockoutResult } from "./knockout"
 import { getWinnerId, propagateWinners } from "./bracket"
 import { simulateAllGroups } from "./groups"
 import { seedBracketFromGroups } from "./tournament"
@@ -48,16 +49,12 @@ function simDoubleLegInPlace(match: any, teams: Team[], form: Form) {
     match.result = simulateMatch(match, teams, form)
   }
   if (match.leg2Result === null) {
+    // Leg 2 reverses the fixture, so leg 1 goes over flipped into its frame.
     const leg2 = { id: match.id, homeId: match.awayId, awayId: match.homeId }
-    const r2 = simulateMatch(leg2 as any, teams, form)
-    const aggHome = match.result.home + r2.away
-    const aggAway = match.result.away + r2.home
-    if (aggHome !== aggAway) {
-      match.leg2Result = r2
-    } else {
-      const pen = simulatePenaltyShootout(leg2 as any, teams)
-      match.leg2Result = { ...r2, penHome: pen.penHome, penAway: pen.penAway }
-    }
+    match.leg2Result = decideKnockoutResult(leg2 as any, teams, {
+      form,
+      aggregateOffset: { home: match.result.away, away: match.result.home },
+    }).result
   }
 }
 
@@ -74,11 +71,7 @@ function simBracketInPlace(
       if (match.leg2Result !== undefined) {
         simDoubleLegInPlace(match, teams, form)
       } else if (!match.result) {
-        const result = simulateMatch(match, teams, form)
-        match.result =
-          result.home === result.away
-            ? { ...result, ...simulatePenaltyShootout(match, teams) }
-            : result
+        match.result = decideKnockoutResult(match, teams, { form }).result
       }
     })
   }

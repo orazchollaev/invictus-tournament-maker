@@ -16,6 +16,8 @@ export type TeamsSortKey = "default" | "name" | "power"
 export type PlayersSortKey = "default" | "name" | "power"
 export type TournamentsSortKey = "default" | "name" | "season"
 export type HistorySortKey = "default" | "name" | "seasons"
+/** Game minutes per real second is 2 at 1x, so a match runs about 45 seconds. */
+export type LiveMatchSpeed = 1 | 2 | 4 | 10
 
 export const useSettingsStore = defineStore("settings", () => {
   const theme = ref<Theme>("dark")
@@ -44,6 +46,7 @@ export const useSettingsStore = defineStore("settings", () => {
   const drawPoints = ref(1)
   const lossPoints = ref(0)
   const gradualReveal = ref(true)
+  const liveMatchSpeed = ref<LiveMatchSpeed>(2)
   const tournamentListView = ref<TournamentListView>("list")
   const teamsListView = ref<TournamentListView>("list")
   const teamsSortKey = ref<TeamsSortKey>("default")
@@ -142,6 +145,7 @@ export const useSettingsStore = defineStore("settings", () => {
     drawPoints.value = 1
     lossPoints.value = 0
     gradualReveal.value = true
+    liveMatchSpeed.value = 2
     tournamentListView.value = "list"
     teamsListView.value = "list"
     teamsSortKey.value = "default"
@@ -182,6 +186,7 @@ export const useSettingsStore = defineStore("settings", () => {
     drawPoints,
     lossPoints,
     gradualReveal,
+    liveMatchSpeed,
     tournamentListView,
     teamsListView,
     teamsSortKey,

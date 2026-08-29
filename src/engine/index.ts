@@ -32,12 +32,29 @@ export type {
 } from "./drawCeremony"
 export {
   simulateMatch,
+  simulateExtraTime,
+  simulateShootoutOutcome,
   simulatePenaltyShootout,
   setSimConfig,
   getSimConfig,
   isFormFactorEnabled,
   computeFormAdjustments,
 } from "./simulation"
+export { decideKnockoutResult, extraTimeGoalsOf } from "./knockout"
+export type { KnockoutDecision, AggregateOffset } from "./knockout"
+export { rollShootout, reconstructShootout, REGULATION_KICKS } from "./shootout"
+export type { ShootoutOutcome, ShootoutKickOutcome, ShootoutSide } from "./shootout"
+export {
+  REGULATION_MINUTES,
+  EXTRA_TIME_MINUTES,
+  FULL_TIME_MINUTES,
+  HALF_TIME_MINUTE,
+  EXTRA_TIME_HALF_MINUTE,
+  MAX_STOPPAGE,
+  PERIOD_END,
+  PERIOD_START,
+} from "./periods"
+export type { MatchPeriod } from "./periods"
 export { tournamentFormAdjustments } from "./form"
 export { setTableConfig } from "./tableConfig"
 export { setPowerResolver, resolvePower } from "./power"
@@ -113,10 +130,15 @@ export {
   computeRating,
   ensureMatchStats,
   markLegacyMatchStats,
+  pendingKey,
+  stashWatchedMatch,
+  claimWatchedMatch,
+  dropWatchedMatch,
+  clearPendingStats,
   FORMATION,
   LINEUP_SIZE,
   UNKNOWN_POWER,
   MIN_RATING,
   MAX_RATING,
 } from "./events"
-export type { Lineup, LineupSlot, MatchOutcome, RatingInput } from "./events"
+export type { Lineup, LineupSlot, MatchOutcome, RatingInput, WatchedMatch } from "./events"

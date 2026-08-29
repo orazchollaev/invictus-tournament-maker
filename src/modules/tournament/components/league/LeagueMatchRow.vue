@@ -10,6 +10,8 @@ const props = defineProps<{
   homeTeam: Team | undefined
   awayTeam: Team | undefined
   result: MatchResult | null
+  /** Identifies the fixture, so the modal can offer to play it out live. */
+  matchId?: string
   /** Matchday label, shown as the modal's subtitle. */
   label?: string
   locked?: boolean
@@ -67,6 +69,7 @@ function scoreAccentColor(): string {
       :home-team="homeTeam"
       :away-team="awayTeam"
       :result="result"
+      :match-id="matchId"
       :subtitle="label"
       @save="(h, a) => emit('save', h, a)"
       @simulate="emit('sim')"

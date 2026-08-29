@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue"
+import { useI18n } from "vue-i18n"
 import type { Team } from "@/modules/teams/types"
 import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
 import MatchScoreModal from "../match-stats/MatchScoreModal.vue"
@@ -7,6 +8,8 @@ import MatchStatsButton from "../match-stats/MatchStatsButton.vue"
 import type { FlatMatch } from "./types"
 
 const props = defineProps<{ match: FlatMatch; teams: Team[] }>()
+
+const { t } = useI18n()
 const emit = defineEmits<{
   "set-result": [match: FlatMatch, home: number, away: number, penHome?: number, penAway?: number]
   "clear-result": [match: FlatMatch]
@@ -44,6 +47,7 @@ function scoreAccentColor(): string {
     >
       <template v-if="match.result">
         {{ match.result.home }} – {{ match.result.away }}
+        <span v-if="match.result.ft" class="pen-sup">({{ t("matchStats.aet") }})</span>
         <span v-if="match.result.penHome !== undefined" class="pen-sup">
           ({{ match.result.penHome }}-{{ match.result.penAway }}p)
         </span>
@@ -67,6 +71,7 @@ function scoreAccentColor(): string {
       :home-team="getTeam(match.homeId)"
       :away-team="getTeam(match.awayId)"
       :result="match.result"
+      :match-id="match.id"
       requires-winner
       @save="(h, a, ph, pa) => emit('set-result', match, h, a, ph, pa)"
       @simulate="emit('sim', match)"

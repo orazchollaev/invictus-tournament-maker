@@ -7,3 +7,11 @@ export { generateTeamStats } from "./teamStats"
 export { computeRating, rollPerformance, MIN_RATING, MAX_RATING } from "./rating"
 export type { MatchOutcome, RatingInput } from "./rating"
 export { ensureMatchStats, markLegacyMatchStats } from "./ensure"
+export {
+  pendingKey,
+  stashWatchedMatch,
+  claimWatchedMatch,
+  dropWatchedMatch,
+  clearPendingStats,
+} from "./pending"
+export type { WatchedMatch } from "./pending"

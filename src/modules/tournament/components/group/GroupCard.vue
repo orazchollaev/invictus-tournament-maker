@@ -169,6 +169,7 @@ function scoreAccentColor(match: GroupMatch): string {
       :home-team="teamById(editingMatch.homeId)"
       :away-team="teamById(editingMatch.awayId)"
       :result="editingMatch.result"
+      :match-id="editingMatch.id"
       :subtitle="engineLabel(group.name)"
       @save="(h, a) => emit('setResult', editingIdx!, h, a)"
       @simulate="emit('simMatch', editingIdx!)"

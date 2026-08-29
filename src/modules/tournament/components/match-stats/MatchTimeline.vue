@@ -12,8 +12,16 @@ import { AppIcon } from "@/components/ui"
 import { usePlayersStore } from "@/modules/players/store"
 import type { MatchEvent } from "../../types"
 import { EVENT_META } from "./eventMeta"
+import { formatMinute } from "./matchTime"
 
-const props = defineProps<{ events: MatchEvent[] }>()
+const props = withDefaults(
+  defineProps<{
+    events: MatchEvent[]
+    /** Decides whether a minute past 90 reads as stoppage or as extra time. */
+    hasExtraTime?: boolean
+  }>(),
+  { hasExtraTime: false }
+)
 
 const { t } = useI18n()
 const playersStore = usePlayersStore()
@@ -28,6 +36,7 @@ const rows = computed(() =>
     key: `${event.minute}-${event.type}-${index}`,
     event,
     meta: EVENT_META[event.type],
+    minute: formatMinute(event.minute, props.hasExtraTime),
     scorer: nameOf(event.playerId),
     assist: event.assistId ? nameOf(event.assistId) : null,
   }))
@@ -64,7 +73,7 @@ const rows = computed(() =>
         </span>
       </div>
 
-      <span class="tl-minute">{{ row.event.minute }}'</span>
+      <span class="tl-minute">{{ row.minute }}'</span>
     </li>
   </ol>
 

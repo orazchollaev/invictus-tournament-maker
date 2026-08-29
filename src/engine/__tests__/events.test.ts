@@ -8,6 +8,9 @@ import { generateTeamStats } from "../events/teamStats"
 import { setSimConfig } from "../simulation"
 import { computeRating, MIN_RATING, MAX_RATING } from "../events/rating"
 import { ensureMatchStats, markLegacyMatchStats } from "../events/ensure"
+import { clearPendingStats, pendingKey, stashWatchedMatch } from "../events/pending"
+import { FULL_TIME_MINUTES, MAX_STOPPAGE, REGULATION_MINUTES } from "../periods"
+import { rollShootout } from "../shootout"
 import { makeTeams, makeGroup } from "./helpers"
 
 function makePlayer(id: string, position: Player["position"], power = 70, teamId = "t1"): Player {
@@ -370,6 +373,115 @@ describe("computeRating", () => {
   })
 })
 
+describe("extra time", () => {
+  const lineups = () => ({
+    homeLineup: buildLineup(fullSquad("t1")),
+    awayLineup: buildLineup(fullSquad("t2")),
+    homePower: 70,
+    awayPower: 70,
+  })
+
+  it("keeps a ninety-minute match inside ninety minutes and its stoppage", () => {
+    for (let i = 0; i < 60; i++) {
+      const stats = generateMatchStats({ ...lineups(), homeGoals: 3, awayGoals: 2 })
+      for (const event of stats.events) {
+        expect(event.minute).toBeLessThanOrEqual(REGULATION_MINUTES + MAX_STOPPAGE.regulation)
+      }
+    }
+  })
+
+  it("places extra-time goals in the extra-time minutes", () => {
+    for (let i = 0; i < 60; i++) {
+      const stats = generateMatchStats({
+        ...lineups(),
+        homeGoals: 3,
+        awayGoals: 2,
+        extraTime: { home: 1, away: 0 },
+      })
+      const goals = stats.events.filter(
+        (e) => e.type === "goal" || e.type === "penGoal" || e.type === "ownGoal"
+      )
+      expect(goals.filter((e) => e.minute > REGULATION_MINUTES).length).toBeGreaterThanOrEqual(1)
+      for (const event of stats.events) {
+        expect(event.minute).toBeLessThanOrEqual(FULL_TIME_MINUTES + MAX_STOPPAGE.extra)
+      }
+    }
+  })
+
+  it("gives up ninetieth-minute stoppage so a minute past 90 is unambiguous", () => {
+    // 93 cannot mean both "90+3" and "the 93rd minute", so a match that went
+    // to extra time never uses the first reading.
+    for (let i = 0; i < 200; i++) {
+      const stats = generateMatchStats({
+        ...lineups(),
+        homeGoals: 2,
+        awayGoals: 2,
+        extraTime: { home: 0, away: 0 },
+      })
+      const inExtra = stats.events.filter((e) => e.minute > REGULATION_MINUTES)
+      // Anything past 90 must be a real extra-time minute, never stoppage.
+      for (const event of inExtra) {
+        expect(event.minute).toBeGreaterThan(REGULATION_MINUTES)
+      }
+    }
+  })
+
+  it("still adds up to the score it was given", () => {
+    const stats = generateMatchStats({
+      ...lineups(),
+      homeGoals: 4,
+      awayGoals: 1,
+      extraTime: { home: 2, away: 1 },
+    })
+    const goals = stats.events.filter(
+      (e) => e.type === "goal" || e.type === "penGoal" || e.type === "ownGoal"
+    )
+    expect(goals.filter((e) => e.side === "home")).toHaveLength(4)
+    expect(goals.filter((e) => e.side === "away")).toHaveLength(1)
+  })
+})
+
+describe("shootout hand-off", () => {
+  it("shows the kicks that were rolled, in the order they were taken", () => {
+    const rolled = rollShootout(0.8, 0.6)
+    const stats = generateMatchStats({
+      homeLineup: buildLineup(fullSquad("t1")),
+      awayLineup: buildLineup(fullSquad("t2")),
+      homePower: 70,
+      awayPower: 70,
+      homeGoals: 1,
+      awayGoals: 1,
+      penHome: rolled.penHome,
+      penAway: rolled.penAway,
+      shootoutOutcome: rolled,
+    })
+
+    expect(stats.shootout).toHaveLength(rolled.kicks.length)
+    stats.shootout!.forEach((kick, i) => {
+      expect(kick.side).toBe(rolled.kicks[i].side)
+      expect(kick.scored).toBe(rolled.kicks[i].scored)
+      expect(kick.order).toBe(i + 1)
+    })
+  })
+
+  it("rebuilds a sequence when only the tally survives", () => {
+    const stats = generateMatchStats({
+      homeLineup: buildLineup(fullSquad("t1")),
+      awayLineup: buildLineup(fullSquad("t2")),
+      homePower: 70,
+      awayPower: 70,
+      homeGoals: 0,
+      awayGoals: 0,
+      penHome: 4,
+      penAway: 3,
+    })
+    const scored = (side: "home" | "away") =>
+      stats.shootout!.filter((k) => k.side === side && k.scored).length
+    expect(scored("home")).toBe(4)
+    expect(scored("away")).toBe(3)
+  })
+})
+
 describe("ensureMatchStats", () => {
   function playedTournament(): Tournament {
     const teams = makeTeams(4)
@@ -420,5 +532,69 @@ describe("ensureMatchStats", () => {
     t.groups![0].matches[0].result = null
     ensureMatchStats(t, makeTeams(4), [])
     expect(t.groups![0].matches[0].result).toBeNull()
+  })
+
+  it("takes the narrative that was watched instead of rolling a new one", () => {
+    const t = playedTournament()
+    const match = t.groups![0].matches[0]
+    const watched = generateMatchStats({
+      homeLineup: buildLineup([]),
+      awayLineup: buildLineup([]),
+      homePower: 70,
+      awayPower: 70,
+      homeGoals: match.result!.home,
+      awayGoals: match.result!.away,
+    })
+
+    stashWatchedMatch(pendingKey(match.id), {
+      home: match.result!.home,
+      away: match.result!.away,
+      stats: watched,
+    })
+    ensureMatchStats(t, makeTeams(4), [])
+
+    expect(match.result!.stats).toBe(watched)
+    clearPendingStats()
+  })
+
+  it("drops a stash whose score no longer matches what was saved", () => {
+    const t = playedTournament()
+    const match = t.groups![0].matches[0]
+    const watched = generateMatchStats({
+      homeLineup: buildLineup([]),
+      awayLineup: buildLineup([]),
+      homePower: 70,
+      awayPower: 70,
+      homeGoals: 9,
+      awayGoals: 9,
+    })
+
+    // Edited after watching: the timeline would no longer add up.
+    stashWatchedMatch(pendingKey(match.id), {
+      home: 9,
+      away: 9,
+      ft: { home: 4, away: 4 },
+      stats: watched,
+    })
+    ensureMatchStats(t, makeTeams(4), [])
+
+    expect(match.result!.stats).not.toBe(watched)
+    expect(match.result!.ft).toBeUndefined()
+    clearPendingStats()
+  })
+
+  it("restores extra time from a stash that carries no events of its own", () => {
+    const t = playedTournament()
+    const match = t.groups![0].matches[0]
+    match.result = { home: 2, away: 1 }
+
+    stashWatchedMatch(pendingKey(match.id), { home: 2, away: 1, ft: { home: 1, away: 1 } })
+    ensureMatchStats(t, makeTeams(4), [])
+
+    expect(match.result!.ft).toEqual({ home: 1, away: 1 })
+    // And the generated events place the extra-time goal past ninety.
+    const late = match.result!.stats!.events.filter((e) => e.minute > REGULATION_MINUTES)
+    expect(late.length).toBeGreaterThanOrEqual(1)
+    clearPendingStats()
   })
 })

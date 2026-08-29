@@ -101,6 +101,9 @@ const activeTab = ref<ReportTab>("timeline")
             <span class="score-dash">–</span>
             <span>{{ result.away }}</span>
           </p>
+          <p v-if="result.ft" class="score-pens">
+            {{ t("matchStats.aetFull", { home: result.ft.home, away: result.ft.away }) }}
+          </p>
           <p v-if="hasShootout" class="score-pens">
             {{ t("matchStats.shootout", { home: result.penHome, away: result.penAway }) }}
           </p>

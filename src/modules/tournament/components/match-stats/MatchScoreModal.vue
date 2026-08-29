@@ -2,14 +2,27 @@
 import { computed, nextTick, ref, watch } from "vue"
 import { DialogRoot, DialogPortal, DialogOverlay, DialogContent, DialogTitle } from "reka-ui"
 import { useI18n } from "vue-i18n"
-import { ChartColumn, Shuffle, Trash2, X } from "@lucide/vue"
+import { ChartColumn, PlayCircle, Shuffle, Trash2, X } from "@lucide/vue"
 import { AppNumberInput } from "@/components/ui"
 import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
 import MatchStatsModal from "./MatchStatsModal.vue"
+import LiveMatchModal from "./LiveMatchModal.vue"
 import type { Team } from "@/modules/teams/types"
-import type { MatchResult } from "../../types"
+import type { MatchResult, MatchStats } from "../../types"
 import { MAX_GOALS } from "@/constants"
-import { simulateMatch, simulatePenaltyShootout } from "@/engine"
+import {
+  buildLineup,
+  decideKnockoutResult,
+  generateMatchStats,
+  dropWatchedMatch,
+  pendingKey,
+  resolvePower,
+  simulateMatch,
+  stashWatchedMatch,
+  type KnockoutDecision,
+  type WatchedMatch,
+} from "@/engine"
+import { usePlayersStore } from "@/modules/players/store"
 import { useHaptic } from "@/composables/useHaptic"
 
 const props = withDefaults(
@@ -20,6 +33,14 @@ const props = withDefaults(
     requiresWinner?: boolean
     subtitle?: string
     canSimulate?: boolean
+    /**
+     * Identifies the fixture, so a tie played out in the live window can hand
+     * its events to the sweep that runs after the result is saved. Without it
+     * the Live button is not offered: there would be nowhere to leave the
+     * narrative, and the report would contradict what was watched.
+     */
+    matchId?: string
+    leg?: 1 | 2
     /**
      * Leg 2 of a two-legged tie: the other leg's score, in this modal's
      * home/away frame (which is reversed vs. leg 1). When set, "level"
@@ -40,6 +61,7 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 const { success: hapticSuccess } = useHaptic()
+const playersStore = usePlayersStore()
 
 const home = ref(props.result?.home ?? 0)
 const away = ref(props.result?.away ?? 0)
@@ -81,6 +103,9 @@ const closing = ref(false)
 function close() {
   if (closing.value) return
   closing.value = true
+  // Save commits synchronously before this runs, so by now the stash has
+  // either been claimed or belongs to a roll the user walked away from.
+  if (props.matchId) dropWatchedMatch(pendingKey(props.matchId, props.leg ?? 1))
   setTimeout(() => emit("close"), 180)
 }
 
@@ -98,28 +123,133 @@ function save() {
   close()
 }
 
+/**
+ * Roll the tie without writing anything.
+ *
+ * A knockout tie now goes through the whole rule — ninety minutes, extra
+ * time, then kicks — which is more than the four numbers this modal can emit
+ * on Save. The score at ninety rides along in the stash instead, where the
+ * sweep after the commit picks it up; see engine/events/pending.ts.
+ */
+function rollTie(): KnockoutDecision {
+  const fakeMatch = {
+    id: props.matchId ?? "",
+    homeId: props.homeTeam!.id,
+    awayId: props.awayTeam!.id,
+  }
+  const bothTeams = [props.homeTeam!, props.awayTeam!]
+  if (!props.requiresWinner) return { result: simulateMatch(fakeMatch as never, bothTeams) }
+  return decideKnockoutResult(fakeMatch as never, bothTeams, {
+    aggregateOffset: props.aggregateOffset,
+  })
+}
+
+/** Put a rolled result into the fields, and stash what Save cannot carry. */
+function applyRoll(watched: WatchedMatch) {
+  home.value = watched.home
+  away.value = watched.away
+  if (watched.penHome !== undefined && watched.penAway !== undefined) {
+    penHome.value = watched.penHome
+    penAway.value = watched.penAway
+  }
+  if (props.matchId && (watched.ft || watched.stats)) {
+    stashWatchedMatch(pendingKey(props.matchId, props.leg ?? 1), watched)
+  }
+  // The [home, away] watcher below clears pensRevealed on every score change
+  // (including this one) to force a Save press before showing the shootout —
+  // override it after that flush, since this roll already decided the
+  // shootout and there is nothing left to reveal on Save.
+  const decided = watched.penHome !== undefined
+  nextTick(() => {
+    pensRevealed.value = decided
+  })
+}
+
 /* Simulate used to emit straight up to the store, which committed a result
  * the instant the button was tapped — Save never got a say. It now only
  * rolls the fields locally; nothing is written until Save is pressed. */
 function simulate() {
   if (!props.homeTeam || !props.awayTeam) return
-  const fakeMatch = { homeId: props.homeTeam.id, awayId: props.awayTeam.id }
-  const bothTeams = [props.homeTeam, props.awayTeam]
-  const result = simulateMatch(fakeMatch as never, bothTeams)
-  home.value = result.home
-  away.value = result.away
-  if (props.requiresWinner && isLevel(result.home, result.away)) {
-    const pen = simulatePenaltyShootout(fakeMatch as never, bothTeams)
-    penHome.value = pen.penHome
-    penAway.value = pen.penAway
-    // The [home, away] watcher below clears pensRevealed on every score
-    // change (including this one) to force a Save press before showing the
-    // shootout — override it after that flush since this roll already
-    // decided the shootout and there's nothing left to reveal-on-Save.
-    nextTick(() => {
-      pensRevealed.value = true
-    })
+  const { result } = rollTie()
+  applyRoll({
+    home: result.home,
+    away: result.away,
+    ...(result.penHome !== undefined && result.penAway !== undefined
+      ? { penHome: result.penHome, penAway: result.penAway }
+      : {}),
+    ...(result.ft ? { ft: result.ft } : {}),
+  })
+}
+
+// ─── Watching it happen ──────────────────────────────────────────
+const liveStats = ref<MatchStats | null>(null)
+const liveHasExtraTime = ref(false)
+const liveIsReplay = ref(false)
+/** What the live window will hand back on finish. Null for a replay. */
+const liveWatched = ref<WatchedMatch | null>(null)
+
+const canWatch = computed(
+  () =>
+    props.canSimulate && !props.result && !!props.matchId && !!props.homeTeam && !!props.awayTeam
+)
+const canReplay = computed(() => !!props.result?.stats)
+
+function statsFor(decision: KnockoutDecision): MatchStats {
+  const { result } = decision
+  return generateMatchStats({
+    homeLineup: buildLineup(playersStore.byTeam(props.homeTeam!.id)),
+    awayLineup: buildLineup(playersStore.byTeam(props.awayTeam!.id)),
+    homePower: resolvePower(props.homeTeam!),
+    awayPower: resolvePower(props.awayTeam!),
+    homeGoals: result.home,
+    awayGoals: result.away,
+    ...(decision.extraTimeGoals ? { extraTime: decision.extraTimeGoals } : {}),
+    ...(result.penHome !== undefined && result.penAway !== undefined
+      ? { penHome: result.penHome, penAway: result.penAway }
+      : {}),
+    ...(decision.shootout ? { shootoutOutcome: decision.shootout } : {}),
+  })
+}
+
+function watchLive() {
+  if (!props.homeTeam || !props.awayTeam) return
+  const decision = rollTie()
+  const stats = statsFor(decision)
+  const { result } = decision
+
+  liveWatched.value = {
+    home: result.home,
+    away: result.away,
+    ...(result.penHome !== undefined && result.penAway !== undefined
+      ? { penHome: result.penHome, penAway: result.penAway }
+      : {}),
+    ...(result.ft ? { ft: result.ft } : {}),
+    stats,
   }
+  liveHasExtraTime.value = !!result.ft
+  liveIsReplay.value = false
+  liveStats.value = stats
+}
+
+/** A match already on record plays back from its own events — nothing is rolled. */
+function replay() {
+  const stats = props.result?.stats
+  if (!stats) return
+  liveWatched.value = null
+  liveHasExtraTime.value = !!props.result?.ft
+  liveIsReplay.value = true
+  liveStats.value = stats
+}
+
+function closeLive() {
+  liveStats.value = null
+  liveWatched.value = null
+}
+
+function onLiveFinish() {
+  const watched = liveWatched.value
+  closeLive()
+  if (watched) applyRoll(watched)
 }
 
 function clear() {
@@ -228,6 +358,14 @@ const canShowStats = computed(() => !!props.result?.stats)
             <ChartColumn :size="14" />
             <span>{{ t("matchStats.buttonLabel") }}</span>
           </button>
+          <button
+            v-if="canWatch || canReplay"
+            class="ms-ghost ms-ghost--live"
+            @click="canReplay ? replay() : watchLive()"
+          >
+            <PlayCircle :size="14" />
+            <span>{{ canReplay ? t("liveMatch.replay") : t("liveMatch.watch") }}</span>
+          </button>
           <button v-if="canSimulate" class="ms-ghost" @click="simulate">
             <Shuffle :size="14" />
             <span>{{ t("matchScore.simulate") }}</span>
@@ -245,6 +383,19 @@ const canShowStats = computed(() => !!props.result?.stats)
       </DialogContent>
     </DialogPortal>
   </DialogRoot>
+
+  <LiveMatchModal
+    v-if="liveStats"
+    :home-team="homeTeam"
+    :away-team="awayTeam"
+    :events="liveStats.events"
+    :shootout="liveStats.shootout"
+    :has-extra-time="liveHasExtraTime"
+    :subtitle="subtitle"
+    :replay="liveIsReplay"
+    @finish="onLiveFinish"
+    @cancel="closeLive"
+  />
 
   <MatchStatsModal
     v-if="showStats && result"
@@ -486,14 +637,14 @@ const canShowStats = computed(() => !!props.result?.stats)
   border-color: color-mix(in srgb, var(--danger) 40%, var(--border-light));
 }
 
-/* The match report is the new thing here, so it is the one footer button
-   that carries colour before it is hovered. */
-.ms-ghost--stats {
+/* Watching the match happen is the headline action here, so it is the one
+   footer button that carries colour before it is hovered. */
+.ms-ghost--live {
   color: var(--accent);
   border-color: color-mix(in srgb, var(--accent) 35%, var(--border-light));
   background: var(--accent-subtle);
 }
-.ms-ghost--stats:hover {
+.ms-ghost--live:hover {
   color: var(--accent);
   border-color: var(--accent);
 }
@@ -517,9 +668,10 @@ const canShowStats = computed(() => !!props.result?.stats)
   .ms-side {
     padding: var(--sp-3) var(--sp-3) var(--sp-3) var(--sp-4);
   }
-  /* Three ghost buttons do not fit a phone footer — the destructive one
-     keeps only its icon, which is unambiguous on its own. */
-  .ms-ghost--danger span {
+  /* Four ghost buttons do not fit a phone footer, so the two whose icons
+     speak for themselves drop their labels. */
+  .ms-ghost--danger span,
+  .ms-ghost--stats span {
     display: none;
   }
 }

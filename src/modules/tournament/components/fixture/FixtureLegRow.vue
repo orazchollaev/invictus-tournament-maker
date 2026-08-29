@@ -6,6 +6,7 @@
  * different kind of card.
  */
 import { computed, ref } from "vue"
+import { useI18n } from "vue-i18n"
 import type { Team } from "@/modules/teams/types"
 import type { MatchResult } from "../../types"
 import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
@@ -26,6 +27,8 @@ const props = defineProps<{
   /** Leg 2 only: leg 1's score, in this row's home/away frame, to judge level on aggregate. */
   aggregateOffset?: { home: number; away: number } | null
 }>()
+
+const { t } = useI18n()
 
 const emit = defineEmits<{
   "set-result": [leg: 1 | 2, home: number, away: number, penHome?: number, penAway?: number]
@@ -71,6 +74,7 @@ const requiresWinner = computed(() => props.leg === 2)
     >
       <template v-if="result">
         {{ result.home }} – {{ result.away }}
+        <span v-if="result.ft" class="pen-sup">({{ t("matchStats.aet") }})</span>
         <span v-if="result.penHome !== undefined" class="pen-sup">
           ({{ result.penHome }}-{{ result.penAway }}p)
         </span>
@@ -97,6 +101,8 @@ const requiresWinner = computed(() => props.leg === 2)
       :result="result"
       :subtitle="`Leg ${leg}`"
       :requires-winner="requiresWinner"
+      :match-id="match.id"
+      :leg="leg"
       :aggregate-offset="leg === 2 ? aggregateOffset : null"
       @save="(h, a, ph, pa) => emit('set-result', leg, h, a, ph, pa)"
       @simulate="emit('sim', leg)"

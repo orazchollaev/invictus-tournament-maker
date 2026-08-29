@@ -2,6 +2,8 @@
 import type { Team } from "../modules/teams/types"
 import type { Match, GroupMatch } from "../modules/tournament/types"
 import { resolvePower } from "./power"
+import { rollShootout, type ShootoutOutcome } from "./shootout"
+import { REGULATION_MINUTES, EXTRA_TIME_MINUTES } from "./periods"
 
 let _surpriseFactor = 50 // 0 = power dominates, 100 = pure chaos
 let _formFactorEnabled = false
@@ -121,28 +123,37 @@ function getTeamLookup(teams: Team[]): Map<string, Team> {
   return lookup
 }
 
+/**
+ * The two sides' effective ratings: squad power plus any form adjustment,
+ * clamped back into the 1-100 range. Home advantage is deliberately *not*
+ * applied here — it belongs to open play, not to a penalty spot.
+ */
+function resolveSides(
+  match: Match | GroupMatch,
+  teams: Team[],
+  formAdjustments?: Map<string, number>
+): { hp: number; ap: number } {
+  const lookup = getTeamLookup(teams)
+  const baseHp = resolvePower(lookup.get(match.homeId as string))
+  const baseAp = resolvePower(lookup.get(match.awayId as string))
+  return {
+    hp: Math.max(1, Math.min(100, baseHp + (formAdjustments?.get(match.homeId as string) ?? 0))),
+    ap: Math.max(1, Math.min(100, baseAp + (formAdjustments?.get(match.awayId as string) ?? 0))),
+  }
+}
+
+/** -1..1: how far the match tilts towards the home side, home advantage included. */
+function sideStrength(hp: number, ap: number): number {
+  return Math.tanh((hp + _homeAdvantage - ap) / 40)
+}
+
 export function simulateMatch(
   match: Match | GroupMatch,
   teams: Team[],
   formAdjustments?: Map<string, number>
 ): { home: number; away: number } {
-  const lookup = getTeamLookup(teams)
-  const homeTeam = lookup.get(match.homeId as string)
-  const awayTeam = lookup.get(match.awayId as string)
-
-  const baseHp = resolvePower(homeTeam)
-  const baseAp = resolvePower(awayTeam)
-  const hp = Math.max(
-    1,
-    Math.min(100, baseHp + (formAdjustments?.get(match.homeId as string) ?? 0))
-  )
-  const ap = Math.max(
-    1,
-    Math.min(100, baseAp + (formAdjustments?.get(match.awayId as string) ?? 0))
-  )
-  const hpAdjusted = hp + _homeAdvantage
-  const diff = (hpAdjusted - ap) / 40
-  const strength = Math.tanh(diff)
+  const { hp, ap } = resolveSides(match, teams, formAdjustments)
+  const strength = sideStrength(hp, ap)
   const base = 1.45
   const randomFactor = 0.85 + Math.random() * 0.3
   const strengthMult = 1.8 - (_surpriseFactor / 100) * 1.7
@@ -169,36 +180,54 @@ export function simulateMatch(
   }
 }
 
+/**
+ * Extra time: thirty more minutes, played to the same model as the ninety
+ * that preceded them, with the goal base scaled to the shorter period.
+ *
+ * The one-off flourishes `simulateMatch` rolls — the shock result, the
+ * chaotic afternoon — belong to a whole match and are not repeated here;
+ * extra time inherits the character of the tie rather than reinventing it.
+ */
+export function simulateExtraTime(
+  match: Match | GroupMatch,
+  teams: Team[],
+  formAdjustments?: Map<string, number>
+): { home: number; away: number } {
+  const { hp, ap } = resolveSides(match, teams, formAdjustments)
+  const strength = sideStrength(hp, ap)
+
+  const base = 1.45 * (EXTRA_TIME_MINUTES / REGULATION_MINUTES)
+  const randomFactor = 0.85 + Math.random() * 0.3
+  const strengthMult = 1.8 - (_surpriseFactor / 100) * 1.7
+
+  const hLambda = base * (1 + strength * strengthMult) * randomFactor
+  const aLambda = base * (1 - strength * strengthMult) * randomFactor
+
+  return {
+    home: poisson(Math.max(0.05, hLambda)),
+    away: poisson(Math.max(0.05, aLambda)),
+  }
+}
+
+/** Conversion rate at the spot, from a side's rating. */
+function penaltyRate(power: number): number {
+  return 0.65 + (power / 100) * 0.15
+}
+
+/**
+ * The full shootout, kick by kick. Callers that only need the scoreline use
+ * `simulatePenaltyShootout`; the live match and the event generator take the
+ * sequence, so the kicks on screen are the kicks that were rolled.
+ */
+export function simulateShootoutOutcome(match: Match | GroupMatch, teams: Team[]): ShootoutOutcome {
+  const { hp, ap } = resolveSides(match, teams)
+  return rollShootout(penaltyRate(hp), penaltyRate(ap))
+}
+
 export function simulatePenaltyShootout(
   match: Match | GroupMatch,
   teams: Team[]
 ): { penHome: number; penAway: number } {
-  const lookup = getTeamLookup(teams)
-  const homeTeam = lookup.get(match.homeId as string)
-  const awayTeam = lookup.get(match.awayId as string)
-  const hp = resolvePower(homeTeam)
-  const ap = resolvePower(awayTeam)
-
-  const hRate = 0.65 + (hp / 100) * 0.15
-  const aRate = 0.65 + (ap / 100) * 0.15
-
-  let ph = 0
-  let pa = 0
-  for (let i = 0; i < 5; i++) {
-    if (Math.random() < hRate) ph++
-    if (Math.random() < aRate) pa++
-  }
-
-  let maxSD = 20
-  while (ph === pa && maxSD-- > 0) {
-    const h = Math.random() < hRate ? 1 : 0
-    const a = Math.random() < aRate ? 1 : 0
-    if (h !== a) {
-      ph += h
-      pa += a
-    }
-  }
-
-  if (ph === pa) ph++
-  return { penHome: ph, penAway: pa }
+  const { penHome, penAway } = simulateShootoutOutcome(match, teams)
+  return { penHome, penAway }
 }

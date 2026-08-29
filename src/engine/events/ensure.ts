@@ -14,8 +14,10 @@ import type { Team } from "@/modules/teams/types"
 import type { Tournament } from "@/modules/tournament/types"
 import { forEachMatch, isBye } from "../matchIterator"
 import { resolvePower } from "../power"
+import { extraTimeGoalsOf } from "../knockout"
 import { buildLineup } from "./lineup"
 import { generateMatchStats } from "./generate"
+import { claimWatchedMatch, pendingKey } from "./pending"
 
 function squadsByTeam(players: Player[]): Map<string, Player[]> {
   const map = new Map<string, Player[]>()
@@ -30,6 +32,10 @@ function squadsByTeam(players: Player[]): Map<string, Player[]> {
 /**
  * Generate stats for every played match that does not have them yet.
  * Returns true when something was written, so callers can skip work.
+ *
+ * A match watched live has already had its narrative generated and played
+ * on screen; that one is claimed from the pending stash rather than rolled
+ * again, so the report matches what was watched.
  */
 export function ensureMatchStats(t: Tournament, teams: Team[], players: Player[]): boolean {
   const teamLookup = new Map(teams.map((team) => [team.id, team]))
@@ -40,8 +46,20 @@ export function ensureMatchStats(t: Tournament, teams: Team[], players: Player[]
     const result = entry.result
     if (!result || isBye(entry) || result.stats !== undefined) return
 
+    const leg = "leg" in entry.source ? entry.source.leg : 1
+    const watched = claimWatchedMatch(pendingKey(entry.match.id, leg), result)
+    if (watched) {
+      result.stats = watched
+      changed = true
+      return
+    }
+
     const homeTeam = teamLookup.get(entry.homeId as string)
     const awayTeam = teamLookup.get(entry.awayId as string)
+    // `ft` is the score at 90', so the difference is what extra time
+    // produced — enough to place those goals in the right minutes without
+    // the commit path having to carry anything extra.
+    const extraTime = extraTimeGoalsOf(result)
 
     result.stats = generateMatchStats({
       homeLineup: buildLineup(squads.get(entry.homeId as string) ?? []),
@@ -50,6 +68,7 @@ export function ensureMatchStats(t: Tournament, teams: Team[], players: Player[]
       awayPower: resolvePower(awayTeam),
       homeGoals: result.home,
       awayGoals: result.away,
+      ...(extraTime ? { extraTime } : {}),
       ...(result.penHome !== undefined && result.penAway !== undefined
         ? { penHome: result.penHome, penAway: result.penAway }
         : {}),

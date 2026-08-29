@@ -16,7 +16,7 @@ export type KnockoutStage = "r64" | "r32" | "r16" | "quarterfinal" | "semifinal"
 export type MatchEventType = "goal" | "ownGoal" | "penGoal" | "penMiss" | "yellow" | "red"
 
 export interface MatchEvent {
-  minute: number // 1-90, or 90+ for stoppage time
+  minute: number // 1-90 (90+ in stoppage), or 91-120 when the tie went to extra time
   type: MatchEventType
   side: "home" | "away" // the side the event is credited to
   playerId: string | null // null = an unfilled squad slot, never aggregated
@@ -63,8 +63,16 @@ export interface MatchStats {
 }
 
 export interface MatchResult {
+  /** Final score. Includes extra-time goals when the tie went that far. */
   home: number
   away: number
+  /**
+   * The score at 90'. Set only when the tie went to extra time, so its
+   * presence is what "a.e.t." means — every other result ended in normal
+   * time. Group and league matches never have it: extra time is only ever
+   * played where a winner is required.
+   */
+  ft?: { home: number; away: number }
   penHome?: number
   penAway?: number
   /**

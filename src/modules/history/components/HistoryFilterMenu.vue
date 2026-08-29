@@ -18,5 +18,9 @@ const sortOptions = computed(() => [
 </script>
 
 <template>
-  <SortFilterMenu v-model:sort-key="sortKey" v-model:sort-asc="sortAsc" :sort-options="sortOptions" />
+  <SortFilterMenu
+    v-model:sort-key="sortKey"
+    v-model:sort-asc="sortAsc"
+    :sort-options="sortOptions"
+  />
 </template>

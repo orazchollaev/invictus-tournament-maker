@@ -90,6 +90,7 @@ async function handleSimMatchday(idx: number) {
           :home-team="teamById(match.homeId)"
           :away-team="teamById(match.awayId)"
           :result="match.result"
+          :match-id="match.id"
           :label="engineLabel(activeMatchday?.name)"
           :locked="locked"
           @save="(h, a) => emit('setResult', activeIdx, mIdx, h, a)"

@@ -1,11 +1,11 @@
 import type { Ref } from "vue"
-import type { LegMode, Tournament } from "../types"
+import type { LegMode, Match, MatchResult, Tournament } from "../types"
 import type { Team } from "@/modules/teams/types"
 import {
   uid,
   updateThirdPlaceSlots,
   simulateMatch,
-  simulatePenaltyShootout,
+  decideKnockoutResult,
   applyThirdPlaceLegMode,
   tournamentFormAdjustments,
 } from "@/engine"
@@ -38,6 +38,14 @@ export function useThirdPlaceActions(tournaments: Ref<Tournament[]>, getTeams: (
     if (mode !== "double" && t.thirdPlaceMatch) t.thirdPlaceMatch.leg2Result = undefined
   }
 
+  /** Mirrors `commitResult` in the bracket slice — see the note there on why. */
+  function commitThirdPlaceResult(t: Tournament, result: MatchResult) {
+    if (!t.thirdPlaceMatch) return
+    t.thirdPlaceMatch.result = result
+    // Editing leg 1 of a double-leg match resets leg 2 (mirrors bracket setResult)
+    if (t.thirdPlaceMatch.leg2Result !== undefined) t.thirdPlaceMatch.leg2Result = null
+  }
+
   function setThirdPlaceResult(
     tournamentId: string,
     home: number,
@@ -47,13 +55,11 @@ export function useThirdPlaceActions(tournaments: Ref<Tournament[]>, getTeams: (
   ) {
     const t = getT(tournamentId)
     if (!t?.thirdPlaceMatch) return
-    t.thirdPlaceMatch.result = {
+    commitThirdPlaceResult(t, {
       home,
       away,
       ...(penHome !== undefined && penAway !== undefined ? { penHome, penAway } : {}),
-    }
-    // Editing leg 1 of a double-leg match resets leg 2 (mirrors bracket setResult)
-    if (t.thirdPlaceMatch.leg2Result !== undefined) t.thirdPlaceMatch.leg2Result = null
+    })
   }
 
   function setThirdPlaceLeg2Result(
@@ -101,19 +107,16 @@ export function useThirdPlaceActions(tournaments: Ref<Tournament[]>, getTeams: (
     if (!t?.thirdPlaceMatch) return
     const m = t.thirdPlaceMatch
     if (!m.homeId || !m.awayId || !m.result || m.leg2Result === undefined) return
-    const allTeams = getTeams()
-    // Leg 2: awayId plays at home
+    m.leg2Result = decideLeg2(m, getTeams(), tournamentFormAdjustments(t))
+  }
+
+  /** Leg 2 reverses the fixture and settles the tie on aggregate. */
+  function decideLeg2(m: Match, allTeams: Team[], form?: Map<string, number>): MatchResult {
     const leg2Sim = { id: m.id, homeId: m.awayId, awayId: m.homeId }
-    const r2 = simulateMatch(leg2Sim as any, allTeams, tournamentFormAdjustments(t))
-    const aggHome = m.result.home + r2.away
-    const aggAway = m.result.away + r2.home
-    if (aggHome !== aggAway) {
-      m.leg2Result = r2
-    } else {
-      // Aggregate tied → penalty. penHome = awayId pens, penAway = homeId pens
-      const pen = simulatePenaltyShootout(leg2Sim as any, allTeams)
-      m.leg2Result = { ...r2, penHome: pen.penHome, penAway: pen.penAway }
-    }
+    return decideKnockoutResult(leg2Sim as never, allTeams, {
+      form,
+      aggregateOffset: { home: m.result!.away, away: m.result!.home },
+    }).result
   }
 
   function simulateThirdPlace(tournamentId: string) {
@@ -128,14 +131,8 @@ export function useThirdPlaceActions(tournaments: Ref<Tournament[]>, getTeams: (
       return
     }
     if (m.result) return
-    const allTeams = getTeams()
-    const result = simulateMatch(m, allTeams, tournamentFormAdjustments(t))
-    if (result.home === result.away) {
-      const pen = simulatePenaltyShootout(m, allTeams)
-      setThirdPlaceResult(tournamentId, result.home, result.away, pen.penHome, pen.penAway)
-    } else {
-      setThirdPlaceResult(tournamentId, result.home, result.away)
-    }
+    const decision = decideKnockoutResult(m, getTeams(), { form: tournamentFormAdjustments(t) })
+    commitThirdPlaceResult(t, decision.result)
   }
 
   return {

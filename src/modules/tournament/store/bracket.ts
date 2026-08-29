@@ -1,12 +1,12 @@
 import type { Ref } from "vue"
-import type { Tournament } from "../types"
+import type { Match, MatchResult, Tournament } from "../types"
 import type { Team } from "@/modules/teams/types"
 import {
   propagateWinners,
   getWinnerId,
   updateThirdPlaceSlots,
   simulateMatch,
-  simulatePenaltyShootout,
+  decideKnockoutResult,
   tournamentFormAdjustments,
 } from "@/engine"
 
@@ -39,6 +39,29 @@ export function useBracketActions(
     }
   }
 
+  /**
+   * Record a leg-1 result and settle everything downstream of it.
+   *
+   * Takes a whole `MatchResult` rather than loose numbers so a simulated tie
+   * can carry what a typed-in score never has — the score at 90' when it went
+   * to extra time — without hanging another optional positional parameter off
+   * the public setter.
+   */
+  function commitResult(t: Tournament, roundIdx: number, matchIdx: number, result: MatchResult) {
+    const match = t.rounds[roundIdx].matches[matchIdx]
+    match.result = result
+    // Editing leg 1 of a double-leg match resets leg 2
+    if (match.leg2Result !== undefined) {
+      match.leg2Result = null
+    }
+    clearDownstream(t, roundIdx, matchIdx)
+    if (roundIdx === t.rounds.length - 2) clearThirdPlace(t)
+    propagateWinners(t.rounds, getTeams())
+    updateThirdPlaceSlots(t)
+    const final = t.rounds[t.rounds.length - 1].matches[0]
+    t.winnerId = getWinnerId(final)
+  }
+
   function setResult(
     tournamentId: string,
     roundIdx: number,
@@ -50,22 +73,11 @@ export function useBracketActions(
   ) {
     const t = tournaments.value.find((t) => t.id === tournamentId)
     if (!t) return
-    const match = t.rounds[roundIdx].matches[matchIdx]
-    match.result = {
+    commitResult(t, roundIdx, matchIdx, {
       home,
       away,
       ...(penHome !== undefined && penAway !== undefined ? { penHome, penAway } : {}),
-    }
-    // Editing leg 1 of a double-leg match resets leg 2
-    if (match.leg2Result !== undefined) {
-      match.leg2Result = null
-    }
-    clearDownstream(t, roundIdx, matchIdx)
-    if (roundIdx === t.rounds.length - 2) clearThirdPlace(t)
-    propagateWinners(t.rounds, getTeams())
-    updateThirdPlaceSlots(t)
-    const final = t.rounds[t.rounds.length - 1].matches[0]
-    t.winnerId = getWinnerId(final)
+    })
   }
 
   /**
@@ -139,19 +151,22 @@ export function useBracketActions(
       match.result = simulateMatch(match, allTeams, form)
     }
     if (match.leg2Result === null) {
-      // Leg 2: awayId plays at home
-      const leg2Sim = { id: match.id, homeId: match.awayId, awayId: match.homeId }
-      const r2 = simulateMatch(leg2Sim as any, allTeams, form)
-      const aggHome = match.result.home + r2.away
-      const aggAway = match.result.away + r2.home
-      if (aggHome !== aggAway) {
-        match.leg2Result = r2
-      } else {
-        // Aggregate tied → penalty. penHome = awayId pens, penAway = homeId pens
-        const pen = simulatePenaltyShootout(leg2Sim as any, allTeams)
-        match.leg2Result = { ...r2, penHome: pen.penHome, penAway: pen.penAway }
-      }
+      match.leg2Result = decideLeg2(match, allTeams, form)
     }
+  }
+
+  /**
+   * Leg 2 settles the tie, so extra time and kicks are judged on aggregate,
+   * not on the leg. The leg is played with the fixture reversed, so leg 1's
+   * score goes over flipped into leg 2's own home/away frame — after which
+   * `penHome` and `homeId` refer to the same side, as everywhere else.
+   */
+  function decideLeg2(match: Match, allTeams: Team[], form?: Map<string, number>): MatchResult {
+    const leg2Sim = { id: match.id, homeId: match.awayId, awayId: match.homeId }
+    return decideKnockoutResult(leg2Sim as never, allTeams, {
+      form,
+      aggregateOffset: { home: match.result!.away, away: match.result!.home },
+    }).result
   }
 
   function simulateLeg1(tournamentId: string, ri: number, mi: number) {
@@ -177,16 +192,7 @@ export function useBracketActions(
     if (!match.homeId || !match.awayId || !match.result) return
     if (match.leg2Result === undefined) return
     const allTeams = getTeams()
-    const leg2Sim = { id: match.id, homeId: match.awayId, awayId: match.homeId }
-    const r2 = simulateMatch(leg2Sim as any, allTeams, tournamentFormAdjustments(t))
-    const aggHome = match.result.home + r2.away
-    const aggAway = match.result.away + r2.home
-    if (aggHome !== aggAway) {
-      match.leg2Result = r2
-    } else {
-      const pen = simulatePenaltyShootout(leg2Sim as any, allTeams)
-      match.leg2Result = { ...r2, penHome: pen.penHome, penAway: pen.penAway }
-    }
+    match.leg2Result = decideLeg2(match, allTeams, tournamentFormAdjustments(t))
     propagateWinners(t.rounds, allTeams)
     updateThirdPlaceSlots(t)
     t.winnerId = getWinnerId(t.rounds[t.rounds.length - 1].matches[0])
@@ -208,13 +214,7 @@ export function useBracketActions(
       const final = t.rounds[t.rounds.length - 1].matches[0]
       t.winnerId = getWinnerId(final)
     } else {
-      const result = simulateMatch(match, allTeams, form)
-      if (result.home === result.away) {
-        const pen = simulatePenaltyShootout(match, allTeams)
-        setResult(tournamentId, ri, mi, result.home, result.away, pen.penHome, pen.penAway)
-      } else {
-        setResult(tournamentId, ri, mi, result.home, result.away)
-      }
+      commitResult(t, ri, mi, decideKnockoutResult(match, allTeams, { form }).result)
     }
   }
 
@@ -229,11 +229,7 @@ export function useBracketActions(
         if (match.leg2Result !== undefined) {
           simulateDoubleLegMatch(t, roundIdx, mi, allTeams, form)
         } else {
-          const result = simulateMatch(match, allTeams, form)
-          match.result =
-            result.home === result.away
-              ? { ...result, ...simulatePenaltyShootout(match, allTeams) }
-              : result
+          match.result = decideKnockoutResult(match, allTeams, { form }).result
         }
       } else if (match.result && match.leg2Result === null && match.homeId && match.awayId) {
         // Leg 1 done, simulate leg 2
@@ -260,11 +256,7 @@ export function useBracketActions(
         if (match.leg2Result !== undefined) {
           simulateDoubleLegMatch(t, r, mi, allTeams, form)
         } else if (!match.result) {
-          const result = simulateMatch(match, allTeams, form)
-          match.result =
-            result.home === result.away
-              ? { ...result, ...simulatePenaltyShootout(match, allTeams) }
-              : result
+          match.result = decideKnockoutResult(match, allTeams, { form }).result
         }
       })
     }

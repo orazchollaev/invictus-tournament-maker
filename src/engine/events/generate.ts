@@ -21,6 +21,15 @@ import type { PlayerPosition } from "@/modules/players/types"
 import type { Lineup, LineupSlot } from "./lineup"
 import { computeRating, rollPerformance, type MatchOutcome } from "./rating"
 import { generateTeamStats } from "./teamStats"
+import { reconstructShootout, type ShootoutKickOutcome, type ShootoutOutcome } from "../shootout"
+import {
+  MAX_STOPPAGE,
+  PERIOD_END,
+  PERIOD_START,
+  EXTRA_TIME_MINUTES,
+  REGULATION_MINUTES,
+  type MatchPeriod,
+} from "../periods"
 
 /** How likely a slot is to be the one that scores, before power weighting. */
 const SCORE_WEIGHT: Record<PlayerPosition, number> = { GK: 0.02, DEF: 0.2, MID: 0.55, FWD: 1.0 }
@@ -37,9 +46,10 @@ const PENALTY_MISS_CHANCE = 0.05
 const YELLOW_LAMBDA = 2.2
 const RED_CHANCE = 0.06
 
-const REGULATION_MINUTES = 90
 const STOPPAGE_CHANCE = 0.08
-const MAX_STOPPAGE = 5
+
+/** Extra time is a third of a match, so it earns a third of the bookings. */
+const EXTRA_TIME_SHARE = EXTRA_TIME_MINUTES / REGULATION_MINUTES
 
 type Side = "home" | "away"
 
@@ -84,11 +94,27 @@ function poisson(lambda: number, rng: () => number): number {
   return k - 1
 }
 
-function randomMinute(rng: () => number): number {
-  if (rng() < STOPPAGE_CHANCE) {
-    return REGULATION_MINUTES + 1 + Math.floor(rng() * MAX_STOPPAGE)
+/**
+ * A minute inside a period. Stoppage runs past the period's scheduled end,
+ * which is why "90+3" and "120+1" both come out of the same rule.
+ *
+ * `allowStoppage` exists because a minute is a plain number, with no period
+ * stored alongside it: 93 has to mean either "90+3" or "the third minute of
+ * extra time", and it cannot mean both. So a match that goes to extra time
+ * gives up its ninetieth-minute stoppage rather than its readability, and
+ * every minute above 90 in such a match is unambiguously extra time.
+ */
+function randomMinute(
+  rng: () => number,
+  period: MatchPeriod = "regulation",
+  allowStoppage = true
+): number {
+  const end = PERIOD_END[period]
+  if (allowStoppage && rng() < STOPPAGE_CHANCE) {
+    return end + 1 + Math.floor(rng() * MAX_STOPPAGE[period])
   }
-  return 1 + Math.floor(rng() * REGULATION_MINUTES)
+  const start = PERIOD_START[period]
+  return start + Math.floor(rng() * (end - start + 1))
 }
 
 /** Goal events for one side, summing to exactly `goals`. */
@@ -97,7 +123,9 @@ function buildGoals(
   goals: number,
   scoringLineup: Lineup,
   concedingLineup: Lineup,
-  rng: () => number
+  rng: () => number,
+  period: MatchPeriod = "regulation",
+  allowStoppage = true
 ): MatchEvent[] {
   const events: MatchEvent[] = []
 
@@ -107,7 +135,7 @@ function buildGoals(
     if (roll < OWN_GOAL_CHANCE) {
       const slot = pickSlot(concedingLineup, OWN_GOAL_WEIGHT, rng)
       events.push({
-        minute: randomMinute(rng),
+        minute: randomMinute(rng, period, allowStoppage),
         type: "ownGoal",
         side,
         playerId: slot?.playerId ?? null,
@@ -118,7 +146,7 @@ function buildGoals(
     if (roll < OWN_GOAL_CHANCE + PENALTY_CHANCE) {
       const slot = penaltyTaker(scoringLineup)
       events.push({
-        minute: randomMinute(rng),
+        minute: randomMinute(rng, period, allowStoppage),
         type: "penGoal",
         side,
         playerId: slot?.playerId ?? null,
@@ -133,7 +161,7 @@ function buildGoals(
         : null
 
     events.push({
-      minute: randomMinute(rng),
+      minute: randomMinute(rng, period, allowStoppage),
       type: "goal",
       side,
       playerId: scorer?.playerId ?? null,
@@ -144,51 +172,96 @@ function buildGoals(
   return events
 }
 
-function buildCards(side: Side, lineup: Lineup, rng: () => number): MatchEvent[] {
+function buildCards(
+  side: Side,
+  lineup: Lineup,
+  rng: () => number,
+  hasExtraTime: boolean
+): MatchEvent[] {
   const events: MatchEvent[] = []
 
-  const yellows = poisson(YELLOW_LAMBDA, rng)
-  for (let i = 0; i < yellows; i++) {
-    const slot = pickSlot(lineup, CARD_WEIGHT, rng)
-    events.push({
-      minute: randomMinute(rng),
-      type: "yellow",
-      side,
-      playerId: slot?.playerId ?? null,
-    })
+  const book = (period: MatchPeriod, lambda: number, redChance: number) => {
+    const allowStoppage = period === "extra" || !hasExtraTime
+    const yellows = poisson(lambda, rng)
+    for (let i = 0; i < yellows; i++) {
+      const slot = pickSlot(lineup, CARD_WEIGHT, rng)
+      events.push({
+        minute: randomMinute(rng, period, allowStoppage),
+        type: "yellow",
+        side,
+        playerId: slot?.playerId ?? null,
+      })
+    }
+
+    if (rng() < redChance) {
+      const slot = pickSlot(lineup, CARD_WEIGHT, rng)
+      events.push({
+        minute: randomMinute(rng, period, allowStoppage),
+        type: "red",
+        side,
+        playerId: slot?.playerId ?? null,
+      })
+    }
   }
 
-  if (rng() < RED_CHANCE) {
-    const slot = pickSlot(lineup, CARD_WEIGHT, rng)
-    events.push({ minute: randomMinute(rng), type: "red", side, playerId: slot?.playerId ?? null })
+  book("regulation", YELLOW_LAMBDA, RED_CHANCE)
+  // Tired legs in extra time, but a third of the time to get booked in.
+  if (hasExtraTime) {
+    book("extra", YELLOW_LAMBDA * EXTRA_TIME_SHARE, RED_CHANCE * EXTRA_TIME_SHARE)
   }
 
   return events
 }
 
 /**
- * Rebuild a shootout, kick by kick, from the totals already recorded.
+ * Name the takers for a shootout.
  *
- * The engine stores only the final tally, so the sequence is reconstructed
- * rather than replayed: five kicks a side (the regulation set), extended to
- * however many rounds sudden death needed. Scored kicks are dealt out at
- * random within each side's set, which is enough to read as a shootout —
- * and the totals always match the score the tie was decided on.
+ * The sequence itself comes from the engine — either the one that was
+ * actually rolled (passed straight through, so the kicks on screen are the
+ * kicks that decided the tie) or one rebuilt from the totals for a result
+ * that predates the kick-level model or was typed in by hand.
+ *
+ * Only when even a rebuild is impossible — a total no legal shootout could
+ * produce, which pre-v2.4.0 data can contain — does it fall back to dealing
+ * five kicks a side at random. That is the old behaviour, kept for the old
+ * data it belongs to.
  */
 function buildShootout(
   homeScored: number,
   awayScored: number,
   homeLineup: Lineup,
   awayLineup: Lineup,
-  rng: () => number
+  rng: () => number,
+  rolled?: ShootoutOutcome
 ): ShootoutKick[] {
-  const rounds = Math.max(5, homeScored, awayScored)
+  const sequence: ShootoutKickOutcome[] =
+    rolled?.kicks ??
+    reconstructShootout(homeScored, awayScored, rng) ??
+    legacySequence(homeScored, awayScored, rng)
 
   // Best takers first, then down the order, wrapping if it went long.
   function takers(lineup: Lineup): (string | null)[] {
     const ranked = [...lineup].sort((a, b) => b.power - a.power)
-    return Array.from({ length: rounds }, (_, i) => ranked[i % ranked.length]?.playerId ?? null)
+    return ranked.map((slot) => slot.playerId)
   }
+
+  const order = { home: takers(homeLineup), away: takers(awayLineup) }
+  const taken = { home: 0, away: 0 }
+
+  return sequence.map((kick, index) => {
+    const pool = order[kick.side]
+    const playerId = pool.length ? pool[taken[kick.side]++ % pool.length] : null
+    return { order: index + 1, side: kick.side, playerId, scored: kick.scored }
+  })
+}
+
+/** Five kicks a side, makes dealt at random — only for totals nothing else explains. */
+function legacySequence(
+  homeScored: number,
+  awayScored: number,
+  rng: () => number
+): ShootoutKickOutcome[] {
+  const rounds = Math.max(5, homeScored, awayScored)
 
   function outcomes(scored: number): boolean[] {
     const set = Array.from({ length: rounds }, (_, i) => i < scored)
@@ -199,27 +272,14 @@ function buildShootout(
     return set
   }
 
-  const homeTakers = takers(homeLineup)
-  const awayTakers = takers(awayLineup)
-  const homeOutcomes = outcomes(homeScored)
-  const awayOutcomes = outcomes(awayScored)
+  const home = outcomes(homeScored)
+  const away = outcomes(awayScored)
 
-  const kicks: ShootoutKick[] = []
+  const kicks: ShootoutKickOutcome[] = []
   for (let round = 0; round < rounds; round++) {
-    kicks.push({
-      order: kicks.length + 1,
-      side: "home",
-      playerId: homeTakers[round],
-      scored: homeOutcomes[round],
-    })
-    kicks.push({
-      order: kicks.length + 1,
-      side: "away",
-      playerId: awayTakers[round],
-      scored: awayOutcomes[round],
-    })
+    kicks.push({ side: "home", scored: home[round] })
+    kicks.push({ side: "away", scored: away[round] })
   }
-
   return kicks
 }
 
@@ -292,28 +352,76 @@ export interface GenerateMatchStatsInput {
   awayLineup: Lineup
   homePower: number
   awayPower: number
+  /** Final score, extra-time goals included. */
   homeGoals: number
   awayGoals: number
+  /**
+   * Goals scored in 91-120, already counted in `homeGoals`/`awayGoals`.
+   * Present means the tie went to extra time — even at 0-0, which still
+   * stretches the timeline to 120 and is worth showing.
+   */
+  extraTime?: { home: number; away: number }
   /** Shootout tally, when the tie needed one. */
   penHome?: number
   penAway?: number
+  /** The shootout as it was actually rolled, when the caller has it. */
+  shootoutOutcome?: ShootoutOutcome
 }
 
 export function generateMatchStats(
   input: GenerateMatchStatsInput,
   rng: () => number = Math.random
 ): MatchStats {
-  const { homeLineup, awayLineup, homePower, awayPower, homeGoals, awayGoals, penHome, penAway } =
-    input
+  const {
+    homeLineup,
+    awayLineup,
+    homePower,
+    awayPower,
+    homeGoals,
+    awayGoals,
+    extraTime,
+    penHome,
+    penAway,
+    shootoutOutcome,
+  } = input
 
   const team: TeamMatchStats = generateTeamStats(homePower, awayPower, homeGoals, awayGoals, rng)
 
+  const hasExtraTime = extraTime !== undefined
+  const regulation = {
+    home: homeGoals - (extraTime?.home ?? 0),
+    away: awayGoals - (extraTime?.away ?? 0),
+  }
+
   const events: MatchEvent[] = [
-    ...buildGoals("home", homeGoals, homeLineup, awayLineup, rng),
-    ...buildGoals("away", awayGoals, awayLineup, homeLineup, rng),
-    ...buildCards("home", homeLineup, rng),
-    ...buildCards("away", awayLineup, rng),
+    ...buildGoals(
+      "home",
+      regulation.home,
+      homeLineup,
+      awayLineup,
+      rng,
+      "regulation",
+      !hasExtraTime
+    ),
+    ...buildGoals(
+      "away",
+      regulation.away,
+      awayLineup,
+      homeLineup,
+      rng,
+      "regulation",
+      !hasExtraTime
+    ),
+    ...buildCards("home", homeLineup, rng, hasExtraTime),
+    ...buildCards("away", awayLineup, rng, hasExtraTime),
   ]
+
+  if (extraTime) {
+    events.push(
+      ...buildGoals("home", extraTime.home, homeLineup, awayLineup, rng, "extra"),
+      ...buildGoals("away", extraTime.away, awayLineup, homeLineup, rng, "extra")
+    )
+  }
 
   // A missed penalty changes nothing on the scoreboard, which is exactly
   // why it is worth showing — the timeline reads as a match, not a list.
@@ -321,7 +429,10 @@ export function generateMatchStats(
     const side: Side = rng() < 0.5 ? "home" : "away"
     const slot = penaltyTaker(side === "home" ? homeLineup : awayLineup)
     events.push({
-      minute: randomMinute(rng),
+      minute:
+        hasExtraTime && rng() < EXTRA_TIME_SHARE
+          ? randomMinute(rng, "extra")
+          : randomMinute(rng, "regulation", !hasExtraTime),
       type: "penMiss",
       side,
       playerId: slot?.playerId ?? null,
@@ -332,7 +443,7 @@ export function generateMatchStats(
 
   const shootout =
     penHome !== undefined && penAway !== undefined
-      ? buildShootout(penHome, penAway, homeLineup, awayLineup, rng)
+      ? buildShootout(penHome, penAway, homeLineup, awayLineup, rng, shootoutOutcome)
       : undefined
 
   return {
