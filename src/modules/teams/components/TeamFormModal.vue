@@ -479,6 +479,67 @@ function submit() {
   box-shadow: var(--focus-ring);
 }
 
+/* ── Design languages ────────────────────────────────────────────
+   iOS: a hairline track under a large white puck — the thumb is the
+   control, the track is just a line. */
+[data-design="ios"] .power-slider::-webkit-slider-runnable-track {
+  height: 4px;
+}
+[data-design="ios"] .power-slider::-moz-range-track {
+  height: 4px;
+}
+[data-design="ios"] .power-slider::-webkit-slider-thumb {
+  width: 26px;
+  height: 26px;
+  margin-top: -11px;
+  border: none;
+  background: #ffffff;
+  box-shadow:
+    0 1px 1px rgba(0, 0, 0, 0.14),
+    0 3px 8px rgba(0, 0, 0, 0.16);
+}
+[data-design="ios"] .power-slider::-moz-range-thumb {
+  width: 26px;
+  height: 26px;
+  border: none;
+  background: #ffffff;
+  box-shadow:
+    0 1px 1px rgba(0, 0, 0, 0.14),
+    0 3px 8px rgba(0, 0, 0, 0.16);
+}
+[data-design="ios"] .power-slider:active::-webkit-slider-thumb {
+  transform: none;
+}
+
+/* M3: the handle is a short vertical bar, not a knob, and the track is
+   split into an active and an inactive half with rounded ends. */
+[data-design="android"] .power-slider::-webkit-slider-runnable-track {
+  height: 16px;
+}
+[data-design="android"] .power-slider::-moz-range-track {
+  height: 16px;
+}
+[data-design="android"] .power-slider::-webkit-slider-thumb {
+  width: 4px;
+  height: 28px;
+  margin-top: -6px;
+  border: none;
+  border-radius: 2px;
+  background: var(--player-color);
+  box-shadow: none;
+}
+[data-design="android"] .power-slider::-moz-range-thumb {
+  width: 4px;
+  height: 28px;
+  border: none;
+  border-radius: 2px;
+  background: var(--player-color);
+  box-shadow: none;
+}
+[data-design="android"] .power-slider:active::-webkit-slider-thumb {
+  transform: scaleY(1.1);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .crest,
   .power-slider::-webkit-slider-thumb {

@@ -48,6 +48,30 @@ defineProps<{
   flex-shrink: 0;
 }
 
+/* ── Design languages ────────────────────────────────────────────
+   iOS: the grouped-list header — small, muted, uppercase, sitting on the
+   card's own fill rather than in a tinted strip. */
+[data-design="ios"] .section-header {
+  background: transparent;
+  padding-bottom: var(--sp-2);
+}
+[data-design="ios"] .section-header-title {
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+}
+
+/* M3: a title in sentence case, in the text colour, no strip. */
+[data-design="android"] .section-header {
+  background: transparent;
+}
+[data-design="android"] .section-header-title {
+  font-size: var(--fs-base);
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--text);
+}
+
 @media (max-width: 600px) {
   .section-header {
     padding: var(--sp-2) var(--sp-3);

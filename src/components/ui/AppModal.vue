@@ -206,6 +206,52 @@ defineExpose({ close })
   flex-shrink: 0;
 }
 
+/* ── Design languages ────────────────────────────────────────────
+   iOS: a navigation-bar style header — centred title on the sheet's own
+   fill, hairline rule, tinted close glyph. */
+[data-design="ios"] .drawer {
+  border-left: none;
+}
+[data-design="ios"] .drawer-header {
+  background: color-mix(in srgb, var(--surface) 86%, transparent);
+  backdrop-filter: saturate(180%) blur(24px);
+  -webkit-backdrop-filter: saturate(180%) blur(24px);
+  border-bottom: 0.5px solid var(--border);
+  padding: var(--sp-3) var(--sp-4);
+}
+[data-design="ios"] .drawer-title {
+  flex: 1;
+  text-align: center;
+  font-size: var(--fs-md);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+[data-design="ios"] .drawer-close {
+  color: var(--accent);
+}
+[data-design="ios"] .drawer-footer {
+  background: transparent;
+  border-top: 0.5px solid var(--border);
+}
+
+/* M3: a tonal top app bar — title on the left, no rule under it. */
+[data-design="android"] .drawer-header {
+  background: var(--surface-2);
+  border-bottom: none;
+  padding: var(--sp-3) var(--sp-4);
+}
+[data-design="android"] .drawer-title {
+  font-size: var(--fs-lg);
+  font-weight: 500;
+}
+[data-design="android"] .drawer-close {
+  border-radius: var(--radius-pill);
+}
+[data-design="android"] .drawer-footer {
+  background: transparent;
+  border-top: none;
+}
+
 @media (max-width: 600px) {
   .drawer {
     width: 100vw;

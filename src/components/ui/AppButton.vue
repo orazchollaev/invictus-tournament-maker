@@ -99,9 +99,12 @@ function onPointerDown() {
   width: 28px;
   height: 28px;
 }
+/* 30px painted + the 1px border on each side = a 32px outer box, which
+   is exactly what a BtnGroup comes out at. The two stand side by side in
+   every search row, so they have to agree. */
 .btn--icon.btn--md {
-  width: 32px;
-  height: 32px;
+  width: 30px;
+  height: 30px;
 }
 
 .btn--pill {
@@ -188,6 +191,64 @@ function onPointerDown() {
 .btn:disabled {
   opacity: 0.4;
   cursor: not-allowed;
+}
+
+/* ── Design languages ────────────────────────────────────────────
+   iOS presses dim; nothing lifts, and filled buttons are capsules. */
+[data-design="ios"] .btn {
+  font-weight: 600;
+}
+[data-design="ios"] .btn--filled,
+[data-design="ios"] .btn--tonal {
+  box-shadow: none;
+}
+[data-design="ios"] .btn--tonal {
+  border-color: transparent;
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+}
+[data-design="ios"] .btn--text {
+  color: var(--accent);
+}
+[data-design="ios"] .btn--filled:hover:not(:disabled) {
+  box-shadow: none;
+  transform: none;
+}
+[data-design="ios"] .btn--outlined:hover:not(:disabled),
+[data-design="ios"] .btn--danger:hover:not(:disabled) {
+  box-shadow: none;
+}
+[data-design="ios"] .btn:active:not(:disabled),
+[data-design="ios"] .btn--filled:active:not(:disabled) {
+  transform: none;
+  opacity: 0.55;
+}
+
+/* Material 3: every button is a capsule, and pressing paints a state
+   layer instead of squashing the button. */
+[data-design="android"] .btn {
+  border-radius: var(--radius-pill);
+  font-weight: 500;
+}
+[data-design="android"] .btn--md:not(.btn--icon) {
+  padding: 10px var(--sp-5);
+}
+[data-design="android"] .btn--sm:not(.btn--icon) {
+  padding: var(--sp-2) var(--sp-4);
+}
+[data-design="android"] .btn--tonal {
+  border-color: transparent;
+  background: var(--fill-3);
+}
+[data-design="android"] .btn--filled {
+  box-shadow: none;
+}
+[data-design="android"] .btn--filled:hover:not(:disabled) {
+  transform: none;
+}
+[data-design="android"] .btn:active:not(:disabled),
+[data-design="android"] .btn--filled:active:not(:disabled) {
+  transform: none;
+  box-shadow: inset 0 0 0 999px color-mix(in srgb, currentColor 12%, transparent);
 }
 
 @media (prefers-reduced-motion: reduce) {

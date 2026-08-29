@@ -327,6 +327,12 @@ export default {
     },
     appearance: {
       title: "Appearance",
+      design: {
+        label: "Design Language",
+        desc: "Soft is calm and glassy; Vivid is bolder, with tinted surfaces and larger corners. Your primary color is unaffected.",
+        soft: "Soft",
+        vivid: "Vivid",
+      },
       theme: {
         label: "Theme",
         desc: "Color scheme for the entire app",

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue"
 import { useSettingsStore } from "../store"
-import type { Theme } from "../store"
+import type { DesignLanguage, Theme } from "../store"
 import { useI18n } from "vue-i18n"
 import { Palette } from "@lucide/vue"
 import { AppCard, AppField, AppIcon, BtnGroup } from "@/components/ui"
@@ -13,6 +13,14 @@ const settings = useSettingsStore()
 const themes = computed<{ value: Theme; label: string }[]>(() => [
   { value: "light", label: t("settings.appearance.theme.light") },
   { value: "dark", label: t("settings.appearance.theme.dark") },
+])
+
+/* Named for what they look like, not for the platform they come from:
+   the app ships on Android, so labelling a look "iOS" there would read as
+   a promise the app is not making. */
+const designs = computed<{ value: DesignLanguage; label: string }[]>(() => [
+  { value: "ios", label: t("settings.appearance.design.soft") },
+  { value: "android", label: t("settings.appearance.design.vivid") },
 ])
 
 /* Must stay in sync with --accent in assets/style/variables.css: picking
@@ -48,6 +56,13 @@ function selectColor(c: string) {
       <AppIcon :icon="Palette" size="md" />
       {{ t("settings.appearance.title") }}
     </template>
+
+    <AppField layout="split" :label="t('settings.appearance.design.label')">
+      <template #description>
+        <SettingDesc>{{ t("settings.appearance.design.desc") }}</SettingDesc>
+      </template>
+      <BtnGroup v-model="settings.designLanguage" :options="designs" />
+    </AppField>
 
     <AppField layout="split" :label="t('settings.appearance.theme.label')">
       <template #description>

@@ -61,8 +61,10 @@ const model = defineModel<string>({ required: true })
   box-sizing: border-box;
   transition: border-color var(--dur-fast) var(--ease);
 }
+/* Same 32px outer box as an icon AppButton and a BtnGroup — the three
+   share every search row. */
 .search-field--md .search-field-input {
-  height: 34px;
+  height: 32px;
 }
 .search-field-input:focus {
   outline: none;
@@ -74,5 +76,28 @@ const model = defineModel<string>({ required: true })
 }
 .search-field-input::placeholder {
   color: var(--text-muted);
+}
+
+/* ── Design languages ────────────────────────────────────────────
+   Both platforms use a borderless, filled search field; iOS keeps it a
+   soft grey capsule, M3 a tonal one that follows the accent. */
+[data-design="ios"] .search-field-input {
+  border-color: transparent;
+  border-radius: var(--radius-pill);
+  background: var(--fill-1);
+}
+[data-design="ios"] .search-field-input:focus {
+  border-color: transparent;
+  background: color-mix(in srgb, var(--text) 10%, transparent);
+}
+
+[data-design="android"] .search-field-input {
+  border-color: transparent;
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--accent) 10%, var(--surface));
+}
+[data-design="android"] .search-field-input:focus {
+  border-color: transparent;
+  background: color-mix(in srgb, var(--accent) 16%, var(--surface));
 }
 </style>

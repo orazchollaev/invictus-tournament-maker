@@ -191,6 +191,45 @@ function onInputFocus(e: FocusEvent) {
   opacity: 0.5;
 }
 
+/* ── Design languages ────────────────────────────────────────────
+   iOS: the stepper control — one grey capsule, a hairline between the
+   two halves, no outline. */
+[data-design="ios"] .num {
+  border-color: transparent;
+  border-radius: var(--radius-pill);
+  background: var(--fill-1);
+}
+[data-design="ios"] .num-btn {
+  background: transparent;
+  color: var(--text);
+}
+[data-design="ios"] .num-btn:first-child {
+  border-right-color: color-mix(in srgb, var(--text) 12%, transparent);
+}
+[data-design="ios"] .num-btn:last-child {
+  border-left-color: color-mix(in srgb, var(--text) 12%, transparent);
+}
+[data-design="ios"] .num-value {
+  font-weight: 500;
+}
+
+/* M3: capsule outline, circular tonal buttons at each end. */
+[data-design="android"] .num {
+  border-radius: var(--radius-pill);
+  border-color: var(--border);
+}
+[data-design="android"] .num-btn {
+  background: var(--fill-1);
+  color: var(--accent);
+}
+[data-design="android"] .num-btn:first-child,
+[data-design="android"] .num-btn:last-child {
+  border-color: transparent;
+}
+[data-design="android"] .num-value {
+  font-weight: 500;
+}
+
 .num-btn {
   width: 28px;
   height: 28px;

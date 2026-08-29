@@ -114,4 +114,27 @@ withDefaults(
   background: var(--accent);
   color: var(--on-accent);
 }
+
+/* ── Design languages ────────────────────────────────────────────
+   iOS badges are borderless tinted capsules. */
+[data-design="ios"] .chip {
+  border-color: transparent;
+  font-weight: 600;
+}
+[data-design="ios"] .chip--neutral {
+  background: color-mix(in srgb, var(--text) 8%, transparent);
+}
+
+/* M3 chips are outlined with an 8px corner, not a capsule. */
+[data-design="android"] .chip {
+  border-radius: 8px;
+  font-weight: 500;
+}
+[data-design="android"] .chip--neutral {
+  background: transparent;
+  border-color: var(--border);
+}
+[data-design="android"] .chip--solid {
+  border-radius: 8px;
+}
 </style>

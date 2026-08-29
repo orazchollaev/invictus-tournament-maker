@@ -120,6 +120,29 @@ const columns = computed(() => {
   opacity: 0.6;
 }
 
+/* ── Design languages ────────────────────────────────────────────
+   The table shell itself is handled in AppTable; this is what is
+   specific to the participants list. */
+[data-design="ios"] .sort-icon {
+  color: var(--accent);
+  opacity: 1;
+}
+[data-design="ios"] .row--winner td {
+  background: color-mix(in srgb, var(--accent-2) 10%, transparent);
+}
+
+[data-design="android"] .sort-icon {
+  color: var(--accent);
+  opacity: 1;
+}
+[data-design="android"] .rank-badge {
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+}
+[data-design="android"] .row--winner td {
+  background: color-mix(in srgb, var(--accent-2) 14%, transparent);
+}
+
 .col-rank,
 .col-stat {
   width: 36px;

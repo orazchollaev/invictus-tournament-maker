@@ -1,0 +1,338 @@
+/* ── Design languages ────────────────────────────────────────────
+   The `design` setting writes data-design onto <html> (see
+   modules/settings/store.ts): "ios" — soft, glassy, flat — or
+   "android" — Material 3, tonal, large-cornered. variables.css stays
+   the shared baseline both of them re-point; neither look is complete
+   without it.
+
+   Only *neutral* tokens move — shape, elevation, type scale, motion and
+   the greys. --accent* is user-picked and the status colours (danger /
+   success / warning / live / gold / medals / pos-*) carry meaning, so
+   both are deliberately left alone.
+
+   This file must stay last in index.css: its [data-design="…"] blocks
+   match the same specificity as [data-theme="dark"], so source order is
+   what makes them win. The combined [data-theme="dark"][data-design="…"]
+   blocks outrank both and hold the dark neutrals. */
+
+/* ══ iOS ═════════════════════════════════════════════════════════
+   Flat white cards on a grey field: depth comes from the background,
+   not from shadows. Hairline separators, softer radii, larger text. */
+[data-design="ios"] {
+  --bg: #f2f2f7;
+  --surface: #ffffff;
+  --border: #c6c6c8;
+  --border-light: #e5e5ea;
+  --text: #1c1c1e;
+  --text-muted: #8e8e93;
+
+  --bg-hover: color-mix(in srgb, var(--text) 5%, transparent);
+  --focus-ring: 0 0 0 4px var(--accent-subtle);
+
+  /* The one fill every borderless iOS control sits on: search fields,
+     segmented tracks, steppers, the number keys, plain inputs. Derived
+     from --text so it works in both themes without a second value. */
+  --fill-1: color-mix(in srgb, var(--text) 7%, transparent);
+  --fill-2: color-mix(in srgb, var(--text) 12%, transparent);
+  --fill-3: color-mix(in srgb, var(--text) 18%, transparent);
+  /* iOS has no tonal container tone: a raised surface is just white. */
+  --surface-2: var(--surface);
+
+  --fs-xs: 12px;
+  --fs-sm: 13px;
+  --fs-base: 15px;
+  --fs-md: 16px;
+  --fs-lg: 20px;
+  --fs-xl: 24px;
+  --fs-2xl: 30px;
+
+  --radius-sm: 8px;
+  --radius: 12px;
+  --radius-lg: 18px;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.14);
+
+  --ease: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --ease-spring: cubic-bezier(0.32, 1.28, 0.6, 1);
+  --dur-fast: 0.15s;
+  --dur: 0.3s;
+  --dur-2: 0.35s;
+  --dur-slow: 0.45s;
+}
+
+[data-theme="dark"][data-design="ios"] {
+  /* Not pure black: the cards have to read as lifted off the ground,
+     and at #000 the whole app looked switched off. */
+  --bg: #0e0e10;
+  --surface: #1c1c1e;
+  --border: #38383a;
+  --border-light: #2c2c2e;
+  --text: #ffffff;
+  --text-muted: #98989d;
+
+  --bg-hover: color-mix(in srgb, var(--text) 9%, transparent);
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.55);
+  --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.65);
+}
+
+/* ══ Android — Material 3 ════════════════════════════════════════
+   Tonal surfaces: the neutrals carry a trace of the live accent, so a
+   user-picked primary colour tints the whole shell the way M3 does.
+   Bigger corner radii, real (if low) elevation, no negative tracking. */
+[data-design="android"] {
+  --bg: color-mix(in srgb, var(--accent) 5%, #f7f6f9);
+  --surface: color-mix(in srgb, var(--accent) 3%, #ffffff);
+  --border: color-mix(in srgb, var(--accent) 12%, #cac4d0);
+  --border-light: color-mix(in srgb, var(--accent) 8%, #e3e0e6);
+  --text: #1c1b1f;
+  --text-muted: #49454f;
+
+  /* M3 fills are tinted with the primary rather than the text colour.
+     --surface-2 is the container tone used by menus, table headers, the
+     navigation bar and the top app bar. */
+  --fill-1: color-mix(in srgb, var(--accent) 10%, transparent);
+  --fill-2: color-mix(in srgb, var(--accent) 16%, transparent);
+  --fill-3: color-mix(in srgb, var(--accent) 24%, transparent);
+  --surface-2: color-mix(in srgb, var(--accent) 8%, var(--surface));
+
+  --bg-hover: var(--fill-1);
+  --focus-ring: 0 0 0 3px color-mix(in srgb, var(--accent) 35%, transparent);
+
+  --fs-lg: 19px;
+  --fs-xl: 24px;
+  --fs-2xl: 30px;
+
+  --radius-sm: 12px;
+  --radius: 16px;
+  --radius-lg: 24px;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.12), 0 1px 3px 1px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 1px 2px rgba(0, 0, 0, 0.12), 0 2px 6px 2px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 2px 3px rgba(0, 0, 0, 0.14), 0 6px 10px 4px rgba(0, 0, 0, 0.12);
+
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+  --ease-spring: cubic-bezier(0.34, 1.32, 0.64, 1);
+  --dur-fast: 0.15s;
+  --dur: 0.25s;
+  --dur-2: 0.3s;
+  --dur-slow: 0.4s;
+}
+
+[data-theme="dark"][data-design="android"] {
+  --bg: color-mix(in srgb, var(--accent) 6%, #101014);
+  --surface: color-mix(in srgb, var(--accent) 8%, #1b1b1f);
+  --border: color-mix(in srgb, var(--accent) 14%, #48464c);
+  --border-light: color-mix(in srgb, var(--accent) 10%, #2b2930);
+  --text: #e6e1e5;
+  --text-muted: #cac4d0;
+
+  --bg-hover: color-mix(in srgb, var(--accent) 16%, transparent);
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3), 0 1px 3px 1px rgba(0, 0, 0, 0.15);
+  --shadow-md: 0 1px 2px rgba(0, 0, 0, 0.3), 0 2px 6px 2px rgba(0, 0, 0, 0.15);
+  --shadow-lg: 0 2px 3px rgba(0, 0, 0, 0.3), 0 6px 10px 4px rgba(0, 0, 0, 0.15);
+}
+
+/* ── Form controls ───────────────────────────────────────────────
+   iOS: filled field, no visible border. Android: outlined field. */
+[data-design="ios"] input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+[data-design="ios"] select,
+[data-design="ios"] textarea {
+  background: var(--fill-1);
+  border-color: transparent;
+}
+
+[data-design="ios"] input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):focus,
+[data-design="ios"] select:focus,
+[data-design="ios"] textarea:focus {
+  background: var(--surface);
+  border-color: var(--accent);
+}
+
+[data-design="android"] input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+[data-design="android"] select,
+[data-design="android"] textarea {
+  background: transparent;
+  border-color: var(--border);
+}
+
+/* M3 thickens the outline on focus. Painted as an inset ring rather than a
+   real 2px border so the field does not resize under the caret. */
+[data-design="android"] input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):focus,
+[data-design="android"] select:focus,
+[data-design="android"] textarea:focus {
+  box-shadow:
+    inset 0 0 0 1px var(--accent),
+    var(--focus-ring);
+}
+
+/* ── Phase tabs ──────────────────────────────────────────────────
+   iOS turns the tab strip into a segmented control: a grey track with a
+   white thumb sliding under the selected segment, no underline anywhere.
+   M3 keeps the strip but marks the selection with an accent underline
+   instead of a filled block. */
+[data-design="ios"] .phase-tabs {
+  gap: 2px;
+  padding: 2px;
+  border-bottom: none;
+  border-radius: var(--radius-pill);
+  background: var(--fill-1);
+}
+
+[data-design="ios"] .phase-tab {
+  flex: 1;
+  justify-content: center;
+  margin-bottom: 0;
+  padding: 6px var(--sp-3);
+  border-bottom: none;
+  border-radius: var(--radius-pill);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+}
+
+[data-design="ios"] .phase-tab[data-state="active"] {
+  border-radius: var(--radius-pill);
+  background-color: var(--surface);
+  color: var(--text);
+  box-shadow: var(--shadow-sm);
+}
+
+[data-design="android"] .phase-tabs {
+  border-bottom-color: var(--border-light);
+}
+
+[data-design="android"] .phase-tab {
+  flex: 1;
+  justify-content: center;
+  padding: var(--sp-3) var(--sp-4);
+  border-bottom-width: 3px;
+  border-radius: 0;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+}
+
+[data-design="android"] .phase-tab[data-state="active"] {
+  border-radius: 0;
+  background-color: transparent;
+  border-bottom-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ── Data tables ─────────────────────────────────────────────────
+   iOS: no header fill, hairline rows, right-aligned numbers already come
+   from the table itself. M3: a tinted header row. */
+[data-design="ios"] .data-table th {
+  background: transparent;
+  font-size: var(--fs-xs);
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--text-muted);
+}
+
+[data-design="ios"] .data-table td {
+  border-bottom-color: var(--border-light);
+}
+
+[data-design="android"] .data-table th {
+  background: var(--surface-2);
+  text-transform: none;
+  letter-spacing: 0.01em;
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* ── Page titles ─────────────────────────────────────────────────
+   iOS runs a large, tight, heavy title. M3 runs a lighter headline that
+   sits at normal tracking. */
+[data-design="ios"] .page-title,
+[data-design="ios"] .t-header h1 {
+  font-size: var(--fs-2xl);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+[data-design="android"] .page-title,
+[data-design="android"] .t-header h1 {
+  font-size: var(--fs-xl);
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+/* ── Form-card group ─────────────────────────────────────────────
+   The settings/creation forms use .form-card. iOS renders it as an inset
+   grouped list — no shadow, generous corners. M3 gives it real corners
+   and keeps its elevation. */
+[data-design="ios"] .form-card {
+  box-shadow: none;
+}
+
+[data-design="ios"] .hint-box {
+  border-color: transparent;
+  background: color-mix(in srgb, var(--text) 5%, transparent);
+}
+
+[data-design="android"] .hint-box {
+  background: var(--fill-1);
+  border-color: transparent;
+}
+
+/* ── Hand-rolled tables ──────────────────────────────────────────
+   A few screens draw their own <table> instead of AppTable (the
+   simulation results page, the all-time team stats tab). Those live in
+   scoped blocks that load with their route chunk, so these selectors
+   carry an extra element qualifier to outrank them from here. */
+[data-design="ios"] table.srp-table th,
+[data-design="ios"] table.ts-table th,
+[data-design="ios"] table.ts-sub-table th {
+  background: transparent;
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 400;
+  border-bottom: 0.5px solid var(--border);
+}
+
+[data-design="ios"] table.srp-table td,
+[data-design="ios"] table.ts-table td,
+[data-design="ios"] table.ts-sub-table td {
+  border-bottom: 0.5px solid var(--border-light);
+}
+
+[data-design="ios"] table.srp-table,
+[data-design="ios"] table.ts-table {
+  font-variant-numeric: tabular-nums;
+}
+
+[data-design="android"] table.srp-table th,
+[data-design="android"] table.ts-table th,
+[data-design="android"] table.ts-sub-table th {
+  background: var(--surface-2);
+  text-transform: none;
+  letter-spacing: 0.01em;
+  font-weight: 600;
+  color: var(--text);
+  border-bottom-color: transparent;
+}
+
+[data-design="android"] table.srp-table td,
+[data-design="android"] table.ts-table td,
+[data-design="android"] table.ts-sub-table td {
+  border-bottom-color: color-mix(in srgb, var(--border-light) 60%, transparent);
+}
+
+[data-design="android"] table.srp-table tbody tr:hover,
+[data-design="android"] table.ts-table tbody tr:hover {
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+}
+
+/* The global .data-table (components.css) gets the same split. */
+[data-design="ios"] table.data-table tbody tr:hover {
+  background: transparent;
+}
+
+[data-design="android"] table.data-table tbody tr:hover {
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+}

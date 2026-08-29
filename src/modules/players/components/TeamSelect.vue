@@ -143,6 +143,31 @@ function onOpenChange(open: boolean) {
   flex-shrink: 0;
   color: var(--text-muted);
 }
+
+/* ── Design languages ────────────────────────────────────────────
+   Kept in step with AppSelect's trigger, since the point of this
+   control is to read as the same form field. */
+[data-design="ios"] .tsel-trigger {
+  border-color: transparent;
+  background: var(--fill-1);
+}
+[data-design="ios"] .tsel-trigger:focus-visible {
+  border-color: var(--accent);
+  background: var(--surface);
+}
+[data-design="ios"] .tsel-icon {
+  color: color-mix(in srgb, var(--text-muted) 70%, transparent);
+}
+
+[data-design="android"] .tsel-trigger {
+  border-color: var(--border);
+  background: transparent;
+}
+[data-design="android"] .tsel-trigger:focus-visible {
+  box-shadow:
+    inset 0 0 0 1px var(--accent),
+    var(--focus-ring);
+}
 </style>
 
 <!-- Unscoped: SelectPortal teleports content to <body>, past scoped-attr propagation. -->
@@ -226,6 +251,42 @@ function onOpenChange(open: boolean) {
     opacity: 0;
     transform: translateY(-4px) scale(0.97);
   }
+}
+
+/* ── Design languages ────────────────────────────────────────────
+   Same menu treatment as AppSelect: iOS floats a blurred outline-free
+   card, M3 elevates a tonal sheet with full-bleed rows. */
+[data-design="ios"] .tsel-content {
+  border-color: transparent;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--surface) 86%, transparent);
+  backdrop-filter: saturate(180%) blur(24px);
+  -webkit-backdrop-filter: saturate(180%) blur(24px);
+  box-shadow: var(--elev-3);
+}
+[data-design="ios"] .tsel-item {
+  border-radius: 8px;
+  font-size: var(--fs-base);
+  font-weight: 400;
+}
+[data-design="ios"] .tsel-item[data-state="checked"] {
+  font-weight: 500;
+}
+
+[data-design="android"] .tsel-content {
+  border-color: transparent;
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  box-shadow: var(--elev-2);
+}
+[data-design="android"] .tsel-item {
+  border-radius: 0;
+  padding: var(--sp-3) var(--sp-4);
+  font-size: var(--fs-base);
+  font-weight: 400;
+}
+[data-design="android"] .tsel-item[data-state="checked"] {
+  background: var(--fill-2);
 }
 
 @media (prefers-reduced-motion: reduce) {

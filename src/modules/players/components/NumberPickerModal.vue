@@ -142,4 +142,73 @@ function clear() {
   border-color: var(--accent);
   color: #fff;
 }
+
+/* ── Design languages ────────────────────────────────────────────
+   The trigger copies what design.css does to a plain field, so it reads
+   as the same control as the name input above it. */
+[data-design="ios"] .npick-trigger {
+  border-color: transparent;
+  background: var(--fill-1);
+}
+[data-design="ios"] .npick-trigger:hover {
+  border-color: transparent;
+}
+[data-design="ios"] .npick-trigger:focus-visible {
+  border-color: var(--accent);
+  background: var(--surface);
+}
+
+[data-design="android"] .npick-trigger {
+  border-color: var(--border);
+  background: transparent;
+}
+[data-design="android"] .npick-trigger:focus-visible {
+  box-shadow:
+    inset 0 0 0 1px var(--accent),
+    var(--focus-ring);
+}
+
+/* iOS: the grid reads as plain keys — filled grey circles, no outline,
+   and the pressed key dims instead of shrinking. */
+[data-design="ios"] .npick-cell {
+  border-color: transparent;
+  background: var(--fill-1);
+  font-family: var(--font-ui);
+}
+[data-design="ios"] .npick-cell:hover {
+  border-color: transparent;
+  color: var(--text);
+  background: var(--fill-2);
+}
+[data-design="ios"] .npick-cell:active {
+  transform: none;
+  opacity: 0.5;
+}
+[data-design="ios"] .npick-cell--active {
+  background: var(--accent);
+  border-color: transparent;
+  color: var(--on-accent);
+}
+
+/* M3: tonal keys with a state layer, the selection in the accent
+   container tone rather than the full accent. */
+[data-design="android"] .npick-cell {
+  border-color: transparent;
+  background: var(--fill-1);
+  font-family: var(--font-ui);
+}
+[data-design="android"] .npick-cell:hover {
+  border-color: transparent;
+  background: var(--fill-2);
+  color: var(--accent);
+}
+[data-design="android"] .npick-cell:active {
+  transform: none;
+  background: var(--fill-3);
+}
+[data-design="android"] .npick-cell--active {
+  background: var(--accent);
+  border-color: transparent;
+  color: var(--on-accent);
+}
 </style>

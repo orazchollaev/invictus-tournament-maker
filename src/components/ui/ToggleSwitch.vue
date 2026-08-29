@@ -73,6 +73,59 @@ function onUpdate(value: boolean) {
   transform: translate(18px, -50%);
 }
 
+/* ── Design languages ────────────────────────────────────────────
+   iOS: the platform's 51×31 switch — borderless track, large knob. */
+[data-design="ios"] .toggle-switch {
+  width: 51px;
+  height: 31px;
+  border-color: transparent;
+  background: var(--fill-3);
+}
+[data-design="ios"] .toggle-switch[data-state="checked"] {
+  border-color: transparent;
+}
+[data-design="ios"] .toggle-knob {
+  width: 27px;
+  height: 27px;
+  left: 2px;
+  box-shadow: var(--shadow-md);
+}
+[data-design="ios"] .toggle-switch[data-state="checked"] .toggle-knob {
+  transform: translate(20px, -50%);
+}
+
+/* Material 3: outlined track, knob grows once the switch is on. */
+[data-design="android"] .toggle-switch {
+  width: 52px;
+  height: 32px;
+  background: var(--bg);
+  border-width: 2px;
+  border-color: var(--border);
+}
+[data-design="android"] .toggle-switch[data-state="checked"] {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+[data-design="android"] .toggle-knob {
+  width: 16px;
+  height: 16px;
+  left: 6px;
+  background: var(--text-muted);
+  box-shadow: none;
+  transition:
+    transform var(--dur-fast) var(--ease),
+    width var(--dur-fast) var(--ease),
+    height var(--dur-fast) var(--ease),
+    background var(--dur-fast) var(--ease);
+}
+[data-design="android"] .toggle-switch[data-state="checked"] .toggle-knob {
+  width: 24px;
+  height: 24px;
+  left: 2px;
+  background: var(--on-accent);
+  transform: translate(22px, -50%);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .toggle-switch,
   .toggle-knob {

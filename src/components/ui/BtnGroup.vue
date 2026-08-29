@@ -70,9 +70,14 @@ defineEmits<{ "update:modelValue": [value: string] }>()
     box-shadow var(--dur-fast) var(--ease);
 }
 
+/* Heights are pinned rather than left to line-height + padding: a group
+   sits next to an icon AppButton in every search row, and the two have
+   to come out the same height. 24 + 3px padding + 1px border on each
+   side = the 32px outer box an icon AppButton paints. */
 .btn-group--sm button {
+  height: 24px;
   font-size: var(--fs-sm);
-  padding: var(--sp-1) var(--sp-3);
+  padding: 0 var(--sp-3);
 }
 .btn-group--xs button {
   font-size: var(--fs-xs);
@@ -80,8 +85,9 @@ defineEmits<{ "update:modelValue": [value: string] }>()
 }
 
 .btn-group--md button {
+  height: 24px;
   font-size: var(--fs-xs);
-  padding: 6px var(--sp-2);
+  padding: 0 var(--sp-2);
 }
 
 .btn-group button:hover:not(.active):not(:disabled) {
@@ -115,13 +121,57 @@ defineEmits<{ "update:modelValue": [value: string] }>()
   justify-content: center;
 }
 .btn-group--sm button.icon-only {
-  width: 26px;
-  height: 26px;
+  width: 24px;
+  height: 24px;
 }
 /* 24px is the floor a tap target may be painted at (WCAG 2.5.8). */
 .btn-group--xs button.icon-only {
   width: 24px;
   height: 24px;
+}
+
+/* ── Design languages ────────────────────────────────────────────
+   iOS: the system segmented control — grey track, white thumb, dark
+   label. The accent never fills a segment there. */
+[data-design="ios"] .btn-group {
+  gap: 0;
+  padding: 2px;
+  border-color: transparent;
+  border-radius: var(--radius-pill);
+  background: var(--fill-1);
+}
+[data-design="ios"] .btn-group button {
+  border-radius: var(--radius-pill);
+}
+[data-design="ios"] .btn-group button.active,
+[data-design="ios"] .btn-group button.active:hover {
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: var(--shadow-sm);
+}
+
+/* M3: an outlined segmented button — one shared outline, the selected
+   segment filled with the accent's container tone. */
+[data-design="android"] .btn-group {
+  gap: 0;
+  padding: 0;
+  border-color: var(--border);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  overflow: hidden;
+}
+[data-design="android"] .btn-group button {
+  border-radius: 0;
+  padding-block: var(--sp-2);
+}
+[data-design="android"] .btn-group button + button {
+  border-left: 1px solid var(--border);
+}
+[data-design="android"] .btn-group button.active,
+[data-design="android"] .btn-group button.active:hover {
+  background: var(--fill-3);
+  color: var(--accent);
+  box-shadow: none;
 }
 
 @media (max-width: 600px) {

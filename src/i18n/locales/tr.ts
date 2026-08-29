@@ -329,6 +329,12 @@ export default {
     },
     appearance: {
       title: "Görünüm",
+      design: {
+        label: "Tasarım Dili",
+        desc: "Yumuşak sakin ve camsıdır; Canlı daha iddialıdır, renk tonlu yüzeyler ve daha yuvarlak köşeler kullanır. Ana renginiz etkilenmez.",
+        soft: "Yumuşak",
+        vivid: "Canlı",
+      },
       theme: {
         label: "Tema",
         desc: "Uygulamanın renk şeması",

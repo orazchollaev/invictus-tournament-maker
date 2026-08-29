@@ -127,6 +127,24 @@ onUnmounted(() => {
   box-shadow: var(--elev-2);
 }
 
+/* ── Design languages ────────────────────────────────────────────
+   The same popover shell the menus use. */
+[data-design="ios"] .sd-popover {
+  border-color: transparent;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--surface) 86%, transparent);
+  backdrop-filter: saturate(180%) blur(24px);
+  -webkit-backdrop-filter: saturate(180%) blur(24px);
+  box-shadow: var(--elev-3);
+}
+
+[data-design="android"] .sd-popover {
+  border-color: transparent;
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  box-shadow: var(--elev-2);
+}
+
 /* The info dot is 20px by design — grow only what the finger hits. */
 .sd-btn {
   position: relative;

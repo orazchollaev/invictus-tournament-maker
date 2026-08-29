@@ -6,3 +6,5 @@
 @import "./components.css";
 @import "./forms.css";
 @import "./utilities.css";
+/* Last: its [data-design="…"] blocks re-point tokens set above. */
+@import "./design.css";

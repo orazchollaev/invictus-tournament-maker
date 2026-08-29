@@ -144,6 +144,88 @@ watch(
   filter: brightness(0.9);
 }
 
+/* ── Design languages ────────────────────────────────────────────
+   iOS renders an alert as a narrow blurred card with the buttons welded
+   to the bottom edge, split by hairlines and drawn as plain accent text
+   rather than as filled buttons. */
+[data-design="ios"] .dialog-card {
+  width: 270px;
+  min-width: 0;
+  max-width: 270px;
+  padding: 19px 16px 0;
+  border: none;
+  border-radius: 14px;
+  text-align: center;
+  background: color-mix(in srgb, var(--surface) 82%, transparent);
+  backdrop-filter: saturate(180%) blur(24px);
+  -webkit-backdrop-filter: saturate(180%) blur(24px);
+}
+[data-design="ios"] .dialog-msg {
+  font-size: 13px;
+  line-height: 1.4;
+  margin-bottom: 18px;
+}
+[data-design="ios"] .dialog-actions {
+  gap: 0;
+  margin: 0 -16px;
+  border-top: 0.5px solid var(--border);
+}
+[data-design="ios"] .dialog-actions > button {
+  flex: 1;
+  padding: 11px var(--sp-2);
+  border: none;
+  border-radius: 0;
+  background: none;
+  background-image: none;
+  font-size: 17px;
+  font-weight: 400;
+  color: var(--accent);
+}
+[data-design="ios"] .dialog-actions > button + button {
+  border-left: 0.5px solid var(--border);
+  font-weight: 600;
+}
+[data-design="ios"] .dialog-confirm.danger-solid {
+  color: var(--danger);
+}
+[data-design="ios"] .dialog-actions > button:hover {
+  background: var(--bg-hover);
+  filter: none;
+}
+
+/* M3 dialogs are large-cornered tonal sheets whose actions are text
+   buttons sitting bottom-right. */
+[data-design="android"] .dialog-card {
+  border: none;
+  border-radius: 28px;
+  padding: 24px;
+  background: var(--surface-2);
+}
+[data-design="android"] .dialog-msg {
+  font-size: var(--fs-base);
+  margin-bottom: 24px;
+}
+[data-design="android"] .dialog-actions {
+  gap: var(--sp-2);
+}
+[data-design="android"] .dialog-actions > button {
+  border: none;
+  border-radius: var(--radius-pill);
+  padding: 10px var(--sp-3);
+  min-width: 72px;
+  background: none;
+  background-image: none;
+  font-weight: 500;
+  color: var(--accent);
+}
+[data-design="android"] .dialog-confirm.danger-solid {
+  color: var(--danger);
+}
+[data-design="android"] .dialog-actions > button:hover {
+  background: var(--bg-hover);
+  filter: none;
+}
+
 /* ── Transitions ─────────────────────────────────────────── */
 @keyframes dialog-fade-in {
   from {

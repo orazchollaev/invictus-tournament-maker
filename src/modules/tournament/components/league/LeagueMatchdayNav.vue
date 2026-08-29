@@ -144,7 +144,7 @@ defineEmits<{
   font-size: var(--fs-xs);
   font-weight: 600;
   border: none;
-  border-radius: var(--radius-full, 999px);
+  border-radius: var(--radius-pill);
   color: var(--accent);
   background: color-mix(in srgb, var(--accent) 10%, transparent);
   cursor: pointer;

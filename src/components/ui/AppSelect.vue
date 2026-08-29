@@ -85,6 +85,34 @@ const model = defineModel<T>({ required: true })
   flex-shrink: 0;
   color: var(--text-muted);
 }
+
+/* ── Design languages ────────────────────────────────────────────
+   The trigger has to read as the same control as the <input> next to
+   it, so it copies exactly what design.css does to a plain field:
+   iOS fills it and drops the outline, M3 keeps the outline on no fill.
+   Padding and type size stay on the shared baseline — changing them
+   here is what made this sit a size off from the name field. */
+[data-design="ios"] .asel-trigger {
+  border-color: transparent;
+  background: var(--fill-1);
+}
+[data-design="ios"] .asel-trigger:focus-visible {
+  border-color: var(--accent);
+  background: var(--surface);
+}
+[data-design="ios"] .asel-icon {
+  color: color-mix(in srgb, var(--text-muted) 70%, transparent);
+}
+
+[data-design="android"] .asel-trigger {
+  border-color: var(--border);
+  background: transparent;
+}
+[data-design="android"] .asel-trigger:focus-visible {
+  box-shadow:
+    inset 0 0 0 1px var(--accent),
+    var(--focus-ring);
+}
 </style>
 
 <!-- Unscoped: SelectPortal teleports content to <body>, past scoped-attr propagation. -->
@@ -161,6 +189,43 @@ const model = defineModel<T>({ required: true })
     opacity: 0;
     transform: translateY(-4px) scale(0.97);
   }
+}
+
+/* ── Design languages ────────────────────────────────────────────
+   iOS: a floating menu — no outline, heavy blur, tight rows. */
+[data-design="ios"] .asel-content {
+  border-color: transparent;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--surface) 86%, transparent);
+  backdrop-filter: saturate(180%) blur(24px);
+  -webkit-backdrop-filter: saturate(180%) blur(24px);
+  box-shadow: var(--elev-3);
+}
+[data-design="ios"] .asel-item {
+  border-radius: 8px;
+  font-size: var(--fs-base);
+  font-weight: 400;
+}
+[data-design="ios"] .asel-item[data-state="checked"] {
+  font-weight: 500;
+}
+
+/* M3: an elevated tonal menu, square-ish rows, no outline. */
+[data-design="android"] .asel-content {
+  border-color: transparent;
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  box-shadow: var(--elev-2);
+  padding: var(--sp-1) 0;
+}
+[data-design="android"] .asel-item {
+  border-radius: 0;
+  padding: var(--sp-3) var(--sp-4);
+  font-size: var(--fs-base);
+  font-weight: 400;
+}
+[data-design="android"] .asel-item[data-state="checked"] {
+  background: var(--fill-2);
 }
 
 @media (prefers-reduced-motion: reduce) {

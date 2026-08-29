@@ -224,6 +224,46 @@ function onDirSelect(dir: unknown) {
   }
 }
 
+/* ── Design languages ────────────────────────────────────────────
+   Same treatment as the select menu: iOS floats a blurred, outline-free
+   card; M3 elevates a tonal sheet with full-bleed rows. */
+[data-design="ios"] .sort-filter-menu {
+  border-color: transparent;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--surface) 86%, transparent);
+  backdrop-filter: saturate(180%) blur(24px);
+  -webkit-backdrop-filter: saturate(180%) blur(24px);
+  box-shadow: var(--elev-3);
+}
+[data-design="ios"] .sort-filter-item {
+  border-radius: 8px;
+  font-size: var(--fs-base);
+  font-weight: 400;
+}
+[data-design="ios"] .sort-filter-item:active {
+  background: var(--bg-hover);
+}
+
+[data-design="android"] .sort-filter-menu {
+  border-color: transparent;
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  box-shadow: var(--elev-2);
+  padding: var(--sp-1) 0;
+}
+[data-design="android"] .sort-filter-item {
+  border-radius: 0;
+  padding: var(--sp-3) var(--sp-4);
+  font-size: var(--fs-base);
+  font-weight: 400;
+}
+[data-design="android"] .sort-filter-item[data-state="checked"] {
+  background: var(--fill-2);
+}
+[data-design="android"] .sort-filter-sep {
+  margin-inline: 0;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .sort-filter-menu[data-state="open"],
   .sort-filter-menu[data-state="closed"] {

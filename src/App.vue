@@ -38,7 +38,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div style="height: 100%">
+  <div style="height: 100vh">
     <AppHeader />
     <main class="app-main">
       <ErrorBoundary>

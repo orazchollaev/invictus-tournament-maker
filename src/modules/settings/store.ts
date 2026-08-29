@@ -8,6 +8,8 @@ import type { Locale } from "@/i18n"
 import { usePlayersStore } from "@/modules/players/store"
 
 export type Theme = "light" | "dark"
+/** Platform look: shape, elevation, type scale and neutrals — never the accent. */
+export type DesignLanguage = "ios" | "android"
 export type DrawType = "random" | "seeded" | "manual"
 export type BracketStyle = "double-sided" | "classic" | "auto"
 export type BracketQuality = "high" | "low"
@@ -21,6 +23,7 @@ export type LiveMatchSpeed = 1 | 2 | 4 | 10
 
 export const useSettingsStore = defineStore("settings", () => {
   const theme = ref<Theme>("dark")
+  const designLanguage = ref<DesignLanguage>("ios")
   const locale = ref<Locale>("en")
   const primaryColor = ref<string | null>(null)
   const groupLegMode = ref<LegMode>("single")
@@ -63,6 +66,14 @@ export const useSettingsStore = defineStore("settings", () => {
     theme,
     (val) => {
       document.documentElement.setAttribute("data-theme", val)
+    },
+    { immediate: true }
+  )
+
+  watch(
+    designLanguage,
+    (val) => {
+      document.documentElement.setAttribute("data-design", val)
     },
     { immediate: true }
   )
@@ -120,6 +131,7 @@ export const useSettingsStore = defineStore("settings", () => {
 
   function resetAll() {
     theme.value = "dark"
+    designLanguage.value = "ios"
     locale.value = "en"
     primaryColor.value = null
     groupLegMode.value = "single"
@@ -161,6 +173,7 @@ export const useSettingsStore = defineStore("settings", () => {
 
   return {
     theme,
+    designLanguage,
     locale,
     primaryColor,
     groupLegMode,
