@@ -6,7 +6,15 @@ export type { GenerateMatchStatsInput } from "./generate"
 export { generateTeamStats } from "./teamStats"
 export { computeRating, rollPerformance, MIN_RATING, MAX_RATING } from "./rating"
 export type { MatchOutcome, RatingInput } from "./rating"
-export { ensureMatchStats, markLegacyMatchStats } from "./ensure"
+export {
+  ensureMatchStats,
+  markLegacyMatchStats,
+  claimWatchedStats,
+  pendingStatsJobs,
+  computeStatsForJob,
+  applyStatsResults,
+} from "./ensure"
+export type { PendingStatsJob, StatsJobResult } from "./ensure"
 export {
   pendingKey,
   stashWatchedMatch,

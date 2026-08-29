@@ -668,11 +668,26 @@ const canShowStats = computed(() => !!props.result?.stats)
   .ms-side {
     padding: var(--sp-3) var(--sp-3) var(--sp-3) var(--sp-4);
   }
-  /* Four ghost buttons do not fit a phone footer, so the two whose icons
-     speak for themselves drop their labels. */
-  .ms-ghost--danger span,
-  .ms-ghost--stats span {
+  /* Up to four ghost buttons plus cancel/save no longer fit one row, so the
+     footer wraps: ghost actions on top (icon-only, evenly spread), cancel
+     and save pinned full-width below. */
+  .ms-footer {
+    flex-wrap: wrap;
+    row-gap: var(--sp-2);
+  }
+  .ms-ghost {
+    flex: 1;
+    justify-content: center;
+  }
+  .ms-ghost span {
     display: none;
+  }
+  .ms-spacer {
+    display: none;
+  }
+  .ms-footer > button:not(.ms-ghost) {
+    flex: 1;
+    order: 1;
   }
 }
 

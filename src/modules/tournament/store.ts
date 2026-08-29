@@ -5,17 +5,22 @@
 // third responsibility -- if an action needs more than dispatching across
 // slices, it belongs in a slice.
 import { defineStore } from "pinia"
-import { ref } from "vue"
+import { ref, watch, nextTick } from "vue"
 import type { Tournament, Tiebreaker, LegMode } from "./types"
+import { loadTournaments, saveTournament, deleteTournamentRecord, saveIndex } from "./persistence"
 import {
   createMultiTierLeague,
   getLeaguePlayoffData,
   canStartLeaguePlayoff,
   isLeagueLike,
   seedLeaguePlayoffBracket,
-  ensureMatchStats,
   markLegacyMatchStats,
+  claimWatchedStats,
+  pendingStatsJobs,
+  computeStatsForJob,
+  applyStatsResults,
 } from "@/engine"
+import { generateStatsInWorker } from "@/engine/events/statsWorkerClient"
 import { useTeamsStore } from "../teams/store"
 import { usePlayersStore } from "../players/store"
 import { makeWithTournament, assertNoSliceCollisions } from "./store/helpers"
@@ -28,17 +33,104 @@ import { useLeagueActions } from "./store/league"
 import { useLeaguePlayoffActions } from "./store/leaguePlayoff"
 import { useScoringActions } from "./store/scoring"
 
-export const useTournamentStore = defineStore("tournament", () => {
-  const tournaments = ref<Tournament[]>([])
-  const active = ref<string | null>(null)
-  /** Set once the pre-v2.2.0 archive has been stamped — see migrateLegacyMatchStats. */
-  const statsMigrated = ref(false)
+export const useTournamentStore = defineStore(
+  "tournament",
+  () => {
+    const tournaments = ref<Tournament[]>([])
+    const active = ref<string | null>(null)
+    /** Set once the pre-v2.2.0 archive has been stamped — see migrateLegacyMatchStats. */
+    const statsMigrated = ref(false)
 
-  function getTeams() {
-    return useTeamsStore().teams
-  }
+    /**
+     * Whether it's safe to write. False while `hydrate()` is still loading —
+     * without this guard, populating `tournaments.value` from storage would
+     * immediately write every tournament straight back to where it just came
+     * from, for no reason.
+     */
+    const hydrated = ref(false)
 
-  const withTournament = makeWithTournament(tournaments)
+    /**
+     * `tournaments` no longer goes through pinia-plugin-persistedstate-2 —
+     * see persistence.ts for why. This is its replacement: one deep watcher
+     * per tournament, each writing only that tournament's own record, plus
+     * a shallow watcher on the list itself for tournaments being added or
+     * removed. A save or a draw only ever touches one tournament, so this is
+     * the whole fix — the cost of persisting it no longer depends on how
+     * many other tournaments (or how much match history) already exist.
+     */
+    const stopWatchers = new Map<string, () => void>()
+
+    function watchTournament(t: Tournament) {
+      if (stopWatchers.has(t.id)) return
+      stopWatchers.set(
+        t.id,
+        watch(
+          () => t,
+          () => {
+            if (hydrated.value) void saveTournament(t)
+          },
+          { deep: true, flush: "post" }
+        )
+      )
+    }
+
+    // Watching `tournaments` (a ref) directly only fires when `.value` is
+    // *reassigned* — never on `.push()`/`.splice()`, which is how every
+    // create/delete in this store actually mutates it. A tournament being
+    // added or removed silently missed this watcher entirely. Watching a
+    // getter that reads each id instead ties the trigger to the one thing
+    // that actually needs to be caught: the *set* of tournaments changing.
+    // It also stays cheap and leaves content mutations to the per-item
+    // watchers below, which is what `deep: true` here would have muddled.
+    watch(
+      () => tournaments.value.map((t) => t.id),
+      () => {
+        const list = tournaments.value
+        const liveIds = new Set(list.map((t) => t.id))
+        for (const [id, stop] of stopWatchers) {
+          if (!liveIds.has(id)) {
+            stop()
+            stopWatchers.delete(id)
+            if (hydrated.value) deleteTournamentRecord(id)
+          }
+        }
+        for (const t of list) {
+          if (!stopWatchers.has(t.id)) {
+            watchTournament(t)
+            if (hydrated.value) void saveTournament(t)
+          }
+        }
+        if (hydrated.value) saveIndex(list.map((t) => t.id))
+      },
+      { immediate: true }
+    )
+
+    /**
+     * Loads every tournament from its own record. Runs once, before mount
+     * — see main.ts. A storage failure here used to be fatal for the whole
+     * app (an unawaited rejection meant `app.mount` never ran, i.e. a
+     * permanent blank screen) — starting empty is a far smaller loss than
+     * that, and whatever else is on disk stays untouched for a later,
+     * working launch to pick up.
+     */
+    async function hydrate() {
+      try {
+        tournaments.value = await loadTournaments()
+      } catch {
+        tournaments.value = []
+      }
+      // Let the watcher above finish its "a whole new list arrived" pass
+      // (which only sets up per-item watchers while `hydrated` is still
+      // false) before allowing writes.
+      await nextTick()
+      hydrated.value = true
+    }
+
+    function getTeams() {
+      return useTeamsStore().teams
+    }
+
+    const withTournament = makeWithTournament(tournaments)
 
   /**
    * Fill in match events for anything just played. Results are committed
@@ -46,11 +138,42 @@ export const useTournamentStore = defineStore("tournament", () => {
    * about players, every action is wrapped and the tournament it touched is
    * swept afterwards. The sweep skips matches that already have stats, so
    * the repeat cost is one pass over the match list.
+   *
+   * The claim step (reusing a report already rolled in the live window) is
+   * cheap and stays on the main thread.
+   *
+   * Generating a report from scratch measures under a millisecond even for
+   * a full squad — a single save's worth of that is cheaper than a worker
+   * round trip (structured clone + postMessage + scheduling), so it runs
+   * right here. A worker only pays for itself once a sweep turns up a
+   * batch worth off-thread — "Simulate All" filling in a whole bracket's
+   * worth of reports at once, say — which is the case this threshold
+   * routes there instead.
    */
+  const WORKER_WORTHWHILE_JOBS = 8
+
   function ensureStatsFor(tournamentId: string) {
     const t = tournaments.value.find((x) => x.id === tournamentId)
     if (!t) return
-    ensureMatchStats(t, getTeams(), usePlayersStore().players)
+    claimWatchedStats(t)
+    const jobs = pendingStatsJobs(t)
+    if (!jobs.length) return
+
+    const teams = getTeams()
+    const players = usePlayersStore().players
+
+    if (jobs.length < WORKER_WORTHWHILE_JOBS) {
+      applyStatsResults(
+        t,
+        jobs.map((job) => computeStatsForJob(job, teams, players))
+      )
+      return
+    }
+
+    generateStatsInWorker(jobs, teams, players).then((results) => {
+      const target = tournaments.value.find((x) => x.id === tournamentId)
+      if (target) applyStatsResults(target, results)
+    })
   }
 
   type ActionSlice = Record<string, (...args: never[]) => unknown>
@@ -172,6 +295,7 @@ export const useTournamentStore = defineStore("tournament", () => {
     tournaments,
     active,
     statsMigrated,
+    hydrate,
     ...withStats(crud),
     ...withStats(bracket),
     ...withStats(thirdPlace),
@@ -184,4 +308,22 @@ export const useTournamentStore = defineStore("tournament", () => {
     simulateTournament,
     migrateLegacyMatchStats,
   }
-})
+  },
+  {
+    persistedState: {
+      // `tournaments` is persisted by hand (see persistence.ts) — one
+      // record per tournament instead of the whole history in one blob.
+      // Only these two small fields still go through the plugin.
+      includePaths: ["active", "statsMigrated"],
+      // The plugin's default merge (`(state, saved) => saved`) would hand
+      // back whatever shape is on disk wholesale — including a `tournaments`
+      // array, if the pre-refactor blob under this same key still has one.
+      // Only take the two fields this store still delegates to the plugin.
+      merge: (state, saved) => ({
+        ...state,
+        active: saved?.active ?? state.active,
+        statsMigrated: saved?.statsMigrated ?? state.statsMigrated,
+      }),
+    },
+  }
+)

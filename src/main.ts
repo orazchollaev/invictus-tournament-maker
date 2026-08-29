@@ -13,9 +13,40 @@ import { useTournamentStore } from "./modules/tournament/store"
 
 import "./assets/style/index.css"
 
+/**
+ * The persistence plugin fires on every state mutation and, by default,
+ * `JSON.stringify`s the whole store synchronously right then — on the same
+ * thread that just needs to close the score modal and repaint the table.
+ * Now that a played match carries a full report (lineups, events, ratings),
+ * that stringify is heavy enough to be felt as lag on every single save.
+ *
+ * This defers the actual stringify to idle time, after the browser has had
+ * a chance to paint the result the user is waiting on. It reads `state` at
+ * the moment it actually runs, not when scheduled, so a burst of mutations
+ * from one save collapses into a single stringify of the latest values
+ * instead of one per mutation.
+ */
+const idleScheduled = new WeakMap<object, Promise<string>>()
+function idleSerialize(state: object): Promise<string> {
+  const pending = idleScheduled.get(state)
+  if (pending) return pending
+
+  const promise = new Promise<string>((resolve) => {
+    const run = () => {
+      idleScheduled.delete(state)
+      resolve(JSON.stringify(state))
+    }
+    if (typeof requestIdleCallback === "function") requestIdleCallback(run, { timeout: 500 })
+    else setTimeout(run, 0)
+  })
+  idleScheduled.set(state, promise)
+  return promise
+}
+
 const pinia = createPinia()
 const persistedStatePlugin = createPersistedStatePlugin({
   storage: idbStorage,
+  serialize: idleSerialize,
 })
 pinia.use(persistedStatePlugin)
 
@@ -42,9 +73,18 @@ async function bootstrap() {
   // Matches played before v2.2.0 get stamped as legacy so the event engine
   // never invents scorers for them. Has to wait for the persisted state to
   // hydrate, or there would be nothing to stamp.
+  //
+  // `tournaments` is loaded by hand (see modules/tournament/persistence.ts)
+  // rather than by the plugin above — it must run strictly after
+  // `isReady()`, since a first-run migration reads the plugin's own
+  // pre-refactor blob and then deletes it; doing that before the plugin has
+  // had a chance to read `active`/`statsMigrated` out of it would lose them.
   const tournamentStore = useTournamentStore()
   try {
     await tournamentStore.$persistedState.isReady()
+  } catch {}
+  try {
+    await tournamentStore.hydrate()
   } catch {}
   tournamentStore.migrateLegacyMatchStats()
 

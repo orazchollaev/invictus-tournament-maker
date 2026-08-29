@@ -18,11 +18,17 @@ export const idbStorage: IStorage = {
       return localStorage.getItem(key) ?? undefined
     }
   },
-  async setItem(key: string, value: string) {
+  // `value` is usually a plain string, but our own `idleSerialize` (see
+  // main.ts) hands back a Promise instead — it defers the actual
+  // `JSON.stringify` to idle time so a match save doesn't stall on
+  // stringifying the whole tournament history. Awaiting a plain string is
+  // a no-op, so this stays correct either way.
+  async setItem(key: string, value: string | Promise<string>) {
+    const resolved = await value
     try {
-      await set(key, value)
+      await set(key, resolved)
     } catch {
-      localStorage.setItem(key, value)
+      localStorage.setItem(key, resolved)
     }
   },
   async removeItem(key: string) {

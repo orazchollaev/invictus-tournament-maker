@@ -130,6 +130,10 @@ export {
   computeRating,
   ensureMatchStats,
   markLegacyMatchStats,
+  claimWatchedStats,
+  pendingStatsJobs,
+  computeStatsForJob,
+  applyStatsResults,
   pendingKey,
   stashWatchedMatch,
   claimWatchedMatch,
@@ -141,4 +145,12 @@ export {
   MIN_RATING,
   MAX_RATING,
 } from "./events"
-export type { Lineup, LineupSlot, MatchOutcome, RatingInput, WatchedMatch } from "./events"
+export type {
+  Lineup,
+  LineupSlot,
+  MatchOutcome,
+  RatingInput,
+  WatchedMatch,
+  PendingStatsJob,
+  StatsJobResult,
+} from "./events"
