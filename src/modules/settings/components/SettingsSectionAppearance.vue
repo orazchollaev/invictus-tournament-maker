@@ -5,6 +5,7 @@ import type { DesignLanguage, Theme } from "../store"
 import { useI18n } from "vue-i18n"
 import { Palette } from "@lucide/vue"
 import { AppCard, AppField, AppIcon, BtnGroup } from "@/components/ui"
+import { logEvent } from "@/composables/useAnalytics"
 import SettingDesc from "./SettingDesc.vue"
 
 const { t } = useI18n()
@@ -22,6 +23,17 @@ const designs = computed<{ value: DesignLanguage; label: string }[]>(() => [
   { value: "ios", label: t("settings.appearance.design.soft") },
   { value: "android", label: t("settings.appearance.design.vivid") },
 ])
+
+/* Logged from the control rather than from a store watcher: the watcher
+   also fires when the persisted value hydrates on launch, which would
+   count every app start as a deliberate switch. */
+function selectDesign(value: string) {
+  const next = value as DesignLanguage
+  if (next === settings.designLanguage) return
+  const from = settings.designLanguage
+  settings.designLanguage = next
+  void logEvent("design_language_change", { from, to: next })
+}
 
 /* Must stay in sync with --accent in assets/style/variables.css: picking
    this swatch clears the override rather than writing the same value. */
@@ -61,7 +73,11 @@ function selectColor(c: string) {
       <template #description>
         <SettingDesc>{{ t("settings.appearance.design.desc") }}</SettingDesc>
       </template>
-      <BtnGroup v-model="settings.designLanguage" :options="designs" />
+      <BtnGroup
+        :model-value="settings.designLanguage"
+        :options="designs"
+        @update:model-value="selectDesign"
+      />
     </AppField>
 
     <AppField layout="split" :label="t('settings.appearance.theme.label')">
