@@ -1,19 +1,3 @@
-// modules/tournament/persistence.ts
-//
-// Why this exists: pinia-plugin-persistedstate-2 (wired up in main.ts) used
-// to own this store's persistence, writing the *entire* `tournaments` array
-// to storage on every single mutation. That was fine while a match was just
-// a scoreline. Once a played match started carrying a full report — lineups,
-// every goal/card event, a rating per player — the array kept growing, and
-// every save, simulate or draw kept re-stringifying *all of it*, however
-// small the actual change. A single-match save and a 64-team draw felt
-// equally slow because both paid the same full-history tax.
-//
-// The fix is to persist one tournament at a time, under its own key, so the
-// cost of a change is proportional to the tournament that changed — not to
-// every tournament the user has ever played. `store.ts` wires this up with
-// a deep watcher per tournament plus a shallow one for the list itself; this
-// module only knows how to read and write the storage.
 import { get, set, del } from "idb-keyval"
 import { idbStorage } from "@/lib/idbStorage"
 import type { Tournament } from "./types"
@@ -125,4 +109,39 @@ export async function loadTournaments(): Promise<Tournament[]> {
   const fromItems = await loadFromItems()
   if (fromItems) return fromItems
   return migrateFromLegacyBlob()
+}
+
+async function currentIds(): Promise<string[]> {
+  const raw = await get(INDEX_KEY)
+  if (raw === undefined) return []
+  try {
+    return JSON.parse(raw)
+  } catch {
+    return []
+  }
+}
+
+/**
+ * Wipe every tournament record and the index. Data management's "clear all
+ * data" used to just delete the one legacy blob key — now that tournaments
+ * live one-per-record, clearing has to walk the index and delete each item
+ * too, or every tournament comes right back on the next launch.
+ */
+export async function clearAllTournaments(): Promise<void> {
+  const ids = await currentIds()
+  await Promise.all(ids.map((id) => del(itemKey(id))))
+  await del(INDEX_KEY)
+}
+
+/**
+ * Replace the whole tournament list at once — loading a sample dataset or
+ * importing a backup. Clears every existing record first: writing the new
+ * dataset's tournaments into their own keys is not enough on its own, since
+ * whatever the *previous* dataset's ids were would otherwise stay in the
+ * index (or as orphaned items) and come back alongside the new ones.
+ */
+export async function replaceAllTournaments(tournaments: Tournament[]): Promise<void> {
+  await clearAllTournaments()
+  await Promise.all(tournaments.map((t) => set(itemKey(t.id), JSON.stringify(t))))
+  await set(INDEX_KEY, JSON.stringify(tournaments.map((t) => t.id)))
 }

@@ -5,6 +5,8 @@ import { showAlert, showConfirm } from "@/composables/useDialog"
 import { useI18n } from "vue-i18n"
 import { Capacitor } from "@capacitor/core"
 import { idbStorage } from "@/lib/idbStorage"
+import { clearAllTournaments, replaceAllTournaments } from "@/modules/tournament/persistence"
+import type { Tournament } from "@/modules/tournament/types"
 import { version } from "../../../../package.json"
 
 interface Dataset {
@@ -96,9 +98,12 @@ export function useDataManagement() {
     })
     if (!ok) return
     await idbStorage.setItem("teams", JSON.stringify({ teams: dataset.teams }))
-    if (dataset.tournaments)
-      await idbStorage.setItem("tournament", JSON.stringify({ tournaments: dataset.tournaments }))
-    else await idbStorage.setItem("tournament", JSON.stringify({ tournaments: [], active: null }))
+    // `tournaments` lives one-per-record now (see modules/tournament/persistence.ts),
+    // not in the legacy "tournament" blob — swapping datasets has to replace
+    // those records directly, or the previous dataset's tournaments survive
+    // in the index and come back after reload.
+    await replaceAllTournaments((dataset.tournaments as Tournament[] | undefined) ?? [])
+    if (!dataset.tournaments) await idbStorage.setItem("tournament", JSON.stringify({ active: null }))
     // A dataset either ships its own squads or has none. Either way the
     // previous dataset's players go — leaving them behind would orphan
     // entries pointing at team ids that no longer exist.
@@ -117,6 +122,11 @@ export function useDataManagement() {
     })
     if (!ok) return
     await Promise.all(DATA_KEYS.map((k) => idbStorage.removeItem(k)))
+    // The legacy "tournament" key above no longer holds the tournaments
+    // themselves (see modules/tournament/persistence.ts) — those live in
+    // their own per-id records, which need clearing separately or they
+    // all come back on the next launch.
+    await clearAllTournaments()
     location.reload()
   }
 
@@ -209,8 +219,21 @@ export function useDataManagement() {
             .filter((k) => k in IMPORT_KEY_MAP)
             .map((k) => IMPORT_KEY_MAP[k])
           const writes = Object.keys(parsed)
-            .filter((k) => k in IMPORT_KEY_MAP)
+            .filter((k) => k in IMPORT_KEY_MAP && IMPORT_KEY_MAP[k] !== "tournament")
             .map((k) => idbStorage.setItem(IMPORT_KEY_MAP[k], JSON.stringify(parsed[k])))
+          // `tournaments` lives one-per-record now (see
+          // modules/tournament/persistence.ts), not in the exported blob's
+          // shape — importing it the same way loadDataset() writes a fresh
+          // dataset in, or the previous data's tournaments survive in the
+          // index and come back alongside the imported ones.
+          const tournamentKey = Object.keys(parsed).find(
+            (k) => IMPORT_KEY_MAP[k] === "tournament"
+          )
+          if (tournamentKey) {
+            const imported = parsed[tournamentKey] ?? {}
+            writes.push(replaceAllTournaments((imported.tournaments as Tournament[]) ?? []))
+            writes.push(idbStorage.setItem("tournament", JSON.stringify({ active: imported.active })))
+          }
           if (!writes.length) throw new Error()
           // A backup with no players section still replaces the team roster —
           // leaving the old squad in place would orphan it against team ids
