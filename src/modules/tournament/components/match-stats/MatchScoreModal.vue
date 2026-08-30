@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { computed, nextTick, ref, watch } from "vue"
-import { DialogRoot, DialogPortal, DialogOverlay, DialogContent, DialogTitle } from "reka-ui"
+
 import { useI18n } from "vue-i18n"
-import { ChartColumn, PlayCircle, Shuffle, Trash2, X } from "@lucide/vue"
-import { AppNumberInput } from "@/components/ui"
+import { ChartColumn, PlayCircle, Shuffle, Trash2 } from "@lucide/vue"
+import { AppNumberInput, AppSheet } from "@/components/ui"
 import { TeamBadge } from "@/modules/teams/components"
 import MatchStatsModal from "./MatchStatsModal.vue"
 import LiveMatchModal from "./LiveMatchModal.vue"
@@ -99,14 +99,20 @@ const isDraw = computed(() => isLevel(home.value, away.value))
 const showPens = computed(() => props.requiresWinner && isDraw.value && pensRevealed.value)
 const saveDisabled = computed(() => showPens.value && penHome.value === penAway.value)
 
-const closing = ref(false)
+const sheet = ref<InstanceType<typeof AppSheet> | null>(null)
+
 function close() {
-  if (closing.value) return
-  closing.value = true
-  // Save commits synchronously before this runs, so by now the stash has
-  // either been claimed or belongs to a roll the user walked away from.
+  sheet.value?.close()
+}
+
+/**
+ * Runs once the sheet has finished its exit, whichever way it was dismissed.
+ * Save commits synchronously before this, so by now the stash has either
+ * been claimed or belongs to a roll the user walked away from.
+ */
+function onClosed() {
   if (props.matchId) dropWatchedMatch(pendingKey(props.matchId, props.leg ?? 1))
-  setTimeout(() => emit("close"), 180)
+  emit("close")
 }
 
 function save() {
@@ -268,121 +274,104 @@ const canShowStats = computed(() => !!props.result?.stats)
 </script>
 
 <template>
-  <DialogRoot :open="true" @update:open="(v) => !v && close()">
-    <DialogPortal>
-      <DialogOverlay class="ms-backdrop" :class="{ closing }" />
-      <DialogContent
-        class="ms-panel"
-        :class="{ closing }"
-        :aria-describedby="undefined"
-        @escape-key-down="close"
-        @pointer-down-outside="close"
-        @keydown="onKeydown"
+  <AppSheet ref="sheet" @close="onClosed" @keydown="onKeydown">
+    <template #title>
+      <span class="ms-title">
+        {{ t("common.setResult") }}
+        <span v-if="subtitle" class="ms-subtitle">{{ subtitle }}</span>
+      </span>
+    </template>
+
+    <div class="ms-body">
+      <div class="ms-side" :style="{ '--tc': homeTeam?.color ?? 'transparent' }">
+        <TeamBadge :team="homeTeam" :size="20" class="ms-team" />
+        <AppNumberInput
+          v-model="home"
+          editable
+          :min="0"
+          :max="MAX_GOALS"
+          value-width="sm"
+          class="ms-stepper"
+        />
+      </div>
+
+      <div class="ms-side" :style="{ '--tc': awayTeam?.color ?? 'transparent' }">
+        <TeamBadge :team="awayTeam" :size="20" class="ms-team" />
+        <AppNumberInput
+          v-model="away"
+          editable
+          :min="0"
+          :max="MAX_GOALS"
+          value-width="sm"
+          class="ms-stepper"
+        />
+      </div>
+
+      <!-- Shootout: only a level knockout tie needs one. -->
+      <div v-if="showPens" class="ms-pens">
+        <div class="ms-pens-head">
+          <span class="ms-pens-title">{{ t("matchScore.penalties") }}</span>
+          <span class="ms-pens-hint">{{ t("matchScore.penaltiesHint") }}</span>
+        </div>
+        <div class="ms-side">
+          <TeamBadge :team="homeTeam" :size="16" class="ms-team" />
+          <AppNumberInput
+            v-model="penHome"
+            editable
+            :min="0"
+            :max="MAX_GOALS"
+            value-width="sm"
+            class="ms-stepper"
+          />
+        </div>
+        <div class="ms-side">
+          <TeamBadge :team="awayTeam" :size="16" class="ms-team" />
+          <AppNumberInput
+            v-model="penAway"
+            editable
+            :min="0"
+            :max="MAX_GOALS"
+            value-width="sm"
+            class="ms-stepper"
+          />
+        </div>
+        <p v-if="saveDisabled" class="ms-pens-warn">{{ t("matchScore.penaltiesTied") }}</p>
+      </div>
+    </div>
+
+    <div class="ms-footer">
+      <button
+        v-if="canShowStats"
+        class="ms-ghost ms-ghost--stats"
+        :title="t('matchStats.title')"
+        @click="showStats = true"
       >
-        <div class="ms-header">
-          <DialogTitle as-child>
-            <span class="ms-title">
-              {{ t("common.setResult") }}
-              <span v-if="subtitle" class="ms-subtitle">{{ subtitle }}</span>
-            </span>
-          </DialogTitle>
-          <button class="ms-close" :aria-label="t('common.cancel')" @click="close">
-            <X :size="14" />
-          </button>
-        </div>
-
-        <div class="ms-body">
-          <div class="ms-side" :style="{ '--tc': homeTeam?.color ?? 'transparent' }">
-            <TeamBadge :team="homeTeam" :size="20" class="ms-team" />
-            <AppNumberInput
-              v-model="home"
-              editable
-              :min="0"
-              :max="MAX_GOALS"
-              value-width="sm"
-              class="ms-stepper"
-            />
-          </div>
-
-          <div class="ms-side" :style="{ '--tc': awayTeam?.color ?? 'transparent' }">
-            <TeamBadge :team="awayTeam" :size="20" class="ms-team" />
-            <AppNumberInput
-              v-model="away"
-              editable
-              :min="0"
-              :max="MAX_GOALS"
-              value-width="sm"
-              class="ms-stepper"
-            />
-          </div>
-
-          <!-- Shootout: only a level knockout tie needs one. -->
-          <div v-if="showPens" class="ms-pens">
-            <div class="ms-pens-head">
-              <span class="ms-pens-title">{{ t("matchScore.penalties") }}</span>
-              <span class="ms-pens-hint">{{ t("matchScore.penaltiesHint") }}</span>
-            </div>
-            <div class="ms-side">
-              <TeamBadge :team="homeTeam" :size="16" class="ms-team" />
-              <AppNumberInput
-                v-model="penHome"
-                editable
-                :min="0"
-                :max="MAX_GOALS"
-                value-width="sm"
-                class="ms-stepper"
-              />
-            </div>
-            <div class="ms-side">
-              <TeamBadge :team="awayTeam" :size="16" class="ms-team" />
-              <AppNumberInput
-                v-model="penAway"
-                editable
-                :min="0"
-                :max="MAX_GOALS"
-                value-width="sm"
-                class="ms-stepper"
-              />
-            </div>
-            <p v-if="saveDisabled" class="ms-pens-warn">{{ t("matchScore.penaltiesTied") }}</p>
-          </div>
-        </div>
-
-        <div class="ms-footer">
-          <button
-            v-if="canShowStats"
-            class="ms-ghost ms-ghost--stats"
-            :title="t('matchStats.title')"
-            @click="showStats = true"
-          >
-            <ChartColumn :size="14" />
-            <span>{{ t("matchStats.buttonLabel") }}</span>
-          </button>
-          <button
-            v-if="canWatch || canReplay"
-            class="ms-ghost ms-ghost--live"
-            @click="canReplay ? replay() : watchLive()"
-          >
-            <PlayCircle :size="14" />
-            <span>{{ canReplay ? t("liveMatch.replay") : t("liveMatch.watch") }}</span>
-          </button>
-          <button v-if="canSimulate" class="ms-ghost" @click="simulate">
-            <Shuffle :size="14" />
-            <span>{{ t("matchScore.simulate") }}</span>
-          </button>
-          <button v-if="result" class="ms-ghost ms-ghost--danger" @click="clear">
-            <Trash2 :size="14" />
-            <span>{{ t("matchScore.clear") }}</span>
-          </button>
-          <div class="ms-spacer" />
-          <button @click="close">{{ t("common.cancel") }}</button>
-          <button class="primary" :disabled="saveDisabled" @click="save">
-            {{ t("common.save") }}
-          </button>
-        </div>
-      </DialogContent>
-    </DialogPortal>
-  </DialogRoot>
+        <ChartColumn :size="14" />
+        <span>{{ t("matchStats.buttonLabel") }}</span>
+      </button>
+      <button
+        v-if="canWatch || canReplay"
+        class="ms-ghost ms-ghost--live"
+        @click="canReplay ? replay() : watchLive()"
+      >
+        <PlayCircle :size="14" />
+        <span>{{ canReplay ? t("liveMatch.replay") : t("liveMatch.watch") }}</span>
+      </button>
+      <button v-if="canSimulate" class="ms-ghost" @click="simulate">
+        <Shuffle :size="14" />
+        <span>{{ t("matchScore.simulate") }}</span>
+      </button>
+      <button v-if="result" class="ms-ghost ms-ghost--danger" @click="clear">
+        <Trash2 :size="14" />
+        <span>{{ t("matchScore.clear") }}</span>
+      </button>
+      <div class="ms-spacer" />
+      <button @click="close">{{ t("common.cancel") }}</button>
+      <button class="primary" :disabled="saveDisabled" @click="save">
+        {{ t("common.save") }}
+      </button>
+    </div>
+  </AppSheet>
 
   <LiveMatchModal
     v-if="liveStats"
@@ -408,98 +397,6 @@ const canShowStats = computed(() => !!props.result?.stats)
 </template>
 
 <style scoped>
-@keyframes ms-backdrop-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-@keyframes ms-backdrop-out {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-  }
-}
-@keyframes ms-sheet-in {
-  from {
-    transform: translateY(100%);
-  }
-  to {
-    transform: translateY(0);
-  }
-}
-@keyframes ms-sheet-out {
-  from {
-    transform: translateY(0);
-  }
-  to {
-    transform: translateY(100%);
-  }
-}
-@keyframes ms-dialog-in {
-  from {
-    opacity: 0;
-    transform: translate(-50%, -46%);
-  }
-  to {
-    opacity: 1;
-    transform: translate(-50%, -50%);
-  }
-}
-@keyframes ms-dialog-out {
-  from {
-    opacity: 1;
-    transform: translate(-50%, -50%);
-  }
-  to {
-    opacity: 0;
-    transform: translate(-50%, -46%);
-  }
-}
-
-.ms-backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: calc(var(--z-modal) + 10);
-  background: rgba(32, 33, 34, 0.5);
-  animation: ms-backdrop-in 0.16s ease both;
-}
-.ms-backdrop.closing {
-  animation: ms-backdrop-out 0.18s ease both;
-}
-
-.ms-panel {
-  position: fixed;
-  z-index: calc(var(--z-modal) + 11);
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: min(400px, calc(100vw - 2 * var(--sp-4)));
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-lg);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  animation: ms-dialog-in 0.18s var(--ease) both;
-}
-.ms-panel.closing {
-  animation: ms-dialog-out 0.18s var(--ease) both;
-}
-
-.ms-header {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-2);
-  padding: var(--sp-2) var(--sp-3);
-  background: var(--bg);
-  border-bottom: 1px solid var(--border-light);
-}
 .ms-title {
   font-family: var(--font-ui);
   font-size: var(--fs-xs);
@@ -518,25 +415,6 @@ const canShowStats = computed(() => !!props.result?.stats)
   color: var(--text-muted);
   text-transform: none;
 }
-.ms-close {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  padding: 0;
-  margin-inline-start: auto;
-  border: none;
-  background: transparent;
-  color: var(--text-muted);
-  border-radius: var(--radius);
-  cursor: pointer;
-}
-.ms-close:hover {
-  background: color-mix(in srgb, var(--border) 60%, transparent);
-  color: var(--text);
-}
-
 .ms-body {
   padding: var(--sp-3);
   display: flex;
@@ -650,21 +528,6 @@ const canShowStats = computed(() => !!props.result?.stats)
 }
 
 @media (max-width: 600px) {
-  .ms-panel {
-    top: auto;
-    bottom: 0;
-    inset-inline-start: 0;
-    transform: none;
-    width: 100vw;
-    max-width: 100vw;
-    border: none;
-    border-top: 1px solid var(--border);
-    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-    animation: ms-sheet-in 0.22s cubic-bezier(0.22, 1, 0.36, 1) both;
-  }
-  .ms-panel.closing {
-    animation: ms-sheet-out 0.18s cubic-bezier(0.4, 0, 1, 1) both;
-  }
   .ms-side {
     padding: var(--sp-3) var(--sp-3) var(--sp-3) var(--sp-4);
   }
@@ -688,15 +551,6 @@ const canShowStats = computed(() => !!props.result?.stats)
   .ms-footer > button:not(.ms-ghost) {
     flex: 1;
     order: 1;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .ms-panel,
-  .ms-panel.closing,
-  .ms-backdrop,
-  .ms-backdrop.closing {
-    animation: none;
   }
 }
 </style>

@@ -6,10 +6,9 @@
  * window mid-match leaves the fixture exactly as unplayed as it was.
  */
 import { computed, nextTick, onMounted, ref, watch } from "vue"
-import { DialogRoot, DialogPortal, DialogOverlay, DialogContent, DialogTitle } from "reka-ui"
 import { useI18n } from "vue-i18n"
-import { Pause, Play, SkipForward, X } from "@lucide/vue"
-import { AppButtonGroup } from "@/components/ui"
+import { Pause, Play, SkipForward } from "@lucide/vue"
+import { AppButtonGroup, AppSheet } from "@/components/ui"
 import { TeamBadge } from "@/modules/teams/components"
 import MatchTimeline from "./MatchTimeline.vue"
 import MatchShootout from "./MatchShootout.vue"
@@ -98,12 +97,28 @@ watch(
   }
 )
 
+const sheet = ref<InstanceType<typeof AppSheet> | null>(null)
 const closing = ref(false)
-function close(handBack: boolean) {
+
+/**
+ * The sheet owns the exit animation, so the reason for closing is parked
+ * here and read back when it reports.
+ */
+const handBack = ref(false)
+function close(hb: boolean) {
   if (closing.value) return
   closing.value = true
+  handBack.value = hb
   live.stop()
-  setTimeout(() => (handBack ? emit("finish") : emit("cancel")), 180)
+  sheet.value?.close()
+}
+
+function onClosed() {
+  // The header close button and Escape go straight to the sheet, so the
+  // ticker is stopped here rather than only in close().
+  live.stop()
+  if (handBack.value) emit("finish")
+  else emit("cancel")
 }
 
 /** Skipping skips time, not the match — the result was decided before kick-off. */
@@ -119,146 +134,87 @@ onMounted(live.start)
 </script>
 
 <template>
-  <DialogRoot :open="true" @update:open="(v) => !v && close(false)">
-    <DialogPortal>
-      <DialogOverlay class="lm-backdrop" :class="{ closing }" />
-      <DialogContent
-        class="lm-panel"
-        :class="{ closing }"
-        :aria-describedby="undefined"
-        @escape-key-down="close(false)"
-        @pointer-down-outside="(e: Event) => e.preventDefault()"
+  <AppSheet
+    ref="sheet"
+    :dismiss-on-outside-click="false"
+    :layer="20"
+    :dim="0.6"
+    width="min(420px, calc(100vw - 2 * var(--sp-4)))"
+    max-height="min(640px, calc(100dvh - 2 * var(--sp-4)))"
+    max-height-mobile="88dvh"
+    @close="onClosed"
+  >
+    <template #title>
+      <span class="lm-title">
+        {{ replay ? t("liveMatch.replayTitle") : t("liveMatch.title") }}
+        <span v-if="subtitle" class="lm-subtitle">{{ subtitle }}</span>
+      </span>
+    </template>
+
+    <div class="lm-scoreboard">
+      <TeamBadge :team="homeTeam" :size="26" class="lm-team lm-team--home" />
+      <div class="lm-score">
+        <span class="lm-goals">{{ live.score.value.home }}</span>
+        <span class="lm-dash">–</span>
+        <span class="lm-goals">{{ live.score.value.away }}</span>
+      </div>
+      <TeamBadge :team="awayTeam" :size="26" class="lm-team" />
+    </div>
+
+    <div class="lm-clock-row">
+      <span class="lm-clock" :class="{ 'lm-clock--live': !live.finished.value }">
+        {{ clockLabel }}
+      </span>
+      <span v-if="live.inExtraTime.value && !live.finished.value" class="lm-tag">
+        {{ t("liveMatch.extraTimeShort") }}
+      </span>
+      <span v-if="showShootout" class="lm-tag lm-tag--pens">
+        {{ live.penScore.value.home }}–{{ live.penScore.value.away }}
+      </span>
+    </div>
+
+    <div ref="rail" class="lm-rail">
+      <MatchTimeline :events="live.visibleEvents.value" :has-extra-time="hasExtraTime" />
+
+      <div v-if="showShootout" class="lm-pens">
+        <span class="lm-pens-title">{{ t("liveMatch.penalties") }}</span>
+        <MatchShootout
+          :kicks="live.visibleKicks.value"
+          :home-color="homeTeam?.color ?? 'var(--text-muted)'"
+          :away-color="awayTeam?.color ?? 'var(--text-muted)'"
+        />
+      </div>
+    </div>
+
+    <div class="lm-footer">
+      <button
+        v-if="!live.finished.value"
+        class="lm-ghost"
+        :aria-label="live.paused.value ? t('liveMatch.resume') : t('liveMatch.pause')"
+        @click="live.toggle"
       >
-        <div class="lm-header">
-          <DialogTitle as-child>
-            <span class="lm-title">
-              {{ replay ? t("liveMatch.replayTitle") : t("liveMatch.title") }}
-              <span v-if="subtitle" class="lm-subtitle">{{ subtitle }}</span>
-            </span>
-          </DialogTitle>
-          <button class="lm-close" :aria-label="t('common.cancel')" @click="close(false)">
-            <X :size="14" />
-          </button>
-        </div>
-
-        <div class="lm-scoreboard">
-          <TeamBadge :team="homeTeam" :size="26" class="lm-team lm-team--home" />
-          <div class="lm-score">
-            <span class="lm-goals">{{ live.score.value.home }}</span>
-            <span class="lm-dash">–</span>
-            <span class="lm-goals">{{ live.score.value.away }}</span>
-          </div>
-          <TeamBadge :team="awayTeam" :size="26" class="lm-team" />
-        </div>
-
-        <div class="lm-clock-row">
-          <span class="lm-clock" :class="{ 'lm-clock--live': !live.finished.value }">
-            {{ clockLabel }}
-          </span>
-          <span v-if="live.inExtraTime.value && !live.finished.value" class="lm-tag">
-            {{ t("liveMatch.extraTimeShort") }}
-          </span>
-          <span v-if="showShootout" class="lm-tag lm-tag--pens">
-            {{ live.penScore.value.home }}–{{ live.penScore.value.away }}
-          </span>
-        </div>
-
-        <div ref="rail" class="lm-rail">
-          <MatchTimeline :events="live.visibleEvents.value" :has-extra-time="hasExtraTime" />
-
-          <div v-if="showShootout" class="lm-pens">
-            <span class="lm-pens-title">{{ t("liveMatch.penalties") }}</span>
-            <MatchShootout
-              :kicks="live.visibleKicks.value"
-              :home-color="homeTeam?.color ?? 'var(--text-muted)'"
-              :away-color="awayTeam?.color ?? 'var(--text-muted)'"
-            />
-          </div>
-        </div>
-
-        <div class="lm-footer">
-          <button
-            v-if="!live.finished.value"
-            class="lm-ghost"
-            :aria-label="live.paused.value ? t('liveMatch.resume') : t('liveMatch.pause')"
-            @click="live.toggle"
-          >
-            <component :is="live.paused.value ? Play : Pause" :size="14" />
-          </button>
-          <AppButtonGroup
-            v-if="!live.finished.value"
-            :model-value="String(speed)"
-            :options="speedOptions"
-            size="xs"
-            @update:model-value="(v) => (speed = Number(v) as LiveSpeed)"
-          />
-          <div class="lm-spacer" />
-          <button v-if="!live.finished.value" class="lm-ghost" @click="skip">
-            <SkipForward :size="14" />
-            <span>{{ t("liveMatch.skip") }}</span>
-          </button>
-          <button v-else class="primary" @click="done">
-            {{ replay ? t("common.close") : t("liveMatch.useResult") }}
-          </button>
-        </div>
-      </DialogContent>
-    </DialogPortal>
-  </DialogRoot>
+        <component :is="live.paused.value ? Play : Pause" :size="14" />
+      </button>
+      <AppButtonGroup
+        v-if="!live.finished.value"
+        :model-value="String(speed)"
+        :options="speedOptions"
+        size="xs"
+        @update:model-value="(v) => (speed = Number(v) as LiveSpeed)"
+      />
+      <div class="lm-spacer" />
+      <button v-if="!live.finished.value" class="lm-ghost" @click="skip">
+        <SkipForward :size="14" />
+        <span>{{ t("liveMatch.skip") }}</span>
+      </button>
+      <button v-else class="primary" @click="done">
+        {{ replay ? t("common.close") : t("liveMatch.useResult") }}
+      </button>
+    </div>
+  </AppSheet>
 </template>
 
 <style scoped>
-@keyframes lm-fade-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-@keyframes lm-fade-out {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-  }
-}
-@keyframes lm-in {
-  from {
-    opacity: 0;
-    transform: translate(-50%, -46%);
-  }
-  to {
-    opacity: 1;
-    transform: translate(-50%, -50%);
-  }
-}
-@keyframes lm-out {
-  from {
-    opacity: 1;
-    transform: translate(-50%, -50%);
-  }
-  to {
-    opacity: 0;
-    transform: translate(-50%, -46%);
-  }
-}
-@keyframes lm-sheet-in {
-  from {
-    transform: translateY(100%);
-  }
-  to {
-    transform: translateY(0);
-  }
-}
-@keyframes lm-sheet-out {
-  from {
-    transform: translateY(0);
-  }
-  to {
-    transform: translateY(100%);
-  }
-}
 @keyframes lm-pulse {
   0%,
   100% {
@@ -269,46 +225,6 @@ onMounted(live.start)
   }
 }
 
-.lm-backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: calc(var(--z-modal) + 20);
-  background: rgba(32, 33, 34, 0.6);
-  animation: lm-fade-in 0.16s ease both;
-}
-.lm-backdrop.closing {
-  animation: lm-fade-out 0.18s ease both;
-}
-
-.lm-panel {
-  position: fixed;
-  z-index: calc(var(--z-modal) + 21);
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: min(420px, calc(100vw - 2 * var(--sp-4)));
-  max-height: min(640px, calc(100dvh - 2 * var(--sp-4)));
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-lg);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  animation: lm-in 0.18s var(--ease) both;
-}
-.lm-panel.closing {
-  animation: lm-out 0.18s var(--ease) both;
-}
-
-.lm-header {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-2);
-  padding: var(--sp-2) var(--sp-3);
-  background: var(--bg);
-  border-bottom: 1px solid var(--border-light);
-}
 .lm-title {
   font-family: var(--font-ui);
   font-size: var(--fs-xs);
@@ -327,25 +243,6 @@ onMounted(live.start)
   color: var(--text-muted);
   text-transform: none;
 }
-.lm-close {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  padding: 0;
-  margin-inline-start: auto;
-  border: none;
-  background: transparent;
-  color: var(--text-muted);
-  border-radius: var(--radius);
-  cursor: pointer;
-}
-.lm-close:hover {
-  background: color-mix(in srgb, var(--border) 60%, transparent);
-  color: var(--text);
-}
-
 .lm-scoreboard {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
@@ -463,29 +360,9 @@ onMounted(live.start)
 }
 
 @media (max-width: 600px) {
-  .lm-panel {
-    top: auto;
-    bottom: 0;
-    inset-inline-start: 0;
-    transform: none;
-    width: 100vw;
-    max-width: 100vw;
-    max-height: 88dvh;
-    border: none;
-    border-top: 1px solid var(--border);
-    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-    animation: lm-sheet-in 0.22s cubic-bezier(0.22, 1, 0.36, 1) both;
-  }
-  .lm-panel.closing {
-    animation: lm-sheet-out 0.18s cubic-bezier(0.4, 0, 1, 1) both;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .lm-panel,
-  .lm-panel.closing,
-  .lm-backdrop,
-  .lm-backdrop.closing,
   .lm-clock--live {
     animation: none;
   }
