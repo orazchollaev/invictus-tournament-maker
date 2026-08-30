@@ -67,7 +67,13 @@ function submit() {
     :title="isEdit ? t('players.form.editTitle') : t('players.form.addTitle')"
     @close="emit('close')"
   >
-    <div class="form" :style="{ '--player-color': selectedTeam?.color ?? '#999' }">
+    <div
+      class="form"
+      :style="{
+        '--player-color': selectedTeam?.color ?? '#999',
+        '--power-color': selectedTeam?.color ?? '#999',
+      }"
+    >
       <div class="preview">
         <PlayerAvatar
           :name="name"
@@ -261,129 +267,5 @@ function submit() {
   font-weight: 700;
   color: var(--player-color);
   text-shadow: 0 0 1px color-mix(in srgb, var(--text) 25%, transparent);
-}
-
-.power-slider {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 100%;
-  height: 20px;
-  padding: 0;
-  border: none;
-  background: transparent;
-  cursor: pointer;
-}
-.power-slider:focus {
-  outline: none;
-  box-shadow: none;
-}
-
-.power-slider::-webkit-slider-runnable-track {
-  height: 6px;
-  border-radius: var(--radius-pill);
-  background: linear-gradient(to right, var(--player-color) var(--pct), var(--border) var(--pct));
-}
-.power-slider::-moz-range-track {
-  height: 6px;
-  border-radius: var(--radius-pill);
-  background: linear-gradient(to right, var(--player-color) var(--pct), var(--border) var(--pct));
-}
-
-.power-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 18px;
-  height: 18px;
-  margin-top: -6px;
-  border-radius: var(--radius-pill);
-  background: var(--surface);
-  border: 3px solid var(--player-color);
-  box-shadow: var(--elev-1);
-  transition: transform var(--dur-fast) var(--ease);
-}
-.power-slider::-moz-range-thumb {
-  width: 18px;
-  height: 18px;
-  border-radius: var(--radius-pill);
-  background: var(--surface);
-  border: 3px solid var(--player-color);
-  box-shadow: var(--elev-1);
-}
-
-.power-slider:active::-webkit-slider-thumb {
-  transform: scale(1.15);
-}
-.power-slider:focus-visible::-webkit-slider-thumb {
-  box-shadow: var(--focus-ring);
-}
-.power-slider:focus-visible::-moz-range-thumb {
-  box-shadow: var(--focus-ring);
-}
-
-/* ── Design languages ────────────────────────────────────────────
-   iOS: a hairline track under a large white puck — the thumb is the
-   control, the track is just a line. */
-[data-design="ios"] .power-slider::-webkit-slider-runnable-track {
-  height: 4px;
-}
-[data-design="ios"] .power-slider::-moz-range-track {
-  height: 4px;
-}
-[data-design="ios"] .power-slider::-webkit-slider-thumb {
-  width: 26px;
-  height: 26px;
-  margin-top: -11px;
-  border: none;
-  background: #ffffff;
-  box-shadow:
-    0 1px 1px rgba(0, 0, 0, 0.14),
-    0 3px 8px rgba(0, 0, 0, 0.16);
-}
-[data-design="ios"] .power-slider::-moz-range-thumb {
-  width: 26px;
-  height: 26px;
-  border: none;
-  background: #ffffff;
-  box-shadow:
-    0 1px 1px rgba(0, 0, 0, 0.14),
-    0 3px 8px rgba(0, 0, 0, 0.16);
-}
-[data-design="ios"] .power-slider:active::-webkit-slider-thumb {
-  transform: none;
-}
-
-/* M3: the handle is a short vertical bar, not a knob, and the track is
-   split into an active and an inactive half with rounded ends. */
-[data-design="android"] .power-slider::-webkit-slider-runnable-track {
-  height: 16px;
-}
-[data-design="android"] .power-slider::-moz-range-track {
-  height: 16px;
-}
-[data-design="android"] .power-slider::-webkit-slider-thumb {
-  width: 4px;
-  height: 28px;
-  margin-top: -6px;
-  border: none;
-  border-radius: 2px;
-  background: var(--player-color);
-  box-shadow: none;
-}
-[data-design="android"] .power-slider::-moz-range-thumb {
-  width: 4px;
-  height: 28px;
-  border: none;
-  border-radius: 2px;
-  background: var(--player-color);
-  box-shadow: none;
-}
-[data-design="android"] .power-slider:active::-webkit-slider-thumb {
-  transform: scaleY(1.1);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .power-slider::-webkit-slider-thumb {
-    transition: none;
-  }
 }
 </style>
