@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { computed } from "vue"
+import { useI18n } from "vue-i18n"
 import type { Tournament } from "@/modules/tournament/types"
 import type { MainTab } from "./types"
-import { useI18n } from "vue-i18n"
-import { TabsRoot, TabsList, TabsTrigger } from "reka-ui"
+import { AppTabs, AppTab } from "@/components/ui"
 
 const props = defineProps<{
   tournament: Tournament
@@ -33,43 +33,32 @@ function onUpdate(value: string) {
 </script>
 
 <template>
-  <TabsRoot
+  <AppTabs
     :model-value="activeTab"
+    sticky
     :dir="locale === 'ar' ? 'rtl' : 'ltr'"
     @update:model-value="onUpdate"
   >
-    <TabsList class="phase-tabs">
-      <template v-if="isLeagueFormat">
-        <TabsTrigger as="div" class="phase-tab" value="league">
-          {{ leagueTabLabel }}
-        </TabsTrigger>
-        <TabsTrigger v-if="hasLeaguePlayoff" as="div" class="phase-tab" value="bracket">
-          {{ t("tournament.tabs.playoff") }}
-        </TabsTrigger>
-      </template>
+    <template v-if="isLeagueFormat">
+      <AppTab value="league">{{ leagueTabLabel }}</AppTab>
+      <AppTab v-if="hasLeaguePlayoff" value="bracket">
+        {{ t("tournament.tabs.playoff") }}
+      </AppTab>
+    </template>
 
-      <template v-else-if="isGroupFormat">
-        <TabsTrigger as="div" class="phase-tab" value="groups">
-          {{ t("tournament.tabs.groups") }}
-        </TabsTrigger>
-        <TabsTrigger v-if="tournament.groupsDone" as="div" class="phase-tab" value="bracket">
-          {{ t("tournament.tabs.bracket") }}
-        </TabsTrigger>
-      </template>
+    <template v-else-if="isGroupFormat">
+      <AppTab value="groups">{{ t("tournament.tabs.groups") }}</AppTab>
+      <AppTab v-if="tournament.groupsDone" value="bracket">
+        {{ t("tournament.tabs.bracket") }}
+      </AppTab>
+    </template>
 
-      <template v-else>
-        <TabsTrigger as="div" class="phase-tab" value="bracket">
-          {{ t("tournament.tabs.bracket") }}
-        </TabsTrigger>
-      </template>
+    <template v-else>
+      <AppTab value="bracket">{{ t("tournament.tabs.bracket") }}</AppTab>
+    </template>
 
-      <TabsTrigger v-if="hasAnyResults" as="div" class="phase-tab" value="stats">
-        {{ t("tournament.tabs.stats") }}
-      </TabsTrigger>
+    <AppTab v-if="hasAnyResults" value="stats">{{ t("tournament.tabs.stats") }}</AppTab>
 
-      <TabsTrigger as="div" class="phase-tab" value="participants">
-        {{ t("tournament.tabs.participants") }}
-      </TabsTrigger>
-    </TabsList>
-  </TabsRoot>
+    <AppTab value="participants">{{ t("tournament.tabs.participants") }}</AppTab>
+  </AppTabs>
 </template>

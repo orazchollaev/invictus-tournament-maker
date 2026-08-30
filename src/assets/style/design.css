@@ -175,14 +175,6 @@
    white thumb sliding under the selected segment, no underline anywhere.
    M3 keeps the strip but marks the selection with an accent underline
    instead of a filled block. */
-[data-design="ios"] .phase-tabs {
-  gap: 2px;
-  padding: 2px;
-  border-bottom: none;
-  border-radius: var(--radius-pill);
-  background: var(--fill-1);
-}
-
 [data-design="ios"] .phase-tab {
   flex: 1;
   justify-content: center;
@@ -199,10 +191,6 @@
   background-color: var(--surface);
   color: var(--text);
   box-shadow: var(--shadow-sm);
-}
-
-[data-design="android"] .phase-tabs {
-  border-bottom-color: var(--border-light);
 }
 
 [data-design="android"] .phase-tab {

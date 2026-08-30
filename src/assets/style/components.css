@@ -10,17 +10,6 @@
 }
 
 /* ── Tabs ────────────────────────────────────────────────────── */
-.phase-tabs {
-  display: flex;
-  gap: 0;
-  margin-bottom: var(--sp-3);
-  border-bottom: 1px solid var(--border-light);
-  position: sticky;
-  top: var(--sticky-top);
-  z-index: var(--z-sticky);
-  background: var(--bg);
-}
-
 .phase-tab {
   display: flex;
   align-items: center;
@@ -114,16 +103,6 @@
 
 /* ── Responsive ──────────────────────────────────────────────── */
 @media (max-width: 600px) {
-  .phase-tabs {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    top: var(--safe-top);
-  }
-  .phase-tabs::-webkit-scrollbar {
-    display: none;
-  }
-
   .phase-tab {
     padding: var(--sp-2) var(--sp-3);
     font-size: var(--fs-sm);
