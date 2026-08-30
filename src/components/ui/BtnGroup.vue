@@ -70,10 +70,6 @@ defineEmits<{ "update:modelValue": [value: string] }>()
     box-shadow var(--dur-fast) var(--ease);
 }
 
-/* Heights are pinned rather than left to line-height + padding: a group
-   sits next to an icon AppButton in every search row, and the two have
-   to come out the same height. 24 + 3px padding + 1px border on each
-   side = the 32px outer box an icon AppButton paints. */
 .btn-group--sm button {
   height: 24px;
   font-size: var(--fs-sm);
@@ -85,7 +81,7 @@ defineEmits<{ "update:modelValue": [value: string] }>()
 }
 
 .btn-group--md button {
-  height: 24px;
+  height: 26px;
   font-size: var(--fs-xs);
   padding: 0 var(--sp-2);
 }
@@ -128,6 +124,10 @@ defineEmits<{ "update:modelValue": [value: string] }>()
 .btn-group--xs button.icon-only {
   width: 24px;
   height: 24px;
+}
+.btn-group--md button.icon-only {
+  width: 26px;
+  height: 26px;
 }
 
 /* ── Design languages ────────────────────────────────────────────

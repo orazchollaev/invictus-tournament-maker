@@ -72,7 +72,7 @@ const filtered = computed(() => {
 
     <div v-if="store.teams.length" class="search-row">
       <AppSearchInput v-model="query" :placeholder="t('teams.searchPlaceholder')" />
-      <BtnGroup v-model="settings.teamsListView" :options="viewOptions" />
+      <BtnGroup v-model="settings.teamsListView" :options="viewOptions" size="md" />
 
       <TeamsFilterMenu
         v-model:sort-key="settings.teamsSortKey"

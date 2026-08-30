@@ -98,7 +98,7 @@ async function deleteTournament(id: string) {
 
     <div v-if="store.tournaments.length" class="search-row">
       <AppSearchInput v-model="query" :placeholder="t('tournaments.searchPlaceholder')" />
-      <BtnGroup v-model="settings.tournamentListView" :options="viewOptions" />
+      <BtnGroup v-model="settings.tournamentListView" :options="viewOptions" size="md" />
 
       <TournamentsFilterMenu
         v-model:sort-key="settings.tournamentsSortKey"
