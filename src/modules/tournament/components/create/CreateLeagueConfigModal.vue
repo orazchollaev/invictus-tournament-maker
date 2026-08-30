@@ -5,7 +5,7 @@ import { AppModal, AppButton, AppStepper } from "@/components/ui"
 import BtnGroup from "@/components/ui/BtnGroup.vue"
 import type { LegMode, Tiebreaker } from "@/modules/tournament/types"
 import type { Team } from "@/modules/teams/types"
-import { useLegOptions } from "../../composables/useLegOptions"
+import { useLegOptions } from "@/modules/tournament/composables/useLegOptions"
 import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
 
 export interface LeagueConfigPayload {

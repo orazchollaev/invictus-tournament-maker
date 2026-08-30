@@ -2,7 +2,7 @@
 import { ref } from "vue"
 import { ChevronDown, Shuffle } from "@lucide/vue"
 import { AppButton, AppIcon } from "@/components/ui"
-import type { Match, Round } from "../../types"
+import type { Match, Round } from "@/modules/tournament/types"
 import { useI18n } from "vue-i18n"
 import { useEngineLabels } from "@/composables/useEngineLabels"
 

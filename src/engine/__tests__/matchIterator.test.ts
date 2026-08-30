@@ -1,6 +1,6 @@
 // engine/__tests__/matchIterator.test.ts
 import { describe, expect, it } from "vitest"
-import type { Tournament } from "../../modules/tournament/types"
+import type { Tournament } from "@/modules/tournament/types"
 import { allMatches, forEachMatch, isBye, matchesForTeam, playedMatches } from "../matchIterator"
 import { propagateWinners } from "../bracket"
 import { createTournament } from "../tournament"

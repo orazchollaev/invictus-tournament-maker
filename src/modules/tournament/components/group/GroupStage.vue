@@ -2,7 +2,7 @@
 import { ref, computed } from "vue"
 import type { Team } from "@/modules/teams/types"
 import type { Tournament } from "@/modules/tournament/types"
-import { useGradualSim } from "../../composables/useGradualSim"
+import { useGradualSim } from "@/modules/tournament/composables/useGradualSim"
 import GroupCard from "./GroupCard.vue"
 import GroupLegend from "./GroupLegend.vue"
 import GroupSimToolbar from "./GroupSimToolbar.vue"

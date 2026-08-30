@@ -1,8 +1,8 @@
 // engine/__tests__/helpers.ts
 // Shared factories used across the engine test suites.
 import { expect } from "vitest"
-import type { Team } from "../../modules/teams/types"
-import type { Group, GroupStanding, League, Tournament } from "../../modules/tournament/types"
+import type { Team } from "@/modules/teams/types"
+import type { Group, GroupStanding, League, Tournament } from "@/modules/tournament/types"
 import { buildGroupFixture, recalcStandings } from "../groups"
 import { recalcLeagueStandings } from "../league"
 

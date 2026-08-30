@@ -1,5 +1,5 @@
 import type { Team } from "@/modules/teams/types"
-import type { Tournament } from "../../types"
+import type { Tournament } from "@/modules/tournament/types"
 import { getLeaguePlayoffData, getLoserId, getWinnerId, isLeagueLike } from "@/engine"
 import { EMPTY_STATS, NO_FINISH, type ParticipantRow, type TeamStats } from "./types"
 

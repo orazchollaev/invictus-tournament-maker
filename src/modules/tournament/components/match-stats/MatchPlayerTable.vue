@@ -11,7 +11,7 @@ import { Star } from "@lucide/vue"
 import { AppTable } from "@/components/ui"
 import { usePlayersStore } from "@/modules/players/store"
 import PlayerRatingChip from "@/modules/players/components/PlayerRatingChip.vue"
-import type { PlayerMatchLine } from "../../types"
+import type { PlayerMatchLine } from "@/modules/tournament/types"
 import type { PlayerPosition } from "@/modules/players/types"
 
 const props = withDefaults(

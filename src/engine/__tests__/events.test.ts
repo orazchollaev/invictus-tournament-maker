@@ -1,7 +1,7 @@
 // engine/__tests__/events.test.ts
 import { describe, it, expect } from "vitest"
-import type { Player } from "../../modules/players/types"
-import type { Tournament } from "../../modules/tournament/types"
+import type { Player } from "@/modules/players/types"
+import type { Tournament } from "@/modules/tournament/types"
 import { buildLineup, FORMATION, LINEUP_SIZE, UNKNOWN_POWER } from "../events/lineup"
 import { generateMatchStats } from "../events/generate"
 import { generateTeamStats } from "../events/teamStats"

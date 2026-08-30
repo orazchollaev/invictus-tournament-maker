@@ -3,7 +3,7 @@
 import { computed } from "vue"
 import { useI18n } from "vue-i18n"
 import { AppStatBar } from "@/components/ui"
-import type { TeamMatchStats } from "../../types"
+import type { TeamMatchStats } from "@/modules/tournament/types"
 
 const props = defineProps<{
   stats: TeamMatchStats

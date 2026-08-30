@@ -1,7 +1,7 @@
 // engine/__tests__/groups.test.ts
 import { describe, expect, it } from "vitest"
-import type { Team } from "../../modules/teams/types"
-import type { GroupStanding, Tournament } from "../../modules/tournament/types"
+import type { Team } from "@/modules/teams/types"
+import type { GroupStanding, Tournament } from "@/modules/tournament/types"
 import {
   allGroupsDone,
   buildGroupFixture,

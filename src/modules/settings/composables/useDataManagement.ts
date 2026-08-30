@@ -7,7 +7,7 @@ import { Capacitor } from "@capacitor/core"
 import { idbStorage } from "@/lib/idbStorage"
 import { clearAllTournaments, replaceAllTournaments } from "@/modules/tournament/services/persistence"
 import type { Tournament } from "@/modules/tournament/types"
-import { version } from "../../../../package.json"
+import { APP_VERSION } from "@/constants"
 
 interface Dataset {
   label: string
@@ -163,7 +163,7 @@ export function useDataManagement() {
     // bytes, so both compressed and old plain-JSON backups keep working.
     const canCompress = typeof CompressionStream !== "undefined"
     const buf = canCompress ? await gzipCompress(json) : null
-    const filename = `invictus-v${version}-${new Date().toISOString().slice(0, 10)}.json${buf ? ".gz" : ""}`
+    const filename = `invictus-v${APP_VERSION}-${new Date().toISOString().slice(0, 10)}.json${buf ? ".gz" : ""}`
 
     // Same story as the bracket PNG export: Android's system WebView (what
     // Capacitor apps run in) has no download manager wired to <a download> —

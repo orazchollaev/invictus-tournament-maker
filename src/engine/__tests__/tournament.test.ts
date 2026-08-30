@@ -1,6 +1,6 @@
 // engine/__tests__/tournament.test.ts
 import { describe, expect, it } from "vitest"
-import type { Tournament } from "../../modules/tournament/types"
+import type { Tournament } from "@/modules/tournament/types"
 import {
   createLeague,
   createMultiTierLeague,

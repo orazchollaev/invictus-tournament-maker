@@ -7,7 +7,7 @@
 import { computed } from "vue"
 import { useI18n } from "vue-i18n"
 import { usePlayersStore } from "@/modules/players/store"
-import type { ShootoutKick } from "../../types"
+import type { ShootoutKick } from "@/modules/tournament/types"
 
 const props = defineProps<{
   kicks: ShootoutKick[]

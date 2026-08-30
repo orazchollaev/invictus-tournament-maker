@@ -4,7 +4,7 @@ import { useI18n } from "vue-i18n"
 import { useEngineLabels } from "@/composables/useEngineLabels"
 import type { Team } from "@/modules/teams/types"
 import type { CeremonyKind, DrawStep } from "@/engine"
-import type { CeremonySpeed } from "../../composables/useDrawCeremony"
+import type { CeremonySpeed } from "@/modules/tournament/composables/useDrawCeremony"
 import { useTeamLookup } from "@/composables/useTeamLookup"
 import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
 

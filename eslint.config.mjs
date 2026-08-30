@@ -34,6 +34,7 @@ export default tseslint.config(
     plugins: {
       vue,
       "unused-imports": unusedImports,
+      "@typescript-eslint": tseslint.plugin,
     },
 
     rules: {
@@ -85,23 +86,24 @@ export default tseslint.config(
       "vue/component-name-in-template-casing": ["error", "PascalCase"],
       "vue/define-macros-order": "error",
 
-      // Promote to "error" once the remaining deep relative imports are converted.
-      "no-restricted-imports": ["warn", { patterns: deepRelativeImports }],
+      "no-restricted-imports": ["error", { patterns: deepRelativeImports }],
     },
   },
 
   // reka-ui belongs to the design system, not to feature code. Three modules each
   // building their own Dialog on raw DialogRoot is how close animations, focus traps
   // and backdrop z-indexes drift apart. Wrap once in components/ui, fix once.
-  // Promote to "error" once the remaining bypasses are wrapped.
+  //
+  // This uses the typescript-eslint rule rather than the core one so that it can carry
+  // its own severity: deep relative imports are already an error, these bypasses are
+  // still being unwound. Promote to "error" once the last one is wrapped.
   {
     files: ["src/**/*.{ts,vue}"],
     ignores: ["src/components/ui/**"],
     rules: {
-      "no-restricted-imports": [
+      "@typescript-eslint/no-restricted-imports": [
         "warn",
         {
-          patterns: deepRelativeImports,
           paths: [
             {
               name: "reka-ui",

@@ -2,7 +2,7 @@
 // player tables and the player detail page all label a goal the same way.
 import { Goal, CircleSlash, Volleyball } from "@lucide/vue"
 import type { Component } from "vue"
-import type { MatchEventType } from "../../types"
+import type { MatchEventType } from "@/modules/tournament/types"
 
 export interface EventMeta {
   /** "card" renders the CSS card glyph instead of an icon. */

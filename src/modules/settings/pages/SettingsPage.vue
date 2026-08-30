@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, nextTick } from "vue"
-import { version } from "../../../../package.json"
+import { APP_VERSION } from "@/constants"
 import { Palette, LayoutGrid, Trophy, Dices, Database, Menu, ChevronDown } from "@lucide/vue"
 import type { Component } from "vue"
 import { useI18n } from "vue-i18n"
@@ -115,7 +115,7 @@ function selectCategory(id: Category) {
         </Transition>
 
         <div class="version-row">
-          <span class="version">v{{ version }}</span>
+          <span class="version">v{{ APP_VERSION }}</span>
           <RouterLink class="changelog-btn" to="/guide">
             {{ t("guide.title") }}
           </RouterLink>

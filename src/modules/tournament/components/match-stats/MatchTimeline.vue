@@ -10,7 +10,7 @@ import { computed } from "vue"
 import { useI18n } from "vue-i18n"
 import { AppIcon } from "@/components/ui"
 import { usePlayersStore } from "@/modules/players/store"
-import type { MatchEvent } from "../../types"
+import type { MatchEvent } from "@/modules/tournament/types"
 import { EVENT_META } from "./eventMeta"
 import { formatMinute } from "./matchTime"
 

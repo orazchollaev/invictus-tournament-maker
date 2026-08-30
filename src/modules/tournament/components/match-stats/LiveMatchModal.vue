@@ -14,12 +14,12 @@ import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
 import MatchTimeline from "./MatchTimeline.vue"
 import MatchShootout from "./MatchShootout.vue"
 import { formatMinute } from "./matchTime"
-import { useLiveMatch, type LiveSpeed } from "../../composables/useLiveMatch"
+import { useLiveMatch, type LiveSpeed } from "@/modules/tournament/composables/useLiveMatch"
 import { useSettingsStore } from "@/modules/settings/store"
 import { useHaptic } from "@/composables/useHaptic"
 import { REGULATION_MINUTES } from "@/engine"
 import type { Team } from "@/modules/teams/types"
-import type { MatchEvent, ShootoutKick } from "../../types"
+import type { MatchEvent, ShootoutKick } from "@/modules/tournament/types"
 
 const props = defineProps<{
   homeTeam: Team | null | undefined

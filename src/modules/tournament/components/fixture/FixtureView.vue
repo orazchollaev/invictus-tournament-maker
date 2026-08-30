@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from "vue"
-import type { Tournament } from "../../types"
+import type { Tournament } from "@/modules/tournament/types"
 import type { Team } from "@/modules/teams/types"
 import FixtureMatchCard from "./FixtureMatchCard.vue"
 import FixtureTieCard from "./FixtureTieCard.vue"

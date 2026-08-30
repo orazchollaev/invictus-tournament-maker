@@ -12,12 +12,12 @@ import { AppCard, AppEmptyState, AppTable, SubTabBar } from "@/components/ui"
 import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
 import PlayerRatingChip from "@/modules/players/components/PlayerRatingChip.vue"
 import type { Team } from "@/modules/teams/types"
-import type { Tournament } from "../../types"
+import type { Tournament } from "@/modules/tournament/types"
 import {
   useTournamentPlayerStats,
   MIN_APPS_FOR_RATING,
   type PlayerStatRow,
-} from "../../composables/useTournamentPlayerStats"
+} from "@/modules/tournament/composables/useTournamentPlayerStats"
 
 const props = defineProps<{
   tournament: Tournament

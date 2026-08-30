@@ -1,4 +1,4 @@
-import type { Match } from "../../types"
+import type { Match } from "@/modules/tournament/types"
 import type { Team } from "@/modules/teams/types"
 import { getWinnerId } from "@/engine"
 

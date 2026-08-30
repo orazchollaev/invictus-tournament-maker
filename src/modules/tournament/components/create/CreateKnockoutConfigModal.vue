@@ -8,11 +8,11 @@ import type {
   LeaguePlayoffSeedMode,
   PlayoffSeedMode,
 } from "@/modules/tournament/types"
-import { useLegOptions } from "../../composables/useLegOptions"
+import { useLegOptions } from "@/modules/tournament/composables/useLegOptions"
 import {
   knockoutStagesForRoundCount,
   totalRoundsForSize,
-} from "../../composables/useKnockoutRoundStages"
+} from "@/modules/tournament/composables/useKnockoutRoundStages"
 
 type DrawType = "random" | "seeded" | "manual"
 

@@ -1,4 +1,4 @@
-import type { GroupStanding } from "../../types"
+import type { GroupStanding } from "@/modules/tournament/types"
 
 /**
  * The group card and the league table are two renderings of the same standings

@@ -4,7 +4,7 @@ import { ArrowLeft } from "@lucide/vue"
 import { useI18n } from "vue-i18n"
 import { AppButton, AppCard, AppIcon } from "@/components/ui"
 import FlagCircle from "../FlagCircle.vue"
-import type { Team } from "../../types"
+import type { Team } from "@/modules/teams/types"
 
 const props = defineProps<{ team: Team }>()
 defineEmits<{ back: [] }>()

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { version } from "../../../../package.json"
+import { APP_VERSION } from "@/constants"
 import { useI18n } from "vue-i18n"
 import { AppModal } from "@/components/ui"
 
@@ -23,7 +23,7 @@ const CONTRIBUTORS = ["Rodrigo Hernandez"]
       </div>
 
       <h3 class="about-title">Invictus {{ t("settings.aboutBy") }} ShiftFn Dev</h3>
-      <span class="about-version">v{{ version }}</span>
+      <span class="about-version">v{{ APP_VERSION }}</span>
 
       <div class="about-thanks">
         <span class="about-thanks-title">{{ t("settings.specialThanks") }}</span>

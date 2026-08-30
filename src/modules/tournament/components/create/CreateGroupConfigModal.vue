@@ -3,8 +3,8 @@ import { computed, ref, watch } from "vue"
 import { useI18n } from "vue-i18n"
 import { AppModal, AppButton, AppStepper, BtnGroup } from "@/components/ui"
 import type { LegMode, Tiebreaker } from "@/modules/tournament/types"
-import { useGroupSizeHint } from "../../composables/useGroupSizeHint"
-import { useLegOptions } from "../../composables/useLegOptions"
+import { useGroupSizeHint } from "@/modules/tournament/composables/useGroupSizeHint"
+import { useLegOptions } from "@/modules/tournament/composables/useLegOptions"
 
 type DrawType = "random" | "seeded" | "manual"
 

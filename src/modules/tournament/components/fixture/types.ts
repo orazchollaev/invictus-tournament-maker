@@ -1,4 +1,4 @@
-import type { Match } from "../../types"
+import type { Match } from "@/modules/tournament/types"
 
 /** A bracket match plus the coordinates the fixture list flattened it from. */
 export interface FlatMatch extends Match {

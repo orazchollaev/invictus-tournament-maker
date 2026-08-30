@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref, computed } from "vue"
 import { useI18n } from "vue-i18n"
-import type { Tournament, League } from "../../types"
+import type { Tournament, League } from "@/modules/tournament/types"
 import type { Team } from "@/modules/teams/types"
-import { useTournamentStats } from "../../composables/useTournamentStats"
+import { useTournamentStats } from "@/modules/tournament/composables/useTournamentStats"
 import { isLeagueLike } from "@/engine"
 import LeagueProgressChart from "../league/LeagueProgressChart.vue"
 import TeamBadge from "@/modules/teams/components/TeamBadge.vue"

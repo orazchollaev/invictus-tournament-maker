@@ -1,5 +1,5 @@
 import { reactive } from "vue"
-import type { Match, MatchResult } from "../../types"
+import type { Match, MatchResult } from "@/modules/tournament/types"
 
 export interface FlatMatch extends Match {
   _origRound: number

@@ -8,7 +8,7 @@ import { useI18n } from "vue-i18n"
 import { AppStepper, BtnGroup, ToggleSwitch } from "@/components/ui"
 import type { DrawType, LegMode, Tiebreaker } from "@/modules/tournament/types"
 import { legModeToCount, validateSwissConfig } from "@/engine"
-import { useLegOptions } from "../../composables/useLegOptions"
+import { useLegOptions } from "@/modules/tournament/composables/useLegOptions"
 import TspLockedCard from "../settings/TspLockedCard.vue"
 
 const props = withDefaults(defineProps<{ teamCount: number; locked?: boolean }>(), {

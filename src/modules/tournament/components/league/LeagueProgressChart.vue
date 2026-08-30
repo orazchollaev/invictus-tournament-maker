@@ -12,9 +12,9 @@ import {
   Legend,
 } from "chart.js"
 import type { ChartData, ChartOptions } from "chart.js"
-import type { League } from "../../types"
+import type { League } from "@/modules/tournament/types"
 import type { Team } from "@/modules/teams/types"
-import { useLeagueProgress, type ProgressMode } from "../../composables/useLeagueProgress"
+import { useLeagueProgress, type ProgressMode } from "@/modules/tournament/composables/useLeagueProgress"
 import { AppCard } from "@/components/ui"
 
 const props = defineProps<{

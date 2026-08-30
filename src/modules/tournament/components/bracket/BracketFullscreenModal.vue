@@ -4,8 +4,8 @@ import { X } from "@lucide/vue"
 import { AppButton, AppIcon } from "@/components/ui"
 import BracketZoomControls from "./BracketZoomControls.vue"
 import BracketZoomHint from "./BracketZoomHint.vue"
-import { useBracketViewport } from "../../composables/useBracketViewport"
-import { useBracketZoomHint } from "../../composables/useBracketZoomHint"
+import { useBracketViewport } from "@/modules/tournament/composables/useBracketViewport"
+import { useBracketZoomHint } from "@/modules/tournament/composables/useBracketZoomHint"
 
 defineProps<{ title: string }>()
 

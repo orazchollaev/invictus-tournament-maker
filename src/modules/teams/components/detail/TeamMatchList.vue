@@ -3,8 +3,8 @@ import { computed } from "vue"
 import { useI18n } from "vue-i18n"
 import { AppSectionHeader, AppSelect } from "@/components/ui"
 import TeamBadge from "../TeamBadge.vue"
-import type { Team } from "../../types"
-import type { MatchRow, RoundPhase } from "../../composables/useTeamMatchHistory"
+import type { Team } from "@/modules/teams/types"
+import type { MatchRow, RoundPhase } from "@/modules/teams/composables/useTeamMatchHistory"
 
 const props = defineProps<{
   matches: MatchRow[]

@@ -9,7 +9,7 @@ import { useI18n } from "vue-i18n"
 import { AppButton, AppCard, AppIcon } from "@/components/ui"
 import PlayerAvatar from "../PlayerAvatar.vue"
 import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
-import type { Player } from "../../types"
+import type { Player } from "@/modules/players/types"
 import type { Team } from "@/modules/teams/types"
 
 defineProps<{

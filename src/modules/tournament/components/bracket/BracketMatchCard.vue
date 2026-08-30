@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from "vue"
 import { useI18n } from "vue-i18n"
-import type { Match } from "../../types"
+import type { Match } from "@/modules/tournament/types"
 import type { Team } from "@/modules/teams/types"
 import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
 import { NO_TEAM_COLOR } from "@/modules/teams/utils/color"

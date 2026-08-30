@@ -1,6 +1,6 @@
 // engine/__tests__/swiss.test.ts
 import { describe, expect, it } from "vitest"
-import type { League } from "../../modules/tournament/types"
+import type { League } from "@/modules/tournament/types"
 import {
   assignHomeAway,
   buildSwissLeague,

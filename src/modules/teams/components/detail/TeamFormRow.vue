@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n"
 import { AppSectionHeader } from "@/components/ui"
-import type { MatchRow } from "../../composables/useTeamMatchHistory"
+import type { MatchRow } from "@/modules/teams/composables/useTeamMatchHistory"
 
 defineProps<{
   form: MatchRow[]

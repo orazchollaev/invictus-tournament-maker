@@ -1,7 +1,7 @@
 // engine/__tests__/drawCeremony.test.ts
 import { describe, expect, it } from "vitest"
-import type { Team } from "../../modules/teams/types"
-import type { Tournament } from "../../modules/tournament/types"
+import type { Team } from "@/modules/teams/types"
+import type { Tournament } from "@/modules/tournament/types"
 import {
   buildPots,
   buildPlayoffPots,

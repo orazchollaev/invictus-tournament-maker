@@ -3,7 +3,7 @@ import { computed } from "vue"
 import { useI18n } from "vue-i18n"
 import { Check, FastForward, History, Pause, Play } from "@lucide/vue"
 import { AppButton, AppIcon, BtnGroup } from "@/components/ui"
-import type { CeremonyPhase, CeremonySpeed } from "../../composables/useDrawCeremony"
+import type { CeremonyPhase, CeremonySpeed } from "@/modules/tournament/composables/useDrawCeremony"
 
 defineProps<{
   phase: CeremonyPhase

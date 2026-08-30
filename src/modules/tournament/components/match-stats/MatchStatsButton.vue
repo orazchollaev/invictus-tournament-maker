@@ -14,7 +14,7 @@ import { ref } from "vue"
 import { useI18n } from "vue-i18n"
 import { ChartColumn } from "@lucide/vue"
 import type { Team } from "@/modules/teams/types"
-import type { MatchResult } from "../../types"
+import type { MatchResult } from "@/modules/tournament/types"
 import MatchStatsModal from "./MatchStatsModal.vue"
 
 withDefaults(

@@ -1,6 +1,6 @@
 // engine/__tests__/simulation.test.ts
 import { afterEach, describe, expect, it } from "vitest"
-import type { Team } from "../../modules/teams/types"
+import type { Team } from "@/modules/teams/types"
 import {
   computeFormAdjustments,
   isFormFactorEnabled,

@@ -3,7 +3,7 @@
 import { useI18n } from "vue-i18n"
 import { Goal, Trophy } from "@lucide/vue"
 import { AppCard, AppIcon } from "@/components/ui"
-import type { Honour } from "../../composables/usePlayerCareer"
+import type { Honour } from "@/modules/players/composables/usePlayerCareer"
 
 defineProps<{ honours: Honour[] }>()
 

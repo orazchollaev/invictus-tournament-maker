@@ -8,7 +8,7 @@ import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
 import MatchStatsModal from "./MatchStatsModal.vue"
 import LiveMatchModal from "./LiveMatchModal.vue"
 import type { Team } from "@/modules/teams/types"
-import type { MatchResult, MatchStats } from "../../types"
+import type { MatchResult, MatchStats } from "@/modules/tournament/types"
 import { MAX_GOALS } from "@/constants"
 import {
   buildLineup,

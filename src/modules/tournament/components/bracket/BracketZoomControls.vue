@@ -2,7 +2,7 @@
 import { useI18n } from "vue-i18n"
 import { Expand, Minus, Plus } from "@lucide/vue"
 import { AppButton, AppIcon } from "@/components/ui"
-import { MAX_ZOOM, MIN_ZOOM } from "../../composables/useBracketViewport"
+import { MAX_ZOOM, MIN_ZOOM } from "@/modules/tournament/composables/useBracketViewport"
 
 defineProps<{ zoom: number }>()
 

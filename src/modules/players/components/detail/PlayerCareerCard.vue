@@ -8,8 +8,8 @@ import { computed } from "vue"
 import { useI18n } from "vue-i18n"
 import { AppCard } from "@/components/ui"
 import PlayerRatingChip from "../PlayerRatingChip.vue"
-import type { CareerTotals } from "../../composables/usePlayerCareer"
-import type { PlayerPosition } from "../../types"
+import type { CareerTotals } from "@/modules/players/composables/usePlayerCareer"
+import type { PlayerPosition } from "@/modules/players/types"
 
 const props = withDefaults(
   defineProps<{

@@ -8,7 +8,7 @@
 import { computed, ref } from "vue"
 import { useI18n } from "vue-i18n"
 import type { Team } from "@/modules/teams/types"
-import type { MatchResult } from "../../types"
+import type { MatchResult } from "@/modules/tournament/types"
 import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
 import MatchScoreModal from "../match-stats/MatchScoreModal.vue"
 import MatchStatsButton from "../match-stats/MatchStatsButton.vue"
