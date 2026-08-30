@@ -7,9 +7,9 @@ import BracketZoomHint from "./BracketZoomHint.vue"
 import { useBracketViewport } from "../../composables/useBracketViewport"
 import { useBracketZoomHint } from "../../composables/useBracketZoomHint"
 
-const zoomHint = useBracketZoomHint()
-
 defineProps<{ title: string }>()
+
+const zoomHint = useBracketZoomHint()
 
 const open = defineModel<boolean>("open", { required: true })
 

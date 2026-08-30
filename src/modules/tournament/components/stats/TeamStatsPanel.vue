@@ -9,12 +9,12 @@ import LeagueProgressChart from "../league/LeagueProgressChart.vue"
 import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
 import { AppCard, AppTable, BtnGroup } from "@/components/ui"
 
-const { t } = useI18n()
-
 const props = defineProps<{
   tournament: Tournament
   teams: Team[]
 }>()
+
+const { t } = useI18n()
 
 const { topScorers, bestDefense, hasStats } = useTournamentStats(
   () => props.tournament,

@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { useHaptic } from "@/composables/useHaptic"
 
-const { tap: hapticTap, warning: hapticWarning } = useHaptic()
-
 const props = withDefaults(
   defineProps<{
     variant?: "filled" | "tonal" | "outlined" | "text" | "danger"
@@ -20,6 +18,8 @@ const props = withDefaults(
     type: "button",
   }
 )
+
+const { tap: hapticTap, warning: hapticWarning } = useHaptic()
 
 /** Every tap gets a tick; destructive buttons get the heavier warning buzz. */
 function onPointerDown() {

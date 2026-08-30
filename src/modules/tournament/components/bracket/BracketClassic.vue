@@ -8,9 +8,6 @@ import { useSettingsStore } from "@/modules/settings/store"
 import { useEngineLabels } from "@/composables/useEngineLabels"
 
 const props = defineProps<{ tournament: Tournament; teams: Team[]; isExporting?: boolean }>()
-const settings = useSettingsStore()
-const { engineLabel } = useEngineLabels()
-const hoveredTeamId = ref<string | null>(null)
 const emit = defineEmits<{
   "set-result": [
     round: number,
@@ -37,7 +34,9 @@ const emit = defineEmits<{
   "clear-third-place-result": []
   "sim-third-place": []
 }>()
-
+const settings = useSettingsStore()
+const { engineLabel } = useEngineLabels()
+const hoveredTeamId = ref<string | null>(null)
 const thirdPlaceMatch = computed(() => props.tournament.thirdPlaceMatch ?? null)
 
 // ── Bracket data ──────────────────────────────────────────────

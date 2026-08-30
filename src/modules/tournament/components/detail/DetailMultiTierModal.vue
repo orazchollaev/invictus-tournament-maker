@@ -6,10 +6,6 @@ import type { Team } from "@/modules/teams/types"
 import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
 import { useI18n } from "vue-i18n"
 
-const { t } = useI18n()
-
-const modal = ref<InstanceType<typeof AppModal> | null>(null)
-
 const props = defineProps<{
   tournament: Tournament
   allTeams: Team[]
@@ -19,6 +15,11 @@ const emit = defineEmits<{
   confirm: []
   close: []
 }>()
+
+const { t } = useI18n()
+
+const modal = ref<InstanceType<typeof AppModal> | null>(null)
+
 </script>
 
 <template>

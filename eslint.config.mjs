@@ -4,8 +4,18 @@ import vueParser from "vue-eslint-parser"
 import unusedImports from "eslint-plugin-unused-imports"
 import prettierConfig from "eslint-config-prettier"
 
+// Two levels up or more means the import has left its own neighbourhood -- at that
+// distance the path stops describing where the file is and starts breaking whenever
+// either end moves. Use the "@/" alias instead.
+const deepRelativeImports = [
+  {
+    group: ["../../*", "../../**"],
+    message: 'Use the "@/" alias instead of a deep relative import.',
+  },
+]
+
 export default tseslint.config(
-  { ignores: ["android/**"] },
+  { ignores: ["android/**", "dist/**"] },
 
   ...vue.configs["flat/recommended"],
 
@@ -71,6 +81,44 @@ export default tseslint.config(
           order: ["script", "template", "style"],
         },
       ],
+
+      "vue/component-name-in-template-casing": ["error", "PascalCase"],
+      "vue/define-macros-order": "error",
+
+      // Promote to "error" once the remaining deep relative imports are converted.
+      "no-restricted-imports": ["warn", { patterns: deepRelativeImports }],
+    },
+  },
+
+  // reka-ui belongs to the design system, not to feature code. Three modules each
+  // building their own Dialog on raw DialogRoot is how close animations, focus traps
+  // and backdrop z-indexes drift apart. Wrap once in components/ui, fix once.
+  // Promote to "error" once the remaining bypasses are wrapped.
+  {
+    files: ["src/**/*.{ts,vue}"],
+    ignores: ["src/components/ui/**"],
+    rules: {
+      "no-restricted-imports": [
+        "warn",
+        {
+          patterns: deepRelativeImports,
+          paths: [
+            {
+              name: "reka-ui",
+              message:
+                'Compose the wrappers in "@/components/ui" instead. If none fits, extend the wrapper rather than rebuilding the primitive here.',
+            },
+          ],
+        },
+      ],
+    },
+  },
+
+  // A component past 400 lines is almost always doing two jobs. Warning, not a gate.
+  {
+    files: ["src/**/*.vue"],
+    rules: {
+      "max-lines": ["warn", { max: 400, skipBlankLines: true, skipComments: true }],
     },
   },
 

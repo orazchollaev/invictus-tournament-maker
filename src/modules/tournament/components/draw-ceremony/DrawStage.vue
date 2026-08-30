@@ -381,7 +381,7 @@ function isBye(label: string) {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   gap: 8px;
-  height: 46vh;
+  height: 40vh;
   overflow-y: auto;
   align-content: start;
 }
@@ -472,7 +472,6 @@ function isBye(label: string) {
   border: 1px solid var(--border-light);
   background: var(--bg);
   border-radius: var(--radius);
-  overflow: hidden;
 }
 .ds-match-label {
   font-size: 10px;

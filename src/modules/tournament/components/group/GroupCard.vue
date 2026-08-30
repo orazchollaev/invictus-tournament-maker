@@ -20,14 +20,14 @@ const props = defineProps<{
   wildcardCount: number
 }>()
 
-const round = defineModel<number>("round", { default: 0 })
-
 const emit = defineEmits<{
   simMatch: [matchIdx: number]
   simGroupWeek: []
   setResult: [matchIdx: number, home: number, away: number]
   clearResult: [matchIdx: number]
 }>()
+
+const round = defineModel<number>("round", { default: 0 })
 
 const { t } = useI18n()
 const { engineLabel } = useEngineLabels()

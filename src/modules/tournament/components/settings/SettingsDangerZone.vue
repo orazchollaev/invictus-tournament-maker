@@ -4,13 +4,12 @@ import { useRouter } from "vue-router"
 import { showConfirm } from "@/composables/useDialog"
 import { useI18n } from "vue-i18n"
 
-const { t } = useI18n()
-const store = useTournamentStore()
-const router = useRouter()
-
 const props = defineProps<{
   tournamentId: string
 }>()
+const { t } = useI18n()
+const store = useTournamentStore()
+const router = useRouter()
 
 async function handleReset() {
   if (

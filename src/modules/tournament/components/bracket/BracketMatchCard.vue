@@ -10,10 +10,6 @@ import { useSettingsStore } from "@/modules/settings/store"
 import MatchScoreModal from "../match-stats/MatchScoreModal.vue"
 import { Pencil } from "@lucide/vue"
 
-const { t } = useI18n()
-const settings = useSettingsStore()
-const lowQuality = computed(() => settings.bracketQuality === "low")
-
 const props = withDefaults(
   defineProps<{
     match: Match
@@ -25,7 +21,6 @@ const props = withDefaults(
   }>(),
   { variant: "match" }
 )
-
 /**
  * Emits carry no round/match indices — the parent owns the bracket coordinates and
  * already has them in scope at the call site. That keeps this card usable for the
@@ -41,6 +36,9 @@ const emit = defineEmits<{
   "sim-leg2": []
   "hover-team": [teamId: string | null]
 }>()
+const { t } = useI18n()
+const settings = useSettingsStore()
+const lowQuality = computed(() => settings.bracketQuality === "low")
 
 const isDouble = computed(() => props.match.leg2Result !== undefined)
 

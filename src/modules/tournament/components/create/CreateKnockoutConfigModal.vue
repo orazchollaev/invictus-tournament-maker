@@ -16,6 +16,24 @@ import {
 
 type DrawType = "random" | "seeded" | "manual"
 
+const props = defineProps<
+  KnockoutConfigPayload & {
+    /** bracket/group formats show draw+thirdPlace+legs; leaguePlayoff shows qualifier count+seeding. */
+    variant: "bracket" | "leaguePlayoff"
+    /** group+knockout: this modal controls the bracket pairing after groups
+     *  finish (cross/no-same-group/random/manual) — group formation itself
+     *  is configured in the Group config modal instead. */
+    isGroupFormat?: boolean
+    selectedCount: number
+    maxPlayoffQualifiers: number
+    /** estimated number of teams/qualifiers that will enter the knockout
+     *  bracket — used only to decide which round rows to show. */
+    bracketTeamCount: number
+  }
+>()
+
+const emit = defineEmits<{ save: [KnockoutConfigPayload]; close: [] }>()
+
 const STAGE_LABEL_KEYS: Record<KnockoutStage, string> = {
   r64: "tournament.settingsPage.legsPerMatch.r64",
   r32: "tournament.settingsPage.legsPerMatch.r32",
@@ -34,23 +52,6 @@ export interface KnockoutConfigPayload {
   leaguePlayoffSeedMode: LeaguePlayoffSeedMode
   groupPlayoffSeedMode: PlayoffSeedMode
 }
-
-const props = defineProps<
-  KnockoutConfigPayload & {
-    /** bracket/group formats show draw+thirdPlace+legs; leaguePlayoff shows qualifier count+seeding. */
-    variant: "bracket" | "leaguePlayoff"
-    /** group+knockout: this modal controls the bracket pairing after groups
-     *  finish (cross/no-same-group/random/manual) — group formation itself
-     *  is configured in the Group config modal instead. */
-    isGroupFormat?: boolean
-    selectedCount: number
-    maxPlayoffQualifiers: number
-    /** estimated number of teams/qualifiers that will enter the knockout
-     *  bracket — used only to decide which round rows to show. */
-    bracketTeamCount: number
-  }
->()
-const emit = defineEmits<{ save: [KnockoutConfigPayload]; close: [] }>()
 
 const { t } = useI18n()
 const { legOptions } = useLegOptions()

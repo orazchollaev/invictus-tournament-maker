@@ -9,8 +9,6 @@ import { useI18n } from "vue-i18n"
 import { useEngineLabels } from "@/composables/useEngineLabels"
 
 const props = defineProps<{ tournament: Tournament; teams: Team[] }>()
-const { t } = useI18n()
-const { engineLabel } = useEngineLabels()
 const emit = defineEmits<{
   "set-result": [
     round: number,
@@ -41,7 +39,8 @@ const emit = defineEmits<{
   "sim-third-place-leg1": []
   "sim-third-place-leg2": []
 }>()
-
+const { t } = useI18n()
+const { engineLabel } = useEngineLabels()
 const roundOptions = computed(() => {
   const opts: { label: string; value: number | "tp" }[] = props.tournament.rounds.map((r, i) => ({
     label: engineLabel(r.name),

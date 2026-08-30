@@ -8,14 +8,13 @@ import { useMonteCarlo } from "@/modules/tournament/composables/useMonteCarlo"
 import { cacheSimResult } from "@/modules/tournament/composables/simulationCache"
 import { useI18n } from "vue-i18n"
 
-const { t } = useI18n()
-const router = useRouter()
-const teamsStore = useTeamsStore()
-
 const props = defineProps<{
   tournamentId: string
   tournament: Tournament
 }>()
+const { t } = useI18n()
+const router = useRouter()
+const teamsStore = useTeamsStore()
 
 const {
   isRunning: simRunning,

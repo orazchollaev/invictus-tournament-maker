@@ -16,9 +16,6 @@ export interface LeagueConfigPayload {
   lossPoints: number
 }
 
-const { t } = useI18n()
-const { multiLegOptions } = useLegOptions()
-
 const props = defineProps<
   LeagueConfigPayload & {
     hasAnyResults: boolean
@@ -28,6 +25,8 @@ const props = defineProps<
   }
 >()
 const emit = defineEmits<{ save: [LeagueConfigPayload]; close: [] }>()
+const { t } = useI18n()
+const { multiLegOptions } = useLegOptions()
 
 const modalRef = ref<InstanceType<typeof AppModal>>()
 const leagueLegMode = ref(props.leagueLegMode)

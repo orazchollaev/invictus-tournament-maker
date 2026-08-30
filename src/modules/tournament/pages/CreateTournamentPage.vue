@@ -548,7 +548,6 @@ function doCreate(orderedIds?: string[]) {
         @update:selected="selected = $event"
       />
 
-      <!-- Format cards -->
       <CreateFormatSelector
         v-model:format="format"
         v-model:playoff-enabled="playoffEnabled"
@@ -557,7 +556,6 @@ function doCreate(orderedIds?: string[]) {
         :selected-count="selected.length"
       />
 
-      <!-- Phase configuration buttons -->
       <div class="form-card ctp-config-buttons">
         <AppConfigButton
           v-if="format === 'group+bracket'"

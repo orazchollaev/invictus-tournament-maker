@@ -17,6 +17,12 @@ import type { Team } from "@/modules/teams/types"
 import { useLeagueProgress, type ProgressMode } from "../../composables/useLeagueProgress"
 import { AppCard } from "@/components/ui"
 
+const props = defineProps<{
+  league: League
+  teams: Team[]
+  title?: string
+}>()
+
 const { t } = useI18n()
 
 Chart.register(
@@ -28,12 +34,6 @@ Chart.register(
   Tooltip,
   Legend
 )
-
-const props = defineProps<{
-  league: League
-  teams: Team[]
-  title?: string
-}>()
 
 const mode = ref<ProgressMode>("position")
 const canvasRef = ref<HTMLCanvasElement | null>(null)

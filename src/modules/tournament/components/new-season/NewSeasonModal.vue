@@ -8,19 +8,17 @@ import NewSeasonTeamList from "./NewSeasonTeamList.vue"
 import type { Tournament } from "@/modules/tournament/types"
 import type { Team } from "@/modules/teams/types"
 
-const MIN_TEAMS = 2
-const CLOSE_MS = 220
-
 const props = defineProps<{
   tournament: Tournament
   allTeams: Team[]
 }>()
-
 const emit = defineEmits<{
   useOldDraw: []
   startDraw: [teamIds: string[]]
   cancel: []
 }>()
+const MIN_TEAMS = 2
+const CLOSE_MS = 220
 
 const { t } = useI18n()
 

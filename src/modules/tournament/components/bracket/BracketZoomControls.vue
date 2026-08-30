@@ -4,10 +4,12 @@ import { Expand, Minus, Plus } from "@lucide/vue"
 import { AppButton, AppIcon } from "@/components/ui"
 import { MAX_ZOOM, MIN_ZOOM } from "../../composables/useBracketViewport"
 
+defineProps<{ zoom: number }>()
+
+defineEmits<{ "zoom-in": []; "zoom-out": []; fit: [] }>()
+
 const { t } = useI18n()
 
-defineProps<{ zoom: number }>()
-defineEmits<{ "zoom-in": []; "zoom-out": []; fit: [] }>()
 </script>
 
 <template>

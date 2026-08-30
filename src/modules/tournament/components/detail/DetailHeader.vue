@@ -3,8 +3,6 @@ import { ArrowLeft, RefreshCw, Settings, Zap } from "@lucide/vue"
 import { AppButton, AppIcon } from "@/components/ui"
 import { useI18n } from "vue-i18n"
 
-const { t } = useI18n()
-
 defineProps<{
   isFinished: boolean
 }>()
@@ -14,6 +12,9 @@ const emit = defineEmits<{
   simulateAll: []
   openSettings: []
 }>()
+
+const { t } = useI18n()
+
 </script>
 
 <template>

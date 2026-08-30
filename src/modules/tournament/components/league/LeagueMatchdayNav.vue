@@ -14,14 +14,15 @@ defineProps<{
   locked?: boolean
 }>()
 
-const { t } = useI18n()
-
 defineEmits<{
   prev: []
   next: []
   select: [idx: number]
   "sim-matchday": []
 }>()
+
+const { t } = useI18n()
+
 </script>
 
 <template>

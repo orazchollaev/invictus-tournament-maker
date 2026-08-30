@@ -14,13 +14,13 @@ const props = defineProps<{
   locked?: boolean
 }>()
 
-const { engineLabel } = useEngineLabels()
-
 const emit = defineEmits<{
   setResult: [matchdayIdx: number, matchIdx: number, home: number, away: number]
   clearResult: [matchdayIdx: number, matchIdx: number]
   simMatch: [matchdayIdx: number, matchIdx: number]
 }>()
+
+const { engineLabel } = useEngineLabels()
 
 /** Open on the first matchday that still has fixtures to play. */
 function firstUnplayedIdx() {

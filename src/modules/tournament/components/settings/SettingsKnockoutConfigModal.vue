@@ -19,6 +19,23 @@ import {
   totalRoundsForSize,
 } from "@/modules/tournament/composables/useKnockoutRoundStages"
 
+const props = defineProps<
+  KnockoutConfigPayload & {
+    /** bracket/group formats show draw+thirdPlace+legs; leaguePlayoff shows the league playoff toggle. */
+    variant: "bracket" | "leaguePlayoff"
+    /** group+knockout: this modal controls the bracket pairing after groups
+     *  finish — group formation itself is configured in the Group modal. */
+    isGroupFormat?: boolean
+    tournamentId: string
+    tournament: Tournament
+    hasAnyResults: boolean
+    teamCount: number
+    leaguePlayoffStarted: boolean
+  }
+>()
+
+const emit = defineEmits<{ save: [KnockoutConfigPayload]; close: []; openManualDraw: [] }>()
+
 const STAGE_LABEL_KEYS: Record<KnockoutStage, string> = {
   r64: "tournament.settingsPage.legsPerMatch.r64",
   r32: "tournament.settingsPage.legsPerMatch.r32",
@@ -42,22 +59,6 @@ export interface KnockoutConfigPayload {
 const { t } = useI18n()
 const store = useTournamentStore()
 const { legOptions } = useLegOptions()
-
-const props = defineProps<
-  KnockoutConfigPayload & {
-    /** bracket/group formats show draw+thirdPlace+legs; leaguePlayoff shows the league playoff toggle. */
-    variant: "bracket" | "leaguePlayoff"
-    /** group+knockout: this modal controls the bracket pairing after groups
-     *  finish — group formation itself is configured in the Group modal. */
-    isGroupFormat?: boolean
-    tournamentId: string
-    tournament: Tournament
-    hasAnyResults: boolean
-    teamCount: number
-    leaguePlayoffStarted: boolean
-  }
->()
-const emit = defineEmits<{ save: [KnockoutConfigPayload]; close: []; openManualDraw: [] }>()
 
 const modalRef = ref<InstanceType<typeof AppModal>>()
 const drawType = ref(props.drawType)

@@ -4,9 +4,9 @@ import type { Team, TeamLike } from "../types"
 import { teamAbbr } from "@/composables/useTeamLookup"
 import { useSettingsStore } from "@/modules/settings/store"
 
-const settings = useSettingsStore()
-
 const props = defineProps<{ team: Team | TeamLike | undefined | null; fallback?: string }>()
+
+const settings = useSettingsStore()
 
 const el = ref<HTMLSpanElement>()
 const showAbbr = ref(false)

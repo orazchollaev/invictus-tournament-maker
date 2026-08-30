@@ -7,8 +7,6 @@ import LeagueMatchdayPanel from "./LeagueMatchdayPanel.vue"
 import LeagueStandingsTable from "./LeagueStandingsTable.vue"
 import { SubTabBar } from "@/components/ui"
 
-const { t } = useI18n()
-
 const props = defineProps<{
   tournament: Tournament
   teams: Team[]
@@ -28,6 +26,8 @@ defineEmits<{
   simMatchday: [matchdayIdx: number]
   simAll: []
 }>()
+
+const { t } = useI18n()
 
 const league = computed(() => props.leagueOverride ?? props.tournament.league!)
 const matchdays = computed(() => league.value.matchdays)

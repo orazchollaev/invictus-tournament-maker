@@ -5,13 +5,13 @@ import type { Team } from "@/modules/teams/types"
 import { useI18n } from "vue-i18n"
 import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
 
-const { t } = useI18n()
-
 defineProps<{
   teams: Team[]
   hasAnyResults: boolean
   showPoints?: boolean
 }>()
+
+const { t } = useI18n()
 
 const teamPointAdjustments = defineModel<Record<string, number>>("teamPointAdjustments", {
   required: true,

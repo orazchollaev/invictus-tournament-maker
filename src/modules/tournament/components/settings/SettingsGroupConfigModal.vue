@@ -21,10 +21,6 @@ export interface GroupConfigPayload {
   lossPoints: number
 }
 
-const { t } = useI18n()
-const store = useTournamentStore()
-const { multiLegOptions } = useLegOptions()
-
 const props = defineProps<
   GroupConfigPayload & {
     tournamentId: string
@@ -34,6 +30,9 @@ const props = defineProps<
   }
 >()
 const emit = defineEmits<{ save: [GroupConfigPayload]; close: []; openManualDraw: [] }>()
+const { t } = useI18n()
+const store = useTournamentStore()
+const { multiLegOptions } = useLegOptions()
 
 const modalRef = ref<InstanceType<typeof AppModal>>()
 const drawType = ref(props.drawType)

@@ -12,8 +12,6 @@ import {
 } from "reka-ui"
 import { X } from "@lucide/vue"
 
-const { t } = useI18n()
-
 withDefaults(
   defineProps<{
     title?: string
@@ -28,6 +26,9 @@ withDefaults(
 )
 
 const emit = defineEmits<{ close: [] }>()
+
+const { t } = useI18n()
+
 const closing = ref(false)
 
 function close() {

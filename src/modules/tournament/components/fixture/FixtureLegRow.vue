@@ -28,13 +28,13 @@ const props = defineProps<{
   aggregateOffset?: { home: number; away: number } | null
 }>()
 
-const { t } = useI18n()
-
 const emit = defineEmits<{
   "set-result": [leg: 1 | 2, home: number, away: number, penHome?: number, penAway?: number]
   "clear-result": [leg: 1 | 2]
   sim: [leg: 1 | 2]
 }>()
+
+const { t } = useI18n()
 
 function getTeam(id: string | null): Team | null {
   if (!id) return null

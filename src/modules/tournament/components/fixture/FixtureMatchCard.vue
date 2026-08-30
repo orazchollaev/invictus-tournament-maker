@@ -9,13 +9,12 @@ import type { FlatMatch } from "./types"
 
 const props = defineProps<{ match: FlatMatch; teams: Team[] }>()
 
-const { t } = useI18n()
 const emit = defineEmits<{
   "set-result": [match: FlatMatch, home: number, away: number, penHome?: number, penAway?: number]
   "clear-result": [match: FlatMatch]
   sim: [match: FlatMatch]
 }>()
-
+const { t } = useI18n()
 function getTeam(id: string | null): Team | null {
   if (!id) return null
   return props.teams.find((t) => t.id === id) ?? null

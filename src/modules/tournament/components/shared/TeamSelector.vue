@@ -6,9 +6,6 @@ import type { Team } from "@/modules/teams/types"
 import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
 import { AppButton, AppChip, AppIcon, AppSearchInput } from "@/components/ui"
 
-/** A tournament needs at least this many teams to be drawable. */
-const MIN_TEAMS = 2
-
 const props = withDefaults(
   defineProps<{
     teams: Team[]
@@ -22,6 +19,10 @@ const props = withDefaults(
 )
 
 const emit = defineEmits<{ "update:selected": [ids: string[]] }>()
+
+/** A tournament needs at least this many teams to be drawable. */
+const MIN_TEAMS = 2
+
 const { t } = useI18n()
 
 const searchQuery = ref("")

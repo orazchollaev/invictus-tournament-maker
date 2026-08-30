@@ -2,10 +2,11 @@
 import { useI18n } from "vue-i18n"
 import { ref, watch } from "vue"
 
-const { t } = useI18n()
-
 const props = defineProps<{ modelValue: string }>()
+
 const emit = defineEmits<{ "update:modelValue": [string] }>()
+
+const { t } = useI18n()
 
 const nativeInput = ref<HTMLInputElement | null>(null)
 
