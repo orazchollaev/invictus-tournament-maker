@@ -8,13 +8,15 @@ import { useI18n } from "vue-i18n"
 import { Swiper, SwiperSlide } from "swiper/vue"
 import "swiper/css"
 import { AppChip, AppEmptyState, AppIcon, AppTab, AppTabs } from "@/components/ui"
-import ChampionsTab from "../components/ChampionsTab.vue"
-import AllFinalsTab from "../components/AllFinalsTab.vue"
-import LeagueSeasonsTab from "../components/LeagueSeasonsTab.vue"
-import LeagueAllTimeTab from "../components/LeagueAllTimeTab.vue"
-import StatisticsTab from "../components/StatisticsTab.vue"
-import TeamStatsTab from "../components/TeamStatsTab.vue"
-import PlayersTab from "../components/PlayersTab.vue"
+import {
+  ChampionsTab,
+  AllFinalsTab,
+  LeagueSeasonsTab,
+  LeagueAllTimeTab,
+  StatisticsTab,
+  TeamStatsTab,
+  PlayersTab,
+} from "@/modules/history/components"
 import { useTournamentHistoryStats } from "../composables/useTournamentHistoryStats"
 import { useHistoryPlayerStats } from "../composables/useHistoryPlayerStats"
 import { useHistoryTabs, type HistoryTab } from "../composables/useHistoryTabs"

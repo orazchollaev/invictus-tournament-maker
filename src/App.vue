@@ -2,10 +2,8 @@
 import { onMounted, onUnmounted, ref, watch } from "vue"
 import { useRouter } from "vue-router"
 import { App } from "@capacitor/app"
-import AppHeader from "@/components/layout/AppHeader.vue"
-import AppMobileBottomNav from "@/components/layout/AppMobileBottomNav.vue"
-import AppDialog from "@/components/ui/AppDialog.vue"
-import ErrorBoundary from "@/components/layout/ErrorBoundary.vue"
+import { AppHeader, AppMobileBottomNav, ErrorBoundary } from "@/components/layout"
+import { AppDialog } from "@/components/ui"
 import { useSettingsStore } from "@/modules/settings/store"
 import { useStatusBar } from "@/composables/useStatusBar"
 

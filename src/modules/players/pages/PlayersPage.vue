@@ -3,9 +3,7 @@ import { ref, computed } from "vue"
 import { usePlayersStore } from "../store"
 import { useTeamsStore } from "@/modules/teams/store"
 import { useSettingsStore } from "@/modules/settings/store"
-import PlayerFormModal from "../components/PlayerFormModal.vue"
-import PlayerAvatar from "../components/PlayerAvatar.vue"
-import PlayersFilterMenu from "../components/PlayersFilterMenu.vue"
+import { PlayerFormModal, PlayerAvatar, PlayersFilterMenu } from "@/modules/players/components"
 import type { Player } from "../types"
 import {
   AppButton,

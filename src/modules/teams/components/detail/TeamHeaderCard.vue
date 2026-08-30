@@ -3,7 +3,7 @@ import { ref, watch } from "vue"
 import { ArrowLeft } from "@lucide/vue"
 import { useI18n } from "vue-i18n"
 import { AppButton, AppCard, AppIcon } from "@/components/ui"
-import FlagCircle from "../FlagCircle.vue"
+import { FlagCircle } from "@/modules/teams/components"
 import type { Team } from "@/modules/teams/types"
 
 const props = defineProps<{ team: Team }>()

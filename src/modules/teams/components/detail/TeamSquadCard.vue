@@ -6,8 +6,7 @@ import { useI18n } from "vue-i18n"
 import { AppButton, AppChip, AppIcon, AppSectionHeader } from "@/components/ui"
 import { Pencil, Plus, X } from "@lucide/vue"
 import { usePlayersStore } from "@/modules/players/store"
-import PlayerAvatar from "@/modules/players/components/PlayerAvatar.vue"
-import PlayerFormModal from "@/modules/players/components/PlayerFormModal.vue"
+import { PlayerAvatar, PlayerFormModal } from "@/modules/players/components"
 import type { Player } from "@/modules/players/types"
 
 const props = defineProps<{ teamId: string; teamColor: string }>()

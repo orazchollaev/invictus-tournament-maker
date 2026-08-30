@@ -5,7 +5,10 @@ import { showAlert, showConfirm } from "@/composables/useDialog"
 import { useI18n } from "vue-i18n"
 import { Capacitor } from "@capacitor/core"
 import { idbStorage } from "@/lib/idbStorage"
-import { clearAllTournaments, replaceAllTournaments } from "@/modules/tournament/services/persistence"
+import {
+  clearAllTournaments,
+  replaceAllTournaments,
+} from "@/modules/tournament/services/persistence"
 import type { Tournament } from "@/modules/tournament/types"
 import { APP_VERSION } from "@/constants"
 
@@ -103,7 +106,8 @@ export function useDataManagement() {
     // those records directly, or the previous dataset's tournaments survive
     // in the index and come back after reload.
     await replaceAllTournaments((dataset.tournaments as Tournament[] | undefined) ?? [])
-    if (!dataset.tournaments) await idbStorage.setItem("tournament", JSON.stringify({ active: null }))
+    if (!dataset.tournaments)
+      await idbStorage.setItem("tournament", JSON.stringify({ active: null }))
     // A dataset either ships its own squads or has none. Either way the
     // previous dataset's players go — leaving them behind would orphan
     // entries pointing at team ids that no longer exist.
@@ -226,13 +230,13 @@ export function useDataManagement() {
           // shape — importing it the same way loadDataset() writes a fresh
           // dataset in, or the previous data's tournaments survive in the
           // index and come back alongside the imported ones.
-          const tournamentKey = Object.keys(parsed).find(
-            (k) => IMPORT_KEY_MAP[k] === "tournament"
-          )
+          const tournamentKey = Object.keys(parsed).find((k) => IMPORT_KEY_MAP[k] === "tournament")
           if (tournamentKey) {
             const imported = parsed[tournamentKey] ?? {}
             writes.push(replaceAllTournaments((imported.tournaments as Tournament[]) ?? []))
-            writes.push(idbStorage.setItem("tournament", JSON.stringify({ active: imported.active })))
+            writes.push(
+              idbStorage.setItem("tournament", JSON.stringify({ active: imported.active }))
+            )
           }
           if (!writes.length) throw new Error()
           // A backup with no players section still replaces the team roster —

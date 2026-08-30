@@ -17,7 +17,7 @@ import {
   AppTab,
   AppTabs,
 } from "@/components/ui"
-import SeasonChart from "../components/SeasonChart.vue"
+import { SeasonChart } from "@/modules/teams/components"
 import {
   TeamFormRow,
   TeamHeaderCard,

@@ -5,8 +5,8 @@ import type { Tournament, League } from "@/modules/tournament/types"
 import type { Team } from "@/modules/teams/types"
 import { useTournamentStats } from "@/modules/tournament/composables/useTournamentStats"
 import { isLeagueLike } from "@/engine"
-import LeagueProgressChart from "../league/LeagueProgressChart.vue"
-import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
+import { LeagueProgressChart } from "@/modules/tournament/components/league"
+import { TeamBadge } from "@/modules/teams/components"
 import { AppCard, AppTable, BtnGroup } from "@/components/ui"
 
 const props = defineProps<{

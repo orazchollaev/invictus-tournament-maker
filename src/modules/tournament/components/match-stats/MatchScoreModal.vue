@@ -4,7 +4,7 @@ import { DialogRoot, DialogPortal, DialogOverlay, DialogContent, DialogTitle } f
 import { useI18n } from "vue-i18n"
 import { ChartColumn, PlayCircle, Shuffle, Trash2, X } from "@lucide/vue"
 import { AppNumberInput } from "@/components/ui"
-import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
+import { TeamBadge } from "@/modules/teams/components"
 import MatchStatsModal from "./MatchStatsModal.vue"
 import LiveMatchModal from "./LiveMatchModal.vue"
 import type { Team } from "@/modules/teams/types"

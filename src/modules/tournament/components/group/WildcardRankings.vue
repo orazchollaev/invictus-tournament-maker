@@ -2,7 +2,7 @@
 import { computed } from "vue"
 import type { Team } from "@/modules/teams/types"
 import type { Tournament } from "@/modules/tournament/types"
-import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
+import { TeamBadge } from "@/modules/teams/components"
 import { AppCard, AppTable } from "@/components/ui"
 import { useTeamLookup } from "@/composables/useTeamLookup"
 import { useI18n } from "vue-i18n"

@@ -10,7 +10,7 @@ import { DialogRoot, DialogPortal, DialogOverlay, DialogContent, DialogTitle } f
 import { useI18n } from "vue-i18n"
 import { Pause, Play, SkipForward, X } from "@lucide/vue"
 import { BtnGroup } from "@/components/ui"
-import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
+import { TeamBadge } from "@/modules/teams/components"
 import MatchTimeline from "./MatchTimeline.vue"
 import MatchShootout from "./MatchShootout.vue"
 import { formatMinute } from "./matchTime"

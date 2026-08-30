@@ -2,9 +2,8 @@
 import { ref } from "vue"
 import { useI18n } from "vue-i18n"
 import type { Team } from "@/modules/teams/types"
-import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
-import MatchScoreModal from "../match-stats/MatchScoreModal.vue"
-import MatchStatsButton from "../match-stats/MatchStatsButton.vue"
+import { TeamBadge } from "@/modules/teams/components"
+import { MatchScoreModal, MatchStatsButton } from "@/modules/tournament/components/match-stats"
 import type { FlatMatch } from "./types"
 
 const props = defineProps<{ match: FlatMatch; teams: Team[] }>()

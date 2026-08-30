@@ -5,8 +5,8 @@ import { useTeamsStore } from "@/modules/teams/store"
 import { useTournamentStore } from "@/modules/tournament/store"
 import { useSettingsStore } from "@/modules/settings/store"
 import type { Tournament } from "../types"
-import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
-import TournamentsFilterMenu from "../components/TournamentsFilterMenu.vue"
+import { TeamBadge } from "@/modules/teams/components"
+import { TournamentsFilterMenu } from "@/modules/tournament/components"
 import {
   AppButton,
   AppCard,

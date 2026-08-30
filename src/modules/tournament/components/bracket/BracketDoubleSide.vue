@@ -2,7 +2,7 @@
 import { computed, ref } from "vue"
 import type { Tournament } from "@/modules/tournament/types"
 import type { Team } from "@/modules/teams/types"
-import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
+import { TeamBadge } from "@/modules/teams/components"
 import BracketMatchCard from "./BracketMatchCard.vue"
 import { getWinnerId } from "@/engine"
 import { type DisplayMatch, type ConnInfo, buildConnInfo, teamColor } from "./bracketUtils"

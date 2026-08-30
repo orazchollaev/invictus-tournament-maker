@@ -1,15 +1,6 @@
-import LeagueMatchRow from "./LeagueMatchRow.vue"
-import LeagueMatchdayNav from "./LeagueMatchdayNav.vue"
-import LeagueMatchdayPanel from "./LeagueMatchdayPanel.vue"
-import LeagueStandingsTable from "./LeagueStandingsTable.vue"
-import LeagueView from "./LeagueView.vue"
-import LeagueProgressChart from "./LeagueProgressChart.vue"
-
-export {
-  LeagueMatchRow,
-  LeagueMatchdayNav,
-  LeagueMatchdayPanel,
-  LeagueStandingsTable,
-  LeagueView,
-  LeagueProgressChart,
-}
+export { default as LeagueMatchRow } from "./LeagueMatchRow.vue"
+export { default as LeagueMatchdayNav } from "./LeagueMatchdayNav.vue"
+export { default as LeagueMatchdayPanel } from "./LeagueMatchdayPanel.vue"
+export { default as LeagueProgressChart } from "./LeagueProgressChart.vue"
+export { default as LeagueStandingsTable } from "./LeagueStandingsTable.vue"
+export { default as LeagueView } from "./LeagueView.vue"

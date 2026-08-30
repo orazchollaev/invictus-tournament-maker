@@ -1,49 +1,23 @@
-import AppButton from "./AppButton.vue"
-import AppCard from "./AppCard.vue"
-import AppConfigButton from "./AppConfigButton.vue"
-import AppChip from "./AppChip.vue"
-import AppDialog from "./AppDialog.vue"
-import AppEmptyState from "./AppEmptyState.vue"
-import AppField from "./AppField.vue"
-import AppIcon from "./AppIcon.vue"
-import AppModal from "./AppModal.vue"
-import AppNumberInput from "./AppNumberInput.vue"
-import AppSearchInput from "./AppSearchInput.vue"
-import AppSelect from "./AppSelect.vue"
-import AppStatBar from "./AppStatBar.vue"
-import AppSectionHeader from "./AppSectionHeader.vue"
-import AppStepper from "./AppStepper.vue"
-import AppTab from "./AppTab.vue"
-import AppTable from "./AppTable.vue"
-import AppTabs from "./AppTabs.vue"
-import BtnGroup from "./BtnGroup.vue"
-import ColorPicker from "./ColorPicker.vue"
-import SortFilterMenu from "./SortFilterMenu.vue"
-import SubTabBar from "./SubTabBar.vue"
-import ToggleSwitch from "./ToggleSwitch.vue"
-
-export {
-  AppButton,
-  AppCard,
-  AppConfigButton,
-  AppChip,
-  AppDialog,
-  AppEmptyState,
-  AppField,
-  AppIcon,
-  AppModal,
-  AppNumberInput,
-  AppSearchInput,
-  AppSelect,
-  AppSectionHeader,
-  AppStatBar,
-  AppStepper,
-  AppTab,
-  AppTable,
-  AppTabs,
-  BtnGroup,
-  ColorPicker,
-  SortFilterMenu,
-  SubTabBar,
-  ToggleSwitch,
-}
+export { default as AppButton } from "./AppButton.vue"
+export { default as AppCard } from "./AppCard.vue"
+export { default as AppChip } from "./AppChip.vue"
+export { default as AppConfigButton } from "./AppConfigButton.vue"
+export { default as AppDialog } from "./AppDialog.vue"
+export { default as AppEmptyState } from "./AppEmptyState.vue"
+export { default as AppField } from "./AppField.vue"
+export { default as AppIcon } from "./AppIcon.vue"
+export { default as AppModal } from "./AppModal.vue"
+export { default as AppNumberInput } from "./AppNumberInput.vue"
+export { default as AppSearchInput } from "./AppSearchInput.vue"
+export { default as AppSectionHeader } from "./AppSectionHeader.vue"
+export { default as AppSelect } from "./AppSelect.vue"
+export { default as AppStatBar } from "./AppStatBar.vue"
+export { default as AppStepper } from "./AppStepper.vue"
+export { default as AppTab } from "./AppTab.vue"
+export { default as AppTable } from "./AppTable.vue"
+export { default as AppTabs } from "./AppTabs.vue"
+export { default as BtnGroup } from "./BtnGroup.vue"
+export { default as ColorPicker } from "./ColorPicker.vue"
+export { default as SortFilterMenu } from "./SortFilterMenu.vue"
+export { default as SubTabBar } from "./SubTabBar.vue"
+export { default as ToggleSwitch } from "./ToggleSwitch.vue"

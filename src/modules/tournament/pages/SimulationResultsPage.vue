@@ -4,7 +4,7 @@ import { useRoute, useRouter } from "vue-router"
 import { useI18n } from "vue-i18n"
 
 import { ArrowLeft, Download, BarChart2, Trophy, Medal, Users } from "@lucide/vue"
-import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
+import { TeamBadge } from "@/modules/teams/components"
 import { AppButton, AppEmptyState } from "@/components/ui"
 
 import { useTournamentStore } from "@/modules/tournament/store"

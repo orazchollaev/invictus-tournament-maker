@@ -6,7 +6,7 @@ import type { Team } from "@/modules/teams/types"
 import type { CeremonyKind, DrawStep } from "@/engine"
 import type { CeremonySpeed } from "@/modules/tournament/composables/useDrawCeremony"
 import { useTeamLookup } from "@/composables/useTeamLookup"
-import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
+import { TeamBadge } from "@/modules/teams/components"
 
 const props = defineProps<{
   revealed: DrawStep[]

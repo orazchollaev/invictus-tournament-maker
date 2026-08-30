@@ -5,7 +5,7 @@ import { useTournamentStore } from "@/modules/tournament/store"
 import { useSettingsStore } from "@/modules/settings/store"
 import { useI18n } from "vue-i18n"
 import { AppCard, AppChip, AppEmptyState, AppSearchInput } from "@/components/ui"
-import HistoryFilterMenu from "../components/HistoryFilterMenu.vue"
+import { HistoryFilterMenu } from "@/modules/history/components"
 
 const { t } = useI18n()
 const router = useRouter()

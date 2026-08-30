@@ -5,7 +5,7 @@ import { Languages } from "@lucide/vue"
 import { LOCALES } from "@/i18n"
 import { AppButton, AppCard, AppField, AppIcon } from "@/components/ui"
 import SettingDesc from "./SettingDesc.vue"
-import FlagCircle from "@/modules/teams/components/FlagCircle.vue"
+import { FlagCircle } from "@/modules/teams/components"
 
 const { t } = useI18n()
 const settings = useSettingsStore()

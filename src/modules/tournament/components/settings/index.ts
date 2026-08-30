@@ -1,17 +1,8 @@
-import SettingsDangerZone from "./SettingsDangerZone.vue"
-import SettingsGroupConfigModal from "./SettingsGroupConfigModal.vue"
-import SettingsKnockoutConfigModal from "./SettingsKnockoutConfigModal.vue"
-import SettingsLeagueConfigModal from "./SettingsLeagueConfigModal.vue"
-import SettingsSimulation from "./SettingsSimulation.vue"
-import SettingsSwissConfigModal from "./SettingsSwissConfigModal.vue"
-import SettingsTeamAdjustments from "./SettingsTeamAdjustments.vue"
-
-export {
-  SettingsDangerZone,
-  SettingsGroupConfigModal,
-  SettingsKnockoutConfigModal,
-  SettingsLeagueConfigModal,
-  SettingsSimulation,
-  SettingsSwissConfigModal,
-  SettingsTeamAdjustments,
-}
+export { default as SettingsDangerZone } from "./SettingsDangerZone.vue"
+export { default as SettingsGroupConfigModal } from "./SettingsGroupConfigModal.vue"
+export { default as SettingsKnockoutConfigModal } from "./SettingsKnockoutConfigModal.vue"
+export { default as SettingsLeagueConfigModal } from "./SettingsLeagueConfigModal.vue"
+export { default as SettingsSimulation } from "./SettingsSimulation.vue"
+export { default as SettingsSwissConfigModal } from "./SettingsSwissConfigModal.vue"
+export { default as SettingsTeamAdjustments } from "./SettingsTeamAdjustments.vue"
+export { default as TspLockedCard } from "./TspLockedCard.vue"

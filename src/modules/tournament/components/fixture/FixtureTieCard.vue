@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Team } from "@/modules/teams/types"
 import { getWinnerId } from "@/engine"
-import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
+import { TeamBadge } from "@/modules/teams/components"
 import FixtureLegRow from "./FixtureLegRow.vue"
 import type { FlatMatch } from "./types"
 

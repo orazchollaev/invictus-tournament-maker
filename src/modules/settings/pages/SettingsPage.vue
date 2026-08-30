@@ -4,18 +4,20 @@ import { APP_VERSION } from "@/constants"
 import { Palette, LayoutGrid, Trophy, Dices, Database, Menu, ChevronDown } from "@lucide/vue"
 import type { Component } from "vue"
 import { useI18n } from "vue-i18n"
-import SettingsAboutModal from "../components/SettingsAboutModal.vue"
-import SettingsSectionLanguage from "../components/SettingsSectionLanguage.vue"
-import SettingsSectionAppearance from "../components/SettingsSectionAppearance.vue"
-import SettingsSectionTableRules from "../components/SettingsSectionTableRules.vue"
-import SettingsSectionMatchDefaults from "../components/SettingsSectionMatchDefaults.vue"
-import SettingsSectionNewTournament from "../components/SettingsSectionNewTournament.vue"
-import SettingsSectionGraphics from "../components/SettingsSectionGraphics.vue"
-import SettingsSectionDisplay from "../components/SettingsSectionDisplay.vue"
-import SettingsSectionEffects from "../components/SettingsSectionEffects.vue"
-import SettingsSectionSimulation from "../components/SettingsSectionSimulation.vue"
-import SettingsSectionSampleData from "../components/SettingsSectionSampleData.vue"
-import SettingsSectionDataManagement from "../components/SettingsSectionDataManagement.vue"
+import {
+  SettingsAboutModal,
+  SettingsSectionLanguage,
+  SettingsSectionAppearance,
+  SettingsSectionTableRules,
+  SettingsSectionMatchDefaults,
+  SettingsSectionNewTournament,
+  SettingsSectionGraphics,
+  SettingsSectionDisplay,
+  SettingsSectionEffects,
+  SettingsSectionSimulation,
+  SettingsSectionSampleData,
+  SettingsSectionDataManagement,
+} from "@/modules/settings/components"
 
 const { t } = useI18n()
 

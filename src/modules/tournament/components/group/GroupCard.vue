@@ -3,14 +3,13 @@ import { computed, ref } from "vue"
 import type { Team } from "@/modules/teams/types"
 import type { Group, GroupMatch } from "@/modules/tournament/types"
 import { useTeamLookup } from "@/composables/useTeamLookup"
-import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
+import { TeamBadge } from "@/modules/teams/components"
 import { AppCard, AppTable } from "@/components/ui"
 import { Shuffle } from "@lucide/vue"
 import { useI18n } from "vue-i18n"
 import { GROUP_COLUMNS, formatGoalDiff } from "../shared/standingsColumns"
 import { useEngineLabels } from "@/composables/useEngineLabels"
-import MatchScoreModal from "../match-stats/MatchScoreModal.vue"
-import MatchStatsButton from "../match-stats/MatchStatsButton.vue"
+import { MatchScoreModal, MatchStatsButton } from "@/modules/tournament/components/match-stats"
 
 const props = defineProps<{
   group: Group

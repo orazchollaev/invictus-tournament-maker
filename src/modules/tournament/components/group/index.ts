@@ -1,8 +1,6 @@
-import GroupCard from "./GroupCard.vue"
-import GroupSimToolbar from "./GroupSimToolbar.vue"
-import GroupLegend from "./GroupLegend.vue"
-import GroupStage from "./GroupStage.vue"
-import GroupDraw from "./GroupDraw.vue"
-import WildcardRankings from "./WildcardRankings.vue"
-
-export { GroupCard, GroupSimToolbar, GroupLegend, GroupStage, GroupDraw, WildcardRankings }
+export { default as GroupCard } from "./GroupCard.vue"
+export { default as GroupDraw } from "./GroupDraw.vue"
+export { default as GroupLegend } from "./GroupLegend.vue"
+export { default as GroupSimToolbar } from "./GroupSimToolbar.vue"
+export { default as GroupStage } from "./GroupStage.vue"
+export { default as WildcardRankings } from "./WildcardRankings.vue"

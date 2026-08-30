@@ -9,7 +9,7 @@ import { AppStepper, BtnGroup, ToggleSwitch } from "@/components/ui"
 import type { DrawType, LegMode, Tiebreaker } from "@/modules/tournament/types"
 import { legModeToCount, validateSwissConfig } from "@/engine"
 import { useLegOptions } from "@/modules/tournament/composables/useLegOptions"
-import TspLockedCard from "../settings/TspLockedCard.vue"
+import { TspLockedCard } from "@/modules/tournament/components/settings"
 
 const props = withDefaults(defineProps<{ teamCount: number; locked?: boolean }>(), {
   locked: false,

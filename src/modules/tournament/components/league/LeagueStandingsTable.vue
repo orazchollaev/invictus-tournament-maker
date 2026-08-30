@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { GroupStanding } from "@/modules/tournament/types"
 import type { Team } from "@/modules/teams/types"
-import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
+import { TeamBadge } from "@/modules/teams/components"
 import { AppSectionHeader, AppTable } from "@/components/ui"
 import { useI18n } from "vue-i18n"
 import { LEAGUE_COLUMNS, formatGoalDiff } from "../shared/standingsColumns"

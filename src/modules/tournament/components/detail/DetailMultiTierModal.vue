@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref } from "vue"
-import AppModal from "@/components/ui/AppModal.vue"
+import { AppModal } from "@/components/ui"
 import type { Tournament } from "@/modules/tournament/types"
 import type { Team } from "@/modules/teams/types"
-import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
+import { TeamBadge } from "@/modules/teams/components"
 import { useI18n } from "vue-i18n"
 
 const props = defineProps<{
@@ -19,7 +19,6 @@ const emit = defineEmits<{
 const { t } = useI18n()
 
 const modal = ref<InstanceType<typeof AppModal> | null>(null)
-
 </script>
 
 <template>

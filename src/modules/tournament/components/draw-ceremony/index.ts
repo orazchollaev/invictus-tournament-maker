@@ -1,7 +1,5 @@
-import DrawCeremony from "./DrawCeremony.vue"
-import DrawCeremonyFooter from "./DrawCeremonyFooter.vue"
-import DrawStage from "./DrawStage.vue"
-import DrawTeamPanel from "./DrawTeamPanel.vue"
-import PotEditor from "./PotEditor.vue"
-
-export { DrawCeremony, DrawCeremonyFooter, DrawStage, DrawTeamPanel, PotEditor }
+export { default as DrawCeremony } from "./DrawCeremony.vue"
+export { default as DrawCeremonyFooter } from "./DrawCeremonyFooter.vue"
+export { default as DrawStage } from "./DrawStage.vue"
+export { default as DrawTeamPanel } from "./DrawTeamPanel.vue"
+export { default as PotEditor } from "./PotEditor.vue"

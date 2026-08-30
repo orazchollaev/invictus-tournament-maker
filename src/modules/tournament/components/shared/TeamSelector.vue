@@ -3,7 +3,7 @@ import { computed, ref } from "vue"
 import { useI18n } from "vue-i18n"
 import { ArrowDown, ArrowUp, Check } from "@lucide/vue"
 import type { Team } from "@/modules/teams/types"
-import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
+import { TeamBadge } from "@/modules/teams/components"
 import { AppButton, AppChip, AppIcon, AppSearchInput } from "@/components/ui"
 
 const props = withDefaults(

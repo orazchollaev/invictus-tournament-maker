@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { X } from "@lucide/vue"
-import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
+import { TeamBadge } from "@/modules/teams/components"
 import type { DrawItem } from "./types"
 
 withDefaults(

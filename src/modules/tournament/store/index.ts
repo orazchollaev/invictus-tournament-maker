@@ -7,7 +7,12 @@
 import { defineStore } from "pinia"
 import { ref, watch, nextTick } from "vue"
 import type { Tournament, Tiebreaker, LegMode } from "../types"
-import { loadTournaments, saveTournament, deleteTournamentRecord, saveIndex } from "../services/persistence"
+import {
+  loadTournaments,
+  saveTournament,
+  deleteTournamentRecord,
+  saveIndex,
+} from "../services/persistence"
 import {
   createMultiTierLeague,
   getLeaguePlayoffData,
@@ -132,182 +137,182 @@ export const useTournamentStore = defineStore(
 
     const withTournament = makeWithTournament(tournaments)
 
-  /**
-   * Fill in match events for anything just played. Results are committed
-   * from a dozen actions across every slice, so rather than teach each one
-   * about players, every action is wrapped and the tournament it touched is
-   * swept afterwards. The sweep skips matches that already have stats, so
-   * the repeat cost is one pass over the match list.
-   *
-   * The claim step (reusing a report already rolled in the live window) is
-   * cheap and stays on the main thread.
-   *
-   * Generating a report from scratch measures under a millisecond even for
-   * a full squad — a single save's worth of that is cheaper than a worker
-   * round trip (structured clone + postMessage + scheduling), so it runs
-   * right here. A worker only pays for itself once a sweep turns up a
-   * batch worth off-thread — "Simulate All" filling in a whole bracket's
-   * worth of reports at once, say — which is the case this threshold
-   * routes there instead.
-   */
-  const WORKER_WORTHWHILE_JOBS = 8
+    /**
+     * Fill in match events for anything just played. Results are committed
+     * from a dozen actions across every slice, so rather than teach each one
+     * about players, every action is wrapped and the tournament it touched is
+     * swept afterwards. The sweep skips matches that already have stats, so
+     * the repeat cost is one pass over the match list.
+     *
+     * The claim step (reusing a report already rolled in the live window) is
+     * cheap and stays on the main thread.
+     *
+     * Generating a report from scratch measures under a millisecond even for
+     * a full squad — a single save's worth of that is cheaper than a worker
+     * round trip (structured clone + postMessage + scheduling), so it runs
+     * right here. A worker only pays for itself once a sweep turns up a
+     * batch worth off-thread — "Simulate All" filling in a whole bracket's
+     * worth of reports at once, say — which is the case this threshold
+     * routes there instead.
+     */
+    const WORKER_WORTHWHILE_JOBS = 8
 
-  function ensureStatsFor(tournamentId: string) {
-    const t = tournaments.value.find((x) => x.id === tournamentId)
-    if (!t) return
-    claimWatchedStats(t)
-    const jobs = pendingStatsJobs(t)
-    if (!jobs.length) return
+    function ensureStatsFor(tournamentId: string) {
+      const t = tournaments.value.find((x) => x.id === tournamentId)
+      if (!t) return
+      claimWatchedStats(t)
+      const jobs = pendingStatsJobs(t)
+      if (!jobs.length) return
 
-    const teams = getTeams()
-    const players = usePlayersStore().players
+      const teams = getTeams()
+      const players = usePlayersStore().players
 
-    if (jobs.length < WORKER_WORTHWHILE_JOBS) {
-      applyStatsResults(
-        t,
-        jobs.map((job) => computeStatsForJob(job, teams, players))
-      )
-      return
-    }
-
-    generateStatsInWorker(jobs, teams, players).then((results) => {
-      const target = tournaments.value.find((x) => x.id === tournamentId)
-      if (target) applyStatsResults(target, results)
-    })
-  }
-
-  type ActionSlice = Record<string, (...args: never[]) => unknown>
-
-  /**
-   * Every slice action takes the tournament id first, so the wrapper knows
-   * what to sweep. Actions that take something else first (crud.create takes
-   * a name) simply find no tournament and sweep nothing — which is correct,
-   * since a tournament being created has no results yet.
-   */
-  function withStats<T extends ActionSlice>(slice: T): T {
-    const wrapped: ActionSlice = {}
-    for (const [name, action] of Object.entries(slice)) {
-      wrapped[name] = (...args: never[]) => {
-        const out = action(...args)
-        if (typeof args[0] === "string") ensureStatsFor(args[0])
-        return out
-      }
-    }
-    return wrapped as T
-  }
-
-  const thirdPlace = useThirdPlaceActions(tournaments, getTeams)
-  const crud = useCrudActions(tournaments, active, getTeams)
-  const bracket = useBracketActions(tournaments, getTeams, thirdPlace.simulateThirdPlace)
-  const groups = useGroupActions(tournaments, getTeams)
-  const draw = useDrawActions(tournaments, getTeams)
-  const leagueActions = useLeagueActions(tournaments, getTeams)
-  const leaguePlayoff = useLeaguePlayoffActions(tournaments, getTeams)
-  const scoring = useScoringActions(tournaments)
-
-  if (import.meta.env.DEV) {
-    assertNoSliceCollisions({
-      crud,
-      bracket,
-      thirdPlace,
-      groups,
-      draw,
-      leagueActions,
-      leaguePlayoff,
-      scoring,
-    })
-  }
-
-  function createMultiTierLeagueTournament(
-    name: string,
-    tierDefs: Array<{ name: string; teamIds: string[] }>,
-    legMode: LegMode = "single",
-    promotionCount = 1,
-    tiebreaker?: Tiebreaker,
-    winPoints?: number,
-    drawPoints?: number,
-    lossPoints?: number
-  ): string {
-    const allTeams = useTeamsStore().teams
-    const season =
-      tournaments.value
-        .filter((t) => t.name === name)
-        .reduce((max, t) => Math.max(max, t.season), 0) + 1
-    const resolvedTiers = tierDefs.map((td) => ({
-      name: td.name,
-      teams: allTeams.filter((t) => td.teamIds.includes(t.id)),
-    }))
-    const newT = createMultiTierLeague(name, resolvedTiers, season, legMode, promotionCount)
-    if (tiebreaker) newT.tiebreaker = tiebreaker
-    if (winPoints !== undefined) newT.winPoints = winPoints
-    if (drawPoints !== undefined) newT.drawPoints = drawPoints
-    if (lossPoints !== undefined) newT.lossPoints = lossPoints
-    tournaments.value.push(newT)
-    active.value = newT.id
-    return newT.id
-  }
-
-  /** One "Simulate All" plays out the whole structure, whatever it is. */
-  function simulateTournament(tournamentId: string) {
-    withTournament(tournamentId, (t) => {
-      if (isLeagueLike(t)) {
-        if (t.tiers?.length) {
-          leagueActions.simAllTiers(tournamentId)
-        } else {
-          leagueActions.simAllLeague(tournamentId)
-        }
-        // Auto-seed the playoff bracket once the season is done (like
-        // group -> bracket), then play it out.
-        const data = getLeaguePlayoffData(t)
-        if (data?.enabled && !data.started && canStartLeaguePlayoff(t)) {
-          seedLeaguePlayoffBracket(t, getTeams(), data.seedMode)
-        }
-        if (t.rounds.length && getLeaguePlayoffData(t)?.started) {
-          bracket.simulateAll(tournamentId)
-        }
+      if (jobs.length < WORKER_WORTHWHILE_JOBS) {
+        applyStatsResults(
+          t,
+          jobs.map((job) => computeStatsForJob(job, teams, players))
+        )
         return
       }
 
-      if (t.format === "group+bracket") {
-        groups.simAllGroups(tournamentId)
-        // Only seed the bracket if it hasn't been seeded yet — re-seeding
-        // would rebuild rounds and wipe knockout matches already played.
-        if (!t.groupsDone) groups.advanceToBracket(tournamentId)
+      generateStatsInWorker(jobs, teams, players).then((results) => {
+        const target = tournaments.value.find((x) => x.id === tournamentId)
+        if (target) applyStatsResults(target, results)
+      })
+    }
+
+    type ActionSlice = Record<string, (...args: never[]) => unknown>
+
+    /**
+     * Every slice action takes the tournament id first, so the wrapper knows
+     * what to sweep. Actions that take something else first (crud.create takes
+     * a name) simply find no tournament and sweep nothing — which is correct,
+     * since a tournament being created has no results yet.
+     */
+    function withStats<T extends ActionSlice>(slice: T): T {
+      const wrapped: ActionSlice = {}
+      for (const [name, action] of Object.entries(slice)) {
+        wrapped[name] = (...args: never[]) => {
+          const out = action(...args)
+          if (typeof args[0] === "string") ensureStatsFor(args[0])
+          return out
+        }
       }
+      return wrapped as T
+    }
 
-      bracket.simulateAll(tournamentId)
-    })
-    ensureStatsFor(tournamentId)
-  }
+    const thirdPlace = useThirdPlaceActions(tournaments, getTeams)
+    const crud = useCrudActions(tournaments, active, getTeams)
+    const bracket = useBracketActions(tournaments, getTeams, thirdPlace.simulateThirdPlace)
+    const groups = useGroupActions(tournaments, getTeams)
+    const draw = useDrawActions(tournaments, getTeams)
+    const leagueActions = useLeagueActions(tournaments, getTeams)
+    const leaguePlayoff = useLeaguePlayoffActions(tournaments, getTeams)
+    const scoring = useScoringActions(tournaments)
 
-  /**
-   * One-time upgrade pass: stamp every match already played before v2.2.0
-   * so the sweep never invents events for history the user played under the
-   * old engine. Runs after the persisted state has hydrated.
-   */
-  function migrateLegacyMatchStats() {
-    if (statsMigrated.value) return
-    tournaments.value.forEach(markLegacyMatchStats)
-    statsMigrated.value = true
-  }
+    if (import.meta.env.DEV) {
+      assertNoSliceCollisions({
+        crud,
+        bracket,
+        thirdPlace,
+        groups,
+        draw,
+        leagueActions,
+        leaguePlayoff,
+        scoring,
+      })
+    }
 
-  return {
-    tournaments,
-    active,
-    statsMigrated,
-    hydrate,
-    ...withStats(crud),
-    ...withStats(bracket),
-    ...withStats(thirdPlace),
-    ...withStats(groups),
-    ...withStats(draw),
-    ...withStats(leagueActions),
-    ...withStats(leaguePlayoff),
-    ...withStats(scoring),
-    createMultiTierLeagueTournament,
-    simulateTournament,
-    migrateLegacyMatchStats,
-  }
+    function createMultiTierLeagueTournament(
+      name: string,
+      tierDefs: Array<{ name: string; teamIds: string[] }>,
+      legMode: LegMode = "single",
+      promotionCount = 1,
+      tiebreaker?: Tiebreaker,
+      winPoints?: number,
+      drawPoints?: number,
+      lossPoints?: number
+    ): string {
+      const allTeams = useTeamsStore().teams
+      const season =
+        tournaments.value
+          .filter((t) => t.name === name)
+          .reduce((max, t) => Math.max(max, t.season), 0) + 1
+      const resolvedTiers = tierDefs.map((td) => ({
+        name: td.name,
+        teams: allTeams.filter((t) => td.teamIds.includes(t.id)),
+      }))
+      const newT = createMultiTierLeague(name, resolvedTiers, season, legMode, promotionCount)
+      if (tiebreaker) newT.tiebreaker = tiebreaker
+      if (winPoints !== undefined) newT.winPoints = winPoints
+      if (drawPoints !== undefined) newT.drawPoints = drawPoints
+      if (lossPoints !== undefined) newT.lossPoints = lossPoints
+      tournaments.value.push(newT)
+      active.value = newT.id
+      return newT.id
+    }
+
+    /** One "Simulate All" plays out the whole structure, whatever it is. */
+    function simulateTournament(tournamentId: string) {
+      withTournament(tournamentId, (t) => {
+        if (isLeagueLike(t)) {
+          if (t.tiers?.length) {
+            leagueActions.simAllTiers(tournamentId)
+          } else {
+            leagueActions.simAllLeague(tournamentId)
+          }
+          // Auto-seed the playoff bracket once the season is done (like
+          // group -> bracket), then play it out.
+          const data = getLeaguePlayoffData(t)
+          if (data?.enabled && !data.started && canStartLeaguePlayoff(t)) {
+            seedLeaguePlayoffBracket(t, getTeams(), data.seedMode)
+          }
+          if (t.rounds.length && getLeaguePlayoffData(t)?.started) {
+            bracket.simulateAll(tournamentId)
+          }
+          return
+        }
+
+        if (t.format === "group+bracket") {
+          groups.simAllGroups(tournamentId)
+          // Only seed the bracket if it hasn't been seeded yet — re-seeding
+          // would rebuild rounds and wipe knockout matches already played.
+          if (!t.groupsDone) groups.advanceToBracket(tournamentId)
+        }
+
+        bracket.simulateAll(tournamentId)
+      })
+      ensureStatsFor(tournamentId)
+    }
+
+    /**
+     * One-time upgrade pass: stamp every match already played before v2.2.0
+     * so the sweep never invents events for history the user played under the
+     * old engine. Runs after the persisted state has hydrated.
+     */
+    function migrateLegacyMatchStats() {
+      if (statsMigrated.value) return
+      tournaments.value.forEach(markLegacyMatchStats)
+      statsMigrated.value = true
+    }
+
+    return {
+      tournaments,
+      active,
+      statsMigrated,
+      hydrate,
+      ...withStats(crud),
+      ...withStats(bracket),
+      ...withStats(thirdPlace),
+      ...withStats(groups),
+      ...withStats(draw),
+      ...withStats(leagueActions),
+      ...withStats(leaguePlayoff),
+      ...withStats(scoring),
+      createMultiTierLeagueTournament,
+      simulateTournament,
+      migrateLegacyMatchStats,
+    }
   },
   {
     persistedState: {

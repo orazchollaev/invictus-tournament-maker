@@ -8,7 +8,7 @@ import { usePlayersStore } from "../store"
 import { useTeamsStore } from "@/modules/teams/store"
 import { usePlayerCareer } from "../composables/usePlayerCareer"
 import { PlayerCareerCard, PlayerHeaderCard, PlayerHonoursCard } from "../components/detail"
-import PlayerFormModal from "../components/PlayerFormModal.vue"
+import { PlayerFormModal } from "@/modules/players/components"
 
 const route = useRoute()
 const router = useRouter()

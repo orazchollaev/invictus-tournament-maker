@@ -5,7 +5,7 @@ import { VueDraggable } from "vue-draggable-plus"
 import type { Team } from "@/modules/teams/types"
 import type { Pot } from "@/engine"
 import { useTeamLookup } from "@/composables/useTeamLookup"
-import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
+import { TeamBadge } from "@/modules/teams/components"
 
 const props = defineProps<{
   pots: Pot[]

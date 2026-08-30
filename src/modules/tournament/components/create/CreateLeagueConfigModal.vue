@@ -2,11 +2,11 @@
 import { computed, ref, watch } from "vue"
 import { useI18n } from "vue-i18n"
 import { AppModal, AppButton, AppStepper } from "@/components/ui"
-import BtnGroup from "@/components/ui/BtnGroup.vue"
+import { BtnGroup } from "@/components/ui"
 import type { LegMode, Tiebreaker } from "@/modules/tournament/types"
 import type { Team } from "@/modules/teams/types"
 import { useLegOptions } from "@/modules/tournament/composables/useLegOptions"
-import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
+import { TeamBadge } from "@/modules/teams/components"
 
 export interface LeagueConfigPayload {
   leagueLegMode: LegMode

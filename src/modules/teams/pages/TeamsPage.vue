@@ -3,9 +3,7 @@ import { ref, computed } from "vue"
 import { useRouter } from "vue-router"
 import { useTeamsStore } from "../store"
 import { useSettingsStore } from "@/modules/settings/store"
-import TeamFormModal from "../components/TeamFormModal.vue"
-import TeamBadge from "../components/TeamBadge.vue"
-import TeamsFilterMenu from "../components/TeamsFilterMenu.vue"
+import { TeamFormModal, TeamBadge, TeamsFilterMenu } from "@/modules/teams/components"
 import type { Team } from "../types"
 import {
   AppButton,

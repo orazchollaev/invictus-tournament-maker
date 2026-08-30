@@ -10,7 +10,7 @@ import { useRouter } from "vue-router"
 import { Star } from "@lucide/vue"
 import { AppTable } from "@/components/ui"
 import { usePlayersStore } from "@/modules/players/store"
-import PlayerRatingChip from "@/modules/players/components/PlayerRatingChip.vue"
+import { PlayerRatingChip } from "@/modules/players/components"
 import type { PlayerMatchLine } from "@/modules/tournament/types"
 import type { PlayerPosition } from "@/modules/players/types"
 

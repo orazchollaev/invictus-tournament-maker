@@ -1,7 +1,6 @@
-import DrawList from "./DrawList.vue"
-import TeamChip from "./TeamChip.vue"
-import ManualDraw from "./ManualDraw.vue"
-import PlayoffManualDraw from "./PlayoffManualDraw.vue"
+export { default as DrawList } from "./DrawList.vue"
+export { default as ManualDraw } from "./ManualDraw.vue"
+export { default as PlayoffManualDraw } from "./PlayoffManualDraw.vue"
+export { default as TeamChip } from "./TeamChip.vue"
 
 export type { DrawItem, Qualifier } from "./types"
-export { DrawList, TeamChip, ManualDraw, PlayoffManualDraw }

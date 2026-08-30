@@ -20,7 +20,7 @@ import {
 } from "reka-ui"
 import { ChevronDown, Check } from "@lucide/vue"
 import { AppIcon, AppSearchInput } from "@/components/ui"
-import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
+import { TeamBadge } from "@/modules/teams/components"
 import type { Team } from "@/modules/teams/types"
 import { useI18n } from "vue-i18n"
 

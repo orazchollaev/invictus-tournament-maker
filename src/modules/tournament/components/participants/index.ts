@@ -1,7 +1,6 @@
-import ParticipantResultCell from "./ParticipantResultCell.vue"
-import ParticipantsTable from "./ParticipantsTable.vue"
+export { default as ParticipantResultCell } from "./ParticipantResultCell.vue"
+export { default as ParticipantsTable } from "./ParticipantsTable.vue"
 
-export { ParticipantResultCell, ParticipantsTable }
 export * from "./formatters"
 export * from "./rowBuilders"
 export * from "./types"

@@ -1,13 +1,5 @@
-import CreateFormatSelector from "./CreateFormatSelector.vue"
-import CreateGroupConfigModal from "./CreateGroupConfigModal.vue"
-import CreateKnockoutConfigModal from "./CreateKnockoutConfigModal.vue"
-import CreateLeagueConfigModal from "./CreateLeagueConfigModal.vue"
-import CreateSwissConfigModal from "./CreateSwissConfigModal.vue"
-
-export {
-  CreateFormatSelector,
-  CreateGroupConfigModal,
-  CreateKnockoutConfigModal,
-  CreateLeagueConfigModal,
-  CreateSwissConfigModal,
-}
+export { default as CreateFormatSelector } from "./CreateFormatSelector.vue"
+export { default as CreateGroupConfigModal } from "./CreateGroupConfigModal.vue"
+export { default as CreateKnockoutConfigModal } from "./CreateKnockoutConfigModal.vue"
+export { default as CreateLeagueConfigModal } from "./CreateLeagueConfigModal.vue"
+export { default as CreateSwissConfigModal } from "./CreateSwissConfigModal.vue"

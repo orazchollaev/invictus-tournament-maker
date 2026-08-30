@@ -9,7 +9,6 @@ defineProps<{ zoom: number }>()
 defineEmits<{ "zoom-in": []; "zoom-out": []; fit: [] }>()
 
 const { t } = useI18n()
-
 </script>
 
 <template>

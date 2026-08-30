@@ -3,7 +3,7 @@ import { ref } from "vue"
 import { ChevronDown, ChevronRight, Trophy } from "@lucide/vue"
 import { useI18n } from "vue-i18n"
 import { AppCard, AppIcon } from "@/components/ui"
-import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
+import { TeamBadge } from "@/modules/teams/components"
 import type { TeamStatEntry } from "../types"
 
 defineProps<{ teams: TeamStatEntry[] }>()

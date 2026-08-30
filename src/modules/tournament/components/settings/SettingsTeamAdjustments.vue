@@ -3,7 +3,7 @@ import { ref } from "vue"
 import { ChevronDown, Lock } from "@lucide/vue"
 import type { Team } from "@/modules/teams/types"
 import { useI18n } from "vue-i18n"
-import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
+import { TeamBadge } from "@/modules/teams/components"
 
 defineProps<{
   teams: Team[]

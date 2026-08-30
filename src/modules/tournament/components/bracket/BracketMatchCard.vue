@@ -3,11 +3,11 @@ import { ref, computed } from "vue"
 import { useI18n } from "vue-i18n"
 import type { Match } from "@/modules/tournament/types"
 import type { Team } from "@/modules/teams/types"
-import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
+import { TeamBadge } from "@/modules/teams/components"
 import { NO_TEAM_COLOR } from "@/modules/teams/utils/color"
 import { getWinnerId } from "@/engine"
 import { useSettingsStore } from "@/modules/settings/store"
-import MatchScoreModal from "../match-stats/MatchScoreModal.vue"
+import { MatchScoreModal } from "@/modules/tournament/components/match-stats"
 import { Pencil } from "@lucide/vue"
 
 const props = withDefaults(

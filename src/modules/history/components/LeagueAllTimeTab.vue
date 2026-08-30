@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n"
 import { AppCard, AppTable } from "@/components/ui"
-import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
+import { TeamBadge } from "@/modules/teams/components"
 import type { AllTimeRow } from "../types"
 
 defineProps<{ rows: AllTimeRow[] }>()

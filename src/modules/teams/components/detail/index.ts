@@ -1,8 +1,6 @@
-import TeamFormRow from "./TeamFormRow.vue"
-import TeamHeaderCard from "./TeamHeaderCard.vue"
-import TeamMatchList from "./TeamMatchList.vue"
-import TeamSquadCard from "./TeamSquadCard.vue"
-import TeamStatsGrid from "./TeamStatsGrid.vue"
-import TeamTrophyList from "./TeamTrophyList.vue"
-
-export { TeamFormRow, TeamHeaderCard, TeamMatchList, TeamSquadCard, TeamStatsGrid, TeamTrophyList }
+export { default as TeamFormRow } from "./TeamFormRow.vue"
+export { default as TeamHeaderCard } from "./TeamHeaderCard.vue"
+export { default as TeamMatchList } from "./TeamMatchList.vue"
+export { default as TeamSquadCard } from "./TeamSquadCard.vue"
+export { default as TeamStatsGrid } from "./TeamStatsGrid.vue"
+export { default as TeamTrophyList } from "./TeamTrophyList.vue"

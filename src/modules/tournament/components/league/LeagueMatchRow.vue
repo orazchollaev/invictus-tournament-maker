@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { ref } from "vue"
-import TeamBadge from "@/modules/teams/components/TeamBadge.vue"
+import { TeamBadge } from "@/modules/teams/components"
 import type { Team } from "@/modules/teams/types"
 import type { MatchResult } from "@/modules/tournament/types"
-import MatchScoreModal from "../match-stats/MatchScoreModal.vue"
-import MatchStatsButton from "../match-stats/MatchStatsButton.vue"
+import { MatchScoreModal, MatchStatsButton } from "@/modules/tournament/components/match-stats"
 
 const props = defineProps<{
   homeTeam: Team | undefined

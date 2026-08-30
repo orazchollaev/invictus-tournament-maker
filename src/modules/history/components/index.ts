@@ -1,0 +1,8 @@
+export { default as AllFinalsTab } from "./AllFinalsTab.vue"
+export { default as ChampionsTab } from "./ChampionsTab.vue"
+export { default as HistoryFilterMenu } from "./HistoryFilterMenu.vue"
+export { default as LeagueAllTimeTab } from "./LeagueAllTimeTab.vue"
+export { default as LeagueSeasonsTab } from "./LeagueSeasonsTab.vue"
+export { default as PlayersTab } from "./PlayersTab.vue"
+export { default as StatisticsTab } from "./StatisticsTab.vue"
+export { default as TeamStatsTab } from "./TeamStatsTab.vue"

@@ -3,7 +3,7 @@ import { computed, ref } from "vue"
 import { useI18n } from "vue-i18n"
 import { AppModal, AppButton } from "@/components/ui"
 import type { DrawType, LegMode, Tiebreaker } from "@/modules/tournament/types"
-import SwissConfigFields from "../swiss/SwissConfigFields.vue"
+import { SwissConfigFields } from "@/modules/tournament/components/swiss"
 import { validateSwissConfig } from "@/engine"
 
 export interface SwissConfigPayload {
