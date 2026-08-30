@@ -1,6 +1,7 @@
-// src/modules/settings/composables/useDataManagement.ts.
-
-const raws = import.meta.glob("../../../node_modules/circle-flags/flags/*.svg", {
+// Root-absolute on purpose: a relative glob silently resolves to nothing the
+// moment this file moves, and an empty flag set looks like a rendering bug
+// rather than a broken path. flags.test.ts guards it.
+const raws = import.meta.glob("/node_modules/circle-flags/flags/*.svg", {
   query: "?raw",
   import: "default",
 }) as Record<string, () => Promise<string>>
