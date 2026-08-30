@@ -21,17 +21,16 @@ import {
 } from "@lucide/vue"
 import {
   SettingsDangerZone,
-  SettingsGroupConfigModal,
   SettingsKnockoutConfigModal,
   SettingsLeagueConfigModal,
   SettingsSimulation,
   SettingsTeamAdjustments,
 } from "../components/settings"
-import type { GroupConfigPayload } from "../components/settings/SettingsGroupConfigModal.vue"
+import type { GroupConfigPayload } from "../components/config"
 import type { KnockoutConfigPayload } from "../components/settings/SettingsKnockoutConfigModal.vue"
 import type { LeagueConfigPayload } from "../components/settings/SettingsLeagueConfigModal.vue"
 import type { SwissConfigPayload } from "../components/config"
-import { SwissConfigModal } from "../components/config"
+import { GroupConfigModal, SwissConfigModal } from "../components/config"
 import { useTournamentSettingsDraft } from "../composables/useTournamentSettingsDraft"
 import { useUnsavedChangesGuard } from "@/composables/useUnsavedChangesGuard"
 
@@ -303,7 +302,7 @@ function handleSave() {
           />
         </div>
 
-        <SettingsGroupConfigModal
+        <GroupConfigModal
           v-if="showGroupModal && draft.isGroupFormat.value"
           :draw-type="draft.drawType.value"
           :group-count="draft.groupCount.value"
@@ -315,7 +314,7 @@ function handleSave() {
           :draw-points="draft.drawPoints.value"
           :loss-points="draft.lossPoints.value"
           :tournament-id="tournamentId"
-          :tournament="tournament"
+          :groups-done="!!tournament.groupsDone"
           :has-any-results="hasAnyResults"
           :team-count="draft.teamIds.value.length"
           @save="applyGroupConfig"

@@ -22,12 +22,11 @@ import type {
 } from "@/modules/tournament/types"
 import {
   CreateFormatSelector,
-  CreateGroupConfigModal,
   CreateKnockoutConfigModal,
   CreateLeagueConfigModal,
 } from "../components/create"
-import { SwissConfigModal } from "../components/config"
-import type { GroupConfigPayload } from "../components/create/CreateGroupConfigModal.vue"
+import { GroupConfigModal, SwissConfigModal } from "../components/config"
+import type { GroupConfigPayload } from "../components/config"
 import type { KnockoutConfigPayload } from "../components/create/CreateKnockoutConfigModal.vue"
 import type { LeagueConfigPayload } from "../components/create/CreateLeagueConfigModal.vue"
 import type { SwissConfigPayload } from "../components/config"
@@ -590,7 +589,7 @@ function doCreate(orderedIds?: string[]) {
         />
       </div>
 
-      <CreateGroupConfigModal
+      <GroupConfigModal
         v-if="showGroupModal"
         :draw-type="drawType"
         :group-count="groupCount"
@@ -601,7 +600,7 @@ function doCreate(orderedIds?: string[]) {
         :win-points="winPoints"
         :draw-points="drawPoints"
         :loss-points="lossPoints"
-        :selected-count="selected.length"
+        :team-count="selected.length"
         @save="applyGroupConfig"
         @close="showGroupModal = false"
       />

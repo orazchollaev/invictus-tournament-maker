@@ -1,5 +1,4 @@
 export { default as SettingsDangerZone } from "./SettingsDangerZone.vue"
-export { default as SettingsGroupConfigModal } from "./SettingsGroupConfigModal.vue"
 export { default as SettingsKnockoutConfigModal } from "./SettingsKnockoutConfigModal.vue"
 export { default as SettingsLeagueConfigModal } from "./SettingsLeagueConfigModal.vue"
 export { default as SettingsSimulation } from "./SettingsSimulation.vue"

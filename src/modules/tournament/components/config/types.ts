@@ -14,3 +14,15 @@ export interface SwissConfigPayload {
   drawPoints: number
   lossPoints: number
 }
+
+export interface GroupConfigPayload {
+  drawType: DrawType
+  groupCount: number
+  qualifiersPerGroup: number
+  wildcardCount: number
+  groupLegMode: LegMode
+  tiebreaker: Tiebreaker
+  winPoints: number
+  drawPoints: number
+  lossPoints: number
+}
