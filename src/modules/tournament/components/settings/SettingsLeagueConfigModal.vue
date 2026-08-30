@@ -5,6 +5,7 @@ import type { LegMode, Tiebreaker } from "@/modules/tournament/types"
 import { AppModal, AppButton, AppStepper, AppButtonGroup } from "@/components/ui"
 import TspLockedCard from "./TspLockedCard.vue"
 import { useLegOptions } from "@/modules/tournament/composables/useLegOptions"
+import { ScoringFields, TiebreakerField } from "@/modules/tournament/components/config"
 
 export interface LeagueConfigPayload {
   leagueLegMode: LegMode
@@ -92,44 +93,14 @@ function handleSave() {
       </TspLockedCard>
     </template>
 
-    <div class="form-card">
-      <div class="form-section-title">{{ t("tournament.create.tiebreaker") }}</div>
-      <div class="form-row">
-        <span class="form-label">{{ t("tournament.settingsPage.tiebreaker.method") }}</span>
-        <AppButtonGroup
-          v-model="tiebreaker"
-          :options="[
-            { value: 'head-to-head', label: t('tournament.settingsPage.tiebreaker.h2h') },
-            { value: 'goal-diff', label: t('tournament.settingsPage.tiebreaker.goalDiff') },
-          ]"
-        />
-      </div>
-    </div>
+    <TiebreakerField v-model="tiebreaker" />
 
-    <TspLockedCard
-      :title="t('tournament.settingsPage.scoring.title')"
+    <ScoringFields
+      v-model:win-points="winPoints"
+      v-model:draw-points="drawPoints"
+      v-model:loss-points="lossPoints"
       :locked="hasAnyResults"
-      :locked-message="t('tournament.settingsPage.scoring.lockedBanner')"
-    >
-      <AppStepper
-        v-model="winPoints"
-        :label="t('tournament.settingsPage.scoring.winPoints')"
-        :min="0"
-        :max="10"
-      />
-      <AppStepper
-        v-model="drawPoints"
-        :label="t('tournament.settingsPage.scoring.drawPoints')"
-        :min="0"
-        :max="10"
-      />
-      <AppStepper
-        v-model="lossPoints"
-        :label="t('tournament.settingsPage.scoring.lossPoints')"
-        :min="0"
-        :max="10"
-      />
-    </TspLockedCard>
+    />
 
     <template #footer>
       <AppButton variant="filled" block @click="handleSave">{{ t("common.save") }}</AppButton>

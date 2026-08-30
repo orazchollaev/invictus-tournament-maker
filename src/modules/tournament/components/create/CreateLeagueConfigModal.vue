@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue"
 import { useI18n } from "vue-i18n"
-import { AppModal, AppButton, AppStepper } from "@/components/ui"
-import { AppButtonGroup } from "@/components/ui"
+import { AppModal, AppButton, AppStepper, AppButtonGroup } from "@/components/ui"
 import type { LegMode, Tiebreaker } from "@/modules/tournament/types"
 import type { Team } from "@/modules/teams/types"
 import { useLegOptions } from "@/modules/tournament/composables/useLegOptions"
+import { ScoringFields, TiebreakerField } from "@/modules/tournament/components/config"
 import { TeamBadge } from "@/modules/teams/components"
 
 export interface LeagueConfigPayload {
@@ -183,41 +183,13 @@ function handleSave() {
       </template>
     </div>
 
-    <div class="form-card">
-      <div class="form-section-title">{{ t("tournament.create.tiebreaker") }}</div>
-      <div class="form-row">
-        <span class="form-label">{{ t("tournament.settingsPage.tiebreaker.method") }}</span>
-        <AppButtonGroup
-          v-model="tiebreaker"
-          :options="[
-            { value: 'head-to-head', label: t('tournament.settingsPage.tiebreaker.h2h') },
-            { value: 'goal-diff', label: t('tournament.settingsPage.tiebreaker.goalDiff') },
-          ]"
-        />
-      </div>
-    </div>
+    <TiebreakerField v-model="tiebreaker" />
 
-    <div class="form-card">
-      <div class="form-section-title">{{ t("tournament.settingsPage.scoring.title") }}</div>
-      <AppStepper
-        v-model="winPoints"
-        :label="t('tournament.settingsPage.scoring.winPoints')"
-        :min="0"
-        :max="10"
-      />
-      <AppStepper
-        v-model="drawPoints"
-        :label="t('tournament.settingsPage.scoring.drawPoints')"
-        :min="0"
-        :max="10"
-      />
-      <AppStepper
-        v-model="lossPoints"
-        :label="t('tournament.settingsPage.scoring.lossPoints')"
-        :min="0"
-        :max="10"
-      />
-    </div>
+    <ScoringFields
+      v-model:win-points="winPoints"
+      v-model:draw-points="drawPoints"
+      v-model:loss-points="lossPoints"
+    />
 
     <template #footer>
       <AppButton variant="filled" block @click="handleSave">{{ t("common.save") }}</AppButton>

@@ -10,6 +10,8 @@ import type { DrawType, LegMode, Tiebreaker } from "@/modules/tournament/types"
 import { legModeToCount, validateSwissConfig } from "@/engine"
 import { useLegOptions } from "@/modules/tournament/composables/useLegOptions"
 import { TspLockedCard } from "@/modules/tournament/components/settings"
+import ScoringFields from "./ScoringFields.vue"
+import TiebreakerField from "./TiebreakerField.vue"
 
 const props = withDefaults(defineProps<{ teamCount: number; locked?: boolean }>(), {
   locked: false,
@@ -116,46 +118,14 @@ defineExpose({ errors })
     />
   </TspLockedCard>
 
-  <div class="form-card">
-    <div class="form-section-title">{{ t("tournament.create.tiebreaker") }}</div>
-    <div class="form-row">
-      <span class="form-label form-label--md">
-        {{ t("tournament.settingsPage.tiebreaker.method") }}
-      </span>
-      <AppButtonGroup
-        v-model="tiebreaker"
-        :options="[
-          { value: 'head-to-head', label: t('tournament.settingsPage.tiebreaker.h2h') },
-          { value: 'goal-diff', label: t('tournament.settingsPage.tiebreaker.goalDiff') },
-        ]"
-      />
-    </div>
-  </div>
+  <TiebreakerField v-model="tiebreaker" />
 
-  <TspLockedCard
-    :title="t('tournament.settingsPage.scoring.title')"
+  <ScoringFields
+    v-model:win-points="winPoints"
+    v-model:draw-points="drawPoints"
+    v-model:loss-points="lossPoints"
     :locked="locked"
-    :locked-message="t('tournament.settingsPage.scoring.lockedBanner')"
-  >
-    <AppStepper
-      v-model="winPoints"
-      :label="t('tournament.settingsPage.scoring.winPoints')"
-      :min="0"
-      :max="10"
-    />
-    <AppStepper
-      v-model="drawPoints"
-      :label="t('tournament.settingsPage.scoring.drawPoints')"
-      :min="0"
-      :max="10"
-    />
-    <AppStepper
-      v-model="lossPoints"
-      :label="t('tournament.settingsPage.scoring.lossPoints')"
-      :min="0"
-      :max="10"
-    />
-  </TspLockedCard>
+  />
 
   <div v-if="!locked" class="form-card swiss-preview">
     <div v-if="errors.length" class="swiss-errors">
