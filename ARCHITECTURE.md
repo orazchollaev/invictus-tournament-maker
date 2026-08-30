@@ -206,6 +206,9 @@ build.
 
 ## File size
 
-`max-lines` warns at 400 lines for `.vue` files. It is a warning, not a gate — but a
-component past 400 lines is almost always doing two jobs. Split the second one into a
-child component or a composable.
+`vue/max-lines-per-block` warns past 250 lines of script or template, and past 400 of
+style. Measured per block on purpose: a visually rich card can honestly need 300 lines
+of CSS, while 300 lines of script or template means the component is doing two jobs.
+Split the second one into a child component or a composable.
+
+It is a warning, not a gate.
