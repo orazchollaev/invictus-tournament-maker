@@ -5,7 +5,7 @@ import { useTeamsStore } from "@/modules/teams/store"
 import type { Tournament } from "@/modules/tournament/types"
 import { Play, BarChart2 } from "@lucide/vue"
 import { useMonteCarlo } from "@/modules/tournament/composables/useMonteCarlo"
-import { cacheSimResult } from "@/modules/tournament/composables/simulationCache"
+import { cacheSimResult } from "@/modules/tournament/utils/simulationCache"
 import { useI18n } from "vue-i18n"
 
 const props = defineProps<{

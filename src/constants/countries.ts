@@ -1,7 +1,4 @@
-export const MAX_TEAMS = 256
-
-export const MAX_GOALS = 20
-
+// ISO 3166-1 alpha-2 codes and English names, used by the flag picker.
 export const COUNTRY_FLAGS: { code: string; name: string }[] = [
   { code: "AF", name: "Afghanistan" },
   { code: "AL", name: "Albania" },

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, watch } from "vue"
-import { flagDataUrl } from "../flags"
+import { flagDataUrl } from "../utils/flags"
 
 const props = defineProps<{ code: string; size?: number }>()
 const size = props.size ?? 20

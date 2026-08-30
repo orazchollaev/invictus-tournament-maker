@@ -4,7 +4,7 @@ import { useI18n } from "vue-i18n"
 import FlagCircle from "./FlagCircle.vue"
 import { X } from "@lucide/vue"
 import { AppSearchInput } from "@/components/ui"
-import { COUNTRY_FLAGS } from "@/constants.ts"
+import { COUNTRY_FLAGS } from "@/constants"
 
 defineProps<{ modelValue?: string }>()
 const emit = defineEmits<{ "update:modelValue": [string | undefined] }>()

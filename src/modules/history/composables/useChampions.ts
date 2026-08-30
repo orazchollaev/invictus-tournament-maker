@@ -1,7 +1,7 @@
 import { computed, type ComputedRef } from "vue"
 import type { Tournament } from "@/modules/tournament/types"
 import type { ChampEntry, FinalEntry } from "../types"
-import { buildScore } from "./matchFormat"
+import { buildScore } from "../utils/matchFormat"
 import { useTeamRef } from "./useTeamRef"
 import { isLeagueLike } from "@/engine"
 

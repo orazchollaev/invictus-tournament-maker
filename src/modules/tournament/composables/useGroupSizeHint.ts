@@ -1,6 +1,6 @@
 import { computed, toValue, type MaybeRefOrGetter } from "vue"
 import { useI18n } from "vue-i18n"
-import { groupSizeSplit } from "../groupSizes"
+import { groupSizeSplit } from "../utils/groupSizes"
 
 /**
  * The line under the "number of groups" stepper, shared by the create page and

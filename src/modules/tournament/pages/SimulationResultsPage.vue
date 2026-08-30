@@ -9,7 +9,7 @@ import { AppButton, AppEmptyState } from "@/components/ui"
 
 import { useTournamentStore } from "@/modules/tournament/store"
 import { useTeamsStore } from "@/modules/teams/store"
-import { getCachedSimResult } from "@/modules/tournament/composables/simulationCache"
+import { getCachedSimResult } from "@/modules/tournament/utils/simulationCache"
 import { useSimResultExport } from "@/modules/tournament/composables/useSimResultExport"
 
 const route = useRoute()

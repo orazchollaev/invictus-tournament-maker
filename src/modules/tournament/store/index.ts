@@ -1,4 +1,4 @@
-// modules/tournament/store.ts
+// modules/tournament/store/index.ts
 //
 // Composition root. It owns the two pieces of state and wires the action
 // slices together; the slices own the rules. Nothing here should grow a
@@ -6,8 +6,8 @@
 // slices, it belongs in a slice.
 import { defineStore } from "pinia"
 import { ref, watch, nextTick } from "vue"
-import type { Tournament, Tiebreaker, LegMode } from "./types"
-import { loadTournaments, saveTournament, deleteTournamentRecord, saveIndex } from "./persistence"
+import type { Tournament, Tiebreaker, LegMode } from "../types"
+import { loadTournaments, saveTournament, deleteTournamentRecord, saveIndex } from "../services/persistence"
 import {
   createMultiTierLeague,
   getLeaguePlayoffData,
@@ -21,17 +21,17 @@ import {
   applyStatsResults,
 } from "@/engine"
 import { generateStatsInWorker } from "@/engine/events/statsWorkerClient"
-import { useTeamsStore } from "../teams/store"
-import { usePlayersStore } from "../players/store"
-import { makeWithTournament, assertNoSliceCollisions } from "./store/helpers"
-import { useCrudActions } from "./store/crud"
-import { useBracketActions } from "./store/bracket"
-import { useThirdPlaceActions } from "./store/third-place"
-import { useGroupActions } from "./store/groups"
-import { useDrawActions } from "./store/draw"
-import { useLeagueActions } from "./store/league"
-import { useLeaguePlayoffActions } from "./store/leaguePlayoff"
-import { useScoringActions } from "./store/scoring"
+import { useTeamsStore } from "@/modules/teams/store"
+import { usePlayersStore } from "@/modules/players/store"
+import { makeWithTournament, assertNoSliceCollisions } from "./helpers"
+import { useCrudActions } from "./crud"
+import { useBracketActions } from "./bracket"
+import { useThirdPlaceActions } from "./third-place"
+import { useGroupActions } from "./groups"
+import { useDrawActions } from "./draw"
+import { useLeagueActions } from "./league"
+import { useLeaguePlayoffActions } from "./leaguePlayoff"
+import { useScoringActions } from "./scoring"
 
 export const useTournamentStore = defineStore(
   "tournament",

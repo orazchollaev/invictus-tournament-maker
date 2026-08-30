@@ -1,6 +1,6 @@
 import { get, set, del } from "idb-keyval"
 import { idbStorage } from "@/lib/idbStorage"
-import type { Tournament } from "./types"
+import type { Tournament } from "../types"
 
 const ITEM_PREFIX = "tournament:item:"
 const INDEX_KEY = "tournament:index"

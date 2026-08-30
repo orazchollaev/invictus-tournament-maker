@@ -5,7 +5,7 @@ import { showAlert, showConfirm } from "@/composables/useDialog"
 import { useI18n } from "vue-i18n"
 import { Capacitor } from "@capacitor/core"
 import { idbStorage } from "@/lib/idbStorage"
-import { clearAllTournaments, replaceAllTournaments } from "@/modules/tournament/persistence"
+import { clearAllTournaments, replaceAllTournaments } from "@/modules/tournament/services/persistence"
 import type { Tournament } from "@/modules/tournament/types"
 import { version } from "../../../../package.json"
 
