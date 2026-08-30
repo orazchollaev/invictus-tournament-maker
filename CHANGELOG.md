@@ -1,5 +1,52 @@
 # Changelog
 
+## [2.4.0](https://github.com/orazchollaev/invictus-tournament-maker/compare/v2.3.0...v2.4.0) (2026-08-30)
+
+### 🚀 New Features
+
+- **analytics:** log design language changes ([789fc7c](https://github.com/orazchollaev/invictus-tournament-maker/commit/789fc7cbc25c45943bff06ff940a9c9fcb62a61b))
+- **match:** add live match playback with extra time and real shootouts ([10e6a2d](https://github.com/orazchollaev/invictus-tournament-maker/commit/10e6a2d8b941d25697cafad25c80cf0b270c0a57))
+- **ui:** add AppSheet and move the match modals onto it ([df7f1aa](https://github.com/orazchollaev/invictus-tournament-maker/commit/df7f1aa9373655a1dbc62f671b087cfece5f3db6))
+- **ui:** add iOS/Material design language setting ([62162a4](https://github.com/orazchollaev/invictus-tournament-maker/commit/62162a42f96efb64bab339df37c7b627da299d10))
+
+### 🐛 Bug Fixes
+
+- **teams:** restore the flag set after the utils move ([d26bdce](https://github.com/orazchollaev/invictus-tournament-maker/commit/d26bdcee7454aad202c8f24f414cfea2b2cbcdba))
+- **ui:** align ios/android design language across checkboxes, config buttons, color picker ([124e5cd](https://github.com/orazchollaev/invictus-tournament-maker/commit/124e5cdc2bf0f11fb7f864c6c8305b7ee2419426))
+- **ui:** give the team power slider its Material thumb back ([f29fe74](https://github.com/orazchollaev/invictus-tournament-maker/commit/f29fe7481ea260955ed5fe0e1059198e1ace84ec))
+- **ui:** size BtnGroup md icon-only buttons correctly ([0302630](https://github.com/orazchollaev/invictus-tournament-maker/commit/03026301916aede44362164ddbe72ee0c5757de3))
+
+### ♻️ Refactoring
+
+- **bracket:** extract the connector column, drop the size rule ([f3ddff3](https://github.com/orazchollaev/invictus-tournament-maker/commit/f3ddff3d2bf7e4ccbc36671ee151e9b1fb8b84ba))
+- give every components folder a barrel and use it ([f8547cc](https://github.com/orazchollaev/invictus-tournament-maker/commit/f8547cce665a4f7dada12acbc416a671483dd8d8))
+- move stray module files into the canonical skeleton ([ff8fc5a](https://github.com/orazchollaev/invictus-tournament-maker/commit/ff8fc5a81364f7d67d07fbaa108daa16fb1efe8e))
+- replace deep relative imports with the @/ alias ([08708d3](https://github.com/orazchollaev/invictus-tournament-maker/commit/08708d3d266e64dea344932ee10e76425770fb37))
+- **style:** name the shared stylesheets after their folders ([ae70891](https://github.com/orazchollaev/invictus-tournament-maker/commit/ae708912f1bd7814d0a296b150b831fdd9bc5185))
+- **tournament:** build the detail phase tabs on AppTabs ([51e3fa3](https://github.com/orazchollaev/invictus-tournament-maker/commit/51e3fa34f63671fb76d29e94939fb1278fbbc329))
+- **tournament:** one group config modal instead of two ([ebaefb2](https://github.com/orazchollaev/invictus-tournament-maker/commit/ebaefb299599aa63be9e16834990c53cda71f0ae))
+- **tournament:** one Swiss config modal instead of two ([1379817](https://github.com/orazchollaev/invictus-tournament-maker/commit/13798174224475104ce16bfa1c7920651d321435))
+- **tournament:** share the scoring and tiebreaker cards ([09701c6](https://github.com/orazchollaev/invictus-tournament-maker/commit/09701c60188a6df986dc54635d2683a05bef6362))
+- **tournament:** split the create page into draft and submit ([fd72705](https://github.com/orazchollaev/invictus-tournament-maker/commit/fd72705249dfdf92ea9d118e3d4a8703b4ede8f7))
+- **ui:** fold the players pickers back into the design system ([0193bf5](https://github.com/orazchollaev/invictus-tournament-maker/commit/0193bf514796461e76b53152e481175698473c58))
+- **ui:** prefix every design-system component with App ([3b17672](https://github.com/orazchollaev/invictus-tournament-maker/commit/3b17672885c19211ee94762c1ffc11574a23dec8))
+
+### 🔧 Maintenance
+
+- **gradle:** bump gradle version ([2bc876e](https://github.com/orazchollaev/invictus-tournament-maker/commit/2bc876e40e0fa9fff8083a5f80a6fbb61d90b0dd))
+- **lint:** add structural rules for imports, casing and file size ([5ffc6d0](https://github.com/orazchollaev/invictus-tournament-maker/commit/5ffc6d01c14a128f3688d283ebcb1ff26b826229))
+- **lint:** measure component size per block, not per file ([cd9d8e0](https://github.com/orazchollaev/invictus-tournament-maker/commit/cd9d8e0877559e20f8ea847855087e0ba0d78f84))
+
+### 📚 Documentation
+
+- add CLAUDE.md and architecture guide ([73b55f2](https://github.com/orazchollaev/invictus-tournament-maker/commit/73b55f2a4fb98fa203620279f20f05aeb3df8983))
+- record the container choice and barrel style ([437ccd5](https://github.com/orazchollaev/invictus-tournament-maker/commit/437ccd58a53d9e246d795e85ebf481a32dec6ae9))
+
+### ✅ Tests
+
+- **tournament:** cover the crud and bracket store slices ([b52a53f](https://github.com/orazchollaev/invictus-tournament-maker/commit/b52a53fc061cd31df303ef7717750ba212ba8238))
+- **tournament:** cover the store helpers and the scoring slice ([99d0e04](https://github.com/orazchollaev/invictus-tournament-maker/commit/99d0e04ab07c0a29343f1a0cc7df50d9ff9480b9))
+
 ## [2.3.0](https://github.com/orazchollaev/invictus-tournament-maker/compare/v2.2.0...v2.3.0) (2026-08-28)
 
 ### 🚀 New Features
