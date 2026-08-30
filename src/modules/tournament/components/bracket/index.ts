@@ -1,4 +1,5 @@
 export { default as BracketClassic } from "./BracketClassic.vue"
+export { default as BracketConnectors } from "./BracketConnectors.vue"
 export { default as BracketDoubleSide } from "./BracketDoubleSide.vue"
 export { default as BracketFullscreenModal } from "./BracketFullscreenModal.vue"
 export { default as BracketMatchCard } from "./BracketMatchCard.vue"

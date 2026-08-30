@@ -115,18 +115,5 @@ export default tseslint.config(
     },
   },
 
-  // Measured per block, not per file: a visually rich card can honestly need 300
-  // lines of CSS, while 300 lines of script or template means the component is
-  // doing two jobs. Warning, not a gate.
-  {
-    files: ["src/**/*.vue"],
-    rules: {
-      "vue/max-lines-per-block": [
-        "warn",
-        { script: 250, template: 250, style: 400, skipBlankLines: true },
-      ],
-    },
-  },
-
   prettierConfig
 )

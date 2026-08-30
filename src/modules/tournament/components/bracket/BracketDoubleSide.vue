@@ -4,8 +4,15 @@ import type { Tournament } from "@/modules/tournament/types"
 import type { Team } from "@/modules/teams/types"
 import { TeamBadge } from "@/modules/teams/components"
 import BracketMatchCard from "./BracketMatchCard.vue"
+import BracketConnectors from "./BracketConnectors.vue"
 import { getWinnerId } from "@/engine"
-import { type DisplayMatch, type ConnInfo, buildConnInfo, teamColor } from "./bracketUtils"
+import {
+  type DisplayMatch,
+  type ConnInfo,
+  buildConnInfo,
+  connectorSegments,
+  teamColor,
+} from "./bracketUtils"
 import { useSettingsStore } from "@/modules/settings/store"
 import { useI18n } from "vue-i18n"
 import { useEngineLabels } from "@/composables/useEngineLabels"
@@ -175,85 +182,11 @@ const connInfosRByRound = computed<ConnInfo[][]>(() =>
   })
 )
 
-// Segment builder for left-side connectors (arms go right → center)
-function segsL(p: ConnInfo, w: number) {
-  const m = w / 2
-  const yMid = (p.ay + p.by) / 2
-  const base = p.active ? "var(--accent)" : "var(--border)"
-  const baseOp = p.active ? 0.55 : 0.4
-  const dimOp = 0.08
-  const topOp = p.dimmed
-    ? dimOp
-    : p.hoverActive
-      ? p.topHovered
-        ? 0.9
-        : dimOp
-      : p.topColor
-        ? 0.85
-        : baseOp
-  const botOp = p.dimmed
-    ? dimOp
-    : p.hoverActive
-      ? p.bottomHovered
-        ? 0.9
-        : dimOp
-      : p.bottomColor
-        ? 0.85
-        : baseOp
-  // One path per strand instead of three — same elbow shape, 66% fewer path
-  // elements per connector (matters most on the 4-column double-sided layout).
-  return [
-    { d: `M0,${p.ay} H${m} V${yMid - 1} H${w}`, stroke: p.topColor ?? base, opacity: topOp, w: 2 },
-    {
-      d: `M0,${p.by} H${m} V${yMid + 1} H${w}`,
-      stroke: p.bottomColor ?? base,
-      opacity: botOp,
-      w: 2,
-    },
-  ]
-}
-
-// Segment builder for right-side connectors (arms go left → center)
-function segsR(p: ConnInfo, w: number) {
-  const m = w / 2
-  const yMid = (p.ay + p.by) / 2
-  const base = p.active ? "var(--accent)" : "var(--border)"
-  const baseOp = p.active ? 0.55 : 0.4
-  const dimOp = 0.08
-  const topOp = p.dimmed
-    ? dimOp
-    : p.hoverActive
-      ? p.topHovered
-        ? 0.9
-        : dimOp
-      : p.topColor
-        ? 0.85
-        : baseOp
-  const botOp = p.dimmed
-    ? dimOp
-    : p.hoverActive
-      ? p.bottomHovered
-        ? 0.9
-        : dimOp
-      : p.bottomColor
-        ? 0.85
-        : baseOp
-  return [
-    { d: `M${w},${p.ay} H${m} V${yMid - 1} H0`, stroke: p.topColor ?? base, opacity: topOp, w: 2 },
-    {
-      d: `M${w},${p.by} H${m} V${yMid + 1} H0`,
-      stroke: p.bottomColor ?? base,
-      opacity: botOp,
-      w: 2,
-    },
-  ]
-}
-
 const segsLByRound = computed(() =>
-  connInfosLByRound.value.map((infos) => infos.map((p) => segsL(p, COL_GAP)))
+  connInfosLByRound.value.map((infos) => infos.map((p) => connectorSegments(p, COL_GAP, "left")))
 )
 const segsRByRound = computed(() =>
-  connInfosRByRound.value.map((infos) => infos.map((p) => segsR(p, COL_GAP)))
+  connInfosRByRound.value.map((infos) => infos.map((p) => connectorSegments(p, COL_GAP, "right")))
 )
 
 // Transition only matters when hover-highlight is on — skip it otherwise to cut
@@ -336,33 +269,15 @@ function finalLineOpacity(side: "home" | "away"): number {
           "
         />
 
-        <svg
+        <BracketConnectors
           v-if="n < nonFinalCount"
-          :style="{
-            position: 'absolute',
-            top: HEADER_H + 'px',
-            left: lColX(n - 1) + CARD_W + 'px',
-            width: COL_GAP + 'px',
-            height: bracketH + 'px',
-          }"
-          overflow="visible"
-          style="display: block"
-        >
-          <template v-for="(segs, pi) in segsLByRound[n - 1]" :key="pi">
-            <path
-              v-for="(seg, si) in segs"
-              :key="si"
-              :d="seg.d"
-              fill="none"
-              :stroke-width="seg.w"
-              :style="{
-                stroke: seg.stroke,
-                strokeOpacity: seg.opacity,
-                transition: connectorTransition,
-              }"
-            />
-          </template>
-        </svg>
+          :connectors="segsLByRound[n - 1]"
+          :left="lColX(n - 1) + CARD_W"
+          :top="HEADER_H"
+          :width="COL_GAP"
+          :height="bracketH"
+          :transition="connectorTransition"
+        />
       </template>
 
       <!-- Left innermost column → final connector -->
@@ -504,33 +419,15 @@ function finalLineOpacity(side: "home" | "away"): number {
           "
         />
 
-        <svg
+        <BracketConnectors
           v-if="n < nonFinalCount"
-          :style="{
-            position: 'absolute',
-            top: HEADER_H + 'px',
-            left: rColX(n) + CARD_W + 'px',
-            width: COL_GAP + 'px',
-            height: bracketH + 'px',
-          }"
-          overflow="visible"
-          style="display: block"
-        >
-          <template v-for="(segs, pi) in segsRByRound[n - 1]" :key="pi">
-            <path
-              v-for="(seg, si) in segs"
-              :key="si"
-              :d="seg.d"
-              fill="none"
-              :stroke-width="seg.w"
-              :style="{
-                stroke: seg.stroke,
-                strokeOpacity: seg.opacity,
-                transition: connectorTransition,
-              }"
-            />
-          </template>
-        </svg>
+          :connectors="segsRByRound[n - 1]"
+          :left="rColX(n) + CARD_W"
+          :top="HEADER_H"
+          :width="COL_GAP"
+          :height="bracketH"
+          :transition="connectorTransition"
+        />
       </template>
 
       <!-- ═══════════════════════════════════════════════════

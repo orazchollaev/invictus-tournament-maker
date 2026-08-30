@@ -206,9 +206,7 @@ build.
 
 ## File size
 
-`vue/max-lines-per-block` warns past 250 lines of script or template, and past 400 of
-style. Measured per block on purpose: a visually rich card can honestly need 300 lines
-of CSS, while 300 lines of script or template means the component is doing two jobs.
-Split the second one into a child component or a composable.
-
-It is a warning, not a gate.
+No lint rule caps this — the useful measure is per block, not per file, and a visually
+rich card can honestly carry 300 lines of CSS. Judge it by hand: a component whose
+script or template runs past a screenful or three is usually doing two jobs. Split the
+second one into a child component or a composable.

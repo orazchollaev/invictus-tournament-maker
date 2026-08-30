@@ -95,3 +95,56 @@ export function buildConnInfo(
     bottomHovered,
   }
 }
+
+/** One drawn strand of a connector: an SVG path plus how to stroke it. */
+export interface ConnectorSegment {
+  d: string
+  stroke: string
+  opacity: number
+  w: number
+}
+
+/**
+ * The two strands of an elbow connector, one per team feeding the next match.
+ *
+ * One path per strand rather than three — the same elbow shape with 66% fewer
+ * path elements per connector, which matters most on the double-sided layout
+ * with its four columns of them.
+ *
+ * `side` only flips which end the arms start from: on the left half they run
+ * right towards the final, on the right half they run left.
+ */
+export function connectorSegments(
+  p: ConnInfo,
+  w: number,
+  side: "left" | "right"
+): ConnectorSegment[] {
+  const m = w / 2
+  const yMid = (p.ay + p.by) / 2
+  const base = p.active ? "var(--accent)" : "var(--border)"
+  const baseOp = p.active ? 0.55 : 0.4
+  const dimOp = 0.08
+
+  const strandOpacity = (hovered: boolean, hasColor: boolean) => {
+    if (p.dimmed) return dimOp
+    if (p.hoverActive) return hovered ? 0.9 : dimOp
+    return hasColor ? 0.85 : baseOp
+  }
+
+  const [from, to] = side === "left" ? [0, w] : [w, 0]
+
+  return [
+    {
+      d: `M${from},${p.ay} H${m} V${yMid - 1} H${to}`,
+      stroke: p.topColor ?? base,
+      opacity: strandOpacity(p.topHovered, !!p.topColor),
+      w: 2,
+    },
+    {
+      d: `M${from},${p.by} H${m} V${yMid + 1} H${to}`,
+      stroke: p.bottomColor ?? base,
+      opacity: strandOpacity(p.bottomHovered, !!p.bottomColor),
+      w: 2,
+    },
+  ]
+}

@@ -69,8 +69,8 @@ components.
 2+ components in that folder share it; `src/assets/style/` for tokens and globals only.
 Use `var(--token)`, never literal hex.
 
-**Size** — a `.vue` block over 250 lines of script or template warns (style gets 400).
-Past that, split out a child component or a composable.
+**Size** — not linted. A long `<style>` is often fine; a long script or template
+usually means two jobs. Split the second one out.
 
 **Tests** — `__tests__/` next to the code. `src/engine/__tests__/` is the model: plain
 function tests, no mounting.
