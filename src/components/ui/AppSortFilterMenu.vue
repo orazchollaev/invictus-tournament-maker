@@ -5,9 +5,12 @@
  *
  * Built on reka-ui Popover + RadioGroup rather than DropdownMenu — picking
  * an option doesn't close the panel, so flipping key and direction (or
- * changing your mind) doesn't mean reopening it every time. Used by
- * Teams/Tournaments/History list pages; PlayersFilterMenu follows the same
- * pattern with an extra team-picker section.
+ * changing your mind) doesn't mean reopening it every time.
+ *
+ * A page that filters on something else as well as sorting puts that in the
+ * `lead` slot and reports it through `extraActive` so the trigger dot still
+ * tells the truth -- that is what PlayersFilterMenu does with its team
+ * picker.
  */
 import { computed } from "vue"
 import { useI18n } from "vue-i18n"
@@ -28,6 +31,12 @@ const props = defineProps<{
   sortOptions: { value: T; label: string }[]
   /** sortKey value that means "no explicit sort" — hides the asc/desc section. Defaults to "default". */
   defaultValue?: T
+  /** Set when the `lead` slot holds an active filter, so the trigger dot lights up. */
+  extraActive?: boolean
+  /** Heading above the sort options. Worth setting once the panel holds more than one section. */
+  sortLabel?: string
+  /** Overrides the panel's min-width — a lead section usually needs more room. */
+  width?: string
 }>()
 
 const sortKey = defineModel<T>("sortKey", { required: true })
@@ -36,7 +45,7 @@ const sortAsc = defineModel<boolean>("sortAsc", { required: true })
 const { t } = useI18n()
 
 const defaultVal = computed(() => props.defaultValue ?? ("default" as T))
-const filterActive = computed(() => sortKey.value !== defaultVal.value)
+const filterActive = computed(() => sortKey.value !== defaultVal.value || !!props.extraActive)
 
 function onSortSelect(key: unknown) {
   if (typeof key !== "string" || sortKey.value === (key as T)) return
@@ -66,7 +75,19 @@ function onDirSelect(dir: unknown) {
       </AppButton>
     </PopoverTrigger>
     <PopoverPortal>
-      <PopoverContent class="sort-filter-menu" align="end" :side-offset="6">
+      <PopoverContent
+        class="sort-filter-menu"
+        align="end"
+        :side-offset="6"
+        :style="width ? { width } : undefined"
+      >
+        <template v-if="$slots.lead">
+          <slot name="lead" />
+          <div class="sort-filter-sep" />
+        </template>
+
+        <p v-if="sortLabel" class="sort-filter-label">{{ sortLabel }}</p>
+
         <RadioGroupRoot
           :model-value="sortKey"
           class="sort-filter-group"
@@ -140,6 +161,16 @@ function onDirSelect(dir: unknown) {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   box-shadow: var(--elev-2);
+}
+
+.sort-filter-label {
+  margin: 0 0 var(--sp-1);
+  padding: 0 var(--sp-1);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--text-muted);
 }
 
 .sort-filter-group {

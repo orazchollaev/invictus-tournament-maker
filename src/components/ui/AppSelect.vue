@@ -1,5 +1,28 @@
-<script setup lang="ts" generic="T extends string">
-/** Plain single-select dropdown (reka-ui Select) for short option lists — no search needed. */
+<script lang="ts">
+/** Shape every option must satisfy; callers may add fields for the slots to draw. */
+export interface AppSelectOption<V extends string> {
+  value: V
+  label: string
+}
+</script>
+
+<script
+  setup
+  lang="ts"
+  generic="T extends string, O extends AppSelectOption<T> = AppSelectOption<T>"
+>
+/**
+ * Single-select dropdown (reka-ui Select).
+ *
+ * Plain by default. Set `searchable` for a list long enough that scanning it
+ * is work, and pass richer option objects with the `option` / `value` slots
+ * when a row needs more than a label — that is how TeamSelect draws a badge
+ * per team without rebuilding the control.
+ *
+ * Combobox was tried for the searchable case and rejected: its input only
+ * opens the list on keyboard input, which reads as a broken dropdown.
+ */
+import { computed, ref } from "vue"
 import {
   SelectRoot,
   SelectTrigger,
@@ -14,32 +37,75 @@ import {
 } from "reka-ui"
 import { ChevronDown, Check } from "@lucide/vue"
 import AppIcon from "./AppIcon.vue"
+import AppSearchInput from "./AppSearchInput.vue"
 
-defineProps<{
-  options: { value: T; label: string }[]
+const props = defineProps<{
+  options: O[]
   placeholder?: string
+  /** Adds a search box inside the popup that filters options by label. */
+  searchable?: boolean
+  searchPlaceholder?: string
+  /** Shown when a search matches nothing. */
+  emptyText?: string
 }>()
 
 const model = defineModel<T>({ required: true })
+
+const search = ref("")
+
+const selectedOption = computed(() => props.options.find((o) => o.value === model.value))
+
+const visibleOptions = computed(() => {
+  const q = search.value.trim().toLowerCase()
+  if (!q) return props.options
+  return props.options.filter((o) => o.label.toLowerCase().includes(q))
+})
+
+// Search state belongs to the popup, not the field — drop it on close so it
+// starts fresh instead of silently hiding options on reopen.
+function onOpenChange(open: boolean) {
+  if (!open) search.value = ""
+}
 </script>
 
 <template>
-  <SelectRoot v-model="model">
+  <SelectRoot v-model="model" @update:open="onOpenChange">
     <SelectTrigger class="asel-trigger">
-      <SelectValue class="asel-value" :placeholder="placeholder" />
+      <SelectValue class="asel-value" :placeholder="placeholder">
+        <slot v-if="$slots.value" name="value" :option="selectedOption" />
+      </SelectValue>
       <SelectIcon class="asel-icon">
         <AppIcon :icon="ChevronDown" size="xs" />
       </SelectIcon>
     </SelectTrigger>
     <SelectPortal>
-      <SelectContent class="asel-content" :side-offset="4" position="popper">
+      <SelectContent
+        class="asel-content"
+        :class="{ 'asel-content--searchable': searchable }"
+        :side-offset="4"
+        position="popper"
+      >
+        <div v-if="searchable" class="asel-search-wrap" @keydown.stop @pointerdown.stop>
+          <AppSearchInput v-model="search" size="sm" :placeholder="searchPlaceholder" />
+        </div>
         <SelectViewport class="asel-viewport">
-          <SelectItem v-for="opt in options" :key="opt.value" :value="opt.value" class="asel-item">
-            <SelectItemText>{{ opt.label }}</SelectItemText>
+          <SelectItem
+            v-for="opt in visibleOptions"
+            :key="opt.value"
+            :value="opt.value"
+            class="asel-item"
+          >
+            <SelectItemText>
+              <slot v-if="$slots.option" name="option" :option="opt" />
+              <template v-else>{{ opt.label }}</template>
+            </SelectItemText>
             <SelectItemIndicator class="asel-item-check">
               <AppIcon :icon="Check" size="xs" />
             </SelectItemIndicator>
           </SelectItem>
+          <p v-if="searchable && !visibleOptions.length" class="empty-inline">
+            {{ emptyText }}
+          </p>
         </SelectViewport>
       </SelectContent>
     </SelectPortal>
@@ -127,6 +193,16 @@ const model = defineModel<T>({ required: true })
   border-radius: var(--radius);
   box-shadow: var(--elev-2);
   overflow: hidden;
+}
+
+.asel-content--searchable {
+  display: flex;
+  flex-direction: column;
+}
+
+.asel-search-wrap {
+  padding: var(--sp-1);
+  flex-shrink: 0;
 }
 
 .asel-viewport {

@@ -94,15 +94,14 @@ export default tseslint.config(
   // building their own Dialog on raw DialogRoot is how close animations, focus traps
   // and backdrop z-indexes drift apart. Wrap once in components/ui, fix once.
   //
-  // This uses the typescript-eslint rule rather than the core one so that it can carry
-  // its own severity: deep relative imports are already an error, these bypasses are
-  // still being unwound. Promote to "error" once the last one is wrapped.
+  // This uses the typescript-eslint rule rather than the core one so it can carry its
+  // own message; both are errors now that the last bypass is wrapped.
   {
     files: ["src/**/*.{ts,vue}"],
     ignores: ["src/components/ui/**"],
     rules: {
       "@typescript-eslint/no-restricted-imports": [
-        "warn",
+        "error",
         {
           paths: [
             {
