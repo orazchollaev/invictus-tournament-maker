@@ -36,7 +36,8 @@ Every module uses the same skeleton — use these names, not synonyms:
 
 ```
 src/modules/<name>/
-  components/     Only .vue. Subfolders group by feature, each with an index.ts barrel.
+  components/     Only .vue. Subfolders group by feature, each with an index.ts barrel
+                  of `export { default as X } from "./X.vue"` lines.
   composables/    Only use*.ts. Anything else is a util or a service.
   pages/          Route targets.
   services/       IO and side effects (persistence, export).
@@ -51,9 +52,14 @@ src/modules/<name>/
 **Imports** — always `@/`. `./sibling` and `../types` are fine; `../../` or deeper is not.
 
 **UI** — feature modules never import `reka-ui`. Compose the wrappers in
-`@/components/ui` (`AppModal`, `AppSelect`, `AppTabs`, …). If a wrapper does not cover
-the case, extend the wrapper; do not rebuild the primitive in the feature module. A
-genuine exception gets an `eslint-disable-next-line no-restricted-imports -- <reason>`.
+`@/components/ui`. If a wrapper does not cover the case, extend the wrapper; do not
+rebuild the primitive in the feature module. A genuine exception gets an
+`eslint-disable-next-line @typescript-eslint/no-restricted-imports -- <reason>`.
+
+Containers: `AppModal` is the side drawer, `AppSheet` is the centred dialog that
+becomes a bottom sheet on phones, `AppDialog` is the `useDialog` confirm singleton.
+`AppSelect` takes `searchable` plus `option`/`value` slots for long or rich lists;
+`AppSortFilterMenu` takes a `lead` slot for an extra filter section.
 
 **Naming** — `src/components/ui/*` is prefixed `App`. Templates use PascalCase for
 components.

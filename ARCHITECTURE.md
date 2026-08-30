@@ -91,11 +91,23 @@ more (`../../`) means you have left your neighbourhood: use `@/`.
 
 ### Barrels
 
-Every `components/` subfolder exports its components through an `index.ts`. Consumers
-import from the folder, not the file:
+Every `components/` subfolder exports its components through an `index.ts`, one line
+per component:
 
 ```ts
-import { CreateFormatSelector, CreateGroupConfigModal } from "@/modules/tournament/components/create"
+export { default as CreateFormatSelector } from "./CreateFormatSelector.vue"
+```
+
+Code in another folder imports from the folder, not the file. Siblings import each
+other directly — a barrel between two files in the same directory buys nothing and
+invites a cycle:
+
+```ts
+import {
+  CreateFormatSelector,
+  CreateGroupConfigModal,
+} from "@/modules/tournament/components/create"
+import MatchStatsModal from "./MatchStatsModal.vue" // from inside that same folder
 ```
 
 `src/components/ui/index.ts` is the design-system barrel — 97% of UI imports go through
@@ -116,7 +128,22 @@ The reason is drift: when three different modules each build their own Dialog on
 diverge silently. Wrapping once means fixing once.
 
 If a wrapper does not cover a case, **extend the wrapper** — add a variant or a slot —
-rather than reaching for the primitive in the feature module.
+rather than reaching for the primitive in the feature module. Every bypass that has
+been unwound so far turned out to be a copy of a wrapper plus one capability, dragging
+a hundred-odd lines of duplicated popup CSS behind it.
+
+### Which container
+
+- `AppModal` — a drawer sliding in from the side. For a panel the user works inside.
+- `AppSheet` — centred dialog on desktop, bottom sheet under 600px. For something
+  transient the user acts on and dismisses. Size and stacking are props.
+- `AppDialog` — the app-wide confirm/alert singleton, driven by `useDialog`. Not a
+  general-purpose container; you do not place one yourself.
+
+`AppSelect` covers both the short option list and, with `searchable`, the long one;
+its `option` and `value` slots draw rows that are more than a label.
+`AppSortFilterMenu` covers filter popovers, including ones with an extra section in
+its `lead` slot.
 
 Where an exception is genuinely justified, make it visible:
 
