@@ -24,14 +24,14 @@ import {
   SettingsGroupConfigModal,
   SettingsKnockoutConfigModal,
   SettingsLeagueConfigModal,
-  SettingsSwissConfigModal,
   SettingsSimulation,
   SettingsTeamAdjustments,
 } from "../components/settings"
 import type { GroupConfigPayload } from "../components/settings/SettingsGroupConfigModal.vue"
 import type { KnockoutConfigPayload } from "../components/settings/SettingsKnockoutConfigModal.vue"
 import type { LeagueConfigPayload } from "../components/settings/SettingsLeagueConfigModal.vue"
-import type { SwissConfigPayload } from "../components/settings/SettingsSwissConfigModal.vue"
+import type { SwissConfigPayload } from "../components/config"
+import { SwissConfigModal } from "../components/config"
 import { useTournamentSettingsDraft } from "../composables/useTournamentSettingsDraft"
 import { useUnsavedChangesGuard } from "@/composables/useUnsavedChangesGuard"
 
@@ -346,7 +346,7 @@ function handleSave() {
           @open-manual-draw="showManualDraw = true"
         />
 
-        <SettingsSwissConfigModal
+        <SwissConfigModal
           v-if="showSwissModal && draft.isSwissFormat.value"
           :opponent-count="draft.swissOpponentCount.value"
           :pot-count="draft.swissPotCount.value"

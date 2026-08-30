@@ -25,12 +25,12 @@ import {
   CreateGroupConfigModal,
   CreateKnockoutConfigModal,
   CreateLeagueConfigModal,
-  CreateSwissConfigModal,
 } from "../components/create"
+import { SwissConfigModal } from "../components/config"
 import type { GroupConfigPayload } from "../components/create/CreateGroupConfigModal.vue"
 import type { KnockoutConfigPayload } from "../components/create/CreateKnockoutConfigModal.vue"
 import type { LeagueConfigPayload } from "../components/create/CreateLeagueConfigModal.vue"
-import type { SwissConfigPayload } from "../components/create/CreateSwissConfigModal.vue"
+import type { SwissConfigPayload } from "../components/config"
 import { randomSeed, validateSwissConfig } from "@/engine"
 import { SettingsTeamAdjustments } from "../components/settings"
 import { AppButton, AppConfigButton, AppIcon } from "@/components/ui"
@@ -625,7 +625,7 @@ function doCreate(orderedIds?: string[]) {
         @close="showKnockoutModal = false"
       />
 
-      <CreateSwissConfigModal
+      <SwissConfigModal
         v-if="showSwissModal"
         :opponent-count="swissOpponentCount"
         :pot-count="swissPotCount"

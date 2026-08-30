@@ -1,24 +1,27 @@
 <script setup lang="ts">
+/**
+ * Swiss shape editor, used by both the create page and the settings page.
+ * They had a modal each; the copies were identical bar the lock, so the lock
+ * is a prop now.
+ */
 import { computed, ref } from "vue"
 import { useI18n } from "vue-i18n"
 import { AppModal, AppButton } from "@/components/ui"
-import type { DrawType, LegMode, Tiebreaker } from "@/modules/tournament/types"
-import { SwissConfigFields } from "@/modules/tournament/components/swiss"
 import { validateSwissConfig } from "@/engine"
+import SwissConfigFields from "./SwissConfigFields.vue"
+import type { SwissConfigPayload } from "./types"
 
-export interface SwissConfigPayload {
-  opponentCount: number
-  potCount: number
-  legMode: LegMode
-  balanceHomeAway: boolean
-  drawType: DrawType
-  tiebreaker: Tiebreaker
-  winPoints: number
-  drawPoints: number
-  lossPoints: number
-}
+const props = withDefaults(
+  defineProps<
+    SwissConfigPayload & {
+      teamCount: number
+      /** Once a result exists the fixture cannot be redrawn, so the shape locks. */
+      hasAnyResults?: boolean
+    }
+  >(),
+  { hasAnyResults: false }
+)
 
-const props = defineProps<SwissConfigPayload & { teamCount: number; hasAnyResults: boolean }>()
 const emit = defineEmits<{ save: [SwissConfigPayload]; close: [] }>()
 
 const { t } = useI18n()
@@ -34,6 +37,11 @@ const winPoints = ref(props.winPoints)
 const drawPoints = ref(props.drawPoints)
 const lossPoints = ref(props.lossPoints)
 
+/**
+ * An unsatisfiable shape would silently fall back to a potless draw, so the
+ * user has to fix it here rather than find out after the tournament exists.
+ * A locked tournament is already drawn, so there is nothing left to validate.
+ */
 const errors = computed(() =>
   props.hasAnyResults
     ? []
@@ -89,5 +97,3 @@ function handleSave() {
     </template>
   </AppModal>
 </template>
-
-<style src="./tournament-settings.css"></style>

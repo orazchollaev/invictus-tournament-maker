@@ -3,6 +3,5 @@ export { default as SettingsGroupConfigModal } from "./SettingsGroupConfigModal.
 export { default as SettingsKnockoutConfigModal } from "./SettingsKnockoutConfigModal.vue"
 export { default as SettingsLeagueConfigModal } from "./SettingsLeagueConfigModal.vue"
 export { default as SettingsSimulation } from "./SettingsSimulation.vue"
-export { default as SettingsSwissConfigModal } from "./SettingsSwissConfigModal.vue"
 export { default as SettingsTeamAdjustments } from "./SettingsTeamAdjustments.vue"
 export { default as TspLockedCard } from "./TspLockedCard.vue"
