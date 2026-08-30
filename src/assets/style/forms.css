@@ -143,6 +143,12 @@
   }
 }
 
+.config-button-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 /* ── Power slider ────────────────────────────────────────────────
    The 0-100 strength control on the team and player forms. Both draw it in
    the owner's colour, so the caller sets --power-color on an ancestor. */

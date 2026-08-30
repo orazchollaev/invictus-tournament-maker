@@ -30,4 +30,4 @@ const { t } = useI18n()
   </div>
 </template>
 
-<style src="./tournament-settings.css"></style>
+<style src="./settings.css"></style>

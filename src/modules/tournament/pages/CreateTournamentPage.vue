@@ -555,7 +555,7 @@ function doCreate(orderedIds?: string[]) {
         :selected-count="selected.length"
       />
 
-      <div class="form-card ctp-config-buttons">
+      <div class="form-card config-button-stack">
         <AppConfigButton
           v-if="format === 'group+bracket'"
           :icon="LayoutGrid"
@@ -793,12 +793,6 @@ function doCreate(orderedIds?: string[]) {
 }
 
 /* Collapsible adjustments */
-.ctp-config-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
 .ctp-adj-wrap {
   display: flex;
   flex-direction: column;

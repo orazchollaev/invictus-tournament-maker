@@ -197,4 +197,4 @@ function handleSave() {
   </AppModal>
 </template>
 
-<style src="./create-tournament.css"></style>
+<style src="./create.css"></style>

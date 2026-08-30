@@ -272,7 +272,7 @@ function handleSave() {
           @update:selected="draft.teamIds.value = $event"
         />
 
-        <div class="form-card ctp-config-buttons">
+        <div class="form-card config-button-stack">
           <AppConfigButton
             v-if="draft.isGroupFormat.value"
             :icon="LayoutGrid"

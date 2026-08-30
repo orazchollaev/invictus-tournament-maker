@@ -49,4 +49,4 @@ const { t } = useI18n()
   </div>
 </template>
 
-<style src="./tournament-detail.css"></style>
+<style src="./detail.css"></style>

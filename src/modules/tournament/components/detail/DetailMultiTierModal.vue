@@ -77,4 +77,4 @@ const modal = ref<InstanceType<typeof AppModal> | null>(null)
   </AppModal>
 </template>
 
-<style src="./tournament-detail.css"></style>
+<style src="./detail.css"></style>

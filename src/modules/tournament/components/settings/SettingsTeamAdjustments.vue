@@ -169,7 +169,7 @@ const MAX = 30
   </div>
 </template>
 
-<style src="./tournament-settings.css"></style>
+<style src="./settings.css"></style>
 <style scoped>
 .tsp-accordion-card {
   padding: 0;

@@ -4,7 +4,7 @@
  * / League Configuration). Shows the section label plus a live one-line
  * summary of the values currently selected, so the user doesn't have to open
  * the modal to see what's configured. Styled to match the format-card
- * picker above it (`.ctp-format-card` in create-tournament.css) — same
+ * picker above it (`.ctp-format-card` in create.css) — same
  * border weight, radius and hover lift, just laid out as a row.
  */
 import { ChevronRight, Lock, type LucideIcon } from "@lucide/vue"

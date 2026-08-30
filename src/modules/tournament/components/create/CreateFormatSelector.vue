@@ -123,4 +123,4 @@ function setLeague(withPlayoff: boolean) {
   </div>
 </template>
 
-<style src="./create-tournament.css"></style>
+<style src="./create.css"></style>

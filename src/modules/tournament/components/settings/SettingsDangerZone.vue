@@ -59,7 +59,7 @@ async function handleDelete() {
   </div>
 </template>
 
-<style src="./tournament-settings.css"></style>
+<style src="./settings.css"></style>
 <style scoped>
 .form-card--danger {
   border-color: color-mix(in srgb, var(--danger) 25%, transparent);

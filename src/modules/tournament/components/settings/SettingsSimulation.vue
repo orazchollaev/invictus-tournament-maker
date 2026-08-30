@@ -100,7 +100,7 @@ function goToSimResults() {
   </Teleport>
 </template>
 
-<style src="./tournament-settings.css"></style>
+<style src="./settings.css"></style>
 <style scoped>
 .form-card--sim {
   border-color: color-mix(in srgb, var(--accent) 30%, var(--border-light));
