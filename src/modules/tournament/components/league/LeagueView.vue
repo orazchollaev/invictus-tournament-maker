@@ -5,7 +5,7 @@ import type { League, Tournament } from "@/modules/tournament/types"
 import type { Team } from "@/modules/teams/types"
 import LeagueMatchdayPanel from "./LeagueMatchdayPanel.vue"
 import LeagueStandingsTable from "./LeagueStandingsTable.vue"
-import { SubTabBar } from "@/components/ui"
+import { AppSubTabBar } from "@/components/ui"
 
 const props = defineProps<{
   tournament: Tournament
@@ -48,7 +48,7 @@ const subTab = ref<"standings" | "fixtures">("standings")
 <template>
   <div class="lv-root">
     <div class="lv-subtab-row">
-      <SubTabBar
+      <AppSubTabBar
         v-model="subTab"
         :options="[
           { value: 'standings', label: t('tournament.tabs.standings') },

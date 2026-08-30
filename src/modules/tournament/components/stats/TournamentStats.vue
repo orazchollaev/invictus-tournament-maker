@@ -7,7 +7,7 @@
 import { computed, ref } from "vue"
 import { useI18n } from "vue-i18n"
 import { ChartColumn, Users } from "@lucide/vue"
-import { SubTabBar } from "@/components/ui"
+import { AppSubTabBar } from "@/components/ui"
 import type { Tournament } from "@/modules/tournament/types"
 import type { Team } from "@/modules/teams/types"
 import TeamStatsPanel from "./TeamStatsPanel.vue"
@@ -31,7 +31,7 @@ const options = computed(() => [
 
 <template>
   <div class="stats-tab">
-    <SubTabBar
+    <AppSubTabBar
       :options="options"
       :model-value="view"
       @update:model-value="(v) => (view = v as StatsView)"

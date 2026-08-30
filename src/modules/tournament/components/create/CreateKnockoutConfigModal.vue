@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from "vue"
 import { useI18n } from "vue-i18n"
-import { AppModal, AppButton, AppStepper, BtnGroup, ToggleSwitch } from "@/components/ui"
+import { AppModal, AppButton, AppStepper, AppButtonGroup, AppToggle } from "@/components/ui"
 import type {
   KnockoutStage,
   LegMode,
@@ -116,7 +116,7 @@ function handleSave() {
     <template v-if="props.variant === 'bracket'">
       <div v-if="!props.isGroupFormat" class="form-card">
         <div class="form-section-title">{{ t("tournament.create.drawMethod") }}</div>
-        <BtnGroup v-model="drawType" :options="drawOptions" />
+        <AppButtonGroup v-model="drawType" :options="drawOptions" />
         <div class="hint-box hint-box--bottom">
           {{
             t("tournament.create.drawHint", {
@@ -132,7 +132,7 @@ function handleSave() {
         <div class="form-section-title">
           {{ t("tournament.settingsPage.playoffSeeding.title") }}
         </div>
-        <BtnGroup v-model="groupPlayoffSeedMode" :options="groupPlayoffSeedOptions" />
+        <AppButtonGroup v-model="groupPlayoffSeedMode" :options="groupPlayoffSeedOptions" />
         <div class="hint-box hint-box--bottom">
           {{
             t("tournament.create.playoffHint", {
@@ -147,7 +147,7 @@ function handleSave() {
       <div v-if="props.selectedCount >= 4" class="form-card">
         <div class="form-section-title">{{ t("tournament.create.options") }}</div>
         <div class="toggle-row" @click="hasThirdPlace = !hasThirdPlace">
-          <ToggleSwitch v-model="hasThirdPlace" @click.stop />
+          <AppToggle v-model="hasThirdPlace" @click.stop />
           <span class="toggle-label">{{ t("tournament.create.thirdPlace") }}</span>
           <span class="toggle-hint">{{ t("tournament.create.thirdPlaceHint") }}</span>
         </div>
@@ -158,17 +158,17 @@ function handleSave() {
         <div class="form-rows">
           <div v-for="stage in visibleStages" :key="stage" class="form-row">
             <span class="form-label">{{ t(STAGE_LABEL_KEYS[stage]) }}</span>
-            <BtnGroup v-model="roundLegModes[stage]" :options="legOptions" />
+            <AppButtonGroup v-model="roundLegModes[stage]" :options="legOptions" />
           </div>
           <div class="form-row">
             <span class="form-label">{{ t("tournament.settingsPage.legsPerMatch.final") }}</span>
-            <BtnGroup v-model="finalLegMode" :options="legOptions" />
+            <AppButtonGroup v-model="finalLegMode" :options="legOptions" />
           </div>
           <div v-if="hasThirdPlace" class="form-row">
             <span class="form-label">
               {{ t("tournament.settingsPage.legsPerMatch.thirdPlace") }}
             </span>
-            <BtnGroup v-model="thirdPlaceLegMode" :options="legOptions" />
+            <AppButtonGroup v-model="thirdPlaceLegMode" :options="legOptions" />
           </div>
         </div>
       </div>
@@ -188,7 +188,7 @@ function handleSave() {
 
       <div class="form-card">
         <div class="form-section-title">{{ t("tournament.create.playoff.seedMode") }}</div>
-        <BtnGroup v-model="leaguePlayoffSeedMode" :options="leaguePlayoffSeedOptions" />
+        <AppButtonGroup v-model="leaguePlayoffSeedMode" :options="leaguePlayoffSeedOptions" />
       </div>
 
       <div class="form-card">
@@ -196,11 +196,11 @@ function handleSave() {
         <div class="form-rows">
           <div v-for="stage in visibleStages" :key="stage" class="form-row">
             <span class="form-label">{{ t(STAGE_LABEL_KEYS[stage]) }}</span>
-            <BtnGroup v-model="roundLegModes[stage]" :options="legOptions" />
+            <AppButtonGroup v-model="roundLegModes[stage]" :options="legOptions" />
           </div>
           <div class="form-row">
             <span class="form-label">{{ t("tournament.settingsPage.legsPerMatch.final") }}</span>
-            <BtnGroup v-model="finalLegMode" :options="legOptions" />
+            <AppButtonGroup v-model="finalLegMode" :options="legOptions" />
           </div>
         </div>
       </div>

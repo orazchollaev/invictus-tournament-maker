@@ -12,7 +12,7 @@ import {
   AppEmptyState,
   AppIcon,
   AppSearchInput,
-  BtnGroup,
+  AppButtonGroup,
 } from "@/components/ui"
 import { X, Pencil, Plus, UserRound, List, Grid3x3 } from "@lucide/vue"
 import { useI18n } from "vue-i18n"
@@ -76,7 +76,7 @@ const filtered = computed(() => {
 
     <div v-if="store.players.length" class="search-row">
       <AppSearchInput v-model="query" :placeholder="t('players.searchPlaceholder')" />
-      <BtnGroup v-model="settings.playersListView" :options="viewOptions" size="md" />
+      <AppButtonGroup v-model="settings.playersListView" :options="viewOptions" size="md" />
       <PlayersFilterMenu
         v-model:team-filter="teamFilter"
         v-model:sort-key="settings.playersSortKey"

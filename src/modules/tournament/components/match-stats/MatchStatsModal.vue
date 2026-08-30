@@ -12,7 +12,7 @@
 import { computed, ref } from "vue"
 import { useI18n } from "vue-i18n"
 import { ChartColumn, Goal, ListOrdered, Users } from "@lucide/vue"
-import { AppModal, SubTabBar } from "@/components/ui"
+import { AppModal, AppSubTabBar } from "@/components/ui"
 import { useModal } from "@/composables/useModal"
 import { TeamBadge } from "@/modules/teams/components"
 import type { Team } from "@/modules/teams/types"
@@ -115,7 +115,7 @@ const activeTab = ref<ReportTab>("timeline")
       </header>
 
       <template v-if="stats">
-        <SubTabBar
+        <AppSubTabBar
           :options="tabs"
           :model-value="activeTab"
           @update:model-value="(v) => (activeTab = v as ReportTab)"

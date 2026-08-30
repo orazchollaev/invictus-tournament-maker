@@ -3,7 +3,7 @@ import { computed } from "vue"
 import { useSettingsStore } from "../store"
 import { useI18n } from "vue-i18n"
 import { Sparkles } from "@lucide/vue"
-import { AppCard, AppField, AppIcon, BtnGroup } from "@/components/ui"
+import { AppCard, AppField, AppIcon, AppButtonGroup } from "@/components/ui"
 import SettingDesc from "./SettingDesc.vue"
 
 const { t } = useI18n()
@@ -26,7 +26,7 @@ const bracketQualityOptions = computed(() => [
       <template #description>
         <SettingDesc>{{ t("settings.graphics.bracketQuality.desc") }}</SettingDesc>
       </template>
-      <BtnGroup v-model="settings.bracketQuality" :options="bracketQualityOptions" />
+      <AppButtonGroup v-model="settings.bracketQuality" :options="bracketQualityOptions" />
     </AppField>
   </AppCard>
 </template>

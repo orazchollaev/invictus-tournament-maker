@@ -9,7 +9,7 @@ import { computed, nextTick, onMounted, ref, watch } from "vue"
 import { DialogRoot, DialogPortal, DialogOverlay, DialogContent, DialogTitle } from "reka-ui"
 import { useI18n } from "vue-i18n"
 import { Pause, Play, SkipForward, X } from "@lucide/vue"
-import { BtnGroup } from "@/components/ui"
+import { AppButtonGroup } from "@/components/ui"
 import { TeamBadge } from "@/modules/teams/components"
 import MatchTimeline from "./MatchTimeline.vue"
 import MatchShootout from "./MatchShootout.vue"
@@ -185,7 +185,7 @@ onMounted(live.start)
           >
             <component :is="live.paused.value ? Play : Pause" :size="14" />
           </button>
-          <BtnGroup
+          <AppButtonGroup
             v-if="!live.finished.value"
             :model-value="String(speed)"
             :options="speedOptions"

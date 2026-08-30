@@ -3,7 +3,7 @@ import { computed } from "vue"
 import { useSettingsStore } from "../store"
 import { useI18n } from "vue-i18n"
 import { CalendarPlus } from "@lucide/vue"
-import { AppCard, AppField, AppIcon, AppNumberInput, BtnGroup } from "@/components/ui"
+import { AppCard, AppField, AppIcon, AppNumberInput, AppButtonGroup } from "@/components/ui"
 import SettingDesc from "./SettingDesc.vue"
 
 const { t } = useI18n()
@@ -42,21 +42,21 @@ const SCORING = [
       <template #description>
         <SettingDesc>{{ t("settings.newTournament.knockoutDraw.desc") }}</SettingDesc>
       </template>
-      <BtnGroup v-model="settings.newSeasonDrawType" :options="drawOptions" />
+      <AppButtonGroup v-model="settings.newSeasonDrawType" :options="drawOptions" />
     </AppField>
 
     <AppField layout="split" :label="t('settings.newTournament.groupDraw.label')">
       <template #description>
         <SettingDesc>{{ t("settings.newTournament.groupDraw.desc") }}</SettingDesc>
       </template>
-      <BtnGroup v-model="settings.newSeasonGroupDrawType" :options="drawOptions" />
+      <AppButtonGroup v-model="settings.newSeasonGroupDrawType" :options="drawOptions" />
     </AppField>
 
     <AppField layout="split" :label="t('settings.newTournament.playoffSeeding.label')">
       <template #description>
         <SettingDesc>{{ t("settings.newTournament.playoffSeeding.desc") }}</SettingDesc>
       </template>
-      <BtnGroup v-model="settings.newSeasonPlayoffSeedMode" :options="playoffSeedOptions" />
+      <AppButtonGroup v-model="settings.newSeasonPlayoffSeedMode" :options="playoffSeedOptions" />
     </AppField>
 
     <AppField layout="split" :label="t('settings.newTournament.scoring.title')" class="scoring-row">

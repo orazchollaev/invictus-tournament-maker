@@ -3,7 +3,7 @@ import { computed } from "vue"
 import { useSettingsStore } from "../store"
 import { useI18n } from "vue-i18n"
 import { Dices } from "@lucide/vue"
-import { AppCard, AppChip, AppField, AppIcon, AppNumberInput, ToggleSwitch } from "@/components/ui"
+import { AppCard, AppChip, AppField, AppIcon, AppNumberInput, AppToggle } from "@/components/ui"
 import SettingDesc from "./SettingDesc.vue"
 
 const { t } = useI18n()
@@ -68,7 +68,7 @@ const surpriseFactorLabel = computed(() => {
           {{ t("settings.simulation.formFactor.desc", { plus: "+10", minus: "−10" }) }}
         </SettingDesc>
       </template>
-      <ToggleSwitch
+      <AppToggle
         v-model="settings.formFactorEnabled"
         :aria-label="t('settings.simulation.formFactor.label')"
       />
@@ -80,7 +80,7 @@ const surpriseFactorLabel = computed(() => {
           {{ t("settings.simulation.usePlayerPower.desc") }}
         </SettingDesc>
       </template>
-      <ToggleSwitch
+      <AppToggle
         v-model="settings.usePlayerPower"
         :aria-label="t('settings.simulation.usePlayerPower.label')"
       />

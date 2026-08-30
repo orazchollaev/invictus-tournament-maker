@@ -2,7 +2,7 @@
 import { computed, ref } from "vue"
 import { useI18n } from "vue-i18n"
 import type { Tournament, LegMode, DrawType, Tiebreaker } from "@/modules/tournament/types"
-import { AppModal, AppButton, AppStepper, BtnGroup } from "@/components/ui"
+import { AppModal, AppButton, AppStepper, AppButtonGroup } from "@/components/ui"
 import TspLockedCard from "./TspLockedCard.vue"
 import { useTournamentStore } from "@/modules/tournament/store"
 import { showConfirm } from "@/composables/useDialog"
@@ -104,7 +104,7 @@ function handleSave() {
       :locked-message="t('tournament.settingsPage.drawMethod.lockedBanner')"
     >
       <div class="form-row">
-        <BtnGroup v-model="drawType" :options="drawOptions" />
+        <AppButtonGroup v-model="drawType" :options="drawOptions" />
         <button @click="handleRedraw">
           {{ t("tournament.settingsPage.drawMethod.regenerate") }}
         </button>
@@ -160,14 +160,14 @@ function handleSave() {
       :locked="hasAnyResults"
       :locked-message="t('tournament.settingsPage.legsPerMatch.lockedBanner')"
     >
-      <BtnGroup v-model="groupLegMode" :options="multiLegOptions" />
+      <AppButtonGroup v-model="groupLegMode" :options="multiLegOptions" />
     </TspLockedCard>
 
     <div class="form-card">
       <div class="form-section-title">{{ t("tournament.create.tiebreaker") }}</div>
       <div class="form-row">
         <span class="form-label">{{ t("tournament.settingsPage.tiebreaker.method") }}</span>
-        <BtnGroup
+        <AppButtonGroup
           v-model="tiebreaker"
           :options="[
             { value: 'head-to-head', label: t('tournament.settingsPage.tiebreaker.h2h') },

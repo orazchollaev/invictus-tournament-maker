@@ -4,7 +4,7 @@ import { useSettingsStore } from "../store"
 import type { DesignLanguage, Theme } from "../store"
 import { useI18n } from "vue-i18n"
 import { Palette } from "@lucide/vue"
-import { AppCard, AppField, AppIcon, BtnGroup } from "@/components/ui"
+import { AppCard, AppField, AppIcon, AppButtonGroup } from "@/components/ui"
 import { logEvent } from "@/composables/useAnalytics"
 import SettingDesc from "./SettingDesc.vue"
 
@@ -73,7 +73,7 @@ function selectColor(c: string) {
       <template #description>
         <SettingDesc>{{ t("settings.appearance.design.desc") }}</SettingDesc>
       </template>
-      <BtnGroup
+      <AppButtonGroup
         :model-value="settings.designLanguage"
         :options="designs"
         @update:model-value="selectDesign"
@@ -84,7 +84,7 @@ function selectColor(c: string) {
       <template #description>
         <SettingDesc>{{ t("settings.appearance.theme.desc") }}</SettingDesc>
       </template>
-      <BtnGroup v-model="settings.theme" :options="themes" />
+      <AppButtonGroup v-model="settings.theme" :options="themes" />
     </AppField>
 
     <AppField layout="split" :label="t('settings.appearance.primaryColor.label')">

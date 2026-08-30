@@ -10,7 +10,7 @@ import type {
   LeaguePlayoffSeedMode,
   PlayoffSeedMode,
 } from "@/modules/tournament/types"
-import { AppModal, AppButton, AppStepper, BtnGroup, ToggleSwitch } from "@/components/ui"
+import { AppModal, AppButton, AppStepper, AppButtonGroup, AppToggle } from "@/components/ui"
 import TspLockedCard from "./TspLockedCard.vue"
 import { showConfirm } from "@/composables/useDialog"
 import { useLegOptions } from "@/modules/tournament/composables/useLegOptions"
@@ -143,7 +143,7 @@ function handleSave() {
         :locked-message="t('tournament.settingsPage.drawMethod.lockedBanner')"
       >
         <div class="form-row">
-          <BtnGroup v-model="drawType" :options="drawOptions" />
+          <AppButtonGroup v-model="drawType" :options="drawOptions" />
           <button @click="handleRedraw">
             {{ t("tournament.settingsPage.drawMethod.regenerate") }}
           </button>
@@ -156,7 +156,7 @@ function handleSave() {
         :locked="!!tournament.groupsDone"
         :locked-message="t('tournament.settingsPage.playoffSeeding.lockedBanner')"
       >
-        <BtnGroup v-model="groupPlayoffSeedMode" :options="groupPlayoffSeedOptions" />
+        <AppButtonGroup v-model="groupPlayoffSeedMode" :options="groupPlayoffSeedOptions" />
       </TspLockedCard>
 
       <TspLockedCard
@@ -166,7 +166,7 @@ function handleSave() {
         :locked-message="t('tournament.settingsPage.formatOptions.lockedBanner')"
       >
         <div class="toggle-row" @click="hasThirdPlace = !hasThirdPlace">
-          <ToggleSwitch v-model="hasThirdPlace" @click.stop />
+          <AppToggle v-model="hasThirdPlace" @click.stop />
           <span class="toggle-label">{{ t("tournament.create.thirdPlace") }}</span>
           <span class="form-hint">{{ t("tournament.create.thirdPlaceHint") }}</span>
         </div>
@@ -180,17 +180,17 @@ function handleSave() {
         <div class="form-rows">
           <div v-for="stage in visibleStages" :key="stage" class="form-row">
             <span class="form-label">{{ t(STAGE_LABEL_KEYS[stage]) }}</span>
-            <BtnGroup v-model="roundLegModes[stage]" :options="legOptions" />
+            <AppButtonGroup v-model="roundLegModes[stage]" :options="legOptions" />
           </div>
           <div class="form-row">
             <span class="form-label">{{ t("tournament.settingsPage.legsPerMatch.final") }}</span>
-            <BtnGroup v-model="finalLegMode" :options="legOptions" />
+            <AppButtonGroup v-model="finalLegMode" :options="legOptions" />
           </div>
           <div v-if="hasThirdPlace" class="form-row">
             <span class="form-label">
               {{ t("tournament.settingsPage.legsPerMatch.thirdPlace") }}
             </span>
-            <BtnGroup v-model="thirdPlaceLegMode" :options="legOptions" />
+            <AppButtonGroup v-model="thirdPlaceLegMode" :options="legOptions" />
           </div>
         </div>
       </TspLockedCard>
@@ -212,7 +212,7 @@ function handleSave() {
           />
           <div class="form-row">
             <span class="form-label">{{ t("tournament.create.playoff.seedMode") }}</span>
-            <BtnGroup v-model="playoffSeedMode" :options="leaguePlayoffSeedOptions" />
+            <AppButtonGroup v-model="playoffSeedMode" :options="leaguePlayoffSeedOptions" />
           </div>
         </template>
       </TspLockedCard>
@@ -226,11 +226,11 @@ function handleSave() {
         <div class="form-rows">
           <div v-for="stage in visibleStages" :key="stage" class="form-row">
             <span class="form-label">{{ t(STAGE_LABEL_KEYS[stage]) }}</span>
-            <BtnGroup v-model="roundLegModes[stage]" :options="legOptions" />
+            <AppButtonGroup v-model="roundLegModes[stage]" :options="legOptions" />
           </div>
           <div class="form-row">
             <span class="form-label">{{ t("tournament.settingsPage.legsPerMatch.final") }}</span>
-            <BtnGroup v-model="finalLegMode" :options="legOptions" />
+            <AppButtonGroup v-model="finalLegMode" :options="legOptions" />
           </div>
         </div>
       </TspLockedCard>

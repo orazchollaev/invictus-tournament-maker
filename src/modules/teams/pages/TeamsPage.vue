@@ -12,7 +12,7 @@ import {
   AppEmptyState,
   AppIcon,
   AppSearchInput,
-  BtnGroup,
+  AppButtonGroup,
 } from "@/components/ui"
 import { X, Pencil, Plus, Users, List, Grid3x3 } from "@lucide/vue"
 import { MAX_TEAMS } from "@/constants"
@@ -70,7 +70,7 @@ const filtered = computed(() => {
 
     <div v-if="store.teams.length" class="search-row">
       <AppSearchInput v-model="query" :placeholder="t('teams.searchPlaceholder')" />
-      <BtnGroup v-model="settings.teamsListView" :options="viewOptions" size="md" />
+      <AppButtonGroup v-model="settings.teamsListView" :options="viewOptions" size="md" />
 
       <TeamsFilterMenu
         v-model:sort-key="settings.teamsSortKey"

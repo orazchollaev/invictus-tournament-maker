@@ -4,7 +4,7 @@ import { useSettingsStore } from "../store"
 import type { BracketStyle } from "../store"
 import { useI18n } from "vue-i18n"
 import { Monitor } from "@lucide/vue"
-import { AppCard, AppField, AppIcon, BtnGroup, ToggleSwitch } from "@/components/ui"
+import { AppCard, AppField, AppIcon, AppButtonGroup, AppToggle } from "@/components/ui"
 import SettingDesc from "./SettingDesc.vue"
 
 const { t } = useI18n()
@@ -28,7 +28,7 @@ const bracketStyleOptions = computed<{ value: BracketStyle; label: string }[]>((
       <template #description>
         <SettingDesc>{{ t("settings.display.teamAbbr.desc", { example: "BRA" }) }}</SettingDesc>
       </template>
-      <ToggleSwitch
+      <AppToggle
         v-model="settings.showTeamAbbr"
         :aria-label="t('settings.display.teamAbbr.label')"
       />
@@ -45,14 +45,14 @@ const bracketStyleOptions = computed<{ value: BracketStyle; label: string }[]>((
           — Double-Sided for 17+ teams
         </SettingDesc>
       </template>
-      <BtnGroup v-model="settings.bracketStyle" :options="bracketStyleOptions" />
+      <AppButtonGroup v-model="settings.bracketStyle" :options="bracketStyleOptions" />
     </AppField>
 
     <AppField layout="split" :label="t('settings.display.bracketHover.label')">
       <template #description>
         <SettingDesc>{{ t("settings.display.bracketHover.desc") }}</SettingDesc>
       </template>
-      <ToggleSwitch
+      <AppToggle
         v-model="settings.bracketHighlightOnHover"
         :aria-label="t('settings.display.bracketHover.label')"
       />
@@ -62,7 +62,7 @@ const bracketStyleOptions = computed<{ value: BracketStyle; label: string }[]>((
       <template #description>
         <SettingDesc>{{ t("settings.display.bracketConnectorColors.desc") }}</SettingDesc>
       </template>
-      <ToggleSwitch
+      <AppToggle
         v-model="settings.bracketConnectorColors"
         :aria-label="t('settings.display.bracketConnectorColors.label')"
       />
@@ -72,7 +72,7 @@ const bracketStyleOptions = computed<{ value: BracketStyle; label: string }[]>((
       <template #description>
         <SettingDesc>{{ t("settings.display.gradualReveal.desc") }}</SettingDesc>
       </template>
-      <ToggleSwitch
+      <AppToggle
         v-model="settings.gradualReveal"
         :aria-label="t('settings.display.gradualReveal.label')"
       />

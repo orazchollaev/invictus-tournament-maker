@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue"
 import { useI18n } from "vue-i18n"
-import { AppModal, AppButton, AppStepper, BtnGroup } from "@/components/ui"
+import { AppModal, AppButton, AppStepper, AppButtonGroup } from "@/components/ui"
 import type { LegMode, Tiebreaker } from "@/modules/tournament/types"
 import { useGroupSizeHint } from "@/modules/tournament/composables/useGroupSizeHint"
 import { useLegOptions } from "@/modules/tournament/composables/useLegOptions"
@@ -99,7 +99,7 @@ function handleSave() {
   >
     <div class="form-card">
       <div class="form-section-title">{{ t("tournament.create.drawMethod") }}</div>
-      <BtnGroup v-model="drawType" :options="drawOptions" />
+      <AppButtonGroup v-model="drawType" :options="drawOptions" />
       <div class="hint-box hint-box--bottom">
         {{
           t("tournament.create.drawHint", {
@@ -142,7 +142,7 @@ function handleSave() {
     <div class="form-card">
       <div class="form-section-title">{{ t("tournament.settingsPage.legsPerMatch.title") }}</div>
       <div class="form-row">
-        <BtnGroup v-model="groupLegMode" :options="multiLegOptions" />
+        <AppButtonGroup v-model="groupLegMode" :options="multiLegOptions" />
       </div>
     </div>
 
@@ -150,7 +150,7 @@ function handleSave() {
       <div class="form-section-title">{{ t("tournament.create.tiebreaker") }}</div>
       <div class="form-row">
         <span class="form-label">{{ t("tournament.settingsPage.tiebreaker.method") }}</span>
-        <BtnGroup
+        <AppButtonGroup
           v-model="tiebreaker"
           :options="[
             { value: 'head-to-head', label: t('tournament.settingsPage.tiebreaker.h2h') },

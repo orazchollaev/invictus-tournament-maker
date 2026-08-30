@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, watch, nextTick } from "vue"
-import { AppButton, AppField, AppIcon, AppModal, ColorPicker } from "@/components/ui"
+import { AppButton, AppField, AppIcon, AppModal, AppColorPicker } from "@/components/ui"
 import FlagPicker from "./FlagPicker.vue"
 import FlagCircle from "./FlagCircle.vue"
 import TeamImageSourceModal from "./TeamImageSourceModal.vue"
@@ -229,7 +229,7 @@ function submit() {
 
       <div class="section">
         <AppField layout="stack" :label="t('teams.form.color')">
-          <ColorPicker v-model="color" />
+          <AppColorPicker v-model="color" />
         </AppField>
       </div>
     </div>

@@ -12,7 +12,7 @@ import { ParticipantsTable } from "@/modules/tournament/components/participants"
 import { ManualDraw, PlayoffManualDraw } from "@/modules/tournament/components/draw"
 import { TournamentStats } from "@/modules/tournament/components/stats"
 import { DrawCeremony } from "@/modules/tournament/components/draw-ceremony"
-import { AppButton, AppModal, SubTabBar } from "@/components/ui"
+import { AppButton, AppModal, AppSubTabBar } from "@/components/ui"
 import { DetailHeader, DetailPhaseTabs, DetailMultiTierModal } from "../components/detail"
 import { useTournamentDetail } from "../composables/useTournamentDetail"
 import { useTournamentTabs } from "../composables/useTournamentTabs"
@@ -129,7 +129,7 @@ const {
               <div v-if="tab === 'league'" class="tab-panel">
                 <template v-if="isMultiTier && tournament.tiers">
                   <div class="gs-subtab-row">
-                    <SubTabBar
+                    <AppSubTabBar
                       :options="
                         tournament.tiers.map((tier, ti) => ({
                           value: String(ti),
@@ -244,7 +244,7 @@ const {
               </div>
               <div v-else-if="tab === 'groups'" class="tab-panel">
                 <div v-if="hasWildcards" class="gs-subtab-row">
-                  <SubTabBar
+                  <AppSubTabBar
                     v-model="groupSubTab"
                     :options="[
                       { value: 'groups', label: trns('tournament.tabs.groups') },

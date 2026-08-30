@@ -13,7 +13,7 @@ import {
   AppEmptyState,
   AppIcon,
   AppSearchInput,
-  BtnGroup,
+  AppButtonGroup,
 } from "@/components/ui"
 import { Trophy, X, Plus, List, Grid3x3 } from "@lucide/vue"
 import { showConfirm } from "@/composables/useDialog"
@@ -98,7 +98,7 @@ async function deleteTournament(id: string) {
 
     <div v-if="store.tournaments.length" class="search-row">
       <AppSearchInput v-model="query" :placeholder="t('tournaments.searchPlaceholder')" />
-      <BtnGroup v-model="settings.tournamentListView" :options="viewOptions" size="md" />
+      <AppButtonGroup v-model="settings.tournamentListView" :options="viewOptions" size="md" />
 
       <TournamentsFilterMenu
         v-model:sort-key="settings.tournamentsSortKey"

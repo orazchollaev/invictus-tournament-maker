@@ -10,7 +10,7 @@ import BracketFullscreenModal from "./BracketFullscreenModal.vue"
 import BracketSimToolbar from "./BracketSimToolbar.vue"
 import BracketZoomControls from "./BracketZoomControls.vue"
 import BracketZoomHint from "./BracketZoomHint.vue"
-import { AppButton, AppIcon, SubTabBar } from "@/components/ui"
+import { AppButton, AppIcon, AppSubTabBar } from "@/components/ui"
 import { useTournamentStore } from "@/modules/tournament/store"
 import { useSettingsStore } from "@/modules/settings/store"
 import { useGradualSim } from "@/modules/tournament/composables/useGradualSim"
@@ -144,7 +144,7 @@ const { isExporting, exportPng } = useBracketExport({
 <template>
   <div class="bracket-panel">
     <div class="bracket-header">
-      <SubTabBar
+      <AppSubTabBar
         :options="[
           { value: 'bracket', label: t('tournament.tabs.bracket') },
           { value: 'fixtures', label: t('tournament.tabs.fixtures') },

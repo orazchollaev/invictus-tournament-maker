@@ -3,7 +3,7 @@ import { computed } from "vue"
 import { useSettingsStore } from "../store"
 import { useI18n } from "vue-i18n"
 import { Swords } from "@lucide/vue"
-import { AppCard, AppField, AppIcon, BtnGroup } from "@/components/ui"
+import { AppCard, AppField, AppIcon, AppButtonGroup } from "@/components/ui"
 import SettingDesc from "./SettingDesc.vue"
 
 const { t } = useI18n()
@@ -47,7 +47,7 @@ const knockoutDesc = computed(() => legDesc("settings.matchDefaults.knockoutRoun
           — {{ groupStageDesc.double }}
         </SettingDesc>
       </template>
-      <BtnGroup v-model="settings.groupLegMode" :options="legOptions" />
+      <AppButtonGroup v-model="settings.groupLegMode" :options="legOptions" />
     </AppField>
 
     <AppField layout="split" :label="t('settings.matchDefaults.knockoutRounds.label')">
@@ -59,14 +59,14 @@ const knockoutDesc = computed(() => legDesc("settings.matchDefaults.knockoutRoun
           — {{ knockoutDesc.double }}
         </SettingDesc>
       </template>
-      <BtnGroup v-model="settings.knockoutLegMode" :options="legOptions" />
+      <AppButtonGroup v-model="settings.knockoutLegMode" :options="legOptions" />
     </AppField>
 
     <AppField layout="split" :label="t('settings.matchDefaults.final.label')">
       <template #description>
         <SettingDesc>{{ t("settings.matchDefaults.final.desc") }}</SettingDesc>
       </template>
-      <BtnGroup v-model="settings.finalLegMode" :options="legOptions" />
+      <AppButtonGroup v-model="settings.finalLegMode" :options="legOptions" />
     </AppField>
   </AppCard>
 </template>

@@ -2,7 +2,7 @@
 import { computed } from "vue"
 import { useI18n } from "vue-i18n"
 import { Check, FastForward, History, Pause, Play } from "@lucide/vue"
-import { AppButton, AppIcon, BtnGroup } from "@/components/ui"
+import { AppButton, AppIcon, AppButtonGroup } from "@/components/ui"
 import type { CeremonyPhase, CeremonySpeed } from "@/modules/tournament/composables/useDrawCeremony"
 
 defineProps<{
@@ -57,7 +57,7 @@ const speedOptions = computed(() => [
       </AppButton>
       <div class="dc-speed dc-push-right">
         <span class="dc-speed-label">{{ t("drawCeremony.speed") }}</span>
-        <BtnGroup
+        <AppButtonGroup
           :model-value="speed"
           size="xs"
           :options="speedOptions"

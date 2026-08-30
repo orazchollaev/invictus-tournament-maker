@@ -2,7 +2,7 @@
 import { ref } from "vue"
 import { useI18n } from "vue-i18n"
 import type { LegMode, Tiebreaker } from "@/modules/tournament/types"
-import { AppModal, AppButton, AppStepper, BtnGroup } from "@/components/ui"
+import { AppModal, AppButton, AppStepper, AppButtonGroup } from "@/components/ui"
 import TspLockedCard from "./TspLockedCard.vue"
 import { useLegOptions } from "@/modules/tournament/composables/useLegOptions"
 
@@ -65,7 +65,7 @@ function handleSave() {
     >
       <div class="form-row">
         <span class="form-label">{{ t("tournament.create.roundFormat") }}</span>
-        <BtnGroup v-model="leagueLegMode" :options="multiLegOptions" />
+        <AppButtonGroup v-model="leagueLegMode" :options="multiLegOptions" />
       </div>
     </TspLockedCard>
 
@@ -96,7 +96,7 @@ function handleSave() {
       <div class="form-section-title">{{ t("tournament.create.tiebreaker") }}</div>
       <div class="form-row">
         <span class="form-label">{{ t("tournament.settingsPage.tiebreaker.method") }}</span>
-        <BtnGroup
+        <AppButtonGroup
           v-model="tiebreaker"
           :options="[
             { value: 'head-to-head', label: t('tournament.settingsPage.tiebreaker.h2h') },

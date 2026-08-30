@@ -1,9 +1,9 @@
 <script setup lang="ts">
-/** Sort filter for the history series list — thin wrapper around the shared SortFilterMenu. */
+/** Sort filter for the history series list — thin wrapper around the shared AppSortFilterMenu. */
 import { computed } from "vue"
 import { useI18n } from "vue-i18n"
 import type { HistorySortKey } from "@/modules/settings/store"
-import { SortFilterMenu } from "@/components/ui"
+import { AppSortFilterMenu } from "@/components/ui"
 
 const sortKey = defineModel<HistorySortKey>("sortKey", { required: true })
 const sortAsc = defineModel<boolean>("sortAsc", { required: true })
@@ -18,7 +18,7 @@ const sortOptions = computed(() => [
 </script>
 
 <template>
-  <SortFilterMenu
+  <AppSortFilterMenu
     v-model:sort-key="sortKey"
     v-model:sort-asc="sortAsc"
     :sort-options="sortOptions"

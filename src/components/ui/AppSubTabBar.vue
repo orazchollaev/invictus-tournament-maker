@@ -2,11 +2,11 @@
 /**
  * Canonical in-panel division switcher — Groups/Wildcards, Bracket/Fixtures
  * and league tiers all pick from a small set of views inside one tab panel.
- * Thin semantic wrapper over BtnGroup so all three read as the same widget
- * instead of three separately hand-rolled BtnGroup blocks.
+ * Thin semantic wrapper over AppButtonGroup so all three read as the same widget
+ * instead of three separately hand-rolled AppButtonGroup blocks.
  */
 import type { Component } from "vue"
-import BtnGroup from "./BtnGroup.vue"
+import AppButtonGroup from "./AppButtonGroup.vue"
 
 withDefaults(
   defineProps<{
@@ -21,7 +21,7 @@ defineEmits<{ "update:modelValue": [value: string] }>()
 </script>
 
 <template>
-  <BtnGroup
+  <AppButtonGroup
     class="sub-tab-bar"
     :options="options"
     :model-value="modelValue"

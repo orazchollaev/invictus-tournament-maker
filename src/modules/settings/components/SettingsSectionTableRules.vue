@@ -3,7 +3,7 @@ import { computed } from "vue"
 import { useSettingsStore } from "../store"
 import { useI18n } from "vue-i18n"
 import { ListOrdered } from "@lucide/vue"
-import { AppCard, AppField, AppIcon, BtnGroup } from "@/components/ui"
+import { AppCard, AppField, AppIcon, AppButtonGroup } from "@/components/ui"
 import SettingDesc from "./SettingDesc.vue"
 
 const { t } = useI18n()
@@ -30,7 +30,7 @@ const tiebreakerOptions = computed(() => [
           {{ t("settings.tableRules.tiebreaker.goalDiff") }} — overall GD first
         </SettingDesc>
       </template>
-      <BtnGroup v-model="settings.tiebreaker" :options="tiebreakerOptions" />
+      <AppButtonGroup v-model="settings.tiebreaker" :options="tiebreakerOptions" />
     </AppField>
   </AppCard>
 </template>

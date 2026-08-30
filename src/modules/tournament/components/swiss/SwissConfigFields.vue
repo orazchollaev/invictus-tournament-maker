@@ -5,7 +5,7 @@
 // fixture cannot be redrawn, so those cards collapse to a lock banner.
 import { computed } from "vue"
 import { useI18n } from "vue-i18n"
-import { AppStepper, BtnGroup, ToggleSwitch } from "@/components/ui"
+import { AppStepper, AppButtonGroup, AppToggle } from "@/components/ui"
 import type { DrawType, LegMode, Tiebreaker } from "@/modules/tournament/types"
 import { legModeToCount, validateSwissConfig } from "@/engine"
 import { useLegOptions } from "@/modules/tournament/composables/useLegOptions"
@@ -65,14 +65,14 @@ defineExpose({ errors })
         <span class="form-label form-label--md">
           {{ t("tournament.create.swissConfig.legs") }}
         </span>
-        <BtnGroup v-model="legMode" :options="multiLegOptions" />
+        <AppButtonGroup v-model="legMode" :options="multiLegOptions" />
       </div>
 
       <div class="form-row">
         <span class="form-label form-label--md">
           {{ t("tournament.create.swissConfig.homeAwayBalance") }}
         </span>
-        <ToggleSwitch
+        <AppToggle
           v-model="balanceHomeAway"
           :aria-label="t('tournament.create.swissConfig.homeAwayBalance')"
         />
@@ -89,7 +89,7 @@ defineExpose({ errors })
       <span class="form-label form-label--md">
         {{ t("tournament.create.swissConfig.drawType") }}
       </span>
-      <BtnGroup
+      <AppButtonGroup
         v-model="drawType"
         :options="[
           { value: 'seeded', label: t('tournament.create.swissConfig.drawSeeded') },
@@ -122,7 +122,7 @@ defineExpose({ errors })
       <span class="form-label form-label--md">
         {{ t("tournament.settingsPage.tiebreaker.method") }}
       </span>
-      <BtnGroup
+      <AppButtonGroup
         v-model="tiebreaker"
         :options="[
           { value: 'head-to-head', label: t('tournament.settingsPage.tiebreaker.h2h') },

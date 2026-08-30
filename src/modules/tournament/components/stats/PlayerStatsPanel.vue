@@ -8,7 +8,7 @@ import { computed, ref } from "vue"
 import { useI18n } from "vue-i18n"
 import { useRouter } from "vue-router"
 import { Goal, Handshake, Shield, Star } from "@lucide/vue"
-import { AppCard, AppEmptyState, AppTable, SubTabBar } from "@/components/ui"
+import { AppCard, AppEmptyState, AppTable, AppSubTabBar } from "@/components/ui"
 import { TeamBadge } from "@/modules/teams/components"
 import { PlayerRatingChip } from "@/modules/players/components"
 import type { Team } from "@/modules/teams/types"
@@ -81,7 +81,7 @@ function open(playerId: string) {
 
 <template>
   <div class="player-stats">
-    <SubTabBar
+    <AppSubTabBar
       :options="options"
       :model-value="active"
       @update:model-value="(v) => (active = v as ListKey)"

@@ -8,7 +8,7 @@
  * all fold into it.
  *
  * For *inline* one-of-N filters (the old `.fv-tab`, `.tier-tab`,
- * `.view-toggle-btn`, `.mode-toggle`, `.dc-speed-btn`) use `BtnGroup`
+ * `.view-toggle-btn`, `.mode-toggle`, `.dc-speed-btn`) use `AppButtonGroup`
  * instead — that is the segmented-control role, not this one.
  */
 import { TabsRoot, TabsList } from "reka-ui"

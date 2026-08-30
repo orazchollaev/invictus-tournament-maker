@@ -100,7 +100,7 @@ function onPointerDown() {
   height: 28px;
 }
 /* 30px painted + the 1px border on each side = a 32px outer box, which
-   is exactly what a BtnGroup comes out at. The two stand side by side in
+   is exactly what an AppButtonGroup comes out at. The two stand side by side in
    every search row, so they have to agree. */
 .btn--icon.btn--md {
   width: 30px;

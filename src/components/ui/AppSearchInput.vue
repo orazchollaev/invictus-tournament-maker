@@ -61,7 +61,7 @@ const model = defineModel<string>({ required: true })
   box-sizing: border-box;
   transition: border-color var(--dur-fast) var(--ease);
 }
-/* Same 32px outer box as an icon AppButton and a BtnGroup — the three
+/* Same 32px outer box as an icon AppButton and an AppButtonGroup — the three
    share every search row. */
 .search-field--md .search-field-input {
   height: 32px;

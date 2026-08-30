@@ -7,7 +7,7 @@ import { useTournamentStats } from "@/modules/tournament/composables/useTourname
 import { isLeagueLike } from "@/engine"
 import { LeagueProgressChart } from "@/modules/tournament/components/league"
 import { TeamBadge } from "@/modules/teams/components"
-import { AppCard, AppTable, BtnGroup } from "@/components/ui"
+import { AppCard, AppTable, AppButtonGroup } from "@/components/ui"
 
 const props = defineProps<{
   tournament: Tournament
@@ -80,7 +80,7 @@ const chartTitle = computed(() => {
 <template>
   <div v-if="hasStats" class="stats-wrap">
     <template v-if="showChart && activeLeague">
-      <BtnGroup
+      <AppButtonGroup
         v-if="tabs.length > 1"
         size="xs"
         :model-value="String(activeIdx)"

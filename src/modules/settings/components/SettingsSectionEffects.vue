@@ -3,7 +3,7 @@ import { computed } from "vue"
 import { useSettingsStore, type LiveMatchSpeed } from "../store"
 import { useI18n } from "vue-i18n"
 import { PartyPopper } from "@lucide/vue"
-import { AppCard, AppField, AppIcon, BtnGroup, ToggleSwitch } from "@/components/ui"
+import { AppCard, AppField, AppIcon, AppButtonGroup, AppToggle } from "@/components/ui"
 import SettingDesc from "./SettingDesc.vue"
 
 const { t } = useI18n()
@@ -28,7 +28,7 @@ const speedOptions = computed(() =>
       <template #description>
         <SettingDesc>{{ t("settings.display.confetti.desc") }}</SettingDesc>
       </template>
-      <ToggleSwitch
+      <AppToggle
         v-model="settings.confettiOnWin"
         :aria-label="t('settings.display.confetti.label')"
       />
@@ -38,14 +38,14 @@ const speedOptions = computed(() =>
       <template #description>
         <SettingDesc>{{ t("settings.display.sound.desc") }}</SettingDesc>
       </template>
-      <ToggleSwitch v-model="settings.soundOnWin" :aria-label="t('settings.display.sound.label')" />
+      <AppToggle v-model="settings.soundOnWin" :aria-label="t('settings.display.sound.label')" />
     </AppField>
 
     <AppField layout="split" :label="t('liveMatch.settingsLabel')">
       <template #description>
         <SettingDesc>{{ t("liveMatch.settingsDesc") }}</SettingDesc>
       </template>
-      <BtnGroup
+      <AppButtonGroup
         :model-value="String(settings.liveMatchSpeed)"
         :options="speedOptions"
         size="xs"
@@ -57,7 +57,7 @@ const speedOptions = computed(() =>
       <template #description>
         <SettingDesc>{{ t("drawCeremony.settingsDesc") }}</SettingDesc>
       </template>
-      <ToggleSwitch v-model="settings.drawCeremony" :aria-label="t('drawCeremony.settingsLabel')" />
+      <AppToggle v-model="settings.drawCeremony" :aria-label="t('drawCeremony.settingsLabel')" />
     </AppField>
   </AppCard>
 </template>
