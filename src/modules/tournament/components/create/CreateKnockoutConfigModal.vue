@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from "vue"
 import { useI18n } from "vue-i18n"
-import { AppModal, AppButton, AppStepper, BtnGroup } from "@/components/ui"
+import { AppModal, AppButton, AppStepper, BtnGroup, ToggleSwitch } from "@/components/ui"
 import type {
   KnockoutStage,
   LegMode,
@@ -145,11 +145,11 @@ function handleSave() {
 
       <div v-if="props.selectedCount >= 4" class="form-card">
         <div class="form-section-title">{{ t("tournament.create.options") }}</div>
-        <label class="toggle-row">
-          <input v-model="hasThirdPlace" type="checkbox" />
+        <div class="toggle-row" @click="hasThirdPlace = !hasThirdPlace">
+          <ToggleSwitch v-model="hasThirdPlace" @click.stop />
           <span class="toggle-label">{{ t("tournament.create.thirdPlace") }}</span>
           <span class="toggle-hint">{{ t("tournament.create.thirdPlaceHint") }}</span>
-        </label>
+        </div>
       </div>
 
       <div class="form-card">

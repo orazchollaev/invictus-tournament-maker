@@ -71,7 +71,7 @@ defineEmits<{ "update:modelValue": [value: string] }>()
 }
 
 .btn-group--sm button {
-  height: 24px;
+  height: 28px;
   font-size: var(--fs-sm);
   padding: 0 var(--sp-3);
 }

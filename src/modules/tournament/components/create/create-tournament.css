@@ -38,6 +38,19 @@
   opacity: 0.4;
   cursor: not-allowed;
 }
+.ctp-format-card:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+/* iOS: press dims, nothing lifts. Android: a tonal state layer. */
+[data-design="ios"] .ctp-format-card:active:not(:disabled) {
+  box-shadow: none;
+  opacity: 0.6;
+}
+[data-design="android"] .ctp-format-card:active:not(:disabled) {
+  box-shadow: inset 0 0 0 999px color-mix(in srgb, var(--accent) 10%, transparent);
+}
 .ctp-format-icon {
   color: var(--accent);
 }

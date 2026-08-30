@@ -151,6 +151,12 @@ function onNativePick(e: Event) {
   border-color: var(--text);
   transform: scale(1.1);
 }
+.swatch:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.15) inset,
+    var(--focus-ring);
+}
 
 .hex-row {
   display: flex;
@@ -184,5 +190,12 @@ function onNativePick(e: Event) {
   font-size: 13px;
   letter-spacing: 0.04em;
   text-transform: uppercase;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .swatch,
+  .preview {
+    transition: none;
+  }
 }
 </style>

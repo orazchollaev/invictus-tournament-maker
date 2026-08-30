@@ -10,7 +10,7 @@ import type {
   LeaguePlayoffSeedMode,
   PlayoffSeedMode,
 } from "@/modules/tournament/types"
-import { AppModal, AppButton, AppStepper, BtnGroup } from "@/components/ui"
+import { AppModal, AppButton, AppStepper, BtnGroup, ToggleSwitch } from "@/components/ui"
 import TspLockedCard from "./TspLockedCard.vue"
 import { showConfirm } from "@/composables/useDialog"
 import { useLegOptions } from "@/modules/tournament/composables/useLegOptions"
@@ -164,11 +164,11 @@ function handleSave() {
         :locked="hasAnyResults"
         :locked-message="t('tournament.settingsPage.formatOptions.lockedBanner')"
       >
-        <label class="toggle-row">
-          <input v-model="hasThirdPlace" type="checkbox" />
+        <div class="toggle-row" @click="hasThirdPlace = !hasThirdPlace">
+          <ToggleSwitch v-model="hasThirdPlace" @click.stop />
           <span class="toggle-label">{{ t("tournament.create.thirdPlace") }}</span>
           <span class="form-hint">{{ t("tournament.create.thirdPlaceHint") }}</span>
-        </label>
+        </div>
       </TspLockedCard>
 
       <TspLockedCard

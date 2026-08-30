@@ -176,6 +176,13 @@ onUnmounted(() => {
   background: color-mix(in srgb, var(--accent) 12%, transparent);
   color: var(--accent);
 }
+.main-nav a:focus-visible,
+.update-btn:focus-visible,
+.github-star-btn:focus-visible,
+.settings-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
 
 /* Right side */
 .header-end {
@@ -291,6 +298,27 @@ onUnmounted(() => {
 .settings-btn.router-link-active {
   background: color-mix(in srgb, var(--accent) 12%, transparent);
   color: var(--accent);
+}
+
+/* ── Design languages ────────────────────────────────────────────
+   iOS: press dims, nothing lifts. Android: a tonal state layer. */
+[data-design="ios"] .main-nav a:active,
+[data-design="ios"] .update-btn:active,
+[data-design="ios"] .github-star-btn:active,
+[data-design="ios"] .settings-btn:active {
+  opacity: 0.55;
+}
+[data-design="android"] .main-nav a:active:not(.router-link-active) {
+  background: var(--bg-hover);
+}
+[data-design="android"] .update-btn:active {
+  background: color-mix(in srgb, var(--accent) 26%, transparent);
+}
+[data-design="android"] .github-star-btn:active {
+  background: var(--bg-hover);
+}
+[data-design="android"] .settings-btn:active:not(.router-link-active) {
+  background: var(--bg-hover);
 }
 
 @media (max-width: 600px) {
