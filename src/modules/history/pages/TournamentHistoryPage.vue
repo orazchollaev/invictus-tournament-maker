@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from "vue"
+import { computed, ref } from "vue"
 import { useRoute, RouterLink } from "vue-router"
 import { useTournamentStore } from "@/modules/tournament/store"
 import { isLeagueLike } from "@/engine"
@@ -20,6 +20,7 @@ import {
 import { useTournamentHistoryStats } from "../composables/useTournamentHistoryStats"
 import { useHistoryPlayerStats } from "../composables/useHistoryPlayerStats"
 import { useHistoryTabs, type HistoryTab } from "../composables/useHistoryTabs"
+import { useFillViewportHeight } from "@/composables/useFillViewportHeight"
 
 const route = useRoute()
 const store = useTournamentStore()
@@ -37,6 +38,11 @@ const completedSeasons = computed(() =>
 
 const first = computed(() => allSeasons.value[0])
 const isLeagueSeries = computed(() => !!first.value && isLeagueLike(first.value))
+
+// The tab surface is sized to the rest of the screen, so each panel scrolls
+// inside itself instead of growing the page.
+const tabSurface = ref<HTMLElement | null>(null)
+const { height: tabSurfaceHeight } = useFillViewportHeight(tabSurface)
 
 const { champions, finals, leagueSeasons, allTimeRows, stats, teamStats } =
   useTournamentHistoryStats(completedSeasons)
@@ -107,41 +113,60 @@ const tabValue = computed({
         </AppTab>
       </AppTabs>
 
-      <Swiper
-        :key="visibleTabs.join('|')"
-        :initial-slide="activeIndex"
-        :auto-height="true"
-        :speed="300"
-        :threshold="10"
-        :space-between="10"
-        css-mode
-        @swiper="onSwiperReady"
-        @slide-change="onSlideChange"
-      >
-        <SwiperSlide v-for="tab in visibleTabs" :key="tab">
-          <template v-if="isTabRendered(tab)">
-            <ChampionsTab
-              v-if="tab === 'champions'"
-              :champions="champions"
-              :finals-label="isLeagueSeries ? 'Runner-up' : undefined"
-            />
-            <LeagueSeasonsTab
-              v-else-if="tab === 'finals' && isLeagueSeries"
-              :seasons="leagueSeasons"
-            />
-            <AllFinalsTab v-else-if="tab === 'finals'" :finals="finals" />
-            <LeagueAllTimeTab v-else-if="tab === 'alltime'" :rows="allTimeRows" />
-            <StatisticsTab v-else-if="tab === 'stats'" :stats="stats" />
-            <TeamStatsTab v-else-if="tab === 'teams'" :teams="teamStats" />
-            <PlayersTab v-else :players="playerRows" />
-          </template>
-        </SwiperSlide>
-      </Swiper>
+      <div ref="tabSurface" class="tab-surface" :style="{ height: tabSurfaceHeight }">
+        <Swiper
+          :key="visibleTabs.join('|')"
+          class="tab-swiper"
+          :initial-slide="activeIndex"
+          :auto-height="false"
+          :speed="300"
+          :threshold="10"
+          :space-between="10"
+          css-mode
+          @swiper="onSwiperReady"
+          @slide-change="onSlideChange"
+        >
+          <SwiperSlide v-for="tab in visibleTabs" :key="tab">
+            <div v-if="isTabRendered(tab)" class="tab-panel">
+              <ChampionsTab
+                v-if="tab === 'champions'"
+                :champions="champions"
+                :finals-label="isLeagueSeries ? 'Runner-up' : undefined"
+              />
+              <LeagueSeasonsTab
+                v-else-if="tab === 'finals' && isLeagueSeries"
+                :seasons="leagueSeasons"
+              />
+              <AllFinalsTab v-else-if="tab === 'finals'" :finals="finals" />
+              <LeagueAllTimeTab v-else-if="tab === 'alltime'" :rows="allTimeRows" />
+              <StatisticsTab v-else-if="tab === 'stats'" :stats="stats" />
+              <TeamStatsTab v-else-if="tab === 'teams'" :teams="teamStats" />
+              <PlayersTab v-else :players="playerRows" />
+            </div>
+          </SwiperSlide>
+        </Swiper>
+      </div>
     </template>
   </div>
 </template>
 
-<!-- No styles: the tab height is owned by useSwiperAutoHeight. This file used
-     to carry `.swiper-wrapper { height: auto !important }`, which never
-     matched — scoped CSS cannot reach inside a child component — so the tabs
-     were clipped regardless. -->
+<style scoped>
+/* The surface carries a measured static height, so the swiper's own
+   height: 100% chain (swiper → wrapper → slide) resolves without autoHeight. */
+.tab-surface {
+  overflow: hidden;
+}
+
+.tab-swiper {
+  height: 100%;
+}
+
+.tab-panel {
+  min-width: 0;
+  height: 100%;
+  /* Both axes are named on purpose: a lone overflow-y turns overflow-x into
+     auto, and a horizontal scroller here would eat the swipe. */
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+</style>

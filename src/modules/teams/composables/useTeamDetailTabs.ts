@@ -1,7 +1,6 @@
 import { ref, computed, watch, onScopeDispose } from "vue"
-import { useRoute, useRouter } from "vue-router"
+import { useRoute } from "vue-router"
 import type { Swiper as SwiperInstance } from "swiper/types"
-import { useSwiperAutoHeight } from "@/composables/useSwiperAutoHeight"
 
 export type TeamTab = "overview" | "squad" | "matches"
 
@@ -12,18 +11,11 @@ const VALID_TABS: TeamTab[] = ["overview", "squad", "matches"]
  *  settle-timer transitionEnd workaround. */
 export function useTeamDetailTabs() {
   const route = useRoute()
-  const router = useRouter()
 
-  function tabFromQuery(): TeamTab {
-    const q = route.query.tab as string
-    return (VALID_TABS.includes(q as TeamTab) ? q : "overview") as TeamTab
-  }
-
-  const activeTab = ref<TeamTab>(tabFromQuery())
+  const activeTab = ref<TeamTab>("overview")
 
   function changeTab(tab: TeamTab) {
     activeTab.value = tab
-    router.replace({ query: { tab } })
   }
 
   const visibleTabs = VALID_TABS
@@ -42,7 +34,6 @@ export function useTeamDetailTabs() {
   }
 
   let swiperInstance: SwiperInstance | null = null
-  const autoHeight = useSwiperAutoHeight()
 
   const SETTLE_MS = 120
   let settleTimer: ReturnType<typeof setTimeout> | null = null
@@ -56,7 +47,6 @@ export function useTeamDetailTabs() {
 
   function onSwiperReady(s: SwiperInstance) {
     swiperInstance = s
-    autoHeight.attach(s)
     s.wrapperEl?.addEventListener("scroll", scheduleSettleCheck, { passive: true })
   }
 
@@ -65,7 +55,6 @@ export function useTeamDetailTabs() {
     swiperInstance?.wrapperEl?.removeEventListener("scroll", scheduleSettleCheck)
   })
 
-  let pendingUrlTab: TeamTab | null = null
   let isProgrammaticJump = false
 
   function onSlideChange(s: SwiperInstance) {
@@ -73,17 +62,12 @@ export function useTeamDetailTabs() {
     const tab = visibleTabs[s.activeIndex]
     if (!tab || tab === activeTab.value) return
     activeTab.value = tab
-    pendingUrlTab = tab
   }
 
   function onSlideChangeEnd() {
     isProgrammaticJump = false
-    autoHeight.sync()
     if (swiperInstance) settledIndex.value = swiperInstance.activeIndex
     if (settledIndex.value === activeIndex.value) jumpRange.value = null
-    if (!pendingUrlTab) return
-    router.replace({ query: { tab: pendingUrlTab } })
-    pendingUrlTab = null
   }
 
   watch(activeIndex, (idx) => {
@@ -99,16 +83,9 @@ export function useTeamDetailTabs() {
   })
 
   watch(
-    () => route.query.tab,
-    () => {
-      activeTab.value = tabFromQuery()
-    }
-  )
-
-  watch(
     () => route.params.id,
     () => {
-      activeTab.value = tabFromQuery()
+      activeTab.value = "overview"
     }
   )
 

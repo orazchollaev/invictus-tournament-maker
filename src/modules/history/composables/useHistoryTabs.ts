@@ -1,29 +1,16 @@
 import { ref, computed, watch, onScopeDispose, type ComputedRef } from "vue"
-import { useRoute, useRouter } from "vue-router"
+import { useRoute } from "vue-router"
 import type { Swiper as SwiperInstance } from "swiper/types"
-import { useSwiperAutoHeight } from "@/composables/useSwiperAutoHeight"
 
 export type HistoryTab = "champions" | "finals" | "alltime" | "stats" | "teams" | "players"
 
-const VALID_TABS: HistoryTab[] = ["champions", "finals", "alltime", "stats", "teams", "players"]
-
 export function useHistoryTabs(isLeagueSeries: ComputedRef<boolean>) {
   const route = useRoute()
-  const router = useRouter()
 
-  function tabFromQuery(): HistoryTab {
-    const q = route.query.tab as string
-    if (VALID_TABS.includes(q as HistoryTab) && (q !== "alltime" || isLeagueSeries.value)) {
-      return q as HistoryTab
-    }
-    return "champions"
-  }
-
-  const activeTab = ref<HistoryTab>(tabFromQuery())
+  const activeTab = ref<HistoryTab>("champions")
 
   function changeTab(tab: HistoryTab) {
     activeTab.value = tab
-    router.replace({ query: { tab } })
   }
 
   const visibleTabs = computed<HistoryTab[]>(() => {
@@ -68,9 +55,6 @@ export function useHistoryTabs(isLeagueSeries: ComputedRef<boolean>) {
   }
 
   let swiperInstance: SwiperInstance | null = null
-  /* css-mode disables Swiper's built-in autoHeight, so each tab's height is
-     measured here instead — otherwise every tab is clipped to the first one. */
-  const autoHeight = useSwiperAutoHeight()
 
   // css-mode never fires Swiper's "transitionEnd" — swiper-core's transitionEnd()
   // returns immediately when params.cssMode is set, and the cssMode scroll handler
@@ -92,7 +76,6 @@ export function useHistoryTabs(isLeagueSeries: ComputedRef<boolean>) {
 
   function onSwiperReady(s: SwiperInstance) {
     swiperInstance = s
-    autoHeight.attach(s)
     s.wrapperEl?.addEventListener("scroll", scheduleSettleCheck, { passive: true })
   }
 
@@ -101,7 +84,6 @@ export function useHistoryTabs(isLeagueSeries: ComputedRef<boolean>) {
     swiperInstance?.wrapperEl?.removeEventListener("scroll", scheduleSettleCheck)
   })
 
-  let pendingUrlTab: HistoryTab | null = null
   // Set while a tab click drives the slide programmatically. css-mode
   // still fires "slide-change" for every slide the scroll passes over,
   // so without this guard a first-tab-to-last click would flash the tab
@@ -109,33 +91,19 @@ export function useHistoryTabs(isLeagueSeries: ComputedRef<boolean>) {
   let isProgrammaticJump = false
 
   function onSlideChange(s: SwiperInstance) {
-    // Deliberately does *not* re-measure the tab height here. Under css-mode
-    // this fires once per slide the scroll crosses, and the wrapper is the
-    // scroll container — resizing it mid-scroll cancels the native smooth
-    // scroll and strands a multi-slide jump on an intermediate tab.
-    // useSwiperAutoHeight waits for the scroll to settle instead.
     if (isProgrammaticJump) return
     const tab = visibleTabs.value[s.activeIndex]
     if (!tab || tab === activeTab.value) return
-    // The tab highlight has to keep up with the finger; router.replace()
-    // re-renders the page, so it waits for the animation to finish.
     activeTab.value = tab
-    pendingUrlTab = tab
   }
 
   function onSlideChangeEnd() {
     isProgrammaticJump = false
-    // The lazy window collapses just below, unmounting neighbours; re-measure
-    // so the wrapper settles on the slide that is left.
-    autoHeight.sync()
     if (swiperInstance) settledIndex.value = swiperInstance.activeIndex
     // Only collapse the mounted window once the settled slide matches
     // the tab we actually want — if a rapid click retargeted mid-flight,
     // this "end" belongs to a superseded jump and another is still coming.
     if (settledIndex.value === activeIndex.value) jumpRange.value = null
-    if (!pendingUrlTab) return
-    router.replace({ query: { tab: pendingUrlTab } })
-    pendingUrlTab = null
   }
 
   watch(activeIndex, (idx) => {
@@ -151,18 +119,16 @@ export function useHistoryTabs(isLeagueSeries: ComputedRef<boolean>) {
   })
 
   watch(
-    () => route.query.tab,
+    () => route.params.name,
     () => {
-      activeTab.value = tabFromQuery()
+      activeTab.value = "champions"
     }
   )
 
-  watch(
-    () => route.params.name,
-    () => {
-      activeTab.value = tabFromQuery()
-    }
-  )
+  // "alltime" only exists for league series; drop off it if the series changes.
+  watch(visibleTabs, (tabs) => {
+    if (tabs.length && !tabs.includes(activeTab.value)) activeTab.value = tabs[0]
+  })
 
   return {
     activeTab,

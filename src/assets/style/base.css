@@ -61,8 +61,3 @@ a:hover {
     scroll-behavior: auto !important;
   }
 }
-
-.swiper-wrapper {
-  min-height: 75vh;
-  overflow-y: hidden !important;
-}

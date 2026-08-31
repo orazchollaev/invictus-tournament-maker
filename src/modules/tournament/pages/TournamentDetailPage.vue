@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from "vue"
+import { computed, ref } from "vue"
 import { useRouter } from "vue-router"
 import { useI18n } from "vue-i18n"
 import { Swiper, SwiperSlide } from "swiper/vue"
@@ -17,6 +17,7 @@ import { DetailHeader, DetailPhaseTabs, DetailMultiTierModal } from "../componen
 import { useTournamentDetail } from "../composables/useTournamentDetail"
 import { useTournamentTabs } from "../composables/useTournamentTabs"
 import { useTournamentCeremonies } from "../composables/useTournamentCeremonies"
+import { useFillViewportHeight } from "@/composables/useFillViewportHeight"
 
 const { t: trns } = useI18n()
 const router = useRouter()
@@ -27,6 +28,11 @@ const { store, allTeams, tournament, startNewSeason, startNewLeagueSeason, hasAn
 const isFinished = computed(
   () => !!tournament.value && store.isTournamentFinished(tournament.value.id)
 )
+
+// The tab surface is sized to the rest of the screen, so each panel scrolls
+// inside itself instead of growing the page.
+const tabSurface = ref<HTMLElement | null>(null)
+const { height: tabSurfaceHeight } = useFillViewportHeight(tabSurface)
 
 const {
   isMultiTier,
@@ -111,10 +117,11 @@ const {
         @change-tab="changeTab"
       />
 
-      <div class="tab-surface">
+      <div ref="tabSurface" class="tab-surface" :style="{ height: tabSurfaceHeight }">
         <Swiper
+          class="tab-swiper"
           :initial-slide="activeIndex"
-          :auto-height="true"
+          :auto-height="false"
           :speed="300"
           :threshold="10"
           :space-between="10"
@@ -376,9 +383,20 @@ const {
   overflow: hidden;
 }
 
+/* The surface carries a measured static height, so the swiper's own
+   height: 100% chain (swiper → wrapper → slide) resolves without autoHeight. */
+.tab-swiper {
+  height: 100%;
+}
+
 .tab-panel {
   min-width: 0;
+  height: 100%;
   padding: var(--sp-3);
+  /* Both axes are named on purpose: a lone overflow-y turns overflow-x into
+     auto, and a horizontal scroller here would eat the swipe. */
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .tab-panel--flush {
@@ -407,10 +425,6 @@ const {
 }
 
 @media (max-width: 600px) {
-  .page {
-    padding-bottom: 40px;
-  }
-
   .tab-panel {
     padding: var(--sp-2);
   }

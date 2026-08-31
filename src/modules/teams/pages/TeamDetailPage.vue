@@ -28,6 +28,7 @@ import {
 } from "../components/detail"
 import { useTeamMatchHistory } from "../composables/useTeamMatchHistory"
 import { useTeamDetailTabs, type TeamTab } from "../composables/useTeamDetailTabs"
+import { useFillViewportHeight } from "@/composables/useFillViewportHeight"
 
 const route = useRoute()
 const router = useRouter()
@@ -47,6 +48,11 @@ const { matches, stats, recentForm, tournamentOptions, seasonStats } = useTeamMa
 const tournamentWins = computed(() =>
   tournamentStore.tournaments.filter((t) => t.winnerId === teamId.value)
 )
+
+// The tab surface is sized to the rest of the screen, so each panel scrolls
+// inside itself instead of growing the page.
+const tabSurface = ref<HTMLElement | null>(null)
+const { height: tabSurfaceHeight } = useFillViewportHeight(tabSurface)
 
 const selectedTournamentKey = ref("all")
 
@@ -105,10 +111,11 @@ const tabValue = computed({
         </AppTab>
       </AppTabs>
 
-      <div class="tab-surface">
+      <div ref="tabSurface" class="tab-surface" :style="{ height: tabSurfaceHeight }">
         <Swiper
+          class="tab-swiper"
           :initial-slide="activeIndex"
-          :auto-height="true"
+          :auto-height="false"
           :speed="300"
           :threshold="10"
           :space-between="10"
@@ -174,12 +181,23 @@ const tabValue = computed({
   overflow: hidden;
 }
 
+/* The surface carries a measured static height, so the swiper's own
+   height: 100% chain (swiper → wrapper → slide) resolves without autoHeight. */
+.tab-swiper {
+  height: 100%;
+}
+
 .tab-panel {
   display: flex;
   flex-direction: column;
   gap: var(--sp-3);
   min-width: 0;
+  height: 100%;
   padding: var(--sp-3);
+  /* Both axes are named on purpose: a lone overflow-y turns overflow-x into
+     auto, and a horizontal scroller here would eat the swipe. */
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .tab-panel--flush {
@@ -199,10 +217,6 @@ const tabValue = computed({
 }
 
 @media (max-width: 600px) {
-  .page {
-    padding-bottom: 40px;
-  }
-
   .tab-panel {
     padding: var(--sp-2);
     gap: var(--sp-2);
