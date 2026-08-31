@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref, watch } from "vue"
+import { computed, onMounted, onUnmounted, ref, watch } from "vue"
 import { useRouter } from "vue-router"
 import { App } from "@capacitor/app"
 import { AppHeader, AppMobileBottomNav, ErrorBoundary } from "@/components/layout"
@@ -13,6 +13,17 @@ watch(() => settings.theme, setTheme, { immediate: true })
 
 const router = useRouter()
 const ROOT_PATHS = ["/tournaments", "/teams", "/history", "/settings"]
+
+const DETAIL_PAGE_PATTERNS = [
+  /^\/tournaments\/[^/]+$/,
+  /^\/tournaments\/[^/]+\/settings$/,
+  /^\/teams\/[^/]+$/,
+  /^\/players\/[^/]+$/,
+  /^\/history\/[^/]+$/,
+]
+const hideBottomNav = computed(() =>
+  DETAIL_PAGE_PATTERNS.some((pattern) => pattern.test(router.currentRoute.value.path))
+)
 
 const transitionName = ref("page")
 
@@ -38,7 +49,7 @@ onUnmounted(() => {
 <template>
   <div style="height: 100vh">
     <AppHeader />
-    <main class="app-main">
+    <main class="app-main" :class="{ 'app-main--no-nav': hideBottomNav }">
       <ErrorBoundary>
         <RouterView v-slot="{ Component }">
           <Transition :name="transitionName" mode="out-in">
@@ -48,7 +59,9 @@ onUnmounted(() => {
       </ErrorBoundary>
     </main>
     <AppDialog />
-    <AppMobileBottomNav />
+    <Transition name="mobile-nav">
+      <AppMobileBottomNav v-if="!hideBottomNav" />
+    </Transition>
   </div>
 </template>
 
@@ -67,5 +80,22 @@ onUnmounted(() => {
   .app-main::after {
     height: calc(var(--mobile-nav-offset) + var(--sp-4));
   }
+
+  .app-main--no-nav::after {
+    height: var(--safe-bottom);
+  }
+}
+
+.mobile-nav-enter-active,
+.mobile-nav-leave-active {
+  transition:
+    transform var(--dur) var(--ease),
+    opacity var(--dur) var(--ease);
+}
+
+.mobile-nav-enter-from,
+.mobile-nav-leave-to {
+  transform: translateY(120%);
+  opacity: 0;
 }
 </style>
