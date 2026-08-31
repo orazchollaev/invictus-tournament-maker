@@ -97,14 +97,22 @@ watch(bracketView, (v) => {
   if (v === "bracket") nextTick(fitScreen)
 })
 
+// The viewport is sized off the screen now, so a rotation changes how much
+// room the bracket has and the old fit no longer matches it.
+function refit() {
+  if (bracketView.value === "bracket") nextTick(fitScreen)
+}
+
 onMounted(() => {
   swipeTabs.mount()
   swipeFixtures.mount()
   nextTick(fitScreen)
+  window.addEventListener("resize", refit)
 })
 onUnmounted(() => {
   swipeTabs.unmount()
   swipeFixtures.unmount()
+  window.removeEventListener("resize", refit)
 })
 
 const {
@@ -225,9 +233,8 @@ const { isExporting, exportPng } = useBracketExport({
         <BracketZoomHint :show="zoomHint.show.value" @dismiss="zoomHint.dismiss" />
       </div>
 
-      <div v-else ref="fixtureWrapperRef">
+      <div v-else ref="fixtureWrapperRef" class="fixture-scroll">
         <FixtureView
-          class="fixture-wrapper"
           :tournament="tournament"
           :teams="teams"
           v-bind="bracketActions"
@@ -249,8 +256,13 @@ const { isExporting, exportPng } = useBracketExport({
 <style scoped src="./bracket-viewport.css"></style>
 
 <style scoped>
+/* The tab panel hands down a fixed height; the viewport takes whatever the
+   header and the sim toolbar leave, so the bracket sits centred in it. */
 .bracket-panel {
+  display: flex;
+  flex-direction: column;
   min-width: 0;
+  height: 100%;
 }
 .bracket-header {
   display: flex;
@@ -268,25 +280,35 @@ const { isExporting, exportPng } = useBracketExport({
 }
 
 .bracket-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
   padding: var(--sp-2) 0;
 }
 
-.bracket-wrapper {
-  height: clamp(360px, 68vh, 780px);
-  min-height: 280px;
+.bracket-header,
+.bracket-body > :not(.bracket-wrapper, .fixture-scroll) {
+  flex-shrink: 0;
 }
 
-.fixture-wrapper {
+.bracket-wrapper {
+  flex: 1;
+  min-height: 0;
+}
+
+/* Fixtures are a long list, so that view scrolls where the bracket pans. */
+.fixture-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 @media (max-width: 600px) {
   :deep(.zoom-controls),
   .btn-label {
     display: none;
-  }
-
-  .bracket-wrapper {
-    height: clamp(300px, 60vh, 600px);
   }
 }
 </style>
