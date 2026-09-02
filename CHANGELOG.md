@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.5.1](https://github.com/orazchollaev/invictus-tournament-maker/compare/v2.5.0...v2.5.1) (2026-09-02)
+
+### 🐛 Bug Fixes
+
+- **android:** resolve Play Console compliance and build optimization issues ([154da42](https://github.com/orazchollaev/invictus-tournament-maker/commit/154da4281cb546ebf1ea3a23844b084457afaafb))
+- **samples:** use flag field for UEFA competition teams ([af6864a](https://github.com/orazchollaev/invictus-tournament-maker/commit/af6864ad97622e815f9b969af0ce440a1d8f1286))
+
+### 🔧 Maintenance
+
+- **gradle:** bump gradle version ([1eee567](https://github.com/orazchollaev/invictus-tournament-maker/commit/1eee567b0f737e13b0d1c0dc0425c5dc6891c571))
+
 ## [2.5.0](https://github.com/orazchollaev/invictus-tournament-maker/compare/v2.4.0...v2.5.0) (2026-09-02)
 
 ### 🚀 New Features
