@@ -160,8 +160,6 @@
   border-color: var(--border);
 }
 
-/* M3 thickens the outline on focus. Painted as an inset ring rather than a
-   real 2px border so the field does not resize under the caret. */
 [data-design="android"] input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):focus,
 [data-design="android"] select:focus,
 [data-design="android"] textarea:focus {
@@ -170,11 +168,6 @@
     var(--focus-ring);
 }
 
-/* ── Phase tabs ──────────────────────────────────────────────────
-   iOS turns the tab strip into a segmented control: a grey track with a
-   white thumb sliding under the selected segment, no underline anywhere.
-   M3 keeps the strip but marks the selection with an accent underline
-   instead of a filled block. */
 [data-design="ios"] .phase-tab {
   flex: 1;
   justify-content: center;
@@ -238,7 +231,7 @@
    sits at normal tracking. */
 [data-design="ios"] .page-title,
 [data-design="ios"] .t-header h1 {
-  font-size: var(--fs-2xl);
+  font-size: var(--fs-xl);
   font-weight: 800;
   letter-spacing: -0.03em;
 }

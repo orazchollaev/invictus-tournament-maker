@@ -1,0 +1,260 @@
+{
+  "label": "Europa League 26/27",
+  "description": "UEFA Europa League 2026/27 — 36 clubs",
+  "order": 2,
+  "type": "club",
+  "teams": [
+    {
+      "id": "el-01",
+      "name": "Bayer Leverkusen",
+      "color": "#E32221",
+      "power": 91,
+      "country": "de"
+    },
+    {
+      "id": "el-02",
+      "name": "Benfica",
+      "color": "#E30613",
+      "power": 83,
+      "country": "pt"
+    },
+    {
+      "id": "el-03",
+      "name": "Juventus",
+      "color": "#000000",
+      "power": 88,
+      "country": "it"
+    },
+    {
+      "id": "el-04",
+      "name": "Milan",
+      "color": "#FB090B",
+      "power": 85,
+      "country": "it"
+    },
+    {
+      "id": "el-05",
+      "name": "Marseille",
+      "color": "#2FAEE0",
+      "power": 78,
+      "country": "fr"
+    },
+    {
+      "id": "el-06",
+      "name": "Crystal Palace",
+      "color": "#1B458F",
+      "power": 78,
+      "country": "gb"
+    },
+    {
+      "id": "el-07",
+      "name": "Bournemouth",
+      "color": "#DA291C",
+      "power": 75,
+      "country": "gb"
+    },
+    {
+      "id": "el-08",
+      "name": "Real Sociedad",
+      "color": "#003399",
+      "power": 75,
+      "country": "es"
+    },
+    {
+      "id": "el-09",
+      "name": "Red Bull Salzburg",
+      "color": "#E32221",
+      "power": 74,
+      "country": "at"
+    },
+    {
+      "id": "el-10",
+      "name": "Lyon",
+      "color": "#0055A4",
+      "power": 76,
+      "country": "fr"
+    },
+    {
+      "id": "el-11",
+      "name": "AZ",
+      "color": "#E31E24",
+      "power": 73,
+      "country": "nl"
+    },
+    {
+      "id": "el-12",
+      "name": "Celtic",
+      "color": "#018749",
+      "power": 72,
+      "country": "gb"
+    },
+    {
+      "id": "el-13",
+      "name": "Rennes",
+      "color": "#E30613",
+      "power": 72,
+      "country": "fr"
+    },
+    {
+      "id": "el-14",
+      "name": "Beşiktaş",
+      "color": "#000000",
+      "power": 72,
+      "country": "tr"
+    },
+    {
+      "id": "el-15",
+      "name": "Olympiacos",
+      "color": "#E30613",
+      "power": 71,
+      "country": "gr"
+    },
+    {
+      "id": "el-16",
+      "name": "Anderlecht",
+      "color": "#5C2D91",
+      "power": 70,
+      "country": "be"
+    },
+    {
+      "id": "el-17",
+      "name": "Celta Vigo",
+      "color": "#8AC3EE",
+      "power": 70,
+      "country": "es"
+    },
+    {
+      "id": "el-18",
+      "name": "Dinamo Zagreb",
+      "color": "#005BBB",
+      "power": 69,
+      "country": "hr"
+    },
+    {
+      "id": "el-19",
+      "name": "Sturm Graz",
+      "color": "#000000",
+      "power": 68,
+      "country": "at"
+    },
+    {
+      "id": "el-20",
+      "name": "Trabzonspor",
+      "color": "#6C0023",
+      "power": 67,
+      "country": "tr"
+    },
+    {
+      "id": "el-21",
+      "name": "Sparta Prague",
+      "color": "#E30613",
+      "power": 67,
+      "country": "cz"
+    },
+    {
+      "id": "el-22",
+      "name": "Sunderland",
+      "color": "#EB172B",
+      "power": 66,
+      "country": "gb"
+    },
+    {
+      "id": "el-23",
+      "name": "Hajduk Split",
+      "color": "#003399",
+      "power": 63,
+      "country": "hr"
+    },
+    {
+      "id": "el-24",
+      "name": "Lech Poznań",
+      "color": "#003399",
+      "power": 64,
+      "country": "pl"
+    },
+    {
+      "id": "el-25",
+      "name": "TSG Hoffenheim",
+      "color": "#003399",
+      "power": 66,
+      "country": "de"
+    },
+    {
+      "id": "el-26",
+      "name": "Ferencváros",
+      "color": "#009543",
+      "power": 62,
+      "country": "hu"
+    },
+    {
+      "id": "el-27",
+      "name": "Union Saint-Gilloise",
+      "color": "#FFD700",
+      "power": 65,
+      "country": "be"
+    },
+    {
+      "id": "el-28",
+      "name": "OFI",
+      "color": "#000000",
+      "power": 56,
+      "country": "gr"
+    },
+    {
+      "id": "el-29",
+      "name": "NEC",
+      "color": "#E30613",
+      "power": 63,
+      "country": "nl"
+    },
+    {
+      "id": "el-30",
+      "name": "Viktoria Plzeň",
+      "color": "#003399",
+      "power": 64,
+      "country": "cz"
+    },
+    {
+      "id": "el-31",
+      "name": "Torreense",
+      "color": "#000000",
+      "power": 58,
+      "country": "pt"
+    },
+    {
+      "id": "el-32",
+      "name": "Jagiellonia Białystok",
+      "color": "#FFD700",
+      "power": 58,
+      "country": "pl"
+    },
+    {
+      "id": "el-33",
+      "name": "Levski Sofia",
+      "color": "#003399",
+      "power": 58,
+      "country": "bg"
+    },
+    {
+      "id": "el-34",
+      "name": "Hapoel Be'er Sheva",
+      "color": "#E30613",
+      "power": 60,
+      "country": "il"
+    },
+    {
+      "id": "el-35",
+      "name": "Lillestrøm",
+      "color": "#FFD700",
+      "power": 57,
+      "country": "no"
+    },
+    {
+      "id": "el-36",
+      "name": "Omonia",
+      "color": "#009543",
+      "power": 57,
+      "country": "cy"
+    }
+  ]
+}

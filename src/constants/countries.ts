@@ -53,6 +53,7 @@ export const COUNTRY_FLAGS: { code: string; name: string }[] = [
   { code: "EC", name: "Ecuador" },
   { code: "EG", name: "Egypt" },
   { code: "SV", name: "El Salvador" },
+  { code: "gb-eng", name: "England" },
   { code: "GQ", name: "Equatorial Guinea" },
   { code: "ER", name: "Eritrea" },
   { code: "EE", name: "Estonia" },
