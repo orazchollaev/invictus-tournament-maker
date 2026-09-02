@@ -1,5 +1,20 @@
 # Changelog
 
+## [2.5.0](https://github.com/orazchollaev/invictus-tournament-maker/compare/v2.4.0...v2.5.0) (2026-09-02)
+
+### 🚀 New Features
+
+- **nav:** hide the bottom nav on detail pages ([383f7e2](https://github.com/orazchollaev/invictus-tournament-maker/commit/383f7e2efdba3a52aab73bf17eb1535c37808961))
+- **samples:** add 2026/27 UEFA competition teams ([6bf2e70](https://github.com/orazchollaev/invictus-tournament-maker/commit/6bf2e70c82f2ce96ec8555b222f99cb0ea534024))
+
+### 🐛 Bug Fixes
+
+- **bracket:** fill the tab panel instead of a clamped height ([4994732](https://github.com/orazchollaev/invictus-tournament-maker/commit/4994732a2557191597ff403e9025083e6b53d33e))
+
+### ♻️ Refactoring
+
+- **tabs:** give tab surfaces a static height, drop swiper autoHeight ([8b6ed1b](https://github.com/orazchollaev/invictus-tournament-maker/commit/8b6ed1b14c99120a8e65fcb56f9f012f2d03b102))
+
 ## [2.4.0](https://github.com/orazchollaev/invictus-tournament-maker/compare/v2.3.0...v2.4.0) (2026-08-30)
 
 ### 🚀 New Features
