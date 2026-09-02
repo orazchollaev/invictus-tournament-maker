@@ -1,246 +1,260 @@
 {
-  "label": "Conference League 26/27",
-  "description": "UEFA Conference League 2026/27 — 36 clubs",
+  "label": "2026/27 Conference League",
+  "description": "UEFA Conference League 2026/27 teams",
   "order": 3,
   "type": "club",
   "teams": [
     {
-      "id": "ecl-01",
+      "id": "uecl-01",
+      "name": "AGF",
+      "color": "#FFFFFF",
+      "power": 68,
+      "flag": "dk"
+    },
+    {
+      "id": "uecl-02",
+      "name": "Ajax",
+      "color": "#D2122E",
+      "power": 84,
+      "flag": "nl"
+    },
+    {
+      "id": "uecl-03",
       "name": "Atalanta",
       "color": "#1E71B8",
-      "power": 86,
+      "power": 83,
       "flag": "it"
     },
     {
-      "id": "ecl-02",
-      "name": "Ajax",
-      "color": "#D2122E",
-      "power": 78,
-      "flag": "nl"
-    },
-    {
-      "id": "ecl-03",
-      "name": "Brighton",
-      "color": "#0057B8",
-      "power": 79,
-      "flag": "gb-eng"
-    },
-    {
-      "id": "ecl-04",
-      "name": "Monaco",
-      "color": "#E30613",
-      "power": 77,
-      "flag": "fr"
-    },
-    {
-      "id": "ecl-05",
-      "name": "SC Freiburg",
-      "color": "#000000",
-      "power": 73,
-      "flag": "de"
-    },
-    {
-      "id": "ecl-06",
-      "name": "Twente",
-      "color": "#E30613",
-      "power": 72,
-      "flag": "nl"
-    },
-    {
-      "id": "ecl-07",
-      "name": "Braga",
-      "color": "#E30613",
-      "power": 72,
-      "flag": "pt"
-    },
-    {
-      "id": "ecl-08",
-      "name": "Getafe",
-      "color": "#003399",
-      "power": 70,
-      "flag": "es"
-    },
-    {
-      "id": "ecl-09",
-      "name": "Copenhagen",
-      "color": "#003399",
-      "power": 70,
-      "flag": "dk"
-    },
-    {
-      "id": "ecl-10",
-      "name": "Midtjylland",
-      "color": "#E30613",
-      "power": 68,
-      "flag": "dk"
-    },
-    {
-      "id": "ecl-11",
-      "name": "Red Star Belgrade",
-      "color": "#D40000",
-      "power": 68,
-      "flag": "rs"
-    },
-    {
-      "id": "ecl-12",
-      "name": "Panathinaikos",
-      "color": "#009543",
-      "power": 67,
-      "flag": "gr"
-    },
-    {
-      "id": "ecl-13",
-      "name": "Lugano",
-      "color": "#000000",
-      "power": 65,
-      "flag": "ch"
-    },
-    {
-      "id": "ecl-14",
-      "name": "Gent",
-      "color": "#0055A4",
-      "power": 66,
-      "flag": "be"
-    },
-    {
-      "id": "ecl-15",
-      "name": "Heart of Midlothian",
-      "color": "#8B0000",
-      "power": 63,
-      "flag": "gb-sct"
-    },
-    {
-      "id": "ecl-16",
-      "name": "Brann",
-      "color": "#003399",
-      "power": 62,
-      "flag": "no"
-    },
-    {
-      "id": "ecl-17",
-      "name": "CSKA Sofia",
-      "color": "#8B0000",
-      "power": 60,
-      "flag": "bg"
-    },
-    {
-      "id": "ecl-18",
-      "name": "AGF",
-      "color": "#003399",
-      "power": 62,
-      "flag": "dk"
-    },
-    {
-      "id": "ecl-19",
-      "name": "Nordsjælland",
-      "color": "#E30613",
-      "power": 63,
-      "flag": "dk"
-    },
-    {
-      "id": "ecl-20",
-      "name": "Sint-Truiden",
-      "color": "#009543",
-      "power": 58,
-      "flag": "be"
-    },
-    {
-      "id": "ecl-21",
-      "name": "Jablonec",
-      "color": "#009543",
-      "power": 59,
-      "flag": "cz"
-    },
-    {
-      "id": "ecl-22",
-      "name": "Thun",
-      "color": "#E30613",
-      "power": 59,
-      "flag": "ch"
-    },
-    {
-      "id": "ecl-23",
-      "name": "Mjällby AIF",
-      "color": "#FFD700",
-      "power": 57,
-      "flag": "se"
-    },
-    {
-      "id": "ecl-24",
+      "id": "uecl-04",
       "name": "Borac Banja Luka",
       "color": "#E30613",
-      "power": 56,
+      "power": 63,
       "flag": "ba"
     },
     {
-      "id": "ecl-25",
-      "name": "Egnatia",
+      "id": "uecl-05",
+      "name": "Braga",
       "color": "#E30613",
-      "power": 52,
+      "power": 79,
+      "flag": "pt"
+    },
+    {
+      "id": "uecl-06",
+      "name": "Brann",
+      "color": "#E30613",
+      "power": 65,
+      "flag": "no"
+    },
+    {
+      "id": "uecl-07",
+      "name": "Brighton & Hove Albion",
+      "color": "#0057B8",
+      "power": 81,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "uecl-08",
+      "name": "Copenhagen",
+      "color": "#FFFFFF",
+      "power": 76,
+      "flag": "dk"
+    },
+    {
+      "id": "uecl-09",
+      "name": "CSKA Sofia",
+      "color": "#D71920",
+      "power": 68,
+      "flag": "bg"
+    },
+    {
+      "id": "uecl-10",
+      "name": "Egnatia",
+      "color": "#009639",
+      "power": 59,
       "flag": "al"
     },
     {
-      "id": "ecl-26",
-      "name": "Kairat",
-      "color": "#009543",
-      "power": 55,
-      "flag": "kz"
+      "id": "uecl-11",
+      "name": "Gent",
+      "color": "#1E3A8A",
+      "power": 71,
+      "flag": "be"
     },
     {
-      "id": "ecl-27",
-      "name": "KuPS",
-      "color": "#009543",
-      "power": 56,
-      "flag": "fi"
+      "id": "uecl-12",
+      "name": "Getafe",
+      "color": "#0055A4",
+      "power": 72,
+      "flag": "es"
     },
     {
-      "id": "ecl-28",
-      "name": "Pafos",
-      "color": "#003399",
-      "power": 54,
-      "flag": "cy"
+      "id": "uecl-13",
+      "name": "Hajduk Split",
+      "color": "#FFFFFF",
+      "power": 68,
+      "flag": "hr"
     },
     {
-      "id": "ecl-29",
-      "name": "Kauno Žalgiris",
-      "color": "#009543",
-      "power": 53,
-      "flag": "lt"
+      "id": "uecl-14",
+      "name": "Heart of Midlothian",
+      "color": "#7A0019",
+      "power": 67,
+      "flag": "gb-sct"
     },
     {
-      "id": "ecl-30",
-      "name": "Riga",
-      "color": "#8B0000",
-      "power": 53,
-      "flag": "lv"
-    },
-    {
-      "id": "ecl-31",
-      "name": "Lincoln Red Imps",
-      "color": "#E30613",
-      "power": 48,
-      "flag": "gi"
-    },
-    {
-      "id": "ecl-32",
+      "id": "uecl-15",
       "name": "Iberia 1999",
-      "color": "#003399",
-      "power": 50,
+      "color": "#E30613",
+      "power": 55,
       "flag": "ge"
     },
     {
-      "id": "ecl-33",
-      "name": "Universitatea Craiova",
-      "color": "#009543",
-      "power": 57,
-      "flag": "ro"
+      "id": "uecl-16",
+      "name": "Inter Club d'Escaldes",
+      "color": "#000000",
+      "power": 48,
+      "flag": "ad"
     },
     {
-      "id": "ecl-34",
-      "name": "Inter Club d'Escaldes",
+      "id": "uecl-17",
+      "name": "Jablonec",
+      "color": "#00843D",
+      "power": 66,
+      "flag": "cz"
+    },
+    {
+      "id": "uecl-18",
+      "name": "Kairat",
+      "color": "#FFD700",
+      "power": 63,
+      "flag": "kz"
+    },
+    {
+      "id": "uecl-19",
+      "name": "Kauno Žalgiris",
+      "color": "#006A44",
+      "power": 58,
+      "flag": "lt"
+    },
+    {
+      "id": "uecl-20",
+      "name": "KuPS",
+      "color": "#FFD700",
+      "power": 62,
+      "flag": "fi"
+    },
+    {
+      "id": "uecl-21",
+      "name": "Lincoln Red Imps",
+      "color": "#C8102E",
+      "power": 49,
+      "flag": "gi"
+    },
+    {
+      "id": "uecl-22",
+      "name": "Lugano",
+      "color": "#000000",
+      "power": 68,
+      "flag": "ch"
+    },
+    {
+      "id": "uecl-23",
+      "name": "Midtjylland",
+      "color": "#D71920",
+      "power": 75,
+      "flag": "dk"
+    },
+    {
+      "id": "uecl-24",
+      "name": "Mjällby AIF",
+      "color": "#FFD700",
+      "power": 62,
+      "flag": "se"
+    },
+    {
+      "id": "uecl-25",
+      "name": "Monaco",
       "color": "#E30613",
-      "power": 47,
-      "flag": "ad"
+      "power": 84,
+      "flag": "fr"
+    },
+    {
+      "id": "uecl-26",
+      "name": "Nordsjælland",
+      "color": "#FF6B00",
+      "power": 69,
+      "flag": "dk"
+    },
+    {
+      "id": "uecl-27",
+      "name": "Pafos",
+      "color": "#0057A8",
+      "power": 67,
+      "flag": "cy"
+    },
+    {
+      "id": "uecl-28",
+      "name": "Panathinaikos",
+      "color": "#007A33",
+      "power": 76,
+      "flag": "gr"
+    },
+    {
+      "id": "uecl-29",
+      "name": "Red Star Belgrade",
+      "color": "#E30613",
+      "power": 76,
+      "flag": "rs"
+    },
+    {
+      "id": "uecl-30",
+      "name": "Riga",
+      "color": "#F58220",
+      "power": 57,
+      "flag": "lv"
+    },
+    {
+      "id": "uecl-31",
+      "name": "SC Freiburg",
+      "color": "#E30613",
+      "power": 77,
+      "flag": "de"
+    },
+    {
+      "id": "uecl-32",
+      "name": "Sint-Truiden",
+      "color": "#F5D000",
+      "power": 61,
+      "flag": "be"
+    },
+    {
+      "id": "uecl-33",
+      "name": "Thun",
+      "color": "#E30613",
+      "power": 58,
+      "flag": "ch"
+    },
+    {
+      "id": "uecl-34",
+      "name": "Trabzonspor",
+      "color": "#8B1E3F",
+      "power": 73,
+      "flag": "tr"
+    },
+    {
+      "id": "uecl-35",
+      "name": "Twente",
+      "color": "#E30613",
+      "power": 75,
+      "flag": "nl"
+    },
+    {
+      "id": "uecl-36",
+      "name": "Universitatea Craiova",
+      "color": "#0057B8",
+      "power": 61,
+      "flag": "ro"
     }
   ]
 }
