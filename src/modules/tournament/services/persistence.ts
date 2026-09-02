@@ -111,6 +111,31 @@ export async function loadTournaments(): Promise<Tournament[]> {
   return migrateFromLegacyBlob()
 }
 
+/**
+ * `active`/`statsMigrated` used to be persisted by pinia-plugin-persistedstate-2's
+ * `$subscribe`, but that subscribes with `{ deep: true }` on the *whole* store
+ * state regardless of `includePaths` — meaning every match save deep-traversed
+ * every loaded tournament just to persist these two small fields. Read/written
+ * by hand instead, from the same legacy key, so no migration is needed.
+ */
+export async function loadPersistedMeta(): Promise<{
+  active: string | null
+  statsMigrated: boolean
+}> {
+  try {
+    const raw = await idbStorage.getItem(LEGACY_KEY)
+    if (!raw) return { active: null, statsMigrated: false }
+    const parsed = JSON.parse(raw)
+    return { active: parsed?.active ?? null, statsMigrated: !!parsed?.statsMigrated }
+  } catch {
+    return { active: null, statsMigrated: false }
+  }
+}
+
+export function saveMeta(active: string | null, statsMigrated: boolean): void {
+  void idbStorage.setItem(LEGACY_KEY, JSON.stringify({ active, statsMigrated }))
+}
+
 async function currentIds(): Promise<string[]> {
   const raw = await get(INDEX_KEY)
   if (raw === undefined) return []

@@ -71,18 +71,16 @@ async function bootstrap() {
   app.use(i18n)
 
   // Matches played before v2.2.0 get stamped as legacy so the event engine
-  // never invents scorers for them. Has to wait for the persisted state to
-  // hydrate, or there would be nothing to stamp.
+  // never invents scorers for them. Has to wait for hydration, or there
+  // would be nothing to stamp.
   //
-  // `tournaments` is loaded by hand (see modules/tournament/persistence.ts)
-  // rather than by the plugin above — it must run strictly after
-  // `isReady()`, since a first-run migration reads the plugin's own
-  // pre-refactor blob and then deletes it; doing that before the plugin has
-  // had a chance to read `active`/`statsMigrated` out of it would lose them.
+  // The tournament store opts out of the plugin above entirely and persists
+  // everything (`tournaments`, `active`, `statsMigrated`) by hand — see
+  // modules/tournament/store/index.ts and services/persistence.ts. Pinia's
+  // own `$subscribe`, which the plugin relies on, deep-watches the whole
+  // store state regardless of `includePaths`, which made every match save
+  // pay for a full traversal of every loaded tournament.
   const tournamentStore = useTournamentStore()
-  try {
-    await tournamentStore.$persistedState.isReady()
-  } catch {}
   try {
     await tournamentStore.hydrate()
   } catch {}

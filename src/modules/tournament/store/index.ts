@@ -12,6 +12,8 @@ import {
   saveTournament,
   deleteTournamentRecord,
   saveIndex,
+  loadPersistedMeta,
+  saveMeta,
 } from "../services/persistence"
 import {
   createMultiTierLeague,
@@ -119,6 +121,14 @@ export const useTournamentStore = defineStore(
      * working launch to pick up.
      */
     async function hydrate() {
+      // Must run before loadTournaments(): the first-run migration below
+      // reads this same legacy key and then shrinks it, so active/statsMigrated
+      // have to be read out of it first or they're lost.
+      try {
+        const meta = await loadPersistedMeta()
+        active.value = meta.active
+        statsMigrated.value = meta.statsMigrated
+      } catch {}
       try {
         tournaments.value = await loadTournaments()
       } catch {
@@ -130,6 +140,17 @@ export const useTournamentStore = defineStore(
       await nextTick()
       hydrated.value = true
     }
+
+    // Persisted by hand, not through pinia-plugin-persistedstate-2: that
+    // plugin's $subscribe watches the *whole* store state with
+    // `{ deep: true }` regardless of `includePaths` (Pinia's own
+    // implementation, not something includePaths can narrow) — so every
+    // match save was deep-traversing every loaded tournament just to persist
+    // these two small fields. A shallow watch on the two refs themselves
+    // never touches `tournaments` at all.
+    watch([active, statsMigrated], ([a, s]) => {
+      if (hydrated.value) saveMeta(a, s)
+    })
 
     function getTeams() {
       return useTeamsStore().teams
@@ -315,20 +336,14 @@ export const useTournamentStore = defineStore(
     }
   },
   {
+    // Everything this store holds (`tournaments`, `active`, `statsMigrated`)
+    // is persisted by hand — see `hydrate()` and the meta watcher above.
+    // The plugin must stay fully opted out (not just narrowed via
+    // includePaths): Pinia's own `$subscribe`, which the plugin relies on,
+    // deep-watches the *entire* store state no matter what includePaths
+    // says, which was the actual cost of every match save.
     persistedState: {
-      // `tournaments` is persisted by hand (see persistence.ts) — one
-      // record per tournament instead of the whole history in one blob.
-      // Only these two small fields still go through the plugin.
-      includePaths: ["active", "statsMigrated"],
-      // The plugin's default merge (`(state, saved) => saved`) would hand
-      // back whatever shape is on disk wholesale — including a `tournaments`
-      // array, if the pre-refactor blob under this same key still has one.
-      // Only take the two fields this store still delegates to the plugin.
-      merge: (state, saved) => ({
-        ...state,
-        active: saved?.active ?? state.active,
-        statsMigrated: saved?.statsMigrated ?? state.statsMigrated,
-      }),
+      persist: false,
     },
   }
 )
