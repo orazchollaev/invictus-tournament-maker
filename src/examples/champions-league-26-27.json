@@ -9,252 +9,252 @@
       "name": "Real Madrid",
       "color": "#FEBE10",
       "power": 97,
-      "country": "es"
+      "flag": "es"
     },
     {
       "id": "cl-02",
       "name": "Manchester City",
       "color": "#6CABDD",
       "power": 96,
-      "country": "gb"
+      "flag": "gb"
     },
     {
       "id": "cl-03",
       "name": "Bayern Munich",
       "color": "#DC052D",
       "power": 95,
-      "country": "de"
+      "flag": "de"
     },
     {
       "id": "cl-04",
       "name": "Liverpool",
       "color": "#C8102E",
       "power": 94,
-      "country": "gb"
+      "flag": "gb"
     },
     {
       "id": "cl-05",
       "name": "Barcelona",
       "color": "#A50044",
       "power": 93,
-      "country": "es"
+      "flag": "es"
     },
     {
       "id": "cl-06",
       "name": "Paris Saint-Germain",
       "color": "#004170",
       "power": 92,
-      "country": "fr"
+      "flag": "fr"
     },
     {
       "id": "cl-07",
       "name": "Arsenal",
       "color": "#EF0107",
       "power": 91,
-      "country": "gb"
+      "flag": "gb"
     },
     {
       "id": "cl-08",
       "name": "Inter Milan",
       "color": "#0055A4",
       "power": 90,
-      "country": "it"
+      "flag": "it"
     },
     {
       "id": "cl-09",
       "name": "Atlético Madrid",
       "color": "#CE3524",
       "power": 89,
-      "country": "es"
+      "flag": "es"
     },
     {
       "id": "cl-10",
       "name": "Borussia Dortmund",
       "color": "#FDE100",
       "power": 86,
-      "country": "de"
+      "flag": "de"
     },
     {
       "id": "cl-11",
       "name": "Napoli",
       "color": "#008BD2",
       "power": 85,
-      "country": "it"
+      "flag": "it"
     },
     {
       "id": "cl-12",
       "name": "Sporting CP",
       "color": "#008F39",
       "power": 83,
-      "country": "pt"
+      "flag": "pt"
     },
     {
       "id": "cl-13",
       "name": "RB Leipzig",
       "color": "#DD013F",
       "power": 82,
-      "country": "de"
+      "flag": "de"
     },
     {
       "id": "cl-14",
       "name": "Aston Villa",
       "color": "#670E36",
       "power": 80,
-      "country": "gb"
+      "flag": "gb"
     },
     {
       "id": "cl-15",
       "name": "Manchester United",
       "color": "#DA291C",
       "power": 79,
-      "country": "gb"
+      "flag": "gb"
     },
     {
       "id": "cl-16",
       "name": "VfB Stuttgart",
       "color": "#E32221",
       "power": 78,
-      "country": "de"
+      "flag": "de"
     },
     {
       "id": "cl-17",
       "name": "Porto",
       "color": "#003399",
       "power": 77,
-      "country": "pt"
+      "flag": "pt"
     },
     {
       "id": "cl-18",
       "name": "PSV Eindhoven",
       "color": "#E31E24",
       "power": 77,
-      "country": "nl"
+      "flag": "nl"
     },
     {
       "id": "cl-19",
       "name": "Galatasaray",
       "color": "#A32638",
       "power": 76,
-      "country": "tr"
+      "flag": "tr"
     },
     {
       "id": "cl-20",
       "name": "Roma",
       "color": "#8E1F2F",
       "power": 76,
-      "country": "it"
+      "flag": "it"
     },
     {
       "id": "cl-21",
       "name": "Fenerbahçe",
       "color": "#001489",
       "power": 75,
-      "country": "tr"
+      "flag": "tr"
     },
     {
       "id": "cl-22",
       "name": "Villarreal",
       "color": "#FFD700",
       "power": 75,
-      "country": "es"
+      "flag": "es"
     },
     {
       "id": "cl-23",
       "name": "Feyenoord",
       "color": "#E31E24",
       "power": 74,
-      "country": "nl"
+      "flag": "nl"
     },
     {
       "id": "cl-24",
       "name": "Shakhtar Donetsk",
       "color": "#FF6A00",
       "power": 74,
-      "country": "ua"
+      "flag": "ua"
     },
     {
       "id": "cl-25",
       "name": "Club Brugge",
       "color": "#0055A4",
       "power": 73,
-      "country": "be"
+      "flag": "be"
     },
     {
       "id": "cl-26",
       "name": "Real Betis",
       "color": "#009543",
       "power": 72,
-      "country": "es"
+      "flag": "es"
     },
     {
       "id": "cl-27",
       "name": "Lille",
       "color": "#E30613",
       "power": 71,
-      "country": "fr"
+      "flag": "fr"
     },
     {
       "id": "cl-28",
       "name": "Lens",
       "color": "#FFD700",
       "power": 70,
-      "country": "fr"
+      "flag": "fr"
     },
     {
       "id": "cl-29",
       "name": "Slavia Prague",
       "color": "#E30613",
       "power": 68,
-      "country": "cz"
+      "flag": "cz"
     },
     {
       "id": "cl-30",
       "name": "AEK Athens",
       "color": "#FFD700",
       "power": 67,
-      "country": "gr"
+      "flag": "gr"
     },
     {
       "id": "cl-31",
       "name": "Como",
       "color": "#0055A4",
       "power": 66,
-      "country": "it"
+      "flag": "it"
     },
     {
       "id": "cl-32",
       "name": "Slovan Bratislava",
       "color": "#003399",
       "power": 60,
-      "country": "sk"
+      "flag": "sk"
     },
     {
       "id": "cl-33",
       "name": "LASK",
       "color": "#E32221",
       "power": 59,
-      "country": "at"
+      "flag": "at"
     },
     {
       "id": "cl-34",
       "name": "Bodø/Glimt",
       "color": "#FFD700",
       "power": 62,
-      "country": "no"
+      "flag": "no"
     },
     {
       "id": "cl-35",
       "name": "Sabah",
       "color": "#009543",
       "power": 55,
-      "country": "az"
+      "flag": "az"
     },
     {
       "id": "cl-36",
       "name": "Viking",
       "color": "#003399",
       "power": 56,
-      "country": "no"
+      "flag": "no"
     }
   ]
 }

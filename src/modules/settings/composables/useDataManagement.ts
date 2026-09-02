@@ -17,7 +17,7 @@ interface Dataset {
   description: string
   order?: number
   type: "country" | "club"
-  teams: { id: string; name: string; color: string; power: number }[]
+  teams: { id: string; name: string; color: string; power: number; flag?: string }[]
   /** Optional squads. Player.teamId must match an id in `teams`. */
   players?: {
     id: string
