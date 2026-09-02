@@ -1,5 +1,15 @@
 # Changelog
 
+## [2.5.2](https://github.com/orazchollaev/invictus-tournament-maker/compare/v2.5.1...v2.5.2) (2026-09-02)
+
+### 🐛 Bug Fixes
+
+- **examples:** fixed england and scotland teams flags ([c56f392](https://github.com/orazchollaev/invictus-tournament-maker/commit/c56f3922cf8158ca8056295a501cd5b1e1e1781a))
+
+### 🔧 Maintenance
+
+- **gradle:** bump gradle version ([df18ebb](https://github.com/orazchollaev/invictus-tournament-maker/commit/df18ebb609caceacf46a9e18b7e6087460b0392e))
+
 ## [2.5.1](https://github.com/orazchollaev/invictus-tournament-maker/compare/v2.5.0...v2.5.1) (2026-09-02)
 
 ### 🐛 Bug Fixes

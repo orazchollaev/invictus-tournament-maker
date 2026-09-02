@@ -2,7 +2,7 @@
   "name": "invictus-tournament-maker",
   "description": "Create and simulate football tournaments in seconds",
   "private": true,
-  "version": "2.5.1",
+  "version": "2.5.2",
   "type": "module",
   "scripts": {
     "dev": "vite",
