@@ -44,14 +44,14 @@
       "name": "Crystal Palace",
       "color": "#1B458F",
       "power": 78,
-      "flag": "gb"
+      "flag": "gb-eng"
     },
     {
       "id": "el-07",
       "name": "Bournemouth",
       "color": "#DA291C",
       "power": 75,
-      "flag": "gb"
+      "flag": "gb-eng"
     },
     {
       "id": "el-08",
@@ -86,7 +86,7 @@
       "name": "Celtic",
       "color": "#018749",
       "power": 72,
-      "flag": "gb"
+      "flag": "gb-sct"
     },
     {
       "id": "el-13",
@@ -156,7 +156,7 @@
       "name": "Sunderland",
       "color": "#EB172B",
       "power": 66,
-      "flag": "gb"
+      "flag": "gb-eng"
     },
     {
       "id": "el-23",

@@ -23,7 +23,7 @@
       "name": "Brighton",
       "color": "#0057B8",
       "power": 79,
-      "flag": "gb"
+      "flag": "gb-eng"
     },
     {
       "id": "ecl-04",
@@ -107,7 +107,7 @@
       "name": "Heart of Midlothian",
       "color": "#8B0000",
       "power": 63,
-      "flag": "gb"
+      "flag": "gb-sct"
     },
     {
       "id": "ecl-16",

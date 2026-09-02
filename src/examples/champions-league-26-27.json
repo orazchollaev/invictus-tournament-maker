@@ -16,7 +16,7 @@
       "name": "Manchester City",
       "color": "#6CABDD",
       "power": 96,
-      "flag": "gb"
+      "flag": "gb-eng"
     },
     {
       "id": "cl-03",
@@ -30,7 +30,7 @@
       "name": "Liverpool",
       "color": "#C8102E",
       "power": 94,
-      "flag": "gb"
+      "flag": "gb-eng"
     },
     {
       "id": "cl-05",
@@ -51,7 +51,7 @@
       "name": "Arsenal",
       "color": "#EF0107",
       "power": 91,
-      "flag": "gb"
+      "flag": "gb-eng"
     },
     {
       "id": "cl-08",
@@ -100,14 +100,14 @@
       "name": "Aston Villa",
       "color": "#670E36",
       "power": 80,
-      "flag": "gb"
+      "flag": "gb-eng"
     },
     {
       "id": "cl-15",
       "name": "Manchester United",
       "color": "#DA291C",
       "power": 79,
-      "flag": "gb"
+      "flag": "gb-eng"
     },
     {
       "id": "cl-16",
