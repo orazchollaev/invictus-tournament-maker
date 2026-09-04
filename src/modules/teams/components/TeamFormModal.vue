@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref, watch, nextTick } from "vue"
-import { AppButton, AppField, AppIcon, AppModal, AppColorPicker } from "@/components/ui"
+import { ref, computed, watch, nextTick } from "vue"
+import { AppButton, AppField, AppIcon, AppModal, AppColorPicker, AppStarRating } from "@/components/ui"
 import FlagPicker from "./FlagPicker.vue"
 import FlagCircle from "./FlagCircle.vue"
 import TeamImageSourceModal from "./TeamImageSourceModal.vue"
@@ -38,6 +38,9 @@ const showSourceChooser = ref(false)
 const showUrlModal = ref(false)
 const imgError = ref(false)
 const fileInput = ref<HTMLInputElement | null>(null)
+
+// Cosmetic only — power (1-99) stays the source of truth for simulation.
+const powerStars = computed(() => Math.round((power.value / 99) * 10) / 2)
 
 const abbrPlaceholder = ref(autoAbbr(name.value))
 watch(name, (v) => {
@@ -168,6 +171,7 @@ function submit() {
           <p class="preview-meta">
             {{ t("teams.form.power") }}
             <strong>{{ power }}</strong>
+            <AppStarRating :value="powerStars" :size="12" class="preview-stars" />
           </p>
         </div>
       </div>
@@ -361,6 +365,11 @@ function submit() {
 .preview-meta strong {
   font-family: var(--font-mono);
   color: var(--text);
+}
+
+.preview-stars {
+  margin-inline-start: var(--sp-1);
+  vertical-align: -1px;
 }
 
 /* ── Sections ─────────────────────────────────────────────────── */

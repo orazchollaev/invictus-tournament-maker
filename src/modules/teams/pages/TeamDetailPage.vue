@@ -93,10 +93,10 @@ const tabValue = computed({
       </AppEmptyState>
     </AppCard>
 
-    <div v-else class="stack" :style="{ '--rail-color': team.color }">
+    <div v-else class="stack" :style="{ '--rail-color': team.color, gap: 0 }">
       <TeamHeaderCard :team="team" @back="router.back()" />
 
-      <AppTabs v-model="tabValue">
+      <AppTabs v-model="tabValue" style="margin-top: var(--sp-4)">
         <AppTab value="overview">
           <AppIcon :icon="BarChart3" />
           {{ t("teams.detail.tabs.overview") }}

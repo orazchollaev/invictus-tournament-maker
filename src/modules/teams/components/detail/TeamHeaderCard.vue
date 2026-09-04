@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { ref, watch } from "vue"
+import { computed, ref, watch } from "vue"
 import { ArrowLeft } from "@lucide/vue"
 import { useI18n } from "vue-i18n"
-import { AppButton, AppCard, AppIcon } from "@/components/ui"
+import { AppButton, AppCard, AppIcon, AppStarRating } from "@/components/ui"
 import { FlagCircle } from "@/modules/teams/components"
 import type { Team } from "@/modules/teams/types"
 
@@ -18,6 +18,9 @@ watch(
     imgError.value = false
   }
 )
+
+// Cosmetic only — power (1-99) stays the source of truth for simulation.
+const powerStars = computed(() => Math.round((props.team.power / 99) * 10) / 2)
 </script>
 
 <template>
@@ -50,6 +53,7 @@ watch(
         <span class="team-meta">
           {{ t("teams.detail.powerRating") }}:
           <strong>{{ team.power }}</strong>
+          <AppStarRating :value="powerStars" :size="13" class="team-stars" />
         </span>
       </div>
     </div>
@@ -100,8 +104,15 @@ watch(
 }
 
 .team-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1);
   font-size: var(--fs-sm);
   color: var(--text-muted);
+}
+
+.team-stars {
+  margin-inline-start: 2px;
 }
 
 @media (max-width: 600px) {
