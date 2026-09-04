@@ -1,23 +1,26 @@
 <script setup lang="ts">
-import { computed, ref } from "vue"
-import { useI18n } from "vue-i18n"
+import { computed } from "vue"
 import type { League, Tournament } from "@/modules/tournament/types"
 import type { Team } from "@/modules/teams/types"
 import LeagueMatchdayPanel from "./LeagueMatchdayPanel.vue"
 import LeagueStandingsTable from "./LeagueStandingsTable.vue"
-import { AppSubTabBar } from "@/components/ui"
 
-const props = defineProps<{
-  tournament: Tournament
-  teams: Team[]
-  leagueOverride?: League
-  relegationCountOverride?: number
-  promotionCount?: number
-  playoffQualifierCount?: number
-  /** True once the league playoff bracket has started — this tier's own
-   *  matches are frozen, same as a finished group stage. */
-  locked?: boolean
-}>()
+const props = withDefaults(
+  defineProps<{
+    tournament: Tournament
+    teams: Team[]
+    leagueOverride?: League
+    relegationCountOverride?: number
+    promotionCount?: number
+    playoffQualifierCount?: number
+    /** True once the league playoff bracket has started — this tier's own
+     *  matches are frozen, same as a finished group stage. */
+    locked?: boolean
+    /** League tab shows standings only; Fixtures tab shows matchdays only. */
+    section?: "standings" | "fixtures"
+  }>(),
+  { section: "standings" }
+)
 
 defineEmits<{
   setResult: [matchdayIdx: number, matchIdx: number, home: number, away: number]
@@ -26,8 +29,6 @@ defineEmits<{
   simMatchday: [matchdayIdx: number]
   simAll: []
 }>()
-
-const { t } = useI18n()
 
 const league = computed(() => props.leagueOverride ?? props.tournament.league!)
 const matchdays = computed(() => league.value.matchdays)
@@ -41,24 +42,15 @@ function matchdayDone(idx: number) {
 
 const totalMatchdays = computed(() => matchdays.value.length)
 const playedMatchdays = computed(() => matchdays.value.filter((_, i) => matchdayDone(i)).length)
-
-const subTab = ref<"standings" | "fixtures">("standings")
 </script>
 
 <template>
   <div class="lv-root">
-    <div class="lv-subtab-row">
-      <AppSubTabBar
-        v-model="subTab"
-        :options="[
-          { value: 'standings', label: t('tournament.tabs.standings') },
-          { value: 'fixtures', label: t('tournament.tabs.fixtures') },
-        ]"
-      />
+    <div v-if="$slots.actions" class="lv-actions-row">
       <slot name="actions" />
     </div>
     <LeagueStandingsTable
-      v-if="subTab === 'standings'"
+      v-if="section === 'standings'"
       :standings="standings"
       :teams="teams"
       :is-finished="isFinished"
@@ -88,10 +80,10 @@ const subTab = ref<"standings" | "fixtures">("standings")
   gap: var(--sp-3);
 }
 
-.lv-subtab-row {
+.lv-actions-row {
   margin-bottom: var(--sp-1);
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
 }
 </style>

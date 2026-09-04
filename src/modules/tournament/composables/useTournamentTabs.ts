@@ -45,7 +45,7 @@ export function useTournamentTabs(
 
   function changeTab(tab: MainTab, tierIdx?: number) {
     activeTab.value = tab
-    if (tab === "league" && tierIdx !== undefined) {
+    if ((tab === "league" || tab === "fixtures") && tierIdx !== undefined) {
       activeTierIdx.value = tierIdx
     }
   }
@@ -54,9 +54,11 @@ export function useTournamentTabs(
     const tabs: MainTab[] = []
     if (isLeagueFormat.value) {
       tabs.push("league")
+      tabs.push("fixtures")
       if (hasLeaguePlayoff.value) tabs.push("bracket")
     } else if (isGroupFormat.value) {
       tabs.push("groups")
+      tabs.push("fixtures")
       if (tournament.value?.groupsDone) tabs.push("bracket")
     } else {
       tabs.push("bracket")

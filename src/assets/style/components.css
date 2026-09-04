@@ -41,6 +41,13 @@
   opacity: 0.5;
 }
 
+/* Compact tab bar: tournament detail page has several tabs sharing one
+   strip, so `size="sm"` on AppTabs trims padding and type size. */
+.tabs--sm .phase-tab {
+  padding: var(--sp-1) var(--sp-3);
+  font-size: var(--fs-sm);
+}
+
 /* ── Data tables ─────────────────────────────────────────────── */
 .data-table {
   width: 100%;

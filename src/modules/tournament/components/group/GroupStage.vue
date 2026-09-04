@@ -7,10 +7,15 @@ import GroupCard from "./GroupCard.vue"
 import GroupLegend from "./GroupLegend.vue"
 import GroupSimToolbar from "./GroupSimToolbar.vue"
 
-const props = defineProps<{
-  tournament: Tournament
-  teams: Team[]
-}>()
+const props = withDefaults(
+  defineProps<{
+    tournament: Tournament
+    teams: Team[]
+    /** Groups tab shows standings only; Fixtures tab shows matches only. */
+    section?: "standings" | "fixtures"
+  }>(),
+  { section: "standings" }
+)
 
 const emit = defineEmits<{
   setResult: [groupIdx: number, matchIdx: number, home: number, away: number]
@@ -154,7 +159,7 @@ const allDone = computed(
 <template>
   <div class="gs-wrap">
     <GroupSimToolbar
-      v-if="!locked"
+      v-if="section === 'fixtures' && !locked"
       :groups="tournament.groups ?? []"
       :all-done="allDone"
       @sim-week="handleSimWeek"
@@ -170,6 +175,7 @@ const allDone = computed(
         :group="group"
         :teams="teams"
         :locked="locked"
+        :section="section"
         :qualifiers-per-group="tournament.qualifiersPerGroup ?? 2"
         :wildcard-count="tournament.wildcardCount ?? 0"
         :round="roundOf(gi)"
@@ -181,7 +187,7 @@ const allDone = computed(
       />
     </div>
 
-    <GroupLegend :wildcard-count="tournament.wildcardCount ?? 0" />
+    <GroupLegend v-if="section === 'standings'" :wildcard-count="tournament.wildcardCount ?? 0" />
   </div>
 </template>
 

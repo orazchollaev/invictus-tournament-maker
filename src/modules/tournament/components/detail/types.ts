@@ -1,1 +1,1 @@
-export type MainTab = "groups" | "bracket" | "league" | "stats" | "participants"
+export type MainTab = "groups" | "fixtures" | "bracket" | "league" | "stats" | "participants"

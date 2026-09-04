@@ -11,13 +11,18 @@ import { GROUP_COLUMNS, formatGoalDiff } from "../shared/standingsColumns"
 import { useEngineLabels } from "@/composables/useEngineLabels"
 import { MatchScoreModal, MatchStatsButton } from "@/modules/tournament/components/match-stats"
 
-const props = defineProps<{
-  group: Group
-  teams: Team[]
-  locked: boolean
-  qualifiersPerGroup: number
-  wildcardCount: number
-}>()
+const props = withDefaults(
+  defineProps<{
+    group: Group
+    teams: Team[]
+    locked: boolean
+    qualifiersPerGroup: number
+    wildcardCount: number
+    /** Groups tab shows standings only; Fixtures tab shows matches only. */
+    section?: "standings" | "fixtures"
+  }>(),
+  { section: "standings" }
+)
 
 const emit = defineEmits<{
   simMatch: [matchIdx: number]
@@ -68,7 +73,7 @@ function scoreAccentColor(match: GroupMatch): string {
 <template>
   <AppCard variant="outlined" :title="engineLabel(group.name)">
     <!-- Standings -->
-    <AppTable dense class="gs-table">
+    <AppTable v-if="section === 'standings'" dense flush class="gs-table">
       <thead>
         <tr>
           <th class="col-rank">#</th>
@@ -94,7 +99,7 @@ function scoreAccentColor(match: GroupMatch): string {
           }"
         >
           <td class="col-rank">{{ ri + 1 }}</td>
-          <td class="col-team" :style="{ '--tc': teamById(row.teamId)?.color ?? 'transparent' }">
+          <td class="col-team">
             <TeamBadge
               :team="teamById(row.teamId)"
               :fallback="row.teamId"
@@ -103,16 +108,17 @@ function scoreAccentColor(match: GroupMatch): string {
             />
           </td>
           <td>{{ row.played }}</td>
-          <td>{{ row.won }}</td>
           <td>{{ row.drawn }}</td>
           <td>{{ row.lost }}</td>
+          <td>{{ row.gf }}</td>
+          <td>{{ row.ga }}</td>
           <td>{{ formatGoalDiff(row.gd) }}</td>
           <td class="col-pts">{{ row.pts }}</td>
         </tr>
       </TransitionGroup>
     </AppTable>
 
-    <div class="gs-matches">
+    <div v-if="section === 'fixtures'" class="gs-matches">
       <div class="gs-round-nav">
         <span class="gs-round-label">Round {{ round + 1 }} / {{ rounds.length }}</span>
         <div class="gs-round-btns">
@@ -131,7 +137,7 @@ function scoreAccentColor(match: GroupMatch): string {
       <div v-for="{ match, mi } in rounds[round] ?? []" :key="match.id" class="gs-match">
         <TeamBadge
           :team="teamById(match.homeId)"
-          :size="16"
+          :size="14"
           reverse
           class="gs-team gs-team--home"
         />
@@ -148,7 +154,7 @@ function scoreAccentColor(match: GroupMatch): string {
           {{ matchResultStr(match) }}
         </button>
 
-        <TeamBadge :team="teamById(match.awayId)" :size="16" class="gs-team gs-team--away" />
+        <TeamBadge :team="teamById(match.awayId)" :size="14" class="gs-team gs-team--away" />
 
         <span class="gs-report">
           <MatchStatsButton
@@ -189,37 +195,18 @@ function scoreAccentColor(match: GroupMatch): string {
 }
 
 .gs-table .col-team {
-  position: relative;
   text-align: start;
   min-width: 0;
   max-width: 120px;
-  padding-inline-start: 11px;
-}
-.gs-table .col-team::before {
-  content: "";
-  position: absolute;
-  left: 2px;
-  top: 3px;
-  bottom: 3px;
-  width: 3px;
-  border-radius: 1px;
-  background: var(--tc, transparent);
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.18);
 }
 .col-pts {
   font-weight: 700;
 }
-.row-qualify {
-  background: color-mix(in srgb, var(--accent) 6%, transparent);
+.gs-table .row-qualify {
+  background: color-mix(in srgb, var(--accent) 12%, var(--surface-2));
 }
-.row-qualify td:first-child {
-  border-left: 3px solid var(--accent);
-}
-.row-wildcard {
-  background: color-mix(in srgb, var(--accent) 3%, transparent);
-}
-.row-wildcard td:first-child {
-  border-left: 3px dashed var(--accent);
+.gs-table .row-wildcard {
+  background: color-mix(in srgb, var(--accent) 6%, var(--surface-2));
 }
 .row-out {
   opacity: 0.65;
@@ -274,7 +261,7 @@ function scoreAccentColor(match: GroupMatch): string {
 }
 
 .gs-team :deep(.name) {
-  font-size: var(--fs-base);
+  font-size: var(--fs-sm);
 }
 .gs-team--home {
   justify-content: flex-end;
@@ -286,7 +273,7 @@ function scoreAccentColor(match: GroupMatch): string {
 
 .gs-score-btn {
   font-family: var(--font);
-  font-size: var(--fs-md);
+  font-size: var(--fs-sm);
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   justify-content: center;
@@ -298,7 +285,7 @@ function scoreAccentColor(match: GroupMatch): string {
   display: flex;
   color: var(--text-muted);
   padding: var(--sp-1) var(--sp-2);
-  min-width: 60px;
+  min-width: 50px;
 }
 .gs-score-btn:hover:not(:disabled) {
   border-color: var(--accent);
@@ -325,8 +312,10 @@ function scoreAccentColor(match: GroupMatch): string {
     min-width: 90px;
   }
 
-  .gs-table th:nth-child(5),
-  .gs-table td:nth-child(5) {
+  .gs-table th:nth-child(6),
+  .gs-table td:nth-child(6),
+  .gs-table th:nth-child(7),
+  .gs-table td:nth-child(7) {
     display: none;
   }
 }

@@ -150,6 +150,7 @@ const {
                   <Transition name="tab" mode="out-in">
                     <LeagueView
                       :key="activeTierIdx"
+                      section="standings"
                       :tournament="tournament"
                       :teams="allTeams"
                       :league-override="tournament.tiers[activeTierIdx]?.league"
@@ -209,6 +210,7 @@ const {
                 </template>
                 <template v-else>
                   <LeagueView
+                    section="standings"
                     :tournament="tournament"
                     :teams="allTeams"
                     :playoff-qualifier-count="
@@ -262,6 +264,7 @@ const {
                 <div class="gs-body">
                   <GroupStage
                     v-if="!hasWildcards || groupSubTab === 'groups'"
+                    section="standings"
                     :tournament="tournament"
                     :teams="allTeams"
                     @set-result="
@@ -277,6 +280,76 @@ const {
                   />
                   <WildcardRankings v-else :tournament="tournament" :teams="allTeams" />
                 </div>
+              </div>
+              <div v-else-if="tab === 'fixtures' && isGroupFormat" class="tab-panel">
+                <GroupStage
+                  section="fixtures"
+                  :tournament="tournament"
+                  :teams="allTeams"
+                  @set-result="(gi, mi, h, a) => store.setGroupResult(tournament!.id, gi, mi, h, a)"
+                  @clear-result="(gi, mi) => store.clearGroupResult(tournament!.id, gi, mi)"
+                  @sim-match="(gi, mi) => store.simGroupMatch(tournament!.id, gi, mi)"
+                  @sim-group="(gi) => store.simGroup(tournament!.id, gi)"
+                  @sim-group-week="(gi) => store.simGroupWeek(tournament!.id, gi)"
+                  @sim-week="store.simWeek(tournament!.id)"
+                  @sim-all="store.simAllGroups(tournament!.id)"
+                  @advance="onAdvance"
+                />
+              </div>
+              <div v-else-if="tab === 'fixtures' && isLeagueFormat" class="tab-panel">
+                <template v-if="isMultiTier && tournament.tiers">
+                  <div class="gs-subtab-row">
+                    <AppSubTabBar
+                      :options="
+                        tournament.tiers.map((tier, ti) => ({
+                          value: String(ti),
+                          label: tier.name,
+                        }))
+                      "
+                      :model-value="String(activeTierIdx)"
+                      @update:model-value="(v) => changeTab('fixtures', Number(v))"
+                    />
+                  </div>
+                  <Transition name="tab" mode="out-in">
+                    <LeagueView
+                      :key="activeTierIdx"
+                      section="fixtures"
+                      :tournament="tournament"
+                      :teams="allTeams"
+                      :league-override="tournament.tiers[activeTierIdx]?.league"
+                      :locked="activeTierIdx === 0 && hasLeaguePlayoff"
+                      @set-result="
+                        (mdi, mi, h, a) =>
+                          store.setTierResult(tournament!.id, activeTierIdx, mdi, mi, h, a)
+                      "
+                      @clear-result="
+                        (mdi, mi) => store.clearTierResult(tournament!.id, activeTierIdx, mdi, mi)
+                      "
+                      @sim-match="
+                        (mdi, mi) => store.simTierMatch(tournament!.id, activeTierIdx, mdi, mi)
+                      "
+                      @sim-matchday="
+                        (mdi) => store.simTierMatchday(tournament!.id, activeTierIdx, mdi)
+                      "
+                      @sim-all="store.simAllTier(tournament!.id, activeTierIdx)"
+                    />
+                  </Transition>
+                </template>
+                <template v-else>
+                  <LeagueView
+                    section="fixtures"
+                    :tournament="tournament"
+                    :teams="allTeams"
+                    :locked="hasLeaguePlayoff"
+                    @set-result="
+                      (mdi, mi, h, a) => store.setLeagueResult(tournament!.id, mdi, mi, h, a)
+                    "
+                    @clear-result="(mdi, mi) => store.clearLeagueResult(tournament!.id, mdi, mi)"
+                    @sim-match="(mdi, mi) => store.simLeagueMatch(tournament!.id, mdi, mi)"
+                    @sim-matchday="(mdi) => store.simLeagueMatchday(tournament!.id, mdi)"
+                    @sim-all="store.simAllLeague(tournament!.id)"
+                  />
+                </template>
               </div>
               <div v-else-if="tab === 'bracket'" class="tab-panel">
                 <BracketPanel

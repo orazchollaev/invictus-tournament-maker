@@ -36,11 +36,13 @@ function onUpdate(value: string) {
   <AppTabs
     :model-value="activeTab"
     sticky
+    size="sm"
     :dir="locale === 'ar' ? 'rtl' : 'ltr'"
     @update:model-value="onUpdate"
   >
     <template v-if="isLeagueFormat">
       <AppTab value="league">{{ leagueTabLabel }}</AppTab>
+      <AppTab value="fixtures">{{ t("tournament.tabs.fixtures") }}</AppTab>
       <AppTab v-if="hasLeaguePlayoff" value="bracket">
         {{ t("tournament.tabs.playoff") }}
       </AppTab>
@@ -48,6 +50,7 @@ function onUpdate(value: string) {
 
     <template v-else-if="isGroupFormat">
       <AppTab value="groups">{{ t("tournament.tabs.groups") }}</AppTab>
+      <AppTab value="fixtures">{{ t("tournament.tabs.fixtures") }}</AppTab>
       <AppTab v-if="tournament.groupsDone" value="bracket">
         {{ t("tournament.tabs.bracket") }}
       </AppTab>
