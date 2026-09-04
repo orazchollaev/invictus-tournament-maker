@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue"
 import { useI18n } from "vue-i18n"
-import { AppSectionHeader, AppSelect } from "@/components/ui"
+import { AppSectionHeader } from "@/components/ui"
 import { TeamBadge } from "@/modules/teams/components"
 import type { Team } from "@/modules/teams/types"
 import type { MatchRow, RoundPhase } from "@/modules/teams/composables/useTeamMatchHistory"
@@ -29,12 +29,11 @@ const PHASE_LABEL: Record<RoundPhase, string> = { group: "GS", league: "LG", kno
     <AppSectionHeader :title="t('teams.detail.matchHistory')">
       <template #actions>
         <span class="count">{{ t("teams.detail.matchCount", { n: matches.length }) }}</span>
-        <AppSelect
-          v-if="tournamentOptions.length > 1"
-          v-model="selected"
-          class="tour-select"
-          :options="tournamentSelectOptions"
-        />
+        <select v-if="tournamentOptions.length > 1" v-model="selected" class="tour-select">
+          <option v-for="opt in tournamentSelectOptions" :key="opt.value" :value="opt.value">
+            {{ opt.label }}
+          </option>
+        </select>
       </template>
     </AppSectionHeader>
 
@@ -85,10 +84,13 @@ const PHASE_LABEL: Record<RoundPhase, string> = { group: "GS", league: "LG", kno
   color: var(--text-muted);
 }
 
-/* Narrow trigger — this select only ever needs to fit a tournament name. */
+/* Native <select> on purpose: a custom popup here fights the OS picker on
+   mobile for no benefit — this list is plain values, no search, no rich
+   rows. Narrow trigger — it only ever needs to fit a tournament name. */
 .tour-select {
   width: auto;
   min-width: 140px;
+  font-size: var(--fs-sm);
 }
 
 .match-list {
@@ -199,6 +201,13 @@ const PHASE_LABEL: Record<RoundPhase, string> = { group: "GS", league: "LG", kno
 }
 
 @media (max-width: 600px) {
+  .tour-select {
+    min-width: 0;
+    max-width: 110px;
+    padding: var(--sp-1) var(--sp-2);
+    font-size: var(--fs-xs);
+  }
+
   .match-tournament {
     display: none;
   }

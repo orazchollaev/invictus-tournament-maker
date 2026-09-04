@@ -151,12 +151,16 @@ const tabValue = computed({
 </template>
 
 <style scoped>
-/* The surface carries a measured static height, so the swiper's own
-   height: 100% chain (swiper → wrapper → slide) resolves without autoHeight. */
 .tab-surface {
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--elev-1);
   overflow: hidden;
 }
 
+/* The surface carries a measured static height, so the swiper's own
+   height: 100% chain (swiper → wrapper → slide) resolves without autoHeight. */
 .tab-swiper {
   height: 100%;
 }
@@ -164,9 +168,16 @@ const tabValue = computed({
 .tab-panel {
   min-width: 0;
   height: 100%;
+  padding: var(--sp-3);
   /* Both axes are named on purpose: a lone overflow-y turns overflow-x into
      auto, and a horizontal scroller here would eat the swipe. */
   overflow-x: hidden;
   overflow-y: auto;
+}
+
+@media (max-width: 600px) {
+  .tab-panel {
+    padding: var(--sp-2);
+  }
 }
 </style>
