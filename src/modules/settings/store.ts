@@ -1,6 +1,6 @@
 import { defineStore } from "pinia"
 import { ref, watch } from "vue"
-import type { LegMode, PlayoffSeedMode } from "@/modules/tournament/types"
+import type { LegMode, MatchEventType, PlayoffSeedMode } from "@/modules/tournament/types"
 import { setSimConfig, setTableConfig, setPowerResolver } from "@/engine"
 import type { Tiebreaker } from "@/modules/tournament/types"
 import { i18n, isRtl, loadLocale } from "@/i18n"
@@ -20,6 +20,8 @@ export type TournamentsSortKey = "default" | "name" | "season"
 export type HistorySortKey = "default" | "name" | "seasons"
 /** Game minutes per real second is 2 at 1x, so a match runs about 45 seconds. */
 export type LiveMatchSpeed = 1 | 2 | 4 | 10
+
+const ALL_EVENT_TYPES: MatchEventType[] = ["goal", "penGoal", "ownGoal", "penMiss", "yellow", "red"]
 
 export const useSettingsStore = defineStore("settings", () => {
   const theme = ref<Theme>("dark")
@@ -61,6 +63,14 @@ export const useSettingsStore = defineStore("settings", () => {
   const tournamentsSortAsc = ref(true)
   const historySortKey = ref<HistorySortKey>("default")
   const historySortAsc = ref(true)
+  const liveEventFilter = ref<Record<MatchEventType, boolean>>({
+    goal: true,
+    penGoal: true,
+    ownGoal: true,
+    penMiss: true,
+    yellow: true,
+    red: true,
+  })
 
   watch(
     theme,
@@ -169,6 +179,7 @@ export const useSettingsStore = defineStore("settings", () => {
     tournamentsSortAsc.value = true
     historySortKey.value = "default"
     historySortAsc.value = true
+    for (const type of ALL_EVENT_TYPES) liveEventFilter.value[type] = true
   }
 
   return {
@@ -211,6 +222,7 @@ export const useSettingsStore = defineStore("settings", () => {
     tournamentsSortAsc,
     historySortKey,
     historySortAsc,
+    liveEventFilter,
     resetAll,
   }
 })

@@ -10,6 +10,7 @@ import { computed } from "vue"
 import { useI18n } from "vue-i18n"
 import { AppIcon } from "@/components/ui"
 import { usePlayersStore } from "@/modules/players/store"
+import { useSettingsStore } from "@/modules/settings/store"
 import type { MatchEvent } from "@/modules/tournament/types"
 import { EVENT_META } from "./eventMeta"
 import { formatMinute } from "./matchTime"
@@ -25,21 +26,27 @@ const props = withDefaults(
 
 const { t } = useI18n()
 const playersStore = usePlayersStore()
+const settings = useSettingsStore()
 
 function nameOf(playerId: string | null): string {
   if (!playerId) return t("matchStats.unknownPlayer")
   return playersStore.byId(playerId)?.name ?? t("matchStats.unknownPlayer")
 }
 
+// Newest event first, and only the event types the user has left enabled
+// in Settings.
 const rows = computed(() =>
-  props.events.map((event, index) => ({
-    key: `${event.minute}-${event.type}-${index}`,
-    event,
-    meta: EVENT_META[event.type],
-    minute: formatMinute(event.minute, props.hasExtraTime),
-    scorer: nameOf(event.playerId),
-    assist: event.assistId ? nameOf(event.assistId) : null,
-  }))
+  props.events
+    .map((event, index) => ({
+      key: `${event.minute}-${event.type}-${index}`,
+      event,
+      meta: EVENT_META[event.type],
+      minute: formatMinute(event.minute, props.hasExtraTime),
+      scorer: nameOf(event.playerId),
+      assist: event.assistId ? nameOf(event.assistId) : null,
+    }))
+    .filter((row) => settings.liveEventFilter[row.event.type])
+    .reverse()
 )
 </script>
 

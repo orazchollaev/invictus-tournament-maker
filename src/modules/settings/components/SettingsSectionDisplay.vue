@@ -6,6 +6,7 @@ import { useI18n } from "vue-i18n"
 import { Monitor } from "@lucide/vue"
 import { AppCard, AppField, AppIcon, AppButtonGroup, AppToggle } from "@/components/ui"
 import SettingDesc from "./SettingDesc.vue"
+import type { MatchEventType } from "@/modules/tournament/types"
 
 const { t } = useI18n()
 const settings = useSettingsStore()
@@ -15,6 +16,8 @@ const bracketStyleOptions = computed<{ value: BracketStyle; label: string }[]>((
   { value: "classic", label: t("settings.display.bracketStyle.classic") },
   { value: "auto", label: t("settings.display.bracketStyle.auto") },
 ])
+
+const liveEventTypes: MatchEventType[] = ["goal", "penGoal", "ownGoal", "penMiss", "yellow", "red"]
 </script>
 
 <template>
@@ -77,5 +80,38 @@ const bracketStyleOptions = computed<{ value: BracketStyle; label: string }[]>((
         :aria-label="t('settings.display.gradualReveal.label')"
       />
     </AppField>
+
+    <AppField layout="split" :label="t('settings.display.liveEvents.label')">
+      <template #description>
+        <SettingDesc>{{ t("settings.display.liveEvents.desc") }}</SettingDesc>
+      </template>
+      <div class="live-event-toggles">
+        <label v-for="type in liveEventTypes" :key="type" class="live-event-toggle">
+          <AppToggle
+            v-model="settings.liveEventFilter[type]"
+            :aria-label="t(`matchStats.events.${type}`)"
+          />
+          {{ t(`matchStats.events.${type}`) }}
+        </label>
+      </div>
+    </AppField>
   </AppCard>
 </template>
+
+<style scoped>
+.live-event-toggles {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  align-items: flex-end;
+}
+
+.live-event-toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-size: var(--fs-sm);
+  color: var(--text);
+  cursor: pointer;
+}
+</style>
