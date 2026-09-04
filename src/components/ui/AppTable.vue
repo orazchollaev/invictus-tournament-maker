@@ -6,18 +6,23 @@
  */
 withDefaults(
   defineProps<{
-    /** Keep the header row visible while the body scrolls. */
     stickyHead?: boolean
-    /** Tighter cells for dense standings/bracket tables. */
     dense?: boolean
+    flush?: boolean
   }>(),
-  {}
+  {
+    flush: true,
+    dense: true,
+  }
 )
 </script>
 
 <template>
   <div class="table-scroll">
-    <table class="table" :class="{ 'table--dense': dense, 'table--sticky': stickyHead }">
+    <table
+      class="table"
+      :class="{ 'table--dense': dense, 'table--sticky': stickyHead, 'table--flush': flush }"
+    >
       <slot />
     </table>
   </div>
@@ -44,12 +49,17 @@ withDefaults(
   text-transform: uppercase;
   color: var(--text-muted);
   padding: var(--sp-3) var(--sp-4) var(--sp-2);
+  /* The global `th, td` reset (assets/style/elements.css) puts a border on
+     all four sides — clear it here, then re-add only the one this table
+     actually wants, so no stray vertical rule survives between columns. */
+  border: none;
   border-bottom: 1px solid var(--border-light);
   white-space: nowrap;
 }
 
 .table :deep(td) {
   padding: var(--sp-3) var(--sp-4);
+  border: none;
   border-bottom: 1px solid var(--border-light);
   vertical-align: middle;
 }
@@ -69,6 +79,10 @@ withDefaults(
 .table--dense :deep(td) {
   padding: var(--sp-2) var(--sp-3);
   font-size: var(--fs-sm);
+}
+
+.table--flush.table--dense :deep(td) {
+  padding-block: var(--sp-1);
 }
 
 /* ── Design languages ────────────────────────────────────────────
@@ -125,6 +139,39 @@ withDefaults(
 }
 [data-design="android"] .table--dense :deep(td) {
   padding-block: var(--sp-3);
+}
+
+/* Flush: no ruled lines anywhere, whichever platform theme is active —
+   wins over the design-language border rules above since it's declared
+   after them. Rows are flat tinted blocks, not bordered/rounded cards —
+   no radius at all, just a hairline gap so it reads as "list", not "grid".
+   Background lives on the <tr>, not the <td>, so a caller's own per-row
+   tint (champion row, qualify/wildcard zones, …) still shows through — an
+   opaque td background would paint over it. */
+.table--flush {
+  border-collapse: collapse;
+}
+.table--flush :deep(th) {
+  border: none !important;
+  padding-block: var(--sp-1) !important;
+  font-size: var(--fs-xs) !important;
+  font-weight: 500 !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+  color: var(--text-muted) !important;
+  background: transparent !important;
+  opacity: 0.8;
+}
+.table--flush :deep(td) {
+  border: none !important;
+  border-radius: 0 !important;
+}
+.table--flush :deep(tbody tr) {
+  background: var(--surface-2);
+  transition: background var(--dur-fast) var(--ease);
+}
+.table--flush :deep(tbody tr:hover) {
+  background: color-mix(in srgb, var(--accent) 7%, var(--surface-2));
 }
 
 @media (max-width: 600px) {

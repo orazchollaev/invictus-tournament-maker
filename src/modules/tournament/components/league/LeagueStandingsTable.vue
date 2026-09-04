@@ -2,7 +2,7 @@
 import type { GroupStanding } from "@/modules/tournament/types"
 import type { Team } from "@/modules/teams/types"
 import { TeamBadge } from "@/modules/teams/components"
-import { AppSectionHeader, AppTable } from "@/components/ui"
+import { AppTable } from "@/components/ui"
 import { useI18n } from "vue-i18n"
 import { LEAGUE_COLUMNS, formatGoalDiff } from "../shared/standingsColumns"
 
@@ -48,13 +48,7 @@ function isLastPlayoffQualifier(rank: number) {
 
 <template>
   <div class="lv-left">
-    <AppSectionHeader>
-      {{ t("tournament.tabs.standings") }}
-      <span class="lv-progress">
-        {{ t("tournament.matchdayProgress", { played: playedMatchdays, total: totalMatchdays }) }}
-      </span>
-    </AppSectionHeader>
-    <AppTable dense class="lv-table">
+    <AppTable dense flush class="lv-table">
       <thead>
         <tr>
           <th class="col-rank">#</th>
@@ -91,11 +85,10 @@ function isLastPlayoffQualifier(rank: number) {
             <span v-if="rank === 0 && isFinished" class="lv-crown">🏆</span>
             <span v-else>{{ rank + 1 }}</span>
           </td>
-          <td class="col-team" :style="{ '--tc': teamById(row.teamId)?.color ?? 'transparent' }">
+          <td class="col-team">
             <TeamBadge :team="teamById(row.teamId)" :fallback="row.teamId" />
           </td>
           <td>{{ row.played }}</td>
-          <td>{{ row.won }}</td>
           <td>{{ row.drawn }}</td>
           <td>{{ row.lost }}</td>
           <td>{{ row.gf }}</td>
@@ -117,12 +110,6 @@ function isLastPlayoffQualifier(rank: number) {
   min-width: 0;
 }
 
-.lv-progress {
-  font-weight: 400;
-  text-transform: none;
-  letter-spacing: 0;
-}
-
 .lv-table :deep(thead th),
 .lv-table :deep(tbody td) {
   text-align: center;
@@ -134,22 +121,9 @@ function isLastPlayoffQualifier(rank: number) {
 }
 
 .lv-table .col-team {
-  position: relative;
   text-align: start;
   min-width: 90px;
   max-width: 130px;
-  padding-inline-start: 11px;
-}
-.lv-table .col-team::before {
-  content: "";
-  position: absolute;
-  left: 2px;
-  top: 3px;
-  bottom: 3px;
-  width: 3px;
-  border-radius: 1px;
-  background: var(--tc, transparent);
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.18);
 }
 .col-pts {
   min-width: 32px;
@@ -162,18 +136,6 @@ function isLastPlayoffQualifier(rank: number) {
 }
 
 /* ─── Position zone colors ─── */
-.lv-pos--1 td:first-child {
-  border-left: 3px solid var(--accent-2);
-}
-.lv-pos--2 td:first-child {
-  border-left: 3px solid var(--pos-2);
-}
-.lv-pos--3 td:first-child {
-  border-left: 3px solid var(--pos-3);
-}
-.lv-pos--4 td:first-child {
-  border-left: 3px solid var(--success);
-}
 .lv-pos--1 .col-rank {
   color: var(--accent-2) !important;
   font-weight: 700;
@@ -190,36 +152,17 @@ function isLastPlayoffQualifier(rank: number) {
   color: var(--success) !important;
   font-weight: 600;
 }
-.lv-pos--playoff td:first-child {
-  border-left: 3px solid var(--accent-2);
-}
 .lv-pos--playoff .col-rank {
   color: var(--accent-2) !important;
   font-weight: 600;
-}
-.lv-pos--playoff-last td {
-  border-bottom: 1px dashed color-mix(in srgb, var(--accent-2) 45%, transparent);
-}
-
-.lv-pos--promoted td:first-child {
-  border-left: 3px solid var(--success);
 }
 .lv-pos--promoted .col-rank {
   color: var(--success) !important;
   font-weight: 600;
 }
-.lv-pos--promoted-last td {
-  border-bottom: 1px dashed color-mix(in srgb, var(--success) 40%, transparent);
-}
-.lv-pos--relegated td:first-child {
-  border-left: 3px solid var(--danger);
-}
 .lv-pos--relegated .col-rank {
   color: var(--danger) !important;
   font-weight: 600;
-}
-.lv-pos--relegated-first td {
-  border-top: 1px dashed color-mix(in srgb, var(--danger) 40%, transparent);
 }
 .gd-pos {
   color: color-mix(in srgb, var(--accent) 80%, var(--text));
@@ -229,14 +172,11 @@ function isLastPlayoffQualifier(rank: number) {
 }
 
 @media (max-width: 600px) {
-  .lv-table th:nth-child(5),
-  .lv-table td:nth-child(5),
+  /* Rank, team, P, D, L, GD, Pts stay; GF/GA are the columns dropped for width. */
   .lv-table th:nth-child(6),
   .lv-table td:nth-child(6),
   .lv-table th:nth-child(7),
-  .lv-table td:nth-child(7),
-  .lv-table th:nth-child(8),
-  .lv-table td:nth-child(8) {
+  .lv-table td:nth-child(7) {
     display: none;
   }
 }

@@ -26,10 +26,10 @@ const COLUMNS: Record<string, StandingsColumn> = {
   pts: { key: "pts", abbr: "Pts", titleKey: "history.table.points" },
 }
 
-/** Full table — the league view, which has the width for goals for/against. */
+/** League table — W is dropped in favour of GF/GA, which carry more signal
+ *  per column of screen width. */
 export const LEAGUE_COLUMNS: StandingsColumn[] = [
   COLUMNS.played,
-  COLUMNS.won,
   COLUMNS.drawn,
   COLUMNS.lost,
   COLUMNS.gf,
@@ -38,12 +38,13 @@ export const LEAGUE_COLUMNS: StandingsColumn[] = [
   COLUMNS.pts,
 ]
 
-/** Compact table — group cards sit several to a screen, so GF/GA are dropped. */
+/** Group card table — same compact rule as the league table: W out, GF/GA in. */
 export const GROUP_COLUMNS: StandingsColumn[] = [
   COLUMNS.played,
-  COLUMNS.won,
   COLUMNS.drawn,
   COLUMNS.lost,
+  COLUMNS.gf,
+  COLUMNS.ga,
   COLUMNS.gd,
   COLUMNS.pts,
 ]

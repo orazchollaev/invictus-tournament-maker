@@ -40,7 +40,7 @@ const columns = computed(() => {
 </script>
 
 <template>
-  <AppTable class="pt swiper-no-swiping">
+  <AppTable dense flush class="pt swiper-no-swiping">
     <thead>
       <tr>
         <th
