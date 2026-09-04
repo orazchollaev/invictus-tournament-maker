@@ -6,6 +6,7 @@ import { useGradualSim } from "@/modules/tournament/composables/useGradualSim"
 import LeagueMatchRow from "./LeagueMatchRow.vue"
 import LeagueMatchdayNav from "./LeagueMatchdayNav.vue"
 import { useEngineLabels } from "@/composables/useEngineLabels"
+import { AppCard } from "@/components/ui"
 
 const props = defineProps<{
   matchdays: LeagueMatchday[]
@@ -69,7 +70,7 @@ async function handleSimMatchday(idx: number) {
 </script>
 
 <template>
-  <div class="lv-right">
+  <AppCard variant="outlined" padding="md" class="lv-right">
     <LeagueMatchdayNav
       :title="engineLabel(activeMatchday?.name)"
       :is-first="activeIdx === 0"
@@ -99,7 +100,7 @@ async function handleSimMatchday(idx: number) {
         />
       </div>
     </LeagueMatchdayNav>
-  </div>
+  </AppCard>
 </template>
 
 <style scoped>

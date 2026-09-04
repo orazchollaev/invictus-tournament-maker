@@ -62,7 +62,7 @@ const requiresWinner = computed(() => props.leg === 2)
   <div class="leg" :class="{ 'leg--locked': disabled }">
     <span class="leg-no">L{{ leg }}</span>
 
-    <TeamBadge :team="homeTeam" :size="16" reverse class="fx-team fx-team--home" />
+    <TeamBadge :team="homeTeam" :size="14" reverse class="fx-team fx-team--home" />
 
     <button
       class="fx-score-btn"
@@ -81,7 +81,7 @@ const requiresWinner = computed(() => props.leg === 2)
       <template v-else>vs</template>
     </button>
 
-    <TeamBadge :team="awayTeam" :size="16" class="fx-team fx-team--away" />
+    <TeamBadge :team="awayTeam" :size="14" class="fx-team fx-team--away" />
 
     <span class="fx-report">
       <MatchStatsButton
@@ -118,7 +118,7 @@ const requiresWinner = computed(() => props.leg === 2)
   grid-template-columns: 18px 1fr auto 1fr 18px;
   align-items: center;
   gap: var(--sp-2);
-  font-size: var(--fs-base);
+  font-size: var(--fs-sm);
   padding: var(--sp-1);
   min-width: 0;
 }

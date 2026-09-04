@@ -36,7 +36,7 @@ function scoreAccentColor(): string {
 
 <template>
   <div class="lv-match">
-    <TeamBadge :team="homeTeam" :size="16" reverse class="lv-team lv-team--home" />
+    <TeamBadge :team="homeTeam" :size="14" reverse class="lv-team lv-team--home" />
 
     <button
       class="lv-score-btn"
@@ -49,7 +49,7 @@ function scoreAccentColor(): string {
       <template v-else>vs</template>
     </button>
 
-    <TeamBadge :team="awayTeam" :size="16" class="lv-team lv-team--away" />
+    <TeamBadge :team="awayTeam" :size="14" class="lv-team lv-team--away" />
 
     <!-- Always a column, filled or not, so rows stay aligned down the list. -->
     <span class="lv-report">
@@ -106,7 +106,7 @@ function scoreAccentColor(): string {
 }
 
 .lv-team :deep(.name) {
-  font-size: var(--fs-base);
+  font-size: var(--fs-sm);
 }
 .lv-team--home {
   justify-content: flex-end;
@@ -118,7 +118,7 @@ function scoreAccentColor(): string {
 
 .lv-score-btn {
   font-family: var(--font);
-  font-size: var(--fs-md);
+  font-size: var(--fs-sm);
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   justify-content: center;
@@ -130,7 +130,7 @@ function scoreAccentColor(): string {
   display: flex;
   color: var(--text-muted);
   padding: var(--sp-1) var(--sp-2);
-  min-width: 60px;
+  min-width: 50px;
 }
 .lv-score-btn--played {
   color: var(--text);

@@ -23,7 +23,7 @@
 
 .fx-score-btn {
   font-family: var(--font);
-  font-size: var(--fs-md);
+  font-size: var(--fs-sm);
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   justify-content: center;
@@ -36,7 +36,7 @@
   align-items: center;
   color: var(--text-muted);
   padding: var(--sp-1) var(--sp-2);
-  min-width: 60px;
+  min-width: 50px;
 }
 .fx-score-btn--played {
   color: var(--text);

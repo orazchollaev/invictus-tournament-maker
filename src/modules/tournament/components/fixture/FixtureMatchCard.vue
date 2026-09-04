@@ -34,7 +34,7 @@ function scoreAccentColor(): string {
 
 <template>
   <div class="fm-match">
-    <TeamBadge :team="getTeam(match.homeId)" :size="16" reverse class="fx-team fx-team--home" />
+    <TeamBadge :team="getTeam(match.homeId)" :size="14" reverse class="fx-team fx-team--home" />
 
     <button
       class="fx-score-btn"
@@ -53,7 +53,7 @@ function scoreAccentColor(): string {
       <template v-else>vs</template>
     </button>
 
-    <TeamBadge :team="getTeam(match.awayId)" :size="16" class="fx-team fx-team--away" />
+    <TeamBadge :team="getTeam(match.awayId)" :size="14" class="fx-team fx-team--away" />
 
     <span class="fx-report">
       <MatchStatsButton
@@ -89,7 +89,7 @@ function scoreAccentColor(): string {
   grid-template-columns: 1fr auto 1fr 18px;
   align-items: center;
   gap: var(--sp-2);
-  font-size: var(--fs-base);
+  font-size: var(--fs-sm);
   padding: var(--sp-1);
   min-width: 0;
 }
