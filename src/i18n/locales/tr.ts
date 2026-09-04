@@ -113,6 +113,7 @@ export default {
     double: "Çift",
     triple: "3×",
     quadruple: "4×",
+    half: "0.5×",
     random: "Rastgele",
     seeded: "Sıralı",
     manual: "Manuel",
@@ -451,6 +452,10 @@ export default {
       gradualReveal: {
         label: "Kademeli Sonuç Açılımı",
         desc: "Maç sonuçları hepsi birden değil, kısa gecikmelerle teker teker gösterilsin",
+      },
+      liveEvents: {
+        label: "Canlı Maç Olayları",
+        desc: "Canlı maç akışında hangi olay türlerinin görüneceğini seç",
       },
     },
     simulation: {

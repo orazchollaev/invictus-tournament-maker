@@ -111,6 +111,7 @@ export default {
     double: "Double",
     triple: "3×",
     quadruple: "4×",
+    half: "0.5×",
     random: "Random",
     seeded: "Seeded",
     manual: "Manual",
@@ -448,6 +449,10 @@ export default {
       gradualReveal: {
         label: "Gradual Result Reveal",
         desc: "Show match results one by one with a short delay instead of all at once",
+      },
+      liveEvents: {
+        label: "Live Match Events",
+        desc: "Choose which event types appear in the live match timeline",
       },
     },
     simulation: {
