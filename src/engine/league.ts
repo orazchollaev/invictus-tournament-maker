@@ -11,6 +11,7 @@ import type {
 import { buildGroupFixture } from "./groups"
 import { simulateMatch, isFormFactorEnabled, computeFormAdjustments } from "./simulation"
 import { getTiebreaker } from "./tableConfig"
+import { shuffle } from "./utils"
 
 function h2hLeagueStats(
   ids: Set<string>,
@@ -88,6 +89,32 @@ export function buildLeagueMatchdays(teamIds: string[], legs = 1): League["match
       name: `Matchday ${matchdays.length + 1}`,
       matches: allMatches.slice(i, i + mpr),
     })
+  }
+  return matchdays
+}
+
+/** ×0.5 schedule: a random half of the single round-robin, so each team
+ *  faces roughly half the field instead of everyone. Matches are packed
+ *  into matchdays greedily — a team never plays twice in the same one. */
+export function buildHalfLeagueMatchdays(teamIds: string[]): League["matchdays"] {
+  if (teamIds.length < 2) return []
+
+  const allMatches = buildGroupFixture(teamIds, 1)
+  const half = Math.ceil(allMatches.length / 2)
+  const selected = shuffle(allMatches).slice(0, half)
+
+  const matchdays: League["matchdays"] = []
+  for (const match of selected) {
+    const md = matchdays.find(
+      (d) =>
+        !d.matches.some((m) => [m.homeId, m.awayId].includes(match.homeId)) &&
+        !d.matches.some((m) => [m.homeId, m.awayId].includes(match.awayId))
+    )
+    if (md) {
+      md.matches.push(match)
+    } else {
+      matchdays.push({ name: `Matchday ${matchdays.length + 1}`, matches: [match] })
+    }
   }
   return matchdays
 }

@@ -28,7 +28,7 @@ const props = defineProps<
 const emit = defineEmits<{ save: [LeagueConfigPayload]; close: [] }>()
 
 const { t } = useI18n()
-const { multiLegOptions } = useLegOptions()
+const { leagueLegOptions } = useLegOptions()
 
 const modalRef = ref<InstanceType<typeof AppModal>>()
 const leagueLegMode = ref(props.leagueLegMode)
@@ -118,7 +118,7 @@ function handleSave() {
       <div class="form-section-title">{{ t("tournament.create.roundFormat") }}</div>
       <div class="form-row">
         <span class="form-label">{{ t("tournament.create.schedule") }}</span>
-        <AppButtonGroup v-model="leagueLegMode" :options="multiLegOptions" />
+        <AppButtonGroup v-model="leagueLegMode" :options="leagueLegOptions" />
       </div>
     </div>
 

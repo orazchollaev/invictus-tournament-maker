@@ -4,6 +4,7 @@ import type { Tournament } from "@/modules/tournament/types"
 import {
   allLeagueDone,
   allTiersDone,
+  buildHalfLeagueMatchdays,
   buildLeagueMatchdays,
   clearLeagueMatchResult,
   getLeagueWinner,
@@ -67,6 +68,44 @@ describe("buildLeagueMatchdays", () => {
     for (const id of ["a", "b", "c", "d", "e"]) {
       expect(all.filter((m) => m.homeId === id || m.awayId === id)).toHaveLength(4)
     }
+  })
+})
+
+describe("buildHalfLeagueMatchdays", () => {
+  it("produces roughly half the matches of a single round-robin", () => {
+    const ids = ["a", "b", "c", "d", "e", "f"]
+    const full = buildLeagueMatchdays(ids)
+    const fullCount = full.flatMap((md) => md.matches).length // 6*5/2 = 15
+
+    const half = buildHalfLeagueMatchdays(ids)
+    const halfCount = half.flatMap((md) => md.matches).length
+    expect(halfCount).toBe(Math.ceil(fullCount / 2))
+  })
+
+  it("never repeats a team within the same matchday", () => {
+    const ids = ["a", "b", "c", "d", "e", "f", "g", "h"]
+    const matchdays = buildHalfLeagueMatchdays(ids)
+    for (const md of matchdays) {
+      const seen = new Set<string>()
+      for (const m of md.matches) {
+        expect(seen.has(m.homeId)).toBe(false)
+        expect(seen.has(m.awayId)).toBe(false)
+        seen.add(m.homeId)
+        seen.add(m.awayId)
+      }
+    }
+  })
+
+  it("never pairs the same two teams twice", () => {
+    const ids = ["a", "b", "c", "d", "e", "f"]
+    const matchdays = buildHalfLeagueMatchdays(ids)
+    const all = matchdays.flatMap((md) => md.matches)
+    const pairs = all.map((m) => [m.homeId, m.awayId].sort().join("|"))
+    expect(new Set(pairs).size).toBe(pairs.length)
+  })
+
+  it("returns nothing for fewer than two teams", () => {
+    expect(buildHalfLeagueMatchdays(["a"])).toEqual([])
   })
 })
 

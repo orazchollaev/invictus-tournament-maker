@@ -16,5 +16,11 @@ export function useLegOptions() {
     { value: "quadruple", label: t("common.quadruple") },
   ])
 
-  return { legOptions, multiLegOptions }
+  /** League-only: each team faces half the field instead of a whole round-robin. */
+  const leagueLegOptions = computed(() => [
+    { value: "half", label: t("common.half") },
+    ...multiLegOptions.value,
+  ])
+
+  return { legOptions, multiLegOptions, leagueLegOptions }
 }
