@@ -124,9 +124,9 @@ const items = [
     gap: 0;
     border: 0.5px solid color-mix(in srgb, var(--text) 10%, transparent);
     border-radius: var(--radius-pill);
-    background: color-mix(in srgb, var(--surface) 62%, transparent);
-    backdrop-filter: saturate(180%) blur(30px);
-    -webkit-backdrop-filter: saturate(180%) blur(30px);
+    background: color-mix(in srgb, var(--surface) 45%, transparent);
+    backdrop-filter: saturate(180%) blur(34px);
+    -webkit-backdrop-filter: saturate(180%) blur(34px);
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.14);
   }
 
@@ -155,7 +155,7 @@ const items = [
   }
 
   [data-theme="dark"][data-design="ios"] .mobile-nav {
-    background: color-mix(in srgb, var(--surface) 70%, transparent);
+    background: color-mix(in srgb, var(--surface) 50%, transparent);
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
   }
 
