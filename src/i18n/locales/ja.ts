@@ -444,6 +444,10 @@ export default {
         label: "結果の段階的な表示",
         desc: "一度に全て表示するのではなく、短い遅延を挟んで試合結果を1つずつ表示する",
       },
+      autoAdvanceFixtureStage: {
+        label: "フィクスチャの自動進行",
+        desc: "フィクスチャタブでステージをシミュレートした後、自動的に次のステージへ進む",
+      },
     },
     simulation: {
       title: "シミュレーション",
@@ -536,6 +540,15 @@ export default {
     simulateGroup: "{group}をシミュレート",
     advanceToKnockout: "ノックアウトステージへ進む",
     settings: "設定",
+    fixtures: {
+      groupWeek: "第{n}週",
+      simulateStage: "このステージをシミュレートする",
+    },
+    locked: {
+      bracketNeedsGroups: "グループステージを終えるとブラケットが解放されます。",
+      bracketNeedsPlayoff: "シーズンを終えるとプレーオフが解放されます。",
+      stats: "統計を見るには試合をプレイしてください。",
+    },
     tabs: {
       groups: "グループ",
       bracket: "トーナメント表",

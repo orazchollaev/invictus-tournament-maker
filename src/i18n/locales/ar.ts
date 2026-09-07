@@ -443,6 +443,10 @@ export default {
         label: "كشف النتائج تدريجيًا",
         desc: "عرض نتائج المباريات واحدة تلو الأخرى بتأخير قصير بدلاً من عرضها دفعة واحدة",
       },
+      autoAdvanceFixtureStage: {
+        label: "التقدم التلقائي للمباريات",
+        desc: "بعد محاكاة مرحلة في تبويب المباريات، الانتقال تلقائيًا إلى المرحلة التالية",
+      },
     },
     simulation: {
       title: "المحاكاة",
@@ -533,6 +537,15 @@ export default {
     simulateGroup: "محاكاة {group}",
     advanceToKnockout: "الانتقال إلى مرحلة خروج المغلوب",
     settings: "الإعدادات",
+    fixtures: {
+      groupWeek: "الأسبوع {n}",
+      simulateStage: "محاكاة هذه المرحلة",
+    },
+    locked: {
+      bracketNeedsGroups: "أكمل دور المجموعات لفتح قائمة الإقصاء.",
+      bracketNeedsPlayoff: "أكمل الموسم لفتح الملحق (بلاي أوف).",
+      stats: "العب بعض المباريات لرؤية الإحصائيات.",
+    },
     tabs: {
       groups: "المجموعات",
       bracket: "القرعة الإقصائية",

@@ -446,6 +446,10 @@ export default {
         label: "Pengungkapan Hasil Bertahap",
         desc: "Tampilkan hasil pertandingan satu per satu dengan jeda singkat alih-alih semuanya sekaligus",
       },
+      autoAdvanceFixtureStage: {
+        label: "Lanjut Otomatis ke Jadwal Berikutnya",
+        desc: "Setelah mensimulasikan satu tahap di tab Jadwal, otomatis lanjut ke tahap berikutnya",
+      },
     },
     simulation: {
       title: "Simulasi",
@@ -538,6 +542,15 @@ export default {
     simulateGroup: "Simulasikan {group}",
     advanceToKnockout: "Lanjut ke Babak Gugur",
     settings: "Pengaturan",
+    fixtures: {
+      groupWeek: "Minggu {n}",
+      simulateStage: "Simulasikan tahap ini",
+    },
+    locked: {
+      bracketNeedsGroups: "Selesaikan babak grup untuk membuka bagan gugur.",
+      bracketNeedsPlayoff: "Selesaikan musim untuk membuka babak playoff.",
+      stats: "Mainkan beberapa pertandingan untuk melihat statistik.",
+    },
     tabs: {
       groups: "Grup",
       bracket: "Braket",

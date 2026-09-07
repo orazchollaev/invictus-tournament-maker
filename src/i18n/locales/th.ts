@@ -443,6 +443,10 @@ export default {
         label: "เปิดเผยผลทีละนัด",
         desc: "แสดงผลการแข่งขันทีละนัดพร้อมหน่วงเวลาสั้นๆ แทนการแสดงพร้อมกันทั้งหมด",
       },
+      autoAdvanceFixtureStage: {
+        label: "เลื่อนตารางแข่งอัตโนมัติ",
+        desc: "หลังจากจำลองขั้นตอนในแท็บตารางแข่งแล้ว ให้ไปยังขั้นตอนถัดไปโดยอัตโนมัติ",
+      },
     },
     simulation: {
       title: "การจำลอง",
@@ -535,6 +539,15 @@ export default {
     simulateGroup: "จำลอง {group}",
     advanceToKnockout: "เลื่อนขั้นสู่น็อกเอาต์",
     settings: "ตั้งค่า",
+    fixtures: {
+      groupWeek: "สัปดาห์ที่ {n}",
+      simulateStage: "จำลองขั้นตอนนี้",
+    },
+    locked: {
+      bracketNeedsGroups: "จบรอบแบ่งกลุ่มเพื่อปลดล็อกสายการแข่งขัน",
+      bracketNeedsPlayoff: "จบฤดูกาลเพื่อปลดล็อกรอบเพลย์ออฟ",
+      stats: "เล่นสักสองสามนัดเพื่อดูสถิติ",
+    },
     tabs: {
       groups: "กลุ่ม",
       bracket: "สายการแข่งขัน",

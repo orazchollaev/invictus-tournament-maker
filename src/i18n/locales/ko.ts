@@ -444,6 +444,10 @@ export default {
         label: "결과 순차 공개",
         desc: "모든 경기 결과를 한 번에 보여주지 않고 짧은 지연 후 하나씩 표시합니다",
       },
+      autoAdvanceFixtureStage: {
+        label: "경기 일정 자동 진행",
+        desc: "경기 일정 탭에서 한 단계를 시뮬레이션한 후 자동으로 다음 단계로 이동합니다",
+      },
     },
     simulation: {
       title: "시뮬레이션",
@@ -535,6 +539,15 @@ export default {
     simulateGroup: "{group} 시뮬레이션",
     advanceToKnockout: "토너먼트로 진출",
     settings: "설정",
+    fixtures: {
+      groupWeek: "{n}주차",
+      simulateStage: "이 단계 시뮬레이션",
+    },
+    locked: {
+      bracketNeedsGroups: "브래킷을 해제하려면 조별리그를 완료하세요.",
+      bracketNeedsPlayoff: "플레이오프를 해제하려면 시즌을 완료하세요.",
+      stats: "통계를 보려면 경기를 진행하세요.",
+    },
     tabs: {
       groups: "조별리그",
       bracket: "대진표",

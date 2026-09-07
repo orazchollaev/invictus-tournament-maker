@@ -444,6 +444,10 @@ export default {
         label: "Stopniowe ujawnianie wyników",
         desc: "Pokazuj wyniki meczów pojedynczo z krótkim opóźnieniem zamiast wszystkich naraz",
       },
+      autoAdvanceFixtureStage: {
+        label: "Automatyczne przechodzenie terminarza",
+        desc: "Po symulacji etapu w zakładce Terminarz automatycznie przejdź do następnego",
+      },
     },
     simulation: {
       title: "Symulacja",
@@ -536,6 +540,15 @@ export default {
     simulateGroup: "Symuluj {group}",
     advanceToKnockout: "Awansuj do fazy pucharowej",
     settings: "Ustawienia",
+    fixtures: {
+      groupWeek: "Tydzień {n}",
+      simulateStage: "Symuluj ten etap",
+    },
+    locked: {
+      bracketNeedsGroups: "Zakończ fazę grupową, aby odblokować drabinkę pucharową.",
+      bracketNeedsPlayoff: "Zakończ sezon, aby odblokować fazę pucharową.",
+      stats: "Rozegraj kilka meczów, aby zobaczyć statystyki.",
+    },
     tabs: {
       groups: "Grupy",
       bracket: "Drabinka",

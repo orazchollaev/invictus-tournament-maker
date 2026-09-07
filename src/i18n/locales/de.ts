@@ -448,6 +448,10 @@ export default {
         label: "Schrittweise Ergebnisanzeige",
         desc: "Zeigt Spielergebnisse nacheinander mit kurzer Verzögerung statt alle auf einmal",
       },
+      autoAdvanceFixtureStage: {
+        label: "Spielplan automatisch weiterschalten",
+        desc: "Nach der Simulation einer Phase im Spielplan-Tab automatisch zur nächsten wechseln",
+      },
     },
     simulation: {
       title: "Simulation",
@@ -540,6 +544,15 @@ export default {
     simulateGroup: "{group} simulieren",
     advanceToKnockout: "Zur K.-o.-Phase",
     settings: "Einstellungen",
+    fixtures: {
+      groupWeek: "Woche {n}",
+      simulateStage: "Diese Phase simulieren",
+    },
+    locked: {
+      bracketNeedsGroups: "Schließe die Gruppenphase ab, um die K.-o.-Runde freizuschalten.",
+      bracketNeedsPlayoff: "Schließe die Saison ab, um die Play-offs freizuschalten.",
+      stats: "Spiele ein paar Partien, um Statistiken zu sehen.",
+    },
     tabs: {
       groups: "Gruppen",
       bracket: "Turnierbaum",

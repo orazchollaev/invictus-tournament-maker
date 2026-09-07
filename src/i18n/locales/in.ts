@@ -444,6 +444,10 @@ export default {
         label: "क्रमिक परिणाम प्रदर्शन",
         desc: "सभी परिणाम एक साथ दिखाने के बजाय थोड़े अंतराल के साथ एक-एक करके दिखाएँ",
       },
+      autoAdvanceFixtureStage: {
+        label: "फिक्स्चर में स्वतः आगे बढ़ें",
+        desc: "फिक्स्चर टैब में किसी चरण का सिमुलेशन करने के बाद, अपने आप अगले चरण पर जाएँ",
+      },
     },
     simulation: {
       title: "सिमुलेशन",
@@ -536,6 +540,15 @@ export default {
     simulateGroup: "सिम {group}",
     advanceToKnockout: "नॉकआउट में आगे बढ़ें",
     settings: "सेटिंग्स",
+    fixtures: {
+      groupWeek: "सप्ताह {n}",
+      simulateStage: "इस चरण का सिमुलेशन करें",
+    },
+    locked: {
+      bracketNeedsGroups: "नॉकआउट अनलॉक करने के लिए ग्रुप चरण पूरा करें।",
+      bracketNeedsPlayoff: "प्लेऑफ़ अनलॉक करने के लिए सीज़न पूरा करें।",
+      stats: "आँकड़े देखने के लिए कुछ मैच खेलें।",
+    },
     tabs: {
       groups: "Groups",
       bracket: "ब्रैकेट",

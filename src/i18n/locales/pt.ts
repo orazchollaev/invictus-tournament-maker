@@ -445,6 +445,10 @@ export default {
         label: "Revelação gradual",
         desc: "Os resultados aparecem um a um com uma breve pausa em vez de todos de uma vez",
       },
+      autoAdvanceFixtureStage: {
+        label: "Avanço automático do calendário",
+        desc: "Após simular uma etapa na aba Calendário, avançar automaticamente para a próxima",
+      },
     },
     simulation: {
       title: "Simulação",
@@ -537,6 +541,15 @@ export default {
     simulateGroup: "Simular {group}",
     advanceToKnockout: "Avançar para a Fase Eliminatória",
     settings: "Configurações",
+    fixtures: {
+      groupWeek: "Semana {n}",
+      simulateStage: "Simular esta etapa",
+    },
+    locked: {
+      bracketNeedsGroups: "Termine a fase de grupos para desbloquear o mata-mata.",
+      bracketNeedsPlayoff: "Termine a temporada para desbloquear o playoff.",
+      stats: "Jogue algumas partidas para ver as estatísticas.",
+    },
     tabs: {
       groups: "Grupos",
       bracket: "Chave",

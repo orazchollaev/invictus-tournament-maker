@@ -445,6 +445,10 @@ export default {
         label: "Hiển thị kết quả từng bước",
         desc: "Hiển thị kết quả trận đấu lần lượt với một khoảng trễ ngắn thay vì cùng lúc",
       },
+      autoAdvanceFixtureStage: {
+        label: "Tự động chuyển lịch thi đấu",
+        desc: "Sau khi mô phỏng một giai đoạn trong tab Lịch thi đấu, tự động chuyển sang giai đoạn tiếp theo",
+      },
     },
     simulation: {
       title: "Mô phỏng",
@@ -537,6 +541,15 @@ export default {
     simulateGroup: "Mô phỏng {group}",
     advanceToKnockout: "Chuyển sang loại trực tiếp",
     settings: "Cài đặt",
+    fixtures: {
+      groupWeek: "Tuần {n}",
+      simulateStage: "Mô phỏng giai đoạn này",
+    },
+    locked: {
+      bracketNeedsGroups: "Hoàn thành vòng bảng để mở khóa nhánh đấu loại trực tiếp.",
+      bracketNeedsPlayoff: "Hoàn thành mùa giải để mở khóa vòng playoff.",
+      stats: "Chơi vài trận để xem thống kê.",
+    },
     tabs: {
       groups: "Bảng",
       bracket: "Nhánh đấu",
