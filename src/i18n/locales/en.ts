@@ -450,6 +450,10 @@ export default {
         label: "Gradual Result Reveal",
         desc: "Show match results one by one with a short delay instead of all at once",
       },
+      autoAdvanceFixtureStage: {
+        label: "Auto-Advance Fixtures",
+        desc: "After simulating a stage in the Fixtures tab, jump to the next one automatically",
+      },
       liveEvents: {
         label: "Live Match Events",
         desc: "Choose which event types appear in the live match timeline",
@@ -545,6 +549,15 @@ export default {
     simulateGroup: "Sim {group}",
     advanceToKnockout: "Advance to Knockout",
     settings: "Settings",
+    fixtures: {
+      groupWeek: "Week {n}",
+      simulateStage: "Simulate this stage",
+    },
+    locked: {
+      bracketNeedsGroups: "Finish the group stage to unlock the bracket.",
+      bracketNeedsPlayoff: "Finish the season to unlock the playoff.",
+      stats: "Play some matches to see stats.",
+    },
     tabs: {
       groups: "Groups",
       bracket: "Bracket",

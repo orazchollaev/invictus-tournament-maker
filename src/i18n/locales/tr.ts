@@ -453,6 +453,10 @@ export default {
         label: "Kademeli Sonuç Açılımı",
         desc: "Maç sonuçları hepsi birden değil, kısa gecikmelerle teker teker gösterilsin",
       },
+      autoAdvanceFixtureStage: {
+        label: "Fikstürde Otomatik İlerleme",
+        desc: "Fikstür sekmesinde bir aşamayı simüle ettikten sonra otomatik olarak sıradakine geç",
+      },
       liveEvents: {
         label: "Canlı Maç Olayları",
         desc: "Canlı maç akışında hangi olay türlerinin görüneceğini seç",
@@ -549,6 +553,15 @@ export default {
     simulateGroup: "{group} Simüle Et",
     advanceToKnockout: "Eleme Aşamasına Geç",
     settings: "Ayarlar",
+    fixtures: {
+      groupWeek: "{n}. Hafta",
+      simulateStage: "Bu aşamayı simüle et",
+    },
+    locked: {
+      bracketNeedsGroups: "Elemelerin açılması için grup aşamasını tamamlayın.",
+      bracketNeedsPlayoff: "Play-off'un açılması için sezonu tamamlayın.",
+      stats: "İstatistikleri görmek için birkaç maç oynayın.",
+    },
     tabs: {
       groups: "Gruplar",
       bracket: "Eleme",
