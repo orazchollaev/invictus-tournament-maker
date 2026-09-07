@@ -81,6 +81,16 @@ const liveEventTypes: MatchEventType[] = ["goal", "penGoal", "ownGoal", "penMiss
       />
     </AppField>
 
+    <AppField layout="split" :label="t('settings.display.autoAdvanceFixtureStage.label')">
+      <template #description>
+        <SettingDesc>{{ t("settings.display.autoAdvanceFixtureStage.desc") }}</SettingDesc>
+      </template>
+      <AppToggle
+        v-model="settings.autoAdvanceFixtureStage"
+        :aria-label="t('settings.display.autoAdvanceFixtureStage.label')"
+      />
+    </AppField>
+
     <AppField layout="split" :label="t('settings.display.liveEvents.label')">
       <template #description>
         <SettingDesc>{{ t("settings.display.liveEvents.desc") }}</SettingDesc>
@@ -103,7 +113,7 @@ const liveEventTypes: MatchEventType[] = ["goal", "penGoal", "ownGoal", "penMiss
   display: flex;
   flex-direction: column;
   gap: var(--sp-2);
-  align-items: flex-end;
+  align-items: flex-start;
 }
 
 .live-event-toggle {
