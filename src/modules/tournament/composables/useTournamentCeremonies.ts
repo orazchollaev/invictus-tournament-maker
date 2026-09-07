@@ -1,4 +1,4 @@
-import { ref, computed, type ComputedRef, type Ref } from "vue"
+import { ref, computed, type ComputedRef } from "vue"
 import { useRouter } from "vue-router"
 import { useI18n } from "vue-i18n"
 import { useEngineLabels } from "@/composables/useEngineLabels"
@@ -8,7 +8,6 @@ import {
   buildPlayoffPots,
   computeCrossDrawPlan,
   getLeaguePlayoffData,
-  isLeagueLike,
   isSwiss,
   getLeaguePlayoffQualifierIds,
   computeLeaguePlayoffPlan,
@@ -37,8 +36,7 @@ export function useTournamentCeremonies(
     overrideTeamIds?: string[]
   ) => void,
   startNewLeagueSeason: (teamIds: string[]) => void,
-  isMultiTier: ComputedRef<boolean>,
-  activeTierIdx: Ref<number>
+  isMultiTier: ComputedRef<boolean>
 ) {
   const router = useRouter()
   const store = useTournamentStore()
@@ -65,12 +63,6 @@ export function useTournamentCeremonies(
 
   const leaguePlayoffData = computed(() =>
     tournament.value ? getLeaguePlayoffData(tournament.value) : undefined
-  )
-  const showLeaguePlayoffControls = computed(
-    () =>
-      !!tournament.value &&
-      isLeagueLike(tournament.value) &&
-      (!isMultiTier.value || activeTierIdx.value === 0)
   )
   const canStartLeaguePlayoffFlow = computed(() => {
     const t = tournament.value
@@ -432,7 +424,6 @@ export function useTournamentCeremonies(
     ceremonyPots,
     ceremonyFixedPlan,
     ceremonyAction,
-    showLeaguePlayoffControls,
     canStartLeaguePlayoffFlow,
     leaguePlayoffData,
     manualSeasonTeams,

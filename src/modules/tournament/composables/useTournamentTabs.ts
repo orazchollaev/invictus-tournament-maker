@@ -5,10 +5,7 @@ import { getLeaguePlayoffData, isLeagueLike } from "@/engine"
 import type { Tournament } from "@/modules/tournament/types"
 import type { MainTab } from "../components/detail"
 
-export function useTournamentTabs(
-  tournament: ComputedRef<Tournament | undefined>,
-  hasAnyResults: ComputedRef<boolean>
-) {
+export function useTournamentTabs(tournament: ComputedRef<Tournament | undefined>) {
   const route = useRoute()
 
   const isMultiTier = computed(() => (tournament.value?.tiers?.length ?? 0) > 1)
@@ -43,9 +40,25 @@ export function useTournamentTabs(
   )
   const hasLeaguePlayoff = computed(() => !!leaguePlayoffData.value?.started)
 
+  // Whether this tournament ever reaches a bracket phase at all — always for
+  // knockout and group+bracket, only for league/swiss when a playoff is
+  // configured. Independent of whether that phase has actually arrived yet.
+  const bracketAllowed = computed(() => {
+    if (isLeagueFormat.value) return !!leaguePlayoffData.value?.enabled
+    return true
+  })
+
+  // Whether the bracket tab has real content to show right now, vs. a
+  // "come back later" placeholder.
+  const bracketReady = computed(() => {
+    if (isGroupFormat.value) return !!tournament.value?.groupsDone
+    if (isLeagueFormat.value) return hasLeaguePlayoff.value
+    return true
+  })
+
   function changeTab(tab: MainTab, tierIdx?: number) {
     activeTab.value = tab
-    if ((tab === "league" || tab === "fixtures") && tierIdx !== undefined) {
+    if (tab === "league" && tierIdx !== undefined) {
       activeTierIdx.value = tierIdx
     }
   }
@@ -54,17 +67,13 @@ export function useTournamentTabs(
     const tabs: MainTab[] = []
     if (isLeagueFormat.value) {
       tabs.push("league")
-      tabs.push("fixtures")
-      if (hasLeaguePlayoff.value) tabs.push("bracket")
+      if (bracketAllowed.value) tabs.push("bracket")
     } else if (isGroupFormat.value) {
-      tabs.push("groups")
-      tabs.push("fixtures")
-      if (tournament.value?.groupsDone) tabs.push("bracket")
+      tabs.push("groups", "bracket")
     } else {
       tabs.push("bracket")
     }
-    if (hasAnyResults.value) tabs.push("stats")
-    tabs.push("participants")
+    tabs.push("fixtures", "stats", "participants")
     return tabs
   })
   const activeIndex = computed(() => visibleTabs.value.indexOf(activeTab.value))
@@ -189,6 +198,8 @@ export function useTournamentTabs(
     isSwissFormat,
     leaguePlayoffData,
     hasLeaguePlayoff,
+    bracketAllowed,
+    bracketReady,
     changeTab,
     visibleTabs,
     activeIndex,

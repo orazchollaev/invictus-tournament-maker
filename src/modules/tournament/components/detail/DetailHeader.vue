@@ -1,19 +1,30 @@
 <script setup lang="ts">
-import { ArrowLeft, RefreshCw, Settings, Zap } from "@lucide/vue"
+import { ArrowLeft, Check, RefreshCw, Settings, Zap } from "@lucide/vue"
 import { AppButton, AppIcon } from "@/components/ui"
 import { useI18n } from "vue-i18n"
 
-defineProps<{
+const props = defineProps<{
   isFinished: boolean
+  /** Every group is done and the bracket hasn't been seeded yet. */
+  showAdvance: boolean
+  /** The (top-tier) season is finished, playoff enabled, not yet started. */
+  showStartPlayoff: boolean
 }>()
 
 const emit = defineEmits<{
   openNewSeason: []
   simulateAll: []
   openSettings: []
+  advance: []
+  startPlayoff: []
 }>()
 
 const { t } = useI18n()
+
+function onLevelUp() {
+  if (props.showAdvance) emit("advance")
+  else emit("startPlayoff")
+}
 </script>
 
 <template>
@@ -26,6 +37,16 @@ const { t } = useI18n()
       <div class="t-header-actions">
         <AppButton v-if="isFinished" variant="filled" icon-only @click="emit('openNewSeason')">
           <AppIcon :icon="RefreshCw" size="sm" />
+        </AppButton>
+        <AppButton
+          v-if="showAdvance || showStartPlayoff"
+          icon-only
+          class="header-icon-btn"
+          variant="filled"
+          :title="showAdvance ? t('tournament.advanceToKnockout') : t('leaguePlayoff.startPlayoff')"
+          @click="onLevelUp"
+        >
+          <AppIcon :icon="Check" size="md" />
         </AppButton>
         <AppButton
           v-if="!isFinished"

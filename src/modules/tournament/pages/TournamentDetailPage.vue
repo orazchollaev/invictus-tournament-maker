@@ -8,11 +8,12 @@ import "swiper/css"
 import { BracketPanel } from "@/modules/tournament/components/bracket"
 import { GroupStage, GroupDraw, WildcardRankings } from "@/modules/tournament/components/group"
 import { LeagueView } from "@/modules/tournament/components/league"
+import { FixturesPanel } from "@/modules/tournament/components/fixture"
 import { ParticipantsTable } from "@/modules/tournament/components/participants"
 import { ManualDraw, PlayoffManualDraw } from "@/modules/tournament/components/draw"
 import { TournamentStats } from "@/modules/tournament/components/stats"
 import { DrawCeremony } from "@/modules/tournament/components/draw-ceremony"
-import { AppButton, AppModal, AppSubTabBar } from "@/components/ui"
+import { AppModal, AppSubTabBar } from "@/components/ui"
 import { DetailHeader, DetailPhaseTabs, DetailMultiTierModal } from "../components/detail"
 import { useTournamentDetail } from "../composables/useTournamentDetail"
 import { useTournamentTabs } from "../composables/useTournamentTabs"
@@ -42,14 +43,17 @@ const {
   isGroupFormat,
   hasWildcards,
   isLeagueFormat,
+  isSwissFormat,
   hasLeaguePlayoff,
+  bracketAllowed,
+  bracketReady,
   changeTab,
   visibleTabs,
   activeIndex,
   isTabRendered,
   onSwiperReady,
   onSlideChange,
-} = useTournamentTabs(tournament, hasAnyResults)
+} = useTournamentTabs(tournament)
 
 const {
   showSeasonModal,
@@ -62,7 +66,6 @@ const {
   ceremonyPots,
   ceremonyFixedPlan,
   ceremonyAction,
-  showLeaguePlayoffControls,
   canStartLeaguePlayoffFlow,
   leaguePlayoffData,
   manualSeasonTeams,
@@ -79,13 +82,22 @@ const {
   handleQuickGroupDraw,
   onAdvance,
   handlePlayoffManualConfirm,
-} = useTournamentCeremonies(
-  tournament,
-  allTeams,
-  startNewSeason,
-  startNewLeagueSeason,
-  isMultiTier,
-  activeTierIdx
+} = useTournamentCeremonies(tournament, allTeams, startNewSeason, startNewLeagueSeason, isMultiTier)
+
+const allGroupsDone = computed(
+  () => tournament.value?.groups?.every((g) => g.matches.every((m) => m.result !== null)) ?? false
+)
+
+const showAdvanceButton = computed(
+  () => isGroupFormat.value && !tournament.value?.groupsDone && allGroupsDone.value
+)
+
+const showStartPlayoffButton = computed(
+  () =>
+    isLeagueFormat.value &&
+    !!leaguePlayoffData.value?.enabled &&
+    !hasLeaguePlayoff.value &&
+    canStartLeaguePlayoffFlow.value
 )
 </script>
 
@@ -102,18 +114,21 @@ const {
     <template v-else>
       <DetailHeader
         :is-finished="isFinished"
+        :show-advance="showAdvanceButton"
+        :show-start-playoff="showStartPlayoffButton"
         @open-new-season="openNewSeason"
         @simulate-all="store.simulateTournament(tournament!.id)"
         @open-settings="router.push(`/tournaments/${tournament!.id}/settings`)"
+        @advance="onAdvance"
+        @start-playoff="onStartLeaguePlayoff"
       />
 
       <DetailPhaseTabs
-        :tournament="tournament"
         :active-tab="activeTab"
         :is-league-format="isLeagueFormat"
         :is-group-format="isGroupFormat"
-        :has-any-results="hasAnyResults"
-        :has-league-playoff="hasLeaguePlayoff"
+        :is-swiss-format="isSwissFormat"
+        :bracket-allowed="bracketAllowed"
         @change-tab="changeTab"
       />
 
@@ -150,7 +165,6 @@ const {
                   <Transition name="tab" mode="out-in">
                     <LeagueView
                       :key="activeTierIdx"
-                      section="standings"
                       :tournament="tournament"
                       :teams="allTeams"
                       :league-override="tournament.tiers[activeTierIdx]?.league"
@@ -165,90 +179,17 @@ const {
                           ? leaguePlayoffData.qualifierCount
                           : 0
                       "
-                      :locked="activeTierIdx === 0 && hasLeaguePlayoff"
-                      @set-result="
-                        (mdi, mi, h, a) =>
-                          store.setTierResult(tournament!.id, activeTierIdx, mdi, mi, h, a)
-                      "
-                      @clear-result="
-                        (mdi, mi) => store.clearTierResult(tournament!.id, activeTierIdx, mdi, mi)
-                      "
-                      @sim-match="
-                        (mdi, mi) => store.simTierMatch(tournament!.id, activeTierIdx, mdi, mi)
-                      "
-                      @sim-matchday="
-                        (mdi) => store.simTierMatchday(tournament!.id, activeTierIdx, mdi)
-                      "
-                      @sim-all="store.simAllTier(tournament!.id, activeTierIdx)"
-                    >
-                      <template
-                        v-if="
-                          activeTierIdx === 0 &&
-                          showLeaguePlayoffControls &&
-                          leaguePlayoffData?.enabled &&
-                          !hasLeaguePlayoff &&
-                          canStartLeaguePlayoffFlow
-                        "
-                        #actions
-                      >
-                        <div class="lpc-actions">
-                          <AppButton
-                            :disabled="!canStartLeaguePlayoffFlow"
-                            size="xs"
-                            variant="filled"
-                            @click="onStartLeaguePlayoff"
-                          >
-                            {{ trns("leaguePlayoff.startPlayoff") }}
-                          </AppButton>
-                          <span v-if="!canStartLeaguePlayoffFlow" class="lpc-hint">
-                            {{ trns("leaguePlayoff.finishSeasonFirst") }}
-                          </span>
-                        </div>
-                      </template>
-                    </LeagueView>
+                    />
                   </Transition>
                 </template>
                 <template v-else>
                   <LeagueView
-                    section="standings"
                     :tournament="tournament"
                     :teams="allTeams"
                     :playoff-qualifier-count="
                       leaguePlayoffData?.enabled ? leaguePlayoffData.qualifierCount : 0
                     "
-                    :locked="hasLeaguePlayoff"
-                    @set-result="
-                      (mdi, mi, h, a) => store.setLeagueResult(tournament!.id, mdi, mi, h, a)
-                    "
-                    @clear-result="(mdi, mi) => store.clearLeagueResult(tournament!.id, mdi, mi)"
-                    @sim-match="(mdi, mi) => store.simLeagueMatch(tournament!.id, mdi, mi)"
-                    @sim-matchday="(mdi) => store.simLeagueMatchday(tournament!.id, mdi)"
-                    @sim-all="store.simAllLeague(tournament!.id)"
-                  >
-                    <template
-                      v-if="
-                        showLeaguePlayoffControls &&
-                        leaguePlayoffData?.enabled &&
-                        !hasLeaguePlayoff &&
-                        canStartLeaguePlayoffFlow
-                      "
-                      #actions
-                    >
-                      <div class="lpc-actions">
-                        <AppButton
-                          :disabled="!canStartLeaguePlayoffFlow"
-                          size="xs"
-                          variant="filled"
-                          @click="onStartLeaguePlayoff"
-                        >
-                          {{ trns("leaguePlayoff.startPlayoff") }}
-                        </AppButton>
-                        <span v-if="!canStartLeaguePlayoffFlow" class="lpc-hint">
-                          {{ trns("leaguePlayoff.finishSeasonFirst") }}
-                        </span>
-                      </div>
-                    </template>
-                  </LeagueView>
+                  />
                 </template>
               </div>
               <div v-else-if="tab === 'groups'" class="tab-panel">
@@ -264,102 +205,35 @@ const {
                 <div class="gs-body">
                   <GroupStage
                     v-if="!hasWildcards || groupSubTab === 'groups'"
-                    section="standings"
                     :tournament="tournament"
                     :teams="allTeams"
-                    @set-result="
-                      (gi, mi, h, a) => store.setGroupResult(tournament!.id, gi, mi, h, a)
-                    "
-                    @clear-result="(gi, mi) => store.clearGroupResult(tournament!.id, gi, mi)"
-                    @sim-match="(gi, mi) => store.simGroupMatch(tournament!.id, gi, mi)"
-                    @sim-group="(gi) => store.simGroup(tournament!.id, gi)"
-                    @sim-group-week="(gi) => store.simGroupWeek(tournament!.id, gi)"
-                    @sim-week="store.simWeek(tournament!.id)"
-                    @sim-all="store.simAllGroups(tournament!.id)"
-                    @advance="onAdvance"
                   />
                   <WildcardRankings v-else :tournament="tournament" :teams="allTeams" />
                 </div>
               </div>
-              <div v-else-if="tab === 'fixtures' && isGroupFormat" class="tab-panel">
-                <GroupStage
-                  section="fixtures"
-                  :tournament="tournament"
-                  :teams="allTeams"
-                  @set-result="(gi, mi, h, a) => store.setGroupResult(tournament!.id, gi, mi, h, a)"
-                  @clear-result="(gi, mi) => store.clearGroupResult(tournament!.id, gi, mi)"
-                  @sim-match="(gi, mi) => store.simGroupMatch(tournament!.id, gi, mi)"
-                  @sim-group="(gi) => store.simGroup(tournament!.id, gi)"
-                  @sim-group-week="(gi) => store.simGroupWeek(tournament!.id, gi)"
-                  @sim-week="store.simWeek(tournament!.id)"
-                  @sim-all="store.simAllGroups(tournament!.id)"
-                  @advance="onAdvance"
-                />
-              </div>
-              <div v-else-if="tab === 'fixtures' && isLeagueFormat" class="tab-panel">
-                <template v-if="isMultiTier && tournament.tiers">
-                  <div class="gs-subtab-row">
-                    <AppSubTabBar
-                      :options="
-                        tournament.tiers.map((tier, ti) => ({
-                          value: String(ti),
-                          label: tier.name,
-                        }))
-                      "
-                      :model-value="String(activeTierIdx)"
-                      @update:model-value="(v) => changeTab('fixtures', Number(v))"
-                    />
-                  </div>
-                  <Transition name="tab" mode="out-in">
-                    <LeagueView
-                      :key="activeTierIdx"
-                      section="fixtures"
-                      :tournament="tournament"
-                      :teams="allTeams"
-                      :league-override="tournament.tiers[activeTierIdx]?.league"
-                      :locked="activeTierIdx === 0 && hasLeaguePlayoff"
-                      @set-result="
-                        (mdi, mi, h, a) =>
-                          store.setTierResult(tournament!.id, activeTierIdx, mdi, mi, h, a)
-                      "
-                      @clear-result="
-                        (mdi, mi) => store.clearTierResult(tournament!.id, activeTierIdx, mdi, mi)
-                      "
-                      @sim-match="
-                        (mdi, mi) => store.simTierMatch(tournament!.id, activeTierIdx, mdi, mi)
-                      "
-                      @sim-matchday="
-                        (mdi) => store.simTierMatchday(tournament!.id, activeTierIdx, mdi)
-                      "
-                      @sim-all="store.simAllTier(tournament!.id, activeTierIdx)"
-                    />
-                  </Transition>
-                </template>
-                <template v-else>
-                  <LeagueView
-                    section="fixtures"
-                    :tournament="tournament"
-                    :teams="allTeams"
-                    :locked="hasLeaguePlayoff"
-                    @set-result="
-                      (mdi, mi, h, a) => store.setLeagueResult(tournament!.id, mdi, mi, h, a)
-                    "
-                    @clear-result="(mdi, mi) => store.clearLeagueResult(tournament!.id, mdi, mi)"
-                    @sim-match="(mdi, mi) => store.simLeagueMatch(tournament!.id, mdi, mi)"
-                    @sim-matchday="(mdi) => store.simLeagueMatchday(tournament!.id, mdi)"
-                    @sim-all="store.simAllLeague(tournament!.id)"
-                  />
-                </template>
+              <div v-else-if="tab === 'fixtures'" class="tab-panel">
+                <FixturesPanel :tournament="tournament" :teams="allTeams" />
               </div>
               <div v-else-if="tab === 'bracket'" class="tab-panel">
                 <BracketPanel
+                  v-if="bracketReady"
                   :tournament="tournament"
                   :teams="allTeams"
                   :title="trns('tournament.tabs.bracket')"
                 />
+                <div v-else class="locked-panel">
+                  {{
+                    trns(
+                      isGroupFormat
+                        ? "tournament.locked.bracketNeedsGroups"
+                        : "tournament.locked.bracketNeedsPlayoff"
+                    )
+                  }}
+                </div>
               </div>
               <div v-else-if="tab === 'stats'" class="tab-panel">
-                <TournamentStats :tournament="tournament" :teams="allTeams" />
+                <TournamentStats v-if="hasAnyResults" :tournament="tournament" :teams="allTeams" />
+                <div v-else class="locked-panel">{{ trns("tournament.locked.stats") }}</div>
               </div>
               <!-- The table draws its own cell padding. -->
               <div v-else class="tab-panel tab-panel--flush">
@@ -476,16 +350,6 @@ const {
   padding: 0;
 }
 
-.lpc-actions {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-2);
-}
-.lpc-hint {
-  font-size: var(--fs-sm);
-  color: var(--text-muted);
-}
-
 .gs-subtab-row {
   margin-bottom: var(--sp-3);
   display: flex;
@@ -495,6 +359,18 @@ const {
 
 .not-found {
   color: var(--text-muted);
+}
+
+.locked-panel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  min-height: 160px;
+  padding: var(--sp-4);
+  text-align: center;
+  color: var(--text-muted);
+  font-size: var(--fs-sm);
 }
 
 @media (max-width: 600px) {

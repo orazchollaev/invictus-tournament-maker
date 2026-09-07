@@ -1,17 +1,15 @@
 <script setup lang="ts">
 import { computed } from "vue"
 import { useI18n } from "vue-i18n"
-import type { Tournament } from "@/modules/tournament/types"
 import type { MainTab } from "./types"
 import { AppTabs, AppTab } from "@/components/ui"
 
 const props = defineProps<{
-  tournament: Tournament
   activeTab: MainTab
   isLeagueFormat: boolean
   isGroupFormat: boolean
-  hasAnyResults: boolean
-  hasLeaguePlayoff: boolean
+  isSwissFormat: boolean
+  bracketAllowed: boolean
 }>()
 
 const emit = defineEmits<{
@@ -22,9 +20,12 @@ const { t, locale } = useI18n()
 
 // Swiss shares the league tab and table, so only its label changes.
 const leagueTabLabel = computed(() =>
-  props.tournament.format === "swiss"
-    ? t("tournament.tabs.swissPhase")
-    : t("tournament.tabs.league")
+  props.isSwissFormat ? t("tournament.tabs.swissPhase") : t("tournament.tabs.league")
+)
+
+// Swiss's knockout phase reads as "Bracket"; a pure league's reads as "Play Off".
+const bracketTabLabel = computed(() =>
+  props.isSwissFormat ? t("tournament.tabs.bracket") : t("tournament.tabs.playoff")
 )
 
 function onUpdate(value: string) {
@@ -42,25 +43,23 @@ function onUpdate(value: string) {
   >
     <template v-if="isLeagueFormat">
       <AppTab value="league">{{ leagueTabLabel }}</AppTab>
-      <AppTab value="fixtures">{{ t("tournament.tabs.fixtures") }}</AppTab>
-      <AppTab v-if="hasLeaguePlayoff" value="bracket">
-        {{ t("tournament.tabs.playoff") }}
+      <AppTab v-if="bracketAllowed" value="bracket">
+        {{ bracketTabLabel }}
       </AppTab>
     </template>
 
     <template v-else-if="isGroupFormat">
       <AppTab value="groups">{{ t("tournament.tabs.groups") }}</AppTab>
-      <AppTab value="fixtures">{{ t("tournament.tabs.fixtures") }}</AppTab>
-      <AppTab v-if="tournament.groupsDone" value="bracket">
-        {{ t("tournament.tabs.bracket") }}
-      </AppTab>
+      <AppTab value="bracket">{{ t("tournament.tabs.bracket") }}</AppTab>
     </template>
 
     <template v-else>
       <AppTab value="bracket">{{ t("tournament.tabs.bracket") }}</AppTab>
     </template>
 
-    <AppTab v-if="hasAnyResults" value="stats">{{ t("tournament.tabs.stats") }}</AppTab>
+    <AppTab value="fixtures">{{ t("tournament.tabs.fixtures") }}</AppTab>
+
+    <AppTab value="stats">{{ t("tournament.tabs.stats") }}</AppTab>
 
     <AppTab value="participants">{{ t("tournament.tabs.participants") }}</AppTab>
   </AppTabs>
