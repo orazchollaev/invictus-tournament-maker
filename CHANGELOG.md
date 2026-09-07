@@ -1,5 +1,37 @@
 # Changelog
 
+## [2.6.0](https://github.com/orazchollaev/invictus-tournament-maker/compare/v2.5.2...v2.6.0) (2026-09-07)
+
+### 🚀 New Features
+
+- **match:** add live match event type filter and show newest events first ([d5fe310](https://github.com/orazchollaev/invictus-tournament-maker/commit/d5fe3101ebc905b9478b8c25f5b89da350ab0440))
+- **settings:** add auto-advance toggle for fixture stage simulation ([a894b1c](https://github.com/orazchollaev/invictus-tournament-maker/commit/a894b1c4a1e61b57ccd71c3265fa258db1acf2fb))
+- **teams:** add half-star team rating display ([4d21ad6](https://github.com/orazchollaev/invictus-tournament-maker/commit/4d21ad6feb65bf1e4e6aeb832cd10e894ec0434b))
+- **tournament:** add a 0.5x league format that halves the round-robin schedule ([c1306bd](https://github.com/orazchollaev/invictus-tournament-maker/commit/c1306bdc9e64fa107d3eff541b3a58b63a6c3a43))
+- **tournament:** always show bracket and stats tabs and move playoff actions to the header ([a9e5e07](https://github.com/orazchollaev/invictus-tournament-maker/commit/a9e5e07d6201c81f811073802255d773ab4b7cf6))
+- **tournament:** raise max team cap to 1000 ([3ff71d2](https://github.com/orazchollaev/invictus-tournament-maker/commit/3ff71d24e5f3775073272c4bf84c92cd15b04307))
+- **tournament:** split groups/league fixtures into their own tabs and compact the tab bar ([40f6b88](https://github.com/orazchollaev/invictus-tournament-maker/commit/40f6b88f0b05d1237802a0ebf7a269a706a1f6bd))
+- **tournament:** unify fixtures into one panel with a stage picker for every format ([eb72a31](https://github.com/orazchollaev/invictus-tournament-maker/commit/eb72a31ba4bc6d356eb18a5cf888f9077ecdf30e))
+
+### 🐛 Bug Fixes
+
+- **samples:** fix uefa samples ([06cb6a2](https://github.com/orazchollaev/invictus-tournament-maker/commit/06cb6a2bb4cc41cb45773573573e4bedc25435d2))
+- **ui:** wrap history swiper in a card and switch season filter to a native select ([f7131fe](https://github.com/orazchollaev/invictus-tournament-maker/commit/f7131fee75827792ad5a72b7db9c44b7de31beab))
+
+### 🔧 Maintenance
+
+- **gradle:** bump gradle version ([2003826](https://github.com/orazchollaev/invictus-tournament-maker/commit/200382686bcf0b3bca0722f6317ba10bd3110056))
+- **i18n:** add strings for the half league format and live event filter ([6303630](https://github.com/orazchollaev/invictus-tournament-maker/commit/6303630994bc056e3cfe6eb7808b6b5b866b2934))
+- **i18n:** add strings for the unified fixtures panel and locked tabs ([1822735](https://github.com/orazchollaev/invictus-tournament-maker/commit/1822735c6dab4c2c4e1666eb57da2815ff867426))
+- **i18n:** translate the new fixtures/locked-tab strings into every remaining locale ([d777096](https://github.com/orazchollaev/invictus-tournament-maker/commit/d777096c844db542eed35e0206079c3636554c66))
+- **tsbuild:** fix tsbuild ([92765a0](https://github.com/orazchollaev/invictus-tournament-maker/commit/92765a0ffbd3201888ffd61ff3de916539282863))
+
+### 🎨 Styles
+
+- **fixtures:** polish league and bracket fixture rows to match the group fixture card style ([f2a9292](https://github.com/orazchollaev/invictus-tournament-maker/commit/f2a9292b77f3382af2bf2cb94ab094a9a0f316b7))
+- **layout:** lighten iOS tab bar background and boost blur ([9715129](https://github.com/orazchollaev/invictus-tournament-maker/commit/97151299e80036bb7fbe84e9a645040d70db365e))
+- **tables:** redesign standings and participants tables with a flush, borderless look ([90bfaf3](https://github.com/orazchollaev/invictus-tournament-maker/commit/90bfaf3b16a4eb2f8fab336db748e5f36d220bed))
+
 ## [2.5.2](https://github.com/orazchollaev/invictus-tournament-maker/compare/v2.5.1...v2.5.2) (2026-09-02)
 
 ### 🐛 Bug Fixes
