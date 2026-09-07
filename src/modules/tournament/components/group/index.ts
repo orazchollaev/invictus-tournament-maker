@@ -1,6 +1,5 @@
 export { default as GroupCard } from "./GroupCard.vue"
 export { default as GroupDraw } from "./GroupDraw.vue"
 export { default as GroupLegend } from "./GroupLegend.vue"
-export { default as GroupSimToolbar } from "./GroupSimToolbar.vue"
 export { default as GroupStage } from "./GroupStage.vue"
 export { default as WildcardRankings } from "./WildcardRankings.vue"

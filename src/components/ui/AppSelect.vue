@@ -39,15 +39,21 @@ import { ChevronDown, Check } from "@lucide/vue"
 import AppIcon from "./AppIcon.vue"
 import AppSearchInput from "./AppSearchInput.vue"
 
-const props = defineProps<{
-  options: O[]
-  placeholder?: string
-  /** Adds a search box inside the popup that filters options by label. */
-  searchable?: boolean
-  searchPlaceholder?: string
-  /** Shown when a search matches nothing. */
-  emptyText?: string
-}>()
+const props = withDefaults(
+  defineProps<{
+    options: O[]
+    placeholder?: string
+    /** Adds a search box inside the popup that filters options by label. */
+    searchable?: boolean
+    searchPlaceholder?: string
+    /** Shown when a search matches nothing. */
+    emptyText?: string
+    /** "sm" trims the trigger and every popup row — a tab-strip-style picker
+     *  (round/matchday select) rather than a form field. */
+    size?: "sm" | "md"
+  }>(),
+  { size: "md" }
+)
 
 const model = defineModel<T>({ required: true })
 
@@ -70,7 +76,7 @@ function onOpenChange(open: boolean) {
 
 <template>
   <SelectRoot v-model="model" @update:open="onOpenChange">
-    <SelectTrigger class="asel-trigger">
+    <SelectTrigger class="asel-trigger" :class="{ 'asel-trigger--sm': size === 'sm' }">
       <SelectValue class="asel-value" :placeholder="placeholder">
         <slot v-if="$slots.value" name="value" :option="selectedOption" />
       </SelectValue>
@@ -81,7 +87,7 @@ function onOpenChange(open: boolean) {
     <SelectPortal>
       <SelectContent
         class="asel-content"
-        :class="{ 'asel-content--searchable': searchable }"
+        :class="{ 'asel-content--searchable': searchable, 'asel-content--sm': size === 'sm' }"
         :side-offset="4"
         position="popper"
       >
@@ -137,6 +143,11 @@ function onOpenChange(open: boolean) {
   box-shadow: var(--focus-ring);
 }
 
+.asel-trigger--sm {
+  padding: var(--sp-1-5) var(--sp-2);
+  font-size: var(--fs-sm);
+}
+
 .asel-value {
   flex: 1;
   min-width: 0;
@@ -152,12 +163,6 @@ function onOpenChange(open: boolean) {
   color: var(--text-muted);
 }
 
-/* ── Design languages ────────────────────────────────────────────
-   The trigger has to read as the same control as the <input> next to
-   it, so it copies exactly what design.css does to a plain field:
-   iOS fills it and drops the outline, M3 keeps the outline on no fill.
-   Padding and type size stay on the shared baseline — changing them
-   here is what made this sit a size off from the name field. */
 [data-design="ios"] .asel-trigger {
   border-color: transparent;
   background: var(--fill-1);
@@ -239,6 +244,13 @@ function onOpenChange(open: boolean) {
   flex-shrink: 0;
 }
 
+/* size="sm" — a tab-strip-style picker, not a form field. Repeated after each
+   design language below so it wins there too, since each one re-widens rows. */
+.asel-content--sm .asel-item {
+  padding: var(--sp-1) var(--sp-2);
+  font-size: var(--fs-xs);
+}
+
 .asel-content[data-state="open"] {
   animation: asel-content-in 0.14s ease-out both;
 }
@@ -285,6 +297,10 @@ function onOpenChange(open: boolean) {
 [data-design="ios"] .asel-item[data-state="checked"] {
   font-weight: 500;
 }
+[data-design="ios"] .asel-content--sm .asel-item {
+  padding: var(--sp-1) var(--sp-2);
+  font-size: var(--fs-xs);
+}
 
 /* M3: an elevated tonal menu, square-ish rows, no outline. */
 [data-design="android"] .asel-content {
@@ -302,6 +318,10 @@ function onOpenChange(open: boolean) {
 }
 [data-design="android"] .asel-item[data-state="checked"] {
   background: var(--fill-2);
+}
+[data-design="android"] .asel-content--sm .asel-item {
+  padding: var(--sp-1) var(--sp-2);
+  font-size: var(--fs-xs);
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -1,79 +1,28 @@
 <script setup lang="ts">
-import { computed, ref } from "vue"
 import type { Team } from "@/modules/teams/types"
-import type { Group, GroupMatch } from "@/modules/tournament/types"
+import type { Group } from "@/modules/tournament/types"
 import { useTeamLookup } from "@/composables/useTeamLookup"
 import { TeamBadge } from "@/modules/teams/components"
 import { AppCard, AppTable } from "@/components/ui"
-import { Shuffle } from "@lucide/vue"
 import { useI18n } from "vue-i18n"
 import { GROUP_COLUMNS, formatGoalDiff } from "../shared/standingsColumns"
 import { useEngineLabels } from "@/composables/useEngineLabels"
-import { MatchScoreModal, MatchStatsButton } from "@/modules/tournament/components/match-stats"
 
-const props = withDefaults(
-  defineProps<{
-    group: Group
-    teams: Team[]
-    locked: boolean
-    qualifiersPerGroup: number
-    wildcardCount: number
-    /** Groups tab shows standings only; Fixtures tab shows matches only. */
-    section?: "standings" | "fixtures"
-  }>(),
-  { section: "standings" }
-)
-
-const emit = defineEmits<{
-  simMatch: [matchIdx: number]
-  simGroupWeek: []
-  setResult: [matchIdx: number, home: number, away: number]
-  clearResult: [matchIdx: number]
+const props = defineProps<{
+  group: Group
+  teams: Team[]
+  qualifiersPerGroup: number
+  wildcardCount: number
 }>()
-
-const round = defineModel<number>("round", { default: 0 })
 
 const { t } = useI18n()
 const { engineLabel } = useEngineLabels()
 const { teamById } = useTeamLookup(() => props.teams)
-
-/* Scores are entered in the modal: a group row is one line tall and cannot
-   hold a stepper, an input and a simulate button without crushing the names. */
-const editingIdx = ref<number | null>(null)
-const editingMatch = computed(() =>
-  editingIdx.value === null ? null : (props.group.matches[editingIdx.value] ?? null)
-)
-
-const rounds = computed((): { match: GroupMatch; mi: number }[][] => {
-  const n = props.group.teamIds.length
-  const matchesPerRound = Math.floor(n / 2)
-  if (matchesPerRound < 1) return [props.group.matches.map((match, mi) => ({ match, mi }))]
-  const out: { match: GroupMatch; mi: number }[][] = []
-  for (let i = 0; i < props.group.matches.length; i += matchesPerRound) {
-    out.push(
-      props.group.matches.slice(i, i + matchesPerRound).map((match, j) => ({ match, mi: i + j }))
-    )
-  }
-  return out
-})
-
-function matchResultStr(match: GroupMatch): string {
-  if (!match.result) return "–"
-  return `${match.result.home} – ${match.result.away}`
-}
-
-function scoreAccentColor(match: GroupMatch): string {
-  if (!match.result) return ""
-  if (match.result.home > match.result.away) return teamById(match.homeId)?.color ?? ""
-  if (match.result.away > match.result.home) return teamById(match.awayId)?.color ?? ""
-  return "var(--border)"
-}
 </script>
 
 <template>
   <AppCard variant="outlined" :title="engineLabel(group.name)">
-    <!-- Standings -->
-    <AppTable v-if="section === 'standings'" dense flush class="gs-table">
+    <AppTable dense flush class="gs-table">
       <thead>
         <tr>
           <th class="col-rank">#</th>
@@ -117,70 +66,6 @@ function scoreAccentColor(match: GroupMatch): string {
         </tr>
       </TransitionGroup>
     </AppTable>
-
-    <div v-if="section === 'fixtures'" class="gs-matches">
-      <div class="gs-round-nav">
-        <span class="gs-round-label">Round {{ round + 1 }} / {{ rounds.length }}</span>
-        <div class="gs-round-btns">
-          <button
-            v-if="!locked"
-            class="btn-xs"
-            :disabled="group.matches.every((m) => !!m.result)"
-            @click="$emit('simGroupWeek')"
-          >
-            <Shuffle :size="11" />
-          </button>
-          <button class="btn-xs" :disabled="round === 0" @click="round--">‹</button>
-          <button class="btn-xs" :disabled="round >= rounds.length - 1" @click="round++">›</button>
-        </div>
-      </div>
-      <div v-for="{ match, mi } in rounds[round] ?? []" :key="match.id" class="gs-match">
-        <TeamBadge
-          :team="teamById(match.homeId)"
-          :size="14"
-          reverse
-          class="gs-team gs-team--home"
-        />
-
-        <button
-          class="gs-score-btn"
-          :class="{ 'gs-score-btn--locked': locked }"
-          :style="
-            match.result ? { borderColor: scoreAccentColor(match), borderLeftWidth: '3px' } : {}
-          "
-          :disabled="locked"
-          @click="editingIdx = mi"
-        >
-          {{ matchResultStr(match) }}
-        </button>
-
-        <TeamBadge :team="teamById(match.awayId)" :size="14" class="gs-team gs-team--away" />
-
-        <span class="gs-report">
-          <MatchStatsButton
-            :home-team="teamById(match.homeId)"
-            :away-team="teamById(match.awayId)"
-            :result="match.result"
-            :subtitle="engineLabel(group.name)"
-            size="xs"
-          />
-        </span>
-      </div>
-    </div>
-
-    <!-- Inside the card, so the component keeps a single root element. -->
-    <MatchScoreModal
-      v-if="editingMatch && editingIdx !== null && !locked"
-      :home-team="teamById(editingMatch.homeId)"
-      :away-team="teamById(editingMatch.awayId)"
-      :result="editingMatch.result"
-      :match-id="editingMatch.id"
-      :subtitle="engineLabel(group.name)"
-      @save="(h, a) => emit('setResult', editingIdx!, h, a)"
-      @simulate="emit('simMatch', editingIdx!)"
-      @clear="emit('clearResult', editingIdx!)"
-      @close="editingIdx = null"
-    />
   </AppCard>
 </template>
 
@@ -212,90 +97,6 @@ function scoreAccentColor(match: GroupMatch): string {
   opacity: 0.65;
 }
 
-.gs-matches {
-  padding: var(--sp-1) var(--sp-2) var(--sp-2);
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  border-top: 1px solid var(--border-light);
-}
-.gs-round-nav {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: var(--sp-1) 0;
-  border-bottom: 1px solid var(--border-light);
-  margin-bottom: var(--sp-1);
-}
-.gs-round-label {
-  font-size: var(--fs-xs);
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-}
-.gs-round-btns {
-  display: flex;
-  gap: 3px;
-}
-
-.gs-report {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-}
-
-.gs-match {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr 18px;
-  align-items: center;
-  gap: var(--sp-2);
-  font-size: var(--fs-base);
-  padding: var(--sp-1) 0;
-}
-.gs-team {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-2);
-  min-width: 0;
-}
-
-.gs-team :deep(.name) {
-  font-size: var(--fs-sm);
-}
-.gs-team--home {
-  justify-content: flex-end;
-  text-align: end;
-}
-.gs-team--away {
-  justify-content: flex-start;
-}
-
-.gs-score-btn {
-  font-family: var(--font);
-  font-size: var(--fs-sm);
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-  justify-content: center;
-  background: var(--bg);
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius);
-  cursor: pointer;
-  flex-shrink: 0;
-  display: flex;
-  color: var(--text-muted);
-  padding: var(--sp-1) var(--sp-2);
-  min-width: 50px;
-}
-.gs-score-btn:hover:not(:disabled) {
-  border-color: var(--accent);
-  color: var(--accent);
-}
-.gs-score-btn--locked {
-  cursor: default;
-  pointer-events: none;
-}
-
 .team-cell {
   gap: 6px;
 }
@@ -305,9 +106,6 @@ function scoreAccentColor(match: GroupMatch): string {
 }
 
 @media (max-width: 600px) {
-  .gs-matches {
-    max-height: none;
-  }
   .gs-table .col-team {
     min-width: 90px;
   }

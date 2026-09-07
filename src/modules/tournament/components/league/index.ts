@@ -1,6 +1,4 @@
 export { default as LeagueMatchRow } from "./LeagueMatchRow.vue"
-export { default as LeagueMatchdayNav } from "./LeagueMatchdayNav.vue"
-export { default as LeagueMatchdayPanel } from "./LeagueMatchdayPanel.vue"
 export { default as LeagueProgressChart } from "./LeagueProgressChart.vue"
 export { default as LeagueStandingsTable } from "./LeagueStandingsTable.vue"
 export { default as LeagueView } from "./LeagueView.vue"

@@ -2,32 +2,15 @@
 import { computed } from "vue"
 import type { League, Tournament } from "@/modules/tournament/types"
 import type { Team } from "@/modules/teams/types"
-import LeagueMatchdayPanel from "./LeagueMatchdayPanel.vue"
 import LeagueStandingsTable from "./LeagueStandingsTable.vue"
 
-const props = withDefaults(
-  defineProps<{
-    tournament: Tournament
-    teams: Team[]
-    leagueOverride?: League
-    relegationCountOverride?: number
-    promotionCount?: number
-    playoffQualifierCount?: number
-    /** True once the league playoff bracket has started — this tier's own
-     *  matches are frozen, same as a finished group stage. */
-    locked?: boolean
-    /** League tab shows standings only; Fixtures tab shows matchdays only. */
-    section?: "standings" | "fixtures"
-  }>(),
-  { section: "standings" }
-)
-
-defineEmits<{
-  setResult: [matchdayIdx: number, matchIdx: number, home: number, away: number]
-  clearResult: [matchdayIdx: number, matchIdx: number]
-  simMatch: [matchdayIdx: number, matchIdx: number]
-  simMatchday: [matchdayIdx: number]
-  simAll: []
+const props = defineProps<{
+  tournament: Tournament
+  teams: Team[]
+  leagueOverride?: League
+  relegationCountOverride?: number
+  promotionCount?: number
+  playoffQualifierCount?: number
 }>()
 
 const league = computed(() => props.leagueOverride ?? props.tournament.league!)
@@ -46,11 +29,7 @@ const playedMatchdays = computed(() => matchdays.value.filter((_, i) => matchday
 
 <template>
   <div class="lv-root">
-    <div v-if="$slots.actions" class="lv-actions-row">
-      <slot name="actions" />
-    </div>
     <LeagueStandingsTable
-      v-if="section === 'standings'"
       :standings="standings"
       :teams="teams"
       :is-finished="isFinished"
@@ -60,16 +39,6 @@ const playedMatchdays = computed(() => matchdays.value.filter((_, i) => matchday
       :playoff-qualifier-count="playoffQualifierCount"
       :relegation-count="relegationCount"
     />
-    <LeagueMatchdayPanel
-      v-else
-      :matchdays="matchdays"
-      :teams="teams"
-      :tournament-id="tournament.id"
-      :locked="locked"
-      @set-result="(md, m, h, a) => $emit('setResult', md, m, h, a)"
-      @clear-result="(md, m) => $emit('clearResult', md, m)"
-      @sim-match="(md, m) => $emit('simMatch', md, m)"
-    />
   </div>
 </template>
 
@@ -78,12 +47,5 @@ const playedMatchdays = computed(() => matchdays.value.filter((_, i) => matchday
   display: flex;
   flex-direction: column;
   gap: var(--sp-3);
-}
-
-.lv-actions-row {
-  margin-bottom: var(--sp-1);
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
 }
 </style>
