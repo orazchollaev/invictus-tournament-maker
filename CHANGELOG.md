@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.6.1](https://github.com/orazchollaev/invictus-tournament-maker/compare/v2.6.0...v2.6.1) (2026-09-09)
+
+### 🚀 New Features
+
+- add new red card system ([7a77f92](https://github.com/orazchollaev/invictus-tournament-maker/commit/7a77f92f5eb7371e11558b8b68c2816528b454ed))
+
 ## [2.6.0](https://github.com/orazchollaev/invictus-tournament-maker/compare/v2.5.2...v2.6.0) (2026-09-07)
 
 ### 🚀 New Features
