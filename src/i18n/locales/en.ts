@@ -460,6 +460,10 @@ export default {
       },
     },
     simulation: {
+      redCardImpact: {
+        label: "Red Card Impact",
+        desc: "A sending-off weakens the team for the rest of the match, and leaves a small penalty on its next one.",
+      },
       title: "Simulation",
       homeAdvantage: {
         label: "Home Advantage",
@@ -532,6 +536,7 @@ export default {
     specialThanks: "Special thanks",
   },
   tournament: {
+    exportExcel: "Export to Excel",
     noFixtures: "No matches yet.",
     groupStageNotStarted: "Group stage not started yet.",
     matchdayProgress: "{played}/{total} matchdays",

@@ -112,6 +112,7 @@ export default {
     double: "Doble",
     triple: "3×",
     quadruple: "4×",
+    half: "0.5×",
     random: "Aleatorio",
     seeded: "Sembrado",
     manual: "Manual",
@@ -327,6 +328,12 @@ export default {
       desc: "Idioma de visualización de la aplicación",
     },
     appearance: {
+      design: {
+        label: "Lenguaje de diseño",
+        desc: "Suave es sereno y vidrioso; Vivo es más audaz, con superficies tintadas y esquinas más grandes. Tu color principal no cambia.",
+        soft: "Suave",
+        vivid: "Vivo",
+      },
       title: "Apariencia",
       theme: {
         label: "Tema",
@@ -413,6 +420,10 @@ export default {
       title: "Efectos de victoria",
     },
     display: {
+      liveEvents: {
+        label: "Eventos del partido en vivo",
+        desc: "Elige qué tipos de evento aparecen en la cronología del partido en vivo",
+      },
       title: "Visualización",
       teamAbbr: {
         label: "Abreviaturas de equipos",
@@ -451,6 +462,10 @@ export default {
       },
     },
     simulation: {
+      redCardImpact: {
+        label: "Impacto de la tarjeta roja",
+        desc: "Una expulsión debilita al equipo el resto del partido y le deja una pequeña penalización en el siguiente.",
+      },
       title: "Simulación",
       homeAdvantage: {
         label: "Ventaja local",
@@ -524,6 +539,7 @@ export default {
     specialThanks: "Agradecimiento especial",
   },
   tournament: {
+    exportExcel: "Exportar a Excel",
     noFixtures: "Todavía no hay partidos.",
     groupStageNotStarted: "La fase de grupos aún no ha comenzado.",
     matchdayProgress: "{played}/{total} jornadas",

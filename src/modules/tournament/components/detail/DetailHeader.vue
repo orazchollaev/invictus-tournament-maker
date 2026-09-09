@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ArrowLeft, Check, RefreshCw, Settings, Zap } from "@lucide/vue"
+import { ArrowLeft, Check, RefreshCw, Settings, Sheet, Zap } from "@lucide/vue"
 import { AppButton, AppIcon } from "@/components/ui"
 import { useI18n } from "vue-i18n"
 
@@ -9,6 +9,8 @@ const props = defineProps<{
   showAdvance: boolean
   /** The (top-tier) season is finished, playoff enabled, not yet started. */
   showStartPlayoff: boolean
+  /** A spreadsheet is being built — the button waits rather than stacking exports. */
+  isExporting?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -17,6 +19,7 @@ const emit = defineEmits<{
   openSettings: []
   advance: []
   startPlayoff: []
+  exportExcel: []
 }>()
 
 const { t } = useI18n()
@@ -56,6 +59,15 @@ function onLevelUp() {
           @click="emit('simulateAll')"
         >
           <AppIcon :icon="Zap" size="md" />
+        </AppButton>
+        <AppButton
+          icon-only
+          class="header-icon-btn"
+          :disabled="isExporting"
+          :title="t('tournament.exportExcel')"
+          @click="emit('exportExcel')"
+        >
+          <AppIcon :icon="Sheet" size="md" />
         </AppButton>
         <AppButton
           icon-only

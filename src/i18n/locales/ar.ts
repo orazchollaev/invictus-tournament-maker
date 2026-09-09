@@ -111,6 +111,7 @@ export default {
     double: "مزدوج",
     triple: "3×",
     quadruple: "4×",
+    half: "0.5×",
     random: "عشوائي",
     seeded: "مُصنّف",
     manual: "يدوي",
@@ -326,6 +327,12 @@ export default {
       desc: "لغة العرض لكامل التطبيق",
     },
     appearance: {
+      design: {
+        label: "لغة التصميم",
+        desc: "الهادئ ناعم وزجاجي؛ والحيوي أكثر جرأة، بأسطح ملوّنة وزوايا أكبر. لا يتأثر لونك الأساسي.",
+        soft: "هادئ",
+        vivid: "حيوي",
+      },
       title: "المظهر",
       theme: {
         label: "السمة",
@@ -411,6 +418,10 @@ export default {
       title: "تأثيرات الفوز",
     },
     display: {
+      liveEvents: {
+        label: "أحداث المباراة المباشرة",
+        desc: "اختر أنواع الأحداث التي تظهر في مسار المباراة المباشرة",
+      },
       title: "العرض",
       teamAbbr: {
         label: "اختصارات الفرق",
@@ -449,6 +460,10 @@ export default {
       },
     },
     simulation: {
+      redCardImpact: {
+        label: "تأثير البطاقة الحمراء",
+        desc: "الطرد يُضعف الفريق لبقية المباراة ويترك أثرًا بسيطًا في المباراة التالية.",
+      },
       title: "المحاكاة",
       homeAdvantage: {
         label: "أفضلية أرض الملعب",
@@ -520,6 +535,7 @@ export default {
     specialThanks: "شكر خاص",
   },
   tournament: {
+    exportExcel: "تصدير إلى Excel",
     noFixtures: "لا توجد مباريات بعد.",
     groupStageNotStarted: "لم يبدأ دور المجموعات بعد.",
     matchdayProgress: "{played}/{total} جولة",

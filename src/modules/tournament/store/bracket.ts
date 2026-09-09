@@ -7,7 +7,7 @@ import {
   updateThirdPlaceSlots,
   simulateMatch,
   decideKnockoutResult,
-  tournamentFormAdjustments,
+  tournamentAdjustments,
 } from "@/engine"
 
 export function useBracketActions(
@@ -143,15 +143,15 @@ export function useBracketActions(
     ri: number,
     mi: number,
     allTeams: Team[],
-    form?: Map<string, number>
+    adjustments?: Map<string, number>
   ) {
     const match = t.rounds[ri].matches[mi]
     if (!match.homeId || !match.awayId) return
     if (!match.result) {
-      match.result = simulateMatch(match, allTeams, form)
+      match.result = simulateMatch(match, allTeams, adjustments)
     }
     if (match.leg2Result === null) {
-      match.leg2Result = decideLeg2(match, allTeams, form)
+      match.leg2Result = decideLeg2(match, allTeams, adjustments)
     }
   }
 
@@ -161,10 +161,14 @@ export function useBracketActions(
    * score goes over flipped into leg 2's own home/away frame — after which
    * `penHome` and `homeId` refer to the same side, as everywhere else.
    */
-  function decideLeg2(match: Match, allTeams: Team[], form?: Map<string, number>): MatchResult {
+  function decideLeg2(
+    match: Match,
+    allTeams: Team[],
+    adjustments?: Map<string, number>
+  ): MatchResult {
     const leg2Sim = { id: match.id, homeId: match.awayId, awayId: match.homeId }
     return decideKnockoutResult(leg2Sim as never, allTeams, {
-      form,
+      adjustments,
       aggregateOffset: { home: match.result!.away, away: match.result!.home },
     }).result
   }
@@ -176,7 +180,7 @@ export function useBracketActions(
     if (!match.homeId || !match.awayId) return
     if (match.leg2Result === undefined) return
     const allTeams = getTeams()
-    match.result = simulateMatch(match, allTeams, tournamentFormAdjustments(t))
+    match.result = simulateMatch(match, allTeams, tournamentAdjustments(t))
     match.leg2Result = null
     clearDownstream(t, ri, mi)
     if (ri === t.rounds.length - 2) clearThirdPlace(t)
@@ -192,7 +196,7 @@ export function useBracketActions(
     if (!match.homeId || !match.awayId || !match.result) return
     if (match.leg2Result === undefined) return
     const allTeams = getTeams()
-    match.leg2Result = decideLeg2(match, allTeams, tournamentFormAdjustments(t))
+    match.leg2Result = decideLeg2(match, allTeams, tournamentAdjustments(t))
     propagateWinners(t.rounds, allTeams)
     updateThirdPlaceSlots(t)
     t.winnerId = getWinnerId(t.rounds[t.rounds.length - 1].matches[0])
@@ -205,16 +209,16 @@ export function useBracketActions(
     if (!match.homeId || !match.awayId) return
     const allTeams = getTeams()
 
-    const form = tournamentFormAdjustments(t)
+    const adjustments = tournamentAdjustments(t)
 
     if (match.leg2Result !== undefined) {
-      simulateDoubleLegMatch(t, ri, mi, allTeams, form)
+      simulateDoubleLegMatch(t, ri, mi, allTeams, adjustments)
       propagateWinners(t.rounds, allTeams)
       updateThirdPlaceSlots(t)
       const final = t.rounds[t.rounds.length - 1].matches[0]
       t.winnerId = getWinnerId(final)
     } else {
-      commitResult(t, ri, mi, decideKnockoutResult(match, allTeams, { form }).result)
+      commitResult(t, ri, mi, decideKnockoutResult(match, allTeams, { adjustments }).result)
     }
   }
 
@@ -222,18 +226,18 @@ export function useBracketActions(
     const t = tournaments.value.find((t) => t.id === tournamentId)
     if (!t) return
     const allTeams = getTeams()
-    const form = tournamentFormAdjustments(t)
+    const adjustments = tournamentAdjustments(t)
     propagateWinners(t.rounds, allTeams)
     t.rounds[roundIdx].matches.forEach((match, mi) => {
       if (!match.result && match.homeId && match.awayId) {
         if (match.leg2Result !== undefined) {
-          simulateDoubleLegMatch(t, roundIdx, mi, allTeams, form)
+          simulateDoubleLegMatch(t, roundIdx, mi, allTeams, adjustments)
         } else {
-          match.result = decideKnockoutResult(match, allTeams, { form }).result
+          match.result = decideKnockoutResult(match, allTeams, { adjustments }).result
         }
       } else if (match.result && match.leg2Result === null && match.homeId && match.awayId) {
         // Leg 1 done, simulate leg 2
-        simulateDoubleLegMatch(t, roundIdx, mi, allTeams, form)
+        simulateDoubleLegMatch(t, roundIdx, mi, allTeams, adjustments)
       }
     })
     propagateWinners(t.rounds, allTeams)
@@ -249,14 +253,14 @@ export function useBracketActions(
     for (let r = 0; r < t.rounds.length; r++) {
       // Recomputed per round so a run of wins earlier in the bracket feeds into
       // the next round, the way it does matchday by matchday in a league.
-      const form = tournamentFormAdjustments(t)
+      const adjustments = tournamentAdjustments(t)
       propagateWinners(t.rounds, allTeams)
       t.rounds[r].matches.forEach((match, mi) => {
         if (!match.homeId || !match.awayId) return
         if (match.leg2Result !== undefined) {
-          simulateDoubleLegMatch(t, r, mi, allTeams, form)
+          simulateDoubleLegMatch(t, r, mi, allTeams, adjustments)
         } else if (!match.result) {
-          match.result = decideKnockoutResult(match, allTeams, { form }).result
+          match.result = decideKnockoutResult(match, allTeams, { adjustments }).result
         }
       })
     }

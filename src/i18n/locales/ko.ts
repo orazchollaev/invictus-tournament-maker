@@ -111,6 +111,7 @@ export default {
     double: "2회",
     triple: "3회",
     quadruple: "4회",
+    half: "0.5×",
     random: "무작위",
     seeded: "시드 배정",
     manual: "수동",
@@ -326,6 +327,12 @@ export default {
       desc: "앱 전체에 표시되는 언어",
     },
     appearance: {
+      design: {
+        label: "디자인 언어",
+        desc: "‘부드러움’은 차분한 유리 느낌이고, ‘선명함’은 색이 들어간 표면과 큰 모서리로 더 과감합니다. 기본 색상은 그대로입니다.",
+        soft: "부드러움",
+        vivid: "선명함",
+      },
       title: "외관",
       theme: {
         label: "테마",
@@ -412,6 +419,10 @@ export default {
       title: "우승 효과",
     },
     display: {
+      liveEvents: {
+        label: "라이브 경기 이벤트",
+        desc: "라이브 경기 타임라인에 표시할 이벤트 종류를 선택하세요",
+      },
       title: "표시",
       teamAbbr: {
         label: "팀 약어",
@@ -450,6 +461,10 @@ export default {
       },
     },
     simulation: {
+      redCardImpact: {
+        label: "레드카드 영향",
+        desc: "퇴장하면 남은 경기 동안 팀이 약해지고 다음 경기에도 약간의 불이익이 남습니다.",
+      },
       title: "시뮬레이션",
       homeAdvantage: {
         label: "홈 어드밴티지",
@@ -522,6 +537,7 @@ export default {
     specialThanks: "특별 감사",
   },
   tournament: {
+    exportExcel: "Excel로 내보내기",
     noFixtures: "아직 경기가 없습니다.",
     groupStageNotStarted: "조별 리그가 아직 시작되지 않았습니다.",
     matchdayProgress: "{played}/{total} 라운드",

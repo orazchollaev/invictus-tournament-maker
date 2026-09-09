@@ -111,6 +111,7 @@ export default {
     double: "डबल",
     triple: "3×",
     quadruple: "4×",
+    half: "0.5×",
     random: "रैंडम",
     seeded: "सीडेड",
     manual: "मैनुअल",
@@ -326,6 +327,12 @@ export default {
       desc: "पूरे ऐप की प्रदर्शन भाषा",
     },
     appearance: {
+      design: {
+        label: "डिज़ाइन भाषा",
+        desc: "सॉफ़्ट शांत और काँच जैसा है; विविड ज़्यादा दमदार है, रंगीन सतहों और बड़े कोनों के साथ। आपका मुख्य रंग नहीं बदलता।",
+        soft: "सॉफ़्ट",
+        vivid: "विविड",
+      },
       title: "दिखावट",
       theme: {
         label: "थीम",
@@ -412,6 +419,10 @@ export default {
       title: "जीत के प्रभाव",
     },
     display: {
+      liveEvents: {
+        label: "लाइव मैच इवेंट",
+        desc: "चुनें कि लाइव मैच टाइमलाइन में कौन-से इवेंट दिखें",
+      },
       title: "डिस्प्ले",
       teamAbbr: {
         label: "टीम संक्षिप्त नाम",
@@ -450,6 +461,10 @@ export default {
       },
     },
     simulation: {
+      redCardImpact: {
+        label: "लाल कार्ड का असर",
+        desc: "लाल कार्ड मिलने पर टीम बाकी मैच में कमज़ोर हो जाती है और अगले मैच में भी हल्का असर रहता है।",
+      },
       title: "सिमुलेशन",
       homeAdvantage: {
         label: "होम एडवांटेज",
@@ -523,6 +538,7 @@ export default {
     specialThanks: "विशेष धन्यवाद",
   },
   tournament: {
+    exportExcel: "Excel में निर्यात करें",
     noFixtures: "अभी तक कोई मैच नहीं।",
     groupStageNotStarted: "ग्रुप स्टेज अभी शुरू नहीं हुआ है।",
     matchdayProgress: "{played}/{total} मैचडे",

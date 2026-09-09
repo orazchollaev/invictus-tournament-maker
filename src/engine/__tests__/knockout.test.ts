@@ -67,7 +67,12 @@ describe("decideKnockoutResult", () => {
     // Leg 1 finished 3-0 to the side that is away in this frame, so a level
     // leg is a three-goal aggregate defeat — nothing to settle.
     const decisions = decideMany(300, { aggregateOffset: { home: 0, away: 3 } })
-    const levelLegs = decisions.filter((d) => d.result.home === d.result.away)
+    // Level *at ninety* — `result` is the final score, which for a tie that
+    // went the distance is level for a different reason entirely.
+    const levelLegs = decisions.filter((d) => {
+      const ninety = d.result.ft ?? d.result
+      return ninety.home === ninety.away
+    })
     expect(levelLegs.length).toBeGreaterThan(0)
     for (const { result } of levelLegs) {
       expect(result.ft).toBeUndefined()

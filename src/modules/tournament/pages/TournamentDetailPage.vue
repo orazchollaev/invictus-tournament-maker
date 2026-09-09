@@ -18,6 +18,7 @@ import { DetailHeader, DetailPhaseTabs, DetailMultiTierModal } from "../componen
 import { useTournamentDetail } from "../composables/useTournamentDetail"
 import { useTournamentTabs } from "../composables/useTournamentTabs"
 import { useTournamentCeremonies } from "../composables/useTournamentCeremonies"
+import { useTournamentExcelExport } from "../composables/useTournamentExcelExport"
 import { useFillViewportHeight } from "@/composables/useFillViewportHeight"
 
 const { t: trns } = useI18n()
@@ -29,6 +30,8 @@ const { store, allTeams, tournament, startNewSeason, startNewLeagueSeason, hasAn
 const isFinished = computed(
   () => !!tournament.value && store.isTournamentFinished(tournament.value.id)
 )
+
+const { isExporting, exportExcel } = useTournamentExcelExport(() => tournament.value)
 
 // The tab surface is sized to the rest of the screen, so each panel scrolls
 // inside itself instead of growing the page.
@@ -116,7 +119,9 @@ const showStartPlayoffButton = computed(
         :is-finished="isFinished"
         :show-advance="showAdvanceButton"
         :show-start-playoff="showStartPlayoffButton"
+        :is-exporting="isExporting"
         @open-new-season="openNewSeason"
+        @export-excel="exportExcel"
         @simulate-all="store.simulateTournament(tournament!.id)"
         @open-settings="router.push(`/tournaments/${tournament!.id}/settings`)"
         @advance="onAdvance"

@@ -7,7 +7,7 @@ import {
   simulateMatch,
   decideKnockoutResult,
   applyThirdPlaceLegMode,
-  tournamentFormAdjustments,
+  tournamentAdjustments,
 } from "@/engine"
 
 export function useThirdPlaceActions(tournaments: Ref<Tournament[]>, getTeams: () => Team[]) {
@@ -98,7 +98,7 @@ export function useThirdPlaceActions(tournaments: Ref<Tournament[]>, getTeams: (
     if (!t?.thirdPlaceMatch) return
     const m = t.thirdPlaceMatch
     if (!m.homeId || !m.awayId || m.leg2Result === undefined) return
-    m.result = simulateMatch(m, getTeams(), tournamentFormAdjustments(t))
+    m.result = simulateMatch(m, getTeams(), tournamentAdjustments(t))
     m.leg2Result = null
   }
 
@@ -107,14 +107,14 @@ export function useThirdPlaceActions(tournaments: Ref<Tournament[]>, getTeams: (
     if (!t?.thirdPlaceMatch) return
     const m = t.thirdPlaceMatch
     if (!m.homeId || !m.awayId || !m.result || m.leg2Result === undefined) return
-    m.leg2Result = decideLeg2(m, getTeams(), tournamentFormAdjustments(t))
+    m.leg2Result = decideLeg2(m, getTeams(), tournamentAdjustments(t))
   }
 
   /** Leg 2 reverses the fixture and settles the tie on aggregate. */
-  function decideLeg2(m: Match, allTeams: Team[], form?: Map<string, number>): MatchResult {
+  function decideLeg2(m: Match, allTeams: Team[], adjustments?: Map<string, number>): MatchResult {
     const leg2Sim = { id: m.id, homeId: m.awayId, awayId: m.homeId }
     return decideKnockoutResult(leg2Sim as never, allTeams, {
-      form,
+      adjustments,
       aggregateOffset: { home: m.result!.away, away: m.result!.home },
     }).result
   }
@@ -131,7 +131,7 @@ export function useThirdPlaceActions(tournaments: Ref<Tournament[]>, getTeams: (
       return
     }
     if (m.result) return
-    const decision = decideKnockoutResult(m, getTeams(), { form: tournamentFormAdjustments(t) })
+    const decision = decideKnockoutResult(m, getTeams(), { adjustments: tournamentAdjustments(t) })
     commitThirdPlaceResult(t, decision.result)
   }
 

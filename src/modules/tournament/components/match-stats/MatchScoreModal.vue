@@ -158,7 +158,7 @@ function applyRoll(watched: WatchedMatch) {
     penHome.value = watched.penHome
     penAway.value = watched.penAway
   }
-  if (props.matchId && (watched.ft || watched.stats)) {
+  if (props.matchId && (watched.ft || watched.stats || watched.reds)) {
     stashWatchedMatch(pendingKey(props.matchId, props.leg ?? 1), watched)
   }
   // The [home, away] watcher below clears pensRevealed on every score change
@@ -184,6 +184,7 @@ function simulate() {
       ? { penHome: result.penHome, penAway: result.penAway }
       : {}),
     ...(result.ft ? { ft: result.ft } : {}),
+    ...(result.reds ? { reds: result.reds } : {}),
   })
 }
 
@@ -214,6 +215,7 @@ function statsFor(decision: KnockoutDecision): MatchStats {
       ? { penHome: result.penHome, penAway: result.penAway }
       : {}),
     ...(decision.shootout ? { shootoutOutcome: decision.shootout } : {}),
+    ...(result.reds ? { reds: result.reds } : {}),
   })
 }
 
@@ -230,6 +232,7 @@ function watchLive() {
       ? { penHome: result.penHome, penAway: result.penAway }
       : {}),
     ...(result.ft ? { ft: result.ft } : {}),
+    ...(result.reds ? { reds: result.reds } : {}),
     stats,
   }
   liveHasExtraTime.value = !!result.ft

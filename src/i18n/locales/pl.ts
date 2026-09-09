@@ -111,6 +111,7 @@ export default {
     double: "Podwójny",
     triple: "3×",
     quadruple: "4×",
+    half: "0.5×",
     random: "Losowo",
     seeded: "Z rozstawieniem",
     manual: "Ręcznie",
@@ -326,6 +327,12 @@ export default {
       desc: "Język wyświetlania dla całej aplikacji",
     },
     appearance: {
+      design: {
+        label: "Język projektowania",
+        desc: "Łagodny jest spokojny i szklisty; Wyrazisty jest śmielszy, z barwionymi powierzchniami i większymi zaokrągleniami. Kolor główny pozostaje bez zmian.",
+        soft: "Łagodny",
+        vivid: "Wyrazisty",
+      },
       title: "Wygląd",
       theme: {
         label: "Motyw",
@@ -412,6 +419,10 @@ export default {
       title: "Efekty zwycięstwa",
     },
     display: {
+      liveEvents: {
+        label: "Zdarzenia meczu na żywo",
+        desc: "Wybierz, które typy zdarzeń pojawiają się na osi czasu meczu na żywo",
+      },
       title: "Wyświetlanie",
       teamAbbr: {
         label: "Skróty drużyn",
@@ -450,6 +461,10 @@ export default {
       },
     },
     simulation: {
+      redCardImpact: {
+        label: "Wpływ czerwonej kartki",
+        desc: "Wykluczenie osłabia drużynę do końca meczu i zostawia niewielką karę w następnym.",
+      },
       title: "Symulacja",
       homeAdvantage: {
         label: "Przewaga własnego boiska",
@@ -523,6 +538,7 @@ export default {
     specialThanks: "Specjalne podziękowania",
   },
   tournament: {
+    exportExcel: "Eksportuj do Excela",
     noFixtures: "Brak meczów.",
     groupStageNotStarted: "Faza grupowa jeszcze się nie rozpoczęła.",
     matchdayProgress: "{played}/{total} kolejek",

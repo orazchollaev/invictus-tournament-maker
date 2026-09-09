@@ -11,7 +11,7 @@
 // over the match list and nothing more.
 import type { Player } from "@/modules/players/types"
 import type { Team } from "@/modules/teams/types"
-import type { Tournament, MatchStats } from "@/modules/tournament/types"
+import type { Tournament, MatchStats, RedCard } from "@/modules/tournament/types"
 import { forEachMatch, isBye, type MatchEntry } from "../matchIterator"
 import { resolvePower } from "../power"
 import { extraTimeGoalsOf } from "../knockout"
@@ -40,6 +40,8 @@ export interface PendingStatsJob {
   extraTime?: { home: number; away: number }
   penHome?: number
   penAway?: number
+  /** Dismissals the score was simulated with; replayed rather than re-rolled. */
+  reds?: RedCard[]
 }
 
 export interface StatsJobResult {
@@ -75,6 +77,7 @@ function jobFor(entry: MatchEntry): PendingStatsJob | null {
     ...(result.penHome !== undefined && result.penAway !== undefined
       ? { penHome: result.penHome, penAway: result.penAway }
       : {}),
+    ...(result.reds ? { reds: result.reds } : {}),
   }
 }
 
@@ -138,6 +141,7 @@ export function computeStatsForJob(
     ...(job.penHome !== undefined && job.penAway !== undefined
       ? { penHome: job.penHome, penAway: job.penAway }
       : {}),
+    ...(job.reds ? { reds: job.reds } : {}),
   })
 
   return {

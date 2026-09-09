@@ -9,7 +9,8 @@ import type {
   Tournament,
 } from "../modules/tournament/types"
 import { buildGroupFixture } from "./groups"
-import { simulateMatch, isFormFactorEnabled, computeFormAdjustments } from "./simulation"
+import { simulateMatch } from "./simulation"
+import { fixtureAdjustments } from "./form"
 import { getTiebreaker } from "./tableConfig"
 import { shuffle } from "./utils"
 
@@ -218,13 +219,11 @@ export function simulateLeagueMatch(
 ) {
   if (!tournament.league) return
   const match = tournament.league.matchdays[matchdayIdx].matches[matchIdx]
-  const form = isFormFactorEnabled()
-    ? computeFormAdjustments(
-        tournament.teamIds,
-        tournament.league.matchdays.flatMap((md) => md.matches)
-      )
-    : undefined
-  match.result = simulateMatch(match as any, teams, form)
+  const adjustments = fixtureAdjustments(
+    tournament.teamIds,
+    tournament.league.matchdays.flatMap((md) => md.matches)
+  )
+  match.result = simulateMatch(match as any, teams, adjustments)
   recalcLeagueStandings(
     tournament.league,
     tournament.tiebreaker,
@@ -237,14 +236,12 @@ export function simulateLeagueMatch(
 
 export function simulateLeagueMatchday(tournament: Tournament, matchdayIdx: number, teams: Team[]) {
   if (!tournament.league) return
-  const form = isFormFactorEnabled()
-    ? computeFormAdjustments(
-        tournament.teamIds,
-        tournament.league.matchdays.flatMap((md) => md.matches)
-      )
-    : undefined
+  const adjustments = fixtureAdjustments(
+    tournament.teamIds,
+    tournament.league.matchdays.flatMap((md) => md.matches)
+  )
   for (const match of tournament.league.matchdays[matchdayIdx].matches) {
-    if (!match.result) match.result = simulateMatch(match as any, teams, form)
+    if (!match.result) match.result = simulateMatch(match as any, teams, adjustments)
   }
   recalcLeagueStandings(
     tournament.league,
@@ -330,13 +327,11 @@ export function simulateTierMatch(
   const tier = getTier(tournament, tierIdx)
   if (!tier) return
   const match = tier.league.matchdays[matchdayIdx].matches[matchIdx]
-  const form = isFormFactorEnabled()
-    ? computeFormAdjustments(
-        tier.teamIds,
-        tier.league.matchdays.flatMap((md) => md.matches)
-      )
-    : undefined
-  match.result = simulateMatch(match as any, teams, form)
+  const adjustments = fixtureAdjustments(
+    tier.teamIds,
+    tier.league.matchdays.flatMap((md) => md.matches)
+  )
+  match.result = simulateMatch(match as any, teams, adjustments)
   recalcLeagueStandings(
     tier.league,
     tournament.tiebreaker,
@@ -355,14 +350,12 @@ export function simulateTierMatchday(
 ) {
   const tier = getTier(tournament, tierIdx)
   if (!tier) return
-  const form = isFormFactorEnabled()
-    ? computeFormAdjustments(
-        tier.teamIds,
-        tier.league.matchdays.flatMap((md) => md.matches)
-      )
-    : undefined
+  const adjustments = fixtureAdjustments(
+    tier.teamIds,
+    tier.league.matchdays.flatMap((md) => md.matches)
+  )
   for (const match of tier.league.matchdays[matchdayIdx].matches) {
-    if (!match.result) match.result = simulateMatch(match as any, teams, form)
+    if (!match.result) match.result = simulateMatch(match as any, teams, adjustments)
   }
   recalcLeagueStandings(
     tier.league,

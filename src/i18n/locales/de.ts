@@ -115,6 +115,7 @@ export default {
     double: "Doppelt",
     triple: "3×",
     quadruple: "4×",
+    half: "0.5×",
     random: "Zufällig",
     seeded: "Gesetzt",
     manual: "Manuell",
@@ -330,6 +331,12 @@ export default {
       desc: "Anzeigesprache für die gesamte App",
     },
     appearance: {
+      design: {
+        label: "Designsprache",
+        desc: "Sanft ist ruhig und glasartig; Kräftig ist markanter, mit getönten Flächen und größeren Ecken. Deine Primärfarbe bleibt unverändert.",
+        soft: "Sanft",
+        vivid: "Kräftig",
+      },
       title: "Erscheinungsbild",
       theme: {
         label: "Design",
@@ -416,6 +423,10 @@ export default {
       title: "Sieges-Effekte",
     },
     display: {
+      liveEvents: {
+        label: "Live-Spielereignisse",
+        desc: "Wähle, welche Ereignistypen im Live-Spielverlauf erscheinen",
+      },
       title: "Anzeige",
       teamAbbr: {
         label: "Team-Kürzel",
@@ -454,6 +465,10 @@ export default {
       },
     },
     simulation: {
+      redCardImpact: {
+        label: "Wirkung der Roten Karte",
+        desc: "Ein Platzverweis schwächt das Team für den Rest des Spiels und wirkt sich leicht auf das nächste aus.",
+      },
       title: "Simulation",
       homeAdvantage: {
         label: "Heimvorteil",
@@ -527,6 +542,7 @@ export default {
     specialThanks: "Besonderer Dank",
   },
   tournament: {
+    exportExcel: "Nach Excel exportieren",
     noFixtures: "Noch keine Spiele.",
     groupStageNotStarted: "Die Gruppenphase hat noch nicht begonnen.",
     matchdayProgress: "{played}/{total} Spieltage",

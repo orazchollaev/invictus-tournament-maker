@@ -46,21 +46,26 @@ function isLevel(home: number, away: number, offset?: AggregateOffset | null): b
 export function decideKnockoutResult(
   match: Match | GroupMatch,
   teams: Team[],
-  opts?: { form?: Map<string, number>; aggregateOffset?: AggregateOffset | null }
+  opts?: { adjustments?: Map<string, number>; aggregateOffset?: AggregateOffset | null }
 ): KnockoutDecision {
   const offset = opts?.aggregateOffset ?? null
-  const ninety = simulateMatch(match, teams, opts?.form)
+  const ninety = simulateMatch(match, teams, opts?.adjustments)
+  // The dismissals belong to the tie, not to the ninety — a side reduced to
+  // ten before extra time is still a man down in it, and the stored result
+  // has to carry them however the tie ends.
+  const reds = ninety.reds ? { reds: ninety.reds } : {}
+  const ft = { home: ninety.home, away: ninety.away }
 
   if (!isLevel(ninety.home, ninety.away, offset)) {
-    return { result: { ...ninety } }
+    return { result: { ...ft, ...reds } }
   }
 
-  const extra = simulateExtraTime(match, teams, opts?.form)
+  const extra = simulateExtraTime(match, teams, opts?.adjustments, ninety.reds)
   const afterExtra = { home: ninety.home + extra.home, away: ninety.away + extra.away }
 
   if (!isLevel(afterExtra.home, afterExtra.away, offset)) {
     return {
-      result: { ...afterExtra, ft: { ...ninety } },
+      result: { ...afterExtra, ft, ...reds },
       extraTimeGoals: extra,
     }
   }
@@ -70,9 +75,10 @@ export function decideKnockoutResult(
     result: {
       ...afterExtra,
       // A goalless extra time still happened, and the timeline should say so.
-      ft: { ...ninety },
+      ft,
       penHome: shootout.penHome,
       penAway: shootout.penAway,
+      ...reds,
     },
     shootout,
     extraTimeGoals: extra,

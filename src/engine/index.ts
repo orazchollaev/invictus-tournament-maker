@@ -38,6 +38,7 @@ export {
   setSimConfig,
   getSimConfig,
   isFormFactorEnabled,
+  isRedCardImpactEnabled,
   computeFormAdjustments,
 } from "./simulation"
 export { decideKnockoutResult, extraTimeGoalsOf } from "./knockout"
@@ -55,7 +56,18 @@ export {
   PERIOD_START,
 } from "./periods"
 export type { MatchPeriod } from "./periods"
-export { tournamentFormAdjustments } from "./form"
+export { tournamentAdjustments, fixtureAdjustments } from "./form"
+export {
+  RED_CHANCE,
+  RED_IN_MATCH_POWER_COST,
+  RED_NEXT_MATCH_POWER_COST,
+  RED_NEXT_MATCH_POWER_CAP,
+  rollMatchReds,
+  inMatchRedPenalty,
+  extraTimeRedPenalty,
+  redsOf,
+  computeDisciplineAdjustments,
+} from "./discipline"
 export { setTableConfig } from "./tableConfig"
 export { setPowerResolver, resolvePower } from "./power"
 export {

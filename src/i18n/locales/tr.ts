@@ -463,6 +463,10 @@ export default {
       },
     },
     simulation: {
+      redCardImpact: {
+        label: "Kırmızı Kart Etkisi",
+        desc: "Kırmızı kart gören takım maçın kalanında zayıflar ve sonraki maçta küçük bir dezavantaj taşır.",
+      },
       title: "Simülasyon",
       homeAdvantage: {
         label: "Ev Sahibi Avantajı",
@@ -536,6 +540,7 @@ export default {
     specialThanks: "Özel teşekkürler",
   },
   tournament: {
+    exportExcel: "Excel'e aktar",
     noFixtures: "Henüz maç yok.",
     groupStageNotStarted: "Grup aşaması henüz başlamadı.",
     matchdayProgress: "{played}/{total} hafta",

@@ -113,6 +113,7 @@ export default {
     double: "Ganda",
     triple: "3×",
     quadruple: "4×",
+    half: "0.5×",
     random: "Acak",
     seeded: "Unggulan",
     manual: "Manual",
@@ -328,6 +329,12 @@ export default {
       desc: "Bahasa tampilan untuk seluruh aplikasi",
     },
     appearance: {
+      design: {
+        label: "Bahasa Desain",
+        desc: "Lembut terasa tenang dan seperti kaca; Cerah lebih berani, dengan permukaan berwarna dan sudut lebih besar. Warna utama Anda tidak berubah.",
+        soft: "Lembut",
+        vivid: "Cerah",
+      },
       title: "Tampilan",
       theme: {
         label: "Tema",
@@ -414,6 +421,10 @@ export default {
       title: "Efek Kemenangan",
     },
     display: {
+      liveEvents: {
+        label: "Kejadian Pertandingan Langsung",
+        desc: "Pilih jenis kejadian yang muncul di linimasa pertandingan langsung",
+      },
       title: "Tampilan",
       teamAbbr: {
         label: "Singkatan Tim",
@@ -452,6 +463,10 @@ export default {
       },
     },
     simulation: {
+      redCardImpact: {
+        label: "Dampak Kartu Merah",
+        desc: "Kartu merah melemahkan tim untuk sisa pertandingan dan menyisakan penalti kecil di laga berikutnya.",
+      },
       title: "Simulasi",
       homeAdvantage: {
         label: "Keuntungan Kandang",
@@ -525,6 +540,7 @@ export default {
     specialThanks: "Terima kasih khusus",
   },
   tournament: {
+    exportExcel: "Ekspor ke Excel",
     noFixtures: "Belum ada pertandingan.",
     groupStageNotStarted: "Babak grup belum dimulai.",
     matchdayProgress: "{played}/{total} pekan",

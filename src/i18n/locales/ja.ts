@@ -112,6 +112,7 @@ export default {
     double: "ダブル",
     triple: "3回",
     quadruple: "4回",
+    half: "0.5×",
     random: "ランダム",
     seeded: "シード",
     manual: "手動",
@@ -327,6 +328,12 @@ export default {
       desc: "アプリ全体の表示言語",
     },
     appearance: {
+      design: {
+        label: "デザイン言語",
+        desc: "「ソフト」は落ち着いたガラス調、「ビビッド」は色味のある面と大きな角丸で大胆な印象です。プライマリカラーは変わりません。",
+        soft: "ソフト",
+        vivid: "ビビッド",
+      },
       title: "外観",
       theme: {
         label: "テーマ",
@@ -412,6 +419,10 @@ export default {
       title: "勝利エフェクト",
     },
     display: {
+      liveEvents: {
+        label: "ライブ試合のイベント",
+        desc: "ライブ試合のタイムラインに表示するイベントの種類を選択",
+      },
       title: "表示",
       teamAbbr: {
         label: "チームの略称",
@@ -450,6 +461,10 @@ export default {
       },
     },
     simulation: {
+      redCardImpact: {
+        label: "レッドカードの影響",
+        desc: "退場するとその試合の残り時間はチームが弱くなり、次の試合にもわずかな影響が残ります。",
+      },
       title: "シミュレーション",
       homeAdvantage: {
         label: "ホームアドバンテージ",
@@ -523,6 +538,7 @@ export default {
     specialThanks: "スペシャルサンクス",
   },
   tournament: {
+    exportExcel: "Excel に書き出す",
     noFixtures: "まだ試合がありません。",
     groupStageNotStarted: "グループステージはまだ始まっていません。",
     matchdayProgress: "{played}/{total} 節",

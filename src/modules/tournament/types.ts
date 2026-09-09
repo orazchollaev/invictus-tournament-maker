@@ -62,6 +62,16 @@ export interface MatchStats {
   shootout?: ShootoutKick[]
 }
 
+/**
+ * A sending-off, rolled *before* the score rather than decorated onto it
+ * afterwards. Stored on the result so the scoreline, the timeline and the
+ * next match's discipline penalty all read the same dismissal.
+ */
+export interface RedCard {
+  side: "home" | "away"
+  minute: number // 1-90; extra-time dismissals stay cosmetic and live in stats only
+}
+
 export interface MatchResult {
   /** Final score. Includes extra-time goals when the tie went that far. */
   home: number
@@ -75,6 +85,12 @@ export interface MatchResult {
   ft?: { home: number; away: number }
   penHome?: number
   penAway?: number
+  /**
+   * Dismissals that were part of simulating this result. Absent on a
+   * hand-entered score and on anything played before v2.7.0 — the event
+   * generator then rolls its own reds, which stay purely cosmetic.
+   */
+  reds?: RedCard[]
   /**
    * undefined — not generated yet; `ensureMatchStats` will fill it.
    * null      — played before v2.2.0; deliberately never generated.

@@ -112,6 +112,7 @@ export default {
     double: "Hai lượt",
     triple: "3×",
     quadruple: "4×",
+    half: "0.5×",
     random: "Ngẫu nhiên",
     seeded: "Theo hạt giống",
     manual: "Thủ công",
@@ -327,6 +328,12 @@ export default {
       desc: "Ngôn ngữ hiển thị cho toàn bộ ứng dụng",
     },
     appearance: {
+      design: {
+        label: "Ngôn ngữ thiết kế",
+        desc: "Dịu nhẹ mang cảm giác êm và trong như kính; Rực rỡ mạnh mẽ hơn, với bề mặt ám màu và bo góc lớn hơn. Màu chính của bạn không đổi.",
+        soft: "Dịu nhẹ",
+        vivid: "Rực rỡ",
+      },
       title: "Giao diện",
       theme: {
         label: "Chủ đề",
@@ -413,6 +420,10 @@ export default {
       title: "Hiệu ứng chiến thắng",
     },
     display: {
+      liveEvents: {
+        label: "Sự kiện trận đấu trực tiếp",
+        desc: "Chọn loại sự kiện hiển thị trên dòng thời gian trận đấu trực tiếp",
+      },
       title: "Hiển thị",
       teamAbbr: {
         label: "Viết tắt đội",
@@ -451,6 +462,10 @@ export default {
       },
     },
     simulation: {
+      redCardImpact: {
+        label: "Ảnh hưởng của thẻ đỏ",
+        desc: "Một thẻ đỏ làm đội yếu đi trong phần còn lại của trận và để lại bất lợi nhỏ ở trận kế tiếp.",
+      },
       title: "Mô phỏng",
       homeAdvantage: {
         label: "Lợi thế sân nhà",
@@ -524,6 +539,7 @@ export default {
     specialThanks: "Đặc biệt cảm ơn",
   },
   tournament: {
+    exportExcel: "Xuất ra Excel",
     noFixtures: "Chưa có trận đấu nào.",
     groupStageNotStarted: "Vòng bảng chưa bắt đầu.",
     matchdayProgress: "{played}/{total} vòng",

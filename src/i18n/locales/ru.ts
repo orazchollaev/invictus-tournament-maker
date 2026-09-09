@@ -113,6 +113,7 @@ export default {
     double: "Двойной",
     triple: "3×",
     quadruple: "4×",
+    half: "0.5×",
     random: "Случайный",
     seeded: "Сеяный",
     manual: "Ручной",
@@ -328,6 +329,12 @@ export default {
       desc: "Язык отображения приложения",
     },
     appearance: {
+      design: {
+        label: "Язык оформления",
+        desc: "«Мягкий» — спокойный и стеклянный; «Яркий» — смелее, с тонированными поверхностями и крупными скруглениями. Основной цвет не меняется.",
+        soft: "Мягкий",
+        vivid: "Яркий",
+      },
       title: "Внешний вид",
       theme: {
         label: "Тема",
@@ -414,6 +421,10 @@ export default {
       title: "Эффекты победы",
     },
     display: {
+      liveEvents: {
+        label: "События матча в прямом эфире",
+        desc: "Выберите, какие типы событий показывать в ленте матча",
+      },
       title: "Отображение",
       teamAbbr: {
         label: "Аббревиатуры команд",
@@ -452,6 +463,10 @@ export default {
       },
     },
     simulation: {
+      redCardImpact: {
+        label: "Влияние красной карточки",
+        desc: "Удаление ослабляет команду до конца матча и оставляет небольшой штраф в следующем.",
+      },
       title: "Симуляция",
       homeAdvantage: {
         label: "Преимущество хозяев",
@@ -524,6 +539,7 @@ export default {
     specialThanks: "Особая благодарность",
   },
   tournament: {
+    exportExcel: "Экспорт в Excel",
     noFixtures: "Матчей пока нет.",
     groupStageNotStarted: "Групповой этап ещё не начался.",
     matchdayProgress: "{played}/{total} туров",

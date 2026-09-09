@@ -74,6 +74,18 @@ const surpriseFactorLabel = computed(() => {
       />
     </AppField>
 
+    <AppField layout="split" :label="t('settings.simulation.redCardImpact.label')">
+      <template #description>
+        <SettingDesc>
+          {{ t("settings.simulation.redCardImpact.desc") }}
+        </SettingDesc>
+      </template>
+      <AppToggle
+        v-model="settings.redCardImpact"
+        :aria-label="t('settings.simulation.redCardImpact.label')"
+      />
+    </AppField>
+
     <AppField layout="split" :label="t('settings.simulation.usePlayerPower.label')">
       <template #description>
         <SettingDesc>

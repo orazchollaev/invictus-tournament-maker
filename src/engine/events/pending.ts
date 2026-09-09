@@ -12,7 +12,7 @@
 // So the watcher leaves the whole outcome here, keyed by the match, and the
 // sweep claims it. Nothing else about the commit path changes — no setter
 // signature, no store action, no emit chain up through the fixture rows.
-import type { MatchResult, MatchStats } from "@/modules/tournament/types"
+import type { MatchResult, MatchStats, RedCard } from "@/modules/tournament/types"
 
 /** What was rolled, and the score it produced. */
 export interface WatchedMatch {
@@ -22,6 +22,12 @@ export interface WatchedMatch {
   penAway?: number
   /** Score at 90', when the tie went to extra time. */
   ft?: { home: number; away: number }
+  /**
+   * The dismissals the roll priced into this score. Like `ft`, they are part
+   * of what was rolled but not part of what the score modal can emit, so they
+   * ride the stash and are restored onto the committed result.
+   */
+  reds?: RedCard[]
   /**
    * The narrative that was played on screen. Absent for a plain simulation,
    * which has a result to hand over but no events yet — the sweep generates
@@ -65,6 +71,7 @@ export function claimWatchedMatch(key: string, result: MatchResult): MatchStats 
   // Extra time is part of what was watched but not part of what the score
   // modal can emit, so it is restored here alongside the events.
   if (watched.ft && result.ft === undefined) result.ft = { ...watched.ft }
+  if (watched.reds && result.reds === undefined) result.reds = watched.reds.map((r) => ({ ...r }))
 
   return watched.stats
 }

@@ -113,6 +113,7 @@ export default {
     double: "Aller-retour",
     triple: "3×",
     quadruple: "4×",
+    half: "0.5×",
     random: "Aléatoire",
     seeded: "Tirage avec têtes de série",
     manual: "Manuel",
@@ -328,6 +329,12 @@ export default {
       desc: "Langue d'affichage pour toute l'application",
     },
     appearance: {
+      design: {
+        label: "Langage visuel",
+        desc: "Doux est calme et vitré ; Vif est plus affirmé, avec des surfaces teintées et des coins plus arrondis. Votre couleur principale reste inchangée.",
+        soft: "Doux",
+        vivid: "Vif",
+      },
       title: "Apparence",
       theme: {
         label: "Thème",
@@ -414,6 +421,10 @@ export default {
       title: "Effets de victoire",
     },
     display: {
+      liveEvents: {
+        label: "Événements du match en direct",
+        desc: "Choisissez les types d'événements affichés dans le fil du match en direct",
+      },
       title: "Affichage",
       teamAbbr: {
         label: "Abréviations d'équipe",
@@ -452,6 +463,10 @@ export default {
       },
     },
     simulation: {
+      redCardImpact: {
+        label: "Effet du carton rouge",
+        desc: "Une expulsion affaiblit l'équipe pour le reste du match et lui laisse un léger malus au match suivant.",
+      },
       title: "Simulation",
       homeAdvantage: {
         label: "Avantage du terrain",
@@ -526,6 +541,7 @@ export default {
     specialThanks: "Remerciements particuliers",
   },
   tournament: {
+    exportExcel: "Exporter vers Excel",
     noFixtures: "Aucun match pour le moment.",
     groupStageNotStarted: "La phase de groupes n’a pas encore commencé.",
     matchdayProgress: "{played}/{total} journées",

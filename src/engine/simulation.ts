@@ -1,18 +1,21 @@
 // engine/simulation.ts
 import type { Team } from "../modules/teams/types"
-import type { Match, GroupMatch } from "../modules/tournament/types"
+import type { Match, GroupMatch, RedCard } from "../modules/tournament/types"
 import { resolvePower } from "./power"
 import { rollShootout, type ShootoutOutcome } from "./shootout"
 import { REGULATION_MINUTES, EXTRA_TIME_MINUTES } from "./periods"
+import { rollMatchReds, inMatchRedPenalty, extraTimeRedPenalty } from "./discipline"
 
 let _surpriseFactor = 50 // 0 = power dominates, 100 = pure chaos
 let _formFactorEnabled = false
 let _homeAdvantage = 6 // power bonus for home team (0-20)
+let _redCardImpact = true
 
 export function setSimConfig(config: {
   surpriseFactor?: number
   formFactor?: boolean
   homeAdvantage?: number
+  redCardImpact?: boolean
 }) {
   if (config.surpriseFactor !== undefined) {
     _surpriseFactor = Math.max(0, Math.min(100, config.surpriseFactor))
@@ -23,10 +26,22 @@ export function setSimConfig(config: {
   if (config.homeAdvantage !== undefined) {
     _homeAdvantage = Math.max(0, Math.min(20, config.homeAdvantage))
   }
+  if (config.redCardImpact !== undefined) {
+    _redCardImpact = config.redCardImpact
+  }
 }
 
 export function isFormFactorEnabled(): boolean {
   return _formFactorEnabled
+}
+
+/**
+ * Whether a sending-off costs the side anything. Off means reds are still
+ * shown on the timeline — the event generator rolls them, as it always did —
+ * but they never touch a scoreline or a following match.
+ */
+export function isRedCardImpactEnabled(): boolean {
+  return _redCardImpact
 }
 
 /**
@@ -38,11 +53,13 @@ export function getSimConfig(): {
   surpriseFactor: number
   formFactor: boolean
   homeAdvantage: number
+  redCardImpact: boolean
 } {
   return {
     surpriseFactor: _surpriseFactor,
     formFactor: _formFactorEnabled,
     homeAdvantage: _homeAdvantage,
+    redCardImpact: _redCardImpact,
   }
 }
 
@@ -124,21 +141,27 @@ function getTeamLookup(teams: Team[]): Map<string, Team> {
 }
 
 /**
- * The two sides' effective ratings: squad power plus any form adjustment,
- * clamped back into the 1-100 range. Home advantage is deliberately *not*
- * applied here — it belongs to open play, not to a penalty spot.
+ * The two sides' effective ratings: squad power plus any adjustment, clamped
+ * back into the 1-100 range. Home advantage is deliberately *not* applied
+ * here — it belongs to open play, not to a penalty spot.
+ *
+ * `penalty` is the cost of playing a man down, subtracted after the clamp's
+ * lower bound is applied so a red card can always drag a side below its
+ * rating, however weak that rating already was.
  */
 function resolveSides(
   match: Match | GroupMatch,
   teams: Team[],
-  formAdjustments?: Map<string, number>
+  adjustments?: Map<string, number>,
+  penalty?: { home: number; away: number }
 ): { hp: number; ap: number } {
   const lookup = getTeamLookup(teams)
   const baseHp = resolvePower(lookup.get(match.homeId as string))
   const baseAp = resolvePower(lookup.get(match.awayId as string))
+  const clamp = (power: number, drop: number) => Math.max(1, Math.min(100, power) - drop)
   return {
-    hp: Math.max(1, Math.min(100, baseHp + (formAdjustments?.get(match.homeId as string) ?? 0))),
-    ap: Math.max(1, Math.min(100, baseAp + (formAdjustments?.get(match.awayId as string) ?? 0))),
+    hp: clamp(baseHp + (adjustments?.get(match.homeId as string) ?? 0), penalty?.home ?? 0),
+    ap: clamp(baseAp + (adjustments?.get(match.awayId as string) ?? 0), penalty?.away ?? 0),
   }
 }
 
@@ -147,12 +170,21 @@ function sideStrength(hp: number, ap: number): number {
   return Math.tanh((hp + _homeAdvantage - ap) / 40)
 }
 
+/**
+ * Play a match out.
+ *
+ * When red-card impact is on, the dismissals are rolled *first* and weaken
+ * whichever side picked one up for the rest of the ninety. They come back on
+ * the result so the timeline can replay the same reds rather than inventing
+ * its own, and so the next match knows who is short-handed.
+ */
 export function simulateMatch(
   match: Match | GroupMatch,
   teams: Team[],
-  formAdjustments?: Map<string, number>
-): { home: number; away: number } {
-  const { hp, ap } = resolveSides(match, teams, formAdjustments)
+  adjustments?: Map<string, number>
+): { home: number; away: number; reds?: RedCard[] } {
+  const reds = _redCardImpact ? rollMatchReds() : []
+  const { hp, ap } = resolveSides(match, teams, adjustments, inMatchRedPenalty(reds))
   const strength = sideStrength(hp, ap)
   const base = 1.45
   const randomFactor = 0.85 + Math.random() * 0.3
@@ -161,11 +193,13 @@ export function simulateMatch(
   let hLambda = base * (1 + strength * strengthMult) * randomFactor
   let aLambda = base * (1 - strength * strengthMult) * randomFactor
 
+  const carry = reds.length ? { reds } : {}
+
   // Rare shock result: a heavy favourite gets run over. Mirrored on both sides
   // so it fires for a strong away team too, and the underdog is always the one
   // that wins — otherwise half of these "upsets" were the favourite cruising.
   if (Math.abs(strength) > 0.55 && Math.random() < 0.008) {
-    return strength > 0 ? { home: 0, away: 3 } : { home: 3, away: 0 }
+    return strength > 0 ? { home: 0, away: 3, ...carry } : { home: 3, away: 0, ...carry }
   }
 
   const chaos = Math.random()
@@ -177,6 +211,7 @@ export function simulateMatch(
   return {
     home: poisson(Math.max(0.25, hLambda)),
     away: poisson(Math.max(0.25, aLambda)),
+    ...carry,
   }
 }
 
@@ -187,13 +222,18 @@ export function simulateMatch(
  * The one-off flourishes `simulateMatch` rolls — the shock result, the
  * chaotic afternoon — belong to a whole match and are not repeated here;
  * extra time inherits the character of the tie rather than reinventing it.
+ *
+ * A side sent down to ten in the ninety stays down to ten for all thirty of
+ * these, so `reds` costs it the full penalty rather than a scaled share.
  */
 export function simulateExtraTime(
   match: Match | GroupMatch,
   teams: Team[],
-  formAdjustments?: Map<string, number>
+  adjustments?: Map<string, number>,
+  reds?: RedCard[]
 ): { home: number; away: number } {
-  const { hp, ap } = resolveSides(match, teams, formAdjustments)
+  const penalty = _redCardImpact ? extraTimeRedPenalty(reds) : undefined
+  const { hp, ap } = resolveSides(match, teams, adjustments, penalty)
   const strength = sideStrength(hp, ap)
 
   const base = 1.45 * (EXTRA_TIME_MINUTES / REGULATION_MINUTES)

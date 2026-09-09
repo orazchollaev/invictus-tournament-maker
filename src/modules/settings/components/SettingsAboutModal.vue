@@ -7,7 +7,7 @@ defineEmits<{ close: [] }>()
 
 const { t } = useI18n()
 
-const CONTRIBUTORS = ["Rodrigo Hernandez"]
+const CONTRIBUTORS = ["Rodrigo Hernandez", "Juninho"]
 </script>
 
 <template>

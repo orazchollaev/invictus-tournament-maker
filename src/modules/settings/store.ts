@@ -42,6 +42,7 @@ export const useSettingsStore = defineStore("settings", () => {
   const tiebreaker = ref<Tiebreaker>("goal-diff")
   const formFactorEnabled = ref(false)
   const homeAdvantage = ref(6)
+  const redCardImpact = ref(true)
   const usePlayerPower = ref(true)
   const bracketStyle = ref<BracketStyle>("auto")
   const bracketQuality = ref<BracketQuality>("high")
@@ -121,6 +122,7 @@ export const useSettingsStore = defineStore("settings", () => {
   watch(tiebreaker, (val) => setTableConfig({ tiebreaker: val }), { immediate: true })
   watch(formFactorEnabled, (val) => setSimConfig({ formFactor: val }), { immediate: true })
   watch(homeAdvantage, (val) => setSimConfig({ homeAdvantage: val }), { immediate: true })
+  watch(redCardImpact, (val) => setSimConfig({ redCardImpact: val }), { immediate: true })
 
   const playersStore = usePlayersStore()
   watch(
@@ -159,6 +161,7 @@ export const useSettingsStore = defineStore("settings", () => {
     tiebreaker.value = "goal-diff"
     formFactorEnabled.value = false
     homeAdvantage.value = 6
+    redCardImpact.value = true
     usePlayerPower.value = true
     bracketStyle.value = "auto"
     bracketQuality.value = "high"
@@ -203,6 +206,7 @@ export const useSettingsStore = defineStore("settings", () => {
     tiebreaker,
     formFactorEnabled,
     homeAdvantage,
+    redCardImpact,
     usePlayerPower,
     bracketStyle,
     bracketQuality,

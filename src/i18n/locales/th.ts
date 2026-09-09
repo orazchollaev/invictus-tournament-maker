@@ -111,6 +111,7 @@ export default {
     double: "สองนัด",
     triple: "3 นัด",
     quadruple: "4 นัด",
+    half: "0.5×",
     random: "สุ่ม",
     seeded: "จัดอันดับ",
     manual: "กำหนดเอง",
@@ -326,6 +327,12 @@ export default {
       desc: "ภาษาที่แสดงทั่วทั้งแอป",
     },
     appearance: {
+      design: {
+        label: "ภาษาการออกแบบ",
+        desc: "แบบนุ่มนวลให้ความรู้สึกสงบและใส ส่วนแบบสดใสจะโดดเด่นกว่า มีพื้นผิวไล่สีและมุมโค้งใหญ่ขึ้น สีหลักของคุณไม่เปลี่ยน",
+        soft: "นุ่มนวล",
+        vivid: "สดใส",
+      },
       title: "รูปลักษณ์",
       theme: {
         label: "ธีม",
@@ -411,6 +418,10 @@ export default {
       title: "เอฟเฟกต์ชัยชนะ",
     },
     display: {
+      liveEvents: {
+        label: "เหตุการณ์ในแมตช์สด",
+        desc: "เลือกประเภทเหตุการณ์ที่จะแสดงในไทม์ไลน์แมตช์สด",
+      },
       title: "การแสดงผล",
       teamAbbr: {
         label: "ตัวย่อทีม",
@@ -449,6 +460,10 @@ export default {
       },
     },
     simulation: {
+      redCardImpact: {
+        label: "ผลของใบแดง",
+        desc: "การโดนไล่ออกทำให้ทีมอ่อนลงตลอดเวลาที่เหลือของแมตช์ และมีผลเล็กน้อยต่อนัดถัดไป",
+      },
       title: "การจำลอง",
       homeAdvantage: {
         label: "ความได้เปรียบเหย้า",
@@ -522,6 +537,7 @@ export default {
     specialThanks: "ขอบคุณเป็นพิเศษ",
   },
   tournament: {
+    exportExcel: "ส่งออกเป็น Excel",
     noFixtures: "ยังไม่มีการแข่งขัน",
     groupStageNotStarted: "รอบแบ่งกลุ่มยังไม่เริ่ม",
     matchdayProgress: "{played}/{total} นัด",

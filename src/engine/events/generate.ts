@@ -14,6 +14,7 @@ import type {
   MatchEvent,
   MatchStats,
   PlayerMatchLine,
+  RedCard,
   ShootoutKick,
   TeamMatchStats,
 } from "@/modules/tournament/types"
@@ -22,6 +23,7 @@ import type { Lineup, LineupSlot } from "./lineup"
 import { computeRating, rollPerformance, type MatchOutcome } from "./rating"
 import { generateTeamStats } from "./teamStats"
 import { reconstructShootout, type ShootoutKickOutcome, type ShootoutOutcome } from "../shootout"
+import { RED_CHANCE } from "../discipline"
 import {
   MAX_STOPPAGE,
   PERIOD_END,
@@ -44,7 +46,6 @@ const ASSIST_CHANCE = 0.7
 const PENALTY_MISS_CHANCE = 0.05
 
 const YELLOW_LAMBDA = 2.2
-const RED_CHANCE = 0.06
 
 const STOPPAGE_CHANCE = 0.08
 
@@ -53,34 +54,65 @@ const EXTRA_TIME_SHARE = EXTRA_TIME_MINUTES / REGULATION_MINUTES
 
 type Side = "home" | "away"
 
-/** Weighted pick over lineup slots. Returns null only for an empty lineup. */
+/**
+ * A slot that has left the field, and when.
+ *
+ * Kept as the slot itself rather than a player id: a short squad fields
+ * several anonymous "Unknown Player" slots, all with a null id, and sending
+ * one off must not take the other ten off with it.
+ */
+interface Dismissal {
+  slot: LineupSlot
+  minute: number
+}
+
+/** One side's eleven, plus whoever has already been sent off. */
+interface SideState {
+  lineup: Lineup
+  dismissals: Dismissal[]
+}
+
+/**
+ * Who is still on the pitch in a given minute.
+ *
+ * A dismissal in the same minute counts as already gone — "sent off 63',
+ * scored 63'" is exactly the contradiction this exists to prevent, and the
+ * one minute it costs a legitimate goal is not worth the confusion.
+ */
+function onPitch(state: SideState, minute: number): Lineup {
+  if (!state.dismissals.length) return state.lineup
+  const off = new Set(state.dismissals.filter((d) => d.minute <= minute).map((d) => d.slot))
+  return off.size ? state.lineup.filter((slot) => !off.has(slot)) : state.lineup
+}
+
+/** Weighted pick over lineup slots. Returns null only for an empty pool. */
 function pickSlot(
-  lineup: Lineup,
+  pool: Lineup,
   weights: Record<PlayerPosition, number>,
   rng: () => number,
   exclude?: LineupSlot
 ): LineupSlot | null {
-  const pool = lineup.filter((slot) => slot !== exclude)
-  if (!pool.length) return null
+  const candidates = pool.filter((slot) => slot !== exclude)
+  if (!candidates.length) return null
 
-  const scores = pool.map((slot) => weights[slot.position] * (slot.power / 50))
+  const scores = candidates.map((slot) => weights[slot.position] * (slot.power / 50))
   const total = scores.reduce((sum, s) => sum + s, 0)
-  if (total <= 0) return pool[Math.floor(rng() * pool.length)]
+  if (total <= 0) return candidates[Math.floor(rng() * candidates.length)]
 
   let roll = rng() * total
-  for (let i = 0; i < pool.length; i++) {
+  for (let i = 0; i < candidates.length; i++) {
     roll -= scores[i]
-    if (roll <= 0) return pool[i]
+    if (roll <= 0) return candidates[i]
   }
-  return pool[pool.length - 1]
+  return candidates[candidates.length - 1]
 }
 
-/** The designated taker: the strongest attacking slot on the pitch. */
-function penaltyTaker(lineup: Lineup): LineupSlot | null {
-  const takers = lineup.filter((s) => s.position === "FWD" || s.position === "MID")
-  const pool = takers.length ? takers : lineup
-  if (!pool.length) return null
-  return pool.reduce((best, slot) => (slot.power > best.power ? slot : best))
+/** The designated taker: the strongest attacking slot still on the pitch. */
+function penaltyTaker(pool: Lineup): LineupSlot | null {
+  const takers = pool.filter((s) => s.position === "FWD" || s.position === "MID")
+  const candidates = takers.length ? takers : pool
+  if (!candidates.length) return null
+  return candidates.reduce((best, slot) => (slot.power > best.power ? slot : best))
 }
 
 function poisson(lambda: number, rng: () => number): number {
@@ -117,51 +149,50 @@ function randomMinute(
   return start + Math.floor(rng() * (end - start + 1))
 }
 
-/** Goal events for one side, summing to exactly `goals`. */
-function buildGoals(
-  side: Side,
-  goals: number,
-  scoringLineup: Lineup,
-  concedingLineup: Lineup,
-  rng: () => number,
-  period: MatchPeriod = "regulation",
-  allowStoppage = true
-): MatchEvent[] {
+interface GoalsInput {
+  side: Side
+  goals: number
+  scoring: SideState
+  conceding: SideState
+  period: MatchPeriod
+  allowStoppage: boolean
+}
+
+/**
+ * Goal events for one side, summing to exactly `goals`.
+ *
+ * The minute is settled before the player is, because who is available to
+ * score depends on it: a man sent off in the 30th cannot be the one who
+ * scores in the 70th, and neither can he put one through his own net.
+ */
+function buildGoals(input: GoalsInput, rng: () => number): MatchEvent[] {
+  const { side, goals, scoring, conceding, period, allowStoppage } = input
   const events: MatchEvent[] = []
 
   for (let i = 0; i < goals; i++) {
     const roll = rng()
+    const minute = randomMinute(rng, period, allowStoppage)
 
     if (roll < OWN_GOAL_CHANCE) {
-      const slot = pickSlot(concedingLineup, OWN_GOAL_WEIGHT, rng)
-      events.push({
-        minute: randomMinute(rng, period, allowStoppage),
-        type: "ownGoal",
-        side,
-        playerId: slot?.playerId ?? null,
-      })
+      const slot = pickSlot(onPitch(conceding, minute), OWN_GOAL_WEIGHT, rng)
+      events.push({ minute, type: "ownGoal", side, playerId: slot?.playerId ?? null })
       continue
     }
+
+    const attackers = onPitch(scoring, minute)
 
     if (roll < OWN_GOAL_CHANCE + PENALTY_CHANCE) {
-      const slot = penaltyTaker(scoringLineup)
-      events.push({
-        minute: randomMinute(rng, period, allowStoppage),
-        type: "penGoal",
-        side,
-        playerId: slot?.playerId ?? null,
-      })
+      const slot = penaltyTaker(attackers)
+      events.push({ minute, type: "penGoal", side, playerId: slot?.playerId ?? null })
       continue
     }
 
-    const scorer = pickSlot(scoringLineup, SCORE_WEIGHT, rng)
+    const scorer = pickSlot(attackers, SCORE_WEIGHT, rng)
     const assister =
-      rng() < ASSIST_CHANCE
-        ? pickSlot(scoringLineup, ASSIST_WEIGHT, rng, scorer ?? undefined)
-        : null
+      rng() < ASSIST_CHANCE ? pickSlot(attackers, ASSIST_WEIGHT, rng, scorer ?? undefined) : null
 
     events.push({
-      minute: randomMinute(rng, period, allowStoppage),
+      minute,
       type: "goal",
       side,
       playerId: scorer?.playerId ?? null,
@@ -172,45 +203,59 @@ function buildGoals(
   return events
 }
 
+/**
+ * Bookings for one side, and the state the rest of the match is written
+ * against — every dismissal the timeline contains, with the slot it fell on.
+ *
+ * `forcedReds` are the dismissals the simulator already rolled and priced
+ * into the scoreline (see engine/discipline.ts). When they are given, the
+ * regulation red is not rolled again — replaying them here is what keeps the
+ * timeline and the score describing the same match. Extra-time reds are
+ * always rolled: nothing has been simulated for them to contradict.
+ *
+ * The reds are placed before the yellows even though they are announced
+ * later in the match, because a man already sent off cannot be booked again.
+ */
 function buildCards(
   side: Side,
   lineup: Lineup,
   rng: () => number,
-  hasExtraTime: boolean
-): MatchEvent[] {
+  hasExtraTime: boolean,
+  forcedReds?: RedCard[]
+): { events: MatchEvent[]; state: SideState } {
   const events: MatchEvent[] = []
+  const state: SideState = { lineup, dismissals: [] }
+  const mine = forcedReds?.filter((r) => r.side === side)
 
-  const book = (period: MatchPeriod, lambda: number, redChance: number) => {
+  const sendOff = (minute: number) => {
+    const slot = pickSlot(onPitch(state, minute), CARD_WEIGHT, rng)
+    events.push({ minute, type: "red", side, playerId: slot?.playerId ?? null })
+    if (slot) state.dismissals.push({ slot, minute })
+  }
+
+  const book = (period: MatchPeriod, lambda: number, redChance: number | null) => {
     const allowStoppage = period === "extra" || !hasExtraTime
+
+    if (redChance !== null && rng() < redChance) sendOff(randomMinute(rng, period, allowStoppage))
+
     const yellows = poisson(lambda, rng)
     for (let i = 0; i < yellows; i++) {
-      const slot = pickSlot(lineup, CARD_WEIGHT, rng)
-      events.push({
-        minute: randomMinute(rng, period, allowStoppage),
-        type: "yellow",
-        side,
-        playerId: slot?.playerId ?? null,
-      })
-    }
-
-    if (rng() < redChance) {
-      const slot = pickSlot(lineup, CARD_WEIGHT, rng)
-      events.push({
-        minute: randomMinute(rng, period, allowStoppage),
-        type: "red",
-        side,
-        playerId: slot?.playerId ?? null,
-      })
+      const minute = randomMinute(rng, period, allowStoppage)
+      const slot = pickSlot(onPitch(state, minute), CARD_WEIGHT, rng)
+      events.push({ minute, type: "yellow", side, playerId: slot?.playerId ?? null })
     }
   }
 
-  book("regulation", YELLOW_LAMBDA, RED_CHANCE)
+  // The forced reds go on first, so the bookings around them see the gap.
+  for (const red of mine ?? []) sendOff(red.minute)
+  book("regulation", YELLOW_LAMBDA, mine ? null : RED_CHANCE)
+
   // Tired legs in extra time, but a third of the time to get booked in.
   if (hasExtraTime) {
     book("extra", YELLOW_LAMBDA * EXTRA_TIME_SHARE, RED_CHANCE * EXTRA_TIME_SHARE)
   }
 
-  return events
+  return { events, state }
 }
 
 /**
@@ -225,12 +270,16 @@ function buildCards(
  * produce, which pre-v2.4.0 data can contain — does it fall back to dealing
  * five kicks a side at random. That is the old behaviour, kept for the old
  * data it belongs to.
+ *
+ * Kicks are taken by whoever finished the match. A player sent off during it
+ * takes no part in the shootout, which is also why a side can arrive at the
+ * spot with fewer than eleven takers.
  */
 function buildShootout(
   homeScored: number,
   awayScored: number,
-  homeLineup: Lineup,
-  awayLineup: Lineup,
+  home: SideState,
+  away: SideState,
   rng: () => number,
   rolled?: ShootoutOutcome
 ): ShootoutKick[] {
@@ -240,12 +289,13 @@ function buildShootout(
     legacySequence(homeScored, awayScored, rng)
 
   // Best takers first, then down the order, wrapping if it went long.
-  function takers(lineup: Lineup): (string | null)[] {
-    const ranked = [...lineup].sort((a, b) => b.power - a.power)
+  function takers(state: SideState): (string | null)[] {
+    // Every dismissal in the match counts, stoppage-time ones included.
+    const ranked = [...onPitch(state, Infinity)].sort((a, b) => b.power - a.power)
     return ranked.map((slot) => slot.playerId)
   }
 
-  const order = { home: takers(homeLineup), away: takers(awayLineup) }
+  const order = { home: takers(home), away: takers(away) }
   const taken = { home: 0, away: 0 }
 
   return sequence.map((kick, index) => {
@@ -366,6 +416,11 @@ export interface GenerateMatchStatsInput {
   penAway?: number
   /** The shootout as it was actually rolled, when the caller has it. */
   shootoutOutcome?: ShootoutOutcome
+  /**
+   * Dismissals the simulator already priced into the score. Present means
+   * "these are the reds, do not roll any of your own" — even when empty.
+   */
+  reds?: RedCard[]
 }
 
 export function generateMatchStats(
@@ -383,6 +438,7 @@ export function generateMatchStats(
     penHome,
     penAway,
     shootoutOutcome,
+    reds,
   } = input
 
   const team: TeamMatchStats = generateTeamStats(homePower, awayPower, homeGoals, awayGoals, rng)
@@ -393,33 +449,64 @@ export function generateMatchStats(
     away: awayGoals - (extraTime?.away ?? 0),
   }
 
+  // The cards come first: everything after them has to know who is still on
+  // the pitch, so that nobody scores, assists or takes a kick after being
+  // sent off. The timeline is sorted by minute at the end, so generating out
+  // of chronological order costs nothing.
+  const home = buildCards("home", homeLineup, rng, hasExtraTime, reds)
+  const away = buildCards("away", awayLineup, rng, hasExtraTime, reds)
+
   const events: MatchEvent[] = [
+    ...home.events,
+    ...away.events,
     ...buildGoals(
-      "home",
-      regulation.home,
-      homeLineup,
-      awayLineup,
-      rng,
-      "regulation",
-      !hasExtraTime
+      {
+        side: "home",
+        goals: regulation.home,
+        scoring: home.state,
+        conceding: away.state,
+        period: "regulation",
+        allowStoppage: !hasExtraTime,
+      },
+      rng
     ),
     ...buildGoals(
-      "away",
-      regulation.away,
-      awayLineup,
-      homeLineup,
-      rng,
-      "regulation",
-      !hasExtraTime
+      {
+        side: "away",
+        goals: regulation.away,
+        scoring: away.state,
+        conceding: home.state,
+        period: "regulation",
+        allowStoppage: !hasExtraTime,
+      },
+      rng
     ),
-    ...buildCards("home", homeLineup, rng, hasExtraTime),
-    ...buildCards("away", awayLineup, rng, hasExtraTime),
   ]
 
   if (extraTime) {
     events.push(
-      ...buildGoals("home", extraTime.home, homeLineup, awayLineup, rng, "extra"),
-      ...buildGoals("away", extraTime.away, awayLineup, homeLineup, rng, "extra")
+      ...buildGoals(
+        {
+          side: "home",
+          goals: extraTime.home,
+          scoring: home.state,
+          conceding: away.state,
+          period: "extra",
+          allowStoppage: true,
+        },
+        rng
+      ),
+      ...buildGoals(
+        {
+          side: "away",
+          goals: extraTime.away,
+          scoring: away.state,
+          conceding: home.state,
+          period: "extra",
+          allowStoppage: true,
+        },
+        rng
+      )
     )
   }
 
@@ -427,23 +514,19 @@ export function generateMatchStats(
   // why it is worth showing — the timeline reads as a match, not a list.
   if (rng() < PENALTY_MISS_CHANCE) {
     const side: Side = rng() < 0.5 ? "home" : "away"
-    const slot = penaltyTaker(side === "home" ? homeLineup : awayLineup)
-    events.push({
-      minute:
-        hasExtraTime && rng() < EXTRA_TIME_SHARE
-          ? randomMinute(rng, "extra")
-          : randomMinute(rng, "regulation", !hasExtraTime),
-      type: "penMiss",
-      side,
-      playerId: slot?.playerId ?? null,
-    })
+    const minute =
+      hasExtraTime && rng() < EXTRA_TIME_SHARE
+        ? randomMinute(rng, "extra")
+        : randomMinute(rng, "regulation", !hasExtraTime)
+    const slot = penaltyTaker(onPitch(side === "home" ? home.state : away.state, minute))
+    events.push({ minute, type: "penMiss", side, playerId: slot?.playerId ?? null })
   }
 
   events.sort((a, b) => a.minute - b.minute)
 
   const shootout =
     penHome !== undefined && penAway !== undefined
-      ? buildShootout(penHome, penAway, homeLineup, awayLineup, rng, shootoutOutcome)
+      ? buildShootout(penHome, penAway, home.state, away.state, rng, shootoutOutcome)
       : undefined
 
   return {
