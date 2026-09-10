@@ -165,7 +165,6 @@ const candidates = computed(() => {
   background: color-mix(in srgb, var(--accent) 6%, transparent);
 }
 .row-qualify td:first-child {
-  border-left: 3px solid var(--accent);
 }
 .row-out {
   opacity: 0.65;

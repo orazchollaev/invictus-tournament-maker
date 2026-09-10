@@ -137,7 +137,7 @@ async function deleteTournament(id: string) {
 
           <span v-if="store.isTournamentFinished(tour.id)" class="tour-winner">
             <AppIcon :icon="Trophy" size="xs" />
-            <TeamBadge :team="winnerTeam(tour)" />
+            <TeamBadge :team="winnerTeam(tour)" :size="14" />
           </span>
 
           <AppButton
@@ -214,13 +214,12 @@ async function deleteTournament(id: string) {
 .tour-winner {
   display: inline-flex;
   align-items: center;
-  gap: var(--sp-1);
+  gap: var(--sp-2);
   flex-shrink: 0;
   font-size: var(--fs-xs);
   font-weight: 600;
   padding: 2px var(--sp-2) 2px var(--sp-2);
-  border-left: 2px solid var(--team-color, var(--accent));
-  border-radius: 0 var(--radius) var(--radius) 0;
+  border-radius: var(--radius);
   background: color-mix(in srgb, var(--team-color, var(--border)) 8%, var(--bg));
 }
 

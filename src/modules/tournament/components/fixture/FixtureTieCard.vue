@@ -86,7 +86,7 @@ function onSim(leg: 1 | 2) {
     <!-- Total score, below both legs — badges only, so it reads as "whose
          score this is" without repeating the names again. -->
     <div class="tie-agg">
-      <TeamBadge :team="getTeam(match.homeId)" :size="16" class="tie-agg-badge" />
+      <TeamBadge :team="getTeam(match.homeId)" :size="16" class="tie-agg-badge home" reverse />
       <span v-if="aggLabel(match)" class="agg" :class="{ 'agg--decided': aggWinnerId(match) }">
         {{ aggLabel(match) }}
       </span>
@@ -141,13 +141,11 @@ function onSim(leg: 1 | 2) {
   opacity: 0.6;
 }
 
-/* Icon only — the crest, not the name, so a score reads "whose" without
-   spelling it out again. */
-.tie-agg-badge :deep(.name) {
-  display: none;
+.tie-agg-badge.home:deep(.name) {
+  text-align: right;
 }
 .tie-agg-badge {
-  flex: 0 0 20px;
-  width: 20px;
+  flex: 0 0 130px;
+  width: 130px;
 }
 </style>

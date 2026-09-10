@@ -391,7 +391,6 @@ const wentToExtraTime = computed(() =>
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  border-left: 1px solid var(--border-light);
   transition: background var(--dur-fast) var(--ease);
 }
 .mc--editable:hover .mc-scores {
@@ -619,6 +618,5 @@ const wentToExtraTime = computed(() =>
   border-bottom: none;
 }
 .mc--third .mc-scores {
-  border-left-color: color-mix(in srgb, var(--accent-2) 25%, var(--border-light));
 }
 </style>

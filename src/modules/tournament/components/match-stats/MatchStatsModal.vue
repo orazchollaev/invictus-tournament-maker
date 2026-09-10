@@ -177,7 +177,7 @@ const activeTab = ref<ReportTab>("timeline")
 .score {
   position: sticky;
   top: 0;
-  z-index: 1;
+  z-index: 2;
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
