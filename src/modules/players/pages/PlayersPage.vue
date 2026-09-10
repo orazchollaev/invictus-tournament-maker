@@ -3,7 +3,12 @@ import { ref, computed } from "vue"
 import { usePlayersStore } from "../store"
 import { useTeamsStore } from "@/modules/teams/store"
 import { useSettingsStore } from "@/modules/settings/store"
-import { PlayerFormModal, PlayerAvatar, PlayersFilterMenu } from "@/modules/players/components"
+import {
+  GeneratePlayersModal,
+  PlayerFormModal,
+  PlayerAvatar,
+  PlayersFilterMenu,
+} from "@/modules/players/components"
 import type { Player } from "../types"
 import {
   AppButton,
@@ -14,7 +19,7 @@ import {
   AppSearchInput,
   AppButtonGroup,
 } from "@/components/ui"
-import { X, Pencil, Plus, UserRound, List, Grid3x3 } from "@lucide/vue"
+import { X, Pencil, Plus, Sparkles, UserRound, List, Grid3x3 } from "@lucide/vue"
 import { useI18n } from "vue-i18n"
 
 const { t } = useI18n()
@@ -23,6 +28,7 @@ const teamsStore = useTeamsStore()
 const settings = useSettingsStore()
 
 const showAddModal = ref(false)
+const showGenerateModal = ref(false)
 const editingPlayer = ref<Player | null>(null)
 const query = ref("")
 const teamFilter = ref("all")
@@ -63,15 +69,26 @@ const filtered = computed(() => {
         {{ t("players.title") }}
         <span class="count">{{ store.players.length }}</span>
       </h2>
-      <AppButton
-        variant="filled"
-        :disabled="!teamsStore.teams.length"
-        :title="!teamsStore.teams.length ? t('players.needTeamFirst') : ''"
-        @click="showAddModal = true"
-      >
-        <AppIcon :icon="Plus" size="xs" />
-        {{ t("players.addBtn") }}
-      </AppButton>
+      <div class="page-top-actions">
+        <AppButton
+          variant="text"
+          :disabled="!teamsStore.teams.length"
+          :title="!teamsStore.teams.length ? t('players.needTeamFirst') : ''"
+          @click="showGenerateModal = true"
+        >
+          <AppIcon :icon="Sparkles" size="xs" />
+          {{ t("players.generate.buttonLabel") }}
+        </AppButton>
+        <AppButton
+          variant="filled"
+          :disabled="!teamsStore.teams.length"
+          :title="!teamsStore.teams.length ? t('players.needTeamFirst') : ''"
+          @click="showAddModal = true"
+        >
+          <AppIcon :icon="Plus" size="xs" />
+          {{ t("players.addBtn") }}
+        </AppButton>
+      </div>
     </div>
 
     <div v-if="store.players.length" class="search-row">
@@ -165,10 +182,22 @@ const filtered = computed(() => {
 
     <PlayerFormModal v-if="showAddModal" @close="showAddModal = false" />
     <PlayerFormModal v-if="editingPlayer" :player="editingPlayer" @close="editingPlayer = null" />
+    <GeneratePlayersModal
+      v-if="showGenerateModal"
+      :team-id="teamFilter !== 'all' ? teamFilter : undefined"
+      @close="showGenerateModal = false"
+    />
   </div>
 </template>
 
 <style scoped>
+.page-top-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  flex-shrink: 0;
+}
+
 .search-row {
   width: 100%;
   display: flex;

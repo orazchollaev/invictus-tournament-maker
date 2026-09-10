@@ -1,10 +1,35 @@
 import { defineStore } from "pinia"
 import { ref } from "vue"
 import type { Player, PlayerPosition } from "./types"
+import { DEFAULT_FIRST_NAMES, DEFAULT_LAST_NAMES } from "./constants"
 import { uid } from "@/engine"
 
 export const usePlayersStore = defineStore("players", () => {
   const players = ref<Player[]>([])
+
+  // Generate Players' name pool. `null` means "use the defaults" — kept
+  // separate from the defaults themselves so "use default" can restore
+  // them without losing track of the user's last custom list forever.
+  const customFirstNames = ref<string[] | null>(null)
+  const customLastNames = ref<string[] | null>(null)
+
+  function effectiveFirstNames(): string[] {
+    return customFirstNames.value ?? DEFAULT_FIRST_NAMES
+  }
+
+  function effectiveLastNames(): string[] {
+    return customLastNames.value ?? DEFAULT_LAST_NAMES
+  }
+
+  function setCustomNames(first: string[], last: string[]) {
+    customFirstNames.value = first
+    customLastNames.value = last
+  }
+
+  function resetCustomNames() {
+    customFirstNames.value = null
+    customLastNames.value = null
+  }
 
   function clampPower(power: number) {
     return Math.min(99, Math.max(1, Math.round(power)))
@@ -35,6 +60,14 @@ export const usePlayersStore = defineStore("players", () => {
     })
   }
 
+  /** Bulk-add for "Generate Players" — reuses `add` so ids/power-clamping stay identical. */
+  function addMany(
+    teamId: string,
+    specs: Array<{ name: string; position: PlayerPosition; power: number; number?: number }>
+  ) {
+    for (const spec of specs) add(teamId, spec.name, spec.position, spec.power, spec.number)
+  }
+
   function remove(id: string) {
     players.value = players.value.filter((p) => p.id !== id)
   }
@@ -61,5 +94,20 @@ export const usePlayersStore = defineStore("players", () => {
     return players.value.find((p) => p.id === id)
   }
 
-  return { players, add, remove, removeByTeam, update, byTeam, byId }
+  return {
+    players,
+    add,
+    addMany,
+    remove,
+    removeByTeam,
+    update,
+    byTeam,
+    byId,
+    customFirstNames,
+    customLastNames,
+    effectiveFirstNames,
+    effectiveLastNames,
+    setCustomNames,
+    resetCustomNames,
+  }
 })
