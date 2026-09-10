@@ -1,6 +1,6 @@
 // Shared presentation rules for match events, so the timeline, the
 // player tables and the player detail page all label a goal the same way.
-import { Goal, CircleSlash, Volleyball } from "@lucide/vue"
+import { ArrowLeftRight, Goal, CircleSlash, Volleyball } from "@lucide/vue"
 import type { Component } from "vue"
 import type { MatchEventType } from "@/modules/tournament/types"
 
@@ -56,4 +56,11 @@ export const EVENT_META: Record<MatchEventType, EventMeta> = {
     isGoal: false,
   },
   red: { kind: "card", color: "var(--danger)", labelKey: "matchStats.events.red", isGoal: false },
+  sub: {
+    kind: "icon",
+    icon: ArrowLeftRight,
+    color: "var(--text-muted)",
+    labelKey: "matchStats.events.sub",
+    isGoal: false,
+  },
 }

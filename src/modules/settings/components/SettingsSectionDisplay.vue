@@ -17,7 +17,15 @@ const bracketStyleOptions = computed<{ value: BracketStyle; label: string }[]>((
   { value: "auto", label: t("settings.display.bracketStyle.auto") },
 ])
 
-const liveEventTypes: MatchEventType[] = ["goal", "penGoal", "ownGoal", "penMiss", "yellow", "red"]
+const liveEventTypes: MatchEventType[] = [
+  "goal",
+  "penGoal",
+  "ownGoal",
+  "penMiss",
+  "yellow",
+  "red",
+  "sub",
+]
 </script>
 
 <template>

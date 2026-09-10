@@ -60,6 +60,13 @@ export interface RatingInput {
   power?: number
   /** Mean power of the eleven he played in. */
   squadPower?: number
+  /**
+   * 0-1 share of the match played. Only present for a substitute or the
+   * player they replaced. A ten-minute cameo that happened to score should
+   * not out-rate a full ninety spent quietly doing a job — the smaller the
+   * sample, the closer the final number sits to the neutral baseline.
+   */
+  minutesShare?: number
 }
 
 /**
@@ -91,6 +98,11 @@ export function computeRating(input: RatingInput): number {
     const conceded = input.conceded ?? 0
     if (conceded > 1) rating -= (conceded - 1) * CONCEDED_PENALTY
     rating += (input.saves ?? 0) * SAVE_BONUS
+  }
+
+  if (input.minutesShare !== undefined) {
+    const share = Math.max(0, Math.min(1, input.minutesShare))
+    rating = BASE + (rating - BASE) * share
   }
 
   const clamped = Math.max(MIN_RATING, Math.min(MAX_RATING, rating))

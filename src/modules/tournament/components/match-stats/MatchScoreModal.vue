@@ -203,9 +203,11 @@ const canReplay = computed(() => !!props.result?.stats)
 
 function statsFor(decision: KnockoutDecision): MatchStats {
   const { result } = decision
+  const homeSquad = playersStore.byTeam(props.homeTeam!.id)
+  const awaySquad = playersStore.byTeam(props.awayTeam!.id)
   return generateMatchStats({
-    homeLineup: buildLineup(playersStore.byTeam(props.homeTeam!.id)),
-    awayLineup: buildLineup(playersStore.byTeam(props.awayTeam!.id)),
+    homeLineup: buildLineup(homeSquad),
+    awayLineup: buildLineup(awaySquad),
     homePower: resolvePower(props.homeTeam!),
     awayPower: resolvePower(props.awayTeam!),
     homeGoals: result.home,
@@ -216,6 +218,8 @@ function statsFor(decision: KnockoutDecision): MatchStats {
       : {}),
     ...(decision.shootout ? { shootoutOutcome: decision.shootout } : {}),
     ...(result.reds ? { reds: result.reds } : {}),
+    homeSquad,
+    awaySquad,
   })
 }
 
