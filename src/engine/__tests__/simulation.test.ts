@@ -1,6 +1,7 @@
 // engine/__tests__/simulation.test.ts
 import { afterEach, describe, expect, it } from "vitest"
 import type { Team } from "@/modules/teams/types"
+import { MAX_GOALS } from "@/constants/limits"
 import {
   computeFormAdjustments,
   isFormFactorEnabled,
@@ -30,9 +31,33 @@ describe("simulateMatch", () => {
       expect(Number.isInteger(r.away)).toBe(true)
       expect(r.home).toBeGreaterThanOrEqual(0)
       expect(r.away).toBeGreaterThanOrEqual(0)
+      expect(r.home).toBeLessThanOrEqual(MAX_GOALS)
+      expect(r.away).toBeLessThanOrEqual(MAX_GOALS)
+    }
+  })
+
+  it("an ordinary, evenly matched game stays within the base 6-goal cap", () => {
+    setSimConfig({ surpriseFactor: 50, formFactor: false, homeAdvantage: 6 })
+    const a = { id: "a", name: "A", color: "#000", power: 50 } as Team
+    const b = { id: "b", name: "B", color: "#000", power: 50 } as Team
+    for (let i = 0; i < 200; i++) {
+      const r = simulateMatch(match("a", "b"), [a, b])
       expect(r.home).toBeLessThanOrEqual(6)
       expect(r.away).toBeLessThanOrEqual(6)
     }
+  })
+
+  it("a huge power gap at low surprise can exceed the base 6-goal cap", () => {
+    setSimConfig({ surpriseFactor: 0, formFactor: false, homeAdvantage: 0 })
+    const strong = { id: "s", name: "Strong", color: "#000", power: 100 } as Team
+    const weak = { id: "w", name: "Weak", color: "#000", power: 1 } as Team
+
+    let maxHome = 0
+    for (let i = 0; i < 300; i++) {
+      const r = simulateMatch(match("s", "w"), [strong, weak])
+      maxHome = Math.max(maxHome, r.home)
+    }
+    expect(maxHome).toBeGreaterThan(6)
   })
 
   it("a huge power gap is nearly always a win for the stronger side (surprise 0)", () => {
