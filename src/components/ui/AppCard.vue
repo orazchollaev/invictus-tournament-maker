@@ -86,14 +86,6 @@ withDefaults(
   box-shadow: var(--elev-2);
   transform: translateY(-1px);
 }
-.card--interactive.card--rail:hover {
-  border-left-color: var(--rail-color, var(--accent));
-}
-
-/* ── Header ──────────────────────────────────────────────────────
-   Everything about how the strip *looks* lives in AppSectionHeader.
-   Only the fit against the card's own edge is this file's business:
-   the accent rule has to sit flush with the card border, not 1px in. */
 .card-header {
   margin-left: -1px;
   border-radius: var(--radius-lg) var(--radius-lg) 0 0;

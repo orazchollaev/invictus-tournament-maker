@@ -8,7 +8,7 @@
 import { computed, nextTick, onMounted, ref, watch } from "vue"
 import { useI18n } from "vue-i18n"
 import { Pause, Play, SkipForward } from "@lucide/vue"
-import { AppButtonGroup, AppSheet } from "@/components/ui"
+import { AppButtonGroup, AppModal } from "@/components/ui"
 import { TeamBadge } from "@/modules/teams/components"
 import MatchTimeline from "./MatchTimeline.vue"
 import MatchShootout from "./MatchShootout.vue"
@@ -77,11 +77,20 @@ const showShootout = computed(
   () => live.visibleKicks.value.length > 0 || live.stage.value === "shootout"
 )
 
-/* The rail grows downwards, so the newest incident would otherwise fall
-   out of view the moment it is added. */
+/* The timeline lists newest-first, so a fresh match event should keep the
+   rail pinned to the top rather than following it off-screen. The
+   shootout below it runs in the order kicks were taken, so a fresh kick
+   needs the opposite: scroll down to keep it in view. */
 const rail = ref<HTMLElement | null>(null)
 watch(
-  () => [live.visibleEvents.value.length, live.visibleKicks.value.length],
+  () => live.visibleEvents.value.length,
+  async () => {
+    await nextTick()
+    rail.value?.scrollTo({ top: 0, behavior: "smooth" })
+  }
+)
+watch(
+  () => live.visibleKicks.value.length,
   async () => {
     await nextTick()
     rail.value?.scrollTo({ top: rail.value.scrollHeight, behavior: "smooth" })
@@ -97,11 +106,11 @@ watch(
   }
 )
 
-const sheet = ref<InstanceType<typeof AppSheet> | null>(null)
+const modal = ref<InstanceType<typeof AppModal> | null>(null)
 const closing = ref(false)
 
 /**
- * The sheet owns the exit animation, so the reason for closing is parked
+ * The modal owns the exit animation, so the reason for closing is parked
  * here and read back when it reports.
  */
 const handBack = ref(false)
@@ -110,11 +119,11 @@ function close(hb: boolean) {
   closing.value = true
   handBack.value = hb
   live.stop()
-  sheet.value?.close()
+  modal.value?.close()
 }
 
 function onClosed() {
-  // The header close button and Escape go straight to the sheet, so the
+  // The header close button and Escape go straight to the modal, so the
   // ticker is stopped here rather than only in close().
   live.stop()
   if (handBack.value) emit("finish")
@@ -134,16 +143,7 @@ onMounted(live.start)
 </script>
 
 <template>
-  <AppSheet
-    ref="sheet"
-    :dismiss-on-outside-click="false"
-    :layer="20"
-    :dim="0.6"
-    width="min(420px, calc(100vw - 2 * var(--sp-4)))"
-    max-height="min(640px, calc(100dvh - 2 * var(--sp-4)))"
-    max-height-mobile="88dvh"
-    @close="onClosed"
-  >
+  <AppModal ref="modal" :dismiss-on-outside-click="false" :z-index="1020" flush @close="onClosed">
     <template #title>
       <span class="lm-title">
         {{ replay ? t("liveMatch.replayTitle") : t("liveMatch.title") }}
@@ -151,42 +151,44 @@ onMounted(live.start)
       </span>
     </template>
 
-    <div class="lm-scoreboard">
-      <TeamBadge :team="homeTeam" :size="26" class="lm-team lm-team--home" />
-      <div class="lm-score">
-        <span class="lm-goals">{{ live.score.value.home }}</span>
-        <span class="lm-dash">–</span>
-        <span class="lm-goals">{{ live.score.value.away }}</span>
+    <div class="lm-body">
+      <div class="lm-scoreboard">
+        <TeamBadge :team="homeTeam" :size="26" class="lm-team lm-team--home" />
+        <div class="lm-score">
+          <span class="lm-goals">{{ live.score.value.home }}</span>
+          <span class="lm-dash">–</span>
+          <span class="lm-goals">{{ live.score.value.away }}</span>
+        </div>
+        <TeamBadge :team="awayTeam" :size="26" class="lm-team" />
       </div>
-      <TeamBadge :team="awayTeam" :size="26" class="lm-team" />
-    </div>
 
-    <div class="lm-clock-row">
-      <span class="lm-clock" :class="{ 'lm-clock--live': !live.finished.value }">
-        {{ clockLabel }}
-      </span>
-      <span v-if="live.inExtraTime.value && !live.finished.value" class="lm-tag">
-        {{ t("liveMatch.extraTimeShort") }}
-      </span>
-      <span v-if="showShootout" class="lm-tag lm-tag--pens">
-        {{ live.penScore.value.home }}–{{ live.penScore.value.away }}
-      </span>
-    </div>
+      <div class="lm-clock-row">
+        <span class="lm-clock" :class="{ 'lm-clock--live': !live.finished.value }">
+          {{ clockLabel }}
+        </span>
+        <span v-if="live.inExtraTime.value && !live.finished.value" class="lm-tag">
+          {{ t("liveMatch.extraTimeShort") }}
+        </span>
+        <span v-if="showShootout" class="lm-tag lm-tag--pens">
+          {{ live.penScore.value.home }}–{{ live.penScore.value.away }}
+        </span>
+      </div>
 
-    <div ref="rail" class="lm-rail">
-      <MatchTimeline :events="live.visibleEvents.value" :has-extra-time="hasExtraTime" />
+      <div ref="rail" class="lm-rail">
+        <MatchTimeline :events="live.visibleEvents.value" :has-extra-time="hasExtraTime" />
 
-      <div v-if="showShootout" class="lm-pens">
-        <span class="lm-pens-title">{{ t("liveMatch.penalties") }}</span>
-        <MatchShootout
-          :kicks="live.visibleKicks.value"
-          :home-color="homeTeam?.color ?? 'var(--text-muted)'"
-          :away-color="awayTeam?.color ?? 'var(--text-muted)'"
-        />
+        <div v-if="showShootout" class="lm-pens">
+          <span class="lm-pens-title">{{ t("liveMatch.penalties") }}</span>
+          <MatchShootout
+            :kicks="live.visibleKicks.value"
+            :home-color="homeTeam?.color ?? 'var(--text-muted)'"
+            :away-color="awayTeam?.color ?? 'var(--text-muted)'"
+          />
+        </div>
       </div>
     </div>
 
-    <div class="lm-footer">
+    <template #footer>
       <button
         v-if="!live.finished.value"
         class="lm-ghost"
@@ -210,8 +212,8 @@ onMounted(live.start)
       <button v-else class="primary" @click="done">
         {{ replay ? t("common.close") : t("liveMatch.useResult") }}
       </button>
-    </div>
-  </AppSheet>
+    </template>
+  </AppModal>
 </template>
 
 <style scoped>
@@ -243,6 +245,16 @@ onMounted(live.start)
   color: var(--text-muted);
   text-transform: none;
 }
+
+/* Fills the drawer body's full height so the rail below is the only part
+   that scrolls — the scoreboard and clock stay pinned above it. */
+.lm-body {
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
 .lm-scoreboard {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
@@ -331,14 +343,6 @@ onMounted(live.start)
   color: var(--accent-2);
 }
 
-.lm-footer {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-2);
-  padding: var(--sp-2) var(--sp-3) calc(var(--sp-2) + var(--safe-bottom));
-  border-top: 1px solid var(--border-light);
-  background: var(--bg);
-}
 .lm-spacer {
   flex: 1;
 }

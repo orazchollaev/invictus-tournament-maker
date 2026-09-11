@@ -300,7 +300,7 @@ const filtered = computed(() => {
 .player-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: var(--sp-2);
+  gap: var(--sp-1);
 }
 
 @media (min-width: 641px) {

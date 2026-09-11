@@ -480,7 +480,7 @@ const canShowStats = computed(() => !!props.result?.stats)
   gap: var(--sp-3);
   padding: var(--sp-2) var(--sp-2) var(--sp-2) var(--sp-3);
   border: 1px solid var(--border-light);
-  border-radius: var(--radius);
+  border-radius: 0 var(--radius) var(--radius) 0;
   background: var(--bg);
 }
 .ms-side::before {

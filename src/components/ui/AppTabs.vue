@@ -78,6 +78,7 @@ defineEmits<{ "update:modelValue": [value: string] }>()
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
+    margin-bottom: var(--sp-2);
   }
   .tabs::-webkit-scrollbar {
     display: none;

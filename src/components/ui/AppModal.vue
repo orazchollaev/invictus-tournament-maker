@@ -12,16 +12,19 @@ import {
 } from "reka-ui"
 import { X } from "@lucide/vue"
 
-withDefaults(
+const props = withDefaults(
   defineProps<{
     title?: string
     width?: string
     zIndex?: number
     flush?: boolean
+    /** Set false when a stray tap outside must not throw away work in progress. */
+    dismissOnOutsideClick?: boolean
   }>(),
   {
     zIndex: 200,
     flush: false,
+    dismissOnOutsideClick: true,
   }
 )
 
@@ -50,7 +53,7 @@ defineExpose({ close })
         :style="{ zIndex, ...(width ? { width } : {}) }"
         :aria-describedby="undefined"
         @escape-key-down="close"
-        @pointer-down-outside="close"
+        @pointer-down-outside="(e: Event) => (props.dismissOnOutsideClick ? close() : e.preventDefault())"
       >
         <div class="drawer-header">
           <slot name="title">
