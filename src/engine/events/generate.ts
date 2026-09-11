@@ -21,7 +21,7 @@ import type {
 } from "@/modules/tournament/types"
 import type { Player, PlayerPosition } from "@/modules/players/types"
 import type { Lineup, LineupSlot } from "./lineup"
-import { UNKNOWN_POWER } from "./lineup"
+import { UNKNOWN_POWER, pickForPosition, slotPower } from "./lineup"
 import { computeRating, rollPerformance, type MatchOutcome } from "./rating"
 import { generateTeamStats } from "./teamStats"
 import { reconstructShootout, type ShootoutKickOutcome, type ShootoutOutcome } from "../shootout"
@@ -305,9 +305,12 @@ const SUB_MAX_MINUTE = 90
  * 2-5 tactical substitutions, mutating `state.subs` in place.
  *
  * Every squad member not already in the starting lineup is fair game as a
- * replacement, regardless of how thin the bench is — a squad with no spare
- * bodies at all still fields "Unknown Player" in that replacement's place,
- * exactly as an unfilled starting slot does.
+ * replacement. A specialist for the slot comes on where the bench has one,
+ * and otherwise the nearest job covers it at a penalty — the same rule the
+ * starting eleven is built under. Only a bench with nobody left on it at
+ * all sends on an "Unknown Player", exactly as an unfilled starting slot
+ * does; a real substitute is never passed over because his listed position
+ * does not match the shirt going off.
  *
  * Only an original starting slot can go off — never a substitute who has
  * already come on. `buildLines` produces exactly two lines per substituted
@@ -316,7 +319,9 @@ const SUB_MAX_MINUTE = 90
  */
 function buildSubstitutions(state: SideState, squad: Player[], rng: () => number): void {
   const count = SUB_MIN_COUNT + Math.floor(rng() * (SUB_MAX_COUNT - SUB_MIN_COUNT + 1))
-  const startingIds = new Set(state.lineup.map((s) => s.playerId).filter((id): id is string => !!id))
+  const startingIds = new Set(
+    state.lineup.map((s) => s.playerId).filter((id): id is string => !!id)
+  )
   const bench = squad.filter((p) => !startingIds.has(p.id))
   const usedBenchIds = new Set<string>()
 
@@ -334,9 +339,13 @@ function buildSubstitutions(state: SideState, squad: Player[], rng: () => number
     const outSlot = pickSlot(pool, SUB_WEIGHT, rng)
     if (!outSlot) continue
 
-    const replacement = bench.find((p) => p.position === outSlot.position && !usedBenchIds.has(p.id))
+    const replacement = pickForPosition(bench, usedBenchIds, outSlot.position, rng)
     const inSlot: LineupSlot = replacement
-      ? { playerId: replacement.id, position: outSlot.position, power: replacement.power }
+      ? {
+          playerId: replacement.id,
+          position: outSlot.position,
+          power: slotPower(replacement, outSlot.position),
+        }
       : { playerId: null, position: outSlot.position, power: UNKNOWN_POWER }
     if (replacement) usedBenchIds.add(replacement.id)
 
@@ -462,7 +471,11 @@ function buildLines(
     // Only a "goal" event ever carries an assist — a "sub" event reuses the
     // same field for who went off, which must never read as an assist.
     const assists = events.filter(
-      (e) => e.type === "goal" && e.side === side && slot.playerId !== null && e.assistId === slot.playerId
+      (e) =>
+        e.type === "goal" &&
+        e.side === side &&
+        slot.playerId !== null &&
+        e.assistId === slot.playerId
     ).length
     const yellow = events.filter((e) => e.type === "yellow" && e.side === side && mine(e)).length
     const red = events.filter((e) => e.type === "red" && e.side === side && mine(e)).length
@@ -684,8 +697,26 @@ export function generateMatchStats(
   return {
     events,
     lines: [
-      ...buildLines("home", home.state, events, homeGoals, awayGoals, team.onTarget[1], matchMinutes, rng),
-      ...buildLines("away", away.state, events, awayGoals, homeGoals, team.onTarget[0], matchMinutes, rng),
+      ...buildLines(
+        "home",
+        home.state,
+        events,
+        homeGoals,
+        awayGoals,
+        team.onTarget[1],
+        matchMinutes,
+        rng
+      ),
+      ...buildLines(
+        "away",
+        away.state,
+        events,
+        awayGoals,
+        homeGoals,
+        team.onTarget[0],
+        matchMinutes,
+        rng
+      ),
     ],
     team,
     ...(shootout ? { shootout } : {}),

@@ -340,6 +340,83 @@ describe("substitutions", () => {
       }
     }
   })
+
+  /**
+   * The reported bug: an eighteen-man squad kept sending on "Unknown Player"
+   * because the bench was searched for the outgoing man's position alone. A
+   * squad shaped nothing like 1-4-3-3 has a bench full of real players and
+   * none of them in the right shirt.
+   */
+  describe("a bench with real players on it sends real players on", () => {
+    /** Eighteen players, shaped like a real squad rather than like 1-4-3-3. */
+    function lopsided(teamId: string): Player[] {
+      const squad: Player[] = []
+      const shape: [Player["position"], number][] = [
+        ["GK", 2],
+        ["DEF", 3],
+        ["MID", 7],
+        ["FWD", 6],
+      ]
+      for (const [position, count] of shape) {
+        for (let i = 0; i < count; i++) {
+          squad.push(makePlayer(`${teamId}-${position}-${i}`, position, 70, teamId))
+        }
+      }
+      return squad
+    }
+
+    function play() {
+      const homeSquad = lopsided("t1")
+      const awaySquad = lopsided("t2")
+      return generateMatchStats({
+        homeLineup: buildLineup(homeSquad),
+        awayLineup: buildLineup(awaySquad),
+        homePower: 70,
+        awayPower: 70,
+        homeGoals: 2,
+        awayGoals: 1,
+        homeSquad,
+        awaySquad,
+      })
+    }
+
+    it("never brings on an anonymous substitute while the bench has bodies", () => {
+      for (let i = 0; i < 200; i++) {
+        for (const sub of play().substitutions ?? []) {
+          expect(sub.inPlayerId).not.toBeNull()
+        }
+      }
+    })
+
+    it("never sends the same substitute on twice, or one already on the pitch", () => {
+      for (let i = 0; i < 100; i++) {
+        const stats = play()
+        for (const side of ["home", "away"] as const) {
+          const subs = (stats.substitutions ?? []).filter((s) => s.side === side)
+          const onIds = subs.map((s) => s.inPlayerId)
+          expect(new Set(onIds).size).toBe(onIds.length)
+          // Nobody comes on who was already out there.
+          const starters = new Set(subs.map((s) => s.outPlayerId))
+          for (const id of onIds) expect(starters.has(id)).toBe(false)
+        }
+      }
+    })
+
+    it("still sends on an anonymous one when the bench is genuinely empty", () => {
+      const squad = fullSquad("t1") // exactly eleven, no spares
+      const stats = generateMatchStats({
+        homeLineup: buildLineup(squad),
+        awayLineup: buildLineup(squad),
+        homePower: 70,
+        awayPower: 70,
+        homeGoals: 0,
+        awayGoals: 0,
+        homeSquad: squad,
+        awaySquad: squad,
+      })
+      expect((stats.substitutions ?? []).every((s) => s.inPlayerId === null)).toBe(true)
+    })
+  })
 })
 
 describe("shootout reconstruction", () => {

@@ -81,22 +81,34 @@ function sampleByPower(pool: Player[], count: number, rng: () => number): Player
   return picked
 }
 
-/** The best of whoever is left to cover `position`, or nobody. */
-function pickCover(
-  squad: Player[],
+/**
+ * The best available player for `position`: a specialist if `pool` still
+ * holds one, otherwise the nearest job that can cover it. Returns undefined
+ * only when `pool` has nobody left at all.
+ *
+ * Shared with the substitution logic in `generate.ts`, which faces the same
+ * question at the bench: a side with real players left must never send an
+ * anonymous one on merely because the shirt number does not match.
+ */
+export function pickForPosition(
+  pool: Player[],
   used: Set<string>,
   position: PlayerPosition,
-  rng: () => number
+  rng: () => number = Math.random
 ): Player | undefined {
-  for (const from of COVER_ORDER[position]) {
-    const pool = squad.filter((p) => p.position === from && !used.has(p.id))
-    if (pool.length) return sampleByPower(pool, 1, rng)[0]
+  for (const from of [position, ...COVER_ORDER[position]]) {
+    const candidates = pool.filter((p) => p.position === from && !used.has(p.id))
+    if (candidates.length) return sampleByPower(candidates, 1, rng)[0]
   }
   return undefined
 }
 
-/** A covering player's rating in the shirt he is actually wearing. */
-function coverPower(player: Player, playing: PlayerPosition): number {
+/**
+ * A player's rating in the shirt he is actually wearing. Out of position
+ * costs him; in his own, nothing changes.
+ */
+export function slotPower(player: Player, playing: PlayerPosition): number {
+  if (player.position === playing) return player.power
   const penalty = playing === "GK" ? EMERGENCY_KEEPER_PENALTY : OUT_OF_POSITION_PENALTY
   return Math.max(1, player.power - penalty)
 }
@@ -135,11 +147,11 @@ export function buildLineup(squad: Player[], rng: () => number = Math.random): L
   }
 
   for (const slot of gaps) {
-    const cover = pickCover(squad, used, slot.position, rng)
+    const cover = pickForPosition(squad, used, slot.position, rng)
     if (!cover) continue
     used.add(cover.id)
     slot.playerId = cover.id
-    slot.power = coverPower(cover, slot.position)
+    slot.power = slotPower(cover, slot.position)
   }
 
   return lineup
