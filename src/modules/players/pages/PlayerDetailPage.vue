@@ -65,7 +65,6 @@ const editing = ref(false)
 <style scoped>
 /* Every card header on this page picks up the player's team colour. */
 .stack :deep(.card-header) {
-  border-left-color: var(--rail-color, var(--accent));
 }
 
 .actions {

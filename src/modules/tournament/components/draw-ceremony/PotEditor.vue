@@ -110,7 +110,6 @@ const { teamById } = useTeamLookup(() => props.teams)
   padding: 5px 8px;
   background: var(--surface);
   border-bottom: 1px solid var(--border-light);
-  border-left: 3px solid var(--accent);
 }
 .pe-pot-label {
   font-size: 12px;

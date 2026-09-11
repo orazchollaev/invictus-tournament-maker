@@ -278,7 +278,6 @@ const MAX = 30
   border-right: 1px solid var(--border);
 }
 .tsp-adj-stepper button:last-child {
-  border-left: 1px solid var(--border);
 }
 .tsp-adj-stepper button:disabled {
   opacity: 0.35;

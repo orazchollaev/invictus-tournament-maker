@@ -72,6 +72,7 @@ export const useSettingsStore = defineStore("settings", () => {
     penMiss: true,
     yellow: true,
     red: true,
+    sub: true,
   })
 
   watch(

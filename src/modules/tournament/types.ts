@@ -13,13 +13,19 @@ export type KnockoutStage = "r64" | "r32" | "r16" | "quarterfinal" | "semifinal"
 // container: knockout legs, group matches, league matches, third place.
 // One optional field therefore covers all formats.
 
-export type MatchEventType = "goal" | "ownGoal" | "penGoal" | "penMiss" | "yellow" | "red"
+export type MatchEventType = "goal" | "ownGoal" | "penGoal" | "penMiss" | "yellow" | "red" | "sub"
 
 export interface MatchEvent {
   minute: number // 1-90 (90+ in stoppage), or 91-120 when the tie went to extra time
   type: MatchEventType
   side: "home" | "away" // the side the event is credited to
-  playerId: string | null // null = an unfilled squad slot, never aggregated
+  /**
+   * For every type but "sub": the player the event happened to.
+   * For "sub": the player coming ON. null on either field means an
+   * unfilled squad slot, never aggregated.
+   */
+  playerId: string | null
+  /** For "sub", the player going OFF. For a goal, the assist (if any). */
   assistId?: string | null
 }
 
@@ -35,6 +41,22 @@ export interface PlayerMatchLine {
   conceded?: number // goalkeepers only
   cleanSheet?: boolean // goalkeepers and defenders
   rating: number // 1.0-10.0, one decimal
+  /**
+   * Present only when this player was part of a substitution — either the
+   * one who came off or the one who came on. Its absence means all 90 (or
+   * 120) minutes; the two lines sharing a slot always sum to the full match.
+   */
+  minutesPlayed?: number
+}
+
+/** One in-match substitution, home or away. */
+export interface Substitution {
+  minute: number
+  side: "home" | "away"
+  outPlayerId: string | null // null = an Unknown slot went off
+  inPlayerId: string | null // null = replaced by another Unknown slot
+  position: PlayerPosition
+  reason?: "tactical" | "injury"
 }
 
 /** Team-level colour, simulated from the power gap and the score. */
@@ -44,6 +66,11 @@ export interface TeamMatchStats {
   onTarget: [number, number]
   corners: [number, number]
   fouls: [number, number]
+  /** Expected goals, one decimal. Driven by shot volume/quality, not by the actual goals scored. */
+  xg: [number, number]
+  /** Clear-cut chances, a subset of onTarget. */
+  bigChances: [number, number]
+  offsides: [number, number]
 }
 
 /** One kick of a penalty shootout, in the order it was taken. */
@@ -60,6 +87,8 @@ export interface MatchStats {
   team: TeamMatchStats
   /** Only set when the tie went to a shootout. */
   shootout?: ShootoutKick[]
+  /** In-match substitutions, both sides, minute order. */
+  substitutions?: Substitution[]
 }
 
 /**

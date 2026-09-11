@@ -398,7 +398,6 @@ function isBye(label: string) {
   color: var(--text-muted);
   padding: 5px 8px;
   border-bottom: 1px solid var(--border-light);
-  border-left: 3px solid var(--accent);
 }
 .ds-slot-rows {
   display: flex;
@@ -442,7 +441,6 @@ function isBye(label: string) {
 
 /* ── Group cards: pot-colored dot per row ── */
 .ds-group {
-  border-left: 3px solid var(--accent);
 }
 .ds-group .ds-slot-label {
   border-left: none;

@@ -130,9 +130,12 @@ export function computeStatsForJob(
   const homeTeam = teamLookup.get(job.homeId)
   const awayTeam = teamLookup.get(job.awayId)
 
+  const homeSquad = squads.get(job.homeId) ?? []
+  const awaySquad = squads.get(job.awayId) ?? []
+
   const stats = generateMatchStats({
-    homeLineup: buildLineup(squads.get(job.homeId) ?? []),
-    awayLineup: buildLineup(squads.get(job.awayId) ?? []),
+    homeLineup: buildLineup(homeSquad),
+    awayLineup: buildLineup(awaySquad),
     homePower: resolvePower(homeTeam),
     awayPower: resolvePower(awayTeam),
     homeGoals: job.homeGoals,
@@ -142,6 +145,8 @@ export function computeStatsForJob(
       ? { penHome: job.penHome, penAway: job.penAway }
       : {}),
     ...(job.reds ? { reds: job.reds } : {}),
+    homeSquad,
+    awaySquad,
   })
 
   return {

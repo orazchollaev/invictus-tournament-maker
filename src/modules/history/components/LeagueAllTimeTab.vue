@@ -94,18 +94,6 @@ const { t } = useI18n()
 }
 
 /* Position bands: champion, then the two European places, then playoff. */
-.at-pos--1 td:first-child {
-  border-left: 3px solid var(--medal-gold);
-}
-.at-pos--2 td:first-child {
-  border-left: 3px solid var(--pos-2);
-}
-.at-pos--3 td:first-child {
-  border-left: 3px solid var(--pos-3);
-}
-.at-pos--4 td:first-child {
-  border-left: 3px solid var(--success);
-}
 
 .at-pos--1 .col-rank {
   color: var(--medal-gold);

@@ -28,6 +28,17 @@ function fullSquad(teamId: string): Player[] {
   return squad
 }
 
+/** A full XI plus a bench three-deep at every position, so every substitute is a real player. */
+function deepSquad(teamId: string): Player[] {
+  const squad: Player[] = []
+  ;(Object.keys(FORMATION) as Array<Player["position"]>).forEach((position) => {
+    for (let i = 0; i < FORMATION[position] * 3; i++) {
+      squad.push(makePlayer(`${teamId}-${position}-${i}`, position, 70, teamId))
+    }
+  })
+  return squad
+}
+
 describe("buildLineup", () => {
   it("always returns eleven slots, even with no squad", () => {
     expect(buildLineup([])).toHaveLength(LINEUP_SIZE)
@@ -150,6 +161,8 @@ describe("generateMatchStats", () => {
       awayPower: 65,
       homeGoals,
       awayGoals,
+      homeSquad,
+      awaySquad,
     })
   }
 
@@ -191,10 +204,12 @@ describe("generateMatchStats", () => {
     expect(stats.lines.every((l) => l.playerId === null)).toBe(true)
   })
 
-  it("emits a line for every slot on both sides", () => {
+  it("emits a line for every slot, plus one extra per substitution", () => {
     const stats = run(1, 1, fullSquad("t1"), fullSquad("t2"))
-    expect(stats.lines.filter((l) => l.side === "home")).toHaveLength(LINEUP_SIZE)
-    expect(stats.lines.filter((l) => l.side === "away")).toHaveLength(LINEUP_SIZE)
+    const homeSubs = stats.substitutions?.filter((s) => s.side === "home").length ?? 0
+    const awaySubs = stats.substitutions?.filter((s) => s.side === "away").length ?? 0
+    expect(stats.lines.filter((l) => l.side === "home")).toHaveLength(LINEUP_SIZE + homeSubs)
+    expect(stats.lines.filter((l) => l.side === "away")).toHaveLength(LINEUP_SIZE + awaySubs)
   })
 
   it("never credits an own goal as one of the scorer's goals", () => {
@@ -202,6 +217,10 @@ describe("generateMatchStats", () => {
       const stats = run(5, 5, fullSquad("t1"), fullSquad("t2"))
       const ownGoals = stats.events.filter((e) => e.type === "ownGoal")
       for (const own of ownGoals) {
+        // A null id is an anonymous "Unknown Player" slot — several can
+        // exist at once (unfilled starting slots, anonymous substitutes),
+        // and are deliberately never aggregated onto any one line.
+        if (!own.playerId) continue
         const line = stats.lines.find((l) => l.playerId === own.playerId)
         if (!line) continue
         const credited = stats.events.filter(
@@ -242,17 +261,100 @@ describe("generateMatchStats", () => {
   })
 })
 
+describe("substitutions", () => {
+  function withDeepBench(homeGoals = 1, awayGoals = 1) {
+    return generateMatchStats({
+      homeLineup: buildLineup(deepSquad("t1")),
+      awayLineup: buildLineup(deepSquad("t2")),
+      homePower: 70,
+      awayPower: 70,
+      homeGoals,
+      awayGoals,
+      homeSquad: deepSquad("t1"),
+      awaySquad: deepSquad("t2"),
+    })
+  }
+
+  it("makes 2-5 substitutions per side", () => {
+    for (let i = 0; i < 30; i++) {
+      const stats = withDeepBench()
+      const homeSubs = stats.substitutions?.filter((s) => s.side === "home").length ?? 0
+      const awaySubs = stats.substitutions?.filter((s) => s.side === "away").length ?? 0
+      expect(homeSubs).toBeGreaterThanOrEqual(2)
+      expect(homeSubs).toBeLessThanOrEqual(5)
+      expect(awaySubs).toBeGreaterThanOrEqual(2)
+      expect(awaySubs).toBeLessThanOrEqual(5)
+    }
+  })
+
+  it("keeps every substitution inside the second half", () => {
+    for (let i = 0; i < 30; i++) {
+      const stats = withDeepBench()
+      for (const sub of stats.substitutions ?? []) {
+        expect(sub.minute).toBeGreaterThanOrEqual(46)
+        expect(sub.minute).toBeLessThanOrEqual(90)
+      }
+    }
+  })
+
+  it("never subs the same slot off twice, and keeps its position fixed", () => {
+    for (let i = 0; i < 30; i++) {
+      const stats = withDeepBench()
+      for (const side of ["home", "away"] as const) {
+        const subs = (stats.substitutions ?? []).filter((s) => s.side === side)
+        const outIds = subs.map((s) => `${s.outPlayerId}@${s.position}`)
+        expect(new Set(outIds).size).toBe(outIds.length)
+      }
+    }
+  })
+
+  it("still adds exactly one line per slot even with an empty squad, all substitutes anonymous", () => {
+    const stats = generateMatchStats({
+      homeLineup: buildLineup([]),
+      awayLineup: buildLineup([]),
+      homePower: 70,
+      awayPower: 70,
+      homeGoals: 0,
+      awayGoals: 0,
+    })
+    expect(stats.lines.every((l) => l.playerId === null)).toBe(true)
+    expect((stats.substitutions ?? []).every((s) => s.outPlayerId === null)).toBe(true)
+  })
+
+  it("splits a substituted slot's minutes across its two lines, summing to the full match", () => {
+    for (let i = 0; i < 30; i++) {
+      const stats = withDeepBench()
+      for (const sub of stats.substitutions ?? []) {
+        const outLine = stats.lines.find(
+          (l) =>
+            l.side === sub.side && l.playerId === sub.outPlayerId && l.minutesPlayed === sub.minute
+        )
+        const inLine = stats.lines.find(
+          (l) =>
+            l.side === sub.side &&
+            l.playerId === sub.inPlayerId &&
+            l.minutesPlayed === REGULATION_MINUTES - sub.minute
+        )
+        expect(outLine).toBeDefined()
+        expect(inLine).toBeDefined()
+      }
+    }
+  })
+})
+
 describe("shootout reconstruction", () => {
   function shootout(penHome: number, penAway: number) {
     return generateMatchStats({
-      homeLineup: buildLineup(fullSquad("t1")),
-      awayLineup: buildLineup(fullSquad("t2")),
+      homeLineup: buildLineup(deepSquad("t1")),
+      awayLineup: buildLineup(deepSquad("t2")),
       homePower: 75,
       awayPower: 75,
       homeGoals: 1,
       awayGoals: 1,
       penHome,
       penAway,
+      homeSquad: deepSquad("t1"),
+      awaySquad: deepSquad("t2"),
     }).shootout
   }
 
@@ -353,6 +455,43 @@ describe("generateTeamStats", () => {
     const won = averagePossession(70, 70, 3, 0)
     const lost = averagePossession(70, 70, 0, 3)
     expect(won).toBeGreaterThan(lost)
+  })
+
+  it("keeps the new stats non-negative and xg independent of the actual score", () => {
+    for (let i = 0; i < 200; i++) {
+      const homeGoals = Math.floor(Math.random() * 5)
+      const stats = generateTeamStats(70, 70, homeGoals, 0)
+      expect(stats.xg[0]).toBeGreaterThanOrEqual(0)
+      expect(stats.xg[1]).toBeGreaterThanOrEqual(0)
+      expect(stats.bigChances[0]).toBeGreaterThanOrEqual(0)
+      expect(stats.bigChances[1]).toBeGreaterThanOrEqual(0)
+      expect(stats.offsides[0]).toBeGreaterThanOrEqual(0)
+      expect(stats.offsides[1]).toBeGreaterThanOrEqual(0)
+    }
+  })
+
+  it("can produce a very low shot count for a side that barely threatened", () => {
+    let sawQuiet = false
+    for (let i = 0; i < 400; i++) {
+      const stats = generateTeamStats(70, 70, 0, 0)
+      if (stats.shots[0] <= 2 || stats.shots[1] <= 2) {
+        sawQuiet = true
+        break
+      }
+    }
+    expect(sawQuiet).toBe(true)
+  })
+
+  it("lets a single shot be enough for a 1-0 win", () => {
+    let sawSoloWinner = false
+    for (let i = 0; i < 400; i++) {
+      const stats = generateTeamStats(70, 70, 1, 0)
+      if (stats.shots[0] === 1) {
+        sawSoloWinner = true
+        break
+      }
+    }
+    expect(sawSoloWinner).toBe(true)
   })
 })
 

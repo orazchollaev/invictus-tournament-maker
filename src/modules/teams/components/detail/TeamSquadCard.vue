@@ -4,9 +4,9 @@
 import { ref, computed } from "vue"
 import { useI18n } from "vue-i18n"
 import { AppButton, AppChip, AppIcon, AppSectionHeader } from "@/components/ui"
-import { Pencil, Plus, X } from "@lucide/vue"
+import { Pencil, Plus, Sparkles, X } from "@lucide/vue"
 import { usePlayersStore } from "@/modules/players/store"
-import { PlayerAvatar, PlayerFormModal } from "@/modules/players/components"
+import { GeneratePlayersModal, PlayerAvatar, PlayerFormModal } from "@/modules/players/components"
 import type { Player } from "@/modules/players/types"
 
 const props = defineProps<{ teamId: string; teamColor: string }>()
@@ -17,6 +17,7 @@ const playersStore = usePlayersStore()
 const squad = computed(() => playersStore.byTeam(props.teamId))
 
 const showAddModal = ref(false)
+const showGenerateModal = ref(false)
 const editingPlayer = ref<Player | null>(null)
 </script>
 
@@ -25,6 +26,15 @@ const editingPlayer = ref<Player | null>(null)
     <AppSectionHeader :title="t('players.squadTitle')">
       <template #actions>
         <span class="count">{{ squad.length }}</span>
+        <AppButton
+          variant="text"
+          icon-only
+          size="xs"
+          :title="t('players.generate.buttonLabel')"
+          @click="showGenerateModal = true"
+        >
+          <AppIcon :icon="Sparkles" size="xs" />
+        </AppButton>
         <AppButton variant="text" size="xs" @click="showAddModal = true">
           <AppIcon :icon="Plus" size="xs" />
           {{ t("players.addBtn") }}
@@ -71,6 +81,11 @@ const editingPlayer = ref<Player | null>(null)
 
     <PlayerFormModal v-if="showAddModal" :team-id="teamId" @close="showAddModal = false" />
     <PlayerFormModal v-if="editingPlayer" :player="editingPlayer" @close="editingPlayer = null" />
+    <GeneratePlayersModal
+      v-if="showGenerateModal"
+      :team-id="teamId"
+      @close="showGenerateModal = false"
+    />
   </div>
 </template>
 

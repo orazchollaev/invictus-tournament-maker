@@ -13,6 +13,12 @@ const props = defineProps<{
 
 const { t } = useI18n()
 
+/**
+ * xg/bigChances/offsides were added after this match's report may have
+ * been generated and persisted — a report saved before that still has a
+ * `team` object without them, so every read here falls back to [0, 0]
+ * rather than reading `undefined[0]` and crashing the whole report open.
+ */
 const rows = computed(() => [
   {
     key: "possession",
@@ -36,10 +42,31 @@ const rows = computed(() => [
     unit: "",
   },
   {
+    key: "xg",
+    label: t("matchStats.xg"),
+    home: (props.stats.xg ?? [0, 0])[0],
+    away: (props.stats.xg ?? [0, 0])[1],
+    unit: "",
+  },
+  {
+    key: "bigChances",
+    label: t("matchStats.bigChances"),
+    home: (props.stats.bigChances ?? [0, 0])[0],
+    away: (props.stats.bigChances ?? [0, 0])[1],
+    unit: "",
+  },
+  {
     key: "corners",
     label: t("matchStats.corners"),
     home: props.stats.corners[0],
     away: props.stats.corners[1],
+    unit: "",
+  },
+  {
+    key: "offsides",
+    label: t("matchStats.offsides"),
+    home: (props.stats.offsides ?? [0, 0])[0],
+    away: (props.stats.offsides ?? [0, 0])[1],
     unit: "",
   },
   {

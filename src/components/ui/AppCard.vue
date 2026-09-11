@@ -73,10 +73,6 @@ withDefaults(
   box-shadow: var(--elev-0);
 }
 
-.card--rail {
-  border-left: 3px solid var(--rail-color, transparent);
-}
-
 .card--interactive {
   transition:
     border-color var(--dur-fast) var(--ease),

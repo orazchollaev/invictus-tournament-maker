@@ -359,7 +359,31 @@ onMounted(live.start)
   border-color: var(--border);
 }
 
-@media (max-width: 600px) {
+@media (max-width: 380px) {
+  .lm-title {
+    font-size: 10px;
+    gap: var(--sp-1);
+  }
+  .lm-subtitle {
+    font-size: 10px;
+  }
+  .lm-goals {
+    font-size: 1.4rem;
+  }
+  .lm-clock {
+    font-size: var(--fs-xs);
+  }
+  .lm-tag {
+    font-size: 10px;
+    padding: 1px var(--sp-1);
+  }
+  .lm-ghost {
+    padding: var(--sp-1) var(--sp-2);
+    font-size: var(--fs-xs);
+  }
+  .lm-pens-title {
+    font-size: 10px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

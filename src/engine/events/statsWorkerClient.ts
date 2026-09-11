@@ -62,11 +62,15 @@ export function generateStatsInWorker(
   const id = ++seq
   return new Promise((resolve) => {
     waiting.set(id, resolve)
-    // Teams/players are Vue reactive proxies — postMessage's structured
-    // clone can't carry those directly, so strip reactivity first.
+    // Teams/players/jobs all trace back to the reactive tournament/team/player
+    // stores — a job's `reds` in particular is read straight off the live
+    // `MatchResult`, so it's still a Vue reactive proxy at this point too.
+    // postMessage's structured clone can't carry those directly (it throws
+    // DataCloneError and silently kills the whole batch, which is why every
+    // match report can vanish at once), so strip reactivity from all three.
     getWorker().postMessage({
       id,
-      jobs,
+      jobs: JSON.parse(JSON.stringify(jobs)),
       teams: JSON.parse(JSON.stringify(relevantTeams)),
       players: JSON.parse(JSON.stringify(relevantPlayers)),
     })

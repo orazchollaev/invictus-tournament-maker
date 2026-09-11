@@ -73,7 +73,10 @@ const rows = computed(() =>
             {{ row.scorer }}
             <span v-if="row.meta.suffixKey" class="tl-suffix">{{ t(row.meta.suffixKey) }}</span>
           </span>
-          <span v-if="row.assist" class="tl-assist">
+          <span v-if="row.event.type === 'sub'" class="tl-assist">
+            {{ t("matchStats.events.subFor", { name: row.assist ?? t("matchStats.unknownPlayer") }) }}
+          </span>
+          <span v-else-if="row.assist" class="tl-assist">
             {{ t("matchStats.assistBy", { name: row.assist }) }}
           </span>
           <span v-else-if="!row.meta.isGoal" class="tl-assist">{{ t(row.meta.labelKey) }}</span>
@@ -124,6 +127,8 @@ const rows = computed(() =>
   align-items: center;
   gap: var(--sp-2);
   min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 /* Home on the left of the rail, away on the right — the same spatial

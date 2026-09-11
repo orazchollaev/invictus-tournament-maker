@@ -46,15 +46,31 @@ function surpriseDamping(surpriseFactor: number): number {
   return 1 - (surpriseFactor / 100) * 0.65
 }
 
-/** Shots and shots on target, kept consistent with the goals actually scored. */
+/**
+ * Shots and shots on target, kept consistent with the goals actually scored.
+ *
+ * A flat "1 + ... + rng()*3" floor made every match look the same — roughly
+ * ten shots a side, regardless of the story the scoreline told. `quiet`
+ * lets a side barely threaten at all every so often (real games where a
+ * single shot decides it), and `volatility` can swing negative instead of
+ * only ever adding on top of the base.
+ */
 function attempts(
   possessionShare: number,
   goals: number,
   dominance: number,
   rng: () => number
 ): { shots: number; onTarget: number } {
-  // Territory drives volume: the side camped in the other half shoots more.
-  const shots = Math.round(1 + (possessionShare / 100) * 26 + goals * 1.1 + rng() * 3)
+  let shots: number
+  if (rng() < 0.12) {
+    // A quiet afternoon: barely any chances created, whatever the territory.
+    // A side that still scored got it from next to nothing it created.
+    shots = goals + (rng() < 0.3 ? 1 : 0)
+  } else {
+    const base = 1 + (possessionShare / 100) * 22 + goals * 1.1
+    const volatility = (rng() - 0.35) * 7
+    shots = Math.max(goals, Math.round(base + volatility))
+  }
   // The better side is also more accurate, not just busier.
   const accuracy = 0.3 + Math.max(0, dominance) * 0.14 + rng() * 0.08
   const onTarget = Math.round(shots * accuracy)
@@ -63,6 +79,27 @@ function attempts(
   const safeShots = Math.max(shots, safeOnTarget)
 
   return { shots: safeShots, onTarget: safeOnTarget }
+}
+
+/**
+ * Expected goals: driven by shot volume/quality, not by the actual goals
+ * scored, so a 1-shot winner still shows a low xG and the goal reads as
+ * overperformance rather than the model just echoing the scoreline back.
+ */
+function xgFor(shots: number, onTarget: number, dominance: number, rng: () => number): number {
+  const perShot = 0.09 + Math.max(0, dominance) * 0.05
+  const raw = onTarget * (perShot + rng() * 0.06) + (shots - onTarget) * 0.02
+  return Math.round(raw * 10) / 10
+}
+
+/** Clear-cut chances: a fraction of shots on target, weighted by dominance. */
+function bigChancesFor(onTarget: number, dominance: number, rng: () => number): number {
+  return Math.max(0, Math.round(onTarget * (0.25 + Math.max(0, dominance) * 0.15) + (rng() - 0.5)))
+}
+
+/** Offsides: cheap noise off how often a side is pushing a high line/final ball. */
+function offsidesFor(dominance: number, rng: () => number): number {
+  return Math.max(0, Math.round(1 + Math.max(0, dominance) * 2 + rng() * 2))
 }
 
 export function generateTeamStats(
@@ -100,5 +137,14 @@ export function generateTeamStats(
       Math.round(((100 - possession) / 100) * 12 + rng() * 2),
     ],
     fouls: [homeFouls, awayFouls],
+    xg: [
+      xgFor(home.shots, home.onTarget, dominance, rng),
+      xgFor(away.shots, away.onTarget, -dominance, rng),
+    ],
+    bigChances: [
+      bigChancesFor(home.onTarget, dominance, rng),
+      bigChancesFor(away.onTarget, -dominance, rng),
+    ],
+    offsides: [offsidesFor(dominance, rng), offsidesFor(-dominance, rng)],
   }
 }

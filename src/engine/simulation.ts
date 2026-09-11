@@ -1,6 +1,7 @@
 // engine/simulation.ts
 import type { Team } from "../modules/teams/types"
 import type { Match, GroupMatch, RedCard } from "../modules/tournament/types"
+import { MAX_GOALS } from "@/constants/limits"
 import { resolvePower } from "./power"
 import { rollShootout, type ShootoutOutcome } from "./shootout"
 import { REGULATION_MINUTES, EXTRA_TIME_MINUTES } from "./periods"
@@ -93,7 +94,18 @@ export function computeFormAdjustments(
   return map
 }
 
+/**
+ * 6 at ordinary lambdas, rising once the model itself is predicting a rout.
+ * A close match (lambda ~1.45-2.6) never sees the extra room; a huge power
+ * gap at low surprise pushes lambda well past that, and the cap opens up
+ * with it, capped at MAX_GOALS (the same ceiling manual score entry uses).
+ */
+function dynamicCap(lambda: number): number {
+  return Math.min(MAX_GOALS, 6 + Math.floor(Math.max(0, lambda - 2.6) * 2.5))
+}
+
 function poisson(lambda: number): number {
+  const cap = dynamicCap(lambda)
   const L = Math.exp(-lambda)
   let k = 0,
     p = 1
@@ -101,7 +113,7 @@ function poisson(lambda: number): number {
     k++
     p *= Math.random()
   } while (p > L)
-  return Math.min(k - 1, 6)
+  return Math.min(k - 1, cap)
 }
 
 interface TeamLookupEntry {

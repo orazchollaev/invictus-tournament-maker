@@ -16,10 +16,12 @@ import type {
   PlayerMatchLine,
   RedCard,
   ShootoutKick,
+  Substitution,
   TeamMatchStats,
 } from "@/modules/tournament/types"
-import type { PlayerPosition } from "@/modules/players/types"
+import type { Player, PlayerPosition } from "@/modules/players/types"
 import type { Lineup, LineupSlot } from "./lineup"
+import { UNKNOWN_POWER } from "./lineup"
 import { computeRating, rollPerformance, type MatchOutcome } from "./rating"
 import { generateTeamStats } from "./teamStats"
 import { reconstructShootout, type ShootoutKickOutcome, type ShootoutOutcome } from "../shootout"
@@ -66,23 +68,55 @@ interface Dismissal {
   minute: number
 }
 
-/** One side's eleven, plus whoever has already been sent off. */
+/**
+ * A tactical substitution: `outSlot` is a reference into the starting
+ * lineup, `inSlot` is a freshly minted slot for whoever replaced him (a
+ * bench player if the squad had one for that position, otherwise another
+ * anonymous "Unknown Player").
+ */
+interface SubRecord {
+  outSlot: LineupSlot
+  inSlot: LineupSlot
+  minute: number
+}
+
+/** One side's eleven, plus whoever has already been sent off or subbed. */
 interface SideState {
   lineup: Lineup
   dismissals: Dismissal[]
+  subs: SubRecord[]
 }
 
 /**
  * Who is still on the pitch in a given minute.
  *
+ * Substitutions are applied before dismissals: a player can only be sent
+ * off while he is actually out there, on the pitch he was subbed onto (or
+ * still in, if not subbed at all) — never his replacement's dismissal
+ * landing on a slot that already left.
+ *
  * A dismissal in the same minute counts as already gone — "sent off 63',
  * scored 63'" is exactly the contradiction this exists to prevent, and the
- * one minute it costs a legitimate goal is not worth the confusion.
+ * one minute it costs a legitimate goal is not worth the confusion. Subs
+ * follow the same same-minute rule.
  */
 function onPitch(state: SideState, minute: number): Lineup {
-  if (!state.dismissals.length) return state.lineup
-  const off = new Set(state.dismissals.filter((d) => d.minute <= minute).map((d) => d.slot))
-  return off.size ? state.lineup.filter((slot) => !off.has(slot)) : state.lineup
+  let pool = state.lineup
+
+  if (state.subs.length) {
+    const active = state.subs.filter((s) => s.minute <= minute)
+    if (active.length) {
+      const outSet = new Set(active.map((s) => s.outSlot))
+      pool = pool.filter((slot) => !outSet.has(slot)).concat(active.map((s) => s.inSlot))
+    }
+  }
+
+  if (state.dismissals.length) {
+    const off = new Set(state.dismissals.filter((d) => d.minute <= minute).map((d) => d.slot))
+    if (off.size) pool = pool.filter((slot) => !off.has(slot))
+  }
+
+  return pool
 }
 
 /** Weighted pick over lineup slots. Returns null only for an empty pool. */
@@ -224,7 +258,7 @@ function buildCards(
   forcedReds?: RedCard[]
 ): { events: MatchEvent[]; state: SideState } {
   const events: MatchEvent[] = []
-  const state: SideState = { lineup, dismissals: [] }
+  const state: SideState = { lineup, dismissals: [], subs: [] }
   const mine = forcedReds?.filter((r) => r.side === side)
 
   const sendOff = (minute: number) => {
@@ -256,6 +290,58 @@ function buildCards(
   }
 
   return { events, state }
+}
+
+/** How likely a slot is to be the one taken off. Rarely the keeper. */
+const SUB_WEIGHT: Record<PlayerPosition, number> = { GK: 0.05, DEF: 0.9, MID: 1.0, FWD: 1.0 }
+
+const SUB_MIN_COUNT = 2
+const SUB_MAX_COUNT = 5
+/** Subs cluster in the second half — earlier ones are the exception, not the norm. */
+const SUB_MIN_MINUTE = 46
+const SUB_MAX_MINUTE = 90
+
+/**
+ * 2-5 tactical substitutions, mutating `state.subs` in place.
+ *
+ * Every squad member not already in the starting lineup is fair game as a
+ * replacement, regardless of how thin the bench is — a squad with no spare
+ * bodies at all still fields "Unknown Player" in that replacement's place,
+ * exactly as an unfilled starting slot does.
+ *
+ * Only an original starting slot can go off — never a substitute who has
+ * already come on. `buildLines` produces exactly two lines per substituted
+ * slot (the starter, the replacement); a substitute-of-a-substitute would
+ * need a third, which nothing downstream expects.
+ */
+function buildSubstitutions(state: SideState, squad: Player[], rng: () => number): void {
+  const count = SUB_MIN_COUNT + Math.floor(rng() * (SUB_MAX_COUNT - SUB_MIN_COUNT + 1))
+  const startingIds = new Set(state.lineup.map((s) => s.playerId).filter((id): id is string => !!id))
+  const bench = squad.filter((p) => !startingIds.has(p.id))
+  const usedBenchIds = new Set<string>()
+
+  const minutes = Array.from(
+    { length: count },
+    () => SUB_MIN_MINUTE + Math.floor(rng() * (SUB_MAX_MINUTE - SUB_MIN_MINUTE + 1))
+  ).sort((a, b) => a - b)
+
+  for (const minute of minutes) {
+    const dismissedByNow = new Set(
+      state.dismissals.filter((d) => d.minute <= minute).map((d) => d.slot)
+    )
+    const outAlready = new Set(state.subs.map((s) => s.outSlot))
+    const pool = state.lineup.filter((slot) => !outAlready.has(slot) && !dismissedByNow.has(slot))
+    const outSlot = pickSlot(pool, SUB_WEIGHT, rng)
+    if (!outSlot) continue
+
+    const replacement = bench.find((p) => p.position === outSlot.position && !usedBenchIds.has(p.id))
+    const inSlot: LineupSlot = replacement
+      ? { playerId: replacement.id, position: outSlot.position, power: replacement.power }
+      : { playerId: null, position: outSlot.position, power: UNKNOWN_POWER }
+    if (replacement) usedBenchIds.add(replacement.id)
+
+    state.subs.push({ outSlot, inSlot, minute })
+  }
 }
 
 /**
@@ -338,14 +424,22 @@ function outcomeFor(goalsFor: number, goalsAgainst: number): MatchOutcome {
   return goalsFor > goalsAgainst ? "win" : "loss"
 }
 
-/** Aggregate a side's events into one line per slot, then rate each one. */
+/**
+ * Aggregate a side's events into one line per slot, then rate each one.
+ *
+ * A slot that was substituted produces two lines instead of one — the man
+ * who came off and the man who came on — each scoped to the minutes he
+ * actually played, via `state.subs`. Every other slot is untouched and
+ * produces exactly the one line it always has.
+ */
 function buildLines(
   side: Side,
-  lineup: Lineup,
+  state: SideState,
   events: MatchEvent[],
   goalsFor: number,
   goalsAgainst: number,
   opponentOnTarget: number,
+  matchMinutes: number,
   rng: () => number
 ): PlayerMatchLine[] {
   const outcome = outcomeFor(goalsFor, goalsAgainst)
@@ -354,9 +448,10 @@ function buildLines(
   const saves = Math.max(0, opponentOnTarget - goalsAgainst)
   // Measured against his own eleven, so a weak player in a weak side is
   // rated on his afternoon rather than on the league table.
+  const lineup = state.lineup
   const squadPower = lineup.reduce((sum, slot) => sum + slot.power, 0) / lineup.length
 
-  return lineup.map((slot) => {
+  function lineFor(slot: LineupSlot, minutesPlayed?: number): PlayerMatchLine {
     const mine = (e: MatchEvent) => slot.playerId !== null && e.playerId === slot.playerId
 
     // Own goals credit the opposing side, so they are matched by player
@@ -364,13 +459,16 @@ function buildLines(
     const goals = events.filter(
       (e) => e.side === side && (e.type === "goal" || e.type === "penGoal") && mine(e)
     ).length
+    // Only a "goal" event ever carries an assist — a "sub" event reuses the
+    // same field for who went off, which must never read as an assist.
     const assists = events.filter(
-      (e) => e.side === side && slot.playerId !== null && e.assistId === slot.playerId
+      (e) => e.type === "goal" && e.side === side && slot.playerId !== null && e.assistId === slot.playerId
     ).length
     const yellow = events.filter((e) => e.type === "yellow" && e.side === side && mine(e)).length
     const red = events.filter((e) => e.type === "red" && e.side === side && mine(e)).length
 
     const isKeeper = slot.position === "GK"
+    const minutesShare = minutesPlayed !== undefined ? minutesPlayed / matchMinutes : undefined
 
     return {
       playerId: slot.playerId,
@@ -382,6 +480,7 @@ function buildLines(
       red,
       ...(isKeeper ? { saves, conceded: goalsAgainst } : {}),
       ...(slot.position === "GK" || slot.position === "DEF" ? { cleanSheet } : {}),
+      ...(minutesPlayed !== undefined ? { minutesPlayed } : {}),
       rating: computeRating({
         position: slot.position,
         outcome,
@@ -392,8 +491,15 @@ function buildLines(
         power: slot.power,
         squadPower,
         ...(isKeeper ? { saves, conceded: goalsAgainst } : {}),
+        ...(minutesShare !== undefined ? { minutesShare } : {}),
       }),
     }
+  }
+
+  return lineup.flatMap((slot) => {
+    const sub = state.subs.find((s) => s.outSlot === slot)
+    if (!sub) return [lineFor(slot)]
+    return [lineFor(slot, sub.minute), lineFor(sub.inSlot, matchMinutes - sub.minute)]
   })
 }
 
@@ -421,6 +527,13 @@ export interface GenerateMatchStatsInput {
    * "these are the reds, do not roll any of your own" — even when empty.
    */
   reds?: RedCard[]
+  /**
+   * Full squads, for drawing substitutes from the bench. Absent or empty
+   * means every substitution comes on as another "Unknown Player" — the
+   * same graceful degradation a thin starting lineup already gets.
+   */
+  homeSquad?: Player[]
+  awaySquad?: Player[]
 }
 
 export function generateMatchStats(
@@ -439,6 +552,8 @@ export function generateMatchStats(
     penAway,
     shootoutOutcome,
     reds,
+    homeSquad,
+    awaySquad,
   } = input
 
   const team: TeamMatchStats = generateTeamStats(homePower, awayPower, homeGoals, awayGoals, rng)
@@ -456,9 +571,30 @@ export function generateMatchStats(
   const home = buildCards("home", homeLineup, rng, hasExtraTime, reds)
   const away = buildCards("away", awayLineup, rng, hasExtraTime, reds)
 
+  // Substitutions next, so the goals/penalty logic below already sees who
+  // is actually out there — a substitute can score, get carded or take a
+  // penalty; the man he replaced cannot do any of those past his minute.
+  buildSubstitutions(home.state, homeSquad ?? [], rng)
+  buildSubstitutions(away.state, awaySquad ?? [], rng)
+
+  function subEventsFor(side: Side, state: SideState): MatchEvent[] {
+    return state.subs.map((s) => ({
+      minute: s.minute,
+      type: "sub",
+      side,
+      playerId: s.inSlot.playerId,
+      assistId: s.outSlot.playerId,
+    }))
+  }
+  const subEvents: MatchEvent[] = [
+    ...subEventsFor("home", home.state),
+    ...subEventsFor("away", away.state),
+  ]
+
   const events: MatchEvent[] = [
     ...home.events,
     ...away.events,
+    ...subEvents,
     ...buildGoals(
       {
         side: "home",
@@ -529,13 +665,30 @@ export function generateMatchStats(
       ? buildShootout(penHome, penAway, home.state, away.state, rng, shootoutOutcome)
       : undefined
 
+  const matchMinutes = hasExtraTime ? REGULATION_MINUTES + EXTRA_TIME_MINUTES : REGULATION_MINUTES
+
+  function substitutionsFor(side: Side, state: SideState): Substitution[] {
+    return state.subs.map((s) => ({
+      minute: s.minute,
+      side,
+      outPlayerId: s.outSlot.playerId,
+      inPlayerId: s.inSlot.playerId,
+      position: s.outSlot.position,
+    }))
+  }
+  const substitutions = [
+    ...substitutionsFor("home", home.state),
+    ...substitutionsFor("away", away.state),
+  ].sort((a, b) => a.minute - b.minute)
+
   return {
     events,
     lines: [
-      ...buildLines("home", homeLineup, events, homeGoals, awayGoals, team.onTarget[1], rng),
-      ...buildLines("away", awayLineup, events, awayGoals, homeGoals, team.onTarget[0], rng),
+      ...buildLines("home", home.state, events, homeGoals, awayGoals, team.onTarget[1], matchMinutes, rng),
+      ...buildLines("away", away.state, events, awayGoals, homeGoals, team.onTarget[0], matchMinutes, rng),
     ],
     team,
     ...(shootout ? { shootout } : {}),
+    ...(substitutions.length ? { substitutions } : {}),
   }
 }

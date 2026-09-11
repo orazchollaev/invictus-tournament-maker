@@ -1,3 +1,4 @@
+export { default as GeneratePlayersModal } from "./GeneratePlayersModal.vue"
 export { default as NumberPickerModal } from "./NumberPickerModal.vue"
 export { default as PlayerAvatar } from "./PlayerAvatar.vue"
 export { default as PlayerFormModal } from "./PlayerFormModal.vue"
