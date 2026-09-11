@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { ref, computed } from "vue"
 import { useI18n } from "vue-i18n"
-import { AppButton, AppChip, AppField, AppModal } from "@/components/ui"
+import { AppButton, AppChip, AppField, AppModal, AppStepper, AppToggle } from "@/components/ui"
 import { usePlayersStore } from "../store"
 import { useTeamsStore } from "@/modules/teams/store"
 import { useModal } from "@/composables/useModal"
 import TeamSelect from "./TeamSelect.vue"
-import { planGeneration, drawGenerationSpecs } from "../utils/generatePlayers"
+import { planGeneration, drawGenerationSpecs, type PositionDeficit } from "../utils/generatePlayers"
+import { SQUAD_TARGET_SIZE } from "../constants"
+import type { PlayerPosition } from "../types"
 
 // `teamId` is only known up front when opened from a team-scoped context
 // (the squad card on a team's own page). Opened from the players list —
@@ -23,6 +25,10 @@ useModal(() => modal.value?.close())
 const modal = ref<InstanceType<typeof AppModal> | null>(null)
 
 const selectedTeamId = ref(props.teamId ?? teamsStore.teams[0]?.id ?? "")
+
+/** Instead of one chosen team, top up every team whose squad is thin. */
+const fillAllTeams = ref(false)
+const minSquadSize = ref(1)
 
 function toLines(names: string[]): string {
   return names.join("\n")
@@ -43,11 +49,49 @@ const parsedLastNames = computed(() => fromLines(lastNamesText.value))
 
 const selectedTeam = computed(() => teamsStore.teams.find((tm) => tm.id === selectedTeamId.value))
 const squad = computed(() => store.byTeam(selectedTeamId.value))
-const plan = computed(() => planGeneration(squad.value))
-const totalToAdd = computed(() => plan.value.reduce((sum, d) => sum + d.count, 0))
+
+interface TeamPlan {
+  teamId: string
+  power: number
+  plan: PositionDeficit[]
+}
+
+/** Every team under the squad-size cutoff, each with its own position plan. */
+const understaffedTeamPlans = computed<TeamPlan[]>(() =>
+  teamsStore.teams
+    .filter((tm) => store.byTeam(tm.id).length < minSquadSize.value)
+    .map((tm) => ({ teamId: tm.id, power: tm.power, plan: planGeneration(store.byTeam(tm.id)) }))
+    .filter((tp) => tp.plan.length > 0)
+)
+
+const activePlans = computed<TeamPlan[]>(() => {
+  if (fillAllTeams.value) return understaffedTeamPlans.value
+  if (!selectedTeamId.value) return []
+  return [
+    {
+      teamId: selectedTeamId.value,
+      power: selectedTeam.value?.power ?? 60,
+      plan: planGeneration(squad.value),
+    },
+  ]
+})
+
+const totalToAdd = computed(() =>
+  activePlans.value.reduce((sum, tp) => sum + tp.plan.reduce((s, d) => s + d.count, 0), 0)
+)
+
+/** Position counts summed across every team in play — how the plan renders as chips either way. */
+const positionTotals = computed(() => {
+  const totals = new Map<PlayerPosition, number>()
+  for (const tp of activePlans.value) {
+    for (const d of tp.plan) totals.set(d.position, (totals.get(d.position) ?? 0) + d.count)
+  }
+  return Array.from(totals, ([position, count]) => ({ position, count }))
+})
+
 const canGenerate = computed(
   () =>
-    !!selectedTeamId.value &&
+    activePlans.value.length > 0 &&
     totalToAdd.value > 0 &&
     parsedFirstNames.value.length > 0 &&
     parsedLastNames.value.length > 0
@@ -68,19 +112,24 @@ function generate() {
   if (!canGenerate.value) return
   store.setCustomNames(parsedFirstNames.value, parsedLastNames.value)
   // Generated players cluster around their own team's rating, so a
-  // generated squad reads as that team's players rather than everyone's.
-  const targetPower = selectedTeam.value?.power ?? 60
-  const takenNumbers = new Set(
-    squad.value.filter((p) => p.number !== undefined).map((p) => p.number as number)
-  )
-  const specs = drawGenerationSpecs(
-    plan.value,
-    parsedFirstNames.value,
-    parsedLastNames.value,
-    targetPower,
-    takenNumbers
-  )
-  store.addMany(selectedTeamId.value, specs)
+  // generated squad reads as that team's players rather than everyone's —
+  // done per team here since "fill every understaffed team" spans several.
+  for (const tp of activePlans.value) {
+    const takenNumbers = new Set(
+      store
+        .byTeam(tp.teamId)
+        .filter((p) => p.number !== undefined)
+        .map((p) => p.number as number)
+    )
+    const specs = drawGenerationSpecs(
+      tp.plan,
+      parsedFirstNames.value,
+      parsedLastNames.value,
+      tp.power,
+      takenNumbers
+    )
+    store.addMany(tp.teamId, specs)
+  }
   modal.value?.close()
 }
 </script>
@@ -90,7 +139,12 @@ function generate() {
     <div class="form">
       <p class="hint">{{ t("players.generate.hint") }}</p>
 
-      <AppField v-if="!teamId" layout="stack" :label="t('players.generate.team')">
+      <div v-if="!teamId" class="form-row">
+        <span class="form-label form-label--md">{{ t("players.generate.fillAllTeams") }}</span>
+        <AppToggle v-model="fillAllTeams" :aria-label="t('players.generate.fillAllTeams')" />
+      </div>
+
+      <AppField v-if="!teamId && !fillAllTeams" layout="stack" :label="t('players.generate.team')">
         <TeamSelect
           v-model="selectedTeamId"
           :teams="teamsStore.teams"
@@ -98,11 +152,29 @@ function generate() {
         />
       </AppField>
 
+      <AppStepper
+        v-if="fillAllTeams"
+        v-model="minSquadSize"
+        :min="1"
+        :max="SQUAD_TARGET_SIZE"
+        :label="t('players.generate.minSquadSize')"
+        :hint="t('players.generate.minSquadSizeHint')"
+      />
+
       <div class="plan-summary">
         <template v-if="totalToAdd > 0">
-          <span>{{ t("players.generate.willAdd", { count: totalToAdd }) }}</span>
+          <span>
+            {{
+              fillAllTeams
+                ? t("players.generate.willAddMulti", {
+                    count: totalToAdd,
+                    teams: activePlans.length,
+                  })
+                : t("players.generate.willAdd", { count: totalToAdd })
+            }}
+          </span>
           <AppChip
-            v-for="d in plan"
+            v-for="d in positionTotals"
             :key="d.position"
             square
             size="xs"
@@ -111,7 +183,9 @@ function generate() {
             {{ d.position }} +{{ d.count }}
           </AppChip>
         </template>
-        <span v-else class="plan-full">{{ t("players.generate.squadFull") }}</span>
+        <span v-else class="plan-full">
+          {{ fillAllTeams ? t("players.generate.noTeamsBelow") : t("players.generate.squadFull") }}
+        </span>
       </div>
 
       <div class="section">
