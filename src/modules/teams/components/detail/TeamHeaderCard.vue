@@ -26,9 +26,8 @@ const powerStars = computed(() => Math.round((props.team.power / 99) * 10) / 2)
 <template>
   <AppCard padding="md" rail class="team-header-card">
     <div class="team-header">
-      <AppButton variant="text" size="xs" @click="$emit('back')">
-        <AppIcon :icon="ArrowLeft" />
-        {{ t("common.back") }}
+      <AppButton icon-only size="sm" :aria-label="t('common.back')" @click="$emit('back')">
+        <AppIcon :icon="ArrowLeft" size="sm" />
       </AppButton>
 
       <img

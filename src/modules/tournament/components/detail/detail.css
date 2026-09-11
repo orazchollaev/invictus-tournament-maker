@@ -13,9 +13,63 @@
   color: var(--text-muted);
   margin: 0;
 }
-.t-header-actions {
+/* Three-column grid instead of the shared rule's flex + space-between —
+   space-between centers the middle child only when both sides are equally
+   wide, and the actions column here almost never matches the back button's
+   width. A grid with matching outer columns keeps the season switcher
+   centered no matter how many action buttons the right side has. */
+.t-header .t-header-top {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+}
+.back-btn {
+  grid-column: 1;
+  flex-shrink: 0;
+  justify-self: start;
+}
+
+/* Fixed to column 2 rather than left to auto-placement, so the actions
+   column still lands in column 3 (not 2) when there is only one season and
+   this element doesn't render at all. */
+.t-season-switcher {
+  grid-column: 2;
   display: flex;
   align-items: center;
+  justify-self: center;
+  gap: 2px;
+  flex-shrink: 0;
+}
+.t-season-select {
+  width: 52px;
+}
+.t-season-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+.t-season-nav:hover:not(:disabled) {
+  color: var(--text);
+  background: var(--bg-hover);
+}
+.t-season-nav:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.t-header-actions {
+  grid-column: 3;
+  display: flex;
+  align-items: center;
+  justify-self: end;
   gap: var(--sp-2);
 }
 .header-icon-btn {
@@ -121,8 +175,7 @@
 
 /* ── Responsive ──────────────────────────────────────────────── */
 @media (max-width: 600px) {
-  .t-header-top {
-    flex-wrap: wrap;
+  .t-header .t-header-top {
     gap: 6px;
   }
   .t-header-actions {

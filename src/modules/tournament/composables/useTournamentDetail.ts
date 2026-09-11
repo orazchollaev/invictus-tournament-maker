@@ -22,6 +22,21 @@ export function useTournamentDetail() {
   const tournament = computed(() => store.getById(route.params.id as string))
   const winnerTeam = computed(() => allTeams.value.find((t) => t.id === tournament.value?.winnerId))
 
+  /** Other recorded seasons of this same tournament — same name, another id. */
+  const seasons = computed(() => {
+    if (!tournament.value) return []
+    const name = tournament.value.name
+    return store.tournaments
+      .filter((tour) => tour.name === name)
+      .slice()
+      .sort((a, b) => a.season - b.season)
+      .map((tour) => ({ value: tour.id, label: `S${tour.season}` }))
+  })
+
+  function switchSeason(id: string) {
+    if (id !== tournament.value?.id) router.push(`/tournaments/${id}`)
+  }
+
   const dateStr = computed(() => {
     if (!tournament.value) return ""
     return new Date(tournament.value.createdAt).toLocaleDateString()
@@ -118,6 +133,8 @@ export function useTournamentDetail() {
     tournament,
     winnerTeam,
     dateStr,
+    seasons,
+    switchSeason,
     startNewSeason,
     startNewLeagueSeason,
     hasAnyResults,

@@ -173,18 +173,24 @@ function handleSave() {
   <div class="page">
     <AppCard v-if="!tournament" padding="md">
       <p class="muted">{{ t("tournament.settingsPage.notFound") }}</p>
-      <RouterLink to="/tournaments" class="back-link">
-        <AppIcon :icon="ArrowLeft" />
-        {{ t("tournament.settingsPage.backToTournaments") }}
-      </RouterLink>
+      <AppButton
+        icon-only
+        :aria-label="t('tournament.settingsPage.backToTournaments')"
+        @click="router.push('/tournaments')"
+      >
+        <AppIcon :icon="ArrowLeft" size="sm" />
+      </AppButton>
     </AppCard>
 
     <template v-else>
       <div class="page-top">
-        <RouterLink :to="`/tournaments/${tournamentId}`" class="back-link">
-          <AppIcon :icon="ArrowLeft" />
-          {{ tournament.name }}
-        </RouterLink>
+        <AppButton
+          icon-only
+          :aria-label="t('common.back')"
+          @click="router.push(`/tournaments/${tournamentId}`)"
+        >
+          <AppIcon :icon="ArrowLeft" size="sm" />
+        </AppButton>
         <div class="title-row">
           <h2 class="page-title">
             <AppIcon :icon="Settings" size="lg" class="title-icon" />

@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { computed, ref } from "vue"
-import { useRoute, RouterLink } from "vue-router"
+import { useRoute, useRouter } from "vue-router"
 import { useTournamentStore } from "@/modules/tournament/store"
 import { isLeagueLike } from "@/engine"
 import { ArrowLeft, Trophy, Medal, BarChart3, Table2, Users, Goal } from "@lucide/vue"
 import { useI18n } from "vue-i18n"
 import { Swiper, SwiperSlide } from "swiper/vue"
 import "swiper/css"
-import { AppChip, AppEmptyState, AppIcon, AppTab, AppTabs } from "@/components/ui"
+import { AppButton, AppChip, AppEmptyState, AppIcon, AppTab, AppTabs } from "@/components/ui"
 import {
   ChampionsTab,
   AllFinalsTab,
@@ -23,6 +23,7 @@ import { useHistoryTabs, type HistoryTab } from "../composables/useHistoryTabs"
 import { useFillViewportHeight } from "@/composables/useFillViewportHeight"
 
 const route = useRoute()
+const router = useRouter()
 const store = useTournamentStore()
 const { t } = useI18n()
 
@@ -68,10 +69,9 @@ const tabValue = computed({
 <template>
   <div class="page">
     <div class="t-header">
-      <RouterLink to="/history" class="back-link">
-        <AppIcon :icon="ArrowLeft" />
-        {{ t("history.title") }}
-      </RouterLink>
+      <AppButton icon-only :aria-label="t('history.title')" @click="router.push('/history')">
+        <AppIcon :icon="ArrowLeft" size="sm" />
+      </AppButton>
       <div class="t-header-top">
         <h1>
           {{ name }}

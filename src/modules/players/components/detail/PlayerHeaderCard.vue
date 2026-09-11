@@ -25,9 +25,8 @@ const { t } = useI18n()
 <template>
   <AppCard padding="md" rail class="player-header-card">
     <div class="header">
-      <AppButton variant="text" size="xs" @click="$emit('back')">
-        <AppIcon :icon="ArrowLeft" />
-        {{ t("common.back") }}
+      <AppButton icon-only size="sm" :aria-label="t('common.back')" @click="$emit('back')">
+        <AppIcon :icon="ArrowLeft" size="sm" />
       </AppButton>
 
       <div class="identity">

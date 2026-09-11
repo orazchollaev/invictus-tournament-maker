@@ -24,8 +24,16 @@ import { useFillViewportHeight } from "@/composables/useFillViewportHeight"
 const { t: trns } = useI18n()
 const router = useRouter()
 
-const { store, allTeams, tournament, startNewSeason, startNewLeagueSeason, hasAnyResults } =
-  useTournamentDetail()
+const {
+  store,
+  allTeams,
+  tournament,
+  seasons,
+  switchSeason,
+  startNewSeason,
+  startNewLeagueSeason,
+  hasAnyResults,
+} = useTournamentDetail()
 
 const isFinished = computed(
   () => !!tournament.value && store.isTournamentFinished(tournament.value.id)
@@ -120,12 +128,16 @@ const showStartPlayoffButton = computed(
         :show-advance="showAdvanceButton"
         :show-start-playoff="showStartPlayoffButton"
         :is-exporting="isExporting"
+        :seasons="seasons"
+        :current-season-id="tournament.id"
+        @back="router.push('/tournaments')"
         @open-new-season="openNewSeason"
         @export-excel="exportExcel"
         @simulate-all="store.simulateTournament(tournament!.id)"
         @open-settings="router.push(`/tournaments/${tournament!.id}/settings`)"
         @advance="onAdvance"
         @start-playoff="onStartLeaguePlayoff"
+        @switch-season="switchSeason"
       />
 
       <DetailPhaseTabs

@@ -104,18 +104,22 @@
 
 @media (max-width: 600px) {
   .page {
-    padding: var(--sp-3) var(--sp-2);
+    padding: var(--sp-2);
   }
 
   .page-top {
     flex-wrap: wrap;
     gap: var(--sp-2);
-    margin-bottom: var(--sp-4);
+    margin-bottom: var(--sp-2);
   }
 
   .page-title,
   .t-header h1 {
     font-size: var(--fs-lg);
+  }
+
+  .t-header {
+    margin-bottom: var(--sp-2);
   }
 
   .t-header-top {
