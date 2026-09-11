@@ -481,6 +481,10 @@ export default {
         label: "Kırmızı Kart Etkisi",
         desc: "Kırmızı kart gören takım maçın kalanında zayıflar ve sonraki maçta küçük bir dezavantaj taşır.",
       },
+      injuries: {
+        label: "Sakatlıklar",
+        desc: "Bir sakatlık, oyuncuyu takımının sonraki birkaç maçında rastgele bir süre kadro dışı bırakabilir.",
+      },
       title: "Simülasyon",
       homeAdvantage: {
         label: "Ev Sahibi Avantajı",
@@ -990,6 +994,8 @@ export default {
   playerDetail: {
     yellowCards: "Sarı",
     redCards: "Kırmızı",
+    injuries: "Sakatlık",
+    matchesMissedToInjury: "Sakatlıktan kaçırılan",
     notFound: "Oyuncu bulunamadı.",
     careerTitle: "Kariyer",
     honoursTitle: "Başarılar",

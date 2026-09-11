@@ -479,6 +479,10 @@ export default {
         label: "レッドカードの影響",
         desc: "退場するとその試合の残り時間はチームが弱くなり、次の試合にもわずかな影響が残ります。",
       },
+      injuries: {
+        label: "怪我",
+        desc: "怪我をすると、ランダムな期間、その選手はチームの次の数試合に出場できなくなることがあります。",
+      },
       title: "シミュレーション",
       homeAdvantage: {
         label: "ホームアドバンテージ",
@@ -990,6 +994,8 @@ export default {
   playerDetail: {
     yellowCards: "警告",
     redCards: "退場",
+    injuries: "怪我",
+    matchesMissedToInjury: "怪我による欠場",
     notFound: "選手が見つかりません。",
     careerTitle: "通算成績",
     honoursTitle: "タイトル",

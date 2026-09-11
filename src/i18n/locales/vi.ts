@@ -480,6 +480,10 @@ export default {
         label: "Ảnh hưởng của thẻ đỏ",
         desc: "Một thẻ đỏ làm đội yếu đi trong phần còn lại của trận và để lại bất lợi nhỏ ở trận kế tiếp.",
       },
+      injuries: {
+        label: "Chấn thương",
+        desc: "Chấn thương có thể khiến cầu thủ vắng mặt trong vài trận đấu tiếp theo của đội, với thời gian ngẫu nhiên.",
+      },
       title: "Mô phỏng",
       homeAdvantage: {
         label: "Lợi thế sân nhà",
@@ -990,6 +994,8 @@ export default {
   playerDetail: {
     yellowCards: "Thẻ vàng",
     redCards: "Thẻ đỏ",
+    injuries: "Chấn thương",
+    matchesMissedToInjury: "Vắng vì chấn thương",
     notFound: "Không tìm thấy cầu thủ.",
     careerTitle: "Sự nghiệp",
     honoursTitle: "Danh hiệu",

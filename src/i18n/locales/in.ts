@@ -479,6 +479,10 @@ export default {
         label: "लाल कार्ड का असर",
         desc: "लाल कार्ड मिलने पर टीम बाकी मैच में कमज़ोर हो जाती है और अगले मैच में भी हल्का असर रहता है।",
       },
+      injuries: {
+        label: "चोटें",
+        desc: "चोट लगने पर खिलाड़ी अपनी टीम के अगले कुछ मैचों से बाहर हो सकता है, अवधि यादृच्छिक होती है।",
+      },
       title: "सिमुलेशन",
       homeAdvantage: {
         label: "होम एडवांटेज",
@@ -989,6 +993,8 @@ export default {
   playerDetail: {
     yellowCards: "पीला",
     redCards: "लाल",
+    injuries: "चोटें",
+    matchesMissedToInjury: "चोट से चूके मैच",
     notFound: "खिलाड़ी नहीं मिला।",
     careerTitle: "करियर",
     honoursTitle: "सम्मान",

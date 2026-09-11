@@ -478,6 +478,10 @@ export default {
         label: "ผลของใบแดง",
         desc: "การโดนไล่ออกทำให้ทีมอ่อนลงตลอดเวลาที่เหลือของแมตช์ และมีผลเล็กน้อยต่อนัดถัดไป",
       },
+      injuries: {
+        label: "อาการบาดเจ็บ",
+        desc: "อาการบาดเจ็บอาจทำให้ผู้เล่นพลาดลงสนามในนัดถัดไปของทีมอีกหลายนัด โดยระยะเวลาสุ่ม",
+      },
       title: "การจำลอง",
       homeAdvantage: {
         label: "ความได้เปรียบเหย้า",
@@ -986,6 +990,8 @@ export default {
   playerDetail: {
     yellowCards: "ใบเหลือง",
     redCards: "ใบแดง",
+    injuries: "บาดเจ็บ",
+    matchesMissedToInjury: "พลาดเพราะบาดเจ็บ",
     notFound: "ไม่พบนักเตะ",
     careerTitle: "อาชีพ",
     honoursTitle: "เกียรติประวัติ",

@@ -481,6 +481,10 @@ export default {
         label: "Effet du carton rouge",
         desc: "Une expulsion affaiblit l'équipe pour le reste du match et lui laisse un léger malus au match suivant.",
       },
+      injuries: {
+        label: "Blessures",
+        desc: "Une blessure peut écarter un joueur des prochains matchs de son équipe, pour une durée aléatoire.",
+      },
       title: "Simulation",
       homeAdvantage: {
         label: "Avantage du terrain",
@@ -998,6 +1002,8 @@ export default {
   playerDetail: {
     yellowCards: "Jaunes",
     redCards: "Rouges",
+    injuries: "Blessures",
+    matchesMissedToInjury: "Matchs manqués (blessure)",
     notFound: "Joueur introuvable.",
     careerTitle: "Carrière",
     honoursTitle: "Palmarès",

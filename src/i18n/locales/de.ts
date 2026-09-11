@@ -483,6 +483,10 @@ export default {
         label: "Wirkung der Roten Karte",
         desc: "Ein Platzverweis schwächt das Team für den Rest des Spiels und wirkt sich leicht auf das nächste aus.",
       },
+      injuries: {
+        label: "Verletzungen",
+        desc: "Eine Verletzung kann einen Spieler für die nächsten paar Spiele seines Teams ausschalten, die Dauer ist zufällig.",
+      },
       title: "Simulation",
       homeAdvantage: {
         label: "Heimvorteil",
@@ -999,6 +1003,8 @@ export default {
   playerDetail: {
     yellowCards: "Gelb",
     redCards: "Rot",
+    injuries: "Verletzungen",
+    matchesMissedToInjury: "Verletzt verpasst",
     notFound: "Spieler nicht gefunden.",
     careerTitle: "Karriere",
     honoursTitle: "Erfolge",

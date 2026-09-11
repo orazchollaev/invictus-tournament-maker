@@ -480,6 +480,10 @@ export default {
         label: "Impacto de la tarjeta roja",
         desc: "Una expulsión debilita al equipo el resto del partido y le deja una pequeña penalización en el siguiente.",
       },
+      injuries: {
+        label: "Lesiones",
+        desc: "Una lesión puede dejar a un jugador fuera de los próximos partidos de su equipo, por una duración aleatoria.",
+      },
       title: "Simulación",
       homeAdvantage: {
         label: "Ventaja local",
@@ -992,6 +996,8 @@ export default {
   playerDetail: {
     yellowCards: "Amarillas",
     redCards: "Rojas",
+    injuries: "Lesiones",
+    matchesMissedToInjury: "Bajas por lesión",
     notFound: "Jugador no encontrado.",
     careerTitle: "Carrera",
     honoursTitle: "Palmarés",

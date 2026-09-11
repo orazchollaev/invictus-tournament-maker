@@ -43,6 +43,7 @@ export const useSettingsStore = defineStore("settings", () => {
   const formFactorEnabled = ref(false)
   const homeAdvantage = ref(6)
   const redCardImpact = ref(true)
+  const injuriesEnabled = ref(true)
   const usePlayerPower = ref(true)
   const bracketStyle = ref<BracketStyle>("auto")
   const bracketQuality = ref<BracketQuality>("high")
@@ -124,6 +125,7 @@ export const useSettingsStore = defineStore("settings", () => {
   watch(formFactorEnabled, (val) => setSimConfig({ formFactor: val }), { immediate: true })
   watch(homeAdvantage, (val) => setSimConfig({ homeAdvantage: val }), { immediate: true })
   watch(redCardImpact, (val) => setSimConfig({ redCardImpact: val }), { immediate: true })
+  watch(injuriesEnabled, (val) => setSimConfig({ injuriesEnabled: val }), { immediate: true })
 
   const playersStore = usePlayersStore()
   watch(
@@ -163,6 +165,7 @@ export const useSettingsStore = defineStore("settings", () => {
     formFactorEnabled.value = false
     homeAdvantage.value = 6
     redCardImpact.value = true
+    injuriesEnabled.value = true
     usePlayerPower.value = true
     bracketStyle.value = "auto"
     bracketQuality.value = "high"
@@ -208,6 +211,7 @@ export const useSettingsStore = defineStore("settings", () => {
     formFactorEnabled,
     homeAdvantage,
     redCardImpact,
+    injuriesEnabled,
     usePlayerPower,
     bracketStyle,
     bracketQuality,

@@ -478,6 +478,10 @@ export default {
         label: "تأثير البطاقة الحمراء",
         desc: "الطرد يُضعف الفريق لبقية المباراة ويترك أثرًا بسيطًا في المباراة التالية.",
       },
+      injuries: {
+        label: "الإصابات",
+        desc: "قد تُبعد الإصابة اللاعب عن المباريات القليلة القادمة لفريقه، لمدة عشوائية.",
+      },
       title: "المحاكاة",
       homeAdvantage: {
         label: "أفضلية أرض الملعب",
@@ -983,6 +987,8 @@ export default {
   playerDetail: {
     yellowCards: "صفراء",
     redCards: "حمراء",
+    injuries: "الإصابات",
+    matchesMissedToInjury: "غياب بالإصابة",
     notFound: "اللاعب غير موجود.",
     careerTitle: "المسيرة",
     honoursTitle: "الألقاب",

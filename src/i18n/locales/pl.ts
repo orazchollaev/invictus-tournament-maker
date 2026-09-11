@@ -479,6 +479,10 @@ export default {
         label: "Wpływ czerwonej kartki",
         desc: "Wykluczenie osłabia drużynę do końca meczu i zostawia niewielką karę w następnym.",
       },
+      injuries: {
+        label: "Kontuzje",
+        desc: "Kontuzja może wykluczyć zawodnika z kilku najbliższych meczów drużyny, na losowy czas.",
+      },
       title: "Symulacja",
       homeAdvantage: {
         label: "Przewaga własnego boiska",
@@ -990,6 +994,8 @@ export default {
   playerDetail: {
     yellowCards: "Żółte kartki",
     redCards: "Czerwone kartki",
+    injuries: "Kontuzje",
+    matchesMissedToInjury: "Opuszczone przez kontuzję",
     notFound: "Nie znaleziono zawodnika.",
     careerTitle: "Kariera",
     honoursTitle: "Osiągnięcia",

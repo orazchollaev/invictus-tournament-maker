@@ -478,6 +478,10 @@ export default {
         label: "Red Card Impact",
         desc: "A sending-off weakens the team for the rest of the match, and leaves a small penalty on its next one.",
       },
+      injuries: {
+        label: "Injuries",
+        desc: "A knock can rule a player out of his team's next few matches, for a random length of time.",
+      },
       title: "Simulation",
       homeAdvantage: {
         label: "Home Advantage",
@@ -985,6 +989,8 @@ export default {
   playerDetail: {
     yellowCards: "Yellow",
     redCards: "Red",
+    injuries: "Injuries",
+    matchesMissedToInjury: "Missed to injury",
     notFound: "Player not found.",
     careerTitle: "Career",
     honoursTitle: "Honours",

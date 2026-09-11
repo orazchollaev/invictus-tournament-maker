@@ -35,6 +35,12 @@ const cells = computed(() => {
     { key: "assists", label: t("playerDetail.assists"), value: String(props.totals.assists) },
     { key: "yellow", label: t("playerDetail.yellowCards"), value: String(props.totals.yellow) },
     { key: "red", label: t("playerDetail.redCards"), value: String(props.totals.red) },
+    { key: "injuries", label: t("playerDetail.injuries"), value: String(props.totals.injuries) },
+    {
+      key: "matchesMissedToInjury",
+      label: t("playerDetail.matchesMissedToInjury"),
+      value: String(props.totals.matchesMissedToInjury),
+    },
   ]
 
   if (props.position === "GK") {

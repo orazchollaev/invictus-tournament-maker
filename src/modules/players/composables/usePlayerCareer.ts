@@ -19,6 +19,10 @@ export interface CareerTotals {
   /** Mean match rating across every appearance; 0 when there are none. */
   rating: number
   bestRating: number
+  /** Times this player came off through a substitution tagged "injury". */
+  injuries: number
+  /** Matches missed to injury, summed across every knock. */
+  matchesMissedToInjury: number
 }
 
 export interface Honour {
@@ -40,6 +44,8 @@ const EMPTY: CareerTotals = {
   conceded: 0,
   rating: 0,
   bestRating: 0,
+  injuries: 0,
+  matchesMissedToInjury: 0,
 }
 
 interface TournamentSpell {
@@ -103,6 +109,11 @@ export function usePlayerCareer(getPlayerId: () => string | undefined) {
           acc.conceded += line.conceded ?? 0
           ratingSum += line.rating
           acc.bestRating = Math.max(acc.bestRating, line.rating)
+        }
+        for (const sub of stats.substitutions ?? []) {
+          if (sub.reason !== "injury" || sub.outPlayerId !== playerId) continue
+          acc.injuries += 1
+          acc.matchesMissedToInjury += sub.injuryMatches ?? 0
         }
       }
     }

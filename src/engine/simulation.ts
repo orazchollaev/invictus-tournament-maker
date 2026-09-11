@@ -11,12 +11,14 @@ let _surpriseFactor = 50 // 0 = power dominates, 100 = pure chaos
 let _formFactorEnabled = false
 let _homeAdvantage = 6 // power bonus for home team (0-20)
 let _redCardImpact = true
+let _injuriesEnabled = true
 
 export function setSimConfig(config: {
   surpriseFactor?: number
   formFactor?: boolean
   homeAdvantage?: number
   redCardImpact?: boolean
+  injuriesEnabled?: boolean
 }) {
   if (config.surpriseFactor !== undefined) {
     _surpriseFactor = Math.max(0, Math.min(100, config.surpriseFactor))
@@ -29,6 +31,9 @@ export function setSimConfig(config: {
   }
   if (config.redCardImpact !== undefined) {
     _redCardImpact = config.redCardImpact
+  }
+  if (config.injuriesEnabled !== undefined) {
+    _injuriesEnabled = config.injuriesEnabled
   }
 }
 
@@ -46,6 +51,16 @@ export function isRedCardImpactEnabled(): boolean {
 }
 
 /**
+ * Whether an injury rules a player out of matches after it. Off means no
+ * injuries are rolled at all — unlike a red card, an injury has no cosmetic
+ * value on its own; a sub tagged "injury" only exists to carry a suspension
+ * forward, so with nothing to carry there is nothing to show.
+ */
+export function isInjuriesEnabled(): boolean {
+  return _injuriesEnabled
+}
+
+/**
  * Read the live simulation settings. The match-stats generator needs the
  * surprise factor: at low surprise a power gap should show up as a lopsided
  * match, and at high surprise the same gap should barely register.
@@ -55,12 +70,14 @@ export function getSimConfig(): {
   formFactor: boolean
   homeAdvantage: number
   redCardImpact: boolean
+  injuriesEnabled: boolean
 } {
   return {
     surpriseFactor: _surpriseFactor,
     formFactor: _formFactorEnabled,
     homeAdvantage: _homeAdvantage,
     redCardImpact: _redCardImpact,
+    injuriesEnabled: _injuriesEnabled,
   }
 }
 

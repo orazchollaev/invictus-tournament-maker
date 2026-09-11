@@ -57,6 +57,8 @@ export interface Substitution {
   inPlayerId: string | null // null = replaced by another Unknown slot
   position: PlayerPosition
   reason?: "tactical" | "injury"
+  /** Present only when `reason` is "injury": his team's next N matches he is ruled out of. */
+  injuryMatches?: number
 }
 
 /** Team-level colour, simulated from the power gap and the score. */

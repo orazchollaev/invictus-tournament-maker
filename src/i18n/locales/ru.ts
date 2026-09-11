@@ -481,6 +481,10 @@ export default {
         label: "Влияние красной карточки",
         desc: "Удаление ослабляет команду до конца матча и оставляет небольшой штраф в следующем.",
       },
+      injuries: {
+        label: "Травмы",
+        desc: "Травма может выбить игрока из нескольких следующих матчей команды на случайный срок.",
+      },
       title: "Симуляция",
       homeAdvantage: {
         label: "Преимущество хозяев",
@@ -990,6 +994,8 @@ export default {
   playerDetail: {
     yellowCards: "Жёлтые",
     redCards: "Красные",
+    injuries: "Травмы",
+    matchesMissedToInjury: "Пропущено из-за травм",
     notFound: "Игрок не найден.",
     careerTitle: "Карьера",
     honoursTitle: "Достижения",

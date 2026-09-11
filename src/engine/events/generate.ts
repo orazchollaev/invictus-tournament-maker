@@ -26,6 +26,8 @@ import { computeRating, rollPerformance, type MatchOutcome } from "./rating"
 import { generateTeamStats } from "./teamStats"
 import { reconstructShootout, type ShootoutKickOutcome, type ShootoutOutcome } from "../shootout"
 import { RED_CHANCE } from "../discipline"
+import { INJURY_CHANCE, rollInjuryDuration } from "../injuries"
+import { isInjuriesEnabled } from "../simulation"
 import {
   MAX_STOPPAGE,
   PERIOD_END,
@@ -69,15 +71,21 @@ interface Dismissal {
 }
 
 /**
- * A tactical substitution: `outSlot` is a reference into the starting
- * lineup, `inSlot` is a freshly minted slot for whoever replaced him (a
- * bench player if the squad had one for that position, otherwise another
+ * A substitution: `outSlot` is a reference into the starting lineup,
+ * `inSlot` is a freshly minted slot for whoever replaced him (a bench
+ * player if the squad had one for that position, otherwise another
  * anonymous "Unknown Player").
+ *
+ * `reason` and `injuryMatches` ride straight through to the `Substitution`
+ * the caller sees — see modules/tournament/types.ts and engine/injuries.ts
+ * for what they mean and who reads them.
  */
 interface SubRecord {
   outSlot: LineupSlot
   inSlot: LineupSlot
   minute: number
+  reason: "tactical" | "injury"
+  injuryMatches?: number
 }
 
 /** One side's eleven, plus whoever has already been sent off or subbed. */
@@ -249,6 +257,13 @@ function buildGoals(input: GoalsInput, rng: () => number): MatchEvent[] {
  *
  * The reds are placed before the yellows even though they are announced
  * later in the match, because a man already sent off cannot be booked again.
+ *
+ * A second yellow is a red: when a booking lands on a slot that already
+ * has one this match — regulation or extra time, the count is never reset
+ * between them — it goes down as both, the same shirt carrying a 2Y/1R
+ * line the way a real match report would, and the man comes off exactly
+ * like any other dismissal for everything after it (scoring, subs, the
+ * next match's discipline penalty).
  */
 function buildCards(
   side: Side,
@@ -260,6 +275,8 @@ function buildCards(
   const events: MatchEvent[] = []
   const state: SideState = { lineup, dismissals: [], subs: [] }
   const mine = forcedReds?.filter((r) => r.side === side)
+  const yellowedOnce = new Set<LineupSlot>()
+  const isDismissed = (slot: LineupSlot) => state.dismissals.some((d) => d.slot === slot)
 
   const sendOff = (minute: number) => {
     const slot = pickSlot(onPitch(state, minute), CARD_WEIGHT, rng)
@@ -272,11 +289,35 @@ function buildCards(
 
     if (redChance !== null && rng() < redChance) sendOff(randomMinute(rng, period, allowStoppage))
 
+    // Drawn and sorted before any slot is picked: a second yellow is decided
+    // by which card actually came first on the clock, not by which one the
+    // dice happened to land on first — drawing minute and slot together, as
+    // every other event in this file does, would let a yellow rolled late
+    // in the draw order but early on the clock dodge a dismissal that a
+    // later-clock, earlier-drawn one had already recorded.
     const yellows = poisson(lambda, rng)
-    for (let i = 0; i < yellows; i++) {
-      const minute = randomMinute(rng, period, allowStoppage)
+    const minutes = Array.from({ length: yellows }, () =>
+      randomMinute(rng, period, allowStoppage)
+    ).sort((a, b) => a - b)
+
+    for (const minute of minutes) {
       const slot = pickSlot(onPitch(state, minute), CARD_WEIGHT, rng)
       events.push({ minute, type: "yellow", side, playerId: slot?.playerId ?? null })
+      if (!slot) continue
+
+      if (yellowedOnce.has(slot)) {
+        // A player already carrying a forced red (see engine/discipline.ts)
+        // can still draw an early, unrelated yellow before that dismissal's
+        // own minute — onPitch only rules him out from his dismissal minute
+        // onward. What he cannot do is pick up a *second* dismissal: if
+        // he's already off, this "second yellow" changes nothing further.
+        if (!isDismissed(slot)) {
+          events.push({ minute, type: "red", side, playerId: slot.playerId })
+          state.dismissals.push({ slot, minute })
+        }
+      } else {
+        yellowedOnce.add(slot)
+      }
     }
   }
 
@@ -302,7 +343,8 @@ const SUB_MIN_MINUTE = 46
 const SUB_MAX_MINUTE = 90
 
 /**
- * 2-5 tactical substitutions, mutating `state.subs` in place.
+ * 2-5 tactical substitutions, plus an occasional injury, mutating
+ * `state.subs` in place.
  *
  * Every squad member not already in the starting lineup is fair game as a
  * replacement. A specialist for the slot comes on where the bench has one,
@@ -312,10 +354,19 @@ const SUB_MAX_MINUTE = 90
  * does; a real substitute is never passed over because his listed position
  * does not match the shirt going off.
  *
+ * An injury is just one more substitution, rolled into the same list and
+ * drawn from the same bench — the only things that set it apart are its
+ * minute (any time, not just the second half) and its `injuryMatches`,
+ * which is what makes it cost the player his place in matches still to
+ * come. See engine/injuries.ts for how that duration is later turned into
+ * an unavailable squad.
+ *
  * Only an original starting slot can go off — never a substitute who has
  * already come on. `buildLines` produces exactly two lines per substituted
  * slot (the starter, the replacement); a substitute-of-a-substitute would
- * need a third, which nothing downstream expects.
+ * need a third, which nothing downstream expects. So a player already hurt
+ * cannot then be tactically subbed, or vice versa — whichever is rolled
+ * first claims the slot.
  */
 function buildSubstitutions(state: SideState, squad: Player[], rng: () => number): void {
   const count = SUB_MIN_COUNT + Math.floor(rng() * (SUB_MAX_COUNT - SUB_MIN_COUNT + 1))
@@ -325,12 +376,23 @@ function buildSubstitutions(state: SideState, squad: Player[], rng: () => number
   const bench = squad.filter((p) => !startingIds.has(p.id))
   const usedBenchIds = new Set<string>()
 
-  const minutes = Array.from(
-    { length: count },
-    () => SUB_MIN_MINUTE + Math.floor(rng() * (SUB_MAX_MINUTE - SUB_MIN_MINUTE + 1))
-  ).sort((a, b) => a - b)
+  const planned: { minute: number; reason: "tactical" | "injury"; injuryMatches?: number }[] =
+    Array.from({ length: count }, () => ({
+      minute: SUB_MIN_MINUTE + Math.floor(rng() * (SUB_MAX_MINUTE - SUB_MIN_MINUTE + 1)),
+      reason: "tactical" as const,
+    }))
 
-  for (const minute of minutes) {
+  if (isInjuriesEnabled() && rng() < INJURY_CHANCE) {
+    planned.push({
+      minute: randomMinute(rng, "regulation", true),
+      reason: "injury",
+      injuryMatches: rollInjuryDuration(rng),
+    })
+  }
+
+  planned.sort((a, b) => a.minute - b.minute)
+
+  for (const { minute, reason, injuryMatches } of planned) {
     const dismissedByNow = new Set(
       state.dismissals.filter((d) => d.minute <= minute).map((d) => d.slot)
     )
@@ -349,7 +411,13 @@ function buildSubstitutions(state: SideState, squad: Player[], rng: () => number
       : { playerId: null, position: outSlot.position, power: UNKNOWN_POWER }
     if (replacement) usedBenchIds.add(replacement.id)
 
-    state.subs.push({ outSlot, inSlot, minute })
+    state.subs.push({
+      outSlot,
+      inSlot,
+      minute,
+      reason,
+      ...(injuryMatches ? { injuryMatches } : {}),
+    })
   }
 }
 
@@ -687,6 +755,8 @@ export function generateMatchStats(
       outPlayerId: s.outSlot.playerId,
       inPlayerId: s.inSlot.playerId,
       position: s.outSlot.position,
+      reason: s.reason,
+      ...(s.injuryMatches ? { injuryMatches: s.injuryMatches } : {}),
     }))
   }
   const substitutions = [

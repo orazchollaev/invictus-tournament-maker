@@ -317,8 +317,17 @@ describe("a sent-off player takes no further part", () => {
       for (const red of dismissed(stats.events)) {
         for (const event of stats.events) {
           if (event === undefined) continue
-          if (event.type === "red" && event.playerId === red.playerId) continue
           if (event.minute < red.minute) continue
+          // A dismissal can be a second yellow: the card and the red that
+          // follows it both land in his own minute, and are the sending-off
+          // itself rather than something after it.
+          if (
+            event.minute === red.minute &&
+            (event.type === "yellow" || event.type === "red") &&
+            event.playerId === red.playerId
+          ) {
+            continue
+          }
           expect(event.playerId).not.toBe(red.playerId)
           expect(event.assistId ?? null).not.toBe(red.playerId)
         }

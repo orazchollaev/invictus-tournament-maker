@@ -15,6 +15,7 @@ import type { Tournament, MatchStats, RedCard } from "@/modules/tournament/types
 import { forEachMatch, isBye, type MatchEntry } from "../matchIterator"
 import { resolvePower } from "../power"
 import { extraTimeGoalsOf } from "../knockout"
+import { unavailablePlayersByMatch, type InjuryAvailability } from "../injuries"
 import { buildLineup } from "./lineup"
 import { generateMatchStats } from "./generate"
 import { claimWatchedMatch, pendingKey } from "./pending"
@@ -42,6 +43,14 @@ export interface PendingStatsJob {
   penAway?: number
   /** Dismissals the score was simulated with; replayed rather than re-rolled. */
   reds?: RedCard[]
+  /**
+   * Player ids ruled out of this match by an injury picked up earlier in
+   * the tournament — see engine/injuries.ts. Filtered out of both squads
+   * before a lineup is built for either side, so an injured player is
+   * never selected, starting or off the bench.
+   */
+  unavailableHomeIds?: string[]
+  unavailableAwayIds?: string[]
 }
 
 export interface StatsJobResult {
@@ -61,7 +70,7 @@ export interface StatsJobResult {
   penAway?: number
 }
 
-function jobFor(entry: MatchEntry): PendingStatsJob | null {
+function jobFor(entry: MatchEntry, availability?: InjuryAvailability): PendingStatsJob | null {
   const result = entry.result
   if (!result || isBye(entry)) return null
   const leg = "leg" in entry.source ? entry.source.leg : 1
@@ -78,6 +87,12 @@ function jobFor(entry: MatchEntry): PendingStatsJob | null {
       ? { penHome: result.penHome, penAway: result.penAway }
       : {}),
     ...(result.reds ? { reds: result.reds } : {}),
+    ...(availability?.unavailableHomeIds.length
+      ? { unavailableHomeIds: availability.unavailableHomeIds }
+      : {}),
+    ...(availability?.unavailableAwayIds.length
+      ? { unavailableAwayIds: availability.unavailableAwayIds }
+      : {}),
   }
 }
 
@@ -110,10 +125,17 @@ export function claimWatchedStats(t: Tournament): boolean {
  * to hand the list to a worker instead of generating on the main thread.
  */
 export function pendingStatsJobs(t: Tournament): PendingStatsJob[] {
+  // One pass over the whole tournament's history, snapshotted before any of
+  // these jobs run — the same "computed once per sweep" approximation
+  // fixtureAdjustments already makes for form and discipline. See
+  // engine/injuries.ts for what that trades away.
+  const availabilityByKey = unavailablePlayersByMatch(t)
+
   const jobs: PendingStatsJob[] = []
   forEachMatch(t, (entry) => {
     if (entry.result?.stats !== undefined) return
-    const job = jobFor(entry)
+    const leg = "leg" in entry.source ? entry.source.leg : 1
+    const job = jobFor(entry, availabilityByKey.get(`${entry.match.id}:${leg}`))
     if (job) jobs.push(job)
   })
   return jobs
@@ -130,8 +152,12 @@ export function computeStatsForJob(
   const homeTeam = teamLookup.get(job.homeId)
   const awayTeam = teamLookup.get(job.awayId)
 
-  const homeSquad = squads.get(job.homeId) ?? []
-  const awaySquad = squads.get(job.awayId) ?? []
+  // Ruled out entirely for this match — neither starting nor a bench option,
+  // exactly like a player who was never registered to the squad.
+  const homeOut = new Set(job.unavailableHomeIds)
+  const awayOut = new Set(job.unavailableAwayIds)
+  const homeSquad = (squads.get(job.homeId) ?? []).filter((p) => !homeOut.has(p.id))
+  const awaySquad = (squads.get(job.awayId) ?? []).filter((p) => !awayOut.has(p.id))
 
   const stats = generateMatchStats({
     homeLineup: buildLineup(homeSquad),

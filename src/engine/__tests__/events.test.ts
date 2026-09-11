@@ -275,26 +275,50 @@ describe("substitutions", () => {
     })
   }
 
-  it("makes 2-5 substitutions per side", () => {
+  it("makes 2-5 tactical substitutions per side, plus an occasional injury", () => {
     for (let i = 0; i < 30; i++) {
       const stats = withDeepBench()
-      const homeSubs = stats.substitutions?.filter((s) => s.side === "home").length ?? 0
-      const awaySubs = stats.substitutions?.filter((s) => s.side === "away").length ?? 0
-      expect(homeSubs).toBeGreaterThanOrEqual(2)
-      expect(homeSubs).toBeLessThanOrEqual(5)
-      expect(awaySubs).toBeGreaterThanOrEqual(2)
-      expect(awaySubs).toBeLessThanOrEqual(5)
+      for (const side of ["home", "away"] as const) {
+        const subs = stats.substitutions?.filter((s) => s.side === side) ?? []
+        const tactical = subs.filter((s) => s.reason !== "injury").length
+        const injuries = subs.filter((s) => s.reason === "injury").length
+        expect(tactical).toBeGreaterThanOrEqual(2)
+        expect(tactical).toBeLessThanOrEqual(5)
+        expect(injuries).toBeLessThanOrEqual(1)
+      }
     }
   })
 
-  it("keeps every substitution inside the second half", () => {
+  it("keeps every tactical substitution inside the second half", () => {
     for (let i = 0; i < 30; i++) {
       const stats = withDeepBench()
       for (const sub of stats.substitutions ?? []) {
+        if (sub.reason === "injury") continue
         expect(sub.minute).toBeGreaterThanOrEqual(46)
         expect(sub.minute).toBeLessThanOrEqual(90)
       }
     }
+  })
+
+  it("tags every substitution as tactical unless it is an injury", () => {
+    for (let i = 0; i < 30; i++) {
+      for (const sub of withDeepBench().substitutions ?? []) {
+        expect(["tactical", "injury"]).toContain(sub.reason)
+        if (sub.reason === "injury") {
+          expect(sub.injuryMatches).toBeGreaterThanOrEqual(1)
+        } else {
+          expect(sub.injuryMatches).toBeUndefined()
+        }
+      }
+    }
+  })
+
+  it("never rolls an injury when the setting is off", () => {
+    setSimConfig({ injuriesEnabled: false })
+    for (let i = 0; i < 60; i++) {
+      expect(withDeepBench().substitutions?.some((s) => s.reason === "injury")).toBe(false)
+    }
+    setSimConfig({ injuriesEnabled: true })
   })
 
   it("never subs the same slot off twice, and keeps its position fixed", () => {
@@ -416,6 +440,103 @@ describe("substitutions", () => {
       })
       expect((stats.substitutions ?? []).every((s) => s.inPlayerId === null)).toBe(true)
     })
+  })
+})
+
+describe("second yellow", () => {
+  function play(reds?: { side: "home" | "away"; minute: number }[]) {
+    const homeSquad = fullSquad("t1")
+    const awaySquad = fullSquad("t2")
+    return generateMatchStats({
+      homeLineup: buildLineup(homeSquad),
+      awayLineup: buildLineup(awaySquad),
+      homePower: 70,
+      awayPower: 70,
+      homeGoals: 2,
+      awayGoals: 2,
+      extraTime: { home: 1, away: 1 },
+      penHome: 3,
+      penAway: 2,
+      ...(reds ? { reds } : {}),
+      homeSquad,
+      awaySquad,
+    })
+  }
+
+  it("sends a player off on his second yellow, crediting every card on his line", () => {
+    let seen = 0
+    for (let i = 0; i < 400; i++) {
+      const stats = play()
+      const yellows = new Map<string, number>()
+      for (const e of stats.events) {
+        if (e.type === "yellow" && e.playerId)
+          yellows.set(e.playerId, (yellows.get(e.playerId) ?? 0) + 1)
+      }
+      for (const [playerId, count] of yellows) {
+        if (count < 2) continue
+        seen++
+        const reds = stats.events.filter((e) => e.type === "red" && e.playerId === playerId)
+        expect(reds).toHaveLength(1)
+        const line = stats.lines.find((l) => l.playerId === playerId)
+        expect(line?.yellow).toBe(count)
+        expect(line?.red).toBe(1)
+      }
+    }
+    // Rare, but this fixture (two full sides, extra time, ~2.2 yellows/side)
+    // produces one often enough that never seeing it means the rule broke.
+    expect(seen).toBeGreaterThan(0)
+  })
+
+  it("never gives the same player two red events, forced dismissal or not", () => {
+    for (let i = 0; i < 400; i++) {
+      for (const stats of [
+        play(),
+        play([
+          { side: "home", minute: 18 },
+          { side: "away", minute: 24 },
+        ]),
+      ]) {
+        const counts = new Map<string, number>()
+        for (const e of stats.events) {
+          if (e.type === "red" && e.playerId)
+            counts.set(e.playerId, (counts.get(e.playerId) ?? 0) + 1)
+        }
+        for (const count of counts.values()) expect(count).toBe(1)
+      }
+    }
+  })
+
+  it("takes no further part — scoring, assisting, subbing or a shootout kick — after his dismissal", () => {
+    for (let i = 0; i < 300; i++) {
+      const stats = play()
+      const dismissedAt = new Map<string, number>()
+      for (const e of stats.events) {
+        if (e.type === "red" && e.playerId) dismissedAt.set(e.playerId, e.minute)
+      }
+
+      for (const [playerId, minute] of dismissedAt) {
+        for (const e of stats.events) {
+          if (e.minute < minute) continue
+          if (
+            e.minute === minute &&
+            (e.type === "yellow" || e.type === "red") &&
+            e.playerId === playerId
+          ) {
+            continue
+          }
+          expect(e.playerId).not.toBe(playerId)
+          expect(e.assistId ?? null).not.toBe(playerId)
+        }
+        for (const sub of stats.substitutions ?? []) {
+          if (sub.minute < minute) continue
+          expect(sub.outPlayerId).not.toBe(playerId)
+          expect(sub.inPlayerId).not.toBe(playerId)
+        }
+        for (const kick of stats.shootout ?? []) {
+          expect(kick.playerId).not.toBe(playerId)
+        }
+      }
+    }
   })
 })
 
@@ -886,5 +1007,102 @@ describe("ensureMatchStats", () => {
     const late = match.result!.stats!.events.filter((e) => e.minute > REGULATION_MINUTES)
     expect(late.length).toBeGreaterThanOrEqual(1)
     clearPendingStats()
+  })
+
+  it("keeps an injured player out of his team's following matches", () => {
+    const t = playedTournament()
+    const teams = makeTeams(4)
+    const squad = fullSquad("t1")
+    const injuredId = squad[0].id
+
+    const t1Matches = t.groups![0].matches.filter((m) => m.homeId === "t1" || m.awayId === "t1")
+    expect(t1Matches.length).toBeGreaterThanOrEqual(3)
+
+    // The first of t1's fixtures is already reported, with the injury baked
+    // into it — exactly the shape a real sweep would have left behind.
+    const first = t1Matches[0]
+    const side: "home" | "away" = first.homeId === "t1" ? "home" : "away"
+    first.result!.stats = {
+      events: [],
+      lines: [],
+      team: {
+        possession: 50,
+        shots: [0, 0],
+        onTarget: [0, 0],
+        corners: [0, 0],
+        fouls: [0, 0],
+        xg: [0, 0],
+        bigChances: [0, 0],
+        offsides: [0, 0],
+      },
+      substitutions: [
+        {
+          minute: 30,
+          side,
+          outPlayerId: injuredId,
+          inPlayerId: null,
+          position: "MID",
+          reason: "injury",
+          injuryMatches: 2,
+        },
+      ],
+    }
+
+    ensureMatchStats(t, teams, squad)
+
+    for (const m of t1Matches.slice(1)) {
+      const stats = m.result!.stats
+      expect(stats).toBeTruthy()
+      const ids = [
+        ...stats!.lines.map((l) => l.playerId),
+        ...stats!.events.map((e) => e.playerId),
+        ...(stats!.substitutions ?? []).flatMap((s) => [s.outPlayerId, s.inPlayerId]),
+      ]
+      expect(ids).not.toContain(injuredId)
+    }
+  })
+
+  it("lets an injured player back in once his matches out are served", () => {
+    const t = playedTournament()
+    const teams = makeTeams(4)
+    const squad = fullSquad("t1")
+    const injuredId = squad[0].id
+
+    const t1Matches = t.groups![0].matches.filter((m) => m.homeId === "t1" || m.awayId === "t1")
+    expect(t1Matches.length).toBeGreaterThanOrEqual(3)
+
+    const first = t1Matches[0]
+    const side: "home" | "away" = first.homeId === "t1" ? "home" : "away"
+    first.result!.stats = {
+      events: [],
+      lines: [],
+      team: {
+        possession: 50,
+        shots: [0, 0],
+        onTarget: [0, 0],
+        corners: [0, 0],
+        fouls: [0, 0],
+        xg: [0, 0],
+        bigChances: [0, 0],
+        offsides: [0, 0],
+      },
+      substitutions: [
+        {
+          minute: 30,
+          side,
+          outPlayerId: injuredId,
+          inPlayerId: null,
+          position: "MID",
+          reason: "injury",
+          injuryMatches: 1,
+        },
+      ],
+    }
+
+    ensureMatchStats(t, teams, squad)
+
+    // One match missed (t1Matches[1]), fit again from t1Matches[2] onward.
+    const backId = t1Matches[2]!.result!.stats!.lines.map((l) => l.playerId)
+    expect(backId).toContain(injuredId)
   })
 })

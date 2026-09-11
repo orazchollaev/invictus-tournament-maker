@@ -39,6 +39,7 @@ export {
   getSimConfig,
   isFormFactorEnabled,
   isRedCardImpactEnabled,
+  isInjuriesEnabled,
   computeFormAdjustments,
 } from "./simulation"
 export { decideKnockoutResult, extraTimeGoalsOf } from "./knockout"
@@ -68,6 +69,16 @@ export {
   redsOf,
   computeDisciplineAdjustments,
 } from "./discipline"
+export {
+  INJURY_CHANCE,
+  INJURY_MIN_MATCHES,
+  INJURY_MAX_MATCHES,
+  rollInjuryDuration,
+  computeInjuryAvailability,
+  tournamentInjuryMatches,
+  unavailablePlayersByMatch,
+} from "./injuries"
+export type { InjuryMatch, InjuryAvailability } from "./injuries"
 export { setTableConfig } from "./tableConfig"
 export { setPowerResolver, resolvePower } from "./power"
 export {

@@ -86,6 +86,18 @@ const surpriseFactorLabel = computed(() => {
       />
     </AppField>
 
+    <AppField layout="split" :label="t('settings.simulation.injuries.label')">
+      <template #description>
+        <SettingDesc>
+          {{ t("settings.simulation.injuries.desc") }}
+        </SettingDesc>
+      </template>
+      <AppToggle
+        v-model="settings.injuriesEnabled"
+        :aria-label="t('settings.simulation.injuries.label')"
+      />
+    </AppField>
+
     <AppField layout="split" :label="t('settings.simulation.usePlayerPower.label')">
       <template #description>
         <SettingDesc>

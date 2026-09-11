@@ -481,6 +481,10 @@ export default {
         label: "Dampak Kartu Merah",
         desc: "Kartu merah melemahkan tim untuk sisa pertandingan dan menyisakan penalti kecil di laga berikutnya.",
       },
+      injuries: {
+        label: "Cedera",
+        desc: "Cedera bisa membuat pemain absen di beberapa laga berikutnya timnya, dengan durasi acak.",
+      },
       title: "Simulasi",
       homeAdvantage: {
         label: "Keuntungan Kandang",
@@ -991,6 +995,8 @@ export default {
   playerDetail: {
     yellowCards: "Kuning",
     redCards: "Merah",
+    injuries: "Cedera",
+    matchesMissedToInjury: "Absen karena cedera",
     notFound: "Pemain tidak ditemukan.",
     careerTitle: "Karier",
     honoursTitle: "Prestasi",

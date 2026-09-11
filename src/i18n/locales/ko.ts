@@ -479,6 +479,10 @@ export default {
         label: "레드카드 영향",
         desc: "퇴장하면 남은 경기 동안 팀이 약해지고 다음 경기에도 약간의 불이익이 남습니다.",
       },
+      injuries: {
+        label: "부상",
+        desc: "부상을 당하면 선수가 팀의 다음 몇 경기에 무작위 기간 동안 결장할 수 있습니다.",
+      },
       title: "시뮬레이션",
       homeAdvantage: {
         label: "홈 어드밴티지",
@@ -985,6 +989,8 @@ export default {
   playerDetail: {
     yellowCards: "경고",
     redCards: "퇴장",
+    injuries: "부상",
+    matchesMissedToInjury: "부상 결장",
     notFound: "선수를 찾을 수 없습니다.",
     careerTitle: "커리어",
     honoursTitle: "수상",

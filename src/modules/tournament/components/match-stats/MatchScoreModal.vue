@@ -11,6 +11,7 @@ import type { Team } from "@/modules/teams/types"
 import type { MatchResult, MatchStats } from "@/modules/tournament/types"
 import { MAX_GOALS } from "@/constants"
 import {
+  allMatches,
   buildLineup,
   decideKnockoutResult,
   generateMatchStats,
@@ -19,10 +20,12 @@ import {
   resolvePower,
   simulateMatch,
   stashWatchedMatch,
+  unavailablePlayersByMatch,
   type KnockoutDecision,
   type WatchedMatch,
 } from "@/engine"
 import { usePlayersStore } from "@/modules/players/store"
+import { useTournamentStore } from "@/modules/tournament/store"
 import { useHaptic } from "@/composables/useHaptic"
 
 const props = withDefaults(
@@ -62,6 +65,42 @@ const emit = defineEmits<{
 const { t } = useI18n()
 const { success: hapticSuccess } = useHaptic()
 const playersStore = usePlayersStore()
+const tournamentStore = useTournamentStore()
+
+/**
+ * The tournament this fixture belongs to, found by searching for the match
+ * id rather than threaded down as a prop — this modal is opened from four
+ * different card components, each several layers under whichever page
+ * already resolved the tournament, and match ids are effectively unique
+ * (see engine/utils.ts:uid), so a search is far cheaper than plumbing an
+ * id through every one of those layers for this alone.
+ */
+const tournament = computed(() => {
+  if (!props.matchId) return undefined
+  return tournamentStore.tournaments.find((t) =>
+    allMatches(t).some((entry) => entry.match.id === props.matchId)
+  )
+})
+
+/**
+ * Players this fixture's two sides cannot field — hurt in an earlier match
+ * and not yet due back (see engine/injuries.ts). Rolling or watching a
+ * match here goes through the same filter the post-save sweep in ensure.ts
+ * applies, so an injured player is exactly as unavailable whether the
+ * score was typed in, tapped to simulate, or watched live.
+ */
+const unavailable = computed(() => {
+  const empty = { home: new Set<string>(), away: new Set<string>() }
+  if (!tournament.value || !props.matchId) return empty
+  const entry = unavailablePlayersByMatch(tournament.value).get(
+    `${props.matchId}:${props.leg ?? 1}`
+  )
+  if (!entry) return empty
+  return {
+    home: new Set(entry.unavailableHomeIds),
+    away: new Set(entry.unavailableAwayIds),
+  }
+})
 
 const home = ref(props.result?.home ?? 0)
 const away = ref(props.result?.away ?? 0)
@@ -203,8 +242,12 @@ const canReplay = computed(() => !!props.result?.stats)
 
 function statsFor(decision: KnockoutDecision): MatchStats {
   const { result } = decision
-  const homeSquad = playersStore.byTeam(props.homeTeam!.id)
-  const awaySquad = playersStore.byTeam(props.awayTeam!.id)
+  const homeSquad = playersStore
+    .byTeam(props.homeTeam!.id)
+    .filter((p) => !unavailable.value.home.has(p.id))
+  const awaySquad = playersStore
+    .byTeam(props.awayTeam!.id)
+    .filter((p) => !unavailable.value.away.has(p.id))
   return generateMatchStats({
     homeLineup: buildLineup(homeSquad),
     awayLineup: buildLineup(awaySquad),
