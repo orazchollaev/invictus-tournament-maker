@@ -60,6 +60,80 @@ describe("buildLineup", () => {
       FORMATION.FWD - 1
     )
   })
+
+  /**
+   * A real squad is never shaped like the formation. Eighteen players with
+   * three defenders used to field an anonymous fourth one while five
+   * outfielders sat unused — and a sending-off then put that phantom on the
+   * scoresheet.
+   */
+  describe("a squad deep enough to field eleven fields eleven real players", () => {
+    function lopsidedSquad(): Player[] {
+      const squad: Player[] = []
+      const shape: [Player["position"], number][] = [
+        ["GK", 2],
+        ["DEF", 3],
+        ["MID", 7],
+        ["FWD", 6],
+      ]
+      for (const [position, count] of shape) {
+        for (let i = 0; i < count; i++) {
+          squad.push(makePlayer(`${position}-${i}`, position, 60 + i))
+        }
+      }
+      return squad
+    }
+
+    it("leaves no anonymous slot when players are left on the bench", () => {
+      for (let i = 0; i < 100; i++) {
+        const lineup = buildLineup(lopsidedSquad())
+        expect(lineup.filter((s) => s.playerId === null)).toHaveLength(0)
+      }
+    })
+
+    it("still never fields the same player twice", () => {
+      for (let i = 0; i < 100; i++) {
+        const ids = buildLineup(lopsidedSquad()).map((s) => s.playerId)
+        expect(new Set(ids).size).toBe(LINEUP_SIZE)
+      }
+    })
+
+    it("fills each position from its own specialists first", () => {
+      const lineup = buildLineup(lopsidedSquad())
+      // Only one defensive slot is short, so the three real defenders keep theirs.
+      const defenders = lineup.filter((s) => s.position === "DEF")
+      const natural = defenders.filter((s) => s.playerId?.startsWith("DEF-"))
+      expect(natural).toHaveLength(3)
+      expect(defenders).toHaveLength(FORMATION.DEF)
+    })
+
+    it("charges the cover player for playing out of position", () => {
+      const lineup = buildLineup(lopsidedSquad())
+      const cover = lineup.find((s) => s.position === "DEF" && !s.playerId?.startsWith("DEF-"))
+      expect(cover).toBeDefined()
+      const squad = lopsidedSquad()
+      const real = squad.find((p) => p.id === cover!.playerId)!
+      expect(cover!.power).toBe(real.power - 8)
+    })
+
+    it("puts an outfielder in goal only when there is no keeper at all", () => {
+      const outfieldOnly = [
+        ...Array.from({ length: 6 }, (_, i) => makePlayer(`DEF-${i}`, "DEF", 70)),
+        ...Array.from({ length: 6 }, (_, i) => makePlayer(`MID-${i}`, "MID", 70)),
+      ]
+      const lineup = buildLineup(outfieldOnly)
+      const keeper = lineup.find((s) => s.position === "GK")!
+      expect(keeper.playerId).not.toBeNull()
+      // A field player between the posts is worth a good deal less there.
+      expect(keeper.power).toBe(70 - 20)
+    })
+
+    it("still leaves slots anonymous when the squad really is too small", () => {
+      const lineup = buildLineup([makePlayer("p1", "MID"), makePlayer("p2", "MID")])
+      expect(lineup.filter((s) => s.playerId !== null)).toHaveLength(2)
+      expect(lineup.filter((s) => s.playerId === null)).toHaveLength(LINEUP_SIZE - 2)
+    })
+  })
 })
 
 describe("generateMatchStats", () => {
