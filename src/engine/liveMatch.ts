@@ -21,7 +21,13 @@
 import type { Player } from "@/modules/players/types"
 import type { Formation, PlayStyle, Team } from "@/modules/teams/types"
 import type { MatchEvent, MatchResult, MatchStats, RedCard } from "@/modules/tournament/types"
-import { LINEUP_SIZE, UNKNOWN_POWER, buildLineup, slotPower, type LineupSlot } from "./events/lineup"
+import {
+  LINEUP_SIZE,
+  UNKNOWN_POWER,
+  buildLineup,
+  slotPower,
+  type LineupSlot,
+} from "./events/lineup"
 import {
   ASSIST_CHANCE,
   ASSIST_WEIGHT,
@@ -183,7 +189,10 @@ export function endMinute(state: LiveMatchState): number {
  * clock on a goal without re-scanning the whole timeline. They are appended
  * to `state.events` either way.
  */
-export function advanceMinute(state: LiveMatchState, rng: () => number = Math.random): MatchEvent[] {
+export function advanceMinute(
+  state: LiveMatchState,
+  rng: () => number = Math.random
+): MatchEvent[] {
   if (state.finished) return []
 
   state.minute++
@@ -216,7 +225,11 @@ export function playToEnd(state: LiveMatchState, rng: () => number = Math.random
  * The user (or the AI) changing how a side is set up. Takes effect from the
  * next minute — the one being played has already happened.
  */
-export function setTactics(state: LiveMatchState, which: Side, tactics: Partial<LiveTactics>): void {
+export function setTactics(
+  state: LiveMatchState,
+  which: Side,
+  tactics: Partial<LiveTactics>
+): void {
   const side = state[which]
   side.tactics = { ...side.tactics, ...tactics }
 }
@@ -452,7 +465,14 @@ function rollInjury(state: LiveMatchState, which: Side, rng: () => number): Matc
   if (!slot || !bench.length) return []
 
   const replacement = bench[Math.floor(rng() * bench.length)]
-  const event = applySubstitution(state, which, slot, replacement, "injury", rollInjuryDuration(rng))
+  const event = applySubstitution(
+    state,
+    which,
+    slot,
+    replacement,
+    "injury",
+    rollInjuryDuration(rng)
+  )
   return event ? popEvent(state, event) : []
 }
 
@@ -536,7 +556,9 @@ function isLevel(state: LiveMatchState): boolean {
 }
 
 function goalDiff(state: LiveMatchState, which: Side): number {
-  return which === "home" ? state.score.home - state.score.away : state.score.away - state.score.home
+  return which === "home"
+    ? state.score.home - state.score.away
+    : state.score.away - state.score.home
 }
 
 function meanPower(slots: LineupSlot[]): number {

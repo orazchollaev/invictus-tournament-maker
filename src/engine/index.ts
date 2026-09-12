@@ -48,6 +48,20 @@ export {
 } from "./tactics"
 export type { TacticProfile } from "./tactics"
 export {
+  MAX_SUBSTITUTIONS,
+  createLiveMatch,
+  advanceMinute,
+  playToEnd,
+  endMinute,
+  setTactics,
+  decideAiTactics,
+  benchFor,
+  onPitchFor,
+  applySubstitution,
+  finishLiveMatch,
+} from "./liveMatch"
+export type { LiveMatchState, LiveSide, LiveTactics, CreateLiveMatchInput, Side } from "./liveMatch"
+export {
   simulateMatch,
   simulateExtraTime,
   matchLambdas,

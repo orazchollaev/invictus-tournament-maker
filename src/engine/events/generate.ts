@@ -38,11 +38,31 @@ import {
 } from "../periods"
 
 /** How likely a slot is to be the one that scores, before power weighting. */
-export const SCORE_WEIGHT: Record<PlayerPosition, number> = { GK: 0.02, DEF: 0.2, MID: 0.55, FWD: 1.0 }
-export const ASSIST_WEIGHT: Record<PlayerPosition, number> = { GK: 0.05, DEF: 0.35, MID: 1.0, FWD: 0.7 }
-export const CARD_WEIGHT: Record<PlayerPosition, number> = { GK: 0.15, DEF: 1.0, MID: 0.9, FWD: 0.6 }
+export const SCORE_WEIGHT: Record<PlayerPosition, number> = {
+  GK: 0.02,
+  DEF: 0.2,
+  MID: 0.55,
+  FWD: 1.0,
+}
+export const ASSIST_WEIGHT: Record<PlayerPosition, number> = {
+  GK: 0.05,
+  DEF: 0.35,
+  MID: 1.0,
+  FWD: 0.7,
+}
+export const CARD_WEIGHT: Record<PlayerPosition, number> = {
+  GK: 0.15,
+  DEF: 1.0,
+  MID: 0.9,
+  FWD: 0.6,
+}
 /** Own goals come off a defender's boot far more often than anyone else's. */
-export const OWN_GOAL_WEIGHT: Record<PlayerPosition, number> = { GK: 0.3, DEF: 1.0, MID: 0.25, FWD: 0.05 }
+export const OWN_GOAL_WEIGHT: Record<PlayerPosition, number> = {
+  GK: 0.3,
+  DEF: 1.0,
+  MID: 0.25,
+  FWD: 0.05,
+}
 
 export const OWN_GOAL_CHANCE = 0.02
 export const PENALTY_CHANCE = 0.08
@@ -114,8 +134,16 @@ export function onPitch(state: SideState, minute: number): Lineup {
   if (state.subs.length) {
     const active = state.subs.filter((s) => s.minute <= minute)
     if (active.length) {
-      const outSet = new Set(active.map((s) => s.outSlot))
-      pool = pool.filter((slot) => !outSet.has(slot)).concat(active.map((s) => s.inSlot))
+      // Each change swaps one shirt for another *in place*, in the order the
+      // changes were made. Filtering the departed out and appending the
+      // arrivals looks equivalent and is not: a substitute who is himself
+      // later substituted is not in `lineup`, so nothing gets filtered and
+      // the side ends up fielding twelve.
+      pool = [...pool]
+      for (const sub of active) {
+        const index = pool.indexOf(sub.outSlot)
+        if (index >= 0) pool[index] = sub.inSlot
+      }
     }
   }
 
@@ -577,10 +605,23 @@ function buildLines(
     }
   }
 
+  // One shirt can be worn by more than two men: the live manager may take off
+  // a player who came on himself. Walking the chain keeps the minutes adding
+  // up to the full match however long it runs.
   return lineup.flatMap((slot) => {
-    const sub = state.subs.find((s) => s.outSlot === slot)
-    if (!sub) return [lineFor(slot)]
-    return [lineFor(slot, sub.minute), lineFor(sub.inSlot, matchMinutes - sub.minute)]
+    const lines: PlayerMatchLine[] = []
+    let current = slot
+    let from = 0
+    for (;;) {
+      const sub = state.subs.find((s) => s.outSlot === current)
+      if (!sub) {
+        lines.push(lineFor(current, from === 0 ? undefined : matchMinutes - from))
+        return lines
+      }
+      lines.push(lineFor(current, sub.minute - from))
+      from = sub.minute
+      current = sub.inSlot
+    }
   })
 }
 
@@ -659,16 +700,33 @@ export function assembleMatchStats(
 
   const matchMinutes = hasExtraTime ? REGULATION_MINUTES + EXTRA_TIME_MINUTES : REGULATION_MINUTES
 
-  const substitutions = [
-    ...substitutionsFor("home", home),
-    ...substitutionsFor("away", away),
-  ].sort((a, b) => a.minute - b.minute)
+  const substitutions = [...substitutionsFor("home", home), ...substitutionsFor("away", away)].sort(
+    (a, b) => a.minute - b.minute
+  )
 
   return {
     events,
     lines: [
-      ...buildLines("home", home, events, homeGoals, awayGoals, team.onTarget[1], matchMinutes, rng),
-      ...buildLines("away", away, events, awayGoals, homeGoals, team.onTarget[0], matchMinutes, rng),
+      ...buildLines(
+        "home",
+        home,
+        events,
+        homeGoals,
+        awayGoals,
+        team.onTarget[1],
+        matchMinutes,
+        rng
+      ),
+      ...buildLines(
+        "away",
+        away,
+        events,
+        awayGoals,
+        homeGoals,
+        team.onTarget[0],
+        matchMinutes,
+        rng
+      ),
     ],
     team,
     ...(shootout ? { shootout } : {}),
