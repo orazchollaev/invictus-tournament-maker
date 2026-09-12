@@ -33,6 +33,7 @@ import type { SwissConfigPayload } from "../components/config"
 import { GroupConfigModal, SwissConfigModal } from "../components/config"
 import { useTournamentSettingsDraft } from "../composables/useTournamentSettingsDraft"
 import { useUnsavedChangesGuard } from "@/composables/useUnsavedChangesGuard"
+import { MAX_TIER_COUNT } from "@/constants"
 
 const { t } = useI18n()
 const route = useRoute()
@@ -61,7 +62,7 @@ const localTeams = computed(() =>
 )
 
 const totalTeams = computed(() => tournament.value?.teamIds.length ?? 0)
-const maxTierCount = computed(() => Math.floor(totalTeams.value / 2))
+const maxTierCount = computed(() => Math.min(MAX_TIER_COUNT, Math.floor(totalTeams.value / 2)))
 const minTierSize = computed(() => Math.floor(totalTeams.value / draft.tierCount.value))
 const maxPromotionCount = computed(() => Math.max(1, minTierSize.value - 1))
 

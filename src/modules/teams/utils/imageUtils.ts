@@ -2,7 +2,7 @@
  * Custom team crests come from the user's own device (or a pasted URL), so a
  * gallery pick has to be normalised before it's persisted: cropped to a
  * square, downsized, and re-encoded. Teams are stored via Pinia's persisted
- * IndexedDB adapter and MAX_TEAMS can be as high as 256, so an unprocessed
+ * IndexedDB adapter with no cap on team count, so an unprocessed
  * multi-megabyte photo per team would bloat that store fast.
  */
 

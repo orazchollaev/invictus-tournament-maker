@@ -15,7 +15,6 @@ import {
   AppButtonGroup,
 } from "@/components/ui"
 import { X, Pencil, Plus, Users, List, Grid3x3 } from "@lucide/vue"
-import { MAX_TEAMS } from "@/constants"
 import { useI18n } from "vue-i18n"
 
 const { t } = useI18n()
@@ -55,14 +54,9 @@ const filtered = computed(() => {
     <div class="page-top">
       <h2 class="page-title">
         {{ t("teams.title") }}
-        <span class="count">{{ store.teams.length }}/{{ MAX_TEAMS }}</span>
+        <span class="count">{{ store.teams.length }}</span>
       </h2>
-      <AppButton
-        variant="filled"
-        :disabled="store.teams.length >= MAX_TEAMS"
-        :title="store.teams.length >= MAX_TEAMS ? t('teams.limitReached', { max: MAX_TEAMS }) : ''"
-        @click="showAddModal = true"
-      >
+      <AppButton variant="filled" @click="showAddModal = true">
         <AppIcon :icon="Plus" size="xs" />
         {{ t("teams.addBtn") }}
       </AppButton>

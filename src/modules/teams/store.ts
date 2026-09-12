@@ -3,7 +3,6 @@ import { ref } from "vue"
 import type { Team } from "./types"
 import { useTournamentStore } from "@/modules/tournament/store"
 import { usePlayersStore } from "@/modules/players/store"
-import { MAX_TEAMS } from "@/constants"
 import { showAlert } from "@/composables/useDialog"
 import { i18n } from "@/i18n"
 import { uid } from "@/engine"
@@ -44,7 +43,6 @@ export const useTeamsStore = defineStore("teams", () => {
     flag?: string,
     image?: string
   ) {
-    if (teams.value.length >= MAX_TEAMS) return
     const entry: import("./types").Team = {
       id: uid(),
       name,
