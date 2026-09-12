@@ -26,6 +26,7 @@ import {
   SettingsSimulation,
   SettingsTeamAdjustments,
 } from "../components/settings"
+import { ManagerSettingsCard } from "../components/manager"
 import type { GroupConfigPayload } from "../components/config"
 import type { KnockoutConfigPayload } from "../components/settings/SettingsKnockoutConfigModal.vue"
 import type { LeagueConfigPayload } from "../components/settings/SettingsLeagueConfigModal.vue"
@@ -395,6 +396,8 @@ function handleSave() {
         />
 
         <SettingsSimulation :tournament-id="tournamentId" :tournament="tournament" />
+
+        <ManagerSettingsCard :tournament-id="tournamentId" />
 
         <SettingsDangerZone :tournament-id="tournamentId" />
 

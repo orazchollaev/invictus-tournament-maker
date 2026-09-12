@@ -953,6 +953,39 @@ export default {
       generateBtn: "Üret",
     },
   },
+  manager: {
+    match: {
+      title: "Menajer",
+      manage: "Yönet",
+    },
+    tactics: {
+      title: "Taktik",
+      hint: "Bir sonraki dakikadan itibaren geçerli. Oynanan dakikalar değişmez.",
+      apply: "Uygula",
+    },
+    sub: {
+      title: "Oyuncu Değişikliği",
+      pickOut: "Kim çıkıyor?",
+      pickIn: "Kim giriyor?",
+      back: "Geri",
+      left: "{count} hak",
+      noneLeft: "Değişiklik hakkı kalmadı",
+      emptyBench: "Yedek kulübesi boş",
+      unknownPlayer: "Bilinmeyen Oyuncu",
+    },
+    banner: {
+      title: "{team} — sıradaki maçın",
+      play: "Yönet",
+    },
+    settings: {
+      title: "Menajer Modu",
+      team: "Bir takımı yönet",
+      hint: "Bu takımın tüm sezon boyunca her maçını sen oynarsın. Toplu simülasyon seni bekler.",
+      placeholder: "Kimseyi yönetme — hepsi simüle edilsin",
+      standDown: "Görevi bırak",
+      blocked: "Önce kendi maçını yönet",
+    },
+  },
   liveMatch: {
     title: "Canlı",
     replayTitle: "Tekrar",
@@ -1103,6 +1136,7 @@ export default {
   rounds: {
     matchday: "{n}. Hafta",
     final: "Final",
+    thirdPlace: "3.lük Maçı",
     semiFinals: "Yarı Final",
     quarterFinals: "Çeyrek Final",
     roundOf: "Son {n}",

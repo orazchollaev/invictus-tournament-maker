@@ -74,7 +74,9 @@ const rows = computed(() =>
             <span v-if="row.meta.suffixKey" class="tl-suffix">{{ t(row.meta.suffixKey) }}</span>
           </span>
           <span v-if="row.event.type === 'sub'" class="tl-assist">
-            {{ t("matchStats.events.subFor", { name: row.assist ?? t("matchStats.unknownPlayer") }) }}
+            {{
+              t("matchStats.events.subFor", { name: row.assist ?? t("matchStats.unknownPlayer") })
+            }}
           </span>
           <span v-else-if="row.assist" class="tl-assist">
             {{ t("matchStats.assistBy", { name: row.assist }) }}

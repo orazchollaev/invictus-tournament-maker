@@ -79,7 +79,11 @@ const stageReady = computed(() => {
 })
 
 const knockoutLockedMessage = computed(() =>
-  t(isGroupFormat.value ? "tournament.locked.bracketNeedsGroups" : "tournament.locked.bracketNeedsPlayoff")
+  t(
+    isGroupFormat.value
+      ? "tournament.locked.bracketNeedsGroups"
+      : "tournament.locked.bracketNeedsPlayoff"
+  )
 )
 
 const knockoutMatches = computed<FlatMatch[]>(() => {

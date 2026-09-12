@@ -948,6 +948,39 @@ export default {
       generateBtn: "Generate",
     },
   },
+  manager: {
+    match: {
+      title: "Manager",
+      manage: "Manage",
+    },
+    tactics: {
+      title: "Tactics",
+      hint: "Takes effect from the next minute. Nothing already played changes.",
+      apply: "Apply",
+    },
+    sub: {
+      title: "Substitution",
+      pickOut: "Who comes off?",
+      pickIn: "Who comes on?",
+      back: "Back",
+      left: "{count} left",
+      noneLeft: "No substitutions left",
+      emptyBench: "Nobody on the bench",
+      unknownPlayer: "Unknown Player",
+    },
+    banner: {
+      title: "{team} — your next match",
+      play: "Manage",
+    },
+    settings: {
+      title: "Manager Mode",
+      team: "Manage a team",
+      hint: "You play every one of this team's matches yourself, all season. Bulk simulation waits for you.",
+      placeholder: "Nobody — simulate everything",
+      standDown: "Stand down",
+      blocked: "Manage your own match first",
+    },
+  },
   liveMatch: {
     title: "Live",
     replayTitle: "Replay",
@@ -1098,6 +1131,7 @@ export default {
   rounds: {
     matchday: "Matchday {n}",
     final: "Final",
+    thirdPlace: "3rd Place Match",
     semiFinals: "Semi-Finals",
     quarterFinals: "Quarter-Finals",
     roundOf: "Round of {n}",

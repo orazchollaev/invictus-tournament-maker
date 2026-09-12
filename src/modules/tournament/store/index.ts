@@ -27,6 +27,7 @@ import {
   computeStatsForJob,
   applyStatsResults,
 } from "@/engine"
+import type { MatchEntry } from "@/engine"
 import { generateStatsInWorker } from "@/engine/events/statsWorkerClient"
 import { useTeamsStore } from "@/modules/teams/store"
 import { usePlayersStore } from "@/modules/players/store"
@@ -324,6 +325,65 @@ export const useTournamentStore = defineStore(
       return newT.id
     }
 
+    /**
+     * Commit a score for any fixture, given only the entry that names it.
+     *
+     * Every container has its own setter, addressed by its own coordinates —
+     * group index, matchday index, round index, leg. The fixture cards each
+     * know which one they are and call it directly. The manager banner does
+     * not: it is handed whichever fixture is next, in whatever container that
+     * happens to be, so it needs the dispatch that has never had to exist
+     * before.
+     */
+    function setFixtureResult(
+      tournamentId: string,
+      entry: MatchEntry,
+      home: number,
+      away: number,
+      penHome?: number,
+      penAway?: number
+    ) {
+      const t = tournaments.value.find((x) => x.id === tournamentId)
+      if (!t) return
+      const src = entry.source
+      const id = entry.match.id
+
+      if (src.kind === "group") {
+        const idx = t.groups?.[src.groupIdx]?.matches.findIndex((m) => m.id === id) ?? -1
+        if (idx >= 0) groups.setGroupResult(tournamentId, src.groupIdx, idx, home, away)
+        return
+      }
+
+      if (src.kind === "league") {
+        const league = src.tierIdx === undefined ? t.league : t.tiers?.[src.tierIdx]?.league
+        const idx = league?.matchdays[src.matchdayIdx]?.matches.findIndex((m) => m.id === id) ?? -1
+        if (idx < 0) return
+        if (src.tierIdx === undefined) {
+          leagueActions.setLeagueResult(tournamentId, src.matchdayIdx, idx, home, away)
+        } else {
+          leagueActions.setTierResult(tournamentId, src.tierIdx, src.matchdayIdx, idx, home, away)
+        }
+        return
+      }
+
+      if (src.kind === "third-place") {
+        if (src.leg === 2) {
+          thirdPlace.setThirdPlaceLeg2Result(tournamentId, home, away, penHome, penAway)
+        } else {
+          thirdPlace.setThirdPlaceResult(tournamentId, home, away, penHome, penAway)
+        }
+        return
+      }
+
+      const idx = t.rounds[src.roundIdx]?.matches.findIndex((m) => m.id === id) ?? -1
+      if (idx < 0) return
+      if (src.leg === 2) {
+        bracket.setLeg2Result(tournamentId, src.roundIdx, idx, home, away, penHome, penAway)
+      } else {
+        bracket.setResult(tournamentId, src.roundIdx, idx, home, away, penHome, penAway)
+      }
+    }
+
     /** One "Simulate All" plays out the whole structure, whatever it is. */
     function simulateTournament(tournamentId: string) {
       if (isManagerBlocked(tournamentId)) return
@@ -384,6 +444,7 @@ export const useTournamentStore = defineStore(
       ...withStats(scoring),
       ...withStats(manager),
       createMultiTierLeagueTournament,
+      setFixtureResult,
       simulateTournament,
       migrateLegacyMatchStats,
     }

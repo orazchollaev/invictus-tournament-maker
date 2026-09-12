@@ -2,11 +2,14 @@
 import { computed, nextTick, ref, watch } from "vue"
 
 import { useI18n } from "vue-i18n"
-import { ChartColumn, PlayCircle, Shuffle, Trash2 } from "@lucide/vue"
+import { ChartColumn, ClipboardList, PlayCircle, Shuffle, Trash2 } from "@lucide/vue"
 import { AppNumberInput, AppSheet } from "@/components/ui"
 import { TeamBadge } from "@/modules/teams/components"
 import MatchStatsModal from "./MatchStatsModal.vue"
 import LiveMatchModal from "./LiveMatchModal.vue"
+// Imported directly rather than through the manager barrel: ManagerBanner
+// opens this very modal, so pulling the barrel in here would close a cycle.
+import ManagerMatchDrawer from "../manager/ManagerMatchDrawer.vue"
 import type { Team } from "@/modules/teams/types"
 import type { MatchResult, MatchStats } from "@/modules/tournament/types"
 import { MAX_GOALS } from "@/constants"
@@ -22,7 +25,11 @@ import {
   stashWatchedMatch,
   teamFormation,
   unavailablePlayersByMatch,
+  DEFAULT_FORMATION,
+  DEFAULT_STYLE,
   type KnockoutDecision,
+  type LiveTactics,
+  type Side,
   type WatchedMatch,
 } from "@/engine"
 import { usePlayersStore } from "@/modules/players/store"
@@ -303,6 +310,51 @@ function closeLive() {
   liveWatched.value = null
 }
 
+// ─── Managing it yourself ────────────────────────────────────────
+/**
+ * When the user is in charge of one of these two sides, the match is his to
+ * play rather than to roll. Simulating and watching stay on offer — a manager
+ * is allowed not to be bothered with a dead rubber — but this is the one that
+ * is actually about the outcome, so it is the one styled as the main action.
+ */
+const managedSide = computed<Side | null>(() => {
+  const teamId = tournament.value?.manager?.teamId
+  if (!teamId || props.result) return null
+  if (props.homeTeam?.id === teamId) return "home"
+  if (props.awayTeam?.id === teamId) return "away"
+  return null
+})
+
+const canManage = computed(
+  () => props.canSimulate && !!props.matchId && !!managedSide.value && !!tournament.value?.manager
+)
+
+const managing = ref(false)
+
+/** Both squads as they will actually be available, injuries already removed. */
+const managedSquads = computed(() => ({
+  home: playersStore.byTeam(props.homeTeam!.id).filter((p) => !unavailable.value.home.has(p.id)),
+  away: playersStore.byTeam(props.awayTeam!.id).filter((p) => !unavailable.value.away.has(p.id)),
+}))
+
+const managedTactics = computed<LiveTactics>(() => {
+  const manager = tournament.value?.manager
+  return {
+    formation: manager?.formation ?? DEFAULT_FORMATION,
+    style: manager?.style ?? DEFAULT_STYLE,
+  }
+})
+
+function manage() {
+  if (!canManage.value) return
+  managing.value = true
+}
+
+function onManagedFinish(watched: WatchedMatch) {
+  managing.value = false
+  applyRoll(watched)
+}
+
 function onLiveFinish() {
   const watched = liveWatched.value
   closeLive()
@@ -400,6 +452,10 @@ const canShowStats = computed(() => !!props.result?.stats)
         <ChartColumn :size="14" />
         <span>{{ t("matchStats.buttonLabel") }}</span>
       </button>
+      <button v-if="canManage" class="ms-ghost ms-ghost--manage" @click="manage">
+        <ClipboardList :size="14" />
+        <span>{{ t("manager.match.manage") }}</span>
+      </button>
       <button
         v-if="canWatch || canReplay"
         class="ms-ghost ms-ghost--live"
@@ -435,6 +491,21 @@ const canShowStats = computed(() => !!props.result?.stats)
     :replay="liveIsReplay"
     @finish="onLiveFinish"
     @cancel="closeLive"
+  />
+
+  <ManagerMatchDrawer
+    v-if="managing && managedSide && homeTeam && awayTeam"
+    :home-team="homeTeam"
+    :away-team="awayTeam"
+    :home-squad="managedSquads.home"
+    :away-squad="managedSquads.away"
+    :managed-side="managedSide"
+    :tactics="managedTactics"
+    :requires-winner="requiresWinner"
+    :aggregate-offset="aggregateOffset"
+    :subtitle="subtitle"
+    @finish="onManagedFinish"
+    @cancel="managing = false"
   />
 
   <MatchStatsModal
@@ -576,6 +647,18 @@ const canShowStats = computed(() => !!props.result?.stats)
 .ms-ghost--live:hover {
   color: var(--accent);
   border-color: var(--accent);
+}
+
+/* The match the user is actually in charge of — the one action here that
+   decides something rather than rolling for it. */
+.ms-ghost--manage {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: var(--accent-subtle);
+  font-weight: 600;
+}
+.ms-ghost--manage:hover {
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
 }
 
 @media (max-width: 600px) {

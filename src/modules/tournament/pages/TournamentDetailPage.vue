@@ -15,6 +15,8 @@ import { TournamentStats } from "@/modules/tournament/components/stats"
 import { DrawCeremony } from "@/modules/tournament/components/draw-ceremony"
 import { AppModal, AppSubTabBar } from "@/components/ui"
 import { DetailHeader, DetailPhaseTabs, DetailMultiTierModal } from "../components/detail"
+import { ManagerBanner } from "../components/manager"
+import { hasPendingManagedFixture } from "../utils/managerFixtures"
 import { useTournamentDetail } from "../composables/useTournamentDetail"
 import { useTournamentTabs } from "../composables/useTournamentTabs"
 import { useTournamentCeremonies } from "../composables/useTournamentCeremonies"
@@ -37,6 +39,15 @@ const {
 
 const isFinished = computed(
   () => !!tournament.value && store.isTournamentFinished(tournament.value.id)
+)
+
+/**
+ * Managing a side means managing all of its matches, so "simulate everything"
+ * stays out of reach while one of them is outstanding. The store refuses it
+ * either way — this is only so the button says why.
+ */
+const managerBlocked = computed(
+  () => !!tournament.value?.manager && hasPendingManagedFixture(tournament.value)
 )
 
 const { isExporting, exportExcel } = useTournamentExcelExport(() => tournament.value)
@@ -130,6 +141,7 @@ const showStartPlayoffButton = computed(
         :is-exporting="isExporting"
         :seasons="seasons"
         :current-season-id="tournament.id"
+        :manager-blocked="managerBlocked"
         @back="router.push('/tournaments')"
         @open-new-season="openNewSeason"
         @export-excel="exportExcel"
@@ -139,6 +151,8 @@ const showStartPlayoffButton = computed(
         @start-playoff="onStartLeaguePlayoff"
         @switch-season="switchSeason"
       />
+
+      <ManagerBanner v-if="tournament.manager" :tournament-id="tournament.id" />
 
       <DetailPhaseTabs
         :active-tab="activeTab"

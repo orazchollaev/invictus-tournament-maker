@@ -1,6 +1,15 @@
 <script setup lang="ts">
 import { computed } from "vue"
-import { ArrowLeft, Check, ChevronLeft, ChevronRight, RefreshCw, Settings, Sheet, Zap } from "@lucide/vue"
+import {
+  ArrowLeft,
+  Check,
+  ChevronLeft,
+  ChevronRight,
+  RefreshCw,
+  Settings,
+  Sheet,
+  Zap,
+} from "@lucide/vue"
 import { AppButton, AppIcon, AppSelect } from "@/components/ui"
 import { useI18n } from "vue-i18n"
 
@@ -16,6 +25,9 @@ const props = defineProps<{
    *  none) means there is nothing to switch to, so the picker hides. */
   seasons: { value: string; label: string }[]
   currentSeasonId: string
+  /** Manager mode: the user owes the season a match of his own, so bulk
+   *  simulation is off the table until he has played it. */
+  managerBlocked?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -37,7 +49,9 @@ const seasonModel = computed({
 })
 
 // `seasons` is oldest-first, so the index also doubles as the step direction.
-const seasonIndex = computed(() => props.seasons.findIndex((s) => s.value === props.currentSeasonId))
+const seasonIndex = computed(() =>
+  props.seasons.findIndex((s) => s.value === props.currentSeasonId)
+)
 const prevSeasonId = computed(() => props.seasons[seasonIndex.value - 1]?.value)
 const nextSeasonId = computed(() => props.seasons[seasonIndex.value + 1]?.value)
 
@@ -99,7 +113,8 @@ function onLevelUp() {
           v-if="!isFinished"
           icon-only
           class="header-icon-btn"
-          :title="t('tournament.simulateAll')"
+          :disabled="managerBlocked"
+          :title="managerBlocked ? t('manager.settings.blocked') : t('tournament.simulateAll')"
           @click="emit('simulateAll')"
         >
           <AppIcon :icon="Zap" size="md" />
