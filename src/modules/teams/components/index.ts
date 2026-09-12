@@ -1,5 +1,7 @@
+export { default as CoachFormModal } from "./CoachFormModal.vue"
 export { default as FlagCircle } from "./FlagCircle.vue"
 export { default as FlagPicker } from "./FlagPicker.vue"
+export { default as GenerateCoachesModal } from "./GenerateCoachesModal.vue"
 export { default as SeasonChart } from "./SeasonChart.vue"
 export { default as TeamBadge } from "./TeamBadge.vue"
 export { default as TeamFormModal } from "./TeamFormModal.vue"

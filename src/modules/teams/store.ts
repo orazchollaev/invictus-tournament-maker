@@ -1,6 +1,6 @@
 import { defineStore } from "pinia"
 import { ref } from "vue"
-import type { Team } from "./types"
+import type { Coach, Team } from "./types"
 import { useTournamentStore } from "@/modules/tournament/store"
 import { usePlayersStore } from "@/modules/players/store"
 import { showAlert } from "@/composables/useDialog"
@@ -72,9 +72,22 @@ export const useTeamsStore = defineStore("teams", () => {
     Object.assign(t, data)
   }
 
+  /** Appoint or sack one manager. `undefined` leaves the club without one. */
+  function setCoach(id: string, coach: Coach | undefined) {
+    const team = teams.value.find((t) => t.id === id)
+    if (!team) return
+    if (coach) team.coach = { ...coach, power: clampPower(coach.power) }
+    else delete team.coach
+  }
+
+  /** A whole generation run at once — mirrors players' `addMany`. */
+  function setCoaches(specs: Array<Coach & { teamId: string }>) {
+    for (const { teamId, ...coach } of specs) setCoach(teamId, coach)
+  }
+
   function isTeamInTournament(id: string) {
     return tournaments.some((t) => t.teamIds.find((tmId) => tmId == id))
   }
 
-  return { teams, add, remove, update, COLORS }
+  return { teams, add, remove, update, setCoach, setCoaches, COLORS }
 })

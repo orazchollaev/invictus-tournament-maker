@@ -3,6 +3,7 @@ import type { Team } from "../modules/teams/types"
 import type { Match, GroupMatch, RedCard } from "../modules/tournament/types"
 import { MAX_GOALS } from "@/constants/limits"
 import { resolvePower } from "./power"
+import { lambdaMultipliers, teamProfile, type TacticProfile } from "./tactics"
 import { rollShootout, type ShootoutOutcome } from "./shootout"
 import { REGULATION_MINUTES, EXTRA_TIME_MINUTES } from "./periods"
 import { rollMatchReds, inMatchRedPenalty, extraTimeRedPenalty } from "./discipline"
@@ -177,26 +178,77 @@ function getTeamLookup(teams: Team[]): Map<string, Team> {
  * `penalty` is the cost of playing a man down, subtracted after the clamp's
  * lower bound is applied so a red card can always drag a side below its
  * rating, however weak that rating already was.
+ *
+ * A coach's own rating rides in with the adjustment, before the clamp — he is
+ * part of how good the side is on the day. What he is *not* part of is
+ * `resolvePower` itself, which stays the pure squad rating: draw pots, Swiss
+ * seeding and multi-tier divisions rank teams, not touchlines.
  */
 function resolveSides(
   match: Match | GroupMatch,
   teams: Team[],
   adjustments?: Map<string, number>,
   penalty?: { home: number; away: number }
-): { hp: number; ap: number } {
+): { hp: number; ap: number; tactics: { home: TacticProfile; away: TacticProfile } } {
   const lookup = getTeamLookup(teams)
-  const baseHp = resolvePower(lookup.get(match.homeId as string))
-  const baseAp = resolvePower(lookup.get(match.awayId as string))
+  const homeTeam = lookup.get(match.homeId as string)
+  const awayTeam = lookup.get(match.awayId as string)
+  const home = teamProfile(homeTeam)
+  const away = teamProfile(awayTeam)
   const clamp = (power: number, drop: number) => Math.max(1, Math.min(100, power) - drop)
   return {
-    hp: clamp(baseHp + (adjustments?.get(match.homeId as string) ?? 0), penalty?.home ?? 0),
-    ap: clamp(baseAp + (adjustments?.get(match.awayId as string) ?? 0), penalty?.away ?? 0),
+    hp: clamp(
+      resolvePower(homeTeam) + home.powerBonus + (adjustments?.get(match.homeId as string) ?? 0),
+      penalty?.home ?? 0
+    ),
+    ap: clamp(
+      resolvePower(awayTeam) + away.powerBonus + (adjustments?.get(match.awayId as string) ?? 0),
+      penalty?.away ?? 0
+    ),
+    tactics: { home, away },
   }
 }
 
 /** -1..1: how far the match tilts towards the home side, home advantage included. */
-function sideStrength(hp: number, ap: number): number {
+export function sideStrength(hp: number, ap: number): number {
   return Math.tanh((hp + _homeAdvantage - ap) / 40)
+}
+
+/** Goals a side is expected to score over ninety minutes, before any tactics. */
+const BASE_LAMBDA = 1.45
+
+/**
+ * The two goal rates a match is played at.
+ *
+ * The one place the model lives, so the live manager engine — which rolls a
+ * minute at a time rather than a match at a time — cannot drift away from the
+ * bulk simulator it has to agree with. `minutes` scales the rate to a shorter
+ * period (extra time, or a single minute); `tactics` applies the coaches'
+ * matchup on top.
+ */
+export function matchLambdas(
+  hp: number,
+  ap: number,
+  opts?: {
+    tactics?: { home: TacticProfile; away: TacticProfile }
+    minutes?: number
+    rng?: () => number
+  }
+): { home: number; away: number; strength: number } {
+  const rng = opts?.rng ?? Math.random
+  const strength = sideStrength(hp, ap)
+  const base = BASE_LAMBDA * ((opts?.minutes ?? REGULATION_MINUTES) / REGULATION_MINUTES)
+  const randomFactor = 0.85 + rng() * 0.3
+  const strengthMult = 1.8 - (_surpriseFactor / 100) * 1.7
+  const tactics = opts?.tactics
+    ? lambdaMultipliers(opts.tactics.home, opts.tactics.away)
+    : { home: 1, away: 1 }
+
+  return {
+    home: base * (1 + strength * strengthMult) * randomFactor * tactics.home,
+    away: base * (1 - strength * strengthMult) * randomFactor * tactics.away,
+    strength,
+  }
 }
 
 /**
@@ -213,14 +265,11 @@ export function simulateMatch(
   adjustments?: Map<string, number>
 ): { home: number; away: number; reds?: RedCard[] } {
   const reds = _redCardImpact ? rollMatchReds() : []
-  const { hp, ap } = resolveSides(match, teams, adjustments, inMatchRedPenalty(reds))
-  const strength = sideStrength(hp, ap)
-  const base = 1.45
-  const randomFactor = 0.85 + Math.random() * 0.3
-  const strengthMult = 1.8 - (_surpriseFactor / 100) * 1.7
+  const { hp, ap, tactics } = resolveSides(match, teams, adjustments, inMatchRedPenalty(reds))
+  const { home: hBase, away: aBase, strength } = matchLambdas(hp, ap, { tactics })
 
-  let hLambda = base * (1 + strength * strengthMult) * randomFactor
-  let aLambda = base * (1 - strength * strengthMult) * randomFactor
+  let hLambda = hBase
+  let aLambda = aBase
 
   const carry = reds.length ? { reds } : {}
 
@@ -262,15 +311,11 @@ export function simulateExtraTime(
   reds?: RedCard[]
 ): { home: number; away: number } {
   const penalty = _redCardImpact ? extraTimeRedPenalty(reds) : undefined
-  const { hp, ap } = resolveSides(match, teams, adjustments, penalty)
-  const strength = sideStrength(hp, ap)
-
-  const base = 1.45 * (EXTRA_TIME_MINUTES / REGULATION_MINUTES)
-  const randomFactor = 0.85 + Math.random() * 0.3
-  const strengthMult = 1.8 - (_surpriseFactor / 100) * 1.7
-
-  const hLambda = base * (1 + strength * strengthMult) * randomFactor
-  const aLambda = base * (1 - strength * strengthMult) * randomFactor
+  const { hp, ap, tactics } = resolveSides(match, teams, adjustments, penalty)
+  const { home: hLambda, away: aLambda } = matchLambdas(hp, ap, {
+    tactics,
+    minutes: EXTRA_TIME_MINUTES,
+  })
 
   return {
     home: poisson(Math.max(0.05, hLambda)),

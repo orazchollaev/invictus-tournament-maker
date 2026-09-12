@@ -14,6 +14,7 @@ import type { Team } from "@/modules/teams/types"
 import type { Tournament, MatchStats, RedCard } from "@/modules/tournament/types"
 import { forEachMatch, isBye, type MatchEntry } from "../matchIterator"
 import { resolvePower } from "../power"
+import { teamFormation } from "../tactics"
 import { extraTimeGoalsOf } from "../knockout"
 import { unavailablePlayersByMatch, type InjuryAvailability } from "../injuries"
 import { buildLineup } from "./lineup"
@@ -160,8 +161,8 @@ export function computeStatsForJob(
   const awaySquad = (squads.get(job.awayId) ?? []).filter((p) => !awayOut.has(p.id))
 
   const stats = generateMatchStats({
-    homeLineup: buildLineup(homeSquad),
-    awayLineup: buildLineup(awaySquad),
+    homeLineup: buildLineup(homeSquad, Math.random, teamFormation(homeTeam)),
+    awayLineup: buildLineup(awaySquad, Math.random, teamFormation(awayTeam)),
     homePower: resolvePower(homeTeam),
     awayPower: resolvePower(awayTeam),
     homeGoals: job.homeGoals,

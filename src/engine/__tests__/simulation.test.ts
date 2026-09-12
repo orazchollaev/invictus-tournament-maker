@@ -1,6 +1,6 @@
 // engine/__tests__/simulation.test.ts
 import { afterEach, describe, expect, it } from "vitest"
-import type { Team } from "@/modules/teams/types"
+import type { Formation, PlayStyle, Team } from "@/modules/teams/types"
 import { MAX_GOALS } from "@/constants/limits"
 import {
   computeFormAdjustments,
@@ -9,6 +9,7 @@ import {
   simulateMatch,
   simulatePenaltyShootout,
 } from "../simulation"
+import { resolvePower } from "../power"
 import { makeTeams } from "./helpers"
 
 const DEFAULT_CONFIG = { surpriseFactor: 50, formFactor: false, homeAdvantage: 6 }
@@ -184,5 +185,80 @@ describe("simulatePenaltyShootout", () => {
       expect(r.penHome).toBeLessThanOrEqual(30)
       expect(r.penAway).toBeLessThanOrEqual(30)
     }
+  })
+})
+
+describe("coaches", () => {
+  function withCoach(
+    id: string,
+    power: number,
+    coach?: { formation: Formation; style: PlayStyle; power: number }
+  ): Team {
+    return {
+      id,
+      name: id,
+      color: "#333333",
+      power,
+      ...(coach ? { coach: { name: `${id} boss`, ...coach } } : {}),
+    }
+  }
+
+  it("a team with no coach is untouched — power alone still decides it", () => {
+    setSimConfig({ surpriseFactor: 0, formFactor: false, homeAdvantage: 0 })
+    const strong = withCoach("s", 95)
+    const weak = withCoach("w", 40)
+
+    let strongWins = 0
+    for (let i = 0; i < 300; i++) {
+      const r = simulateMatch(match("s", "w"), [strong, weak])
+      if (r.home > r.away) strongWins++
+    }
+    // The same bound the coachless suite above uses for a gap this size.
+    expect(strongWins).toBeGreaterThan(230)
+  })
+
+  it("a coach never moves the squad rating itself", () => {
+    const bare = withCoach("t", 70)
+    const coached = withCoach("t", 70, { formation: "3-4-3", style: "attacking", power: 99 })
+    // resolvePower is what draw pots, Swiss seeding and division sorting read.
+    expect(resolvePower(coached)).toBe(resolvePower(bare))
+  })
+
+  it("an attacking side out-scores the same side set up defensively", () => {
+    setSimConfig({ surpriseFactor: 50, formFactor: false, homeAdvantage: 0 })
+    const opponent = withCoach("o", 60)
+
+    let attackingGoals = 0
+    let defensiveGoals = 0
+    for (let i = 0; i < 600; i++) {
+      attackingGoals += simulateMatch(match("a", "o"), [
+        withCoach("a", 60, { formation: "3-4-3", style: "attacking", power: 60 }),
+        opponent,
+      ]).home
+      defensiveGoals += simulateMatch(match("d", "o"), [
+        withCoach("d", 60, { formation: "5-4-1", style: "defensive", power: 60 }),
+        opponent,
+      ]).home
+    }
+    // ~0.21 vs ~-0.16 on the goal rate over 600 matches (expectation ≈ 870 vs
+    // 610 goals): a wide margin, checked loosely so noise can never fail it.
+    expect(attackingGoals).toBeGreaterThan(defensiveGoals * 1.15)
+  })
+
+  it("a well-coached side edges a badly-coached one of equal strength", () => {
+    setSimConfig({ surpriseFactor: 30, formFactor: false, homeAdvantage: 0 })
+    const good = withCoach("g", 60, { formation: "4-3-3", style: "attacking", power: 99 })
+    const bad = withCoach("b", 60, { formation: "4-5-1", style: "defensive", power: 1 })
+
+    let goodWins = 0
+    let badWins = 0
+    for (let i = 0; i < 800; i++) {
+      const r = simulateMatch(match("g", "b"), [good, bad])
+      if (r.home > r.away) goodWins++
+      else if (r.away > r.home) badWins++
+    }
+    expect(goodWins).toBeGreaterThan(badWins)
+    // Moderate, not decisive: the worse-coached side still wins plenty.
+    expect(badWins).toBeGreaterThan(120)
   })
 })

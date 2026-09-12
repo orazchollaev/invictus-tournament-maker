@@ -31,8 +31,27 @@ export type {
   CeremonyContext,
 } from "./drawCeremony"
 export {
+  FORMATIONS,
+  FORMATION_LIST,
+  PLAY_STYLES,
+  DEFAULT_FORMATION,
+  DEFAULT_STYLE,
+  COACH_POWER_SWING,
+  MIN_LAMBDA_MULTIPLIER,
+  MAX_LAMBDA_MULTIPLIER,
+  coachPowerBonus,
+  tacticsProfile,
+  teamProfile,
+  teamFormation,
+  lambdaMultipliers,
+  aiStyleFor,
+} from "./tactics"
+export type { TacticProfile } from "./tactics"
+export {
   simulateMatch,
   simulateExtraTime,
+  matchLambdas,
+  sideStrength,
   simulateShootoutOutcome,
   simulatePenaltyShootout,
   setSimConfig,

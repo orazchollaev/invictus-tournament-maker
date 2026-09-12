@@ -20,6 +20,7 @@ import {
   resolvePower,
   simulateMatch,
   stashWatchedMatch,
+  teamFormation,
   unavailablePlayersByMatch,
   type KnockoutDecision,
   type WatchedMatch,
@@ -249,8 +250,8 @@ function statsFor(decision: KnockoutDecision): MatchStats {
     .byTeam(props.awayTeam!.id)
     .filter((p) => !unavailable.value.away.has(p.id))
   return generateMatchStats({
-    homeLineup: buildLineup(homeSquad),
-    awayLineup: buildLineup(awaySquad),
+    homeLineup: buildLineup(homeSquad, Math.random, teamFormation(props.homeTeam!)),
+    awayLineup: buildLineup(awaySquad, Math.random, teamFormation(props.awayTeam!)),
     homePower: resolvePower(props.homeTeam!),
     awayPower: resolvePower(props.awayTeam!),
     homeGoals: result.home,

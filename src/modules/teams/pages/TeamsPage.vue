@@ -3,7 +3,12 @@ import { ref, computed } from "vue"
 import { useRouter } from "vue-router"
 import { useTeamsStore } from "../store"
 import { useSettingsStore } from "@/modules/settings/store"
-import { TeamFormModal, TeamBadge, TeamsFilterMenu } from "@/modules/teams/components"
+import {
+  GenerateCoachesModal,
+  TeamFormModal,
+  TeamBadge,
+  TeamsFilterMenu,
+} from "@/modules/teams/components"
 import type { Team } from "../types"
 import {
   AppButton,
@@ -14,7 +19,7 @@ import {
   AppSearchInput,
   AppButtonGroup,
 } from "@/components/ui"
-import { X, Pencil, Plus, Users, List, Grid3x3 } from "@lucide/vue"
+import { X, Pencil, Plus, Users, List, Grid3x3, ClipboardList } from "@lucide/vue"
 import { useI18n } from "vue-i18n"
 
 const { t } = useI18n()
@@ -23,6 +28,7 @@ const settings = useSettingsStore()
 const router = useRouter()
 
 const showAddModal = ref(false)
+const showCoachesModal = ref(false)
 const editingTeam = ref<Team | null>(null)
 const query = ref("")
 
@@ -56,10 +62,20 @@ const filtered = computed(() => {
         {{ t("teams.title") }}
         <span class="count">{{ store.teams.length }}</span>
       </h2>
-      <AppButton variant="filled" @click="showAddModal = true">
-        <AppIcon :icon="Plus" size="xs" />
-        {{ t("teams.addBtn") }}
-      </AppButton>
+      <div class="page-top-actions">
+        <AppButton
+          v-if="store.teams.length"
+          icon-only
+          :title="t('coach.generate.buttonLabel')"
+          @click="showCoachesModal = true"
+        >
+          <AppIcon :icon="ClipboardList" size="xs" />
+        </AppButton>
+        <AppButton variant="filled" @click="showAddModal = true">
+          <AppIcon :icon="Plus" size="xs" />
+          {{ t("teams.addBtn") }}
+        </AppButton>
+      </div>
     </div>
 
     <div v-if="store.teams.length" class="search-row">
@@ -119,10 +135,17 @@ const filtered = computed(() => {
 
     <TeamFormModal v-if="showAddModal" @close="showAddModal = false" />
     <TeamFormModal v-if="editingTeam" :team="editingTeam" @close="editingTeam = null" />
+    <GenerateCoachesModal v-if="showCoachesModal" @close="showCoachesModal = false" />
   </div>
 </template>
 
 <style scoped>
+.page-top-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
 .search-row {
   width: 100%;
   display: flex;

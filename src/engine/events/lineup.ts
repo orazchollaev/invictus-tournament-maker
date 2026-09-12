@@ -16,9 +16,11 @@
 // names; whoever is left over covers the gap, the way a manager fields a
 // midfielder at the back rather than playing with ten.
 import type { Player, PlayerPosition } from "@/modules/players/types"
+import type { Formation } from "@/modules/teams/types"
+import { DEFAULT_FORMATION, FORMATIONS } from "../tactics"
 
-/** 1-4-3-3. Eleven slots, always. */
-export const FORMATION: Record<PlayerPosition, number> = { GK: 1, DEF: 4, MID: 3, FWD: 3 }
+/** The shape a side lines up in when nobody has told it otherwise. */
+export const FORMATION: Record<PlayerPosition, number> = FORMATIONS[DEFAULT_FORMATION]
 
 export const LINEUP_SIZE = 11
 
@@ -122,14 +124,22 @@ export function slotPower(player: Player, playing: PlayerPosition): number {
  * claimed to whoever is still on the bench, at a penalty — a real name out
  * of position beats an anonymous one, and a squad big enough to field
  * eleven should field eleven.
+ *
+ * `formation` is the coach's shape. Whichever it is, it is eleven slots — the
+ * two passes below do not care how they are distributed.
  */
-export function buildLineup(squad: Player[], rng: () => number = Math.random): Lineup {
+export function buildLineup(
+  squad: Player[],
+  rng: () => number = Math.random,
+  formation: Formation = DEFAULT_FORMATION
+): Lineup {
   const lineup: Lineup = []
   const used = new Set<string>()
   const gaps: LineupSlot[] = []
+  const shape = FORMATIONS[formation] ?? FORMATIONS[DEFAULT_FORMATION]
 
-  for (const position of Object.keys(FORMATION) as PlayerPosition[]) {
-    const slots = FORMATION[position]
+  for (const position of Object.keys(shape) as PlayerPosition[]) {
+    const slots = shape[position]
     const candidates = squad.filter((p) => p.position === position)
     const chosen = sampleByPower(candidates, slots, rng)
 

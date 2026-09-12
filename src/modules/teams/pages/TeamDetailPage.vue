@@ -19,6 +19,7 @@ import {
 } from "@/components/ui"
 import { SeasonChart } from "@/modules/teams/components"
 import {
+  TeamCoachCard,
   TeamFormRow,
   TeamHeaderCard,
   TeamMatchList,
@@ -154,6 +155,7 @@ const tabValue = computed({
               </div>
 
               <div v-else-if="tab === 'squad'" class="tab-panel tab-panel--flush">
+                <TeamCoachCard :team-id="team.id" />
                 <TeamSquadCard :team-id="team.id" :team-color="team.color" />
               </div>
 

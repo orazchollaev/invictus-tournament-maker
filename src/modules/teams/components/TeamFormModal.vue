@@ -1,6 +1,13 @@
 <script setup lang="ts">
 import { ref, computed, watch, nextTick } from "vue"
-import { AppButton, AppField, AppIcon, AppModal, AppColorPicker, AppStarRating } from "@/components/ui"
+import {
+  AppButton,
+  AppField,
+  AppIcon,
+  AppModal,
+  AppColorPicker,
+  AppStarRating,
+} from "@/components/ui"
 import FlagPicker from "./FlagPicker.vue"
 import FlagCircle from "./FlagCircle.vue"
 import TeamImageSourceModal from "./TeamImageSourceModal.vue"
