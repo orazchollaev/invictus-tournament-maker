@@ -48,7 +48,7 @@ src/modules/<name>/
   types.ts        Module-scoped types.
 ```
 
-Current modules: `core`, `history`, `players`, `settings`, `teams`, `tournament`.
+Current modules: `core`, `history`, `music`, `players`, `settings`, `teams`, `tournament`.
 
 ### Why these boundaries
 

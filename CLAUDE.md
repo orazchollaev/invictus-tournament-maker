@@ -28,7 +28,7 @@ src/
   engine/         Pure domain logic. No Vue, no stores, no DOM. Well tested.
   i18n/           vue-i18n setup + locales.
   lib/            App-wide infrastructure adapters.
-  modules/        Feature modules (core, history, players, settings, teams, tournament).
+  modules/        Feature modules (core, history, music, players, settings, teams, tournament).
   router/
 ```
 
