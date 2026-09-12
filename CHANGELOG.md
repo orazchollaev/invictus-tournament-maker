@@ -1,5 +1,34 @@
 # Changelog
 
+## [2.7.0](https://github.com/orazchollaev/invictus-tournament-maker/compare/v2.6.1...v2.7.0) (2026-09-12)
+
+### 🚀 New Features
+
+- **engine:** add realistic shot variance, xG/big chances/offsides, and substitutions ([f581920](https://github.com/orazchollaev/invictus-tournament-maker/commit/f581920a59eb53cd535c8b6d457fbbfab2f7c575))
+- **engine:** raise score cap dynamically for lopsided matches ([9ca9989](https://github.com/orazchollaev/invictus-tournament-maker/commit/9ca99898f22a78530bff417005f918a6dfc99e5d))
+- **players:** add bulk Generate Players with editable name pool ([52a9741](https://github.com/orazchollaev/invictus-tournament-maker/commit/52a9741b5d9b22e1ffe46abc5d6a2ab35601d706))
+- **players:** add fill-all-understaffed-teams option to Generate Players, with i18n ([9a853d6](https://github.com/orazchollaev/invictus-tournament-maker/commit/9a853d67d6df248338c7dd232dcb3f4d9d792ff2))
+- remove team limit and increase max tier count to 10 ([f42e3fd](https://github.com/orazchollaev/invictus-tournament-maker/commit/f42e3fdb22ea5801e3a7367c03a66ee8d392565c))
+- **tournament:** add season switcher and icon-only back buttons to detail pages ([49ec64a](https://github.com/orazchollaev/invictus-tournament-maker/commit/49ec64a919517147f94504aa8d22e4711786b6a4))
+
+### 🐛 Bug Fixes
+
+- **engine:** strip reactivity from stats-worker jobs to fix DataCloneError ([020d818](https://github.com/orazchollaev/invictus-tournament-maker/commit/020d81848583ab27aa719caad5bb88d61faf4335))
+- **lineup:** fill empty slots from the bench ([63f8b83](https://github.com/orazchollaev/invictus-tournament-maker/commit/63f8b83e764db40ae783dfe2ec8edf929bcef7e6))
+- **match-stats:** send off on a second yellow, and close the injury-modal gap ([36a8dcc](https://github.com/orazchollaev/invictus-tournament-maker/commit/36a8dccee319294760f37792314e57f098587252))
+- **match-stats:** switch live match to a side drawer and fix event-list scroll direction ([8025d57](https://github.com/orazchollaev/invictus-tournament-maker/commit/8025d57be07c9aa8d70b216052cd1e952ceeaafd))
+- **subs:** draw substitutes from the whole bench ([bfee3cd](https://github.com/orazchollaev/invictus-tournament-maker/commit/bfee3cd1c427a28854bbdffcce35b190efcec040))
+- **ui:** shrink live match modal text on very narrow screens ([0f6fcd8](https://github.com/orazchollaev/invictus-tournament-maker/commit/0f6fcd82ffc5e3335687b78d3dba94db6ae0fbdf))
+
+### 🔧 Maintenance
+
+- **gradle:** bump gradle version ([94b3eca](https://github.com/orazchollaev/invictus-tournament-maker/commit/94b3ecaa70d77742784d63eb98743cd7dc2cd357))
+
+### 🎨 Styles
+
+- drop left-border rail accents and fix match report header stacking ([d10c138](https://github.com/orazchollaev/invictus-tournament-maker/commit/d10c138a8d6410f0179a288ef51b17fae8558a11))
+- fix small style issues ([7bb4296](https://github.com/orazchollaev/invictus-tournament-maker/commit/7bb429636d6fa467e320144e8715e6ec8fbfd1d1))
+
 ## [2.6.1](https://github.com/orazchollaev/invictus-tournament-maker/compare/v2.6.0...v2.6.1) (2026-09-09)
 
 ### 🚀 New Features
