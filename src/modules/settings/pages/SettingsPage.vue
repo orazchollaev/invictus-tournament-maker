@@ -14,6 +14,7 @@ import {
   SettingsSectionGraphics,
   SettingsSectionDisplay,
   SettingsSectionEffects,
+  SettingsSectionMusic,
   SettingsSectionSimulation,
   SettingsSectionSampleData,
   SettingsSectionDataManagement,
@@ -38,7 +39,12 @@ const CATEGORY_ICONS: Record<Category, Component> = {
 
 const GROUPS: Record<Category, Component[]> = {
   appearance: [SettingsSectionLanguage, SettingsSectionAppearance],
-  bracket: [SettingsSectionDisplay, SettingsSectionGraphics, SettingsSectionEffects],
+  bracket: [
+    SettingsSectionDisplay,
+    SettingsSectionGraphics,
+    SettingsSectionEffects,
+    SettingsSectionMusic,
+  ],
   tournament: [
     SettingsSectionTableRules,
     SettingsSectionMatchDefaults,

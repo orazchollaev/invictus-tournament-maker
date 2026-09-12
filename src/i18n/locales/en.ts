@@ -981,6 +981,38 @@ export default {
       blocked: "Manage your own match first",
     },
   },
+  music: {
+    title: "Background Music",
+    builtIn: "Built in",
+    tracksTitle: "Tracks",
+    tracksHint: "Add your own audio files, up to {max} MB each. They are kept on this device only.",
+    addTrack: "Add track",
+    manage: "Manage",
+    manageDesc: "Add or remove your own tracks",
+    invalidType: "That is not an audio file.",
+    tooLarge: "That file is larger than {max} MB.",
+    saveFailed: "The track could not be saved.",
+    enabled: {
+      label: "Play music",
+      desc: "A quiet loop while you play. Off by default.",
+    },
+    volume: {
+      label: "Volume",
+      desc: "How loud the music sits under the app",
+      silent: "Silent",
+      quiet: "Quiet",
+      gentle: "Gentle",
+      loud: "Loud",
+    },
+    track: {
+      label: "Track",
+      desc: "What plays while the app is open",
+    },
+    loop: {
+      label: "Repeat one track",
+      desc: "Off plays through everything in the list instead",
+    },
+  },
   liveMatch: {
     title: "Live",
     replayTitle: "Replay",

@@ -986,6 +986,39 @@ export default {
       blocked: "Önce kendi maçını yönet",
     },
   },
+  music: {
+    title: "Arka Plan Müziği",
+    builtIn: "Gömülü",
+    tracksTitle: "Parçalar",
+    tracksHint:
+      "Kendi ses dosyalarını ekle, her biri en fazla {max} MB. Sadece bu cihazda saklanır.",
+    addTrack: "Parça ekle",
+    manage: "Yönet",
+    manageDesc: "Kendi parçalarını ekle veya kaldır",
+    invalidType: "Bu bir ses dosyası değil.",
+    tooLarge: "Bu dosya {max} MB sınırını aşıyor.",
+    saveFailed: "Parça kaydedilemedi.",
+    enabled: {
+      label: "Müzik çal",
+      desc: "Oynarken arkada sakin bir döngü. Varsayılan olarak kapalı.",
+    },
+    volume: {
+      label: "Ses seviyesi",
+      desc: "Müziğin uygulamanın altında ne kadar duyulacağı",
+      silent: "Sessiz",
+      quiet: "Kısık",
+      gentle: "Yumuşak",
+      loud: "Yüksek",
+    },
+    track: {
+      label: "Parça",
+      desc: "Uygulama açıkken çalan parça",
+    },
+    loop: {
+      label: "Tek parçayı tekrarla",
+      desc: "Kapalıyken listedeki tüm parçalar sırayla çalar",
+    },
+  },
   liveMatch: {
     title: "Canlı",
     replayTitle: "Tekrar",

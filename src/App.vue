@@ -4,6 +4,7 @@ import { useRouter } from "vue-router"
 import { App } from "@capacitor/app"
 import { AppHeader, AppMobileBottomNav, ErrorBoundary } from "@/components/layout"
 import { AppDialog } from "@/components/ui"
+import { MusicController } from "@/modules/music/components"
 import { useSettingsStore } from "@/modules/settings/store"
 import { useStatusBar } from "@/composables/useStatusBar"
 
@@ -59,6 +60,7 @@ onUnmounted(() => {
       </ErrorBoundary>
     </main>
     <AppDialog />
+    <MusicController />
     <Transition name="mobile-nav">
       <AppMobileBottomNav v-if="!hideBottomNav" />
     </Transition>
