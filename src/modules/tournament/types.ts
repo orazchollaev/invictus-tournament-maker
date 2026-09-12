@@ -1,5 +1,6 @@
 // modules/tournament/types.ts
 import type { PlayerPosition } from "@/modules/players/types"
+import type { Formation, PlayStyle } from "@/modules/teams/types"
 
 export type LegMode = "single" | "double" | "triple" | "quadruple" | "half"
 export type Tiebreaker = "head-to-head" | "goal-diff"
@@ -217,6 +218,22 @@ export interface LeagueTier {
   playoff?: LeaguePlayoff // only ever set on tiers[0] (top tier)
 }
 
+// ─── Manager mode ────────────────────────────────────────────────
+/**
+ * One team in this tournament is run by the user rather than simulated.
+ *
+ * Per tournament, not per team: the same club can be yours in the league and
+ * an opponent in the cup. A new season carries it forward, because managing a
+ * side is a commitment to a campaign rather than to a fixture.
+ */
+export interface ManagerState {
+  teamId: string
+  /** The user's default set-up, seeded from the club's own coach. */
+  formation: Formation
+  style: PlayStyle
+  startedAt: number
+}
+
 // ─── Tournament ──────────────────────────────────────────────────
 export type TournamentFormat = "bracket" | "group+bracket" | "league" | "swiss"
 
@@ -271,6 +288,9 @@ export interface Tournament {
   winPoints?: number
   drawPoints?: number
   lossPoints?: number
+
+  // one team run by the user rather than simulated (see ManagerState)
+  manager?: ManagerState
 
   // per-team adjustments for this season only (reset on new season)
   teamPointAdjustments?: Record<string, number> // +/- table points per team

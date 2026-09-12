@@ -2,7 +2,12 @@ import { computed, ref, watch } from "vue"
 import { useI18n } from "vue-i18n"
 import type { Round, Tournament } from "@/modules/tournament/types"
 import { useEngineLabels } from "@/composables/useEngineLabels"
-import { isBracketOnly, isGroupFormat, getLeaguePlayoffData, buildEmptyBracketRounds } from "@/engine"
+import {
+  isBracketOnly,
+  isGroupFormat,
+  getLeaguePlayoffData,
+  buildEmptyBracketRounds,
+} from "@/engine"
 
 /**
  * One entry in the unified Fixtures panel's stage picker — a knockout round,
@@ -64,7 +69,11 @@ export function useFixtureStages(getTournament: () => Tournament) {
         0
       )
       for (let ri = 0; ri < maxRounds; ri++) {
-        out.push({ kind: "group-week", roundIdx: ri, label: t("tournament.fixtures.groupWeek", { n: ri + 1 }) })
+        out.push({
+          kind: "group-week",
+          roundIdx: ri,
+          label: t("tournament.fixtures.groupWeek", { n: ri + 1 }),
+        })
       }
       // The bracket is pre-sized from qualifiersPerGroup/wildcards at
       // creation, so its rounds — and their names — already exist before

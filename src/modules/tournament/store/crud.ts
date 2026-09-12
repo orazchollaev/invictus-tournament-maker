@@ -24,6 +24,16 @@ import {
 } from "@/engine"
 import type { CreateSwissOptions } from "@/engine"
 
+/**
+ * Managing a side is a commitment to a campaign, not to a fixture list, so
+ * it survives into the next season — provided the team is still in the
+ * competition after promotions, relegations and any hand-picked entry list.
+ */
+function carryManager(previous: Tournament, next: Tournament) {
+  const manager = previous.manager
+  if (manager && next.teamIds.includes(manager.teamId)) next.manager = { ...manager }
+}
+
 function deriveDrawType(seeded: boolean, orderedIds?: string[]): DrawType {
   if (orderedIds) return "manual"
   return seeded ? "seeded" : "random"
@@ -166,6 +176,7 @@ export function useCrudActions(
         lossPoints: t.lossPoints,
       })
       if (t.thirdPlaceLegMode) newT.thirdPlaceLegMode = t.thirdPlaceLegMode
+      carryManager(t, newT)
       tournaments.value.push(newT)
       active.value = newT.id
       return newT.id
@@ -194,6 +205,7 @@ export function useCrudActions(
         if (t.roundLegModes) newT.roundLegModes = { ...t.roundLegModes }
         if (t.thirdPlaceLegMode) newT.thirdPlaceLegMode = t.thirdPlaceLegMode
       }
+      carryManager(t, newT)
       tournaments.value.push(newT)
       active.value = newT.id
       return newT.id
@@ -229,6 +241,7 @@ export function useCrudActions(
       applyThirdPlaceLegMode(newT.thirdPlaceMatch, newT)
       updateThirdPlaceSlots(newT)
     }
+    carryManager(t, newT)
     tournaments.value.push(newT)
     active.value = newT.id
     return newT.id
@@ -310,6 +323,7 @@ export function useCrudActions(
       if (t.roundLegModes) newT.roundLegModes = { ...t.roundLegModes }
       if (t.thirdPlaceLegMode) newT.thirdPlaceLegMode = t.thirdPlaceLegMode
     }
+    carryManager(t, newT)
     tournaments.value.push(newT)
     active.value = newT.id
     return newT.id

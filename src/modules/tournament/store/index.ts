@@ -39,6 +39,8 @@ import { useDrawActions } from "./draw"
 import { useLeagueActions } from "./league"
 import { useLeaguePlayoffActions } from "./leaguePlayoff"
 import { useScoringActions } from "./scoring"
+import { useManagerActions } from "./manager"
+import { hasPendingManagedFixture } from "../utils/managerFixtures"
 
 export const useTournamentStore = defineStore(
   "tournament",
@@ -222,6 +224,53 @@ export const useTournamentStore = defineStore(
       return wrapped as T
     }
 
+    /**
+     * Actions that would play the managed team's own match for it.
+     *
+     * Managing a side means managing all of its matches, so while one of them
+     * is outstanding these do nothing at all. The guard lives here rather than
+     * on the buttons because there are a dozen ways into a bulk simulation —
+     * the fixture panel, the group card, the league view, the detail header —
+     * and one of them would eventually be missed. The buttons are disabled as
+     * well, so the user sees why; this is the backstop, not the explanation.
+     */
+    const MANAGED_SIM_ACTIONS = new Set([
+      "simulateAll",
+      "simulateRound",
+      "simulateBracketMatch",
+      "simulateLeg1",
+      "simulateLeg2",
+      "simGroupMatch",
+      "simGroup",
+      "simGroupWeek",
+      "simAllGroups",
+      "simWeek",
+      "simLeagueMatch",
+      "simLeagueMatchday",
+      "simAllLeague",
+      "simTierMatch",
+      "simTierMatchday",
+      "simAllTier",
+      "simAllTiers",
+      "simulateThirdPlace",
+    ])
+
+    function isManagerBlocked(tournamentId: unknown): boolean {
+      if (typeof tournamentId !== "string") return false
+      const t = tournaments.value.find((x) => x.id === tournamentId)
+      return !!t?.manager && hasPendingManagedFixture(t)
+    }
+
+    function withManagerGuard<T extends ActionSlice>(slice: T): T {
+      const wrapped: ActionSlice = {}
+      for (const [name, action] of Object.entries(slice)) {
+        wrapped[name] = MANAGED_SIM_ACTIONS.has(name)
+          ? (...args: never[]) => (isManagerBlocked(args[0]) ? undefined : action(...args))
+          : action
+      }
+      return wrapped as T
+    }
+
     const thirdPlace = useThirdPlaceActions(tournaments, getTeams)
     const crud = useCrudActions(tournaments, active, getTeams)
     const bracket = useBracketActions(tournaments, getTeams, thirdPlace.simulateThirdPlace)
@@ -230,6 +279,7 @@ export const useTournamentStore = defineStore(
     const leagueActions = useLeagueActions(tournaments, getTeams)
     const leaguePlayoff = useLeaguePlayoffActions(tournaments, getTeams)
     const scoring = useScoringActions(tournaments)
+    const manager = useManagerActions(tournaments, getTeams)
 
     if (import.meta.env.DEV) {
       assertNoSliceCollisions({
@@ -241,6 +291,7 @@ export const useTournamentStore = defineStore(
         leagueActions,
         leaguePlayoff,
         scoring,
+        manager,
       })
     }
 
@@ -275,6 +326,7 @@ export const useTournamentStore = defineStore(
 
     /** One "Simulate All" plays out the whole structure, whatever it is. */
     function simulateTournament(tournamentId: string) {
+      if (isManagerBlocked(tournamentId)) return
       withTournament(tournamentId, (t) => {
         if (isLeagueLike(t)) {
           if (t.tiers?.length) {
@@ -323,13 +375,14 @@ export const useTournamentStore = defineStore(
       statsMigrated,
       hydrate,
       ...withStats(crud),
-      ...withStats(bracket),
-      ...withStats(thirdPlace),
-      ...withStats(groups),
+      ...withStats(withManagerGuard(bracket)),
+      ...withStats(withManagerGuard(thirdPlace)),
+      ...withStats(withManagerGuard(groups)),
       ...withStats(draw),
-      ...withStats(leagueActions),
+      ...withStats(withManagerGuard(leagueActions)),
       ...withStats(leaguePlayoff),
       ...withStats(scoring),
+      ...withStats(manager),
       createMultiTierLeagueTournament,
       simulateTournament,
       migrateLegacyMatchStats,
