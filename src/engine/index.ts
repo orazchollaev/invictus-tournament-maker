@@ -168,6 +168,7 @@ export type { MatchEntry, MatchSource } from "./matchIterator"
 export {
   buildLineup,
   generateMatchStats,
+  assembleMatchStats,
   generateTeamStats,
   computeRating,
   ensureMatchStats,
@@ -190,6 +191,7 @@ export {
 export type {
   Lineup,
   LineupSlot,
+  SideState,
   MatchOutcome,
   RatingInput,
   WatchedMatch,

@@ -38,18 +38,18 @@ import {
 } from "../periods"
 
 /** How likely a slot is to be the one that scores, before power weighting. */
-const SCORE_WEIGHT: Record<PlayerPosition, number> = { GK: 0.02, DEF: 0.2, MID: 0.55, FWD: 1.0 }
-const ASSIST_WEIGHT: Record<PlayerPosition, number> = { GK: 0.05, DEF: 0.35, MID: 1.0, FWD: 0.7 }
-const CARD_WEIGHT: Record<PlayerPosition, number> = { GK: 0.15, DEF: 1.0, MID: 0.9, FWD: 0.6 }
+export const SCORE_WEIGHT: Record<PlayerPosition, number> = { GK: 0.02, DEF: 0.2, MID: 0.55, FWD: 1.0 }
+export const ASSIST_WEIGHT: Record<PlayerPosition, number> = { GK: 0.05, DEF: 0.35, MID: 1.0, FWD: 0.7 }
+export const CARD_WEIGHT: Record<PlayerPosition, number> = { GK: 0.15, DEF: 1.0, MID: 0.9, FWD: 0.6 }
 /** Own goals come off a defender's boot far more often than anyone else's. */
-const OWN_GOAL_WEIGHT: Record<PlayerPosition, number> = { GK: 0.3, DEF: 1.0, MID: 0.25, FWD: 0.05 }
+export const OWN_GOAL_WEIGHT: Record<PlayerPosition, number> = { GK: 0.3, DEF: 1.0, MID: 0.25, FWD: 0.05 }
 
-const OWN_GOAL_CHANCE = 0.02
-const PENALTY_CHANCE = 0.08
-const ASSIST_CHANCE = 0.7
-const PENALTY_MISS_CHANCE = 0.05
+export const OWN_GOAL_CHANCE = 0.02
+export const PENALTY_CHANCE = 0.08
+export const ASSIST_CHANCE = 0.7
+export const PENALTY_MISS_CHANCE = 0.05
 
-const YELLOW_LAMBDA = 2.2
+export const YELLOW_LAMBDA = 2.2
 
 const STOPPAGE_CHANCE = 0.08
 
@@ -65,7 +65,7 @@ type Side = "home" | "away"
  * several anonymous "Unknown Player" slots, all with a null id, and sending
  * one off must not take the other ten off with it.
  */
-interface Dismissal {
+export interface Dismissal {
   slot: LineupSlot
   minute: number
 }
@@ -80,7 +80,7 @@ interface Dismissal {
  * the caller sees — see modules/tournament/types.ts and engine/injuries.ts
  * for what they mean and who reads them.
  */
-interface SubRecord {
+export interface SubRecord {
   outSlot: LineupSlot
   inSlot: LineupSlot
   minute: number
@@ -89,7 +89,7 @@ interface SubRecord {
 }
 
 /** One side's eleven, plus whoever has already been sent off or subbed. */
-interface SideState {
+export interface SideState {
   lineup: Lineup
   dismissals: Dismissal[]
   subs: SubRecord[]
@@ -108,7 +108,7 @@ interface SideState {
  * one minute it costs a legitimate goal is not worth the confusion. Subs
  * follow the same same-minute rule.
  */
-function onPitch(state: SideState, minute: number): Lineup {
+export function onPitch(state: SideState, minute: number): Lineup {
   let pool = state.lineup
 
   if (state.subs.length) {
@@ -128,7 +128,7 @@ function onPitch(state: SideState, minute: number): Lineup {
 }
 
 /** Weighted pick over lineup slots. Returns null only for an empty pool. */
-function pickSlot(
+export function pickSlot(
   pool: Lineup,
   weights: Record<PlayerPosition, number>,
   rng: () => number,
@@ -150,7 +150,7 @@ function pickSlot(
 }
 
 /** The designated taker: the strongest attacking slot still on the pitch. */
-function penaltyTaker(pool: Lineup): LineupSlot | null {
+export function penaltyTaker(pool: Lineup): LineupSlot | null {
   const takers = pool.filter((s) => s.position === "FWD" || s.position === "MID")
   const candidates = takers.length ? takers : pool
   if (!candidates.length) return null
@@ -584,6 +584,98 @@ function buildLines(
   })
 }
 
+function substitutionsFor(side: Side, state: SideState): Substitution[] {
+  return state.subs.map((s) => ({
+    minute: s.minute,
+    side,
+    outPlayerId: s.outSlot.playerId,
+    inPlayerId: s.inSlot.playerId,
+    position: s.outSlot.position,
+    reason: s.reason,
+    ...(s.injuryMatches ? { injuryMatches: s.injuryMatches } : {}),
+  }))
+}
+
+export interface AssembleMatchStatsInput {
+  home: SideState
+  away: SideState
+  homePower: number
+  awayPower: number
+  /** Final score, extra-time goals included. */
+  homeGoals: number
+  awayGoals: number
+  /** The timeline as it was played. Order does not matter; it is sorted here. */
+  events: MatchEvent[]
+  /** True when the tie ran to 120, so minutes played are measured against it. */
+  hasExtraTime?: boolean
+  penHome?: number
+  penAway?: number
+  shootoutOutcome?: ShootoutOutcome
+  /**
+   * Already rolled by the caller. `generateMatchStats` needs the shot counts
+   * before it builds its timeline, so it passes its own in rather than having
+   * a second set rolled here.
+   */
+  team?: TeamMatchStats
+}
+
+/**
+ * Turn a finished match into the report the app stores and renders.
+ *
+ * The timeline is an *input*: this decides nothing about what happened, only
+ * what it all adds up to — minutes played, ratings, clean sheets, the team
+ * column. Two very different callers need exactly that:
+ *
+ *   generateMatchStats  rolls a plausible timeline for a score, then assembles.
+ *   the live manager     plays a timeline out minute by minute, then assembles.
+ *
+ * Sharing this half is what keeps a managed match's report indistinguishable
+ * from a simulated one — same ratings model, same team stats, same shape.
+ */
+export function assembleMatchStats(
+  input: AssembleMatchStatsInput,
+  rng: () => number = Math.random
+): MatchStats {
+  const {
+    home,
+    away,
+    homePower,
+    awayPower,
+    homeGoals,
+    awayGoals,
+    hasExtraTime,
+    penHome,
+    penAway,
+    shootoutOutcome,
+  } = input
+
+  const team = input.team ?? generateTeamStats(homePower, awayPower, homeGoals, awayGoals, rng)
+  const events = [...input.events].sort((a, b) => a.minute - b.minute)
+
+  const shootout =
+    penHome !== undefined && penAway !== undefined
+      ? buildShootout(penHome, penAway, home, away, rng, shootoutOutcome)
+      : undefined
+
+  const matchMinutes = hasExtraTime ? REGULATION_MINUTES + EXTRA_TIME_MINUTES : REGULATION_MINUTES
+
+  const substitutions = [
+    ...substitutionsFor("home", home),
+    ...substitutionsFor("away", away),
+  ].sort((a, b) => a.minute - b.minute)
+
+  return {
+    events,
+    lines: [
+      ...buildLines("home", home, events, homeGoals, awayGoals, team.onTarget[1], matchMinutes, rng),
+      ...buildLines("away", away, events, awayGoals, homeGoals, team.onTarget[0], matchMinutes, rng),
+    ],
+    team,
+    ...(shootout ? { shootout } : {}),
+    ...(substitutions.length ? { substitutions } : {}),
+  }
+}
+
 export interface GenerateMatchStatsInput {
   homeLineup: Lineup
   awayLineup: Lineup
@@ -739,57 +831,20 @@ export function generateMatchStats(
     events.push({ minute, type: "penMiss", side, playerId: slot?.playerId ?? null })
   }
 
-  events.sort((a, b) => a.minute - b.minute)
-
-  const shootout =
-    penHome !== undefined && penAway !== undefined
-      ? buildShootout(penHome, penAway, home.state, away.state, rng, shootoutOutcome)
-      : undefined
-
-  const matchMinutes = hasExtraTime ? REGULATION_MINUTES + EXTRA_TIME_MINUTES : REGULATION_MINUTES
-
-  function substitutionsFor(side: Side, state: SideState): Substitution[] {
-    return state.subs.map((s) => ({
-      minute: s.minute,
-      side,
-      outPlayerId: s.outSlot.playerId,
-      inPlayerId: s.inSlot.playerId,
-      position: s.outSlot.position,
-      reason: s.reason,
-      ...(s.injuryMatches ? { injuryMatches: s.injuryMatches } : {}),
-    }))
-  }
-  const substitutions = [
-    ...substitutionsFor("home", home.state),
-    ...substitutionsFor("away", away.state),
-  ].sort((a, b) => a.minute - b.minute)
-
-  return {
-    events,
-    lines: [
-      ...buildLines(
-        "home",
-        home.state,
-        events,
-        homeGoals,
-        awayGoals,
-        team.onTarget[1],
-        matchMinutes,
-        rng
-      ),
-      ...buildLines(
-        "away",
-        away.state,
-        events,
-        awayGoals,
-        homeGoals,
-        team.onTarget[0],
-        matchMinutes,
-        rng
-      ),
-    ],
-    team,
-    ...(shootout ? { shootout } : {}),
-    ...(substitutions.length ? { substitutions } : {}),
-  }
+  return assembleMatchStats(
+    {
+      home: home.state,
+      away: away.state,
+      homePower,
+      awayPower,
+      homeGoals,
+      awayGoals,
+      events,
+      hasExtraTime,
+      team,
+      ...(penHome !== undefined && penAway !== undefined ? { penHome, penAway } : {}),
+      ...(shootoutOutcome ? { shootoutOutcome } : {}),
+    },
+    rng
+  )
 }

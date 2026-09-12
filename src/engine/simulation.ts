@@ -324,7 +324,7 @@ export function simulateExtraTime(
 }
 
 /** Conversion rate at the spot, from a side's rating. */
-function penaltyRate(power: number): number {
+export function penaltyRate(power: number): number {
   return 0.65 + (power / 100) * 0.15
 }
 
