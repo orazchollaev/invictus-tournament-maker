@@ -347,14 +347,13 @@ export const useTournamentStore = defineStore(
       if (!t) return
       const src = entry.source
       const id = entry.match.id
+      const isOwnFixture =
+        !!t.manager && (entry.homeId === t.manager.teamId || entry.awayId === t.manager.teamId)
 
       if (src.kind === "group") {
         const idx = t.groups?.[src.groupIdx]?.matches.findIndex((m) => m.id === id) ?? -1
         if (idx >= 0) groups.setGroupResult(tournamentId, src.groupIdx, idx, home, away)
-        return
-      }
-
-      if (src.kind === "league") {
+      } else if (src.kind === "league") {
         const league = src.tierIdx === undefined ? t.league : t.tiers?.[src.tierIdx]?.league
         const idx = league?.matchdays[src.matchdayIdx]?.matches.findIndex((m) => m.id === id) ?? -1
         if (idx < 0) return
@@ -363,25 +362,135 @@ export const useTournamentStore = defineStore(
         } else {
           leagueActions.setTierResult(tournamentId, src.tierIdx, src.matchdayIdx, idx, home, away)
         }
-        return
-      }
-
-      if (src.kind === "third-place") {
+      } else if (src.kind === "third-place") {
         if (src.leg === 2) {
           thirdPlace.setThirdPlaceLeg2Result(tournamentId, home, away, penHome, penAway)
         } else {
           thirdPlace.setThirdPlaceResult(tournamentId, home, away, penHome, penAway)
         }
-        return
+      } else {
+        const idx = t.rounds[src.roundIdx]?.matches.findIndex((m) => m.id === id) ?? -1
+        if (idx < 0) return
+        if (src.leg === 2) {
+          bracket.setLeg2Result(tournamentId, src.roundIdx, idx, home, away, penHome, penAway)
+        } else {
+          bracket.setResult(tournamentId, src.roundIdx, idx, home, away, penHome, penAway)
+        }
       }
 
-      const idx = t.rounds[src.roundIdx]?.matches.findIndex((m) => m.id === id) ?? -1
-      if (idx < 0) return
-      if (src.leg === 2) {
-        bracket.setLeg2Result(tournamentId, src.roundIdx, idx, home, away, penHome, penAway)
-      } else {
-        bracket.setResult(tournamentId, src.roundIdx, idx, home, away, penHome, penAway)
+      if (isOwnFixture) syncManagerWeek(tournamentId, src)
+      ensureStatsFor(tournamentId)
+    }
+
+    /** Whether the knockout stage has real teams in it yet, not just the
+     *  empty placeholder rounds a group/league format is built with so the
+     *  fixture picker can show round names before a ball is kicked. */
+    function bracketIsSeeded(t: Tournament): boolean {
+      if (isLeagueLike(t)) return !!getLeaguePlayoffData(t)?.started
+      if (t.format === "group+bracket") return !!t.groupsDone
+      return true
+    }
+
+    /**
+     * After the manager plays his own fixture, whatever else shares its round
+     * plays itself out too — every tier's same matchday, every group's same
+     * week, the rest of the same knockout round. And once he has nothing left
+     * to play in the stage he is in (season over, or his side eliminated),
+     * that whole stage stops waiting on him.
+     *
+     * Deliberately stops at the stage boundary rather than seeding the next
+     * one (group → bracket, league → playoff) itself: that seeding is a draw,
+     * and the header's own Advance/Start Playoff buttons are what show it —
+     * this would otherwise skip straight past that and simulate the very
+     * thing the user was meant to watch happen. An already-seeded bracket has
+     * no such ceremony left to skip, so playing the rest of *that* out is
+     * fair game.
+     */
+    function syncManagerWeek(tournamentId: string, src: MatchEntry["source"]) {
+      withTournament(tournamentId, (t) => {
+        if (src.kind === "group") {
+          groups.simWeek(tournamentId)
+        } else if (src.kind === "league") {
+          if (src.tierIdx === undefined) {
+            leagueActions.simLeagueMatchday(tournamentId, src.matchdayIdx)
+          } else {
+            t.tiers?.forEach((tier, ti) => {
+              if (tier.league.matchdays[src.matchdayIdx]) {
+                leagueActions.simTierMatchday(tournamentId, ti, src.matchdayIdx)
+              }
+            })
+          }
+        } else if (src.kind === "knockout") {
+          // Not `bracket.simulateRound`: it plays out *everything* left in
+          // the round, leg 2 of the manager's own tie included — which would
+          // rob him of the second leg the instant the first one is saved.
+          simulateRoundExceptManager(tournamentId, src.roundIdx)
+        }
+
+        if (hasPendingManagedFixture(t) || crud.isTournamentFinished(tournamentId)) return
+
+        if (isLeagueLike(t)) {
+          if (t.tiers?.length) leagueActions.simAllTiers(tournamentId)
+          else leagueActions.simAllLeague(tournamentId)
+        } else if (t.format === "group+bracket" && !t.groupsDone) {
+          groups.simAllGroups(tournamentId)
+        }
+
+        if (hasPendingManagedFixture(t) || crud.isTournamentFinished(tournamentId)) return
+
+        if (bracketIsSeeded(t)) bracket.simulateAll(tournamentId)
+      })
+    }
+
+    /**
+     * A knockout round, minus whichever tie is the manager's own — used
+     * right after he plays one leg of it, so the other leg stays his to
+     * play rather than being swept up with the rest of the round.
+     */
+    function simulateRoundExceptManager(tournamentId: string, roundIdx: number) {
+      withTournament(tournamentId, (t) => {
+        const teamId = t.manager?.teamId
+        t.rounds[roundIdx]?.matches.forEach((match, mi) => {
+          if (teamId && (match.homeId === teamId || match.awayId === teamId)) return
+          bracket.simulateBracketMatch(tournamentId, roundIdx, mi)
+        })
+      })
+    }
+
+    /**
+     * Once a knockout stage has just been seeded — from groups, or a league
+     * playoff — whatever round is live plays itself out for everyone except
+     * the manager, exactly like `syncManagerWeek` does after he plays his own
+     * match. Nothing has been drawn *again* here, so unlike that seeding
+     * itself this needs no ceremony of its own to preserve.
+     */
+    function settleAfterBracketSeed(tournamentId: string) {
+      withTournament(tournamentId, (t) => {
+        if (!hasPendingManagedFixture(t) && !crud.isTournamentFinished(tournamentId)) {
+          bracket.simulateAll(tournamentId)
+        }
+      })
+      ensureStatsFor(tournamentId)
+    }
+
+    const BRACKET_SEED_ACTIONS = new Set([
+      "advanceToBracket",
+      "advanceToBracketManual",
+      "startLeaguePlayoffBracket",
+    ])
+
+    function withManagerBracketSettle<T extends ActionSlice>(slice: T): T {
+      const wrapped: ActionSlice = {}
+      for (const [name, action] of Object.entries(slice)) {
+        wrapped[name] = BRACKET_SEED_ACTIONS.has(name)
+          ? (...args: never[]) => {
+              const out = action(...args)
+              if (typeof args[0] === "string") settleAfterBracketSeed(args[0])
+              return out
+            }
+          : action
       }
+      return wrapped as T
     }
 
     /** One "Simulate All" plays out the whole structure, whatever it is. */
@@ -437,10 +546,10 @@ export const useTournamentStore = defineStore(
       ...withStats(crud),
       ...withStats(withManagerGuard(bracket)),
       ...withStats(withManagerGuard(thirdPlace)),
-      ...withStats(withManagerGuard(groups)),
+      ...withStats(withManagerGuard(withManagerBracketSettle(groups))),
       ...withStats(draw),
       ...withStats(withManagerGuard(leagueActions)),
-      ...withStats(leaguePlayoff),
+      ...withStats(withManagerBracketSettle(leaguePlayoff)),
       ...withStats(scoring),
       ...withStats(manager),
       createMultiTierLeagueTournament,

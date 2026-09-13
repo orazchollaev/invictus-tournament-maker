@@ -6,7 +6,7 @@ import { TeamBadge } from "@/modules/teams/components"
 import { MatchScoreModal, MatchStatsButton } from "@/modules/tournament/components/match-stats"
 import type { FlatMatch } from "./types"
 
-const props = defineProps<{ match: FlatMatch; teams: Team[] }>()
+const props = defineProps<{ match: FlatMatch; teams: Team[]; locked?: boolean }>()
 
 const emit = defineEmits<{
   "set-result": [match: FlatMatch, home: number, away: number, penHome?: number, penAway?: number]
@@ -40,7 +40,7 @@ function scoreAccentColor(): string {
       class="fx-score-btn"
       :class="{ 'fx-score-btn--played': !!match.result }"
       :style="match.result ? { borderColor: scoreAccentColor(), borderLeftWidth: '3px' } : {}"
-      :disabled="!match.homeId || !match.awayId"
+      :disabled="!match.homeId || !match.awayId || locked"
       @click="editing = true"
     >
       <template v-if="match.result">
@@ -65,7 +65,7 @@ function scoreAccentColor(): string {
     </span>
 
     <MatchScoreModal
-      v-if="editing && match.homeId && match.awayId"
+      v-if="editing && match.homeId && match.awayId && !locked"
       :home-team="getTeam(match.homeId)"
       :away-team="getTeam(match.awayId)"
       :result="match.result"

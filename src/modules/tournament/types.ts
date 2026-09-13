@@ -232,6 +232,9 @@ export interface ManagerState {
   formation: Formation
   style: PlayStyle
   startedAt: number
+  /** Starting-XI picks, seated ahead of the auto-draw. Unset or short of
+   *  eleven falls back to the usual formation-and-power pick for the rest. */
+  lineup?: string[]
 }
 
 // ─── Tournament ──────────────────────────────────────────────────

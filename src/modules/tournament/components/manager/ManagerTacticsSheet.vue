@@ -27,7 +27,7 @@ function apply() {
 </script>
 
 <template>
-  <AppSheet ref="sheet" :title="t('manager.tactics.title')" @close="emit('close')">
+  <AppSheet ref="sheet" :layer="30" :title="t('manager.tactics.title')" @close="emit('close')">
     <div class="mt-form">
       <p class="mt-hint">{{ t("manager.tactics.hint") }}</p>
 
@@ -45,8 +45,10 @@ function apply() {
     </div>
 
     <template #footer>
-      <AppButton variant="filled" @click="apply">{{ t("manager.tactics.apply") }}</AppButton>
-      <AppButton @click="sheet?.close()">{{ t("common.cancel") }}</AppButton>
+      <div class="mt-footer">
+        <AppButton variant="filled" @click="apply">{{ t("manager.tactics.apply") }}</AppButton>
+        <AppButton @click="sheet?.close()">{{ t("common.cancel") }}</AppButton>
+      </div>
     </template>
   </AppSheet>
 </template>
@@ -57,10 +59,19 @@ function apply() {
   flex-direction: column;
   gap: var(--sp-4);
   min-width: 0;
+  padding: var(--sp-3);
 }
 .mt-hint {
   margin: 0;
   font-size: var(--fs-sm);
   color: var(--text-muted);
+}
+.mt-footer {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-2) var(--sp-3) calc(var(--sp-2) + var(--safe-bottom));
+  border-top: 1px solid var(--border-light);
+  background: var(--bg);
 }
 </style>

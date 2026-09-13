@@ -92,9 +92,19 @@ function xgFor(shots: number, onTarget: number, dominance: number, rng: () => nu
   return Math.round(raw * 10) / 10
 }
 
-/** Clear-cut chances: a fraction of shots on target, weighted by dominance. */
-function bigChancesFor(onTarget: number, dominance: number, rng: () => number): number {
-  return Math.max(0, Math.round(onTarget * (0.25 + Math.max(0, dominance) * 0.15) + (rng() - 0.5)))
+/**
+ * Clear-cut chances: a fraction of shots on target, weighted by dominance.
+ * Every goal came from some chance, clear-cut or not, so this can never
+ * read lower than the goals actually scored.
+ */
+function bigChancesFor(
+  onTarget: number,
+  goals: number,
+  dominance: number,
+  rng: () => number
+): number {
+  const raw = Math.round(onTarget * (0.25 + Math.max(0, dominance) * 0.15) + (rng() - 0.5))
+  return Math.max(0, goals, raw)
 }
 
 /** Offsides: cheap noise off how often a side is pushing a high line/final ball. */
@@ -142,8 +152,8 @@ export function generateTeamStats(
       xgFor(away.shots, away.onTarget, -dominance, rng),
     ],
     bigChances: [
-      bigChancesFor(home.onTarget, dominance, rng),
-      bigChancesFor(away.onTarget, -dominance, rng),
+      bigChancesFor(home.onTarget, homeGoals, dominance, rng),
+      bigChancesFor(away.onTarget, awayGoals, -dominance, rng),
     ],
     offsides: [offsidesFor(dominance, rng), offsidesFor(-dominance, rng)],
   }

@@ -20,11 +20,16 @@ const props = withDefaults(
     flush?: boolean
     /** Set false when a stray tap outside must not throw away work in progress. */
     dismissOnOutsideClick?: boolean
+    /** Set false to hide the close button and ignore Escape — for a panel
+     *  whose in-progress state must not be walked away from (a live match
+     *  in charge of the user, say), only left through its own controls. */
+    closable?: boolean
   }>(),
   {
     zIndex: 200,
     flush: false,
     dismissOnOutsideClick: true,
+    closable: true,
   }
 )
 
@@ -52,8 +57,10 @@ defineExpose({ close })
         :class="{ closing }"
         :style="{ zIndex, ...(width ? { width } : {}) }"
         :aria-describedby="undefined"
-        @escape-key-down="close"
-        @pointer-down-outside="(e: Event) => (props.dismissOnOutsideClick ? close() : e.preventDefault())"
+        @escape-key-down="(e: Event) => (props.closable ? close() : e.preventDefault())"
+        @pointer-down-outside="
+          (e: Event) => (props.dismissOnOutsideClick ? close() : e.preventDefault())
+        "
       >
         <div class="drawer-header">
           <slot name="title">
@@ -64,7 +71,7 @@ defineExpose({ close })
               <DialogTitle>{{ title }}</DialogTitle>
             </VisuallyHidden>
           </slot>
-          <DialogClose class="drawer-close" :aria-label="t('common.close')">
+          <DialogClose v-if="closable" class="drawer-close" :aria-label="t('common.close')">
             <X :size="14" />
           </DialogClose>
         </div>

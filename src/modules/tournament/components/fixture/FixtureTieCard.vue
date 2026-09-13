@@ -5,7 +5,7 @@ import { TeamBadge } from "@/modules/teams/components"
 import FixtureLegRow from "./FixtureLegRow.vue"
 import type { FlatMatch } from "./types"
 
-const props = defineProps<{ match: FlatMatch; teams: Team[] }>()
+const props = defineProps<{ match: FlatMatch; teams: Team[]; locked?: boolean }>()
 const emit = defineEmits<{
   "set-result": [
     match: FlatMatch,
@@ -63,6 +63,7 @@ function onSim(leg: 1 | 2) {
         :away-id="match.awayId"
         :result="match.result"
         :teams="teams"
+        :locked="locked"
         @set-result="(leg, h, a, ph, pa) => emit('set-result', match, leg, h, a, ph, pa)"
         @clear-result="(leg) => emit('clear-result', match, leg)"
         @sim="onSim"
@@ -76,6 +77,7 @@ function onSim(leg: 1 | 2) {
         :result="match.leg2Result"
         :teams="teams"
         :disabled="!match.result"
+        :locked="locked"
         :aggregate-offset="leg2AggregateOffset(match)"
         @set-result="(leg, h, a, ph, pa) => emit('set-result', match, leg, h, a, ph, pa)"
         @clear-result="(leg) => emit('clear-result', match, leg)"

@@ -7,7 +7,7 @@ import {
   ChevronRight,
   RefreshCw,
   Settings,
-  Sheet,
+  UserCog,
   Zap,
 } from "@lucide/vue"
 import { AppButton, AppIcon, AppSelect } from "@/components/ui"
@@ -19,8 +19,6 @@ const props = defineProps<{
   showAdvance: boolean
   /** The (top-tier) season is finished, playoff enabled, not yet started. */
   showStartPlayoff: boolean
-  /** A spreadsheet is being built — the button waits rather than stacking exports. */
-  isExporting?: boolean
   /** Every recorded season of this tournament, oldest first. One entry (or
    *  none) means there is nothing to switch to, so the picker hides. */
   seasons: { value: string; label: string }[]
@@ -28,6 +26,9 @@ const props = defineProps<{
   /** Manager mode: the user owes the season a match of his own, so bulk
    *  simulation is off the table until he has played it. */
   managerBlocked?: boolean
+  /** No manager yet, and the season hasn't played a match — the only window
+   *  in which taking charge of a side is still on offer. */
+  canBecomeManager?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -37,7 +38,7 @@ const emit = defineEmits<{
   openSettings: []
   advance: []
   startPlayoff: []
-  exportExcel: []
+  openManagerPicker: []
   switchSeason: [id: string]
 }>()
 
@@ -120,13 +121,13 @@ function onLevelUp() {
           <AppIcon :icon="Zap" size="md" />
         </AppButton>
         <AppButton
+          v-if="canBecomeManager"
           icon-only
           class="header-icon-btn"
-          :disabled="isExporting"
-          :title="t('tournament.exportExcel')"
-          @click="emit('exportExcel')"
+          :title="t('manager.settings.title')"
+          @click="emit('openManagerPicker')"
         >
-          <AppIcon :icon="Sheet" size="md" />
+          <AppIcon :icon="UserCog" size="md" />
         </AppButton>
         <AppButton
           icon-only

@@ -189,7 +189,10 @@ function onOpenChange(open: boolean) {
 <!-- Unscoped: SelectPortal teleports content to <body>, past scoped-attr propagation. -->
 <style>
 .asel-content {
-  z-index: 1000;
+  /* Above any sheet/modal layer (AppSheet/AppModal top out around
+     var(--z-modal) + a few dozen) — a dropdown always opens on top of
+     whatever it was triggered from, however deep that is stacked. */
+  z-index: 2000;
   width: var(--reka-select-trigger-width);
   max-height: 280px;
   padding: var(--sp-1);

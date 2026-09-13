@@ -246,6 +246,24 @@ export function useBracketActions(
     t.winnerId = getWinnerId(final)
   }
 
+  /**
+   * True once a later round holds a real, unplayed tie for the managed
+   * team — win a round and it is this that stops a bulk simulation from
+   * blowing straight past whatever he is seeded into next, bye or not.
+   */
+  function managerHasTieFrom(t: Tournament, fromRound: number): boolean {
+    const teamId = t.manager?.teamId
+    if (!teamId) return false
+    for (let r = fromRound; r < t.rounds.length; r++) {
+      if (
+        t.rounds[r].matches.some((m) => !m.result && (m.homeId === teamId || m.awayId === teamId))
+      ) {
+        return true
+      }
+    }
+    return false
+  }
+
   function simulateAll(tournamentId: string) {
     const t = tournaments.value.find((t) => t.id === tournamentId)
     if (!t) return
@@ -263,6 +281,11 @@ export function useBracketActions(
           match.result = decideKnockoutResult(match, allTeams, { adjustments }).result
         }
       })
+      propagateWinners(t.rounds, allTeams)
+      // Stop the instant the round just settled hands the manager a tie of
+      // his own further on — a bye into a later round included, once that
+      // round's other feeder tie is also decided.
+      if (managerHasTieFrom(t, r + 1)) return
     }
     propagateWinners(t.rounds, allTeams)
     updateThirdPlaceSlots(t)

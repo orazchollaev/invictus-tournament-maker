@@ -65,6 +65,7 @@ export function useTournamentTabs(tournament: ComputedRef<Tournament | undefined
 
   const visibleTabs = computed<MainTab[]>(() => {
     const tabs: MainTab[] = []
+    if (tournament.value?.manager) tabs.push("manager")
     if (isLeagueFormat.value) {
       tabs.push("league")
       if (bracketAllowed.value) tabs.push("bracket")

@@ -131,7 +131,15 @@ export function slotPower(player: Player, playing: PlayerPosition): number {
 export function buildLineup(
   squad: Player[],
   rng: () => number = Math.random,
-  formation: Formation = DEFAULT_FORMATION
+  formation: Formation = DEFAULT_FORMATION,
+  /**
+   * A manager's own picks, in the order he made them. Each is seated in its
+   * own position group first — ahead of the power-weighted draw — and only
+   * as many as that group's slots hold; whatever is left of the group (a
+   * shorter list, or a pick that missed the cut) is filled exactly as an
+   * unmanaged side's eleven is.
+   */
+  preferredIds: string[] = []
 ): Lineup {
   const lineup: Lineup = []
   const used = new Set<string>()
@@ -141,7 +149,13 @@ export function buildLineup(
   for (const position of Object.keys(shape) as PlayerPosition[]) {
     const slots = shape[position]
     const candidates = squad.filter((p) => p.position === position)
-    const chosen = sampleByPower(candidates, slots, rng)
+
+    const preferred = preferredIds
+      .map((id) => candidates.find((p) => p.id === id))
+      .filter((p): p is Player => !!p)
+      .slice(0, slots)
+    const rest = candidates.filter((p) => !preferred.some((pp) => pp.id === p.id))
+    const chosen = [...preferred, ...sampleByPower(rest, slots - preferred.length, rng)]
 
     for (let i = 0; i < slots; i++) {
       const player = chosen[i]

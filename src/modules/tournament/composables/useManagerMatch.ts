@@ -22,6 +22,7 @@ import {
   benchFor,
   endMinute,
   finishLiveMatch,
+  generateTeamStats,
   onPitchFor,
   setTactics,
   type LiveMatchState,
@@ -30,7 +31,7 @@ import {
 } from "@/engine"
 import type { LineupSlot } from "@/engine"
 import type { Player } from "@/modules/players/types"
-import type { MatchEvent, MatchStats, MatchResult, ShootoutKick } from "../types"
+import type { MatchEvent, MatchStats, MatchResult, ShootoutKick, TeamMatchStats } from "../types"
 
 export type LiveSpeed = 1 | 2 | 4 | 10
 
@@ -79,6 +80,68 @@ export function useManagerMatch(state: LiveMatchState, managed: Side, speed: Ref
   const extraTime = ref(false)
   const last = ref<number>(endMinute(state))
 
+  /**
+   * A live read of the comparison bars — possession, shots, corners — for
+   * whoever wants to see them before the final report exists. The engine
+   * only knows a match's shape in full once it is over (`assembleMatchStats`
+   * needs a finished timeline), so this rolls the same generator a bulk
+   * simulation would use for the *whole* match and scales the counting
+   * stats down by how much of it has actually been played. Possession and
+   * xG-per-shot are rates, not counts, so they stand as rolled — a side
+   * dominating the ball in minute five is a fair read of minute five.
+   *
+   * The full-match roll itself is cached and only redrawn when the score
+   * changes — rerolling it every tick, at 90 rolls a match, would have shots
+   * and possession jumping to a new random total each second rather than
+   * growing toward one, which reads as broken rather than live.
+   */
+  let cachedFullKey = ""
+  let cachedFull: TeamMatchStats | null = null
+  function fullTeamStats(): TeamMatchStats {
+    const key = `${state.score.home}-${state.score.away}`
+    if (cachedFull && cachedFullKey === key) return cachedFull
+    cachedFullKey = key
+    cachedFull = generateTeamStats(
+      state.home.basePower,
+      state.away.basePower,
+      state.score.home,
+      state.score.away
+    )
+    return cachedFull
+  }
+
+  function liveTeamStats(): TeamMatchStats {
+    const full = fullTeamStats()
+    const span = endMinute(state)
+    const fraction = span > 0 ? Math.min(1, Math.max(0.05, state.minute / span)) : 1
+    const scale = (n: number) => Math.round(n * fraction)
+
+    const shots: [number, number] = [
+      Math.max(scale(full.shots[0]), state.score.home),
+      Math.max(scale(full.shots[1]), state.score.away),
+    ]
+    const onTarget: [number, number] = [
+      Math.min(Math.max(scale(full.onTarget[0]), state.score.home), shots[0]),
+      Math.min(Math.max(scale(full.onTarget[1]), state.score.away), shots[1]),
+    ]
+
+    return {
+      possession: full.possession,
+      shots,
+      onTarget,
+      corners: [scale(full.corners[0]), scale(full.corners[1])],
+      fouls: [scale(full.fouls[0]), scale(full.fouls[1])],
+      xg: [
+        Math.round(full.xg[0] * fraction * 10) / 10,
+        Math.round(full.xg[1] * fraction * 10) / 10,
+      ],
+      bigChances: [scale(full.bigChances[0]), scale(full.bigChances[1])],
+      offsides: [scale(full.offsides[0]), scale(full.offsides[1])],
+    }
+  }
+
+  const teamStats = ref<TeamMatchStats>(liveTeamStats())
+
   function sync() {
     // Chronological, exactly as the timeline component expects it.
     events.value = [...state.events]
@@ -90,6 +153,7 @@ export function useManagerMatch(state: LiveMatchState, managed: Side, speed: Ref
     finished.value = state.finished
     extraTime.value = state.extraTime
     last.value = endMinute(state)
+    teamStats.value = liveTeamStats()
   }
   sync()
 
@@ -281,6 +345,7 @@ export function useManagerMatch(state: LiveMatchState, managed: Side, speed: Ref
     pitch,
     bench,
     tactics,
+    teamStats,
     subsLeft,
     finished,
     extraTime,

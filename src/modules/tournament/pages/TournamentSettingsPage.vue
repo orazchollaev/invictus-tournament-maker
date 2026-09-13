@@ -16,6 +16,7 @@ import {
   Maximize2,
   Save,
   Settings,
+  Sheet,
   Shuffle,
   Trophy,
 } from "@lucide/vue"
@@ -26,13 +27,13 @@ import {
   SettingsSimulation,
   SettingsTeamAdjustments,
 } from "../components/settings"
-import { ManagerSettingsCard } from "../components/manager"
 import type { GroupConfigPayload } from "../components/config"
 import type { KnockoutConfigPayload } from "../components/settings/SettingsKnockoutConfigModal.vue"
 import type { LeagueConfigPayload } from "../components/settings/SettingsLeagueConfigModal.vue"
 import type { SwissConfigPayload } from "../components/config"
 import { GroupConfigModal, SwissConfigModal } from "../components/config"
 import { useTournamentSettingsDraft } from "../composables/useTournamentSettingsDraft"
+import { useTournamentExcelExport } from "../composables/useTournamentExcelExport"
 import { useUnsavedChangesGuard } from "@/composables/useUnsavedChangesGuard"
 import { MAX_TIER_COUNT } from "@/constants"
 
@@ -48,6 +49,7 @@ const allTeams = computed(() => teamsStore.teams)
 const hasAnyResults = computed(() => store.hasAnyResults(tournamentId.value))
 
 const draft = useTournamentSettingsDraft(tournamentId, tournament)
+const { isExporting, exportExcel } = useTournamentExcelExport(() => tournament.value)
 
 const seasonCount = computed(
   () => store.tournaments.filter((tn) => tn.name === tournament.value?.name).length
@@ -221,6 +223,19 @@ function handleSave() {
 
       <div v-else class="stack">
         <AppCard :title="t('tournament.settingsPage.tournamentName.title')" padding="md">
+          <template #actions>
+            <AppButton
+              icon-only
+              variant="outlined"
+              size="xs"
+              :disabled="isExporting"
+              :title="t('tournament.exportExcel')"
+              @click="exportExcel"
+            >
+              <AppIcon :icon="Sheet" size="sm" />
+            </AppButton>
+          </template>
+
           <input
             v-model="draft.name.value"
             class="name-input"
@@ -396,8 +411,6 @@ function handleSave() {
         />
 
         <SettingsSimulation :tournament-id="tournamentId" :tournament="tournament" />
-
-        <ManagerSettingsCard :tournament-id="tournamentId" />
 
         <SettingsDangerZone :tournament-id="tournamentId" />
 

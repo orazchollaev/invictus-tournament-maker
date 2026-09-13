@@ -7,6 +7,7 @@ import type { Team } from "@/modules/teams/types"
 import { useLegOptions } from "@/modules/tournament/composables/useLegOptions"
 import { ScoringFields, TiebreakerField } from "@/modules/tournament/components/config"
 import { TeamBadge } from "@/modules/teams/components"
+import { MAX_TIER_COUNT } from "@/constants"
 
 export interface LeagueConfigPayload {
   leagueLegMode: LegMode
@@ -128,7 +129,7 @@ function handleSave() {
         v-model="tierCount"
         :label="t('tournament.create.numberOfTiers')"
         :min="1"
-        :max="Math.min(4, Math.floor(selectedTeams.length / 2))"
+        :max="Math.min(MAX_TIER_COUNT, Math.floor(selectedTeams.length / 2))"
         :hint="
           tierCount === 1
             ? t('tournament.create.singleDivision')

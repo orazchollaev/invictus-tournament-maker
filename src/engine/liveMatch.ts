@@ -129,6 +129,8 @@ export interface CreateLiveMatchInput {
   managedSide?: Side | null
   /** The user's own instructions, overriding the club's coach for this match. */
   managedTactics?: LiveTactics | null
+  /** The user's own starting XI picks, seated ahead of the auto-draw. */
+  managedStartingXI?: string[] | null
   requiresWinner?: boolean
   /** Leg 2 of a tie: the first leg's score, in this match's home/away frame. */
   aggregateOffset?: { home: number; away: number } | null
@@ -146,7 +148,12 @@ export function createLiveMatch(
       managed && input.managedTactics
         ? { ...input.managedTactics }
         : { formation: teamFormation(team), style: team.coach?.style ?? DEFAULT_STYLE }
-    const lineup = buildLineup(squad, rng, tactics.formation)
+    const lineup = buildLineup(
+      squad,
+      rng,
+      tactics.formation,
+      managed ? (input.managedStartingXI ?? []) : []
+    )
     return {
       teamId: team.id,
       basePower: resolvePower(team) + tacticsProfile(tactics, team.coach?.power).powerBonus,

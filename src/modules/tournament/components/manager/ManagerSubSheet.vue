@@ -48,7 +48,7 @@ function choose(player: Player) {
 </script>
 
 <template>
-  <AppSheet ref="sheet" :title="t('manager.sub.title')" @close="emit('close')">
+  <AppSheet ref="sheet" :layer="30" :title="t('manager.sub.title')" @close="emit('close')">
     <div class="ms-body">
       <div class="ms-head">
         <AppButton v-if="outSlot" variant="text" size="xs" @click="outSlot = null">
@@ -95,6 +95,7 @@ function choose(player: Player) {
   flex-direction: column;
   gap: var(--sp-3);
   min-width: 0;
+  padding: var(--sp-3);
 }
 
 .ms-head {

@@ -1,7 +1,7 @@
 import type { Ref } from "vue"
 import type { ManagerState, Tournament } from "../types"
 import type { Formation, PlayStyle, Team } from "@/modules/teams/types"
-import { DEFAULT_FORMATION, DEFAULT_STYLE, teamFormation } from "@/engine"
+import { DEFAULT_FORMATION, DEFAULT_STYLE, playedMatches, teamFormation } from "@/engine"
 import { makeWithTournament } from "./helpers"
 
 /**
@@ -21,6 +21,10 @@ export function useManagerActions(tournaments: Ref<Tournament[]>, getTeams: () =
         return
       }
       if (!t.teamIds.includes(teamId)) return
+      // Taking a job is only on offer before the season has played a match —
+      // switching sides mid-season would leave results on the books for
+      // matches the user never actually played.
+      if (!t.manager && playedMatches(t).length > 0) return
 
       const team = getTeams().find((tm) => tm.id === teamId)
       const manager: ManagerState = {
@@ -44,5 +48,12 @@ export function useManagerActions(tournaments: Ref<Tournament[]>, getTeams: () =
     })
   }
 
-  return { setManagerTeam, setManagerTactics }
+  function setManagerLineup(tournamentId: string, playerIds: string[]) {
+    withTournament(tournamentId, (t) => {
+      if (!t.manager) return
+      t.manager.lineup = playerIds
+    })
+  }
+
+  return { setManagerTeam, setManagerTactics, setManagerLineup }
 }

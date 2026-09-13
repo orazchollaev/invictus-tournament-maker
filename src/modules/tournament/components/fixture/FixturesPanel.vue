@@ -12,6 +12,7 @@ import { useBracketActions } from "@/modules/tournament/composables/useBracketAc
 import { useFixtureStages } from "@/modules/tournament/composables/useFixtureStages"
 import { useTeamLookup } from "@/composables/useTeamLookup"
 import { useEngineLabels } from "@/composables/useEngineLabels"
+import { isManagedMatch } from "@/modules/tournament/utils/managerFixtures"
 import { AppSelect, AppButton, AppIcon } from "@/components/ui"
 import { LeagueMatchRow } from "@/modules/tournament/components/league"
 import FixtureMatchCard from "./FixtureMatchCard.vue"
@@ -30,6 +31,17 @@ const bracketActions = useBracketActions(() => props.tournament.id)
 
 const isGroupFormat = computed(() => isGroupFormatFn(props.tournament))
 const leaguePlayoffData = computed(() => getLeaguePlayoffData(props.tournament))
+
+/**
+ * Managing a side means the rest of the grid is his to watch, not edit —
+ * only the fixture that is actually his stays clickable. Whatever a bulk
+ * simulation would otherwise play for him gets played automatically once
+ * he plays his own match; see the store's manager week-sync.
+ */
+const isManagerMode = computed(() => !!props.tournament.manager)
+function rowLocked(matchId: string, leg: 1 | 2 = 1): boolean {
+  return isManagerMode.value && !isManagedMatch(props.tournament, matchId, leg)
+}
 
 const { selectedIdx, selectedStage, options, isFirst, isLast, goPrev, goNext } = useFixtureStages(
   () => props.tournament
@@ -123,9 +135,43 @@ const stageDone = computed(() => {
 })
 
 // ── League result entry ──────────────────────────────────────────────
+/**
+ * The managed team's own row goes through `setFixtureResult` instead of the
+ * plain per-stage setter — that's the one path that also triggers the
+ * manager week-sync (see the store), so playing your own matchday also plays
+ * out the rest of it, and the sibling tiers/groups on the same week.
+ */
 function setLeagueRowResult(mi: number, home: number, away: number) {
   const stage = selectedStage.value
   if (!stage || stage.kind !== "league") return
+  const md =
+    stage.tierIdx === null
+      ? props.tournament.league?.matchdays[stage.matchdayIdx]
+      : props.tournament.tiers?.[stage.tierIdx]?.league.matchdays[stage.matchdayIdx]
+  const match = md?.matches[mi]
+  if (match && isManagerMode.value && isManagedMatch(props.tournament, match.id)) {
+    store.setFixtureResult(
+      props.tournament.id,
+      {
+        homeId: match.homeId,
+        awayId: match.awayId,
+        result: match.result,
+        source: {
+          kind: "league",
+          matchdayIdx: stage.matchdayIdx,
+          matchdayName: md!.name,
+          ...(stage.tierIdx !== null
+            ? { tierIdx: stage.tierIdx, tierName: props.tournament.tiers?.[stage.tierIdx]?.name }
+            : {}),
+        },
+        match,
+        isDoubleLeg: false,
+      },
+      home,
+      away
+    )
+    return
+  }
   if (stage.tierIdx === null)
     store.setLeagueResult(props.tournament.id, stage.matchdayIdx, mi, home, away)
   else store.setTierResult(props.tournament.id, stage.tierIdx, stage.matchdayIdx, mi, home, away)
@@ -147,6 +193,24 @@ function simLeagueRow(mi: number) {
 
 // ── Group result entry ───────────────────────────────────────────────
 function setGroupRowResult(gi: number, mi: number, home: number, away: number) {
+  const group = props.tournament.groups?.[gi]
+  const match = group?.matches[mi]
+  if (match && isManagerMode.value && isManagedMatch(props.tournament, match.id)) {
+    store.setFixtureResult(
+      props.tournament.id,
+      {
+        homeId: match.homeId,
+        awayId: match.awayId,
+        result: match.result,
+        source: { kind: "group", groupIdx: gi, groupName: group!.name },
+        match,
+        isDoubleLeg: false,
+      },
+      home,
+      away
+    )
+    return
+  }
   store.setGroupResult(props.tournament.id, gi, mi, home, away)
 }
 function clearGroupRowResult(gi: number, mi: number) {
@@ -263,7 +327,7 @@ async function simStage() {
       <AppSelect v-model="stageModel" class="fp-select" size="sm" :options="options" />
 
       <AppButton
-        v-if="!stageLocked && stageReady"
+        v-if="!stageLocked && stageReady && !isManagerMode"
         icon-only
         variant="outlined"
         size="sm"
@@ -310,7 +374,7 @@ async function simStage() {
               :result="row.match.result"
               :match-id="row.match.id"
               :label="section.groupName"
-              :locked="stageLocked"
+              :locked="stageLocked || rowLocked(row.match.id)"
               @save="(h, a) => setGroupRowResult(section.groupIdx, row.mi, h, a)"
               @clear="clearGroupRowResult(section.groupIdx, row.mi)"
               @sim="simGroupRow(section.groupIdx, row.mi)"
@@ -332,7 +396,7 @@ async function simStage() {
             :result="row.match.result"
             :match-id="row.match.id"
             :label="selectedStage.label"
-            :locked="stageLocked"
+            :locked="stageLocked || rowLocked(row.match.id)"
             @save="(h, a) => setLeagueRowResult(row.mi, h, a)"
             @clear="clearLeagueRowResult(row.mi)"
             @sim="simLeagueRow(row.mi)"
@@ -353,6 +417,7 @@ async function simStage() {
               v-if="match.leg2Result !== undefined"
               :match="match"
               :teams="teams"
+              :locked="rowLocked(match.id)"
               @set-result="onSetTieResult"
               @clear-result="onClearTieResult"
               @sim-leg1="(m) => simTieLeg(m, 1)"
@@ -362,6 +427,7 @@ async function simStage() {
               v-else
               :match="match"
               :teams="teams"
+              :locked="rowLocked(match.id)"
               @set-result="onSetResult"
               @clear-result="onClearResult"
               @sim="simKnockoutMatch"

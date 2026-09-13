@@ -63,6 +63,9 @@ watch(
 .team-badge.reverse {
   flex-direction: row-reverse;
 }
+.team-badge.reverse .name {
+  text-align: right;
+}
 .dot {
   width: 12px;
   height: 12px;

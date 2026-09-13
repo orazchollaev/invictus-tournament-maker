@@ -980,6 +980,16 @@ export default {
       standDown: "Stand down",
       blocked: "Manage your own match first",
     },
+    panel: {
+      allPlayed: "Nothing left for you to play — everything else plays itself out.",
+    },
+    lineup: {
+      title: "Starting XI",
+      count: "{n}/11",
+      hint: "Pick who you want on the pitch, by position. Whatever's left empty fills itself in.",
+      noSquad: "No players registered for this team.",
+      noneForPosition: "No players at this position.",
+    },
   },
   music: {
     title: "Background Music",

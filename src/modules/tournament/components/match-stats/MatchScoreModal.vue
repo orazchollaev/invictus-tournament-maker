@@ -7,7 +7,7 @@ import { AppNumberInput, AppSheet } from "@/components/ui"
 import { TeamBadge } from "@/modules/teams/components"
 import MatchStatsModal from "./MatchStatsModal.vue"
 import LiveMatchModal from "./LiveMatchModal.vue"
-// Imported directly rather than through the manager barrel: ManagerBanner
+// Imported directly rather than through the manager barrel: ManagerTeamPanel
 // opens this very modal, so pulling the barrel in here would close a cycle.
 import ManagerMatchDrawer from "../manager/ManagerMatchDrawer.vue"
 import type { Team } from "@/modules/teams/types"
@@ -345,14 +345,37 @@ const managedTactics = computed<LiveTactics>(() => {
   }
 })
 
+const managedStartingXI = computed(() => tournament.value?.manager?.lineup ?? [])
+
 function manage() {
   if (!canManage.value) return
   managing.value = true
 }
 
+/**
+ * A managed match is already decided in full — including any shootout the
+ * engine ran itself — so there is nothing left for the user to confirm.
+ * It commits the moment the final whistle goes, the same way the ordinary
+ * two-step "reveal the shootout, then Save" flow never applied to it.
+ */
 function onManagedFinish(watched: WatchedMatch) {
   managing.value = false
-  applyRoll(watched)
+  home.value = watched.home
+  away.value = watched.away
+  if (watched.penHome !== undefined && watched.penAway !== undefined) {
+    penHome.value = watched.penHome
+    penAway.value = watched.penAway
+  }
+  if (props.matchId && (watched.ft || watched.stats || watched.reds)) {
+    stashWatchedMatch(pendingKey(props.matchId, props.leg ?? 1), watched)
+  }
+  hapticSuccess()
+  if (watched.penHome !== undefined && watched.penAway !== undefined) {
+    emit("save", home.value, away.value, penHome.value, penAway.value)
+  } else {
+    emit("save", home.value, away.value)
+  }
+  close()
 }
 
 function onLiveFinish() {
@@ -385,7 +408,22 @@ const canShowStats = computed(() => !!props.result?.stats)
       </span>
     </template>
 
-    <div class="ms-body">
+    <!-- A managed fixture is played, not typed in — the only thing on offer
+         is the drawer that plays it out; it commits itself on the final
+         whistle, so there is nothing here to simulate, watch, or hand-enter. -->
+    <div v-if="canManage" class="ms-manage-prompt">
+      <div class="ms-mp-fixture">
+        <TeamBadge :team="homeTeam" :size="24" reverse />
+        <span class="ms-mp-vs">{{ t("common.vs") }}</span>
+        <TeamBadge :team="awayTeam" :size="24" />
+      </div>
+      <button class="ms-mp-manage" @click="manage">
+        <ClipboardList :size="16" />
+        {{ t("manager.match.manage") }}
+      </button>
+    </div>
+
+    <div v-else class="ms-body">
       <div class="ms-side" :style="{ '--tc': homeTeam?.color ?? 'transparent' }">
         <TeamBadge :team="homeTeam" :size="20" class="ms-team" />
         <AppNumberInput
@@ -452,29 +490,36 @@ const canShowStats = computed(() => !!props.result?.stats)
         <ChartColumn :size="14" />
         <span>{{ t("matchStats.buttonLabel") }}</span>
       </button>
-      <button v-if="canManage" class="ms-ghost ms-ghost--manage" @click="manage">
-        <ClipboardList :size="14" />
-        <span>{{ t("manager.match.manage") }}</span>
-      </button>
       <button
-        v-if="canWatch || canReplay"
+        v-if="(canWatch || canReplay) && !canManage"
         class="ms-ghost ms-ghost--live"
+        :title="canReplay ? t('liveMatch.replay') : t('liveMatch.watch')"
         @click="canReplay ? replay() : watchLive()"
       >
         <PlayCircle :size="14" />
         <span>{{ canReplay ? t("liveMatch.replay") : t("liveMatch.watch") }}</span>
       </button>
-      <button v-if="canSimulate" class="ms-ghost" @click="simulate">
+      <button
+        v-if="canSimulate && !canManage"
+        class="ms-ghost"
+        :title="t('matchScore.simulate')"
+        @click="simulate"
+      >
         <Shuffle :size="14" />
         <span>{{ t("matchScore.simulate") }}</span>
       </button>
-      <button v-if="result" class="ms-ghost ms-ghost--danger" @click="clear">
+      <button
+        v-if="result"
+        class="ms-ghost ms-ghost--danger"
+        :title="t('matchScore.clear')"
+        @click="clear"
+      >
         <Trash2 :size="14" />
         <span>{{ t("matchScore.clear") }}</span>
       </button>
       <div class="ms-spacer" />
       <button @click="close">{{ t("common.cancel") }}</button>
-      <button class="primary" :disabled="saveDisabled" @click="save">
+      <button v-if="!canManage" class="primary" :disabled="saveDisabled" @click="save">
         {{ t("common.save") }}
       </button>
     </div>
@@ -501,6 +546,7 @@ const canShowStats = computed(() => !!props.result?.stats)
     :away-squad="managedSquads.away"
     :managed-side="managedSide"
     :tactics="managedTactics"
+    :starting-xi="managedStartingXI"
     :requires-winner="requiresWinner"
     :aggregate-offset="aggregateOffset"
     :subtitle="subtitle"
@@ -542,6 +588,40 @@ const canShowStats = computed(() => !!props.result?.stats)
   display: flex;
   flex-direction: column;
   gap: var(--sp-2);
+}
+
+.ms-manage-prompt {
+  padding: var(--sp-4) var(--sp-3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-4);
+}
+.ms-mp-fixture {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+}
+.ms-mp-vs {
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+}
+.ms-mp-manage {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-3) var(--sp-5);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  background: var(--accent-subtle);
+  color: var(--accent);
+  font-size: var(--fs-base);
+  font-weight: 600;
+  cursor: pointer;
+}
+.ms-mp-manage:hover {
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
 }
 
 .ms-side {
@@ -608,25 +688,42 @@ const canShowStats = computed(() => !!props.result?.stats)
 .ms-footer {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
+  row-gap: var(--sp-2);
   gap: var(--sp-2);
   padding: var(--sp-2) var(--sp-3) calc(var(--sp-2) + var(--safe-bottom));
   border-top: 1px solid var(--border-light);
   background: var(--bg);
 }
+/* The ghost actions (stats/manage/live/simulate/clear) don't share a row
+   with cancel/save — that pair can crowd out however many of them happen to
+   apply to a given match, so it always starts its own full-width row. */
 .ms-spacer {
-  flex: 1;
+  flex-basis: 100%;
+  height: 0;
+  order: 1;
 }
 .ms-ghost {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: var(--sp-1);
-  padding: var(--sp-2) var(--sp-2);
+  flex: 1;
+  min-width: 0;
+  padding: var(--sp-2);
   border: 1px solid var(--border-light);
   border-radius: var(--radius);
   background: transparent;
   color: var(--text-muted);
   font-size: var(--fs-sm);
   cursor: pointer;
+}
+.ms-ghost span {
+  display: none;
+}
+.ms-footer > button:not(.ms-ghost) {
+  flex: 1;
+  order: 2;
 }
 .ms-ghost:hover {
   color: var(--text);
@@ -649,42 +746,9 @@ const canShowStats = computed(() => !!props.result?.stats)
   border-color: var(--accent);
 }
 
-/* The match the user is actually in charge of — the one action here that
-   decides something rather than rolling for it. */
-.ms-ghost--manage {
-  color: var(--accent);
-  border-color: var(--accent);
-  background: var(--accent-subtle);
-  font-weight: 600;
-}
-.ms-ghost--manage:hover {
-  background: color-mix(in srgb, var(--accent) 18%, transparent);
-}
-
 @media (max-width: 600px) {
   .ms-side {
     padding: var(--sp-3) var(--sp-3) var(--sp-3) var(--sp-4);
-  }
-  /* Up to four ghost buttons plus cancel/save no longer fit one row, so the
-     footer wraps: ghost actions on top (icon-only, evenly spread), cancel
-     and save pinned full-width below. */
-  .ms-footer {
-    flex-wrap: wrap;
-    row-gap: var(--sp-2);
-  }
-  .ms-ghost {
-    flex: 1;
-    justify-content: center;
-  }
-  .ms-ghost span {
-    display: none;
-  }
-  .ms-spacer {
-    display: none;
-  }
-  .ms-footer > button:not(.ms-ghost) {
-    flex: 1;
-    order: 1;
   }
 }
 </style>

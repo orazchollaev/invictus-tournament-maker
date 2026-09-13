@@ -1,0 +1,400 @@
+<script setup lang="ts">
+/**
+ * The manager tab: everything about the side the user is in charge of,
+ * in one place — the fixture that is his to play, the tactics it is played
+ * with, and the way out.
+ *
+ * Replaces the old top-of-page banner: that banner only had room for the
+ * next fixture, so tactics lived on the settings page instead, a tap and a
+ * page-load away from the match they applied to.
+ */
+import { computed, ref } from "vue"
+import { useI18n } from "vue-i18n"
+import { ClipboardList, Users } from "@lucide/vue"
+import {
+  AppButton,
+  AppButtonGroup,
+  AppCard,
+  AppChip,
+  AppEmptyState,
+  AppField,
+  AppSelect,
+} from "@/components/ui"
+import { TeamBadge } from "@/modules/teams/components"
+import MatchScoreModal from "../match-stats/MatchScoreModal.vue"
+import { useTournamentStore } from "@/modules/tournament/store"
+import { useTeamsStore } from "@/modules/teams/store"
+import { usePlayersStore } from "@/modules/players/store"
+import { legOf, nextManagedFixture } from "@/modules/tournament/utils/managerFixtures"
+import { FORMATION_LIST, FORMATIONS, PLAY_STYLES } from "@/engine"
+import type { Formation, PlayStyle } from "@/modules/teams/types"
+import type { Player, PlayerPosition } from "@/modules/players/types"
+import type { MatchEntry } from "@/engine"
+
+const props = defineProps<{ tournamentId: string }>()
+
+const { t } = useI18n()
+const store = useTournamentStore()
+const teamsStore = useTeamsStore()
+const playersStore = usePlayersStore()
+
+const tournament = computed(() => store.tournaments.find((x) => x.id === props.tournamentId))
+const manager = computed(() => tournament.value?.manager)
+const managedTeam = computed(() =>
+  teamsStore.teams.find((tm) => tm.id === tournament.value?.manager?.teamId)
+)
+
+// ─── Next fixture ────────────────────────────────────────────────
+const fixture = computed<MatchEntry | null>(() =>
+  tournament.value ? nextManagedFixture(tournament.value) : null
+)
+
+const homeTeam = computed(() => teamsStore.teams.find((tm) => tm.id === fixture.value?.homeId))
+const awayTeam = computed(() => teamsStore.teams.find((tm) => tm.id === fixture.value?.awayId))
+
+const stageLabel = computed(() => {
+  const src = fixture.value?.source
+  if (!src) return ""
+  if (src.kind === "group") return src.groupName
+  if (src.kind === "league")
+    return src.tierName ? `${src.tierName} · ${src.matchdayName}` : src.matchdayName
+  if (src.kind === "third-place") return t("rounds.thirdPlace")
+  return src.roundName
+})
+
+/** A knockout tie has to produce a winner — except in the first leg of two. */
+const requiresWinner = computed(() => {
+  const entry = fixture.value
+  if (!entry) return false
+  if (entry.source.kind !== "knockout" && entry.source.kind !== "third-place") return false
+  return !entry.isDoubleLeg || legOf(entry) === 2
+})
+
+/** Leg 2 counts the first leg, flipped into this leg's home/away frame. */
+const aggregateOffset = computed(() => {
+  const entry = fixture.value
+  if (!entry || legOf(entry) !== 2) return null
+  const leg1 = entry.match.result
+  if (!leg1) return null
+  return { home: leg1.away, away: leg1.home }
+})
+
+const open = ref(false)
+
+function save(home: number, away: number, penHome?: number, penAway?: number) {
+  const entry = fixture.value
+  if (!entry) return
+  store.setFixtureResult(props.tournamentId, entry, home, away, penHome, penAway)
+}
+
+// ─── Tactics ─────────────────────────────────────────────────────
+const formationOptions = computed(() => FORMATION_LIST.map((value) => ({ value, label: value })))
+const styleOptions = computed(() =>
+  PLAY_STYLES.map((value) => ({ value, label: t(`coach.styles.${value}`) }))
+)
+
+const formation = computed({
+  get: () => manager.value?.formation ?? "4-4-2",
+  set: (value: Formation) => store.setManagerTactics(props.tournamentId, { formation: value }),
+})
+
+const style = computed({
+  get: () => manager.value?.style ?? "balanced",
+  set: (value: PlayStyle) => store.setManagerTactics(props.tournamentId, { style: value }),
+})
+
+function standDown() {
+  store.setManagerTeam(props.tournamentId, null)
+}
+
+// ─── Starting XI ─────────────────────────────────────────────────
+/** Best power first — the squad the user is choosing from, not the pitch. */
+const squad = computed(() =>
+  [...playersStore.byTeam(manager.value?.teamId ?? "")].sort((a, b) => b.power - a.power)
+)
+
+const POSITION_ORDER: PlayerPosition[] = ["GK", "DEF", "MID", "FWD"]
+
+/**
+ * Grouped by the job the current formation actually needs, not just
+ * dumped in one long list — a pick only ever fills a slot in the player's
+ * own position (that's how the engine seats them too), so showing them
+ * any other way left it unclear what a checkbox was even choosing.
+ */
+const squadByPosition = computed(() => {
+  const groups = new Map<PlayerPosition, Player[]>()
+  for (const position of POSITION_ORDER) groups.set(position, [])
+  for (const player of squad.value) groups.get(player.position)?.push(player)
+  return groups
+})
+
+const formationSlots = computed(() => FORMATIONS[formation.value])
+
+const lineup = computed(() => manager.value?.lineup ?? [])
+const lineupSet = computed(() => new Set(lineup.value))
+
+function pickedCount(position: PlayerPosition): number {
+  return (squadByPosition.value.get(position) ?? []).filter((p) => lineupSet.value.has(p.id)).length
+}
+
+function toggleLineup(player: Player) {
+  const current = [...lineup.value]
+  const idx = current.indexOf(player.id)
+  if (idx >= 0) {
+    current.splice(idx, 1)
+  } else {
+    if (pickedCount(player.position) >= (formationSlots.value[player.position] ?? 0)) return
+    current.push(player.id)
+  }
+  store.setManagerLineup(props.tournamentId, current)
+}
+</script>
+
+<template>
+  <div v-if="manager && managedTeam" class="mp">
+    <AppCard variant="outlined" padding="md" class="mp-fixture-card">
+      <template #title>
+        <ClipboardList :size="15" class="mp-icon" />
+        {{ t("manager.banner.title", { team: managedTeam.name }) }}
+      </template>
+
+      <template v-if="fixture">
+        <AppChip square size="xs" class="mp-stage">{{ stageLabel }}</AppChip>
+
+        <div class="mp-fixture-row">
+          <div class="mp-side">
+            <TeamBadge :team="homeTeam" :size="28" reverse />
+          </div>
+          <span class="mp-vs">{{ t("common.vs") }}</span>
+          <div class="mp-side mp-side--away">
+            <TeamBadge :team="awayTeam" :size="28" />
+          </div>
+        </div>
+
+        <AppButton variant="filled" block @click="open = true">
+          {{ t("manager.banner.play") }}
+        </AppButton>
+      </template>
+
+      <AppEmptyState v-else :title="t('manager.panel.allPlayed')" />
+    </AppCard>
+
+    <AppCard padding="md">
+      <template #title>{{ t("manager.settings.title") }}</template>
+
+      <div class="mp-tactics">
+        <AppField layout="stack" :label="t('coach.form.formation')">
+          <AppSelect v-model="formation" :options="formationOptions" />
+        </AppField>
+
+        <AppField
+          layout="stack"
+          :label="t('coach.form.style')"
+          :hint="t(`coach.styleHints.${style}`)"
+        >
+          <AppButtonGroup v-model="style" :options="styleOptions" block />
+        </AppField>
+
+        <div class="mp-actions">
+          <AppButton variant="danger" size="xs" @click="standDown">
+            {{ t("manager.settings.standDown") }}
+          </AppButton>
+        </div>
+      </div>
+    </AppCard>
+
+    <AppCard padding="md">
+      <template #title>
+        <Users :size="15" class="mp-icon" />
+        {{ t("manager.lineup.title") }}
+      </template>
+      <template #actions>
+        <AppChip size="xs" square>{{ t("manager.lineup.count", { n: lineup.length }) }}</AppChip>
+      </template>
+
+      <p class="mp-lineup-hint">{{ t("manager.lineup.hint") }}</p>
+
+      <AppEmptyState v-if="!squad.length" :title="t('manager.lineup.noSquad')" />
+      <div v-else class="mp-lineup-groups">
+        <div v-for="position in POSITION_ORDER" :key="position" class="mp-lineup-group">
+          <div class="mp-lineup-group-head">
+            <span>{{ t(`players.positions.${position}`) }}</span>
+            <span class="mp-lineup-group-count">
+              {{ pickedCount(position) }}/{{ formationSlots[position] }}
+            </span>
+          </div>
+
+          <p v-if="!squadByPosition.get(position)?.length" class="mp-lineup-empty">
+            {{ t("manager.lineup.noneForPosition") }}
+          </p>
+          <div v-else class="mp-lineup-list">
+            <label
+              v-for="player in squadByPosition.get(position)"
+              :key="player.id"
+              class="mp-lineup-row"
+              :class="{ 'mp-lineup-row--picked': lineupSet.has(player.id) }"
+            >
+              <input
+                type="checkbox"
+                :checked="lineupSet.has(player.id)"
+                :disabled="
+                  !lineupSet.has(player.id) && pickedCount(position) >= formationSlots[position]
+                "
+                @change="toggleLineup(player)"
+              />
+              <span class="mp-lineup-name">{{ player.name }}</span>
+              <AppChip square size="xs">{{ player.power }}</AppChip>
+            </label>
+          </div>
+        </div>
+      </div>
+    </AppCard>
+
+    <MatchScoreModal
+      v-if="open && fixture"
+      :home-team="homeTeam"
+      :away-team="awayTeam"
+      :result="fixture.result"
+      :requires-winner="requiresWinner"
+      :subtitle="stageLabel"
+      :match-id="fixture.match.id"
+      :leg="legOf(fixture)"
+      :aggregate-offset="aggregateOffset"
+      @save="save"
+      @close="open = false"
+    />
+  </div>
+</template>
+
+<style scoped>
+.mp {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  padding-bottom: var(--sp-3);
+}
+
+.mp-fixture-card {
+  border-color: color-mix(in srgb, var(--accent) 40%, var(--border));
+}
+
+.mp-icon {
+  color: var(--accent);
+}
+
+.mp-stage {
+  margin-bottom: var(--sp-3);
+}
+
+.mp-fixture-row {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-2) 0 var(--sp-4);
+}
+
+.mp-side {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 0;
+}
+.mp-side--away {
+  justify-content: flex-start;
+}
+
+.mp-vs {
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.mp-tactics {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.mp-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.mp-lineup-hint {
+  margin: 0 0 var(--sp-2);
+  font-size: var(--fs-sm);
+  color: var(--text-muted);
+}
+
+.mp-lineup-groups {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  max-height: 50vh;
+  overflow-y: auto;
+}
+
+.mp-lineup-group-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--sp-1) var(--sp-1);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border-light);
+}
+.mp-lineup-group-count {
+  font-family: var(--font-mono);
+  color: var(--accent);
+}
+
+.mp-lineup-empty {
+  margin: 0;
+  padding: var(--sp-2) var(--sp-1);
+  font-size: var(--fs-sm);
+  color: var(--text-muted);
+}
+
+.mp-lineup-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.mp-lineup-row {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-2) var(--sp-1);
+  border-bottom: 1px solid var(--border-light);
+  cursor: pointer;
+  min-height: var(--tap-min);
+}
+.mp-lineup-row:last-child {
+  border-bottom: none;
+}
+.mp-lineup-row:hover {
+  background: var(--border-light);
+}
+.mp-lineup-row--picked {
+  color: var(--accent);
+}
+
+.mp-lineup-name {
+  flex: 1;
+  min-width: 0;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 600px) {
+  .mp-fixture-row {
+    gap: var(--sp-3);
+  }
+}
+</style>

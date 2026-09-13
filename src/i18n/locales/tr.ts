@@ -985,6 +985,16 @@ export default {
       standDown: "Görevi bırak",
       blocked: "Önce kendi maçını yönet",
     },
+    panel: {
+      allPlayed: "Oynanacak maçın kalmadı — geri kalan her şey otomatik oynanır.",
+    },
+    lineup: {
+      title: "İlk 11",
+      count: "{n}/11",
+      hint: "Sahaya çıkmasını istediğin oyuncuları mevkilerine göre seç. Boş kalan yerler otomatik doldurulur.",
+      noSquad: "Bu takımda kayıtlı oyuncu yok.",
+      noneForPosition: "Bu mevkide oyuncu yok.",
+    },
   },
   music: {
     title: "Arka Plan Müziği",

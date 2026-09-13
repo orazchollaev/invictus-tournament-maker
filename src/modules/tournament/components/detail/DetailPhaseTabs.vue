@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue"
 import { useI18n } from "vue-i18n"
+import { UserCog } from "@lucide/vue"
 import type { MainTab } from "./types"
 import { AppTabs, AppTab } from "@/components/ui"
 
@@ -10,6 +11,8 @@ const props = defineProps<{
   isGroupFormat: boolean
   isSwissFormat: boolean
   bracketAllowed: boolean
+  /** Managed team's name — shows the manager tab first when set. */
+  managerTeamName?: string
 }>()
 
 const emit = defineEmits<{
@@ -41,6 +44,11 @@ function onUpdate(value: string) {
     :dir="locale === 'ar' ? 'rtl' : 'ltr'"
     @update:model-value="onUpdate"
   >
+    <AppTab v-if="managerTeamName" value="manager" class="manager-tab">
+      <UserCog :size="13" class="manager-tab-icon" />
+      {{ managerTeamName }}
+    </AppTab>
+
     <template v-if="isLeagueFormat">
       <AppTab value="league">{{ leagueTabLabel }}</AppTab>
       <AppTab v-if="bracketAllowed" value="bracket">
@@ -64,3 +72,15 @@ function onUpdate(value: string) {
     <AppTab value="participants">{{ t("tournament.tabs.participants") }}</AppTab>
   </AppTabs>
 </template>
+
+<style scoped>
+.manager-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.manager-tab-icon {
+  flex-shrink: 0;
+  color: var(--accent);
+}
+</style>

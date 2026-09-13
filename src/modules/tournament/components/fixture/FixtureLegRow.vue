@@ -23,6 +23,8 @@ const props = defineProps<{
   teams: Team[]
   /** Leg 2 cannot be entered before leg 1 has a result. */
   disabled?: boolean
+  /** Manager mode: only the managed team's own fixtures stay editable. */
+  locked?: boolean
   /** Leg 2 only: leg 1's score, in this row's home/away frame, to judge level on aggregate. */
   aggregateOffset?: { home: number; away: number } | null
 }>()
@@ -52,14 +54,16 @@ function scoreAccentColor(): string {
 }
 
 const editing = ref(false)
-const canEdit = computed(() => !!props.match.homeId && !!props.match.awayId && !props.disabled)
+const canEdit = computed(
+  () => !!props.match.homeId && !!props.match.awayId && !props.disabled && !props.locked
+)
 
 /** Only the deciding leg offers a shootout. */
 const requiresWinner = computed(() => props.leg === 2)
 </script>
 
 <template>
-  <div class="leg" :class="{ 'leg--locked': disabled }">
+  <div class="leg" :class="{ 'leg--locked': disabled || locked }">
     <span class="leg-no">L{{ leg }}</span>
 
     <TeamBadge :team="homeTeam" :size="14" reverse class="fx-team fx-team--home" />

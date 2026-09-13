@@ -15,12 +15,11 @@ import { TournamentStats } from "@/modules/tournament/components/stats"
 import { DrawCeremony } from "@/modules/tournament/components/draw-ceremony"
 import { AppModal, AppSubTabBar } from "@/components/ui"
 import { DetailHeader, DetailPhaseTabs, DetailMultiTierModal } from "../components/detail"
-import { ManagerBanner } from "../components/manager"
+import { ManagerTeamPanel, ManagerTeamPickerModal } from "../components/manager"
 import { hasPendingManagedFixture } from "../utils/managerFixtures"
 import { useTournamentDetail } from "../composables/useTournamentDetail"
 import { useTournamentTabs } from "../composables/useTournamentTabs"
 import { useTournamentCeremonies } from "../composables/useTournamentCeremonies"
-import { useTournamentExcelExport } from "../composables/useTournamentExcelExport"
 import { useFillViewportHeight } from "@/composables/useFillViewportHeight"
 
 const { t: trns } = useI18n()
@@ -50,7 +49,22 @@ const managerBlocked = computed(
   () => !!tournament.value?.manager && hasPendingManagedFixture(tournament.value)
 )
 
-const { isExporting, exportExcel } = useTournamentExcelExport(() => tournament.value)
+/** Taking a job is only on offer before the season has played a match. */
+const canBecomeManager = computed(
+  () => !tournament.value?.manager && !isFinished.value && !hasAnyResults.value
+)
+
+const managedTeamName = computed(() => {
+  const teamId = tournament.value?.manager?.teamId
+  if (!teamId) return undefined
+  return allTeams.value.find((tm) => tm.id === teamId)?.name
+})
+
+const showManagerPicker = ref(false)
+function onManagerConfirmed() {
+  showManagerPicker.value = false
+  changeTab("manager")
+}
 
 // The tab surface is sized to the rest of the screen, so each panel scrolls
 // inside itself instead of growing the page.
@@ -138,13 +152,13 @@ const showStartPlayoffButton = computed(
         :is-finished="isFinished"
         :show-advance="showAdvanceButton"
         :show-start-playoff="showStartPlayoffButton"
-        :is-exporting="isExporting"
         :seasons="seasons"
         :current-season-id="tournament.id"
         :manager-blocked="managerBlocked"
+        :can-become-manager="canBecomeManager"
         @back="router.push('/tournaments')"
         @open-new-season="openNewSeason"
-        @export-excel="exportExcel"
+        @open-manager-picker="showManagerPicker = true"
         @simulate-all="store.simulateTournament(tournament!.id)"
         @open-settings="router.push(`/tournaments/${tournament!.id}/settings`)"
         @advance="onAdvance"
@@ -152,14 +166,13 @@ const showStartPlayoffButton = computed(
         @switch-season="switchSeason"
       />
 
-      <ManagerBanner v-if="tournament.manager" :tournament-id="tournament.id" />
-
       <DetailPhaseTabs
         :active-tab="activeTab"
         :is-league-format="isLeagueFormat"
         :is-group-format="isGroupFormat"
         :is-swiss-format="isSwissFormat"
         :bracket-allowed="bracketAllowed"
+        :manager-team-name="managedTeamName"
         @change-tab="changeTab"
       />
 
@@ -179,7 +192,10 @@ const showStartPlayoffButton = computed(
         >
           <SwiperSlide v-for="tab in visibleTabs" :key="tab">
             <template v-if="isTabRendered(tab)">
-              <div v-if="tab === 'league'" class="tab-panel">
+              <div v-if="tab === 'manager'" class="tab-panel">
+                <ManagerTeamPanel :tournament-id="tournament.id" />
+              </div>
+              <div v-else-if="tab === 'league'" class="tab-panel">
                 <template v-if="isMultiTier && tournament.tiers">
                   <div class="gs-subtab-row">
                     <AppSubTabBar
@@ -275,6 +291,13 @@ const showStartPlayoffButton = computed(
         </Swiper>
       </div>
     </template>
+
+    <ManagerTeamPickerModal
+      v-if="showManagerPicker && tournament"
+      :tournament-id="tournament.id"
+      @confirmed="onManagerConfirmed"
+      @close="showManagerPicker = false"
+    />
 
     <DrawCeremony
       v-if="showCeremony && ceremonyContext"

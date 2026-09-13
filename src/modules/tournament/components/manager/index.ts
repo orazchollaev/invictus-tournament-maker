@@ -1,5 +1,5 @@
-export { default as ManagerBanner } from "./ManagerBanner.vue"
+export { default as ManagerTeamPanel } from "./ManagerTeamPanel.vue"
+export { default as ManagerTeamPickerModal } from "./ManagerTeamPickerModal.vue"
 export { default as ManagerMatchDrawer } from "./ManagerMatchDrawer.vue"
-export { default as ManagerSettingsCard } from "./ManagerSettingsCard.vue"
 export { default as ManagerSubSheet } from "./ManagerSubSheet.vue"
 export { default as ManagerTacticsSheet } from "./ManagerTacticsSheet.vue"

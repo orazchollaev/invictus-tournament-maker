@@ -12,9 +12,10 @@
 import { computed, onMounted, ref, watch, nextTick } from "vue"
 import { useI18n } from "vue-i18n"
 import { ClipboardList, Pause, Play, RefreshCw, SkipForward } from "@lucide/vue"
-import { AppButtonGroup, AppModal } from "@/components/ui"
+import { AppButtonGroup, AppModal, AppSubTabBar } from "@/components/ui"
 import { TeamBadge } from "@/modules/teams/components"
 import MatchTimeline from "../match-stats/MatchTimeline.vue"
+import MatchTeamCompare from "../match-stats/MatchTeamCompare.vue"
 import MatchShootout from "../match-stats/MatchShootout.vue"
 import { formatMinute } from "../match-stats/matchTime"
 import ManagerTacticsSheet from "./ManagerTacticsSheet.vue"
@@ -42,6 +43,8 @@ const props = defineProps<{
   managedSide: Side
   /** His standing instructions, from the tournament's manager state. */
   tactics: LiveTactics
+  /** His starting-XI picks, from the tournament's manager state. */
+  startingXI?: string[]
   requiresWinner?: boolean
   aggregateOffset?: { home: number; away: number } | null
   subtitle?: string
@@ -70,6 +73,7 @@ const state: LiveMatchState = createLiveMatch({
   awaySquad: props.awaySquad,
   managedSide: props.managedSide,
   managedTactics: props.tactics,
+  managedStartingXI: props.startingXI ?? null,
   requiresWinner: props.requiresWinner ?? false,
   aggregateOffset: props.aggregateOffset ?? null,
 })
@@ -105,6 +109,10 @@ const clockLabel = computed(() => {
 const showShootout = computed(
   () => match.shootoutKicks.value.length > 0 || match.stage.value === "shootout"
 )
+
+const railTab = ref<"timeline" | "stats">("timeline")
+const homeColor = computed(() => props.homeTeam.color ?? "var(--accent)")
+const awayColor = computed(() => props.awayTeam.color ?? "var(--text-muted)")
 
 const tacticsOpen = ref(false)
 const subOpen = ref(false)
@@ -172,7 +180,11 @@ function close(hb: boolean) {
 
 function onClosed() {
   match.stop()
-  if (!handBack.value) {
+  // The panel only becomes closable once the match is over (see the
+  // `closable` prop below), so reaching here unfinished can only mean the
+  // programmatic cancel path — the header's X, once it reappears, still
+  // means "keep this result" rather than "throw the finished match away".
+  if (!handBack.value && !match.finished.value) {
     emit("cancel")
     return
   }
@@ -193,7 +205,14 @@ onMounted(match.start)
 </script>
 
 <template>
-  <AppModal ref="modal" :dismiss-on-outside-click="false" :z-index="1020" flush @close="onClosed">
+  <AppModal
+    ref="modal"
+    :dismiss-on-outside-click="false"
+    :closable="match.finished.value"
+    :z-index="1020"
+    flush
+    @close="onClosed"
+  >
     <template #title>
       <span class="mm-title">
         {{ t("manager.match.title") }}
@@ -228,17 +247,36 @@ onMounted(match.start)
         </span>
       </div>
 
-      <div ref="rail" class="mm-rail">
-        <MatchTimeline :events="match.events.value" :has-extra-time="hasExtraTime" />
+      <AppSubTabBar
+        class="mm-subtabs"
+        :options="[
+          { value: 'timeline', label: t('matchStats.timeline') },
+          { value: 'stats', label: t('matchStats.comparison') },
+        ]"
+        :model-value="railTab"
+        @update:model-value="(v) => (railTab = v as 'timeline' | 'stats')"
+      />
 
-        <div v-if="showShootout" class="mm-pens">
-          <span class="mm-pens-title">{{ t("liveMatch.penalties") }}</span>
-          <MatchShootout
-            :kicks="match.shootoutKicks.value"
-            :home-color="homeTeam.color"
-            :away-color="awayTeam.color"
-          />
-        </div>
+      <div ref="rail" class="mm-rail">
+        <template v-if="railTab === 'timeline'">
+          <MatchTimeline :events="match.events.value" :has-extra-time="hasExtraTime" />
+
+          <div v-if="showShootout" class="mm-pens">
+            <span class="mm-pens-title">{{ t("liveMatch.penalties") }}</span>
+            <MatchShootout
+              :kicks="match.shootoutKicks.value"
+              :home-color="homeTeam.color"
+              :away-color="awayTeam.color"
+            />
+          </div>
+        </template>
+
+        <MatchTeamCompare
+          v-else
+          :stats="match.teamStats.value"
+          :home-color="homeColor"
+          :away-color="awayColor"
+        />
       </div>
     </div>
 
@@ -253,6 +291,7 @@ onMounted(match.start)
       </button>
       <AppButtonGroup
         v-if="!match.finished.value"
+        class="mm-speed"
         :model-value="String(speed)"
         :options="speedOptions"
         size="xs"
@@ -405,6 +444,10 @@ onMounted(match.start)
   border-color: color-mix(in srgb, var(--accent) 35%, var(--border-light));
 }
 
+.mm-subtabs {
+  margin: var(--sp-2) var(--sp-3) 0;
+}
+
 .mm-rail {
   flex: 1;
   min-height: 180px;
@@ -455,6 +498,15 @@ onMounted(match.start)
 .mm-subs-left {
   font-family: var(--font-mono);
   font-size: var(--fs-xs);
+}
+
+/* Which speed is running matters here in a way it doesn't for a formation
+   or play-style toggle, so this one keeps the accent fill even under design
+   languages (iOS) that otherwise leave a segmented control's selection
+   uncoloured. */
+.mm-speed :deep(button.active) {
+  background: var(--accent) !important;
+  color: var(--on-accent) !important;
 }
 
 @media (max-width: 380px) {
