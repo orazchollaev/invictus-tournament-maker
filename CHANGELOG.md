@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.8.1](https://github.com/orazchollaev/invictus-tournament-maker/compare/v2.8.0...v2.8.1) (2026-09-13)
+
+### 🐛 Bug Fixes
+
+- **music:** guard against a missing \ on init ([c1fce09](https://github.com/orazchollaev/invictus-tournament-maker/commit/c1fce09df447587256a35ee0afe6deaf88b23894))
+
 ## [2.8.0](https://github.com/orazchollaev/invictus-tournament-maker/compare/v2.7.0...v2.8.0) (2026-09-13)
 
 ### 🚀 New Features
