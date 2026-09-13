@@ -13,8 +13,9 @@ function setup(teams: Team[] = makeTeams(8)) {
   const tournaments = ref<Tournament[]>([])
   const active = ref<string | null>(null)
   const getTeams = () => teams
+  const getPlayers = () => []
   const crud = useCrudActions(tournaments, active, getTeams)
-  const manager = useManagerActions(tournaments, getTeams)
+  const manager = useManagerActions(tournaments, getTeams, getPlayers)
   const league = useLeagueActions(tournaments, getTeams)
   const ids = teams.map((t) => t.id)
   return { tournaments, crud, manager, league, teams, ids }

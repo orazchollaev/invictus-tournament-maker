@@ -1,7 +1,9 @@
 import type { Ref } from "vue"
 import type { ManagerState, Tournament } from "../types"
 import type { Formation, PlayStyle, Team } from "@/modules/teams/types"
+import type { Player } from "@/modules/players/types"
 import { DEFAULT_FORMATION, DEFAULT_STYLE, playedMatches, teamFormation } from "@/engine"
+import { bestStartingXI } from "../utils/managerLineup"
 import { makeWithTournament } from "./helpers"
 
 /**
@@ -11,7 +13,11 @@ import { makeWithTournament } from "./helpers"
  * never opens the tactics sheet still plays the way the team was built to
  * play. From then on it is his.
  */
-export function useManagerActions(tournaments: Ref<Tournament[]>, getTeams: () => Team[]) {
+export function useManagerActions(
+  tournaments: Ref<Tournament[]>,
+  getTeams: () => Team[],
+  getPlayers: () => Player[]
+) {
   const withTournament = makeWithTournament(tournaments)
 
   function setManagerTeam(tournamentId: string, teamId: string | null) {
@@ -27,11 +33,16 @@ export function useManagerActions(tournaments: Ref<Tournament[]>, getTeams: () =
       if (!t.manager && playedMatches(t).length > 0) return
 
       const team = getTeams().find((tm) => tm.id === teamId)
+      const formation = team ? teamFormation(team) : DEFAULT_FORMATION
+      const squad = getPlayers().filter((p) => p.teamId === teamId)
       const manager: ManagerState = {
         teamId,
-        formation: team ? teamFormation(team) : DEFAULT_FORMATION,
+        formation,
         style: team?.coach?.style ?? DEFAULT_STYLE,
         startedAt: Date.now(),
+        // Best eleven he already has, so taking the job hands him a side
+        // ready to play rather than an empty sheet he must fill first.
+        lineup: bestStartingXI(squad, formation),
       }
       t.manager = manager
     })

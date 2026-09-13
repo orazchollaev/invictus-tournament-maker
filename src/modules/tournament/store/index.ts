@@ -159,6 +159,10 @@ export const useTournamentStore = defineStore(
       return useTeamsStore().teams
     }
 
+    function getPlayers() {
+      return usePlayersStore().players
+    }
+
     const withTournament = makeWithTournament(tournaments)
 
     /**
@@ -280,7 +284,7 @@ export const useTournamentStore = defineStore(
     const leagueActions = useLeagueActions(tournaments, getTeams)
     const leaguePlayoff = useLeaguePlayoffActions(tournaments, getTeams)
     const scoring = useScoringActions(tournaments)
-    const manager = useManagerActions(tournaments, getTeams)
+    const manager = useManagerActions(tournaments, getTeams, getPlayers)
 
     if (import.meta.env.DEV) {
       assertNoSliceCollisions({

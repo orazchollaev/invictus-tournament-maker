@@ -170,11 +170,36 @@ function pickedCount(position: PlayerPosition): number {
   return (squadByPosition.value.get(position) ?? []).filter((p) => lineupSet.value.has(p.id)).length
 }
 
-const totalSlots = computed(() =>
-  Object.values(formationSlots.value).reduce((sum, n) => sum + n, 0)
+/** Fit players actually left to pick from, for one position — hurt or
+ * suspended ones don't count, same as they can't be checked below. */
+function availableCount(position: PlayerPosition): number {
+  return (squadByPosition.value.get(position) ?? []).filter((p) => !unavailabilityOf(p.id)).length
+}
+
+/** What a full XI needs from this position, capped by what the squad can
+ * actually supply — a position the squad is short of is never "incomplete",
+ * it is just short, and the match's own engine covers the gap. */
+function neededCount(position: PlayerPosition): number {
+  return Math.min(formationSlots.value[position] ?? 0, availableCount(position))
+}
+
+function isComplete(ids: string[]): boolean {
+  const set = new Set(ids)
+  return POSITION_ORDER.every((position) => {
+    const picked = (squadByPosition.value.get(position) ?? []).filter((p) => set.has(p.id)).length
+    return picked >= neededCount(position)
+  })
+}
+
+/** How many more can still usefully be picked — zero once every position has
+ * either filled its slots or the manager has run out of fit players in it. */
+const missingCount = computed(() =>
+  POSITION_ORDER.reduce(
+    (sum, position) => sum + Math.max(0, neededCount(position) - pickedCount(position)),
+    0
+  )
 )
-/** Whole squad picked, nobody left to auto-fill — the only state the match is allowed to start from. */
-const lineupReady = computed(() => lineup.value.length >= totalSlots.value)
+const lineupReady = computed(() => missingCount.value === 0)
 
 function toggleLineup(player: Player) {
   if (unavailabilityOf(player.id)) return
@@ -186,7 +211,7 @@ function toggleLineup(player: Player) {
   } else {
     if (pickedCount(player.position) >= (formationSlots.value[player.position] ?? 0)) return
     current.push(player.id)
-    if (current.length >= totalSlots.value) hapticSuccess()
+    if (isComplete(current)) hapticSuccess()
     else hapticSelection()
   }
   store.setManagerLineup(props.tournamentId, current)
@@ -232,7 +257,7 @@ function open11() {
           {{ t("manager.banner.play") }}
         </AppButton>
         <p v-if="!lineupReady" class="mp-fixture-hint">
-          {{ t("manager.lineup.incomplete", { n: totalSlots - lineup.length }) }}
+          {{ t("manager.lineup.incomplete", { n: missingCount }) }}
         </p>
       </template>
 
