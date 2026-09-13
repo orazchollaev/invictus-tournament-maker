@@ -1,5 +1,34 @@
 # Changelog
 
+## [2.8.0](https://github.com/orazchollaev/invictus-tournament-maker/compare/v2.7.0...v2.8.0) (2026-09-13)
+
+### 🚀 New Features
+
+- add new manager mode ([ffdbdff](https://github.com/orazchollaev/invictus-tournament-maker/commit/ffdbdff2e97b65bf91a53185165078f71787c126))
+- **coach:** add managers with formation, play style and rating ([6db1038](https://github.com/orazchollaev/invictus-tournament-maker/commit/6db10388d36306166388f0e31a407e6087f00f69))
+- **engine:** play a managed match forward, minute by minute ([71758e7](https://github.com/orazchollaev/invictus-tournament-maker/commit/71758e77fa6b4b871ed41b812eda162cb9179b76))
+- **manager:** auto-pick the best starting XI when taking charge of a team ([a4e2aa6](https://github.com/orazchollaev/invictus-tournament-maker/commit/a4e2aa6d84ea7af8852dcca6ccef4775af227751))
+- **manager:** manage your own matches, live ([de2b45e](https://github.com/orazchollaev/invictus-tournament-maker/commit/de2b45ed5e1db29b8695ca5764834b8efa0abe81))
+- **manager:** realistic starting XI picker with injury/suspension gating ([f66fbde](https://github.com/orazchollaev/invictus-tournament-maker/commit/f66fbdedff14b46b891ee4edc92feb25ae405d07))
+- **manager:** take charge of one team for a whole season ([801353a](https://github.com/orazchollaev/invictus-tournament-maker/commit/801353ae186c9b806bb1b5472eb0c22eb96a1774))
+- **music:** background music with your own tracks ([293d576](https://github.com/orazchollaev/invictus-tournament-maker/commit/293d5764ac1a2c53f248114cf6e4397277687f6c))
+- **music:** switch built-in theme track to ogg ([61cf055](https://github.com/orazchollaev/invictus-tournament-maker/commit/61cf0556b40b0a255c56f0230d8a77510f5f0229))
+- **settings:** split music into its own settings section ([0531ff8](https://github.com/orazchollaev/invictus-tournament-maker/commit/0531ff8c08082d3eb4ebb8d33baeead4904f3c76))
+
+### 🐛 Bug Fixes
+
+- **engine:** send off a player on a second yellow in a live-managed match ([1631d49](https://github.com/orazchollaev/invictus-tournament-maker/commit/1631d49f35e19bd0fda72c64dfb4d73427614216))
+- **music:** cancel pending gesture retry when playback stops ([25acc4e](https://github.com/orazchollaev/invictus-tournament-maker/commit/25acc4e7b50bc4956ff0b48fef503f41527cba41))
+- **music:** wait for persisted state before deciding to autoplay ([340241a](https://github.com/orazchollaev/invictus-tournament-maker/commit/340241a45079c44be9df614d347f77e6a3484004))
+
+### 🔧 Maintenance
+
+- **i18n:** add missing coach, manager, and music translations to all locales ([8aafdc6](https://github.com/orazchollaev/invictus-tournament-maker/commit/8aafdc6b250d44b2b8f99a1a5f7e6270bae0efbe))
+
+### 📚 Documentation
+
+- list the music module alongside the others ([fccdb40](https://github.com/orazchollaev/invictus-tournament-maker/commit/fccdb40aa9ec551573a7c106d372e28734fae4a6))
+
 ## [2.7.0](https://github.com/orazchollaev/invictus-tournament-maker/compare/v2.6.1...v2.7.0) (2026-09-12)
 
 ### 🚀 New Features
