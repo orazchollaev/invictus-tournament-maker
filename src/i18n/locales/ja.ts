@@ -553,6 +553,7 @@ export default {
       bracket: "トーナメント表とエフェクト",
       tournament: "大会ルール",
       simulation: "シミュレーション",
+      music: "音楽",
       data: "データ",
     },
     tutorials: "チュートリアル",

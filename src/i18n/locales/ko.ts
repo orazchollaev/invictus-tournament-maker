@@ -552,6 +552,7 @@ export default {
       bracket: "대진표 및 효과",
       tournament: "토너먼트 규칙",
       simulation: "시뮬레이션",
+      music: "음악",
       data: "데이터",
     },
     tutorials: "튜토리얼",

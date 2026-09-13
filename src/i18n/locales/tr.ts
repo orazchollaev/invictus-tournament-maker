@@ -555,6 +555,7 @@ export default {
       bracket: "Bracket ve Efektler",
       tournament: "Turnuva Kuralları",
       simulation: "Simülasyon",
+      music: "Müzik",
       data: "Veriler",
     },
     tutorials: "Eğitim Videoları",

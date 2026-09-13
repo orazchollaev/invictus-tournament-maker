@@ -15,9 +15,11 @@ import {
 import SettingDesc from "./SettingDesc.vue"
 import { useMusicStore } from "@/modules/music/store"
 import { MusicTracksSheet } from "@/modules/music/components"
+import { useSettingsStore } from "../store"
 
 const { t } = useI18n()
 const music = useMusicStore()
+const settings = useSettingsStore()
 
 const tracksOpen = ref(false)
 
@@ -82,6 +84,13 @@ const volumeLabel = computed(() => {
         <SettingDesc>{{ t("music.manageDesc") }}</SettingDesc>
       </template>
       <AppButton size="xs" @click="tracksOpen = true">{{ t("music.manage") }}</AppButton>
+    </AppField>
+
+    <AppField layout="split" :label="t('settings.display.sound.label')">
+      <template #description>
+        <SettingDesc>{{ t("settings.display.sound.desc") }}</SettingDesc>
+      </template>
+      <AppToggle v-model="settings.soundOnWin" :aria-label="t('settings.display.sound.label')" />
     </AppField>
 
     <MusicTracksSheet v-if="tracksOpen" @close="tracksOpen = false" />

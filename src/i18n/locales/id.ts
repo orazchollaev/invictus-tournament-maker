@@ -555,6 +555,7 @@ export default {
       bracket: "Braket & Efek",
       tournament: "Aturan Turnamen",
       simulation: "Simulasi",
+      music: "Musik",
       data: "Data",
     },
     tutorials: "Tutorial",

@@ -557,6 +557,7 @@ export default {
       bracket: "K.-o.-Baum & Effekte",
       tournament: "Turnierregeln",
       simulation: "Simulation",
+      music: "Musik",
       data: "Daten",
     },
     tutorials: "Anleitungen",

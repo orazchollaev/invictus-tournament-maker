@@ -34,13 +34,6 @@ const speedOptions = computed(() =>
       />
     </AppField>
 
-    <AppField layout="split" :label="t('settings.display.sound.label')">
-      <template #description>
-        <SettingDesc>{{ t("settings.display.sound.desc") }}</SettingDesc>
-      </template>
-      <AppToggle v-model="settings.soundOnWin" :aria-label="t('settings.display.sound.label')" />
-    </AppField>
-
     <AppField layout="split" :label="t('liveMatch.settingsLabel')">
       <template #description>
         <SettingDesc>{{ t("liveMatch.settingsDesc") }}</SettingDesc>

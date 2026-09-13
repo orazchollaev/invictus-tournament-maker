@@ -554,6 +554,7 @@ export default {
       bracket: "Сетка и эффекты",
       tournament: "Правила турнира",
       simulation: "Симуляция",
+      music: "Музыка",
       data: "Данные",
     },
     tutorials: "Обучающие видео",

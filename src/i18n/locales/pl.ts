@@ -553,6 +553,7 @@ export default {
       bracket: "Drabinka i efekty",
       tournament: "Zasady turnieju",
       simulation: "Symulacja",
+      music: "Muzyka",
       data: "Dane",
     },
     tutorials: "Samouczki",

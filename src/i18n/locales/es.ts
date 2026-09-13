@@ -554,6 +554,7 @@ export default {
       bracket: "Cuadro y efectos",
       tournament: "Reglas del torneo",
       simulation: "Simulación",
+      music: "Música",
       data: "Datos",
     },
     tutorials: "Tutoriales",

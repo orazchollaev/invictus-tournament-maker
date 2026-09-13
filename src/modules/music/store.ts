@@ -13,7 +13,7 @@ import { deleteTrackBlob, saveTrackBlob } from "./services/trackStorage"
  * `JSON.stringify` on every change.
  */
 export const useMusicStore = defineStore("music", () => {
-  const enabled = ref(false)
+  const enabled = ref(true)
   const volume = ref(DEFAULT_VOLUME)
   /** Play one track over and over, rather than moving on to the next. */
   const loop = ref(true)
@@ -55,7 +55,7 @@ export const useMusicStore = defineStore("music", () => {
   }
 
   function resetAll() {
-    enabled.value = false
+    enabled.value = true
     volume.value = DEFAULT_VOLUME
     loop.value = true
     shuffle.value = false

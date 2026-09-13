@@ -553,6 +553,7 @@ export default {
       bracket: "ब्रैकेट और प्रभाव",
       tournament: "टूर्नामेंट नियम",
       simulation: "सिमुलेशन",
+      music: "संगीत",
       data: "डेटा",
     },
     tutorials: "ट्यूटोरियल",

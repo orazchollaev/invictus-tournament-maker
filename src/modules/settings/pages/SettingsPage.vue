@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, nextTick } from "vue"
 import { APP_VERSION } from "@/constants"
-import { Palette, LayoutGrid, Trophy, Dices, Database, Menu, ChevronDown } from "@lucide/vue"
+import { Palette, LayoutGrid, Trophy, Dices, Database, Music, Menu, ChevronDown } from "@lucide/vue"
 import type { Component } from "vue"
 import { useI18n } from "vue-i18n"
 import {
@@ -23,10 +23,11 @@ import {
 const { t } = useI18n()
 
 // "appearance": language + theme/color, both about how the app looks & speaks.
-// "bracket": bracket rendering, performance and win-celebration effects — all
-// visual/audio feedback, kept apart from app-wide appearance.
+// "bracket": bracket rendering and win-celebration effects — visual feedback,
+// kept apart from app-wide appearance.
 // "tournament": rules & defaults that shape how tournaments play out.
-const CATEGORIES = ["appearance", "bracket", "tournament", "simulation", "data"] as const
+// "music": background music playback and track management.
+const CATEGORIES = ["appearance", "bracket", "tournament", "simulation", "music", "data"] as const
 type Category = (typeof CATEGORIES)[number]
 
 const CATEGORY_ICONS: Record<Category, Component> = {
@@ -34,23 +35,20 @@ const CATEGORY_ICONS: Record<Category, Component> = {
   bracket: LayoutGrid,
   tournament: Trophy,
   simulation: Dices,
+  music: Music,
   data: Database,
 }
 
 const GROUPS: Record<Category, Component[]> = {
   appearance: [SettingsSectionLanguage, SettingsSectionAppearance],
-  bracket: [
-    SettingsSectionDisplay,
-    SettingsSectionGraphics,
-    SettingsSectionEffects,
-    SettingsSectionMusic,
-  ],
+  bracket: [SettingsSectionDisplay, SettingsSectionGraphics, SettingsSectionEffects],
   tournament: [
     SettingsSectionTableRules,
     SettingsSectionMatchDefaults,
     SettingsSectionNewTournament,
   ],
   simulation: [SettingsSectionSimulation],
+  music: [SettingsSectionMusic],
   data: [SettingsSectionSampleData, SettingsSectionDataManagement],
 }
 

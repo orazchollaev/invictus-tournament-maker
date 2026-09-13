@@ -550,6 +550,7 @@ export default {
       bracket: "الجدول والتأثيرات",
       tournament: "قواعد البطولة",
       simulation: "المحاكاة",
+      music: "الموسيقى",
       data: "البيانات",
     },
     tutorials: "دروس تعليمية",

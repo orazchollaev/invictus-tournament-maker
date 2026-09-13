@@ -552,6 +552,7 @@ export default {
       bracket: "สายการแข่งขันและเอฟเฟกต์",
       tournament: "กฎทัวร์นาเมนต์",
       simulation: "การจำลอง",
+      music: "เพลง",
       data: "ข้อมูล",
     },
     tutorials: "บทแนะนำ",

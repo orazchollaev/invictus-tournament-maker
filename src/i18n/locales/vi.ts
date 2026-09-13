@@ -554,6 +554,7 @@ export default {
       bracket: "Nhánh đấu & Hiệu ứng",
       tournament: "Luật giải đấu",
       simulation: "Mô phỏng",
+      music: "Âm nhạc",
       data: "Dữ liệu",
     },
     tutorials: "Hướng dẫn",
