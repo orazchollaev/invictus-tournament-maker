@@ -992,9 +992,12 @@ export default {
     lineup: {
       title: "İlk 11",
       count: "{n}/11",
-      hint: "Sahaya çıkmasını istediğin oyuncuları mevkilerine göre seç. Boş kalan yerler otomatik doldurulur.",
+      hint: "İlk onbirini mevkilerine göre seç — tüm formalar dolmadan maç başlamaz.",
       noSquad: "Bu takımda kayıtlı oyuncu yok.",
       noneForPosition: "Bu mevkide oyuncu yok.",
+      incomplete: "Maça çıkmadan önce {n} oyuncu daha seçmelisin.",
+      injured: "Sakat",
+      suspended: "Cezalı",
     },
   },
   music: {

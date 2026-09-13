@@ -8,7 +8,7 @@
  * next fixture, so tactics lived on the settings page instead, a tap and a
  * page-load away from the match they applied to.
  */
-import { computed, ref } from "vue"
+import { computed, ref, watch } from "vue"
 import { useI18n } from "vue-i18n"
 import { ClipboardList, Users } from "@lucide/vue"
 import {
@@ -22,11 +22,17 @@ import {
 } from "@/components/ui"
 import { TeamBadge } from "@/modules/teams/components"
 import MatchScoreModal from "../match-stats/MatchScoreModal.vue"
+import ManagerLineupPitch from "./ManagerLineupPitch.vue"
 import { useTournamentStore } from "@/modules/tournament/store"
 import { useTeamsStore } from "@/modules/teams/store"
 import { usePlayersStore } from "@/modules/players/store"
-import { legOf, nextManagedFixture } from "@/modules/tournament/utils/managerFixtures"
+import {
+  legOf,
+  managedUnavailability,
+  nextManagedFixture,
+} from "@/modules/tournament/utils/managerFixtures"
 import { FORMATION_LIST, FORMATIONS, PLAY_STYLES } from "@/engine"
+import { useHaptic } from "@/composables/useHaptic"
 import type { Formation, PlayStyle } from "@/modules/teams/types"
 import type { Player, PlayerPosition } from "@/modules/players/types"
 import type { MatchEntry } from "@/engine"
@@ -37,6 +43,7 @@ const { t } = useI18n()
 const store = useTournamentStore()
 const teamsStore = useTeamsStore()
 const playersStore = usePlayersStore()
+const { selection: hapticSelection, success: hapticSuccess } = useHaptic()
 
 const tournament = computed(() => store.tournaments.find((x) => x.id === props.tournamentId))
 const manager = computed(() => tournament.value?.manager)
@@ -133,20 +140,70 @@ const formationSlots = computed(() => FORMATIONS[formation.value])
 const lineup = computed(() => manager.value?.lineup ?? [])
 const lineupSet = computed(() => new Set(lineup.value))
 
+/** Hurt or one match into a suspension — neither can be fielded right now. */
+const unavailable = computed(() =>
+  tournament.value
+    ? managedUnavailability(tournament.value)
+    : { injured: new Set(), suspended: new Set() }
+)
+
+function unavailabilityOf(playerId: string): "injured" | "suspended" | null {
+  if (unavailable.value.injured.has(playerId)) return "injured"
+  if (unavailable.value.suspended.has(playerId)) return "suspended"
+  return null
+}
+
+/** A pick that becomes unavailable after the fact (a red card just rolled,
+ * say) drops out of the lineup on its own rather than leaving a ghost slot
+ * the "eleven picked" count still trusts. */
+watch(
+  unavailable,
+  ({ injured, suspended }) => {
+    if (!manager.value) return
+    const next = lineup.value.filter((id) => !injured.has(id) && !suspended.has(id))
+    if (next.length !== lineup.value.length) store.setManagerLineup(props.tournamentId, next)
+  },
+  { immediate: true }
+)
+
 function pickedCount(position: PlayerPosition): number {
   return (squadByPosition.value.get(position) ?? []).filter((p) => lineupSet.value.has(p.id)).length
 }
 
+const totalSlots = computed(() =>
+  Object.values(formationSlots.value).reduce((sum, n) => sum + n, 0)
+)
+/** Whole squad picked, nobody left to auto-fill — the only state the match is allowed to start from. */
+const lineupReady = computed(() => lineup.value.length >= totalSlots.value)
+
 function toggleLineup(player: Player) {
+  if (unavailabilityOf(player.id)) return
   const current = [...lineup.value]
   const idx = current.indexOf(player.id)
   if (idx >= 0) {
     current.splice(idx, 1)
+    hapticSelection()
   } else {
     if (pickedCount(player.position) >= (formationSlots.value[player.position] ?? 0)) return
     current.push(player.id)
+    if (current.length >= totalSlots.value) hapticSuccess()
+    else hapticSelection()
   }
   store.setManagerLineup(props.tournamentId, current)
+}
+
+function removeFromLineup(player: Player) {
+  toggleLineup(player)
+}
+
+const groupRefs = ref<Partial<Record<PlayerPosition, HTMLElement | null>>>({})
+function focusPosition(position: PlayerPosition) {
+  groupRefs.value[position]?.scrollIntoView({ behavior: "smooth", block: "center" })
+}
+
+function open11() {
+  if (!lineupReady.value) return
+  open.value = true
 }
 </script>
 
@@ -171,9 +228,12 @@ function toggleLineup(player: Player) {
           </div>
         </div>
 
-        <AppButton variant="filled" block @click="open = true">
+        <AppButton variant="filled" block :disabled="!lineupReady" @click="open11">
           {{ t("manager.banner.play") }}
         </AppButton>
+        <p v-if="!lineupReady" class="mp-fixture-hint">
+          {{ t("manager.lineup.incomplete", { n: totalSlots - lineup.length }) }}
+        </p>
       </template>
 
       <AppEmptyState v-else :title="t('manager.panel.allPlayed')" />
@@ -209,45 +269,70 @@ function toggleLineup(player: Player) {
         {{ t("manager.lineup.title") }}
       </template>
       <template #actions>
-        <AppChip size="xs" square>{{ t("manager.lineup.count", { n: lineup.length }) }}</AppChip>
+        <AppChip size="xs" square :variant="lineupReady ? 'accent' : undefined">
+          {{ t("manager.lineup.count", { n: lineup.length }) }}
+        </AppChip>
       </template>
 
       <p class="mp-lineup-hint">{{ t("manager.lineup.hint") }}</p>
 
       <AppEmptyState v-if="!squad.length" :title="t('manager.lineup.noSquad')" />
-      <div v-else class="mp-lineup-groups">
-        <div v-for="position in POSITION_ORDER" :key="position" class="mp-lineup-group">
-          <div class="mp-lineup-group-head">
-            <span>{{ t(`players.positions.${position}`) }}</span>
-            <span class="mp-lineup-group-count">
-              {{ pickedCount(position) }}/{{ formationSlots[position] }}
-            </span>
-          </div>
+      <template v-else>
+        <ManagerLineupPitch
+          class="mp-pitch"
+          :slots="formationSlots"
+          :squad-by-position="squadByPosition"
+          :lineup-ids="lineup"
+          @focus="focusPosition"
+          @remove="removeFromLineup"
+        />
 
-          <p v-if="!squadByPosition.get(position)?.length" class="mp-lineup-empty">
-            {{ t("manager.lineup.noneForPosition") }}
-          </p>
-          <div v-else class="mp-lineup-list">
-            <label
-              v-for="player in squadByPosition.get(position)"
-              :key="player.id"
-              class="mp-lineup-row"
-              :class="{ 'mp-lineup-row--picked': lineupSet.has(player.id) }"
-            >
-              <input
-                type="checkbox"
-                :checked="lineupSet.has(player.id)"
-                :disabled="
-                  !lineupSet.has(player.id) && pickedCount(position) >= formationSlots[position]
-                "
-                @change="toggleLineup(player)"
-              />
-              <span class="mp-lineup-name">{{ player.name }}</span>
-              <AppChip square size="xs">{{ player.power }}</AppChip>
-            </label>
+        <div class="mp-lineup-groups">
+          <div
+            v-for="position in POSITION_ORDER"
+            :key="position"
+            :ref="(el) => (groupRefs[position] = el as HTMLElement | null)"
+            class="mp-lineup-group"
+          >
+            <div class="mp-lineup-group-head">
+              <span>{{ t(`players.positions.${position}`) }}</span>
+              <span class="mp-lineup-group-count">
+                {{ pickedCount(position) }}/{{ formationSlots[position] }}
+              </span>
+            </div>
+
+            <p v-if="!squadByPosition.get(position)?.length" class="mp-lineup-empty">
+              {{ t("manager.lineup.noneForPosition") }}
+            </p>
+            <div v-else class="mp-lineup-list">
+              <label
+                v-for="player in squadByPosition.get(position)"
+                :key="player.id"
+                class="mp-lineup-row"
+                :class="{
+                  'mp-lineup-row--picked': lineupSet.has(player.id),
+                  'mp-lineup-row--unavailable': !!unavailabilityOf(player.id),
+                }"
+              >
+                <input
+                  type="checkbox"
+                  :checked="lineupSet.has(player.id)"
+                  :disabled="
+                    !!unavailabilityOf(player.id) ||
+                    (!lineupSet.has(player.id) && pickedCount(position) >= formationSlots[position])
+                  "
+                  @change="toggleLineup(player)"
+                />
+                <span class="mp-lineup-name">{{ player.name }}</span>
+                <AppChip v-if="unavailabilityOf(player.id)" square size="xs" variant="danger">
+                  {{ t(`manager.lineup.${unavailabilityOf(player.id)}`) }}
+                </AppChip>
+                <AppChip square size="xs">{{ player.power }}</AppChip>
+              </label>
+            </div>
           </div>
         </div>
-      </div>
+      </template>
     </AppCard>
 
     <MatchScoreModal
@@ -321,10 +406,21 @@ function toggleLineup(player: Player) {
   justify-content: flex-end;
 }
 
+.mp-fixture-hint {
+  margin: var(--sp-2) 0 0;
+  text-align: center;
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+}
+
 .mp-lineup-hint {
   margin: 0 0 var(--sp-2);
   font-size: var(--fs-sm);
   color: var(--text-muted);
+}
+
+.mp-pitch {
+  margin-bottom: var(--sp-3);
 }
 
 .mp-lineup-groups {
@@ -381,6 +477,13 @@ function toggleLineup(player: Player) {
 }
 .mp-lineup-row--picked {
   color: var(--accent);
+}
+.mp-lineup-row--unavailable {
+  cursor: default;
+  opacity: 0.55;
+}
+.mp-lineup-row--unavailable .mp-lineup-name {
+  text-decoration: line-through;
 }
 
 .mp-lineup-name {

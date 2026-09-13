@@ -987,9 +987,12 @@ export default {
     lineup: {
       title: "Starting XI",
       count: "{n}/11",
-      hint: "Pick who you want on the pitch, by position. Whatever's left empty fills itself in.",
+      hint: "Pick your eleven, by position — the match won't kick off until every shirt is filled.",
       noSquad: "No players registered for this team.",
       noneForPosition: "No players at this position.",
+      incomplete: "{n} more to pick before you can kick off.",
+      injured: "Injured",
+      suspended: "Suspended",
     },
   },
   music: {

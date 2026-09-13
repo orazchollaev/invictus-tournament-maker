@@ -8,7 +8,7 @@
 // which is all "next" has to mean here: the first fixture of the managed
 // team's that has not been played yet.
 import type { Match, Tournament } from "../types"
-import { allMatches, isBye, type MatchEntry } from "@/engine"
+import { allMatches, isBye, unavailablePlayersByMatch, type MatchEntry } from "@/engine"
 
 /** The leg a match entry belongs to — 1 for anything that is not a second leg. */
 export function legOf(entry: MatchEntry): 1 | 2 {
@@ -90,4 +90,48 @@ export function managedSideOf(t: Tournament, entry: MatchEntry): "home" | "away"
   if (entry.homeId === teamId) return "home"
   if (entry.awayId === teamId) return "away"
   return null
+}
+
+/**
+ * Who the manager cannot pick for his next fixture, split by why.
+ *
+ * Injured: hurt in an earlier match, not yet due back — see engine/injuries.ts.
+ * Suspended: sent off in the team's last played match. Unlike the residual
+ * power cost discipline.ts applies to the whole side, this is the one player
+ * who actually saw red, serving a single-match ban — read straight from that
+ * match's own event timeline rather than tracked as state anywhere.
+ */
+export function managedUnavailability(t: Tournament): {
+  injured: Set<string>
+  suspended: Set<string>
+} {
+  const teamId = t.manager?.teamId
+  const fixture = nextManagedFixture(t)
+  if (!teamId || !fixture) return { injured: new Set(), suspended: new Set() }
+
+  const injured = new Set<string>()
+  const key = `${fixture.match.id}:${legOf(fixture)}`
+  const availability = unavailablePlayersByMatch(t).get(key)
+  if (availability) {
+    const side = managedSideOf(t, fixture)
+    const ids = side === "home" ? availability.unavailableHomeIds : availability.unavailableAwayIds
+    for (const id of ids) injured.add(id)
+  }
+
+  const suspended = new Set<string>()
+  const played = allMatches(t).filter(
+    (entry) =>
+      !isBye(entry) && entry.result != null && (entry.homeId === teamId || entry.awayId === teamId)
+  )
+  const last = played[played.length - 1]
+  if (last) {
+    const side = last.homeId === teamId ? "home" : "away"
+    for (const event of last.result?.stats?.events ?? []) {
+      if (event.type === "red" && event.side === side && event.playerId) {
+        suspended.add(event.playerId)
+      }
+    }
+  }
+
+  return { injured, suspended }
 }

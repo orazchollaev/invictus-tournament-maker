@@ -1,4 +1,5 @@
 export { default as ManagerTeamPanel } from "./ManagerTeamPanel.vue"
+export { default as ManagerLineupPitch } from "./ManagerLineupPitch.vue"
 export { default as ManagerTeamPickerModal } from "./ManagerTeamPickerModal.vue"
 export { default as ManagerMatchDrawer } from "./ManagerMatchDrawer.vue"
 export { default as ManagerSubSheet } from "./ManagerSubSheet.vue"
