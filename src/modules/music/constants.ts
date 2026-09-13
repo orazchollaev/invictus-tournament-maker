@@ -8,7 +8,7 @@ import type { MusicTrack } from "./types"
  * that is simply not there, and moves on to whatever the user has uploaded.
  */
 export const BUILT_IN_TRACK_ID = "builtin"
-export const BUILT_IN_TRACK_URL = "music/theme.mp3"
+export const BUILT_IN_TRACK_URL = "music/theme.ogg"
 
 export const BUILT_IN_TRACK: MusicTrack = {
   id: BUILT_IN_TRACK_ID,
