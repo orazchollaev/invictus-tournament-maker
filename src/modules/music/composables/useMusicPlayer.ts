@@ -163,10 +163,19 @@ export function useMusicPlayer() {
       { immediate: true }
     )
 
+    // The store starts on its default (music on) and only learns the saved
+    // choice once IndexedDB answers — see idbStorage.ts. Playing on that
+    // default first and correcting afterward is audible, not just wrong: a
+    // WebView that doesn't gate autoplay on a gesture (Android's, unlike
+    // desktop Chrome) starts the sound immediately. Waiting for hydration
+    // first means the very first check already sees what was actually saved.
+    const hydrated = store.$persistedState.isReady()
+
     watch(
       [() => store.enabled, () => store.currentTrackId],
-      async ([on]) => {
-        if (!on) {
+      async () => {
+        await hydrated
+        if (!store.enabled) {
           stop()
           return
         }
