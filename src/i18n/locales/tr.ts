@@ -1014,7 +1014,7 @@ export default {
     saveFailed: "Parça kaydedilemedi.",
     enabled: {
       label: "Müzik çal",
-      desc: "Oynarken arkada sakin bir döngü. Varsayılan olarak kapalı.",
+      desc: "Oynarken arkada sakin bir döngü. Varsayılan olarak açık.",
     },
     volume: {
       label: "Ses seviyesi",

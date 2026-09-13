@@ -1008,7 +1008,7 @@ export default {
     saveFailed: "The track could not be saved.",
     enabled: {
       label: "Play music",
-      desc: "A quiet loop while you play. Off by default.",
+      desc: "A quiet loop while you play. On by default.",
     },
     volume: {
       label: "Volume",
