@@ -111,7 +111,13 @@ export function useMusicPlayer() {
 
   function stop(): void {
     playing.value = false
+    blocked.value = false
     audio?.pause()
+    // A gesture-retry may still be armed from an earlier blocked play() —
+    // without this it would ignore the fact that music was turned off in
+    // the meantime and start playing on the user's next tap anyway.
+    unblockListener?.()
+    unblockListener = null
   }
 
   /** The track finished and looping is off: move on. */
