@@ -169,7 +169,7 @@ export function useMusicPlayer() {
     // WebView that doesn't gate autoplay on a gesture (Android's, unlike
     // desktop Chrome) starts the sound immediately. Waiting for hydration
     // first means the very first check already sees what was actually saved.
-    const hydrated = store.$persistedState.isReady()
+    const hydrated = store.$persistedState?.isReady() ?? Promise.resolve()
 
     watch(
       [() => store.enabled, () => store.currentTrackId],
