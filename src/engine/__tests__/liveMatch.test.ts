@@ -394,11 +394,39 @@ describe("red cards", () => {
     expect(checked).toBeGreaterThan(0)
   })
 
-  it("are never rolled in the opening quarter-hour", () => {
+  it("are never rolled in the opening quarter-hour, unless it's a second yellow", () => {
     for (let i = 0; i < 60; i++) {
       const state = kickoff()
       playToEnd(state)
-      for (const red of state.reds) expect(red.minute).toBeGreaterThanOrEqual(15)
+      for (const red of state.events.filter((e) => e.type === "red")) {
+        if (red.minute >= 15) continue
+        const priorYellows = state.events.filter(
+          (e) => e.type === "yellow" && e.side === red.side && e.playerId === red.playerId
+        )
+        expect(priorYellows.length).toBeGreaterThanOrEqual(2)
+      }
+    }
+  })
+
+  it("sends a player off for a second yellow, at any minute", () => {
+    let checked = 0
+    for (let i = 0; i < 400 && checked < 3; i++) {
+      const state = kickoff()
+      playToEnd(state)
+      for (const side of ["home", "away"] as const) {
+        const bookings = new Map<string, number>()
+        for (const event of state.events) {
+          if (event.type !== "yellow" || event.side !== side || !event.playerId) continue
+          bookings.set(event.playerId, (bookings.get(event.playerId) ?? 0) + 1)
+        }
+        for (const [playerId, count] of bookings) {
+          if (count < 2) continue
+          checked++
+          expect(
+            state.events.some((e) => e.type === "red" && e.side === side && e.playerId === playerId)
+          ).toBe(true)
+        }
+      }
     }
   })
 })

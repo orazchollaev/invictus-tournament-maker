@@ -93,6 +93,8 @@ export interface LiveSide {
   managed: boolean
   /** Minutes the AI bench has earmarked for a change. */
   aiSubMinutes: number[]
+  /** Shirts already booked this match — a second one here is a sending-off. */
+  yellowedOnce: Set<LineupSlot>
 }
 
 export interface LiveMatchState {
@@ -166,6 +168,7 @@ export function createLiveMatch(
       kickoffPower: meanPower(lineup),
       managed,
       aiSubMinutes: managed ? [] : planAiSubs(rng),
+      yellowedOnce: new Set<LineupSlot>(),
     }
   }
 
@@ -427,33 +430,46 @@ function rollGoal(state: LiveMatchState, which: Side, rng: () => number): MatchE
 function rollDiscipline(state: LiveMatchState, which: Side, rng: () => number): MatchEvent[] {
   const minute = state.minute
   const events: MatchEvent[] = []
-  const pitch = onPitch(state[which].state, minute)
+  const side = state[which]
+  let pitch = onPitch(side.state, minute)
   if (!pitch.length) return events
+
+  const sendOff = (slot: LineupSlot) => {
+    side.state.dismissals.push({ slot, minute })
+    state.reds.push({ side: which, minute })
+    events.push({ minute, type: "red", side: which, playerId: slot.playerId })
+    // Off the pitch for anything else rolled this same minute too.
+    pitch = onPitch(side.state, minute)
+  }
 
   if (rng() < YELLOW_LAMBDA / REGULATION_MINUTES) {
     const slot = pickSlot(pitch, CARD_WEIGHT, rng)
     events.push({ minute, type: "yellow", side: which, playerId: slot?.playerId ?? null })
+    if (slot) {
+      // A second yellow this match is a red — same shirt, same minute,
+      // straight down the tunnel, exactly as engine/events/generate.ts
+      // replays it for a rolled result.
+      if (side.yellowedOnce.has(slot)) sendOff(slot)
+      else side.yellowedOnce.add(slot)
+    }
   }
 
   // A red is rolled at the same rate the bulk simulator uses, and costs the
   // side the same power — the difference is only that here it is felt from
   // the next minute rather than priced in before kick-off.
   if (
+    pitch.length &&
     minute >= RED_MIN_MINUTE &&
     minute <= REGULATION_MINUTES &&
     rng() < RED_CHANCE / REGULATION_MINUTES
   ) {
     const slot = pickSlot(pitch, CARD_WEIGHT, rng)
-    if (slot) {
-      state[which].state.dismissals.push({ slot, minute })
-      state.reds.push({ side: which, minute })
-      events.push({ minute, type: "red", side: which, playerId: slot.playerId })
-    }
+    if (slot) sendOff(slot)
   }
 
   // A penalty that goes begging: nothing on the scoreboard, but it is the
   // kind of minute a match is remembered for.
-  if (rng() < PENALTY_MISS_CHANCE / REGULATION_MINUTES) {
+  if (pitch.length && rng() < PENALTY_MISS_CHANCE / REGULATION_MINUTES) {
     const slot = penaltyTaker(pitch)
     events.push({ minute, type: "penMiss", side: which, playerId: slot?.playerId ?? null })
   }
