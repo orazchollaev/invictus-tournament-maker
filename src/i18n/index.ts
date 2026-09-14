@@ -7,10 +7,12 @@ export type Locale =
   | "ru"
   | "es"
   | "pt"
+  | "pt-BR"
   | "id"
   | "ja"
   | "de"
   | "fr"
+  | "it"
   | "ar"
   | "in"
   | "vi"
@@ -36,10 +38,12 @@ export const LOCALES: LocaleOption[] = [
   { value: "ru", label: "Русский", flag: "RU" },
   { value: "es", label: "Español", flag: "ES" },
   { value: "pt", label: "Português", flag: "PT" },
+  { value: "pt-BR", label: "Português (Brasil)", flag: "BR" },
   { value: "id", label: "Bahasa Indonesia", flag: "ID" },
   { value: "ja", label: "日本語", flag: "JP" },
   { value: "de", label: "Deutsch", flag: "DE" },
   { value: "fr", label: "Français", flag: "FR" },
+  { value: "it", label: "Italiano", flag: "IT" },
   { value: "ar", label: "العربية", flag: "SA" },
   { value: "in", label: "Indian", flag: "IN" },
   { value: "vi", label: "Vietnam", flag: "VN" },
@@ -63,10 +67,12 @@ const localeLoaders: Record<
   ru: () => import("./locales/ru"),
   es: () => import("./locales/es"),
   pt: () => import("./locales/pt"),
+  "pt-BR": () => import("./locales/pt-BR"),
   id: () => import("./locales/id"),
   ja: () => import("./locales/ja"),
   de: () => import("./locales/de"),
   fr: () => import("./locales/fr"),
+  it: () => import("./locales/it"),
   ar: () => import("./locales/ar"),
   in: () => import("./locales/in"),
   vi: () => import("./locales/vi"),
