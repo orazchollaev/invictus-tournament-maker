@@ -88,6 +88,9 @@ export default {
   },
   common: {
     next: "次へ",
+    previousPage: "前のページ",
+    nextPage: "次のページ",
+    pageOf: "{page}/{total}",
     remove: "削除",
     simulate: "シミュレート",
     info: "情報",

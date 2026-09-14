@@ -89,6 +89,9 @@ export default {
   },
   common: {
     next: "İleri",
+    previousPage: "Önceki sayfa",
+    nextPage: "Sonraki sayfa",
+    pageOf: "{page}/{total}",
     remove: "Kaldır",
     simulate: "Simüle Et",
     info: "Bilgi",

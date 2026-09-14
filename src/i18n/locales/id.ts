@@ -89,6 +89,9 @@ export default {
   },
   common: {
     next: "Berikutnya",
+    previousPage: "Halaman sebelumnya",
+    nextPage: "Halaman berikutnya",
+    pageOf: "{page}/{total}",
     remove: "Hapus",
     simulate: "Simulasikan",
     info: "Info",

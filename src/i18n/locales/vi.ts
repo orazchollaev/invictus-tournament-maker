@@ -88,6 +88,9 @@ export default {
   },
   common: {
     next: "Tiếp",
+    previousPage: "Trang trước",
+    nextPage: "Trang sau",
+    pageOf: "{page}/{total}",
     remove: "Xóa",
     simulate: "Mô phỏng",
     info: "Thông tin",

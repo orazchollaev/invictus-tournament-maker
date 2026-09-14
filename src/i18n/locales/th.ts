@@ -87,6 +87,9 @@ export default {
   },
   common: {
     next: "ถัดไป",
+    previousPage: "หน้าก่อนหน้า",
+    nextPage: "หน้าถัดไป",
+    pageOf: "{page}/{total}",
     remove: "ลบ",
     simulate: "จำลอง",
     info: "ข้อมูล",

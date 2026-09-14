@@ -87,6 +87,9 @@ export default {
   },
   common: {
     next: "다음",
+    previousPage: "이전 페이지",
+    nextPage: "다음 페이지",
+    pageOf: "{page}/{total}",
     remove: "제거",
     simulate: "시뮬레이션",
     info: "정보",

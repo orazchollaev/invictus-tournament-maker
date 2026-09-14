@@ -88,6 +88,9 @@ export default {
   },
   common: {
     next: "Seguinte",
+    previousPage: "Página anterior",
+    nextPage: "Página seguinte",
+    pageOf: "{page}/{total}",
     remove: "Remover",
     simulate: "Simular",
     info: "Informação",

@@ -87,6 +87,9 @@ export default {
   },
   common: {
     next: "التالي",
+    previousPage: "الصفحة السابقة",
+    nextPage: "الصفحة التالية",
+    pageOf: "{page}/{total}",
     remove: "إزالة",
     simulate: "محاكاة",
     info: "معلومات",

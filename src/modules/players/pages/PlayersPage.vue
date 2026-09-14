@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from "vue"
+import { ref, computed, watch } from "vue"
 import { usePlayersStore } from "../store"
 import { useTeamsStore } from "@/modules/teams/store"
 import { useSettingsStore } from "@/modules/settings/store"
@@ -16,6 +16,7 @@ import {
   AppChip,
   AppEmptyState,
   AppIcon,
+  AppPagination,
   AppSearchInput,
   AppButtonGroup,
 } from "@/components/ui"
@@ -33,6 +34,19 @@ const editingPlayer = ref<Player | null>(null)
 const query = ref("")
 const teamFilter = ref("all")
 
+// The search field updates `query` on every keystroke, but re-filtering and
+// re-rendering the whole list on every keystroke is what causes the freeze
+// once the squad count gets large — so the actual filter runs off a debounced
+// copy instead.
+const debouncedQuery = ref("")
+let debounceTimer: ReturnType<typeof setTimeout> | undefined
+watch(query, (value) => {
+  clearTimeout(debounceTimer)
+  debounceTimer = setTimeout(() => {
+    debouncedQuery.value = value
+  }, 200)
+})
+
 const isGrid = computed(() => settings.playersListView === "grid")
 
 const viewOptions = computed(() => [
@@ -40,12 +54,14 @@ const viewOptions = computed(() => [
   { value: "grid", label: t("tournaments.viewGrid"), icon: Grid3x3 },
 ])
 
+const teamsById = computed(() => new Map(teamsStore.teams.map((tm) => [tm.id, tm])))
+
 function teamOf(player: Player) {
-  return teamsStore.teams.find((tm) => tm.id === player.teamId)
+  return teamsById.value.get(player.teamId)
 }
 
 const filtered = computed(() => {
-  const q = query.value.trim().toLowerCase()
+  const q = debouncedQuery.value.trim().toLowerCase()
   let list = store.players.filter((p) => (q ? p.name.toLowerCase().includes(q) : true))
   if (teamFilter.value !== "all") list = list.filter((p) => p.teamId === teamFilter.value)
   else list = [...list]
@@ -59,6 +75,21 @@ const filtered = computed(() => {
   }
 
   return list
+})
+
+// Rendering every match at once is what makes 100+ players feel laggy — a
+// full AppCard tree per row, animated by TransitionGroup, adds up fast. Only
+// one page's worth of cards is ever mounted at a time.
+const PAGE_SIZE = 30
+const page = ref(1)
+
+watch(filtered, () => {
+  page.value = 1
+})
+
+const pagedPlayers = computed(() => {
+  const start = (page.value - 1) * PAGE_SIZE
+  return filtered.value.slice(start, start + PAGE_SIZE)
 })
 </script>
 
@@ -106,7 +137,7 @@ const filtered = computed(() => {
       <p v-if="!filtered.length" class="empty-text">{{ t("players.noMatch") }}</p>
       <TransitionGroup name="list" tag="div" :class="isGrid ? 'player-grid' : 't-list-inner'">
         <AppCard
-          v-for="(player, i) in filtered"
+          v-for="(player, i) in pagedPlayers"
           :key="player.id"
           rail
           padding="sm"
@@ -154,6 +185,7 @@ const filtered = computed(() => {
           </div>
         </AppCard>
       </TransitionGroup>
+      <AppPagination v-model="page" :total-items="filtered.length" :page-size="PAGE_SIZE" />
     </div>
 
     <AppEmptyState

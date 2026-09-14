@@ -87,6 +87,9 @@ export default {
   },
   common: {
     next: "आगे",
+    previousPage: "पिछला पृष्ठ",
+    nextPage: "अगला पृष्ठ",
+    pageOf: "{page}/{total}",
     remove: "हटाएँ",
     simulate: "सिम्युलेट करें",
     info: "जानकारी",

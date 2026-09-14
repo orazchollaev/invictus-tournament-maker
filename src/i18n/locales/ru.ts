@@ -89,6 +89,9 @@ export default {
   },
   common: {
     next: "Далее",
+    previousPage: "Предыдущая страница",
+    nextPage: "Следующая страница",
+    pageOf: "{page}/{total}",
     remove: "Удалить",
     simulate: "Симуляция",
     info: "Информация",
