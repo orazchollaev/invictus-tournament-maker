@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.9.0](https://github.com/orazchollaev/invictus-tournament-maker/compare/v2.8.1...v2.9.0) (2026-09-14)
+
+### 🚀 New Features
+
+- **i18n:** add Italian and Brazilian Portuguese locales ([deacfe4](https://github.com/orazchollaev/invictus-tournament-maker/commit/deacfe4845e6b58c21d788c9819b3b778a1e3d0e))
+- **players:** load names from txt file without lag ([851454d](https://github.com/orazchollaev/invictus-tournament-maker/commit/851454da12f90ee8ae005f25ef6aea062b1cc6e4))
+
+### 🔧 Maintenance
+
+- **gradle:** bump gradle version ([569c735](https://github.com/orazchollaev/invictus-tournament-maker/commit/569c73524f09ad4e97dd760c07b2560be3d56574))
+
 ## [2.8.1](https://github.com/orazchollaev/invictus-tournament-maker/compare/v2.8.0...v2.8.1) (2026-09-13)
 
 ### 🐛 Bug Fixes
