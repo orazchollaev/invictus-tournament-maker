@@ -1,7 +1,16 @@
 <script setup lang="ts">
 import { ref, computed } from "vue"
 import { useI18n } from "vue-i18n"
-import { AppButton, AppChip, AppField, AppModal, AppStepper, AppToggle } from "@/components/ui"
+import { Upload, X } from "@lucide/vue"
+import {
+  AppButton,
+  AppChip,
+  AppField,
+  AppIcon,
+  AppModal,
+  AppStepper,
+  AppToggle,
+} from "@/components/ui"
 import { usePlayersStore } from "../store"
 import { useTeamsStore } from "@/modules/teams/store"
 import { useModal } from "@/composables/useModal"
@@ -24,6 +33,52 @@ useModal(() => modal.value?.close())
 
 const modal = ref<InstanceType<typeof AppModal> | null>(null)
 
+const firstNamesFileInput = ref<HTMLInputElement | null>(null)
+const lastNamesFileInput = ref<HTMLInputElement | null>(null)
+
+interface NamesFile {
+  fileName: string
+  names: string[]
+}
+
+// A loaded file's names are kept out of the textarea entirely — a file can hold
+// tens of thousands of names, and binding that much text into the DOM is what
+// made the textarea lag. The textarea locks and shows a summary line instead.
+const firstNamesFile = ref<NamesFile | null>(null)
+const lastNamesFile = ref<NamesFile | null>(null)
+
+function loadNamesFile(file: File | undefined, target: typeof firstNamesFile) {
+  if (!file) return
+  const reader = new FileReader()
+  reader.onload = (e) => {
+    const text = typeof e.target?.result === "string" ? e.target.result : ""
+    const names = fromLines(text)
+    if (names.length === 0) return
+    target.value = { fileName: file.name, names }
+  }
+  reader.readAsText(file)
+}
+
+function onFirstNamesFile(event: Event) {
+  const input = event.target as HTMLInputElement
+  loadNamesFile(input.files?.[0], firstNamesFile)
+  input.value = ""
+}
+
+function onLastNamesFile(event: Event) {
+  const input = event.target as HTMLInputElement
+  loadNamesFile(input.files?.[0], lastNamesFile)
+  input.value = ""
+}
+
+function removeFirstNamesFile() {
+  firstNamesFile.value = null
+}
+
+function removeLastNamesFile() {
+  lastNamesFile.value = null
+}
+
 const selectedTeamId = ref(props.teamId ?? teamsStore.teams[0]?.id ?? "")
 
 /** Instead of one chosen team, top up every team whose squad is thin. */
@@ -44,8 +99,12 @@ function fromLines(text: string): string[] {
 const firstNamesText = ref(toLines(store.effectiveFirstNames()))
 const lastNamesText = ref(toLines(store.effectiveLastNames()))
 
-const parsedFirstNames = computed(() => fromLines(firstNamesText.value))
-const parsedLastNames = computed(() => fromLines(lastNamesText.value))
+const parsedFirstNames = computed(() =>
+  firstNamesFile.value ? firstNamesFile.value.names : fromLines(firstNamesText.value)
+)
+const parsedLastNames = computed(() =>
+  lastNamesFile.value ? lastNamesFile.value.names : fromLines(lastNamesText.value)
+)
 
 const selectedTeam = computed(() => teamsStore.teams.find((tm) => tm.id === selectedTeamId.value))
 const squad = computed(() => store.byTeam(selectedTeamId.value))
@@ -100,12 +159,16 @@ const canGenerate = computed(
 function clearNames() {
   firstNamesText.value = ""
   lastNamesText.value = ""
+  firstNamesFile.value = null
+  lastNamesFile.value = null
 }
 
 function useDefaults() {
   store.resetCustomNames()
   firstNamesText.value = toLines(store.effectiveFirstNames())
   lastNamesText.value = toLines(store.effectiveLastNames())
+  firstNamesFile.value = null
+  lastNamesFile.value = null
 }
 
 function generate() {
@@ -190,21 +253,87 @@ function generate() {
 
       <div class="section">
         <AppField layout="stack" :label="t('players.generate.firstNames')">
-          <textarea
-            v-model="firstNamesText"
-            class="names-textarea"
-            rows="6"
-            :placeholder="t('players.generate.namesPlaceholder')"
-          />
+          <div class="names-block">
+            <textarea
+              v-if="!firstNamesFile"
+              v-model="firstNamesText"
+              class="names-textarea"
+              rows="6"
+              :placeholder="t('players.generate.namesPlaceholder')"
+            />
+            <div v-else class="names-file-summary">
+              {{
+                t("players.generate.fileLoaded", {
+                  file: firstNamesFile.fileName,
+                  count: firstNamesFile.names.length,
+                })
+              }}
+            </div>
+            <div class="upload-row">
+              <AppButton
+                v-if="!firstNamesFile"
+                variant="text"
+                size="xs"
+                @click="firstNamesFileInput?.click()"
+              >
+                <AppIcon :icon="Upload" size="xs" />
+                {{ t("players.generate.loadFile") }} (.txt)
+              </AppButton>
+              <AppButton v-else variant="text" size="xs" @click="removeFirstNamesFile">
+                <AppIcon :icon="X" size="xs" />
+                {{ t("players.generate.removeFile") }}
+              </AppButton>
+              <input
+                ref="firstNamesFileInput"
+                type="file"
+                accept=".txt,text/plain"
+                class="visually-hidden"
+                @change="onFirstNamesFile"
+              />
+            </div>
+          </div>
         </AppField>
 
         <AppField layout="stack" :label="t('players.generate.lastNames')">
-          <textarea
-            v-model="lastNamesText"
-            class="names-textarea"
-            rows="6"
-            :placeholder="t('players.generate.namesPlaceholder')"
-          />
+          <div class="names-block">
+            <textarea
+              v-if="!lastNamesFile"
+              v-model="lastNamesText"
+              class="names-textarea"
+              rows="6"
+              :placeholder="t('players.generate.namesPlaceholder')"
+            />
+            <div v-else class="names-file-summary">
+              {{
+                t("players.generate.fileLoaded", {
+                  file: lastNamesFile.fileName,
+                  count: lastNamesFile.names.length,
+                })
+              }}
+            </div>
+            <div class="upload-row">
+              <AppButton
+                v-if="!lastNamesFile"
+                variant="text"
+                size="xs"
+                @click="lastNamesFileInput?.click()"
+              >
+                <AppIcon :icon="Upload" size="xs" />
+                {{ t("players.generate.loadFile") }} (.txt)
+              </AppButton>
+              <AppButton v-else variant="text" size="xs" @click="removeLastNamesFile">
+                <AppIcon :icon="X" size="xs" />
+                {{ t("players.generate.removeFile") }}
+              </AppButton>
+              <input
+                ref="lastNamesFileInput"
+                type="file"
+                accept=".txt,text/plain"
+                class="visually-hidden"
+                @change="onLastNamesFile"
+              />
+            </div>
+          </div>
         </AppField>
 
         <div class="name-actions">
@@ -276,6 +405,46 @@ function generate() {
   border: 1px solid var(--border);
   background: var(--surface);
   color: var(--text);
+}
+
+.names-file-summary {
+  width: 100%;
+  min-height: calc(6 * 1.4em);
+  display: flex;
+  align-items: center;
+  font-size: var(--fs-sm);
+  color: var(--text-muted);
+  padding: var(--sp-2);
+  border-radius: var(--radius);
+  border: 1px dashed var(--border);
+  background: var(--surface-2);
+}
+
+/* AppField's control slot is a flex row; this wrapper keeps the textarea
+   and its load-file button stacked, with the button clearly below. */
+.names-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--sp-1);
+  width: 100%;
+  min-width: 0;
+}
+
+.upload-row {
+  display: flex;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .name-actions {
