@@ -71,11 +71,13 @@ async function onFileChange(event: Event) {
     </div>
 
     <template #footer>
-      <AppButton variant="filled" @click="fileInput?.click()">
-        <AppIcon :icon="Plus" size="xs" />
-        {{ t("music.addTrack") }}
-      </AppButton>
-      <AppButton @click="sheet?.close()">{{ t("common.close") }}</AppButton>
+      <div class="mts-footer">
+        <AppButton variant="filled" @click="fileInput?.click()">
+          <AppIcon :icon="Plus" size="xs" />
+          {{ t("music.addTrack") }}
+        </AppButton>
+        <AppButton @click="sheet?.close()">{{ t("common.close") }}</AppButton>
+      </div>
     </template>
   </AppSheet>
 </template>
@@ -86,6 +88,7 @@ async function onFileChange(event: Event) {
   flex-direction: column;
   gap: var(--sp-3);
   min-width: 0;
+  padding: var(--sp-3);
 }
 
 .mts-hint {
@@ -99,5 +102,14 @@ async function onFileChange(event: Event) {
   flex-direction: column;
   max-height: 52vh;
   overflow-y: auto;
+}
+
+.mts-footer {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-2) var(--sp-3) calc(var(--sp-2) + var(--safe-bottom));
+  border-top: 1px solid var(--border-light);
+  background: var(--bg);
 }
 </style>
