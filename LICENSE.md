@@ -1,6 +1,6 @@
 # Invictus - Tournament Maker License
 
-Copyright (c) 2026 Oraz Chollaev
+Copyright (c) 2026 Oraz Chollayev
 
 ## 1. Permission
 
@@ -25,7 +25,7 @@ Commercial use includes, but is not limited to:
 
 Commercial use is permitted only with explicit written permission from:
 
-**Oraz Chollaev**
+**Oraz Chollayev**
 
 ## 3. Redistribution
 
@@ -60,6 +60,6 @@ For commercial licensing or other permissions not covered by this license, pleas
 
 ---
 
-Copyright (c) 2026 Oraz Chollaev
+Copyright (c) 2026 Oraz Chollayev
 
 All rights reserved.
