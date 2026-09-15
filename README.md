@@ -122,7 +122,7 @@ This includes, but is not limited to:
 
 For commercial licensing or permission, please contact the copyright holder.
 
-See the full [LICENSE](./LICENSE) file for the complete terms.
+See the full [LICENSE](./LICENSE.md) file for the complete terms.
 
 ---
 
