@@ -94,6 +94,38 @@ English, Turkish, German, French, Arabic, Spanish, Portuguese, Russian, Japanese
 
 ---
 
+## License
+
+Invictus - Tournament Maker is **source-available** and released under a custom **Non-Commercial License**.
+
+You are free to:
+
+- View and study the source code.
+- Use it for personal and educational projects.
+- Modify and fork the project for non-commercial purposes.
+- Create derivative works for non-commercial use.
+
+**Commercial use and monetization are not permitted without explicit written permission from the copyright holder.**
+
+This includes, but is not limited to:
+
+- Advertising revenue
+- In-app purchases
+- Paid features
+- Subscriptions
+- Selling the application or derivative works
+- Paid services
+- Sponsorships
+- Other forms of direct or indirect commercial revenue
+
+**All commercial rights to Invictus - Tournament Maker are reserved exclusively by Oraz Chollayev.**
+
+For commercial licensing or permission, please contact the copyright holder.
+
+See the full [LICENSE](./LICENSE) file for the complete terms.
+
+---
+
 ### Available on Android
 
 The app is packaged as a native Android app via Capacitor and is available on the Play Store. It works fully in the browser too — all data is stored locally and survives page refreshes.
