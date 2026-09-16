@@ -1,5 +1,27 @@
 # Changelog
 
+## [2.9.1](https://github.com/orazchollaev/invictus-tournament-maker/compare/v2.9.0...v2.9.1) (2026-09-16)
+
+### 🚀 New Features
+
+- **players:** add delete-all FAB with confirm dialog ([f3d172e](https://github.com/orazchollaev/invictus-tournament-maker/commit/f3d172ea6e0749b657f9371bbaa589288d1035b5))
+
+### 🐛 Bug Fixes
+
+- **music:** add spacing to tracks sheet body and footer ([b6c3ee0](https://github.com/orazchollaev/invictus-tournament-maker/commit/b6c3ee008cb07ea0586329d7406d7ba08baf4b63))
+
+### 🔧 Maintenance
+
+- **gradle:** bump gradle version ([510b848](https://github.com/orazchollaev/invictus-tournament-maker/commit/510b8486f583c9b119597e726e1d7d4959e841b0))
+
+### 📚 Documentation
+
+- add README license section ([7b5fd29](https://github.com/orazchollaev/invictus-tournament-maker/commit/7b5fd2954dc71c9188e92eefea038cbed042f0e0))
+- add README license section ([77c9421](https://github.com/orazchollaev/invictus-tournament-maker/commit/77c9421a3efaded8e88f5c005edeb41f93e36eb9))
+- **license:** add non-commercial license ([952863f](https://github.com/orazchollaev/invictus-tournament-maker/commit/952863f6732b4a05f282075927bf307747aa1c90))
+- **license:** update lastname in license.md ([949fa95](https://github.com/orazchollaev/invictus-tournament-maker/commit/949fa95afdac60359c280aaad7dc1b424d3224a3))
+- update license and add README license section ([e619e29](https://github.com/orazchollaev/invictus-tournament-maker/commit/e619e2962a0f7f82a5bfeaa8ecb48bbf5055bbaf))
+
 ## [2.9.0](https://github.com/orazchollaev/invictus-tournament-maker/compare/v2.8.1...v2.9.0) (2026-09-14)
 
 ### 🚀 New Features
