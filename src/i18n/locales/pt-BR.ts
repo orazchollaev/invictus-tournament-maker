@@ -237,6 +237,7 @@ export default {
     emptyNoTeams: "Crie um time primeiro e depois adicione os jogadores dele.",
     needTeamFirst: "Crie um time primeiro",
     noMatch: "Nenhum jogador corresponde aos filtros.",
+    deleteAllConfirm: "Excluir todos os jogadores?",
     sortDefault: "Padrão",
     positions: {
       GK: "Goleiro",

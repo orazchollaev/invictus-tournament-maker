@@ -236,6 +236,7 @@ export default {
     emptyNoTeams: "Buat tim terlebih dahulu, lalu tambahkan pemainnya.",
     needTeamFirst: "Buat tim terlebih dahulu",
     noMatch: "Tidak ada pemain yang cocok dengan filter.",
+    deleteAllConfirm: "Hapus semua pemain?",
     sortDefault: "Default",
     positions: {
       GK: "Kiper",

@@ -235,6 +235,7 @@ export default {
     emptyNoTeams: "Trước tiên hãy tạo một đội, sau đó thêm cầu thủ.",
     needTeamFirst: "Trước tiên hãy tạo một đội",
     noMatch: "Không có cầu thủ phù hợp với bộ lọc.",
+    deleteAllConfirm: "Xóa tất cả cầu thủ?",
     sortDefault: "Mặc định",
     positions: {
       GK: "Thủ môn",

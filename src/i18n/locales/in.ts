@@ -234,6 +234,7 @@ export default {
     emptyNoTeams: "पहले एक टीम बनाएँ, फिर उसके खिलाड़ी जोड़ें।",
     needTeamFirst: "पहले एक टीम बनाएँ",
     noMatch: "फ़िल्टर से कोई खिलाड़ी मेल नहीं खाता।",
+    deleteAllConfirm: "क्या सभी खिलाड़ियों को हटाना है?",
     sortDefault: "Default",
     positions: {
       GK: "गोलकीपर",

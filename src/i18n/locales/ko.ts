@@ -234,6 +234,7 @@ export default {
     emptyNoTeams: "먼저 팀을 만든 후 선수를 추가하세요.",
     needTeamFirst: "먼저 팀을 만드세요",
     noMatch: "필터와 일치하는 선수가 없습니다.",
+    deleteAllConfirm: "모든 선수를 삭제하시겠습니까?",
     sortDefault: "기본",
     positions: {
       GK: "골키퍼",

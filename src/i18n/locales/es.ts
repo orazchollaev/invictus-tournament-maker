@@ -235,6 +235,7 @@ export default {
     emptyNoTeams: "Crea primero un equipo y luego añade sus jugadores.",
     needTeamFirst: "Crea primero un equipo",
     noMatch: "Ningún jugador coincide con los filtros.",
+    deleteAllConfirm: "¿Eliminar todos los jugadores?",
     sortDefault: "Predeterminado",
     positions: {
       GK: "Portero",

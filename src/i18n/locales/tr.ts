@@ -236,6 +236,7 @@ export default {
     emptyNoTeams: "Önce bir takım oluşturun, sonra oyuncularını ekleyin.",
     needTeamFirst: "Önce bir takım oluşturun",
     noMatch: "Filtrelere uyan oyuncu yok.",
+    deleteAllConfirm: "Tüm oyuncular silinsin mi?",
     sortDefault: "Varsayılan",
     positions: {
       GK: "Kaleci",

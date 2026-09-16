@@ -20,8 +20,9 @@ import {
   AppSearchInput,
   AppButtonGroup,
 } from "@/components/ui"
-import { X, Pencil, Plus, Sparkles, UserRound, List, Grid3x3 } from "@lucide/vue"
+import { X, Pencil, Plus, Sparkles, UserRound, List, Grid3x3, Trash2 } from "@lucide/vue"
 import { useI18n } from "vue-i18n"
+import { showConfirm } from "@/composables/useDialog"
 
 const { t } = useI18n()
 const store = usePlayersStore()
@@ -91,6 +92,17 @@ const pagedPlayers = computed(() => {
   const start = (page.value - 1) * PAGE_SIZE
   return filtered.value.slice(start, start + PAGE_SIZE)
 })
+
+async function handleDeleteAll() {
+  if (
+    !(await showConfirm(t("players.deleteAllConfirm"), {
+      confirmLabel: t("common.delete"),
+      dangerous: true,
+    }))
+  )
+    return
+  store.removeAll()
+}
 </script>
 
 <template>
@@ -219,6 +231,17 @@ const pagedPlayers = computed(() => {
       :team-id="teamFilter !== 'all' ? teamFilter : undefined"
       @close="showGenerateModal = false"
     />
+
+    <button
+      v-if="store.players.length"
+      type="button"
+      class="delete-all-fab"
+      :title="t('players.deleteAllConfirm')"
+      :aria-label="t('players.deleteAllConfirm')"
+      @click="handleDeleteAll"
+    >
+      <AppIcon :icon="Trash2" size="lg" />
+    </button>
   </div>
 </template>
 
@@ -361,5 +384,37 @@ const pagedPlayers = computed(() => {
   position: absolute;
   top: var(--sp-2);
   inset-inline-end: var(--sp-2);
+}
+
+.delete-all-fab {
+  position: fixed;
+  right: calc(var(--safe-right) + var(--sp-4));
+  bottom: calc(var(--safe-bottom) + var(--sp-4));
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  background: var(--danger);
+  color: #fff;
+  box-shadow: var(--shadow-md);
+  cursor: pointer;
+  z-index: var(--z-bottom-bar);
+  transition:
+    transform var(--dur-1) var(--ease),
+    box-shadow var(--dur-1) var(--ease);
+}
+
+.delete-all-fab:hover {
+  transform: scale(1.05);
+  box-shadow: var(--elev-3);
+}
+
+@media (max-width: 600px) {
+  .delete-all-fab {
+    bottom: calc(var(--safe-bottom) + var(--mobile-nav-height) + var(--sp-5));
+  }
 }
 </style>

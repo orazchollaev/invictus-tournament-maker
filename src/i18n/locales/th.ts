@@ -234,6 +234,7 @@ export default {
     emptyNoTeams: "สร้างทีมก่อน แล้วจึงเพิ่มนักเตะ",
     needTeamFirst: "สร้างทีมก่อน",
     noMatch: "ไม่พบนักเตะที่ตรงกับตัวกรอง",
+    deleteAllConfirm: "ลบนักเตะทั้งหมดหรือไม่?",
     sortDefault: "ค่าเริ่มต้น",
     positions: {
       GK: "ผู้รักษาประตู",

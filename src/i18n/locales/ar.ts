@@ -234,6 +234,7 @@ export default {
     emptyNoTeams: "أنشئ فريقًا أولاً، ثم أضف لاعبيه.",
     needTeamFirst: "أنشئ فريقًا أولاً",
     noMatch: "لا يوجد لاعبون مطابقون للفلاتر.",
+    deleteAllConfirm: "هل تريد حذف جميع اللاعبين؟",
     sortDefault: "افتراضي",
     positions: {
       GK: "حارس مرمى",

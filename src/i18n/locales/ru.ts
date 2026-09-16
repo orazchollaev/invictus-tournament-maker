@@ -236,6 +236,7 @@ export default {
     emptyNoTeams: "Сначала создайте команду, затем добавьте её игроков.",
     needTeamFirst: "Сначала создайте команду",
     noMatch: "Нет игроков, соответствующих фильтрам.",
+    deleteAllConfirm: "Удалить всех игроков?",
     sortDefault: "По умолчанию",
     positions: {
       GK: "Вратарь",

@@ -76,6 +76,10 @@ export const usePlayersStore = defineStore("players", () => {
     players.value = players.value.filter((p) => p.teamId !== teamId)
   }
 
+  function removeAll() {
+    players.value = []
+  }
+
   function update(id: string, data: Partial<Omit<Player, "id">>) {
     const p = players.value.find((p) => p.id === id)
     if (!p) return
@@ -100,6 +104,7 @@ export const usePlayersStore = defineStore("players", () => {
     addMany,
     remove,
     removeByTeam,
+    removeAll,
     update,
     byTeam,
     byId,

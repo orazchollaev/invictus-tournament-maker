@@ -234,6 +234,7 @@ export default {
     emptyNoTeams: "Najpierw utwórz drużynę, a następnie dodaj jej zawodników.",
     needTeamFirst: "Najpierw utwórz drużynę",
     noMatch: "Brak zawodników pasujących do filtrów.",
+    deleteAllConfirm: "Usunąć wszystkich zawodników?",
     sortDefault: "Domyślnie",
     positions: {
       GK: "Bramkarz",
