@@ -467,12 +467,18 @@ export const useTournamentStore = defineStore(
      * the manager, exactly like `syncManagerWeek` does after he plays his own
      * match. Nothing has been drawn *again* here, so unlike that seeding
      * itself this needs no ceremony of its own to preserve.
+     *
+     * Only a tournament that is actually being managed plays on by itself:
+     * the auto-settle exists to hand the manager his next tie without making
+     * him press simulate. With manager mode off, a knockout seeded but left
+     * unsimulated is the user waiting on a draw ceremony — auto-playing the
+     * draw here would rob them of every round before they saw it.
      */
     function settleAfterBracketSeed(tournamentId: string) {
       withTournament(tournamentId, (t) => {
-        if (!hasPendingManagedFixture(t) && !crud.isTournamentFinished(tournamentId)) {
-          bracket.simulateAll(tournamentId)
-        }
+        if (!t.manager) return
+        if (hasPendingManagedFixture(t) || crud.isTournamentFinished(tournamentId)) return
+        bracket.simulateAll(tournamentId)
       })
       ensureStatsFor(tournamentId)
     }
