@@ -1,5 +1,15 @@
 # Changelog
 
+## [2.9.2](https://github.com/orazchollaev/invictus-tournament-maker/compare/v2.9.1...v2.9.2) (2026-09-17)
+
+### 🐛 Bug Fixes
+
+- **tournament:** only auto-settle a seeded knockout for a managed tournament ([a5c8999](https://github.com/orazchollaev/invictus-tournament-maker/commit/a5c8999f01d0972eb84f8f98dd69386e5cf6c14b))
+
+### 🔧 Maintenance
+
+- **gradle:** bump gradle version ([13f1d6b](https://github.com/orazchollaev/invictus-tournament-maker/commit/13f1d6b4e4067e5e30055e90602c232737ec415e))
+
 ## [2.9.1](https://github.com/orazchollaev/invictus-tournament-maker/compare/v2.9.0...v2.9.1) (2026-09-16)
 
 ### 🚀 New Features
