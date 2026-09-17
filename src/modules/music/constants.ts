@@ -24,4 +24,4 @@ export const MAX_TRACK_BYTES = 20 * 1024 * 1024
 export const ACCEPTED_AUDIO = "audio/*"
 
 /** Quiet by default: this is something to play under a game, not over it. */
-export const DEFAULT_VOLUME = 35
+export const DEFAULT_VOLUME = 2
