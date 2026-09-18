@@ -1,5 +1,22 @@
 # Changelog
 
+## [2.9.3](https://github.com/orazchollaev/invictus-tournament-maker/compare/v2.9.2...v2.9.3) (2026-09-18)
+
+### 🚀 New Features
+
+- update background music ([b2d47cb](https://github.com/orazchollaev/invictus-tournament-maker/commit/b2d47cb40584634f70e46122380c7a2be869aaee))
+
+### 🐛 Bug Fixes
+
+- **manager:** field only the manager's own picks, never a benched player ([ae6c470](https://github.com/orazchollaev/invictus-tournament-maker/commit/ae6c4706cce2423feb75e4cc1dbb4acad237d698))
+- **music:** curve volume so low slider values are actually quiet ([07ab4db](https://github.com/orazchollaev/invictus-tournament-maker/commit/07ab4dba4ce4824b3cc27b532fa899e76a129daf))
+- **players:** remember an uploaded name file across reopening Generate Players ([d4d7079](https://github.com/orazchollaev/invictus-tournament-maker/commit/d4d7079be7163b38078196dae4b887df11b6c800))
+
+### 🔧 Maintenance
+
+- **deps:** update minor dependencies ([dfebf9d](https://github.com/orazchollaev/invictus-tournament-maker/commit/dfebf9d3f9a1bb353ab75ea1c18ea95cfbbe3568))
+- **gradle:** bump gradle version ([9084e31](https://github.com/orazchollaev/invictus-tournament-maker/commit/9084e313d7b3bcceaaf5e49ef3410d2e93c76de4))
+
 ## [2.9.2](https://github.com/orazchollaev/invictus-tournament-maker/compare/v2.9.1...v2.9.2) (2026-09-17)
 
 ### 🐛 Bug Fixes
