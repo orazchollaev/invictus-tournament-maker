@@ -128,6 +128,114 @@ describe("createLiveMatch", () => {
     expect(state.home.tactics.style).toBe("balanced")
     expect(state.home.coachPower).toBeUndefined()
   })
+
+  /**
+   * Regression: `buildLineup` used to fill any slot the manager left short
+   * of the formation's count for that position by drawing, power-weighted,
+   * from the *whole* squad at that position — so a bench player with more
+   * power than the manager's actual pick (a backup keeper started over the
+   * first choice, a striker benched in favor of a weaker one) kept winning
+   * that draw back onto the pitch regardless of what was picked. See
+   * `engine/events/lineup.ts`'s `managed` parameter.
+   */
+  describe("a managed side only ever fields who was actually picked", () => {
+    function keeperAndStrikerSquad(): Player[] {
+      return [
+        { id: "gk-star", teamId: "h", name: "GK Star", position: "GK", power: 95 },
+        { id: "gk-pick", teamId: "h", name: "GK Pick", position: "GK", power: 30 },
+        ...Array.from({ length: 6 }, (_, i) => ({
+          id: `def-${i}`,
+          teamId: "h",
+          name: `D${i}`,
+          position: "DEF" as const,
+          power: 60 + i,
+        })),
+        ...Array.from({ length: 6 }, (_, i) => ({
+          id: `mid-${i}`,
+          teamId: "h",
+          name: `M${i}`,
+          position: "MID" as const,
+          power: 60 + i,
+        })),
+        { id: "fwd-star", teamId: "h", name: "FWD Star", position: "FWD", power: 95 },
+        { id: "fwd-pick", teamId: "h", name: "FWD Pick", position: "FWD", power: 30 },
+      ]
+    }
+
+    const managedStartingXI = [
+      "gk-pick",
+      "def-0",
+      "def-1",
+      "def-2",
+      "def-3",
+      "mid-0",
+      "mid-1",
+      "mid-2",
+      "mid-3",
+      "fwd-pick",
+      "def-4",
+    ]
+
+    it("fields the picked backup keeper and striker, not the stronger benched ones", () => {
+      const state = kickoff({
+        managedSide: "home",
+        homeSquad: keeperAndStrikerSquad(),
+        managedTactics: { formation: "4-4-2", style: "balanced" },
+        managedStartingXI,
+      })
+      const ids = onPitchFor(state, "home").map((s) => s.playerId)
+      expect(ids).toContain("gk-pick")
+      expect(ids).toContain("fwd-pick")
+      expect(ids).not.toContain("gk-star")
+      expect(ids).not.toContain("fwd-star")
+    })
+
+    /**
+     * The same invariant, but through a whole match at high speed with a
+     * red card and one manual substitution mid-way through — the scenario
+     * that surfaced the bug in practice — over many random matches.
+     */
+    it("never resurrects a benched player through a red card and a substitution", () => {
+      const homeSquad = keeperAndStrikerSquad()
+      let redCardMatches = 0
+      for (let seed = 0; seed < 60 && redCardMatches < 15; seed++) {
+        const state = kickoff({
+          managedSide: "home",
+          homeSquad,
+          managedTactics: { formation: "4-4-2", style: "balanced" },
+          managedStartingXI,
+        })
+
+        let subbed = false
+        let sawRedOnHome = false
+        let guard = 0
+        while (!state.finished && guard++ < 130) {
+          const fresh = advanceMinute(state)
+          if (fresh.some((e) => e.type === "red" && e.side === "home")) sawRedOnHome = true
+
+          const ids = onPitchFor(state, "home")
+            .map((s) => s.playerId)
+            .filter((id): id is string => id !== null)
+          const subbedInIds = state.home.state.subs.map((sub) => sub.inSlot.playerId)
+          const allowed = new Set([...managedStartingXI, ...subbedInIds])
+          for (const id of ids) expect(allowed.has(id)).toBe(true)
+
+          if (sawRedOnHome && !subbed) {
+            const outSlot = onPitchFor(state, "home")[0]
+            const inPlayer = benchFor(state, "home")[0]
+            if (outSlot && inPlayer) {
+              applySubstitution(state, "home", outSlot, inPlayer)
+              subbed = true
+            }
+          }
+        }
+        if (sawRedOnHome) redCardMatches++
+      }
+      // The scenario itself (a red card actually happening) has to occur
+      // often enough across the seeds for this test to mean anything.
+      expect(redCardMatches).toBeGreaterThan(0)
+    })
+  })
 })
 
 describe("advanceMinute", () => {

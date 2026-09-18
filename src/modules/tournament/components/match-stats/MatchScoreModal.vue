@@ -35,6 +35,7 @@ import {
 import { usePlayersStore } from "@/modules/players/store"
 import { useTournamentStore } from "@/modules/tournament/store"
 import { useHaptic } from "@/composables/useHaptic"
+import { managedUnavailability } from "@/modules/tournament/utils/managerFixtures"
 
 const props = withDefaults(
   defineProps<{
@@ -331,10 +332,34 @@ const canManage = computed(
 
 const managing = ref(false)
 
-/** Both squads as they will actually be available, injuries already removed. */
+/**
+ * The manager's own picks that are serving a one-match ban — see
+ * `managedUnavailability`. Only relevant on the side the user manages: an
+ * AI side's discipline is handled elsewhere (discipline.ts's residual power
+ * cost), never by naming individual players.
+ */
+const managedSuspended = computed(() =>
+  tournament.value?.manager ? managedUnavailability(tournament.value).suspended : new Set<string>()
+)
+
+/** Both squads as they will actually be available — injured or suspended
+ * already removed, so a manager's own squad here matches exactly what he
+ * was allowed to pick from in the lineup panel. */
 const managedSquads = computed(() => ({
-  home: playersStore.byTeam(props.homeTeam!.id).filter((p) => !unavailable.value.home.has(p.id)),
-  away: playersStore.byTeam(props.awayTeam!.id).filter((p) => !unavailable.value.away.has(p.id)),
+  home: playersStore
+    .byTeam(props.homeTeam!.id)
+    .filter(
+      (p) =>
+        !unavailable.value.home.has(p.id) &&
+        !(managedSide.value === "home" && managedSuspended.value.has(p.id))
+    ),
+  away: playersStore
+    .byTeam(props.awayTeam!.id)
+    .filter(
+      (p) =>
+        !unavailable.value.away.has(p.id) &&
+        !(managedSide.value === "away" && managedSuspended.value.has(p.id))
+    ),
 }))
 
 const managedTactics = computed<LiveTactics>(() => {

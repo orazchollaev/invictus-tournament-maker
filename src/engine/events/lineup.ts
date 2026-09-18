@@ -139,16 +139,31 @@ export function buildLineup(
    * shorter list, or a pick that missed the cut) is filled exactly as an
    * unmanaged side's eleven is.
    */
-  preferredIds: string[] = []
+  preferredIds: string[] = [],
+  /**
+   * True for a manager's own side. Both passes then draw only from
+   * `preferredIds` — never from the rest of the squad — so a slot he left
+   * short stays short (an anonymous cover, same as a squad genuinely out of
+   * players) rather than the power-weighted draw quietly promoting whoever
+   * he benched. Without this, a bench player with more power than the man
+   * who replaced him kept winning that draw back onto the pitch regardless
+   * of the manager's actual pick.
+   */
+  managed = false
 ): Lineup {
   const lineup: Lineup = []
   const used = new Set<string>()
   const gaps: LineupSlot[] = []
   const shape = FORMATIONS[formation] ?? FORMATIONS[DEFAULT_FORMATION]
+  // An empty pick list is "no lineup was ever set" (nothing to honor), not
+  // "the manager fielded nobody" — that case still draws from the whole
+  // squad, same as an unmanaged side.
+  const pool =
+    managed && preferredIds.length > 0 ? squad.filter((p) => preferredIds.includes(p.id)) : squad
 
   for (const position of Object.keys(shape) as PlayerPosition[]) {
     const slots = shape[position]
-    const candidates = squad.filter((p) => p.position === position)
+    const candidates = pool.filter((p) => p.position === position)
 
     const preferred = preferredIds
       .map((id) => candidates.find((p) => p.id === id))
@@ -171,7 +186,7 @@ export function buildLineup(
   }
 
   for (const slot of gaps) {
-    const cover = pickForPosition(squad, used, slot.position, rng)
+    const cover = pickForPosition(pool, used, slot.position, rng)
     if (!cover) continue
     used.add(cover.id)
     slot.playerId = cover.id
