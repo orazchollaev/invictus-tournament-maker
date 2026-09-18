@@ -44,8 +44,20 @@ interface NamesFile {
 // A loaded file's names are kept out of the textarea entirely — a file can hold
 // tens of thousands of names, and binding that much text into the DOM is what
 // made the textarea lag. The textarea locks and shows a summary line instead.
-const firstNamesFile = ref<NamesFile | null>(null)
-const lastNamesFile = ref<NamesFile | null>(null)
+//
+// Which list (if either) came from a file is remembered on the store, so
+// reopening this modal after a previous upload restores the summary rather
+// than dumping the whole loaded list back into the textarea.
+const firstNamesFile = ref<NamesFile | null>(
+  store.customFirstNamesFile
+    ? { fileName: store.customFirstNamesFile, names: store.effectiveFirstNames() }
+    : null
+)
+const lastNamesFile = ref<NamesFile | null>(
+  store.customLastNamesFile
+    ? { fileName: store.customLastNamesFile, names: store.effectiveLastNames() }
+    : null
+)
 
 function loadNamesFile(file: File | undefined, target: typeof firstNamesFile) {
   if (!file) return
@@ -96,8 +108,8 @@ function fromLines(text: string): string[] {
     .filter(Boolean)
 }
 
-const firstNamesText = ref(toLines(store.effectiveFirstNames()))
-const lastNamesText = ref(toLines(store.effectiveLastNames()))
+const firstNamesText = ref(firstNamesFile.value ? "" : toLines(store.effectiveFirstNames()))
+const lastNamesText = ref(lastNamesFile.value ? "" : toLines(store.effectiveLastNames()))
 
 const parsedFirstNames = computed(() =>
   firstNamesFile.value ? firstNamesFile.value.names : fromLines(firstNamesText.value)
@@ -173,7 +185,12 @@ function useDefaults() {
 
 function generate() {
   if (!canGenerate.value) return
-  store.setCustomNames(parsedFirstNames.value, parsedLastNames.value)
+  store.setCustomNames(
+    parsedFirstNames.value,
+    parsedLastNames.value,
+    firstNamesFile.value?.fileName ?? null,
+    lastNamesFile.value?.fileName ?? null
+  )
   // Generated players cluster around their own team's rating, so a
   // generated squad reads as that team's players rather than everyone's —
   // done per team here since "fill every understaffed team" spans several.

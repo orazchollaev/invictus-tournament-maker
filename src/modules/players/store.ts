@@ -12,6 +12,12 @@ export const usePlayersStore = defineStore("players", () => {
   // them without losing track of the user's last custom list forever.
   const customFirstNames = ref<string[] | null>(null)
   const customLastNames = ref<string[] | null>(null)
+  // Set only when the matching list came from an uploaded .txt file, so
+  // reopening Generate Players can show the file summary again instead of
+  // dumping every name — possibly tens of thousands of them — into the
+  // textarea.
+  const customFirstNamesFile = ref<string | null>(null)
+  const customLastNamesFile = ref<string | null>(null)
 
   function effectiveFirstNames(): string[] {
     return customFirstNames.value ?? DEFAULT_FIRST_NAMES
@@ -21,14 +27,23 @@ export const usePlayersStore = defineStore("players", () => {
     return customLastNames.value ?? DEFAULT_LAST_NAMES
   }
 
-  function setCustomNames(first: string[], last: string[]) {
+  function setCustomNames(
+    first: string[],
+    last: string[],
+    firstFile: string | null = null,
+    lastFile: string | null = null
+  ) {
     customFirstNames.value = first
     customLastNames.value = last
+    customFirstNamesFile.value = firstFile
+    customLastNamesFile.value = lastFile
   }
 
   function resetCustomNames() {
     customFirstNames.value = null
     customLastNames.value = null
+    customFirstNamesFile.value = null
+    customLastNamesFile.value = null
   }
 
   function clampPower(power: number) {
@@ -110,6 +125,8 @@ export const usePlayersStore = defineStore("players", () => {
     byId,
     customFirstNames,
     customLastNames,
+    customFirstNamesFile,
+    customLastNamesFile,
     effectiveFirstNames,
     effectiveLastNames,
     setCustomNames,
