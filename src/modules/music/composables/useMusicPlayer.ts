@@ -5,7 +5,7 @@
 // navigation and there must never be two of them fighting over the volume.
 import { computed, ref, watch } from "vue"
 import { useMusicStore } from "../store"
-import { BUILT_IN_TRACK_ID, BUILT_IN_TRACK_URL } from "../constants"
+import { BUILT_IN_TRACK_ID, BUILT_IN_TRACK_URL, volumeToGain } from "../constants"
 import { loadTrackBlob } from "../services/trackStorage"
 import { nextTrackId, resolveTrack, shuffleOrder } from "../utils/playlist"
 
@@ -88,12 +88,12 @@ export function useMusicPlayer() {
     const el = element()
     el.src = src
     el.loop = store.loop
-    el.volume = store.volume / 100
+    el.volume = volumeToGain(store.volume)
   }
 
   function play(): void {
     const el = element()
-    el.volume = store.volume / 100
+    el.volume = volumeToGain(store.volume)
     el.loop = store.loop
     el.play()
       .then(() => {
@@ -150,7 +150,7 @@ export function useMusicPlayer() {
     watch(
       () => store.volume,
       (value) => {
-        el.volume = value / 100
+        el.volume = volumeToGain(value)
       },
       { immediate: true }
     )
