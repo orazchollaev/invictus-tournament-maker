@@ -160,6 +160,11 @@ watch(
   backdrop-filter: saturate(180%) blur(24px);
   -webkit-backdrop-filter: saturate(180%) blur(24px);
 }
+:root[data-glass="off"][data-design="ios"] .dialog-card {
+  background: var(--surface);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
 [data-design="ios"] .dialog-msg {
   font-size: 13px;
   line-height: 1.4;

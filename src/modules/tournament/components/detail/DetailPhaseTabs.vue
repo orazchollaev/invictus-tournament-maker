@@ -4,6 +4,7 @@ import { useI18n } from "vue-i18n"
 import { UserCog } from "@lucide/vue"
 import { phaseTab, type MainTab } from "./types"
 import { AppTabs, AppTab } from "@/components/ui"
+import { isRtl, type Locale } from "@/i18n"
 
 const props = defineProps<{
   activeTab: MainTab
@@ -46,7 +47,7 @@ function onUpdate(value: string) {
     :model-value="activeTab"
     sticky
     size="sm"
-    :dir="locale === 'ar' ? 'rtl' : 'ltr'"
+    :dir="isRtl(locale as Locale) ? 'rtl' : 'ltr'"
     @update:model-value="onUpdate"
   >
     <AppTab v-if="managerTeamName" value="manager" class="manager-tab">

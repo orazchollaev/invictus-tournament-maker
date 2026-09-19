@@ -292,6 +292,11 @@ function onOpenChange(open: boolean) {
   -webkit-backdrop-filter: saturate(180%) blur(24px);
   box-shadow: var(--elev-3);
 }
+:root[data-glass="off"][data-design="ios"] .asel-content {
+  background: var(--surface);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
 [data-design="ios"] .asel-item {
   border-radius: 8px;
   font-size: var(--fs-base);

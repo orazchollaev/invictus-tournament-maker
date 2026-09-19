@@ -19,6 +19,9 @@ export type Locale =
   | "ko"
   | "pl"
   | "th"
+  | "fa"
+  | "uz"
+  | "nl"
 
 export interface LocaleOption {
   value: Locale
@@ -26,7 +29,7 @@ export interface LocaleOption {
   flag: string
 }
 
-export const RTL_LOCALES: readonly Locale[] = ["ar"]
+export const RTL_LOCALES: readonly Locale[] = ["ar", "fa"]
 
 export function isRtl(locale: Locale): boolean {
   return RTL_LOCALES.includes(locale)
@@ -45,11 +48,14 @@ export const LOCALES: LocaleOption[] = [
   { value: "fr", label: "Français", flag: "FR" },
   { value: "it", label: "Italiano", flag: "IT" },
   { value: "ar", label: "العربية", flag: "SA" },
-  { value: "in", label: "Indian", flag: "IN" },
-  { value: "vi", label: "Vietnam", flag: "VN" },
+  { value: "in", label: "हिन्दी", flag: "IN" },
+  { value: "vi", label: "Tiếng Việt", flag: "VN" },
   { value: "ko", label: "한국어", flag: "KR" },
   { value: "pl", label: "Polski", flag: "PL" },
   { value: "th", label: "ไทย", flag: "TH" },
+  { value: "fa", label: "فارسی", flag: "IR" },
+  { value: "uz", label: "O‘zbekcha", flag: "UZ" },
+  { value: "nl", label: "Nederlands", flag: "NL" },
 ]
 
 export const i18n = createI18n({
@@ -79,6 +85,9 @@ const localeLoaders: Record<
   ko: () => import("./locales/ko"),
   pl: () => import("./locales/pl"),
   th: () => import("./locales/th"),
+  fa: () => import("./locales/fa"),
+  uz: () => import("./locales/uz"),
+  nl: () => import("./locales/nl"),
 }
 
 export async function loadLocale(locale: Locale): Promise<void> {

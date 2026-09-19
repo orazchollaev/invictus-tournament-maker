@@ -230,6 +230,11 @@ defineExpose({ close })
   border-bottom: 0.5px solid var(--border);
   padding: var(--sp-3) var(--sp-4);
 }
+:root[data-glass="off"][data-design="ios"] .drawer-header {
+  background: var(--surface);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
 [data-design="ios"] .drawer-title {
   flex: 1;
   text-align: center;

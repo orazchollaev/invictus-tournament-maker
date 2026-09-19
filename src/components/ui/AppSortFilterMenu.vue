@@ -266,6 +266,11 @@ function onDirSelect(dir: unknown) {
   -webkit-backdrop-filter: saturate(180%) blur(24px);
   box-shadow: var(--elev-3);
 }
+:root[data-glass="off"][data-design="ios"] .sort-filter-menu {
+  background: var(--surface);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
 [data-design="ios"] .sort-filter-item {
   border-radius: 8px;
   font-size: var(--fs-base);
