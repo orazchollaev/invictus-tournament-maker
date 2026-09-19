@@ -81,7 +81,7 @@ const filtered = computed(() => {
 // Rendering every match at once is what makes 100+ players feel laggy — a
 // full AppCard tree per row, animated by TransitionGroup, adds up fast. Only
 // one page's worth of cards is ever mounted at a time.
-const PAGE_SIZE = 30
+const PAGE_SIZE = 24
 const page = ref(1)
 
 watch(filtered, () => {

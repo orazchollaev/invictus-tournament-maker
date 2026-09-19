@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from "vue"
+import { ref, computed, watch } from "vue"
 import { useRouter } from "vue-router"
 import { useTeamsStore } from "@/modules/teams/store"
 import { useTournamentStore } from "@/modules/tournament/store"
@@ -12,6 +12,7 @@ import {
   AppCard,
   AppEmptyState,
   AppIcon,
+  AppPagination,
   AppSearchInput,
   AppButtonGroup,
 } from "@/components/ui"
@@ -61,10 +62,25 @@ const filtered = computed(() => {
   return list
 })
 
+// Mounting every card at once is what makes a long tournament list feel
+// laggy — only one page's worth is ever rendered.
+const PAGE_SIZE = 24
+const page = ref(1)
+
+watch(filtered, () => {
+  page.value = 1
+})
+
+const pagedTournaments = computed(() => {
+  const start = (page.value - 1) * PAGE_SIZE
+  return filtered.value.slice(start, start + PAGE_SIZE)
+})
+
 function formatLabel(format: string) {
   if (format === "group+bracket") return t("tournaments.format.groupsKo")
   if (format === "league") return t("tournaments.format.league")
   if (format === "swiss") return t("tournaments.format.swiss")
+  if (format === "custom") return t("tournaments.format.custom")
   return t("tournaments.format.bracket")
 }
 
@@ -110,7 +126,7 @@ async function deleteTournament(id: string) {
       <p v-if="!filtered.length" class="empty-text">{{ t("tournaments.noMatch", { query }) }}</p>
       <TransitionGroup name="list" tag="div" :class="isGrid ? 'tour-grid' : 't-list-inner'">
         <AppCard
-          v-for="(tour, i) in filtered"
+          v-for="(tour, i) in pagedTournaments"
           :key="tour.id"
           rail
           interactive
@@ -150,6 +166,7 @@ async function deleteTournament(id: string) {
           </AppButton>
         </AppCard>
       </TransitionGroup>
+      <AppPagination v-model="page" :total-items="filtered.length" :page-size="PAGE_SIZE" />
     </div>
 
     <AppEmptyState

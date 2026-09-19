@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from "vue"
+import { ref, computed, watch } from "vue"
 import { useRouter } from "vue-router"
 import { useTeamsStore } from "../store"
 import { useSettingsStore } from "@/modules/settings/store"
@@ -16,6 +16,7 @@ import {
   AppChip,
   AppEmptyState,
   AppIcon,
+  AppPagination,
   AppSearchInput,
   AppButtonGroup,
 } from "@/components/ui"
@@ -52,6 +53,20 @@ const filtered = computed(() => {
   }
 
   return list
+})
+
+// Mounting every card at once is what makes a long roster feel laggy — only
+// one page's worth is ever rendered.
+const PAGE_SIZE = 24
+const page = ref(1)
+
+watch(filtered, () => {
+  page.value = 1
+})
+
+const pagedTeams = computed(() => {
+  const start = (page.value - 1) * PAGE_SIZE
+  return filtered.value.slice(start, start + PAGE_SIZE)
 })
 </script>
 
@@ -92,7 +107,7 @@ const filtered = computed(() => {
       <p v-if="!filtered.length" class="empty-text">{{ t("teams.noMatch", { query }) }}</p>
       <TransitionGroup name="list" tag="div" :class="isGrid ? 'team-grid' : 't-list-inner'">
         <AppCard
-          v-for="(team, i) in filtered"
+          v-for="(team, i) in pagedTeams"
           :key="team.id"
           rail
           interactive
@@ -119,6 +134,7 @@ const filtered = computed(() => {
           </div>
         </AppCard>
       </TransitionGroup>
+      <AppPagination v-model="page" :total-items="filtered.length" :page-size="PAGE_SIZE" />
     </div>
 
     <AppEmptyState

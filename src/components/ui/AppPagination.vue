@@ -8,6 +8,7 @@ import { useI18n } from "vue-i18n"
 import { ChevronLeft, ChevronRight } from "@lucide/vue"
 import AppButton from "./AppButton.vue"
 import AppIcon from "./AppIcon.vue"
+import AppSelect from "./AppSelect.vue"
 
 const props = defineProps<{
   totalItems: number
@@ -19,6 +20,22 @@ const page = defineModel<number>({ required: true })
 const { t } = useI18n()
 
 const totalPages = computed(() => Math.max(1, Math.ceil(props.totalItems / props.pageSize)))
+
+// AppSelect only takes string values, so the page number round-trips through
+// a string here — the caller's model stays a plain number.
+const pageOptions = computed(() =>
+  Array.from({ length: totalPages.value }, (_, i) => {
+    const n = i + 1
+    return { value: String(n), label: t("common.pageOf", { page: n, total: totalPages.value }) }
+  })
+)
+
+const pageSelectModel = computed({
+  get: () => String(page.value),
+  set: (value: string) => {
+    page.value = Number(value)
+  },
+})
 
 function prev() {
   if (page.value > 1) page.value -= 1
@@ -41,7 +58,9 @@ function next() {
     >
       <AppIcon :icon="ChevronLeft" size="sm" />
     </AppButton>
-    <span class="pagination-info">{{ t("common.pageOf", { page, total: totalPages }) }}</span>
+    <div class="pagination-select">
+      <AppSelect v-model="pageSelectModel" size="sm" :options="pageOptions" />
+    </div>
     <AppButton
       variant="text"
       size="sm"
@@ -64,11 +83,12 @@ function next() {
   padding-block: var(--sp-2);
 }
 
-.pagination-info {
-  font-size: var(--fs-sm);
-  color: var(--text-muted);
-  font-variant-numeric: tabular-nums;
-  min-width: 3.5em;
+.pagination-select {
+  width: 100px;
+  flex-shrink: 0;
+}
+
+.pagination-select :deep(.asel-value) {
   text-align: center;
 }
 </style>
