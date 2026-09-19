@@ -134,13 +134,7 @@ onUnmounted(() => {
   border-radius: 14px;
   background: color-mix(in srgb, var(--surface) 86%, transparent);
   backdrop-filter: saturate(180%) blur(24px);
-  -webkit-backdrop-filter: saturate(180%) blur(24px);
   box-shadow: var(--elev-3);
-}
-:root[data-glass="off"][data-design="ios"] .sd-popover {
-  background: var(--surface);
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
 }
 
 [data-design="android"] .sd-popover {

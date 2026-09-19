@@ -55,7 +55,6 @@ const items = [
     border-radius: var(--radius-lg);
     background: color-mix(in srgb, var(--surface) 88%, transparent);
     backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
     box-shadow: var(--elev-3);
   }
 
@@ -126,7 +125,6 @@ const items = [
     border-radius: var(--radius-pill);
     background: color-mix(in srgb, var(--surface) 45%, transparent);
     backdrop-filter: saturate(180%) blur(34px);
-    -webkit-backdrop-filter: saturate(180%) blur(34px);
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.14);
   }
 
@@ -159,13 +157,6 @@ const items = [
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
   }
 
-  /* No blur on this platform (see main.ts) — a solid bar instead. */
-  :root[data-glass="off"]:not([data-design="android"]) .mobile-nav {
-    background: var(--surface);
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-  }
-
   /* ══ Material 3 navigation bar ════════════════════════════════
      Edge to edge on a solid tonal surface, and the selection is a pill
      behind the icon only — never behind the label. The pill is the
@@ -182,7 +173,6 @@ const items = [
     border-radius: 0;
     background: var(--surface-2);
     backdrop-filter: none;
-    -webkit-backdrop-filter: none;
     box-shadow: none;
   }
 

@@ -226,14 +226,8 @@ defineExpose({ close })
 [data-design="ios"] .drawer-header {
   background: color-mix(in srgb, var(--surface) 86%, transparent);
   backdrop-filter: saturate(180%) blur(24px);
-  -webkit-backdrop-filter: saturate(180%) blur(24px);
   border-bottom: 0.5px solid var(--border);
   padding: var(--sp-3) var(--sp-4);
-}
-:root[data-glass="off"][data-design="ios"] .drawer-header {
-  background: var(--surface);
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
 }
 [data-design="ios"] .drawer-title {
   flex: 1;

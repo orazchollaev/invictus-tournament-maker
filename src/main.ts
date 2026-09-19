@@ -1,7 +1,6 @@
 import { createApp } from "vue"
 import { createPinia } from "pinia"
 import { createPersistedStatePlugin } from "pinia-plugin-persistedstate-2"
-import { Capacitor } from "@capacitor/core"
 
 import router from "./router"
 import App from "./App.vue"
@@ -50,16 +49,6 @@ const persistedStatePlugin = createPersistedStatePlugin({
   serialize: idleSerialize,
 })
 pinia.use(persistedStatePlugin)
-
-/**
- * Android's WebView does not render `backdrop-filter` reliably — devices whose
- * GPU is blocklisted fall back to software compositing, which drops the blur
- * entirely, leaving the translucent glass surfaces unreadable over content.
- * Components read this flag and swap their glass for a solid fill.
- */
-if (Capacitor.getPlatform() === "android") {
-  document.documentElement.setAttribute("data-glass", "off")
-}
 
 async function bootstrap() {
   try {

@@ -79,7 +79,6 @@ onUnmounted(() => {
 .site-header {
   background: color-mix(in srgb, var(--surface) 88%, transparent);
   backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--border-light);
   position: sticky;
   top: 0;
