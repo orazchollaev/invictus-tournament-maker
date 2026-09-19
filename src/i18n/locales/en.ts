@@ -626,8 +626,7 @@ export default {
     },
     phases: {
       title: "Phases",
-      help:
-        "Drag from a phase's right port to another phase's left port to send teams onward — on a touch screen, tap one port then the other. Click a connection to change it. A knockout has no output port: that is where a branch ends.",
+      help: "Drag a phase’s right port to the next phase’s left port.",
       summary: "{count} phases",
       summaryEmpty: "No phases yet",
       button: "Phases",
@@ -647,10 +646,14 @@ export default {
       guide: {
         lead: "Build the tournament out of phases and wire them together.",
         add: "Add a phase from the buttons above — a group stage, a table, a Swiss round or a knockout.",
-        connect: "Drag from a phase’s right-hand port to the next phase’s left-hand port. On a touch screen, tap one port and then the other.",
-        configure: "Open a phase’s Settings to set its shape, and its connection to choose which places advance.",
-        final: "Mark the phase that decides the winner as Final. A knockout has no output port — it is where a branch ends.",
-        example: "A common shape: Groups → League → Cup. The groups send their qualifiers to the league, the league’s top four go to the cup, and the cup is the final.",
+        connect:
+          "Drag from a phase’s right-hand port to the next phase’s left-hand port. On a touch screen, tap one port and then the other.",
+        configure:
+          "Open a phase’s Settings to set its shape, and its connection to choose which places advance.",
+        final:
+          "Mark the phase that decides the winner as Final. A knockout has no output port — it is where a branch ends.",
+        example:
+          "A common shape: Groups → League → Cup. The groups send their qualifiers to the league, the league’s top four go to the cup, and the cup is the final.",
         dismiss: "Got it",
         reopen: "How does this work?",
       },
@@ -671,7 +674,8 @@ export default {
         to: "To place",
         hint: "{count} teams move on to {to}.",
         disconnect: "Disconnect",
-        groupNote: "{from} decides who advances in its own settings — qualifiers per group, plus wildcards.",
+        groupNote:
+          "{from} decides who advances in its own settings — qualifiers per group, plus wildcards.",
       },
       config: {
         intake: "{count} teams reach this phase",
@@ -707,7 +711,8 @@ export default {
         phaseTooSmall: "{intake} teams is too few — this phase needs at least {min}.",
         groupCount: "Set at least two groups.",
         groupsTooSmall: "{intake} teams cannot fill {groupCount} groups.",
-        groupSingleOutput: "A group phase sends its qualifiers on as one set — it can only have one connection.",
+        groupSingleOutput:
+          "A group phase sends its qualifiers on as one set — it can only have one connection.",
         groupQualifiers: "{qualifiers} per group is too many — at most {max}.",
         groupWildcards: "{wildcards} wildcards is too many — at most {max}, one per group.",
         swissOpponents: "{opponents} opponents is too many — at most {max}.",

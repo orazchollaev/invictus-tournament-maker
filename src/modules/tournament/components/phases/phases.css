@@ -3,45 +3,48 @@
    Vue Flow's own stylesheet is imported from PhaseGraphCanvas.vue; everything
    below either overrides one of its variables or styles our own markup. */
 
+/* Fills the drawer body, which is itself a definite height, so the canvas can
+   take whatever the text above it leaves rather than adding to it. With a fixed
+   canvas height the help line and the walkthrough pushed the graph off the
+   bottom of the modal. */
 .phase-editor {
   display: flex;
   flex-direction: column;
   gap: var(--sp-2);
   padding: var(--sp-2);
+  height: 100%;
+  min-height: 0;
+  box-sizing: border-box;
 }
 
 .phase-palette {
   display: flex;
   flex-wrap: wrap;
   gap: var(--sp-1);
+  flex-shrink: 0;
 }
 
 .phase-editor-help {
   margin: 0;
   font-size: 11px;
-  line-height: 1.5;
+  line-height: 1.4;
   color: var(--text-muted);
+  flex-shrink: 0;
 }
 
 /* ── Canvas ──────────────────────────────────────────────────────
-   A fixed height because the graph pans and zooms inside it: letting it grow
-   with its content would put the canvas itself on the page scroll, and the two
-   gestures would fight. Shorter on a phone, where the modal is nearly
-   full-height already. */
+   Takes whatever height the rest of the editor leaves, rather than a fixed
+   fraction of the viewport that adds to it: the help line and the walkthrough
+   above were pushing the graph off the bottom of the modal. It never scrolls
+   with the page either — the graph pans and zooms inside it, and the two
+   gestures would fight. The floor keeps it usable while the walkthrough is up. */
 .phase-canvas {
-  height: 58vh;
-  min-height: 300px;
+  flex: 1 1 auto;
+  min-height: 200px;
   border: 2px solid var(--border-light);
   border-radius: var(--radius-lg);
   background: var(--bg-elevated);
   overflow: hidden;
-}
-
-@media (max-width: 600px) {
-  .phase-canvas {
-    height: 68vh;
-    min-height: 260px;
-  }
 }
 
 .phase-canvas :deep(.vue-flow__background) {
@@ -326,16 +329,23 @@
   color: var(--text);
 }
 
-/* ── First-run walkthrough ───────────────────────────────────────── */
+/* ── First-run walkthrough ───────────────────────────────────────
+   Capped and scrollable: it is the tallest thing in the editor, and on a short
+   screen an uncapped one left the graph at its 200px floor with nothing to see.
+   It shrinks before the canvas does. */
 .phase-guide {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: var(--sp-2);
+  gap: var(--sp-1);
   padding: var(--sp-2);
   background: color-mix(in srgb, var(--accent) 7%, var(--bg-elevated));
   border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--border-light));
   border-radius: var(--radius-lg);
+  flex: 0 1 auto;
+  min-height: 0;
+  max-height: 40%;
+  overflow-y: auto;
 }
 
 .phase-guide-lead {
@@ -409,10 +419,16 @@
 /* ── Connection list ─────────────────────────────────────────────
    The canvas shows the shape; this shows the detail, and is the only way to
    reach a connection that needs no aim. */
+/* Also capped, for the same reason: a graph with several connections must not
+   squeeze the graph itself out of view. */
 .phase-links {
   display: flex;
   flex-direction: column;
   gap: var(--sp-1);
+  flex: 0 1 auto;
+  min-height: 0;
+  max-height: 30%;
+  overflow-y: auto;
 }
 
 .phase-links-title {

@@ -2,6 +2,9 @@
 include ':capacitor-android'
 project(':capacitor-android').projectDir = new File('../node_modules/.pnpm/@capacitor+android@8.5.2_@capacitor+core@8.5.2/node_modules/@capacitor/android/capacitor')
 
+include ':capacitor-community-admob'
+project(':capacitor-community-admob').projectDir = new File('../node_modules/.pnpm/@capacitor-community+admob@8.1.0/node_modules/@capacitor-community/admob/android')
+
 include ':capacitor-community-in-app-review'
 project(':capacitor-community-in-app-review').projectDir = new File('../node_modules/.pnpm/@capacitor-community+in-app_474ccc7679cfe31e09dd3c854c0edb3e/node_modules/@capacitor-community/in-app-review/android')
 

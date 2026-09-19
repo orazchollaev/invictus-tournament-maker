@@ -630,8 +630,7 @@ export default {
     },
     phases: {
       title: "Aşamalar",
-      help:
-        "Takımları ilerletmek için bir aşamanın sağ portundan başka bir aşamanın sol portuna sürükleyin — dokunmatik ekranda önce bir porta, sonra diğerine dokunun. Bağlantıyı değiştirmek için üstüne dokunun. Elemenin çıkış portu yoktur: dal orada biter.",
+      help: "Bir aşamanın sağ portunu sonraki aşamanın sol portuna sürükle.",
       summary: "{count} aşama",
       summaryEmpty: "Henüz aşama yok",
       button: "Aşamalar",
@@ -651,10 +650,14 @@ export default {
       guide: {
         lead: "Turnuvayı aşamalardan kur ve birbirine bağla.",
         add: "Yukarıdaki butonlardan aşama ekle — grup, lig, İsviçre turu veya eleme.",
-        connect: "Bir aşamanın sağ portundan sonraki aşamanın sol portuna sürükle. Dokunmatik ekranda önce bir porta, sonra diğerine dokun.",
-        configure: "Aşamanın Ayarlar’ından yapısını, bağlantısından hangi sıraların yükseleceğini belirle.",
-        final: "Kazananı belirleyen aşamayı Final olarak işaretle. Elemenin çıkış portu yoktur — dal orada biter.",
-        example: "Sık kullanılan şema: Gruplar → Lig → Kupa. Gruplar yükselenleri lige gönderir, ligin ilk dördü kupaya gider, kupa finaldir.",
+        connect:
+          "Bir aşamanın sağ portundan sonraki aşamanın sol portuna sürükle. Dokunmatik ekranda önce bir porta, sonra diğerine dokun.",
+        configure:
+          "Aşamanın Ayarlar’ından yapısını, bağlantısından hangi sıraların yükseleceğini belirle.",
+        final:
+          "Kazananı belirleyen aşamayı Final olarak işaretle. Elemenin çıkış portu yoktur — dal orada biter.",
+        example:
+          "Sık kullanılan şema: Gruplar → Lig → Kupa. Gruplar yükselenleri lige gönderir, ligin ilk dördü kupaya gider, kupa finaldir.",
         dismiss: "Anladım",
         reopen: "Bu nasıl çalışıyor?",
       },
@@ -675,7 +678,8 @@ export default {
         to: "Bitiş sırası",
         hint: "{count} takım {to} aşamasına geçer.",
         disconnect: "Bağlantıyı kaldır",
-        groupNote: "{from} kimlerin yükseleceğini kendi ayarlarında belirler — grup başına yükselen sayısı ve wildcard.",
+        groupNote:
+          "{from} kimlerin yükseleceğini kendi ayarlarında belirler — grup başına yükselen sayısı ve wildcard.",
       },
       config: {
         intake: "Bu aşamaya {count} takım geliyor",
@@ -711,7 +715,8 @@ export default {
         phaseTooSmall: "{intake} takım yetersiz — bu aşama en az {min} takım gerektirir.",
         groupCount: "En az iki grup belirleyin.",
         groupsTooSmall: "{intake} takım {groupCount} grubu doldurmaz.",
-        groupSingleOutput: "Grup aşaması yükselenleri tek küme olarak gönderir — yalnızca bir bağlantısı olabilir.",
+        groupSingleOutput:
+          "Grup aşaması yükselenleri tek küme olarak gönderir — yalnızca bir bağlantısı olabilir.",
         groupQualifiers: "Grup başına {qualifiers} fazla — en çok {max}.",
         groupWildcards: "{wildcards} wildcard fazla — en çok {max}, grup başına bir tane.",
         swissOpponents: "{opponents} rakip fazla — en çok {max}.",
