@@ -1,11 +1,20 @@
 <script setup lang="ts">
-import { ref } from "vue"
+import { computed, defineAsyncComponent, ref } from "vue"
 import { useSettingsStore } from "@/modules/settings/store"
 import { ManualDraw } from "../components/draw"
 import { GroupDraw } from "../components/group"
 import { TeamSelector, TeamSelectorFullscreenModal } from "../components/shared"
 import { DrawCeremony } from "../components/draw-ceremony"
-import { Shuffle, ArrowLeft, ChevronDown, LayoutGrid, Trophy, List, Maximize2 } from "@lucide/vue"
+import {
+  Shuffle,
+  ArrowLeft,
+  ChevronDown,
+  LayoutGrid,
+  Trophy,
+  List,
+  Maximize2,
+  Workflow,
+} from "@lucide/vue"
 import { randomTournamentName } from "@/composables/useRandomNames"
 import type { CeremonyContext, DrawMode } from "@/engine"
 import {
@@ -14,13 +23,20 @@ import {
   CreateLeagueConfigModal,
 } from "../components/create"
 import { GroupConfigModal, SwissConfigModal } from "../components/config"
-import { randomSeed } from "@/engine"
+// Lazy: the blueprint editor pulls in Vue Flow, and most visits to this page
+// never open it.
+const PhaseGraphModal = defineAsyncComponent(
+  () => import("../components/phases/PhaseGraphModal.vue")
+)
+import { entryPhases, randomSeed } from "@/engine"
 import { useCreateTournamentDraft } from "../composables/useCreateTournamentDraft"
 import { useCreateTournamentSubmit } from "../composables/useCreateTournamentSubmit"
 import { SettingsTeamAdjustments } from "../components/settings"
 import { AppButton, AppConfigButton, AppIcon } from "@/components/ui"
 import { useI18n } from "vue-i18n"
+import { useRouter } from "vue-router"
 
+const router = useRouter()
 const settingsStore = useSettingsStore()
 
 const draft = useCreateTournamentDraft()
@@ -28,6 +44,9 @@ const {
   name,
   selected,
   format,
+  phaseGraph,
+  phaseGraphErrors,
+  phasesSummary,
   drawType,
   groupCount,
   qualifiersPerGroup,
@@ -85,6 +104,7 @@ const showAdjustments = ref(false)
 // format cards. Each modal edits a local draft and only writes back to the
 // draft above (via its "save" event) when the user actually hits Save;
 // closing any other way (X, backdrop, Escape) discards it.
+const showPhasesModal = ref(false)
 const showGroupModal = ref(false)
 const showKnockoutModal = ref(false)
 const showLeagueModal = ref(false)
@@ -92,6 +112,13 @@ const showSwissModal = ref(false)
 
 function handleCreate() {
   if (!canCreate.value) return
+  if (format.value === "custom") {
+    // A league entry phase has nothing to reveal — everyone plays everyone.
+    const kind = entryPhase.value?.kind
+    if (settingsStore.drawCeremony && kind && kind !== "league") openCeremony()
+    else doCreate()
+    return
+  }
   if (format.value === "league") {
     doCreate()
     return
@@ -113,7 +140,42 @@ function handleCreate() {
   doCreate()
 }
 
+/** The phase the whole field enters — the only one with a draw at creation. */
+const entryPhase = computed(
+  () => entryPhases(phaseGraph.value.phases, phaseGraph.value.phaseEdges)[0]
+)
+
 function openCeremony() {
+  // Custom: the ceremony draws the entry phase, since that is the only one
+  // whose teams are known before a ball is kicked. Every later phase gets its
+  // own draw when the user advances into it.
+  if (format.value === "custom") {
+    const phase = entryPhase.value
+    if (!phase) return
+    const cfg = phase.config
+    ceremonyContext.value = {
+      kind: phase.kind === "group" ? "group" : phase.kind === "swiss" ? "swiss" : "bracket",
+      teams: selectedTeams.value,
+      drawMode:
+        cfg.kind === "group"
+          ? cfg.group.seedMode
+          : cfg.kind === "knockout"
+            ? cfg.knockout.seedMode
+            : "seeded",
+      groupCount: cfg.kind === "group" ? cfg.group.groupCount : undefined,
+      swiss:
+        cfg.kind === "swiss"
+          ? {
+              opponentCount: cfg.swiss.opponentCount,
+              potCount: cfg.swiss.potCount,
+              balanceHomeAway: cfg.swiss.balanceHomeAway,
+              seed: cfg.swiss.seed,
+            }
+          : undefined,
+    }
+    showCeremony.value = true
+    return
+  }
   if (format.value === "swiss") {
     pendingSwissSeed.value = randomSeed()
     ceremonyContext.value = {
@@ -149,10 +211,9 @@ function onCeremonyComplete(orderedIds: string[]) {
   <div class="page">
     <!-- Page header -->
     <div class="ctp-header">
-      <RouterLink to="/tournaments" class="back-link">
-        <ArrowLeft :size="14" />
-        {{ $t("tournaments.title") }}
-      </RouterLink>
+      <AppButton icon-only :aria-label="$t('common.back')" @click="router.push('/tournaments')">
+        <AppIcon :icon="ArrowLeft" size="sm" />
+      </AppButton>
       <h2 class="ctp-title">{{ $t("tournaments.newBtn") }}</h2>
     </div>
 
@@ -229,6 +290,20 @@ function onCeremonyComplete(orderedIds: string[]) {
 
       <div class="form-card config-button-stack">
         <AppConfigButton
+          v-if="format === 'custom'"
+          :icon="Workflow"
+          :label="t('tournament.phases.button')"
+          :summary="phasesSummary"
+          @click="showPhasesModal = true"
+        />
+        <p
+          v-for="err in phaseGraphErrors"
+          :key="err.code + (err.phaseId ?? err.edgeId ?? '')"
+          class="ctp-swiss-error"
+        >
+          {{ t(`tournament.phases.errors.${err.code}`, err.params ?? {}) }}
+        </p>
+        <AppConfigButton
           v-if="format === 'group+bracket'"
           :icon="LayoutGrid"
           :label="t('tournament.create.config.group')"
@@ -253,13 +328,23 @@ function onCeremonyComplete(orderedIds: string[]) {
           {{ t(`tournament.create.swissConfig.errors.${key}`, { teams: selected.length }) }}
         </p>
         <AppConfigButton
-          v-if="(format !== 'league' && format !== 'swiss') || playoffEnabled"
+          v-if="
+            (format !== 'league' && format !== 'swiss' && format !== 'custom') || playoffEnabled
+          "
           :icon="Trophy"
           :label="t('tournament.create.config.knockout')"
           :summary="knockoutConfigSummary"
           @click="showKnockoutModal = true"
         />
       </div>
+
+      <PhaseGraphModal
+        v-if="showPhasesModal"
+        :draft="phaseGraph"
+        :team-count="selected.length"
+        @save="phaseGraph = $event"
+        @close="showPhasesModal = false"
+      />
 
       <GroupConfigModal
         v-if="showGroupModal"
@@ -384,9 +469,10 @@ function onCeremonyComplete(orderedIds: string[]) {
 
 .ctp-header {
   display: flex;
-  flex-direction: column;
+  align-items: center;
   gap: 6px;
   margin-bottom: 20px;
+  justify-content: space-between;
 }
 
 .ctp-title {
