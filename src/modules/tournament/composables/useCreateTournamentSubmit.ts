@@ -3,6 +3,7 @@ import { useTournamentStore } from "@/modules/tournament/store"
 import { useSettingsStore } from "@/modules/settings/store"
 import { useHaptic } from "@/composables/useHaptic"
 import { logEvent } from "@/composables/useAnalytics"
+import { useInterstitialAd } from "@/composables/useInterstitialAd"
 import { randomSeed } from "@/engine"
 import type { useCreateTournamentDraft } from "./useCreateTournamentDraft"
 
@@ -20,12 +21,14 @@ export function useCreateTournamentSubmit(draft: ReturnType<typeof useCreateTour
   const store = useTournamentStore()
   const settingsStore = useSettingsStore()
   const { success: hapticSuccess } = useHaptic()
+  const { onTournamentCreated } = useInterstitialAd()
 
   const {
     name,
     selected,
     selectedTeams,
     format,
+    phaseGraph,
     drawType,
     groupCount,
     qualifiersPerGroup,
@@ -84,6 +87,30 @@ export function useCreateTournamentSubmit(draft: ReturnType<typeof useCreateTour
 
   function doCreate(orderedIds?: string[]) {
     hapticSuccess()
+    if (format.value === "custom") {
+      const id = store.createCustom(
+        name.value.trim(),
+        selected.value,
+        {
+          phases: phaseGraph.value.phases,
+          phaseEdges: phaseGraph.value.phaseEdges,
+        },
+        // Present only when a draw ceremony ran: the order it produced is how
+        // the entry phase is laid out, so the fixture matches what was shown.
+        orderedIds
+      )
+      // The store validates the graph again and refuses an unbuildable one.
+      // The button is disabled on the same check, so this is the backstop.
+      if (!id) return
+      applyAdjustments(id)
+      void logEvent("create_tournament", {
+        format: "custom",
+        team_count: selectedTeams.value.length,
+      })
+      void onTournamentCreated()
+      router.push("/tournaments/" + id)
+      return
+    }
     if (format.value === "swiss") {
       const id = store.createSwiss(name.value.trim(), selected.value, {
         opponentCount: swissOpponentCount.value,
@@ -109,6 +136,7 @@ export function useCreateTournamentSubmit(draft: ReturnType<typeof useCreateTour
         format: "swiss",
         team_count: selectedTeams.value.length,
       })
+      void onTournamentCreated()
       router.push("/tournaments/" + id)
       return
     }
@@ -134,6 +162,7 @@ export function useCreateTournamentSubmit(draft: ReturnType<typeof useCreateTour
           format: "league",
           team_count: selectedTeams.value.length,
         })
+        void onTournamentCreated()
         router.push(`/tournaments/${id}`)
         return
       }
@@ -152,6 +181,7 @@ export function useCreateTournamentSubmit(draft: ReturnType<typeof useCreateTour
         format: "league",
         team_count: selectedTeams.value.length,
       })
+      void onTournamentCreated()
       router.push(`/tournaments/${id}`)
       return
     }
@@ -186,6 +216,7 @@ export function useCreateTournamentSubmit(draft: ReturnType<typeof useCreateTour
       format: format.value,
       team_count: selectedTeams.value.length,
     })
+    void onTournamentCreated()
     router.push(`/tournaments/${id}`)
   }
   return { doCreate }

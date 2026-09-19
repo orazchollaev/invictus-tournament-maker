@@ -5,7 +5,12 @@ import { useEngineLabels } from "@/composables/useEngineLabels"
 import { useTournamentStore } from "@/modules/tournament/store"
 import { useSettingsStore } from "@/modules/settings/store"
 import {
+  isCustomFormat,
+  entryPhases,
+  entryPhaseDrawOrder,
+  buildPots,
   buildPlayoffPots,
+  incomingQualifierIds,
   computeCrossDrawPlan,
   getLeaguePlayoffData,
   isSwiss,
@@ -18,6 +23,7 @@ import type { PlayoffSeedMode, Tournament } from "@/modules/tournament/types"
 import type { Team } from "@/modules/teams/types"
 import type { Qualifier } from "../components/draw"
 import { logEvent } from "@/composables/useAnalytics"
+import { useInterstitialAd } from "@/composables/useInterstitialAd"
 
 function ordinal(n: number): string {
   const s = ["th", "st", "nd", "rd"]
@@ -43,6 +49,7 @@ export function useTournamentCeremonies(
   const settings = useSettingsStore()
   const { t: trns } = useI18n()
   const { engineLabel } = useEngineLabels()
+  const { onTournamentCreated } = useInterstitialAd()
 
   const showSeasonModal = ref(false)
   const showManualSeason = ref(false)
@@ -55,7 +62,11 @@ export function useTournamentCeremonies(
   const ceremonyContext = ref<CeremonyContext | null>(null)
   const ceremonyPots = ref<Pot[] | undefined>(undefined)
   const ceremonyFixedPlan = ref<DrawPlan | undefined>(undefined)
-  const ceremonyAction = ref<"playoff" | "season" | "leaguePlayoff" | "swissSeason" | null>(null)
+  const ceremonyAction = ref<
+    "playoff" | "season" | "leaguePlayoff" | "swissSeason" | "phase" | null
+  >(null)
+  /** Which phase the running ceremony is drawing, for the "phase" action. */
+  const ceremonyPhaseId = ref<string | null>(null)
   const ceremonySeasonOpts = ref<{
     thirdPlace: boolean
     playoffSeedMode?: PlayoffSeedMode
@@ -143,6 +154,7 @@ export function useTournamentCeremonies(
       teams: t.teamIds.length,
       season: t.season + 1,
     })
+    void onTournamentCreated(0.5)
 
     // Swiss redraws its own opponent graph inside the store (fresh seed), so
     // there are no pots for the user to edit — but it still gets the reveal
@@ -150,6 +162,20 @@ export function useTournamentCeremonies(
     if (isSwiss(t)) {
       if (settings.drawCeremony) {
         openSwissSeasonCeremony(t)
+      } else {
+        startNewLeagueSeason(t.teamIds)
+      }
+      return
+    }
+
+    // Custom: the store replays the graph the user drew, with every phase back
+    // to pending. There is no single bracket to draw, so no ceremony to run —
+    // the entry phase's own seeding is the draw, exactly as at creation.
+    if (isCustomFormat(t)) {
+      // A league entry phase has nothing to reveal — everyone plays everyone.
+      const entryKind = entryPhases(t.phases ?? [], t.phaseEdges ?? [])[0]?.kind
+      if (settings.drawCeremony && entryKind && entryKind !== "league") {
+        openSeasonCeremony("seeded", false)
       } else {
         startNewLeagueSeason(t.teamIds)
       }
@@ -197,12 +223,37 @@ export function useTournamentCeremonies(
   ) {
     const t = tournament.value
     if (!t) return
-    ceremonyContext.value = {
-      kind: t.format === "group+bracket" ? "group" : "bracket",
-      teams: tournamentTeams.value,
-      drawMode,
-      groupCount: t.format === "group+bracket" ? t.groups?.length : undefined,
-    }
+    // Custom: the new season redraws the entry phase, so that phase's own shape
+    // and seeding are what the ceremony reveals.
+    const entry = isCustomFormat(t) ? entryPhases(t.phases ?? [], t.phaseEdges ?? [])[0] : undefined
+    const entryCfg = entry?.config
+    ceremonyContext.value = entry
+      ? {
+          kind: entry.kind === "group" ? "group" : entry.kind === "swiss" ? "swiss" : "bracket",
+          teams: tournamentTeams.value,
+          drawMode:
+            entryCfg?.kind === "group"
+              ? entryCfg.group.seedMode
+              : entryCfg?.kind === "knockout"
+                ? entryCfg.knockout.seedMode
+                : drawMode,
+          groupCount: entryCfg?.kind === "group" ? entryCfg.group.groupCount : undefined,
+          swiss:
+            entryCfg?.kind === "swiss"
+              ? {
+                  opponentCount: entryCfg.swiss.opponentCount,
+                  potCount: entryCfg.swiss.potCount,
+                  balanceHomeAway: entryCfg.swiss.balanceHomeAway,
+                  seed: entryCfg.swiss.seed,
+                }
+              : undefined,
+        }
+      : {
+          kind: t.format === "group+bracket" ? "group" : "bracket",
+          teams: tournamentTeams.value,
+          drawMode,
+          groupCount: t.format === "group+bracket" ? t.groups?.length : undefined,
+        }
     ceremonyPots.value = undefined
     ceremonyFixedPlan.value = undefined
     ceremonySeasonOpts.value = { thirdPlace, playoffSeedMode }
@@ -236,7 +287,10 @@ export function useTournamentCeremonies(
     const t = tournament.value
     if (!t) return
     const opts = ceremonySeasonOpts.value
-    startNewSeason(false, [...t.teamIds], opts?.thirdPlace ?? false, opts?.playoffSeedMode)
+    // Custom: reproducing the draw means reproducing the entry phase's own
+    // layout, not just the team list — see entryPhaseDrawOrder.
+    const order = isCustomFormat(t) ? entryPhaseDrawOrder(t) : [...t.teamIds]
+    startNewSeason(false, order, opts?.thirdPlace ?? false, opts?.playoffSeedMode)
     ceremonyAction.value = null
   }
 
@@ -269,7 +323,18 @@ export function useTournamentCeremonies(
     showCeremony.value = false
     const t = tournament.value
     if (!t) return
-    if (ceremonyAction.value === "playoff") {
+    if (ceremonyAction.value === "phase") {
+      const phaseId = ceremonyPhaseId.value
+      // Swiss reveals its draw but does not derive the fixture from the reveal
+      // order — the config's seed already fixed it, so seeding normally is what
+      // keeps the animation and the stored fixture in agreement.
+      const phase = t.phases?.find((p) => p.id === phaseId)
+      if (phaseId) {
+        if (phase?.kind === "swiss") store.advancePhase(t.id, phaseId)
+        else store.advancePhaseManual(t.id, phaseId, orderedIds)
+      }
+      ceremonyPhaseId.value = null
+    } else if (ceremonyAction.value === "playoff") {
       store.advanceToBracketManual(t.id, orderedIds)
     } else if (ceremonyAction.value === "swissSeason") {
       startNewLeagueSeason(t.teamIds)
@@ -394,6 +459,100 @@ export function useTournamentCeremonies(
     showManualSeason.value = false
   }
 
+  /**
+   * Starting a custom phase is a draw like any other, so it gets the same
+   * ceremony the fixed formats do — the whole point of a group stage or a
+   * knockout is watching who lands where.
+   *
+   * A league table has nothing to reveal (everyone plays everyone), so it is
+   * seeded straight away; swiss does, and uses its own reveal.
+   */
+  /**
+   * The group phase feeding a knockout, when a single played group phase is all
+   * that feeds it. Anything more mixed has no one finishing table to seed from.
+   */
+  function knockoutGroupSource(t: Tournament, phaseId: string) {
+    const incoming = (t.phaseEdges ?? []).filter((e) => e.toPhaseId === phaseId)
+    if (incoming.length !== 1) return undefined
+    const source = t.phases?.find((p) => p.id === incoming[0].fromPhaseId)
+    if (source?.kind !== "group" || !source.groups?.length) return undefined
+    return source
+  }
+
+  function openPhaseCeremony(phaseId: string): boolean {
+    const t = tournament.value
+    if (!t) return false
+    const phase = t.phases?.find((p) => p.id === phaseId)
+    if (!phase || phase.kind === "league") return false
+
+    const ids = new Set(incomingQualifierIds(t, phaseId))
+    const teams = allTeams.value.filter((tm) => ids.has(tm.id))
+    if (teams.length < 2) return false
+
+    const cfg = phase.config
+    const drawMode: DrawMode =
+      cfg.kind === "group"
+        ? cfg.group.seedMode
+        : cfg.kind === "knockout"
+          ? cfg.knockout.seedMode
+          : "seeded"
+
+    const ctx: CeremonyContext = {
+      kind: phase.kind === "group" ? "group" : phase.kind === "swiss" ? "swiss" : "bracket",
+      teams,
+      drawMode,
+      groupCount: cfg.kind === "group" ? cfg.group.groupCount : undefined,
+      swiss:
+        cfg.kind === "swiss"
+          ? {
+              opponentCount: cfg.swiss.opponentCount,
+              potCount: cfg.swiss.potCount,
+              balanceHomeAway: cfg.swiss.balanceHomeAway,
+              seed: cfg.swiss.seed,
+            }
+          : undefined,
+    }
+
+    ceremonyContext.value = ctx
+    // A knockout drawn out of a group stage seeds by where each side finished,
+    // not by power — "Group Winners" and "Runners-up" are the pots the user
+    // expects to see, and buildPlayoffPots already builds exactly those from a
+    // set of groups. Handing it a view of the source phase is all that takes.
+    const groupSource =
+      phase.kind === "knockout" && drawMode === "seeded"
+        ? knockoutGroupSource(t, phaseId)
+        : undefined
+    ceremonyPots.value = groupSource
+      ? buildPlayoffPots(
+          {
+            ...t,
+            groups: groupSource.groups,
+            qualifiersPerGroup:
+              groupSource.config.kind === "group"
+                ? groupSource.config.group.qualifiersPerGroup
+                : undefined,
+            wildcardCount:
+              groupSource.config.kind === "group" ? groupSource.config.group.wildcardCount : 0,
+          },
+          allTeams.value
+        )
+      : buildPots(ctx)
+    ceremonyFixedPlan.value = undefined
+    ceremonySeasonOpts.value = undefined
+    ceremonyPhaseId.value = phaseId
+    ceremonyAction.value = "phase"
+    showCeremony.value = true
+    return true
+  }
+
+  /** The header's Advance button for a custom tournament. */
+  function onAdvancePhase(phaseId: string) {
+    const t = tournament.value
+    if (!t) return
+    if (settings.drawCeremony && openPhaseCeremony(phaseId)) return
+    store.advancePhase(t.id, phaseId)
+  }
+
   function onAdvance() {
     const t = tournament.value
     if (!t) return
@@ -439,6 +598,7 @@ export function useTournamentCeremonies(
     closeSeasonModal,
     handleQuickGroupDraw,
     onAdvance,
+    onAdvancePhase,
     handlePlayoffManualConfirm,
   }
 }
