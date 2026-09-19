@@ -145,6 +145,70 @@ describe("buildLineup", () => {
       expect(lineup.filter((s) => s.playerId === null)).toHaveLength(LINEUP_SIZE - 2)
     })
   })
+
+  /**
+   * A manager who benches someone must be able to trust it: the power-weighted
+   * draw used to fill any slot he left short of the formation's count for
+   * that position, not just the ones he actually asked for filled — and it
+   * drew from the WHOLE squad at that position, so a strong bench player
+   * (a backup keeper, a second striker) regularly won its own way back onto
+   * the pitch regardless of the manager's pick. `managed: true` confines both
+   * the power-weighted fill and the cross-position cover to his own picks.
+   */
+  describe("a manager's picks (managed: true)", () => {
+    function keeperSquad(): Player[] {
+      return [
+        makePlayer("gk-starter", "GK", 90),
+        makePlayer("gk-backup", "GK", 40),
+        ...Array.from({ length: 4 }, (_, i) => makePlayer(`def-${i}`, "DEF", 70)),
+        ...Array.from({ length: 4 }, (_, i) => makePlayer(`mid-${i}`, "MID", 70)),
+        ...Array.from({ length: 2 }, (_, i) => makePlayer(`fwd-${i}`, "FWD", 70)),
+      ]
+    }
+
+    it("starts the picked backup keeper over the far stronger starter", () => {
+      const squad = keeperSquad()
+      const preferred = squad.filter((p) => p.id !== "gk-starter").map((p) => p.id)
+      for (let i = 0; i < 20; i++) {
+        const lineup = buildLineup(squad, Math.random, "4-4-2", preferred, true)
+        const keeper = lineup.find((s) => s.position === "GK")
+        expect(keeper?.playerId).toBe("gk-backup")
+      }
+    })
+
+    function strikerSquad(): Player[] {
+      return [
+        makePlayer("gk-1", "GK", 70),
+        ...Array.from({ length: 4 }, (_, i) => makePlayer(`def-${i}`, "DEF", 70)),
+        ...Array.from({ length: 4 }, (_, i) => makePlayer(`mid-${i}`, "MID", 70)),
+        makePlayer("fwd-star", "FWD", 95),
+        makePlayer("fwd-sub", "FWD", 50),
+      ]
+    }
+
+    it("never redrafts a benched player to cover a slot he was left out of", () => {
+      const squad = strikerSquad()
+      // Only nine picks: the manager deliberately leaves one FWD slot short
+      // rather than starting fwd-star.
+      const preferred = squad.filter((p) => p.id !== "fwd-star" && p.id !== "fwd-sub").map((p) => p.id)
+      preferred.push("fwd-sub")
+      for (let i = 0; i < 20; i++) {
+        const lineup = buildLineup(squad, Math.random, "4-4-2", preferred, true)
+        const ids = lineup.map((s) => s.playerId)
+        expect(ids).not.toContain("fwd-star")
+        const fwdSlot = lineup.filter((s) => s.position === "FWD")
+        expect(fwdSlot.find((s) => s.playerId === null)).toBeDefined()
+      }
+    })
+
+    it("still fills every slot it was actually given a full set of picks for", () => {
+      const squad = keeperSquad()
+      const preferred = squad.map((p) => p.id)
+      const lineup = buildLineup(squad, Math.random, "4-4-2", preferred, true)
+      expect(lineup.filter((s) => s.playerId === null)).toHaveLength(0)
+      expect(lineup.map((s) => s.playerId)).not.toContain("gk-backup")
+    })
+  })
 })
 
 describe("generateMatchStats", () => {

@@ -84,7 +84,9 @@ async function bootstrap() {
   try {
     await tournamentStore.hydrate()
   } catch {}
-  tournamentStore.migrateLegacyMatchStats()
+  try {
+    tournamentStore.migrateLegacyMatchStats()
+  } catch {}
 
   app.mount("#app")
 

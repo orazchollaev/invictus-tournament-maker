@@ -13,6 +13,7 @@ import {
   isManagedMatch,
   legOf,
   managedSideOf,
+  managedUnavailability,
   nextManagedFixture,
   pendingManagedFixtures,
 } from "../managerFixtures"
@@ -177,6 +178,59 @@ describe("a group stage", () => {
 
     groups.simAllGroups(id)
     expect(hasPendingManagedFixture(t)).toBe(false)
+  })
+})
+
+/**
+ * Regression: `MatchScoreModal`'s `managedSquads` only ever filtered out an
+ * *injured* player before handing the squad to the match — a player serving
+ * a one-match ban for a red card in the previous fixture (this function's
+ * own `suspended` set, already shown as blocked in the lineup panel) stayed
+ * fully eligible, and could still be seated by `buildLineup`'s draw even
+ * though he was never a pick the manager could actually make.
+ */
+describe("managedUnavailability", () => {
+  it("suspends the player who was sent off in the team's last played match", () => {
+    const { crud, tournaments, ids } = setup()
+    crud.createLeagueTournament("Liga", ids, "single")
+    const t = tournaments.value[0]
+    manage(t, "t3")
+
+    const played = t.league!.matchdays[0].matches.find(
+      (m) => m.homeId === "t3" || m.awayId === "t3"
+    )!
+    const side = played.homeId === "t3" ? "home" : "away"
+    played.result = {
+      home: 1,
+      away: 0,
+      stats: {
+        events: [{ minute: 40, type: "red", side, playerId: "sent-off-player" }],
+        lines: [],
+        team: {
+          possession: 50,
+          shots: [5, 5],
+          onTarget: [2, 2],
+          corners: [3, 3],
+          fouls: [3, 3],
+          xg: [1, 1],
+          bigChances: [1, 1],
+          offsides: [0, 0],
+        },
+      },
+    }
+
+    const { suspended, injured } = managedUnavailability(t)
+    expect(suspended.has("sent-off-player")).toBe(true)
+    expect(injured.has("sent-off-player")).toBe(false)
+  })
+
+  it("never suspends anyone before the team has played a match", () => {
+    const { crud, tournaments, ids } = setup()
+    crud.createLeagueTournament("Liga", ids, "single")
+    const t = tournaments.value[0]
+    manage(t, "t3")
+
+    expect(managedUnavailability(t).suspended.size).toBe(0)
   })
 })
 

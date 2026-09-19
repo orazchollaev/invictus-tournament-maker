@@ -87,8 +87,14 @@ export interface LiveSide {
   /** The instruction the coach set out with, which the AI deviates from. */
   baseStyle: PlayStyle
   subsUsed: number
-  /** Mean power of the eleven that started — the yardstick changes are measured against. */
-  kickoffPower: number
+  /**
+   * Mean power of the whole squad — the yardstick the eleven actually on the
+   * pitch is measured against. Fixed regardless of who starts, so a lineup
+   * picked weaker than the squad's average costs the side power from kickoff,
+   * and a lineup picked stronger gains it; either way selecting the XI is
+   * not cosmetic.
+   */
+  squadPower: number
   /** True for the side the user is managing: the AI leaves it alone. */
   managed: boolean
   /** Minutes the AI bench has earmarked for a change. */
@@ -154,7 +160,8 @@ export function createLiveMatch(
       squad,
       rng,
       tactics.formation,
-      managed ? (input.managedStartingXI ?? []) : []
+      managed ? (input.managedStartingXI ?? []) : [],
+      managed
     )
     return {
       teamId: team.id,
@@ -165,7 +172,9 @@ export function createLiveMatch(
       ...(team.coach ? { coachPower: team.coach.power } : {}),
       baseStyle: tactics.style,
       subsUsed: 0,
-      kickoffPower: meanPower(lineup),
+      squadPower: squad.length
+        ? squad.reduce((sum, p) => sum + p.power, 0) / squad.length
+        : UNKNOWN_POWER,
       managed,
       aiSubMinutes: managed ? [] : planAiSubs(rng),
       yellowedOnce: new Set<LineupSlot>(),
@@ -359,15 +368,17 @@ export function finishLiveMatch(
  * What each side is worth right now.
  *
  * Three parts: the rating it started with, what the eleven currently on the
- * pitch is worth against the eleven that started it, and the cost of being a
- * man short. A weak player sent off therefore hurts less than a good one —
- * the man-down cost is flat, but the mean it is applied to goes up.
+ * pitch is worth against the squad's own average, and the cost of being a
+ * man short. A weaker-than-average lineup therefore plays below the side's
+ * rating, and a stronger one above it — a red card hurts less for a weak
+ * player than a good one, since the man-down cost is flat but the mean it
+ * is applied to goes up.
  */
 function currentPower(state: LiveMatchState, which: Side): number {
   const side = state[which]
   const pitch = onPitch(side.state, state.minute)
   const delta = clamp(
-    (meanPower(pitch) - side.kickoffPower) * LINEUP_DELTA_WEIGHT,
+    (meanPower(pitch) - side.squadPower) * LINEUP_DELTA_WEIGHT,
     -MAX_LINEUP_DELTA,
     MAX_LINEUP_DELTA
   )

@@ -544,7 +544,15 @@ export const useTournamentStore = defineStore(
      */
     function migrateLegacyMatchStats() {
       if (statsMigrated.value) return
-      tournaments.value.forEach(markLegacyMatchStats)
+      // Isolated per tournament: one record with an unexpected shape (bad
+      // data from an old build, a partial write) must not stop the rest of
+      // the archive from being stamped, or the app from mounting at all —
+      // see the try/catch around this call in main.ts.
+      for (const t of tournaments.value) {
+        try {
+          markLegacyMatchStats(t)
+        } catch {}
+      }
       statsMigrated.value = true
     }
 
