@@ -1,9 +1,9 @@
 import type { Ref } from "vue"
-import type { ManagerState, Tournament } from "../types"
+import type { ManagerLineupSlot, ManagerState, Tournament } from "../types"
 import type { Formation, PlayStyle, Team } from "@/modules/teams/types"
 import type { Player } from "@/modules/players/types"
 import { DEFAULT_FORMATION, DEFAULT_STYLE, playedMatches, teamFormation } from "@/engine"
-import { bestStartingXI } from "../utils/managerLineup"
+import { bestStartingXI, reconcileLineupSlots } from "../utils/managerLineup"
 import { makeWithTournament } from "./helpers"
 
 /**
@@ -54,15 +54,20 @@ export function useManagerActions(
   ) {
     withTournament(tournamentId, (t) => {
       if (!t.manager) return
-      if (tactics.formation) t.manager.formation = tactics.formation
+      if (tactics.formation) {
+        t.manager.formation = tactics.formation
+        // The old picks are reshaped onto the new formation right away —
+        // never left to silently overflow it once the match kicks off.
+        t.manager.lineup = reconcileLineupSlots(t.manager.lineup ?? [], tactics.formation)
+      }
       if (tactics.style) t.manager.style = tactics.style
     })
   }
 
-  function setManagerLineup(tournamentId: string, playerIds: string[]) {
+  function setManagerLineup(tournamentId: string, slots: ManagerLineupSlot[]) {
     withTournament(tournamentId, (t) => {
       if (!t.manager) return
-      t.manager.lineup = playerIds
+      t.manager.lineup = slots
     })
   }
 

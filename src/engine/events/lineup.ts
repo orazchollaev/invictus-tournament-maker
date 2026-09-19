@@ -17,6 +17,7 @@
 // midfielder at the back rather than playing with ten.
 import type { Player, PlayerPosition } from "@/modules/players/types"
 import type { Formation } from "@/modules/teams/types"
+import type { ManagerLineupSlot } from "@/modules/tournament/types"
 import { DEFAULT_FORMATION, FORMATIONS } from "../tactics"
 
 /** The shape a side lines up in when nobody has told it otherwise. */
@@ -118,36 +119,32 @@ export function slotPower(player: Player, playing: PlayerPosition): number {
 /**
  * Build one side's eleven.
  *
- * Two passes. The first fills each slot from its own position, so the
- * specialists play where they belong and a lone striker still takes one
- * attacking slot rather than all three. The second hands the slots nobody
- * claimed to whoever is still on the bench, at a penalty — a real name out
- * of position beats an anonymous one, and a squad big enough to field
- * eleven should field eleven.
+ * An unmanaged side runs two passes: the first fills each slot from its own
+ * position, power-weighted, so the specialists play where they belong and a
+ * lone striker still takes one attacking slot rather than all three; the
+ * second hands the slots nobody claimed to whoever is still on the bench, at
+ * a penalty — a real name out of position beats an anonymous one.
  *
- * `formation` is the coach's shape. Whichever it is, it is eleven slots — the
- * two passes below do not care how they are distributed.
+ * A managed side skips the draw for its own slots entirely: `preferredSlots`
+ * already says exactly who stands where, one id per formation slot, so that
+ * is just seated directly. Only a slot the manager left empty — or filled
+ * with someone no longer in the squad — falls through to the same
+ * bench-cover pass, drawing only from players who appear *somewhere* in his
+ * own picks. Never from the rest of the squad: a bench player with more
+ * power than the man who took his slot must not quietly win it back.
+ *
+ * `formation` is the coach's shape. Whichever it is, it is eleven slots.
  */
 export function buildLineup(
   squad: Player[],
   rng: () => number = Math.random,
   formation: Formation = DEFAULT_FORMATION,
+  /** The manager's own picks, one entry per formation slot, in shape order. */
+  preferredSlots: ManagerLineupSlot[] = [],
   /**
-   * A manager's own picks, in the order he made them. Each is seated in its
-   * own position group first — ahead of the power-weighted draw — and only
-   * as many as that group's slots hold; whatever is left of the group (a
-   * shorter list, or a pick that missed the cut) is filled exactly as an
-   * unmanaged side's eleven is.
-   */
-  preferredIds: string[] = [],
-  /**
-   * True for a manager's own side. Both passes then draw only from
-   * `preferredIds` — never from the rest of the squad — so a slot he left
-   * short stays short (an anonymous cover, same as a squad genuinely out of
-   * players) rather than the power-weighted draw quietly promoting whoever
-   * he benched. Without this, a bench player with more power than the man
-   * who replaced him kept winning that draw back onto the pitch regardless
-   * of the manager's actual pick.
+   * True for a manager's own side — see the function doc for what that
+   * changes. False plays the whole squad through the power-weighted draw,
+   * exactly as if no picks existed.
    */
   managed = false
 ): Lineup {
@@ -155,22 +152,51 @@ export function buildLineup(
   const used = new Set<string>()
   const gaps: LineupSlot[] = []
   const shape = FORMATIONS[formation] ?? FORMATIONS[DEFAULT_FORMATION]
+  const squadById = new Map(squad.map((p) => [p.id, p]))
+
+  // Grouped by position and kept in slot order, so each formation slot can
+  // seat the exact id the manager put in the matching spot.
+  const picksByPosition = new Map<PlayerPosition, (string | null)[]>()
+  if (managed) {
+    for (const slot of preferredSlots) {
+      const list = picksByPosition.get(slot.position) ?? []
+      list.push(slot.playerId)
+      picksByPosition.set(slot.position, list)
+    }
+  }
+
   // An empty pick list is "no lineup was ever set" (nothing to honor), not
   // "the manager fielded nobody" — that case still draws from the whole
-  // squad, same as an unmanaged side.
-  const pool =
+  // squad, same as an unmanaged side. Otherwise the bench-cover pass below
+  // may only draw from players the manager picked somewhere.
+  const preferredIds = preferredSlots
+    .map((s) => s.playerId)
+    .filter((id): id is string => !!id)
+  const coverPool =
     managed && preferredIds.length > 0 ? squad.filter((p) => preferredIds.includes(p.id)) : squad
 
   for (const position of Object.keys(shape) as PlayerPosition[]) {
     const slots = shape[position]
-    const candidates = pool.filter((p) => p.position === position)
 
-    const preferred = preferredIds
-      .map((id) => candidates.find((p) => p.id === id))
-      .filter((p): p is Player => !!p)
-      .slice(0, slots)
-    const rest = candidates.filter((p) => !preferred.some((pp) => pp.id === p.id))
-    const chosen = [...preferred, ...sampleByPower(rest, slots - preferred.length, rng)]
+    if (managed) {
+      const picks = picksByPosition.get(position) ?? []
+      for (let i = 0; i < slots; i++) {
+        const playerId = picks[i] ?? null
+        const player = playerId && !used.has(playerId) ? squadById.get(playerId) : undefined
+        if (player) used.add(player.id)
+        const slot: LineupSlot = {
+          playerId: player?.id ?? null,
+          position,
+          power: player?.power ?? UNKNOWN_POWER,
+        }
+        lineup.push(slot)
+        if (!player) gaps.push(slot)
+      }
+      continue
+    }
+
+    const candidates = squad.filter((p) => p.position === position && !used.has(p.id))
+    const chosen = sampleByPower(candidates, slots, rng)
 
     for (let i = 0; i < slots; i++) {
       const player = chosen[i]
@@ -186,7 +212,7 @@ export function buildLineup(
   }
 
   for (const slot of gaps) {
-    const cover = pickForPosition(pool, used, slot.position, rng)
+    const cover = pickForPosition(coverPool, used, slot.position, rng)
     if (!cover) continue
     used.add(cover.id)
     slot.playerId = cover.id

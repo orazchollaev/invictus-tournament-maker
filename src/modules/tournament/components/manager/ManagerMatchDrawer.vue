@@ -30,9 +30,11 @@ import {
 } from "@/engine"
 import { useManagerMatch, type LiveSpeed } from "@/modules/tournament/composables/useManagerMatch"
 import { useSettingsStore } from "@/modules/settings/store"
+import { usePlayersStore } from "@/modules/players/store"
 import { useHaptic } from "@/composables/useHaptic"
 import type { Team } from "@/modules/teams/types"
 import type { Player } from "@/modules/players/types"
+import type { ManagerLineupSlot } from "@/modules/tournament/types"
 
 const props = defineProps<{
   homeTeam: Team
@@ -43,8 +45,16 @@ const props = defineProps<{
   managedSide: Side
   /** His standing instructions, from the tournament's manager state. */
   tactics: LiveTactics
-  /** His starting-XI picks, from the tournament's manager state. */
-  startingXI?: string[]
+  /**
+   * His starting-XI picks, from the tournament's manager state.
+   *
+   * Named `startingXi`, not `startingXI` — Vue hyphenates every capital
+   * letter individually (`startingXI` -> `starting-x-i`), which never
+   * matches a hand-written `:starting-xi` binding. That mismatch silently
+   * drops the attribute instead of erroring, so the picks never actually
+   * reached this component: the match always fell back to a random draw.
+   */
+  startingXi?: ManagerLineupSlot[]
   requiresWinner?: boolean
   aggregateOffset?: { home: number; away: number } | null
   subtitle?: string
@@ -59,7 +69,13 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 const settings = useSettingsStore()
-const { success: hapticSuccess } = useHaptic()
+const players = usePlayersStore()
+const { success: hapticSuccess, error: hapticError } = useHaptic()
+
+function nameOf(playerId: string | null): string {
+  if (!playerId) return t("manager.sub.unknownPlayer")
+  return players.byId(playerId)?.name ?? t("manager.sub.unknownPlayer")
+}
 
 const speed = computed({
   get: () => settings.liveMatchSpeed,
@@ -73,7 +89,7 @@ const state: LiveMatchState = createLiveMatch({
   awaySquad: props.awaySquad,
   managedSide: props.managedSide,
   managedTactics: props.tactics,
-  managedStartingXI: props.startingXI ?? null,
+  managedStartingXI: props.startingXi ?? null,
   requiresWinner: props.requiresWinner ?? false,
   aggregateOffset: props.aggregateOffset ?? null,
 })
@@ -110,7 +126,7 @@ const showShootout = computed(
   () => match.shootoutKicks.value.length > 0 || match.stage.value === "shootout"
 )
 
-const railTab = ref<"timeline" | "stats">("timeline")
+const railTab = ref<"timeline" | "lineup" | "stats">("timeline")
 const homeColor = computed(() => props.homeTeam.color ?? "var(--accent)")
 const awayColor = computed(() => props.awayTeam.color ?? "var(--text-muted)")
 
@@ -136,8 +152,23 @@ function applyTactics(next: LiveTactics) {
   match.changeTactics(next)
 }
 
+/** Shown while a failed attempt is fresh — the sub sheet gives no other sign
+ *  one didn't take, so a silent `false` back from the engine must surface
+ *  somewhere the user is actually looking. */
+const subError = ref(false)
+let subErrorTimer: ReturnType<typeof setTimeout> | undefined
+
 function substitute(outSlot: Parameters<typeof match.substitute>[0], inPlayer: Player) {
-  match.substitute(outSlot, inPlayer)
+  const ok = match.substitute(outSlot, inPlayer)
+  if (ok) {
+    hapticSuccess()
+    subError.value = false
+    return
+  }
+  hapticError()
+  subError.value = true
+  clearTimeout(subErrorTimer)
+  subErrorTimer = setTimeout(() => (subError.value = false), 4000)
 }
 
 /* The timeline lists newest-first, so a fresh event should keep the rail
@@ -251,10 +282,11 @@ onMounted(match.start)
         class="mm-subtabs"
         :options="[
           { value: 'timeline', label: t('matchStats.timeline') },
+          { value: 'lineup', label: t('manager.match.onPitch') },
           { value: 'stats', label: t('matchStats.comparison') },
         ]"
         :model-value="railTab"
-        @update:model-value="(v) => (railTab = v as 'timeline' | 'stats')"
+        @update:model-value="(v) => (railTab = v as 'timeline' | 'lineup' | 'stats')"
       />
 
       <div ref="rail" class="mm-rail">
@@ -271,6 +303,14 @@ onMounted(match.start)
           </div>
         </template>
 
+        <ul v-else-if="railTab === 'lineup'" class="mm-onpitch">
+          <li v-for="(slot, i) in match.pitch.value" :key="i" class="mm-onpitch-row">
+            <span class="mm-onpitch-pos">{{ slot.position }}</span>
+            <span class="mm-onpitch-name">{{ nameOf(slot.playerId) }}</span>
+            <span class="mm-onpitch-power">{{ slot.power }}</span>
+          </li>
+        </ul>
+
         <MatchTeamCompare
           v-else
           :stats="match.teamStats.value"
@@ -278,6 +318,8 @@ onMounted(match.start)
           :away-color="awayColor"
         />
       </div>
+
+      <p v-if="subError" class="mm-sub-error">{{ t("manager.sub.failed") }}</p>
     </div>
 
     <template #footer>
@@ -463,6 +505,54 @@ onMounted(match.start)
   flex-direction: column;
   gap: var(--sp-2);
 }
+.mm-onpitch {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+.mm-onpitch-row {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-2) var(--sp-1);
+  border-bottom: 1px solid var(--border-light);
+  font-size: var(--fs-sm);
+}
+.mm-onpitch-row:last-child {
+  border-bottom: none;
+}
+.mm-onpitch-pos {
+  flex-shrink: 0;
+  width: 2.5em;
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+}
+.mm-onpitch-name {
+  flex: 1;
+  min-width: 0;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.mm-onpitch-power {
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+}
+
+.mm-sub-error {
+  margin: 0;
+  padding: var(--sp-2) var(--sp-3) 0;
+  text-align: center;
+  font-size: var(--fs-xs);
+  color: var(--danger);
+}
+
 .mm-pens-title {
   font-family: var(--font-ui);
   font-size: var(--fs-xs);

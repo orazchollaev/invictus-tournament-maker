@@ -1064,6 +1064,7 @@ export default {
     match: {
       title: "Manager",
       manage: "Manage",
+      onPitch: "On the pitch",
     },
     tactics: {
       title: "Tactics",
@@ -1079,6 +1080,7 @@ export default {
       noneLeft: "No substitutions left",
       emptyBench: "Nobody on the bench",
       unknownPlayer: "Unknown Player",
+      failed: "That substitution couldn't be made",
     },
     banner: {
       title: "{team} — your next match",
@@ -1104,6 +1106,10 @@ export default {
       incomplete: "{n} more to pick before you can kick off.",
       injured: "Injured",
       suspended: "Suspended",
+      pickTitle: "Choose a player",
+      clear: "Remove from lineup",
+      outOfPosition: "Out of position",
+      searchPlaceholder: "Search players…",
     },
   },
   music: {

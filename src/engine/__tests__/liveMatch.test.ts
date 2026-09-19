@@ -2,6 +2,7 @@
 import { afterEach, describe, expect, it } from "vitest"
 import type { Player } from "@/modules/players/types"
 import type { Coach, Team } from "@/modules/teams/types"
+import type { ManagerLineupSlot } from "@/modules/tournament/types"
 import {
   MAX_SUBSTITUTIONS,
   advanceMinute,
@@ -162,19 +163,22 @@ describe("createLiveMatch", () => {
       ]
     }
 
-    const managedStartingXI = [
-      "gk-pick",
-      "def-0",
-      "def-1",
-      "def-2",
-      "def-3",
-      "mid-0",
-      "mid-1",
-      "mid-2",
-      "mid-3",
-      "fwd-pick",
-      "def-4",
+    const managedStartingXI: ManagerLineupSlot[] = [
+      { position: "GK", playerId: "gk-pick" },
+      { position: "DEF", playerId: "def-0" },
+      { position: "DEF", playerId: "def-1" },
+      { position: "DEF", playerId: "def-2" },
+      { position: "DEF", playerId: "def-3" },
+      { position: "MID", playerId: "mid-0" },
+      { position: "MID", playerId: "mid-1" },
+      { position: "MID", playerId: "mid-2" },
+      { position: "MID", playerId: "mid-3" },
+      { position: "FWD", playerId: "fwd-pick" },
+      { position: "FWD", playerId: null },
     ]
+    const managedStartingIds = managedStartingXI
+      .map((s) => s.playerId)
+      .filter((id): id is string => id !== null)
 
     it("fields the picked backup keeper and striker, not the stronger benched ones", () => {
       const state = kickoff({
@@ -217,7 +221,7 @@ describe("createLiveMatch", () => {
             .map((s) => s.playerId)
             .filter((id): id is string => id !== null)
           const subbedInIds = state.home.state.subs.map((sub) => sub.inSlot.playerId)
-          const allowed = new Set([...managedStartingXI, ...subbedInIds])
+          const allowed = new Set([...managedStartingIds, ...subbedInIds])
           for (const id of ids) expect(allowed.has(id)).toBe(true)
 
           if (sawRedOnHome && !subbed) {

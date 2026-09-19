@@ -1069,6 +1069,7 @@ export default {
     match: {
       title: "Menajer",
       manage: "Yönet",
+      onPitch: "Sahadaki 11",
     },
     tactics: {
       title: "Taktik",
@@ -1084,6 +1085,7 @@ export default {
       noneLeft: "Değişiklik hakkı kalmadı",
       emptyBench: "Yedek kulübesi boş",
       unknownPlayer: "Bilinmeyen Oyuncu",
+      failed: "Bu değişiklik yapılamadı",
     },
     banner: {
       title: "{team} — sıradaki maçın",
@@ -1109,6 +1111,10 @@ export default {
       incomplete: "Maça çıkmadan önce {n} oyuncu daha seçmelisin.",
       injured: "Sakat",
       suspended: "Cezalı",
+      pickTitle: "Oyuncu seç",
+      clear: "Kadrodan çıkar",
+      outOfPosition: "Mevki dışı",
+      searchPlaceholder: "Oyuncu ara…",
     },
   },
   music: {

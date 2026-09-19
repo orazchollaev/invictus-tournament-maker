@@ -2,7 +2,10 @@
 import { describe, it, expect } from "vitest"
 import type { Player } from "@/modules/players/types"
 import type { Tournament } from "@/modules/tournament/types"
+import type { PlayerPosition } from "@/modules/players/types"
+import type { ManagerLineupSlot } from "@/modules/tournament/types"
 import { buildLineup, FORMATION, LINEUP_SIZE, UNKNOWN_POWER } from "../events/lineup"
+import { FORMATIONS, FORMATION_LIST } from "../tactics"
 import { generateMatchStats } from "../events/generate"
 import { generateTeamStats } from "../events/teamStats"
 import { setSimConfig } from "../simulation"
@@ -168,7 +171,9 @@ describe("buildLineup", () => {
 
     it("starts the picked backup keeper over the far stronger starter", () => {
       const squad = keeperSquad()
-      const preferred = squad.filter((p) => p.id !== "gk-starter").map((p) => p.id)
+      const preferred = squad
+        .filter((p) => p.id !== "gk-starter")
+        .map((p) => ({ position: p.position, playerId: p.id }))
       for (let i = 0; i < 20; i++) {
         const lineup = buildLineup(squad, Math.random, "4-4-2", preferred, true)
         const keeper = lineup.find((s) => s.position === "GK")
@@ -190,8 +195,10 @@ describe("buildLineup", () => {
       const squad = strikerSquad()
       // Only nine picks: the manager deliberately leaves one FWD slot short
       // rather than starting fwd-star.
-      const preferred = squad.filter((p) => p.id !== "fwd-star" && p.id !== "fwd-sub").map((p) => p.id)
-      preferred.push("fwd-sub")
+      const preferred = squad
+        .filter((p) => p.position !== "FWD")
+        .map((p) => ({ position: p.position, playerId: p.id }))
+      preferred.push({ position: "FWD", playerId: "fwd-sub" })
       for (let i = 0; i < 20; i++) {
         const lineup = buildLineup(squad, Math.random, "4-4-2", preferred, true)
         const ids = lineup.map((s) => s.playerId)
@@ -203,10 +210,51 @@ describe("buildLineup", () => {
 
     it("still fills every slot it was actually given a full set of picks for", () => {
       const squad = keeperSquad()
-      const preferred = squad.map((p) => p.id)
+      const preferred = squad.map((p) => ({ position: p.position, playerId: p.id }))
       const lineup = buildLineup(squad, Math.random, "4-4-2", preferred, true)
       expect(lineup.filter((s) => s.playerId === null)).toHaveLength(0)
       expect(lineup.map((s) => s.playerId)).not.toContain("gk-backup")
+    })
+
+    /**
+     * The general regression lock: for every formation, and for any complete,
+     * valid set of picks (exactly the slots that formation needs, per
+     * position), the eleven that actually kicks off must be exactly that set
+     * of ids — never more, never fewer, never a substitution the manager
+     * never made. This is what would have caught a starting XI silently
+     * diverging from what was picked, whatever the cause.
+     */
+    it("fuzz: the kickoff eleven is exactly the picked eleven, for every formation", () => {
+      for (const formation of FORMATION_LIST) {
+        const shape = FORMATIONS[formation]
+        for (let trial = 0; trial < 5; trial++) {
+          const squad: Player[] = []
+          for (const position of Object.keys(shape) as PlayerPosition[]) {
+            const need = shape[position]
+            // A few spares per position too, so a wrong pick has somewhere
+            // to quietly come from if the engine ever regresses.
+            for (let i = 0; i < need + 3; i++) {
+              squad.push(
+                makePlayer(`${formation}-${position}-${i}-${trial}`, position, 20 + i * 7)
+              )
+            }
+          }
+
+          const preferred: ManagerLineupSlot[] = []
+          for (const position of Object.keys(shape) as PlayerPosition[]) {
+            const need = shape[position]
+            const pool = squad.filter((p) => p.position === position)
+            const shuffled = [...pool].sort(() => Math.random() - 0.5)
+            for (const p of shuffled.slice(0, need)) preferred.push({ position, playerId: p.id })
+          }
+
+          const expectedIds = new Set(preferred.map((s) => s.playerId))
+          const lineup = buildLineup(squad, Math.random, formation, preferred, true)
+
+          expect(lineup).toHaveLength(11)
+          expect(new Set(lineup.map((s) => s.playerId))).toEqual(expectedIds)
+        }
+      }
     })
   })
 })

@@ -226,15 +226,30 @@ export interface LeagueTier {
  * an opponent in the cup. A new season carries it forward, because managing a
  * side is a commitment to a campaign rather than to a fixture.
  */
+/**
+ * One starting-XI slot as the manager set it up: a fixed spot in the
+ * formation (its position and index within that position) holding at most
+ * one player. The slot itself is what is real — a player id is just what
+ * currently occupies it — so a formation change can reconcile the array by
+ * shape instead of guessing which flat ids still make sense.
+ */
+export interface ManagerLineupSlot {
+  position: PlayerPosition
+  playerId: string | null
+}
+
 export interface ManagerState {
   teamId: string
   /** The user's default set-up, seeded from the club's own coach. */
   formation: Formation
   style: PlayStyle
   startedAt: number
-  /** Starting-XI picks, seated ahead of the auto-draw. Unset or short of
-   *  eleven falls back to the usual formation-and-power pick for the rest. */
-  lineup?: string[]
+  /**
+   * Starting-XI picks, one entry per formation slot, in the same order
+   * `FORMATIONS[formation]` lays them out. Unset, short, or holding empty
+   * slots falls back to the usual formation-and-power pick for the rest.
+   */
+  lineup?: ManagerLineupSlot[]
 }
 
 // ─── Custom format: phase graph ──────────────────────────────────

@@ -20,7 +20,13 @@
 // events/generate.ts. Only the *pacing* is new.
 import type { Player } from "@/modules/players/types"
 import type { Formation, PlayStyle, Team } from "@/modules/teams/types"
-import type { MatchEvent, MatchResult, MatchStats, RedCard } from "@/modules/tournament/types"
+import type {
+  ManagerLineupSlot,
+  MatchEvent,
+  MatchResult,
+  MatchStats,
+  RedCard,
+} from "@/modules/tournament/types"
 import {
   LINEUP_SIZE,
   UNKNOWN_POWER,
@@ -137,8 +143,8 @@ export interface CreateLiveMatchInput {
   managedSide?: Side | null
   /** The user's own instructions, overriding the club's coach for this match. */
   managedTactics?: LiveTactics | null
-  /** The user's own starting XI picks, seated ahead of the auto-draw. */
-  managedStartingXI?: string[] | null
+  /** The user's own starting XI picks, one per formation slot. */
+  managedStartingXI?: ManagerLineupSlot[] | null
   requiresWinner?: boolean
   /** Leg 2 of a tie: the first leg's score, in this match's home/away frame. */
   aggregateOffset?: { home: number; away: number } | null

@@ -4,7 +4,7 @@
  * the same order it happens on the touchline, and it keeps the bench list
  * short enough to read on a phone.
  */
-import { computed, ref } from "vue"
+import { computed, ref, shallowRef } from "vue"
 import { useI18n } from "vue-i18n"
 import { ArrowLeft } from "@lucide/vue"
 import { AppButton, AppChip, AppEmptyState, AppSheet } from "@/components/ui"
@@ -23,7 +23,14 @@ const { t } = useI18n()
 const players = usePlayersStore()
 const sheet = ref<InstanceType<typeof AppSheet> | null>(null)
 
-const outSlot = ref<LineupSlot | null>(null)
+/**
+ * A plain `ref` would wrap this in a reactive proxy the moment a slot is
+ * assigned to it — and the engine's own `onPitch`/`applySubstitution` match
+ * a slot by object identity (`===`) against the raw lineup array, so the
+ * proxy would never be found there and every substitution would silently
+ * fail. `shallowRef` keeps whatever is assigned exactly as it is.
+ */
+const outSlot = shallowRef<LineupSlot | null>(null)
 
 /** The strongest replacements for the chosen shirt come first. */
 const candidates = computed(() => {
