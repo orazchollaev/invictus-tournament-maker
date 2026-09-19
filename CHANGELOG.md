@@ -1,5 +1,25 @@
 # Changelog
 
+## [2.10.0](https://github.com/orazchollaev/invictus-tournament-maker/compare/v2.9.4...v2.10.0) (2026-09-19)
+
+### 🚀 New Features
+
+- **lists:** add 24-per-page pagination with jump-to-page select ([c4eaf65](https://github.com/orazchollaev/invictus-tournament-maker/commit/c4eaf6565f2930a545a6a3132758236c27d3ca7a))
+- **tournament:** add custom format with blueprint phase graph ([c780f77](https://github.com/orazchollaev/invictus-tournament-maker/commit/c780f779db48281f96101fce5f10f31e92cbe8bf))
+
+### 🐛 Bug Fixes
+
+- **tournament:** make create-page back button icon-only like other pages ([c6c3f38](https://github.com/orazchollaev/invictus-tournament-maker/commit/c6c3f3897c6a354f0340c5a95e90eb717fde847f))
+
+### 🔧 Maintenance
+
+- **ads:** show AdMob interstitial every 5 tournament/season creations ([768f860](https://github.com/orazchollaev/invictus-tournament-maker/commit/768f8604aa4cc7926a2225056682c0e79786a79f))
+- **gradle:** bump gradle version ([ede11bc](https://github.com/orazchollaev/invictus-tournament-maker/commit/ede11bcf200e77303af452b0f47ab828a416fd5c))
+
+### 📚 Documentation
+
+- update privacy-policy ([513d71e](https://github.com/orazchollaev/invictus-tournament-maker/commit/513d71e4057db381e38874512a9a7424c510615f))
+
 ## [2.9.4](https://github.com/orazchollaev/invictus-tournament-maker/compare/v2.9.3...v2.9.4) (2026-09-19)
 
 ### 🐛 Bug Fixes
