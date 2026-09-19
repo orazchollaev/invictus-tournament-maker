@@ -23,6 +23,7 @@ import {
 import { TeamBadge } from "@/modules/teams/components"
 import MatchScoreModal from "../match-stats/MatchScoreModal.vue"
 import ManagerLineupPitch from "./ManagerLineupPitch.vue"
+import ManagerLineupSlotSheet from "./ManagerLineupSlotSheet.vue"
 import { useTournamentStore } from "@/modules/tournament/store"
 import { useTeamsStore } from "@/modules/teams/store"
 import { usePlayersStore } from "@/modules/players/store"
@@ -31,10 +32,16 @@ import {
   managedUnavailability,
   nextManagedFixture,
 } from "@/modules/tournament/utils/managerFixtures"
+import {
+  assignLineupSlot,
+  clearLineupPlayer,
+  emptyLineupSlots,
+  lineupPlayerIds,
+} from "@/modules/tournament/utils/managerLineup"
 import { FORMATION_LIST, FORMATIONS, PLAY_STYLES } from "@/engine"
 import { useHaptic } from "@/composables/useHaptic"
 import type { Formation, PlayStyle } from "@/modules/teams/types"
-import type { Player, PlayerPosition } from "@/modules/players/types"
+import type { PlayerPosition } from "@/modules/players/types"
 import type { MatchEntry } from "@/engine"
 
 const props = defineProps<{ tournamentId: string }>()
@@ -115,36 +122,22 @@ function standDown() {
 }
 
 // ─── Starting XI ─────────────────────────────────────────────────
-/** Best power first — the squad the user is choosing from, not the pitch. */
-const squad = computed(() =>
-  [...playersStore.byTeam(manager.value?.teamId ?? "")].sort((a, b) => b.power - a.power)
-)
+const squad = computed(() => playersStore.byTeam(manager.value?.teamId ?? ""))
+const playerById = computed(() => new Map(squad.value.map((p) => [p.id, p])))
 
 const POSITION_ORDER: PlayerPosition[] = ["GK", "DEF", "MID", "FWD"]
 
-/**
- * Grouped by the job the current formation actually needs, not just
- * dumped in one long list — a pick only ever fills a slot in the player's
- * own position (that's how the engine seats them too), so showing them
- * any other way left it unclear what a checkbox was even choosing.
- */
-const squadByPosition = computed(() => {
-  const groups = new Map<PlayerPosition, Player[]>()
-  for (const position of POSITION_ORDER) groups.set(position, [])
-  for (const player of squad.value) groups.get(player.position)?.push(player)
-  return groups
-})
-
 const formationSlots = computed(() => FORMATIONS[formation.value])
 
-const lineup = computed(() => manager.value?.lineup ?? [])
-const lineupSet = computed(() => new Set(lineup.value))
+/** One entry per formation slot — the pitch shows exactly this, nothing else. */
+const slots = computed(() => manager.value?.lineup ?? emptyLineupSlots(formation.value))
+const lineupIds = computed(() => lineupPlayerIds(slots.value))
 
 /** Hurt or one match into a suspension — neither can be fielded right now. */
 const unavailable = computed(() =>
   tournament.value
     ? managedUnavailability(tournament.value)
-    : { injured: new Set(), suspended: new Set() }
+    : { injured: new Set<string>(), suspended: new Set<string>() }
 )
 
 function unavailabilityOf(playerId: string): "injured" | "suspended" | null {
@@ -153,6 +146,14 @@ function unavailabilityOf(playerId: string): "injured" | "suspended" | null {
   return null
 }
 
+const unavailableSlotIndexes = computed(() => {
+  const set = new Set<number>()
+  slots.value.forEach((slot, index) => {
+    if (slot.playerId && unavailabilityOf(slot.playerId)) set.add(index)
+  })
+  return set
+})
+
 /** A pick that becomes unavailable after the fact (a red card just rolled,
  * say) drops out of the lineup on its own rather than leaving a ghost slot
  * the "eleven picked" count still trusts. */
@@ -160,20 +161,21 @@ watch(
   unavailable,
   ({ injured, suspended }) => {
     if (!manager.value) return
-    const next = lineup.value.filter((id) => !injured.has(id) && !suspended.has(id))
-    if (next.length !== lineup.value.length) store.setManagerLineup(props.tournamentId, next)
+    let next = slots.value
+    for (const id of [...injured, ...suspended]) next = clearLineupPlayer(next, id)
+    if (next !== slots.value) store.setManagerLineup(props.tournamentId, next)
   },
   { immediate: true }
 )
 
-function pickedCount(position: PlayerPosition): number {
-  return (squadByPosition.value.get(position) ?? []).filter((p) => lineupSet.value.has(p.id)).length
+function filledCount(position: PlayerPosition): number {
+  return slots.value.filter((s) => s.position === position && s.playerId).length
 }
 
 /** Fit players actually left to pick from, for one position — hurt or
- * suspended ones don't count, same as they can't be checked below. */
+ * suspended ones don't count. */
 function availableCount(position: PlayerPosition): number {
-  return (squadByPosition.value.get(position) ?? []).filter((p) => !unavailabilityOf(p.id)).length
+  return squad.value.filter((p) => p.position === position && !unavailabilityOf(p.id)).length
 }
 
 /** What a full XI needs from this position, capped by what the squad can
@@ -183,47 +185,56 @@ function neededCount(position: PlayerPosition): number {
   return Math.min(formationSlots.value[position] ?? 0, availableCount(position))
 }
 
-function isComplete(ids: string[]): boolean {
-  const set = new Set(ids)
-  return POSITION_ORDER.every((position) => {
-    const picked = (squadByPosition.value.get(position) ?? []).filter((p) => set.has(p.id)).length
-    return picked >= neededCount(position)
-  })
-}
-
 /** How many more can still usefully be picked — zero once every position has
  * either filled its slots or the manager has run out of fit players in it. */
 const missingCount = computed(() =>
   POSITION_ORDER.reduce(
-    (sum, position) => sum + Math.max(0, neededCount(position) - pickedCount(position)),
+    (sum, position) => sum + Math.max(0, neededCount(position) - filledCount(position)),
     0
   )
 )
 const lineupReady = computed(() => missingCount.value === 0)
 
-function toggleLineup(player: Player) {
-  if (unavailabilityOf(player.id)) return
-  const current = [...lineup.value]
-  const idx = current.indexOf(player.id)
-  if (idx >= 0) {
-    current.splice(idx, 1)
-    hapticSelection()
-  } else {
-    if (pickedCount(player.position) >= (formationSlots.value[player.position] ?? 0)) return
-    current.push(player.id)
-    if (isComplete(current)) hapticSuccess()
-    else hapticSelection()
-  }
-  store.setManagerLineup(props.tournamentId, current)
+watch(lineupReady, (ready, wasReady) => {
+  if (ready && !wasReady) hapticSuccess()
+})
+
+// ─── Slot picker ───────────────────────────────────────────────────
+const activeSlotIndex = ref<number | null>(null)
+const activeSlot = computed(() =>
+  activeSlotIndex.value !== null ? slots.value[activeSlotIndex.value] : null
+)
+
+/** Everyone fit to fill the active slot: not hurt/suspended, and not
+ *  already standing in a different one. */
+const activeSlotCandidates = computed(() => {
+  if (!activeSlot.value) return []
+  const current = activeSlot.value.playerId
+  return squad.value.filter(
+    (p) => !unavailabilityOf(p.id) && (p.id === current || !lineupIds.value.has(p.id))
+  )
+})
+
+function openSlot(index: number) {
+  activeSlotIndex.value = index
 }
 
-function removeFromLineup(player: Player) {
-  toggleLineup(player)
+function closeSlot() {
+  activeSlotIndex.value = null
 }
 
-const groupRefs = ref<Partial<Record<PlayerPosition, HTMLElement | null>>>({})
-function focusPosition(position: PlayerPosition) {
-  groupRefs.value[position]?.scrollIntoView({ behavior: "smooth", block: "center" })
+function assignSlot(playerId: string) {
+  if (activeSlotIndex.value === null) return
+  const next = assignLineupSlot(slots.value, activeSlotIndex.value, playerId)
+  store.setManagerLineup(props.tournamentId, next)
+  hapticSelection()
+}
+
+function clearSlot() {
+  if (activeSlotIndex.value === null) return
+  const next = assignLineupSlot(slots.value, activeSlotIndex.value, null)
+  store.setManagerLineup(props.tournamentId, next)
+  hapticSelection()
 }
 
 function open11() {
@@ -295,70 +306,33 @@ function open11() {
       </template>
       <template #actions>
         <AppChip size="xs" square :variant="lineupReady ? 'accent' : undefined">
-          {{ t("manager.lineup.count", { n: lineup.length }) }}
+          {{ t("manager.lineup.count", { n: lineupIds.size }) }}
         </AppChip>
       </template>
 
       <p class="mp-lineup-hint">{{ t("manager.lineup.hint") }}</p>
 
       <AppEmptyState v-if="!squad.length" :title="t('manager.lineup.noSquad')" />
-      <template v-else>
-        <ManagerLineupPitch
-          class="mp-pitch"
-          :slots="formationSlots"
-          :squad-by-position="squadByPosition"
-          :lineup-ids="lineup"
-          @focus="focusPosition"
-          @remove="removeFromLineup"
-        />
-
-        <div class="mp-lineup-groups">
-          <div
-            v-for="position in POSITION_ORDER"
-            :key="position"
-            :ref="(el) => (groupRefs[position] = el as HTMLElement | null)"
-            class="mp-lineup-group"
-          >
-            <div class="mp-lineup-group-head">
-              <span>{{ t(`players.positions.${position}`) }}</span>
-              <span class="mp-lineup-group-count">
-                {{ pickedCount(position) }}/{{ formationSlots[position] }}
-              </span>
-            </div>
-
-            <p v-if="!squadByPosition.get(position)?.length" class="mp-lineup-empty">
-              {{ t("manager.lineup.noneForPosition") }}
-            </p>
-            <div v-else class="mp-lineup-list">
-              <label
-                v-for="player in squadByPosition.get(position)"
-                :key="player.id"
-                class="mp-lineup-row"
-                :class="{
-                  'mp-lineup-row--picked': lineupSet.has(player.id),
-                  'mp-lineup-row--unavailable': !!unavailabilityOf(player.id),
-                }"
-              >
-                <input
-                  type="checkbox"
-                  :checked="lineupSet.has(player.id)"
-                  :disabled="
-                    !!unavailabilityOf(player.id) ||
-                    (!lineupSet.has(player.id) && pickedCount(position) >= formationSlots[position])
-                  "
-                  @change="toggleLineup(player)"
-                />
-                <span class="mp-lineup-name">{{ player.name }}</span>
-                <AppChip v-if="unavailabilityOf(player.id)" square size="xs" variant="danger">
-                  {{ t(`manager.lineup.${unavailabilityOf(player.id)}`) }}
-                </AppChip>
-                <AppChip square size="xs">{{ player.power }}</AppChip>
-              </label>
-            </div>
-          </div>
-        </div>
-      </template>
+      <ManagerLineupPitch
+        v-else
+        class="mp-pitch"
+        :slots="slots"
+        :player-by-id="playerById"
+        :team-color="managedTeam.color"
+        :unavailable-slot-indexes="unavailableSlotIndexes"
+        @tap-slot="openSlot"
+      />
     </AppCard>
+
+    <ManagerLineupSlotSheet
+      v-if="activeSlot"
+      :position="activeSlot.position"
+      :squad="activeSlotCandidates"
+      :current-player-id="activeSlot.playerId"
+      @select="assignSlot"
+      @clear="clearSlot"
+      @close="closeSlot"
+    />
 
     <MatchScoreModal
       v-if="open && fixture"
@@ -445,79 +419,7 @@ function open11() {
 }
 
 .mp-pitch {
-  margin-bottom: var(--sp-3);
-}
-
-.mp-lineup-groups {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sp-3);
-  max-height: 50vh;
-  overflow-y: auto;
-}
-
-.mp-lineup-group-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 var(--sp-1) var(--sp-1);
-  font-size: var(--fs-xs);
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  border-bottom: 1px solid var(--border-light);
-}
-.mp-lineup-group-count {
-  font-family: var(--font-mono);
-  color: var(--accent);
-}
-
-.mp-lineup-empty {
-  margin: 0;
-  padding: var(--sp-2) var(--sp-1);
-  font-size: var(--fs-sm);
-  color: var(--text-muted);
-}
-
-.mp-lineup-list {
-  display: flex;
-  flex-direction: column;
-}
-
-.mp-lineup-row {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-2);
-  padding: var(--sp-2) var(--sp-1);
-  border-bottom: 1px solid var(--border-light);
-  cursor: pointer;
-  min-height: var(--tap-min);
-}
-.mp-lineup-row:last-child {
-  border-bottom: none;
-}
-.mp-lineup-row:hover {
-  background: var(--border-light);
-}
-.mp-lineup-row--picked {
-  color: var(--accent);
-}
-.mp-lineup-row--unavailable {
-  cursor: default;
-  opacity: 0.55;
-}
-.mp-lineup-row--unavailable .mp-lineup-name {
-  text-decoration: line-through;
-}
-
-.mp-lineup-name {
-  flex: 1;
-  min-width: 0;
-  font-weight: 600;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  margin-bottom: var(--sp-1);
 }
 
 @media (max-width: 600px) {
