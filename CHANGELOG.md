@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.9.4](https://github.com/orazchollaev/invictus-tournament-maker/compare/v2.9.3...v2.9.4) (2026-09-19)
+
+### 🐛 Bug Fixes
+
+- **tournament:** don't let one bad tournament crash the app on launch ([71ee632](https://github.com/orazchollaev/invictus-tournament-maker/commit/71ee63290d8f374469ab38fb11e6058d01cfdf1c))
+
 ## [2.9.3](https://github.com/orazchollaev/invictus-tournament-maker/compare/v2.9.2...v2.9.3) (2026-09-18)
 
 ### 🚀 New Features
