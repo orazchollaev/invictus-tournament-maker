@@ -1,6 +1,14 @@
 import type { Team } from "@/modules/teams/types"
 import type { Tournament } from "@/modules/tournament/types"
-import { getLeaguePlayoffData, getLoserId, getWinnerId, isLeagueLike } from "@/engine"
+import {
+  finalPhase,
+  getLeaguePlayoffData,
+  getLoserId,
+  getWinnerId,
+  isCustomFormat,
+  isLeagueLike,
+  phaseStandingIds,
+} from "@/engine"
 import { EMPTY_STATS, NO_FINISH, type ParticipantRow, type TeamStats } from "./types"
 
 /** Rows sort after every ranked team when the tournament gives them no placing. */
@@ -138,6 +146,22 @@ export function buildFinish(ctx: FinishContext, teamId: string): Finish {
     return leagueFinish(ctx, teamId)
   }
 
+  // Custom: the marked final phase decides the placings, whatever kind it is —
+  // the top of its own standing is the champion, and so on down. Teams that
+  // never reached it have no placing rather than a made-up one.
+  if (isCustomFormat(t)) {
+    const final = finalPhase(t)
+    if (!final) return {}
+    const order = phaseStandingIds(final)
+    const idx = order.indexOf(teamId)
+    if (idx === 0) return { isWinner: true }
+    if (idx === 1) return { isSecondPlace: true }
+    // -2 keeps the third-place pair ahead of everyone knocked out earlier.
+    if (idx === 2) return { isThirdPlace: true, eliminatedRoundIdx: -2 }
+    if (idx === 3) return { isFourthPlace: true, eliminatedRoundIdx: -2 }
+    return {}
+  }
+
   if (t.winnerId === teamId) return { isWinner: true }
   if (ctx.secondPlaceId === teamId) return { isSecondPlace: true }
   // -2 keeps the third-place pair ahead of everyone knocked out earlier.
@@ -150,6 +174,20 @@ export function buildFinish(ctx: FinishContext, teamId: string): Finish {
   return elim ? { eliminatedRound: elim.name, eliminatedRoundIdx: elim.idx } : {}
 }
 
+/**
+ * The group a team was drawn into, looking inside a custom tournament's phases
+ * as well as at the top-level group stage.
+ */
+export function groupNameOf(t: Tournament, teamId: string): string | null {
+  const own = t.groups?.find((g) => g.teamIds.includes(teamId))
+  if (own) return own.name
+  for (const phase of t.phases ?? []) {
+    const group = phase.groups?.find((g) => g.teamIds.includes(teamId))
+    if (group) return group.name
+  }
+  return null
+}
+
 export function buildRow(
   ctx: FinishContext,
   team: Team,
@@ -157,7 +195,7 @@ export function buildRow(
 ): ParticipantRow {
   return {
     team,
-    groupName: ctx.tournament.groups?.find((g) => g.teamIds.includes(team.id))?.name ?? null,
+    groupName: groupNameOf(ctx.tournament, team.id),
     stats: stats ?? { ...EMPTY_STATS },
     ...NO_FINISH,
     ...buildFinish(ctx, team.id),

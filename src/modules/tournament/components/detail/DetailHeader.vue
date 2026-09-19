@@ -17,6 +17,12 @@ const props = defineProps<{
   isFinished: boolean
   /** Every group is done and the bracket hasn't been seeded yet. */
   showAdvance: boolean
+  /**
+   * Overrides the Advance button's label. The custom format names the phase it
+   * is about to draw, since "Advance to Knockout" says nothing when the next
+   * stage is a table the user called something else.
+   */
+  advanceLabel?: string
   /** The (top-tier) season is finished, playoff enabled, not yet started. */
   showStartPlayoff: boolean
   /** Every recorded season of this tournament, oldest first. One entry (or
@@ -105,7 +111,11 @@ function onLevelUp() {
           icon-only
           class="header-icon-btn"
           variant="filled"
-          :title="showAdvance ? t('tournament.advanceToKnockout') : t('leaguePlayoff.startPlayoff')"
+          :title="
+            showAdvance
+              ? (advanceLabel ?? t('tournament.advanceToKnockout'))
+              : t('leaguePlayoff.startPlayoff')
+          "
           @click="onLevelUp"
         >
           <AppIcon :icon="Check" size="md" />

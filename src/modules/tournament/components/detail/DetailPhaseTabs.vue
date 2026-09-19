@@ -2,7 +2,7 @@
 import { computed } from "vue"
 import { useI18n } from "vue-i18n"
 import { UserCog } from "@lucide/vue"
-import type { MainTab } from "./types"
+import { phaseTab, type MainTab } from "./types"
 import { AppTabs, AppTab } from "@/components/ui"
 
 const props = defineProps<{
@@ -13,6 +13,11 @@ const props = defineProps<{
   bracketAllowed: boolean
   /** Managed team's name — shows the manager tab first when set. */
   managerTeamName?: string
+  /**
+   * Custom format: one tab per phase, in graph order, labelled with the name
+   * the user gave it. Its presence is what replaces the fixed tabs below.
+   */
+  phases?: { id: string; name: string }[]
 }>()
 
 const emit = defineEmits<{
@@ -49,7 +54,13 @@ function onUpdate(value: string) {
       {{ managerTeamName }}
     </AppTab>
 
-    <template v-if="isLeagueFormat">
+    <template v-if="phases?.length">
+      <AppTab v-for="phase in phases" :key="phase.id" :value="phaseTab(phase.id)">
+        {{ phase.name }}
+      </AppTab>
+    </template>
+
+    <template v-else-if="isLeagueFormat">
       <AppTab value="league">{{ leagueTabLabel }}</AppTab>
       <AppTab v-if="bracketAllowed" value="bracket">
         {{ bracketTabLabel }}

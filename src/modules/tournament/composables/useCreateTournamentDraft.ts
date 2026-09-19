@@ -2,7 +2,7 @@ import { ref, computed, watch } from "vue"
 import { useI18n } from "vue-i18n"
 import { useTeamsStore } from "@/modules/teams/store"
 import { useSettingsStore } from "@/modules/settings/store"
-import { validateSwissConfig } from "@/engine"
+import { topoOrder, validatePhaseGraph, validateSwissConfig } from "@/engine"
 import type {
   KnockoutStage,
   LegMode,
@@ -14,6 +14,7 @@ import type {
 import type { GroupConfigPayload, SwissConfigPayload } from "../components/config"
 import type { KnockoutConfigPayload } from "../components/create/CreateKnockoutConfigModal.vue"
 import type { LeagueConfigPayload } from "../components/create/CreateLeagueConfigModal.vue"
+import type { PhaseGraphDraft } from "./useCustomPhaseGraph"
 
 export type CreateDrawType = "random" | "seeded" | "manual"
 
@@ -98,8 +99,37 @@ export function useCreateTournamentDraft() {
         )
       : []
   )
+  // Custom format: the phase graph the user drew in the Phases modal. Held here
+  // rather than inside that modal so it survives closing and reopening it, and
+  // so the Create button can be blocked on the same validation the modal shows.
+  const phaseGraph = ref<PhaseGraphDraft>({ phases: [], phaseEdges: [] })
+
+  const phaseGraphErrors = computed(() =>
+    format.value === "custom"
+      ? validatePhaseGraph(
+          phaseGraph.value.phases,
+          phaseGraph.value.phaseEdges,
+          selectedTeams.value.length
+        )
+      : []
+  )
+
+  const phasesSummary = computed(() => {
+    const phases = phaseGraph.value.phases
+    if (!phases.length) return t("tournament.phases.summaryEmpty")
+    // "3 phases · Groups -> League -> Cup", in the order the graph runs.
+    const ordered = topoOrder(phases, phaseGraph.value.phaseEdges) ?? phases
+    return `${t("tournament.phases.summary", { count: phases.length })} · ${ordered
+      .map((p) => p.name)
+      .join(" → ")}`
+  })
+
   const canCreate = computed(
-    () => !!name.value.trim() && selected.value.length >= 2 && swissErrors.value.length === 0
+    () =>
+      !!name.value.trim() &&
+      selected.value.length >= 2 &&
+      swissErrors.value.length === 0 &&
+      phaseGraphErrors.value.length === 0
   )
 
   const maxPlayoffQualifiers = computed(() => Math.max(2, selectedTeams.value.length))
@@ -286,6 +316,9 @@ export function useCreateTournamentDraft() {
     name,
     selected,
     format,
+    phaseGraph,
+    phaseGraphErrors,
+    phasesSummary,
     drawType,
     groupCount,
     qualifiersPerGroup,

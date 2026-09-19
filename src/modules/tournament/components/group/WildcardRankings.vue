@@ -144,17 +144,7 @@ const candidates = computed(() => {
   max-width: 120px;
   padding-inline-start: 11px;
 }
-.wc-table .col-team::before {
-  content: "";
-  position: absolute;
-  left: 2px;
-  top: 3px;
-  bottom: 3px;
-  width: 3px;
-  border-radius: 1px;
-  background: var(--tc, transparent);
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.18);
-}
+
 .col-pts {
   font-weight: 700;
 }
@@ -162,9 +152,7 @@ const candidates = computed(() => {
 /* Same treatment as GroupCard's row-qualify/row-out — a wildcard slot reads
    as "would qualify" the same way a group's real qualification line does. */
 .row-qualify {
-  background: color-mix(in srgb, var(--accent) 6%, transparent);
-}
-.row-qualify td:first-child {
+  background: color-mix(in srgb, var(--accent) 6%, transparent) !important;
 }
 .row-out {
   opacity: 0.65;

@@ -60,16 +60,6 @@ export function getLoserId(match: Match): string | null {
   return match.homeId === winner ? match.awayId : match.homeId
 }
 
-export function updateThirdPlaceSlots(tournament: Tournament) {
-  if (!tournament.hasThirdPlace || !tournament.thirdPlaceMatch) return
-  const rounds = tournament.rounds
-  if (rounds.length < 2) return
-  const semis = rounds[rounds.length - 2]
-  const m = tournament.thirdPlaceMatch
-  m.homeId = semis.matches[0] ? getLoserId(semis.matches[0]) : null
-  m.awayId = semis.matches[1] ? getLoserId(semis.matches[1]) : null
-}
-
 export function getWinnerId(match: Match): string | null {
   if (!match.result) return null
 

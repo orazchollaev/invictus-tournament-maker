@@ -2,7 +2,7 @@
 import { computed } from "vue"
 import type { League, Tournament } from "@/modules/tournament/types"
 import type { Team } from "@/modules/teams/types"
-import LeagueStandingsTable from "./LeagueStandingsTable.vue"
+import LeagueStandingsTable, { type StandingsBand } from "./LeagueStandingsTable.vue"
 
 const props = defineProps<{
   tournament: Tournament
@@ -11,6 +11,8 @@ const props = defineProps<{
   relegationCountOverride?: number
   promotionCount?: number
   playoffQualifierCount?: number
+  /** Custom format: which places go to which next phase. */
+  bands?: StandingsBand[]
 }>()
 
 const league = computed(() => props.leagueOverride ?? props.tournament.league!)
@@ -38,6 +40,7 @@ const playedMatchdays = computed(() => matchdays.value.filter((_, i) => matchday
       :promotion-count="promotionCount"
       :playoff-qualifier-count="playoffQualifierCount"
       :relegation-count="relegationCount"
+      :bands="bands"
     />
   </div>
 </template>

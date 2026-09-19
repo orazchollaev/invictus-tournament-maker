@@ -152,6 +152,15 @@ function buildStandings(book: Workbook, input: ExcelExportInput, nameOf: (id: st
   if (t.league) tables.push({ name: "League", standings: t.league.standings })
   t.tiers?.forEach((tier) => tables.push({ name: tier.name, standings: tier.league.standings }))
 
+  // A custom tournament's tables live inside its phases, named after the phase
+  // so the sheet still says where each one came from.
+  t.phases?.forEach((phase) => {
+    if (phase.league) tables.push({ name: phase.name, standings: phase.league.standings })
+    phase.groups?.forEach((group) =>
+      tables.push({ name: `${phase.name} - ${group.name}`, standings: group.standings })
+    )
+  })
+
   if (!tables.length) return
 
   const sheet = book.addWorksheet("Standings")

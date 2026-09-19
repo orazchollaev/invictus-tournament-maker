@@ -1,11 +1,12 @@
 import type { Ref } from "vue"
-import type { LegMode, Match, MatchResult, Tournament } from "../types"
+import type { LegMode, MatchResult, Tournament } from "../types"
 import type { Team } from "@/modules/teams/types"
 import {
   uid,
-  updateThirdPlaceSlots,
+  updateThirdPlaceSlotsIn,
   simulateMatch,
-  decideKnockoutResult,
+  decideLeg2Result,
+  simulateThirdPlaceTie,
   applyThirdPlaceLegMode,
   tournamentAdjustments,
 } from "@/engine"
@@ -25,7 +26,7 @@ export function useThirdPlaceActions(tournaments: Ref<Tournament[]>, getTeams: (
       t.hasThirdPlace = true
       t.thirdPlaceMatch = { id: uid(), homeId: null, awayId: null, result: null }
       applyThirdPlaceLegMode(t.thirdPlaceMatch, t)
-      updateThirdPlaceSlots(t)
+      updateThirdPlaceSlotsIn(t)
     }
   }
 
@@ -107,32 +108,13 @@ export function useThirdPlaceActions(tournaments: Ref<Tournament[]>, getTeams: (
     if (!t?.thirdPlaceMatch) return
     const m = t.thirdPlaceMatch
     if (!m.homeId || !m.awayId || !m.result || m.leg2Result === undefined) return
-    m.leg2Result = decideLeg2(m, getTeams(), tournamentAdjustments(t))
-  }
-
-  /** Leg 2 reverses the fixture and settles the tie on aggregate. */
-  function decideLeg2(m: Match, allTeams: Team[], adjustments?: Map<string, number>): MatchResult {
-    const leg2Sim = { id: m.id, homeId: m.awayId, awayId: m.homeId }
-    return decideKnockoutResult(leg2Sim as never, allTeams, {
-      adjustments,
-      aggregateOffset: { home: m.result!.away, away: m.result!.home },
-    }).result
+    m.leg2Result = decideLeg2Result(m, getTeams(), tournamentAdjustments(t))
   }
 
   function simulateThirdPlace(tournamentId: string) {
     const t = getT(tournamentId)
     if (!t?.thirdPlaceMatch) return
-    const m = t.thirdPlaceMatch
-    if (!m.homeId || !m.awayId) return
-    if (m.leg2Result !== undefined) {
-      // Double-leg: play whichever leg is still pending.
-      if (!m.result) simulateThirdPlaceLeg1(tournamentId)
-      if (m.leg2Result === null) simulateThirdPlaceLeg2(tournamentId)
-      return
-    }
-    if (m.result) return
-    const decision = decideKnockoutResult(m, getTeams(), { adjustments: tournamentAdjustments(t) })
-    commitThirdPlaceResult(t, decision.result)
+    simulateThirdPlaceTie(t, getTeams(), tournamentAdjustments(t))
   }
 
   return {

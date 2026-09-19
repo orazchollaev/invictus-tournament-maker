@@ -20,6 +20,7 @@ import {
   getLeaguePlayoffData,
   canStartLeaguePlayoff,
   isLeagueLike,
+  isCustomFormat,
   seedLeaguePlayoffBracket,
   markLegacyMatchStats,
   claimWatchedStats,
@@ -41,6 +42,7 @@ import { useLeagueActions } from "./league"
 import { useLeaguePlayoffActions } from "./leaguePlayoff"
 import { useScoringActions } from "./scoring"
 import { useManagerActions } from "./manager"
+import { usePhasesActions } from "./phases"
 import { hasPendingManagedFixture } from "../utils/managerFixtures"
 
 export const useTournamentStore = defineStore(
@@ -258,6 +260,23 @@ export const useTournamentStore = defineStore(
       "simAllTier",
       "simAllTiers",
       "simulateThirdPlace",
+      // Custom format: the same rule, per phase. Missing one of these would
+      // let a bulk button play the managed side's own phase fixture for them.
+      "simPhaseGroupMatch",
+      "simPhaseGroup",
+      "simPhaseGroupWeek",
+      "simPhaseWeek",
+      "simAllPhaseGroups",
+      "simPhaseLeagueMatch",
+      "simPhaseLeagueMatchday",
+      "simAllPhaseLeague",
+      "simPhaseBracketLeg1",
+      "simPhaseBracketLeg2",
+      "simPhaseBracketMatch",
+      "simPhaseBracketRound",
+      "simAllPhaseBracket",
+      "simPhaseThirdPlace",
+      "simulateCustomTournament",
     ])
 
     function isManagerBlocked(tournamentId: unknown): boolean {
@@ -285,6 +304,7 @@ export const useTournamentStore = defineStore(
     const leaguePlayoff = useLeaguePlayoffActions(tournaments, getTeams)
     const scoring = useScoringActions(tournaments)
     const manager = useManagerActions(tournaments, getTeams, getPlayers)
+    const phases = usePhasesActions(tournaments, getTeams)
 
     if (import.meta.env.DEV) {
       assertNoSliceCollisions({
@@ -297,6 +317,7 @@ export const useTournamentStore = defineStore(
         leaguePlayoff,
         scoring,
         manager,
+        phases,
       })
     }
 
@@ -354,6 +375,59 @@ export const useTournamentStore = defineStore(
       const isOwnFixture =
         !!t.manager && (entry.homeId === t.manager.teamId || entry.awayId === t.manager.teamId)
 
+      // A custom tournament's fixtures live inside a phase, and the source
+      // carries which one — the same container coordinates, one level deeper.
+      if (src.phaseId) {
+        const phaseId = src.phaseId
+        const phase = t.phases?.find((p) => p.id === phaseId)
+        if (!phase) return
+        if (src.kind === "group") {
+          const idx = phase.groups?.[src.groupIdx]?.matches.findIndex((m) => m.id === id) ?? -1
+          if (idx >= 0) phases.setPhaseGroupResult(tournamentId, phaseId, src.groupIdx, idx, home, away)
+        } else if (src.kind === "league") {
+          const idx =
+            phase.league?.matchdays[src.matchdayIdx]?.matches.findIndex((m) => m.id === id) ?? -1
+          if (idx >= 0) {
+            phases.setPhaseLeagueResult(tournamentId, phaseId, src.matchdayIdx, idx, home, away)
+          }
+        } else if (src.kind === "third-place") {
+          if (src.leg === 2) {
+            phases.setPhaseThirdPlaceLeg2Result(tournamentId, phaseId, home, away, penHome, penAway)
+          } else {
+            phases.setPhaseThirdPlaceResult(tournamentId, phaseId, home, away, penHome, penAway)
+          }
+        } else {
+          const idx = phase.rounds?.[src.roundIdx]?.matches.findIndex((m) => m.id === id) ?? -1
+          if (idx < 0) return
+          if (src.leg === 2) {
+            phases.setPhaseBracketLeg2Result(
+              tournamentId,
+              phaseId,
+              src.roundIdx,
+              idx,
+              home,
+              away,
+              penHome,
+              penAway
+            )
+          } else {
+            phases.setPhaseBracketResult(
+              tournamentId,
+              phaseId,
+              src.roundIdx,
+              idx,
+              home,
+              away,
+              penHome,
+              penAway
+            )
+          }
+        }
+        if (isOwnFixture) syncManagerWeek(tournamentId, src)
+        ensureStatsFor(tournamentId)
+        return
+      }
+
       if (src.kind === "group") {
         const idx = t.groups?.[src.groupIdx]?.matches.findIndex((m) => m.id === id) ?? -1
         if (idx >= 0) groups.setGroupResult(tournamentId, src.groupIdx, idx, home, away)
@@ -392,6 +466,10 @@ export const useTournamentStore = defineStore(
     function bracketIsSeeded(t: Tournament): boolean {
       if (isLeagueLike(t)) return !!getLeaguePlayoffData(t)?.started
       if (t.format === "group+bracket") return !!t.groupsDone
+      // A custom tournament has no top-level bracket at all — its knockouts are
+      // phases, settled by the phase slice. Saying "seeded" here would send the
+      // manager auto-settle into an empty `t.rounds`.
+      if (isCustomFormat(t)) return false
       return true
     }
 
@@ -412,6 +490,24 @@ export const useTournamentStore = defineStore(
      */
     function syncManagerWeek(tournamentId: string, src: MatchEntry["source"]) {
       withTournament(tournamentId, (t) => {
+        // Custom format: the same three cases, scoped to the phase the fixture
+        // came from, and then the rest of whatever phases are already underway.
+        // Never the next phase — advancing into it is the draw the user presses
+        // the header button for, exactly as with group -> bracket below.
+        if (isCustomFormat(t) && src.phaseId) {
+          const phaseId = src.phaseId
+          if (src.kind === "group") {
+            phases.simPhaseWeek(tournamentId, phaseId)
+          } else if (src.kind === "league") {
+            phases.simPhaseLeagueMatchday(tournamentId, phaseId, src.matchdayIdx)
+          } else if (src.kind === "knockout") {
+            phases.simPhaseRoundExceptManager(tournamentId, phaseId, src.roundIdx)
+          }
+          if (hasPendingManagedFixture(t) || crud.isTournamentFinished(tournamentId)) return
+          phases.simAllActivePhases(tournamentId)
+          return
+        }
+
         if (src.kind === "group") {
           groups.simWeek(tournamentId)
         } else if (src.kind === "league") {
@@ -478,7 +574,8 @@ export const useTournamentStore = defineStore(
       withTournament(tournamentId, (t) => {
         if (!t.manager) return
         if (hasPendingManagedFixture(t) || crud.isTournamentFinished(tournamentId)) return
-        bracket.simulateAll(tournamentId)
+        if (isCustomFormat(t)) phases.simAllActivePhases(tournamentId)
+        else bracket.simulateAll(tournamentId)
       })
       ensureStatsFor(tournamentId)
     }
@@ -487,6 +584,10 @@ export const useTournamentStore = defineStore(
       "advanceToBracket",
       "advanceToBracketManual",
       "startLeaguePlayoffBracket",
+      // Advancing into a custom phase is the same event: a stage has just been
+      // drawn, so whatever it handed the manager plays itself out around them.
+      "advancePhase",
+      "advancePhaseManual",
     ])
 
     function withManagerBracketSettle<T extends ActionSlice>(slice: T): T {
@@ -507,6 +608,11 @@ export const useTournamentStore = defineStore(
     function simulateTournament(tournamentId: string) {
       if (isManagerBlocked(tournamentId)) return
       withTournament(tournamentId, (t) => {
+        if (isCustomFormat(t)) {
+          phases.simulateCustomTournament(tournamentId)
+          return
+        }
+
         if (isLeagueLike(t)) {
           if (t.tiers?.length) {
             leagueActions.simAllTiers(tournamentId)
@@ -570,6 +676,7 @@ export const useTournamentStore = defineStore(
       ...withStats(withManagerBracketSettle(leaguePlayoff)),
       ...withStats(scoring),
       ...withStats(manager),
+      ...withStats(withManagerGuard(withManagerBracketSettle(phases))),
       createMultiTierLeagueTournament,
       setFixtureResult,
       simulateTournament,

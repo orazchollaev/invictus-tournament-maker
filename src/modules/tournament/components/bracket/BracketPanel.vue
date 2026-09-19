@@ -20,12 +20,21 @@ const props = defineProps<{
   tournament: Tournament
   teams: Team[]
   title?: string
+  /**
+   * Set when this bracket is a phase of a custom tournament. It only changes
+   * where results are written back to — everything rendered below already
+   * comes from `tournament`, which the detail page hands a phase-scoped view.
+   */
+  phaseId?: string
 }>()
 
 const { t } = useI18n()
 const settings = useSettingsStore()
 
-const bracketActions = useBracketActions(() => props.tournament.id)
+const bracketActions = useBracketActions(
+  () => props.tournament.id,
+  () => props.phaseId
+)
 
 const isMobileViewport = typeof window !== "undefined" && window.innerWidth <= 640
 

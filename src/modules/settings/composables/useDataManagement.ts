@@ -9,6 +9,7 @@ import {
   clearAllTournaments,
   replaceAllTournaments,
 } from "@/modules/tournament/services/persistence"
+import { normalizeTournament } from "@/modules/tournament/services/tournamentSchema"
 import type { Tournament } from "@/modules/tournament/types"
 import { APP_VERSION } from "@/constants"
 
@@ -105,7 +106,14 @@ export function useDataManagement() {
     // not in the legacy "tournament" blob — swapping datasets has to replace
     // those records directly, or the previous dataset's tournaments survive
     // in the index and come back after reload.
-    await replaceAllTournaments((dataset.tournaments as Tournament[] | undefined) ?? [])
+    // Normalized like an import: a sample file is checked into the repo and can
+    // fall behind the shape the app reads, and a bundled dataset that breaks the
+    // launch is worse than one that loads a tournament short.
+    await replaceAllTournaments(
+      (Array.isArray(dataset.tournaments) ? dataset.tournaments : [])
+        .map((entry: unknown) => normalizeTournament(entry))
+        .filter((t: Tournament | null): t is Tournament => t !== null)
+    )
     if (!dataset.tournaments)
       await idbStorage.setItem("tournament", JSON.stringify({ active: null }))
     // A dataset either ships its own squads or has none. Either way the
@@ -219,6 +227,7 @@ export function useDataManagement() {
 
           const parsed = JSON.parse(text)
           if (typeof parsed !== "object" || parsed === null) throw new Error()
+          let droppedTournaments = 0
           const importedKeys = Object.keys(parsed)
             .filter((k) => k in IMPORT_KEY_MAP)
             .map((k) => IMPORT_KEY_MAP[k])
@@ -233,10 +242,25 @@ export function useDataManagement() {
           const tournamentKey = Object.keys(parsed).find((k) => IMPORT_KEY_MAP[k] === "tournament")
           if (tournamentKey) {
             const imported = parsed[tournamentKey] ?? {}
-            writes.push(replaceAllTournaments((imported.tournaments as Tournament[]) ?? []))
-            writes.push(
-              idbStorage.setItem("tournament", JSON.stringify({ active: imported.active }))
-            )
+            // Checked rather than cast. A backup can be hand-edited, can come
+            // from an older build, or can simply not hold an array here — and a
+            // cast let all three through to be written verbatim and silently
+            // dropped on the next launch. Normalizing repairs what can be
+            // repaired and counts what cannot, so the user is told.
+            const raw = Array.isArray(imported.tournaments) ? imported.tournaments : []
+            const tournaments = raw
+              .map((entry: unknown) => normalizeTournament(entry))
+              .filter((t: Tournament | null): t is Tournament => t !== null)
+            droppedTournaments = raw.length - tournaments.length
+            writes.push(replaceAllTournaments(tournaments))
+            // An active id pointing at a tournament that did not survive leaves
+            // the app opening on nothing.
+            const active =
+              typeof imported.active === "string" &&
+              tournaments.some((t: Tournament) => t.id === imported.active)
+                ? imported.active
+                : null
+            writes.push(idbStorage.setItem("tournament", JSON.stringify({ active })))
           }
           if (!writes.length) throw new Error()
           // A backup with no players section still replaces the team roster —
@@ -244,6 +268,13 @@ export function useDataManagement() {
           // that no longer exist. Same rule loadDataset() already follows.
           if (!importedKeys.includes("players")) writes.push(idbStorage.removeItem("players"))
           await Promise.all(writes)
+          // Said before the reload, because after it there is nothing left to
+          // explain why a tournament is missing.
+          if (droppedTournaments > 0) {
+            await showAlert(
+              t("settings.dataManagement.partialImport", { count: droppedTournaments })
+            )
+          }
           location.reload()
         } catch {
           showAlert(t("settings.dataManagement.invalidFile"))

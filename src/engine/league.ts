@@ -8,6 +8,7 @@ import type {
   Tiebreaker,
   Tournament,
 } from "../modules/tournament/types"
+import type { LeagueHost } from "./hosts"
 import { buildGroupFixture } from "./groups"
 import { simulateMatch } from "./simulation"
 import { fixtureAdjustments } from "./form"
@@ -175,7 +176,7 @@ export function recalcLeagueStandings(
 }
 
 export function setLeagueMatchResult(
-  tournament: Tournament,
+  tournament: LeagueHost,
   matchdayIdx: number,
   matchIdx: number,
   home: number,
@@ -186,7 +187,7 @@ export function setLeagueMatchResult(
 
 /** Back to unplayed — the score modal offers this for a mis-entered result. */
 export function clearLeagueMatchResult(
-  tournament: Tournament,
+  tournament: LeagueHost,
   matchdayIdx: number,
   matchIdx: number
 ) {
@@ -194,7 +195,7 @@ export function clearLeagueMatchResult(
 }
 
 function writeLeagueMatchResult(
-  tournament: Tournament,
+  tournament: LeagueHost,
   matchdayIdx: number,
   matchIdx: number,
   result: MatchResult | null
@@ -212,7 +213,7 @@ function writeLeagueMatchResult(
 }
 
 export function simulateLeagueMatch(
-  tournament: Tournament,
+  tournament: LeagueHost,
   matchdayIdx: number,
   matchIdx: number,
   teams: Team[]
@@ -234,7 +235,7 @@ export function simulateLeagueMatch(
   )
 }
 
-export function simulateLeagueMatchday(tournament: Tournament, matchdayIdx: number, teams: Team[]) {
+export function simulateLeagueMatchday(tournament: LeagueHost, matchdayIdx: number, teams: Team[]) {
   if (!tournament.league) return
   const adjustments = fixtureAdjustments(
     tournament.teamIds,
@@ -253,19 +254,19 @@ export function simulateLeagueMatchday(tournament: Tournament, matchdayIdx: numb
   )
 }
 
-export function simulateAllLeague(tournament: Tournament, teams: Team[]) {
+export function simulateAllLeague(tournament: LeagueHost, teams: Team[]) {
   if (!tournament.league) return
   for (let i = 0; i < tournament.league.matchdays.length; i++) {
     simulateLeagueMatchday(tournament, i, teams)
   }
 }
 
-export function allLeagueDone(tournament: Tournament): boolean {
+export function allLeagueDone(tournament: LeagueHost): boolean {
   if (!tournament.league) return false
   return tournament.league.matchdays.every((md) => md.matches.every((m) => m.result !== null))
 }
 
-export function getLeagueWinner(tournament: Tournament): string | null {
+export function getLeagueWinner(tournament: LeagueHost): string | null {
   if (!tournament.league || !allLeagueDone(tournament)) return null
   return tournament.league.standings[0]?.teamId ?? null
 }

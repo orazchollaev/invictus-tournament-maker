@@ -19,7 +19,18 @@ import FixtureMatchCard from "./FixtureMatchCard.vue"
 import FixtureTieCard from "./FixtureTieCard.vue"
 import type { FlatMatch } from "./types"
 
-const props = defineProps<{ tournament: Tournament; teams: Team[] }>()
+const props = defineProps<{
+  tournament: Tournament
+  teams: Team[]
+  /**
+   * Set when this panel is showing one phase of a custom tournament. The
+   * `tournament` prop is then a phase-scoped view — its containers are the
+   * phase's — so every read below is already right and only the writes have to
+   * be routed to the phase actions. The manager path needs no branch at all:
+   * `setFixtureResult` reads the phase off the match entry's own source.
+   */
+  phaseId?: string
+}>()
 
 const { t } = useI18n()
 const { engineLabel } = useEngineLabels()
@@ -27,7 +38,10 @@ const store = useTournamentStore()
 const settings = useSettingsStore()
 const { runSequential } = useGradualSim()
 const { teamById } = useTeamLookup(() => props.teams)
-const bracketActions = useBracketActions(() => props.tournament.id)
+const bracketActions = useBracketActions(
+  () => props.tournament.id,
+  () => props.phaseId
+)
 
 const isGroupFormat = computed(() => isGroupFormatFn(props.tournament))
 const leaguePlayoffData = computed(() => getLeaguePlayoffData(props.tournament))
@@ -172,23 +186,37 @@ function setLeagueRowResult(mi: number, home: number, away: number) {
     )
     return
   }
-  if (stage.tierIdx === null)
+  if (props.phaseId) {
+    store.setPhaseLeagueResult(props.tournament.id, props.phaseId, stage.matchdayIdx, mi, home, away)
+  } else if (stage.tierIdx === null) {
     store.setLeagueResult(props.tournament.id, stage.matchdayIdx, mi, home, away)
-  else store.setTierResult(props.tournament.id, stage.tierIdx, stage.matchdayIdx, mi, home, away)
+  } else {
+    store.setTierResult(props.tournament.id, stage.tierIdx, stage.matchdayIdx, mi, home, away)
+  }
 }
 
 function clearLeagueRowResult(mi: number) {
   const stage = selectedStage.value
   if (!stage || stage.kind !== "league") return
-  if (stage.tierIdx === null) store.clearLeagueResult(props.tournament.id, stage.matchdayIdx, mi)
-  else store.clearTierResult(props.tournament.id, stage.tierIdx, stage.matchdayIdx, mi)
+  if (props.phaseId) {
+    store.clearPhaseLeagueResult(props.tournament.id, props.phaseId, stage.matchdayIdx, mi)
+  } else if (stage.tierIdx === null) {
+    store.clearLeagueResult(props.tournament.id, stage.matchdayIdx, mi)
+  } else {
+    store.clearTierResult(props.tournament.id, stage.tierIdx, stage.matchdayIdx, mi)
+  }
 }
 
 function simLeagueRow(mi: number) {
   const stage = selectedStage.value
   if (!stage || stage.kind !== "league") return
-  if (stage.tierIdx === null) store.simLeagueMatch(props.tournament.id, stage.matchdayIdx, mi)
-  else store.simTierMatch(props.tournament.id, stage.tierIdx, stage.matchdayIdx, mi)
+  if (props.phaseId) {
+    store.simPhaseLeagueMatch(props.tournament.id, props.phaseId, stage.matchdayIdx, mi)
+  } else if (stage.tierIdx === null) {
+    store.simLeagueMatch(props.tournament.id, stage.matchdayIdx, mi)
+  } else {
+    store.simTierMatch(props.tournament.id, stage.tierIdx, stage.matchdayIdx, mi)
+  }
 }
 
 // ── Group result entry ───────────────────────────────────────────────
@@ -211,13 +239,16 @@ function setGroupRowResult(gi: number, mi: number, home: number, away: number) {
     )
     return
   }
-  store.setGroupResult(props.tournament.id, gi, mi, home, away)
+  if (props.phaseId) store.setPhaseGroupResult(props.tournament.id, props.phaseId, gi, mi, home, away)
+  else store.setGroupResult(props.tournament.id, gi, mi, home, away)
 }
 function clearGroupRowResult(gi: number, mi: number) {
-  store.clearGroupResult(props.tournament.id, gi, mi)
+  if (props.phaseId) store.clearPhaseGroupResult(props.tournament.id, props.phaseId, gi, mi)
+  else store.clearGroupResult(props.tournament.id, gi, mi)
 }
 function simGroupRow(gi: number, mi: number) {
-  store.simGroupMatch(props.tournament.id, gi, mi)
+  if (props.phaseId) store.simPhaseGroupMatch(props.tournament.id, props.phaseId, gi, mi)
+  else store.simGroupMatch(props.tournament.id, gi, mi)
 }
 
 // ── Knockout result entry (mirrors the old FixtureView.vue) ────────────

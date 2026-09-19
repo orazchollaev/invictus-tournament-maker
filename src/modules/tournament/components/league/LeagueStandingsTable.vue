@@ -6,6 +6,25 @@ import { AppTable } from "@/components/ui"
 import { useI18n } from "vue-i18n"
 import { LEAGUE_COLUMNS, formatGoalDiff } from "../shared/standingsColumns"
 
+/**
+ * Where a block of finishing places goes next, for a table that feeds more
+ * than one thing.
+ *
+ * The fixed formats have one destination each, so a single tinted zone says
+ * everything. A custom table can split — top four into the cup, next four into
+ * a plate — and "these are the good places" is then not enough: the user needs
+ * to see *which* of them is which, and that they are different.
+ */
+export interface StandingsBand {
+  /** 1-based, inclusive. */
+  fromRank: number
+  toRank: number
+  /** The destination's own name, shown in the key under the table. */
+  label: string
+  /** Which of the band colours to use; wraps past the last one. */
+  colorIdx: number
+}
+
 const props = defineProps<{
   standings: GroupStanding[]
   teams: Team[]
@@ -15,9 +34,29 @@ const props = defineProps<{
   promotionCount?: number
   playoffQualifierCount?: number
   relegationCount: number
+  /** When set, replaces the single-zone tinting above. */
+  bands?: StandingsBand[]
 }>()
 
 const { t } = useI18n()
+
+const BAND_COLORS = 4
+
+function bandOf(rank: number): StandingsBand | undefined {
+  const place = rank + 1
+  return props.bands?.find((b) => place >= b.fromRank && place <= b.toRank)
+}
+
+function bandClass(rank: number): string | undefined {
+  const band = bandOf(rank)
+  return band ? `lv-band--${band.colorIdx % BAND_COLORS}` : undefined
+}
+
+/** True on the last row of a band, which is where the divider line goes. */
+function isBandEnd(rank: number): boolean {
+  const band = bandOf(rank)
+  return !!band && rank + 1 === band.toRank
+}
 
 function teamById(id: string) {
   return props.teams.find((t) => t.id === id)
@@ -67,19 +106,23 @@ function isLastPlayoffQualifier(rank: number) {
         <tr
           v-for="(row, rank) in standings"
           :key="row.teamId"
-          :class="{
-            'lv-row--champion': rank === 0 && isFinished,
-            'lv-pos--1': rank === 0 && !promotionCount && !playoffCount(),
-            'lv-pos--2': rank === 1 && !promotionCount && !playoffCount(),
-            'lv-pos--3': rank === 2 && !promotionCount && !playoffCount(),
-            'lv-pos--4': rank === 3 && !promotionCount && !playoffCount(),
-            'lv-pos--playoff': isPlayoffQualifier(rank),
-            'lv-pos--playoff-last': isLastPlayoffQualifier(rank),
-            'lv-pos--promoted': isPromoted(rank),
-            'lv-pos--promoted-last': isLastPromoted(rank),
-            'lv-pos--relegated': isRelegated(rank),
-            'lv-pos--relegated-first': isFirstRelegated(rank),
-          }"
+          :class="[
+            bandClass(rank),
+            {
+              'lv-row--champion': rank === 0 && isFinished,
+              'lv-band-end': isBandEnd(rank),
+              'lv-pos--1': rank === 0 && !bands && !promotionCount && !playoffCount(),
+              'lv-pos--2': rank === 1 && !bands && !promotionCount && !playoffCount(),
+              'lv-pos--3': rank === 2 && !bands && !promotionCount && !playoffCount(),
+              'lv-pos--4': rank === 3 && !bands && !promotionCount && !playoffCount(),
+              'lv-pos--playoff': !bands && isPlayoffQualifier(rank),
+              'lv-pos--playoff-last': !bands && isLastPlayoffQualifier(rank),
+              'lv-pos--promoted': !bands && isPromoted(rank),
+              'lv-pos--promoted-last': !bands && isLastPromoted(rank),
+              'lv-pos--relegated': !bands && isRelegated(rank),
+              'lv-pos--relegated-first': !bands && isFirstRelegated(rank),
+            },
+          ]"
         >
           <td class="col-rank">
             <span v-if="rank === 0 && isFinished" class="lv-crown">🏆</span>
@@ -102,6 +145,22 @@ function isLastPlayoffQualifier(rank: number) {
         </tr>
       </TransitionGroup>
     </AppTable>
+
+    <!-- Colour alone does not say where a block of places goes, so the key
+         names each destination next to its own swatch. -->
+    <ul v-if="bands?.length" class="lv-key">
+      <li v-for="band in bands" :key="band.label + band.fromRank" class="lv-key-item">
+        <span class="lv-key-dot" :class="`lv-band--${band.colorIdx % BAND_COLORS}`" />
+        <span class="lv-key-range">
+          {{
+            band.fromRank === band.toRank
+              ? band.fromRank
+              : `${band.fromRank}-${band.toRank}`
+          }}
+        </span>
+        <span class="lv-key-label">{{ band.label }}</span>
+      </li>
+    </ul>
   </div>
 </template>
 
@@ -164,6 +223,86 @@ function isLastPlayoffQualifier(rank: number) {
   color: var(--danger) !important;
   font-weight: 600;
 }
+/* ─── Destination bands ───
+   A rail down the rank column rather than a full-row wash: the row background
+   is already carrying the champion highlight and the zebra striping, and three
+   tints stacked on one row read as mud. */
+.lv-band--0 .col-rank {
+  box-shadow: inset 3px 0 0 0 var(--success);
+  color: var(--success) !important;
+  font-weight: 700;
+}
+.lv-band--1 .col-rank {
+  box-shadow: inset 3px 0 0 0 var(--pos-2);
+  color: var(--pos-2) !important;
+  font-weight: 700;
+}
+.lv-band--2 .col-rank {
+  box-shadow: inset 3px 0 0 0 var(--accent-2);
+  color: var(--accent-2) !important;
+  font-weight: 700;
+}
+.lv-band--3 .col-rank {
+  box-shadow: inset 3px 0 0 0 var(--pos-3);
+  color: var(--pos-3) !important;
+  font-weight: 700;
+}
+
+/* Where one destination stops and the next begins. */
+.lv-band-end td {
+  border-bottom: 1px solid var(--border);
+}
+
+.lv-key {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-1) var(--sp-3);
+  margin: var(--sp-2) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lv-key-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+  min-width: 0;
+}
+
+.lv-key-dot {
+  width: 10px;
+  height: 10px;
+  flex-shrink: 0;
+  border-radius: var(--radius-sm);
+}
+
+/* The swatch is the band colour itself, not a rail on a rank cell. */
+.lv-key-dot.lv-band--0 {
+  background: var(--success);
+}
+.lv-key-dot.lv-band--1 {
+  background: var(--pos-2);
+}
+.lv-key-dot.lv-band--2 {
+  background: var(--accent-2);
+}
+.lv-key-dot.lv-band--3 {
+  background: var(--pos-3);
+}
+
+.lv-key-range {
+  font-weight: 700;
+  color: var(--text);
+}
+
+.lv-key-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .gd-pos {
   color: color-mix(in srgb, var(--accent) 80%, var(--text));
 }

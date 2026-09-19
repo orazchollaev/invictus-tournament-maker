@@ -1,6 +1,7 @@
 import { computed } from "vue"
 import type { Tournament } from "../types"
 import type { Team } from "@/modules/teams/types"
+import { playedMatches } from "@/engine"
 
 export interface TeamStat {
   teamId: string
@@ -13,6 +14,17 @@ export interface TeamStat {
   ga: number
 }
 
+/**
+ * Goals for and against per team, across the whole tournament.
+ *
+ * Built from the match iterator rather than by walking each container in turn.
+ * The hand-written version knew about the league, the tiers, the groups and the
+ * bracket — which meant it silently skipped the third-place match in every
+ * format, counted a two-legged tie as one match played while adding both legs'
+ * goals, and reported nothing at all for a custom tournament, whose fixtures
+ * live inside its phases. One walk covers all of them, and byes and pending
+ * ties are already excluded (see engine/matchIterator.ts).
+ */
 export function useTournamentStats(tournament: () => Tournament | undefined, teams: () => Team[]) {
   const stats = computed<TeamStat[]>(() => {
     const t = tournament()
@@ -37,73 +49,19 @@ export function useTournamentStats(tournament: () => Tournament | undefined, tea
       return map.get(id)!
     }
 
-    // League matchday matches (single-tier)
-    for (const matchday of t.league?.matchdays ?? []) {
-      for (const match of matchday.matches) {
-        if (!match.result) continue
-        const home = getOrCreate(match.homeId)
-        const away = getOrCreate(match.awayId)
-        home.gf += match.result.home
-        home.ga += match.result.away
-        home.played++
-        away.gf += match.result.away
-        away.ga += match.result.home
-        away.played++
-      }
-    }
-
-    // Multi-tier league matchdays
-    for (const tier of t.tiers ?? []) {
-      for (const matchday of tier.league.matchdays) {
-        for (const match of matchday.matches) {
-          if (!match.result) continue
-          const home = getOrCreate(match.homeId)
-          const away = getOrCreate(match.awayId)
-          home.gf += match.result.home
-          home.ga += match.result.away
-          home.played++
-          away.gf += match.result.away
-          away.ga += match.result.home
-          away.played++
-        }
-      }
-    }
-
-    // Group stage matches
-    for (const group of t.groups ?? []) {
-      for (const match of group.matches) {
-        if (!match.result) continue
-        const home = getOrCreate(match.homeId)
-        const away = getOrCreate(match.awayId)
-        home.gf += match.result.home
-        home.ga += match.result.away
-        home.played++
-        away.gf += match.result.away
-        away.ga += match.result.home
-        away.played++
-      }
-    }
-
-    // Bracket matches (skip byes)
-    for (const round of t.rounds) {
-      for (const match of round.matches) {
-        if (!match.result || !match.homeId || !match.awayId) continue
-        const home = getOrCreate(match.homeId)
-        const away = getOrCreate(match.awayId)
-        home.gf += match.result.home
-        home.ga += match.result.away
-        home.played++
-        away.gf += match.result.away
-        away.ga += match.result.home
-        away.played++
-        // Leg 2: awayId plays at home, so goals are swapped
-        if (match.leg2Result) {
-          home.gf += match.leg2Result.away
-          home.ga += match.leg2Result.home
-          away.gf += match.leg2Result.home
-          away.ga += match.leg2Result.away
-        }
-      }
+    for (const entry of playedMatches(t)) {
+      // Every entry is a real, played fixture with both sides filled in, and a
+      // second leg arrives already flipped into its own home/away frame — so the
+      // score reads the same way round for every one of them.
+      if (!entry.homeId || !entry.awayId || !entry.result) continue
+      const home = getOrCreate(entry.homeId)
+      const away = getOrCreate(entry.awayId)
+      home.gf += entry.result.home
+      home.ga += entry.result.away
+      home.played++
+      away.gf += entry.result.away
+      away.ga += entry.result.home
+      away.played++
     }
 
     return Array.from(map.values()).filter((s) => s.played > 0)

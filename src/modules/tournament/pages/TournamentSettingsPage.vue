@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from "vue"
+import { defineAsyncComponent, ref, computed } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import { useI18n } from "vue-i18n"
 import { useTeamsStore } from "@/modules/teams/store"
@@ -32,6 +32,10 @@ import type { KnockoutConfigPayload } from "../components/settings/SettingsKnock
 import type { LeagueConfigPayload } from "../components/settings/SettingsLeagueConfigModal.vue"
 import type { SwissConfigPayload } from "../components/config"
 import { GroupConfigModal, SwissConfigModal } from "../components/config"
+// Lazy, and only ever rendered for a custom tournament — see the card below.
+const PhaseGraphCanvas = defineAsyncComponent(
+  () => import("../components/phases/PhaseGraphCanvas.vue")
+)
 import { useTournamentSettingsDraft } from "../composables/useTournamentSettingsDraft"
 import { useTournamentExcelExport } from "../composables/useTournamentExcelExport"
 import { useUnsavedChangesGuard } from "@/composables/useUnsavedChangesGuard"
@@ -295,7 +299,21 @@ function handleSave() {
           @update:selected="draft.teamIds.value = $event"
         />
 
-        <div class="form-card config-button-stack">
+        <!-- Custom format: the graph is settled at creation, so it is shown
+             rather than offered for editing. Changing it after a phase has been
+             seeded would leave results that no longer belong to any stage. -->
+        <AppCard v-if="draft.isCustomFormat.value" padding="md">
+          <div class="form-section-title">{{ t("tournament.phases.title") }}</div>
+          <PhaseGraphCanvas
+            :phases="tournament.phases ?? []"
+            :edges="tournament.phaseEdges ?? []"
+            :errors="[]"
+            :intake-of="(id) => (tournament?.phases?.find((p) => p.id === id)?.teamIds.length ?? 0)"
+            readonly
+          />
+        </AppCard>
+
+        <div v-if="!draft.isCustomFormat.value" class="form-card config-button-stack">
           <AppConfigButton
             v-if="draft.isGroupFormat.value"
             :icon="LayoutGrid"
@@ -410,7 +428,13 @@ function handleSave() {
           :show-points="draft.isLeagueFormat.value || draft.isGroupFormat.value"
         />
 
-        <SettingsSimulation :tournament-id="tournamentId" :tournament="tournament" />
+        <!-- Monte Carlo branches per fixed format and a custom graph fits none
+             of them, so the prediction is withheld rather than made up. -->
+        <SettingsSimulation
+          v-if="!draft.isCustomFormat.value"
+          :tournament-id="tournamentId"
+          :tournament="tournament"
+        />
 
         <SettingsDangerZone :tournament-id="tournamentId" />
 

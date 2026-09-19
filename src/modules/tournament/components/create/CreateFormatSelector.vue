@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Trophy, LayoutGrid, List, Swords, Shuffle } from "@lucide/vue"
+import { Trophy, LayoutGrid, List, Swords, Shuffle, Workflow } from "@lucide/vue"
 import type { TournamentFormat } from "@/modules/tournament/types"
 import { SWISS_MIN_TEAMS } from "@/engine"
 
@@ -117,6 +117,23 @@ function setLeague(withPlayoff: boolean) {
 
         <span class="ctp-format-desc">
           {{ $t("tournament.create.formats.swissDesc") }}
+        </span>
+      </button>
+
+      <button
+        class="ctp-format-card"
+        :class="{ 'ctp-format-card--on': format === 'custom' }"
+        :disabled="selectedCount < 2"
+        @click="setFormat('custom')"
+      >
+        <Workflow :size="28" class="ctp-format-icon" />
+
+        <span class="ctp-format-title">
+          {{ $t("tournament.create.formats.custom") }}
+        </span>
+
+        <span class="ctp-format-desc">
+          {{ $t("tournament.create.formats.customDesc") }}
         </span>
       </button>
     </div>

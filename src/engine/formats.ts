@@ -36,3 +36,13 @@ export function isGroupFormat(t: FormatCarrier): boolean {
 export function isBracketOnly(t: FormatCarrier): boolean {
   return t.format === "bracket"
 }
+
+/**
+ * A user-built graph of phases. Nothing about its shape is fixed, so the
+ * top-level containers every other format uses stay empty and the fixtures
+ * live inside `t.phases` instead — which is why this has to be asked first
+ * anywhere a format branch reads `t.groups`, `t.league` or `t.rounds`.
+ */
+export function isCustomFormat(t: FormatCarrier): boolean {
+  return t.format === "custom"
+}

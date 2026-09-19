@@ -31,7 +31,7 @@ import type {
 } from "../modules/tournament/types"
 import { uid, makeRng, shuffleWith, randomSeed } from "./utils"
 import { resolvePower } from "./power"
-import { legModeToCount } from "./tournament"
+import { legModeToCount } from "./legs"
 import type { Pot } from "./drawCeremony"
 
 export const SWISS_MIN_TEAMS = 4

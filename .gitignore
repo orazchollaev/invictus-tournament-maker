@@ -33,3 +33,6 @@ android/build/
 .vscode
 .freebuff/
 docs/tsconfig.tsbuildinfo
+
+# Generated knowledge graph (graphify) — rebuilt locally, not source
+graphify-out/

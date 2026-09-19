@@ -1,6 +1,7 @@
 import { computed, type ComputedRef } from "vue"
 import type { Tournament } from "@/modules/tournament/types"
 import type { TeamStatEntry } from "../types"
+import { playedMatches } from "@/engine"
 import { useTeamRef } from "./useTeamRef"
 
 interface MatchTally {
@@ -87,34 +88,12 @@ export function useHistoryTeamStats(completedSeasons: ComputedRef<Tournament[]>)
     for (const t of completedSeasons.value) {
       for (const id of t.teamIds) getSeasonTally(id, t.season)
 
-      for (const g of t.groups ?? []) {
-        for (const m of g.matches) {
-          if (!m.result) continue
-          addLeg(m.homeId, m.awayId, t.season, m.result.home, m.result.away)
-        }
-      }
-
-      const ties = [
-        ...t.rounds.flatMap((r) => r.matches),
-        ...(t.thirdPlaceMatch ? [t.thirdPlaceMatch] : []),
-      ]
-      for (const m of ties) {
-        if (!m.homeId || !m.awayId || !m.result) continue
-        addLeg(m.homeId, m.awayId, t.season, m.result.home, m.result.away)
-        // Leg 2 swaps venues, so the original awayId is the home side there.
-        if (m.leg2Result) {
-          addLeg(m.awayId, m.homeId, t.season, m.leg2Result.home, m.leg2Result.away)
-        }
-      }
-
-      const leagues = [...(t.league ? [t.league] : []), ...(t.tiers ?? []).map((x) => x.league)]
-      for (const league of leagues) {
-        for (const md of league.matchdays) {
-          for (const m of md.matches) {
-            if (!m.result) continue
-            addLeg(m.homeId, m.awayId, t.season, m.result.home, m.result.away)
-          }
-        }
+      // One walk over every container the season has, phases included — see the
+      // note in useHistoryOverviewStats. Leg 2 already arrives with its venues
+      // swapped, so there is nothing to flip here.
+      for (const e of playedMatches(t)) {
+        if (!e.homeId || !e.awayId || !e.result) continue
+        addLeg(e.homeId, e.awayId, t.season, e.result.home, e.result.away)
       }
 
       if (t.winnerId) {

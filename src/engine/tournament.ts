@@ -10,6 +10,8 @@ import type {
   LegMode,
   KnockoutStage,
 } from "../modules/tournament/types"
+import { legModeToCount } from "./legs"
+export { legModeToCount }
 import { uid, shuffle } from "./utils"
 import { resolvePower } from "./power"
 import {
@@ -23,13 +25,6 @@ import {
 } from "./bracket"
 import { buildGroupFixture, recalcStandings, selectWildcards, rankTeamsByStanding } from "./groups"
 import { buildLeagueMatchdays, buildHalfLeagueMatchdays } from "./league"
-
-export function legModeToCount(mode: LegMode): number {
-  if (mode === "double") return 2
-  if (mode === "triple") return 3
-  if (mode === "quadruple") return 4
-  return 1
-}
 
 /** League schedule for a leg mode — "half" isn't a whole number of legs, so
  *  it takes its own builder instead of going through `legModeToCount`. */

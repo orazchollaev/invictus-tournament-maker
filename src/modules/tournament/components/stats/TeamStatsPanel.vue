@@ -4,10 +4,11 @@ import { useI18n } from "vue-i18n"
 import type { Tournament, League } from "@/modules/tournament/types"
 import type { Team } from "@/modules/teams/types"
 import { useTournamentStats } from "@/modules/tournament/composables/useTournamentStats"
-import { isLeagueLike } from "@/engine"
+import { isCustomFormat, isLeagueLike } from "@/engine"
 import { LeagueProgressChart } from "@/modules/tournament/components/league"
 import { TeamBadge } from "@/modules/teams/components"
 import { AppCard, AppTable, AppButtonGroup } from "@/components/ui"
+import { useEngineLabels } from "@/composables/useEngineLabels"
 
 const props = defineProps<{
   tournament: Tournament
@@ -21,14 +22,17 @@ const { topScorers, bestDefense, hasStats } = useTournamentStats(
   () => props.teams
 )
 
+const { engineLabel } = useEngineLabels()
+
+const isCustom = computed(() => isCustomFormat(props.tournament))
 const isLeague = computed(() => isLeagueLike(props.tournament))
 const isGroupBracket = computed(() => props.tournament.format === "group+bracket")
 const isMultiTier = computed(() => (props.tournament.tiers?.length ?? 0) > 1)
 
 const activeIdx = ref(0)
 
-function groupToLeague(groupIdx: number): League | undefined {
-  const group = props.tournament.groups?.[groupIdx]
+function groupToLeague(groupIdx: number, groups = props.tournament.groups): League | undefined {
+  const group = groups?.[groupIdx]
   if (!group) return undefined
   const n = group.teamIds.length
   const mpr = Math.max(1, Math.floor(n / 2))
@@ -42,7 +46,26 @@ function groupToLeague(groupIdx: number): League | undefined {
   return { matchdays, standings: group.standings, legMode: "single" }
 }
 
+/**
+ * Every table a custom tournament has a progress chart for: one per league or
+ * swiss phase, and one per group of each group phase. A knockout has no table,
+ * so it contributes nothing.
+ */
+const customTables = computed<{ label: string; league: League }[]>(() => {
+  if (!isCustom.value) return []
+  const out: { label: string; league: League }[] = []
+  for (const phase of props.tournament.phases ?? []) {
+    if (phase.league) out.push({ label: phase.name, league: phase.league })
+    phase.groups?.forEach((group, gi) => {
+      const league = groupToLeague(gi, phase.groups)
+      if (league) out.push({ label: `${phase.name} · ${engineLabel(group.name)}`, league })
+    })
+  }
+  return out
+})
+
 const activeLeague = computed<League | undefined>(() => {
+  if (isCustom.value) return customTables.value[activeIdx.value]?.league
   if (isLeague.value) {
     if (isMultiTier.value && props.tournament.tiers)
       return props.tournament.tiers[activeIdx.value]?.league
@@ -52,9 +75,12 @@ const activeLeague = computed<League | undefined>(() => {
   return undefined
 })
 
-const showChart = computed(() => isLeague.value || isGroupBracket.value)
+const showChart = computed(() =>
+  isCustom.value ? customTables.value.length > 0 : isLeague.value || isGroupBracket.value
+)
 
 const tabs = computed(() => {
+  if (isCustom.value) return customTables.value.map((c) => c.label)
   if (isLeague.value && isMultiTier.value && props.tournament.tiers)
     return props.tournament.tiers.map((t) => t.name)
   if (isGroupBracket.value && props.tournament.groups)
@@ -65,6 +91,10 @@ const tabs = computed(() => {
 const tierOptions = computed(() => tabs.value.map((label, i) => ({ value: String(i), label })))
 
 const chartTitle = computed(() => {
+  if (isCustom.value) {
+    const name = customTables.value[activeIdx.value]?.label
+    return name ? t("stats.standingsProgress", { name }) : t("stats.defaultStandingsProgress")
+  }
   if (isLeague.value && isMultiTier.value && props.tournament.tiers) {
     const name = props.tournament.tiers[activeIdx.value]?.name ?? t("stats.league")
     return t("stats.standingsProgress", { name })

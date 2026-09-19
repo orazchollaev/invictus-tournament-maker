@@ -237,8 +237,130 @@ export interface ManagerState {
   lineup?: string[]
 }
 
+// ─── Custom format: phase graph ──────────────────────────────────
+/**
+ * A custom tournament is a graph of phases rather than one fixed shape.
+ *
+ * Each phase holds its fixture in the *same* containers every other format
+ * uses (`groups`, `league`, `rounds`, `thirdPlaceMatch`), which is what lets
+ * the engine's group/league/bracket helpers, the match iterator, manager mode
+ * and the stats sweep work on a phase without knowing it is one.
+ */
+export type PhaseKind = "group" | "league" | "swiss" | "knockout"
+
+/** How a phase's incoming qualifiers are arranged into its fixture. */
+export type PhaseSeedMode = "seeded" | "random"
+
+/**
+ * A group phase says who advances the way a group stage does — so many per
+ * group, plus so many wildcards — rather than by naming finishing places. Its
+ * outgoing edge carries exactly those qualifiers and has no range of its own;
+ * a table phase (league, swiss) is where picking places belongs.
+ */
+export interface PhaseGroupConfig {
+  groupCount: number
+  /** How many advance from each group. */
+  qualifiersPerGroup: number
+  /** Best N teams finishing one place below the automatic spots. */
+  wildcardCount: number
+  legMode: LegMode
+  seedMode: PhaseSeedMode
+  tiebreaker: Tiebreaker
+  winPoints: number
+  drawPoints: number
+  lossPoints: number
+}
+
+export interface PhaseLeagueConfig {
+  legMode: LegMode
+  tiebreaker: Tiebreaker
+  winPoints: number
+  drawPoints: number
+  lossPoints: number
+}
+
+export interface PhaseSwissConfig {
+  opponentCount: number
+  potCount: number
+  legMode: LegMode
+  balanceHomeAway: boolean
+  seed: number
+  tiebreaker: Tiebreaker
+  winPoints: number
+  drawPoints: number
+  lossPoints: number
+}
+
+export interface PhaseKnockoutConfig {
+  seedMode: PhaseSeedMode
+  hasThirdPlace: boolean
+  knockoutLegMode: LegMode
+  roundLegModes: Partial<Record<KnockoutStage, LegMode>>
+  finalLegMode: LegMode
+  thirdPlaceLegMode: LegMode
+}
+
+/**
+ * Discriminated by `kind` so a phase's config can never be read as the wrong
+ * shape — the whole point of storing four different sets of options in one
+ * array.
+ */
+export type PhaseConfig =
+  | { kind: "group"; group: PhaseGroupConfig }
+  | { kind: "league"; league: PhaseLeagueConfig }
+  | { kind: "swiss"; swiss: PhaseSwissConfig }
+  | { kind: "knockout"; knockout: PhaseKnockoutConfig }
+
+/**
+ * One connection in the blueprint: which slice of a phase's final standing
+ * moves on, and where to.
+ *
+ * `fromRank`/`toRank` are 1-based and inclusive, so {1,2} means the top two.
+ * Putting the range on the edge rather than a single count on the phase is
+ * what allows one table to split two ways — 1-2 into the cup, 3-4 into a
+ * secondary bracket.
+ *
+ * Ignored when the source is a group phase: there the config's qualifiers and
+ * wildcards decide, and the phase has a single outgoing edge carrying them.
+ */
+export interface PhaseEdge {
+  id: string
+  fromPhaseId: string
+  toPhaseId: string
+  fromRank: number
+  toRank: number
+}
+
+export type PhaseStatus = "pending" | "active" | "done"
+
+export interface TournamentPhase {
+  id: string
+  /** The user's own label. Never passed through i18n. */
+  name: string
+  kind: PhaseKind
+  /**
+   * Marks this phase as the one that decides the tournament. More than one
+   * terminal phase is allowed (a main cup plus a consolation bracket), so
+   * which of them crowns the winner has to be said explicitly.
+   */
+  isFinal?: boolean
+  /** Blueprint canvas position. Presentation only. */
+  pos: { x: number; y: number }
+  config: PhaseConfig
+  /** Teams seeded into this phase. Empty until its sources have resolved. */
+  teamIds: string[]
+  status: PhaseStatus
+
+  // Fixture containers — exactly the one that fits `kind` is set.
+  groups?: Group[]
+  /** league and swiss both live here, exactly as the top-level format does. */
+  league?: League
+  rounds?: Round[]
+  thirdPlaceMatch?: Match
+}
+
 // ─── Tournament ──────────────────────────────────────────────────
-export type TournamentFormat = "bracket" | "group+bracket" | "league" | "swiss"
+export type TournamentFormat = "bracket" | "group+bracket" | "league" | "swiss" | "custom"
 
 export type PlayoffSeedMode = "cross" | "no-same-group" | "random" | "manual"
 export type DrawType = "random" | "seeded" | "manual"
@@ -291,6 +413,12 @@ export interface Tournament {
   winPoints?: number
   drawPoints?: number
   lossPoints?: number
+
+  // custom format (only when format === "custom"): the phase graph. The
+  // top-level `rounds`/`groups`/`league` stay empty — every fixture lives
+  // inside a phase instead.
+  phases?: TournamentPhase[]
+  phaseEdges?: PhaseEdge[]
 
   // one team run by the user rather than simulated (see ManagerState)
   manager?: ManagerState

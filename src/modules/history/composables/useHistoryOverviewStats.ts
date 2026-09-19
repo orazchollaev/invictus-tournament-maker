@@ -1,6 +1,7 @@
 import { computed, type ComputedRef } from "vue"
 import type { Tournament } from "@/modules/tournament/types"
 import type { HistoryStats } from "../types"
+import { playedMatches } from "@/engine"
 import { useTeamRef } from "./useTeamRef"
 
 /** A streak shorter than this is not worth reporting. */
@@ -52,48 +53,18 @@ export function useHistoryOverviewStats(completedSeasons: ComputedRef<Tournament
     }
 
     /**
-     * A two-legged tie is two matches, so each played leg is counted separately.
-     * Counting the tie once while adding both legs' goals inflated `avgGoals` and
-     * disagreed with useHistoryTeamStats, which has always counted per leg.
+     * Every played leg of every season, from the match iterator rather than by
+     * visiting each container: a two-legged tie already arrives as two entries
+     * with the second one's home/away flipped, byes are already excluded, and a
+     * custom tournament's phases are walked like anything else. The version that
+     * listed the containers by hand missed those phases entirely.
      */
-    function trackTie(m: Tournament["rounds"][number]["matches"][number]) {
-      if (!m.result) return
-      totalMatches++
-      totalGoals += m.result.home + m.result.away
-      trackLeg(m.homeId, m.awayId, m.result.home, m.result.away)
-
-      if (m.leg2Result) {
-        totalMatches++
-        totalGoals += m.leg2Result.home + m.leg2Result.away
-        trackLeg(m.awayId, m.homeId, m.leg2Result.home, m.leg2Result.away)
-      }
-    }
-
     for (const t of completedSeasons.value) {
-      for (const group of t.groups ?? []) {
-        for (const m of group.matches) {
-          if (!m.result) continue
-          totalMatches++
-          totalGoals += m.result.home + m.result.away
-          trackLeg(m.homeId, m.awayId, m.result.home, m.result.away)
-        }
-      }
-
-      for (const round of t.rounds) {
-        for (const m of round.matches) trackTie(m)
-      }
-      if (t.thirdPlaceMatch) trackTie(t.thirdPlaceMatch)
-
-      const leagues = [...(t.league ? [t.league] : []), ...(t.tiers ?? []).map((x) => x.league)]
-      for (const league of leagues) {
-        for (const matchday of league.matchdays) {
-          for (const m of matchday.matches) {
-            if (!m.result) continue
-            totalMatches++
-            totalGoals += m.result.home + m.result.away
-            trackLeg(m.homeId, m.awayId, m.result.home, m.result.away)
-          }
-        }
+      for (const e of playedMatches(t)) {
+        if (!e.homeId || !e.awayId || !e.result) continue
+        totalMatches++
+        totalGoals += e.result.home + e.result.away
+        trackLeg(e.homeId, e.awayId, e.result.home, e.result.away)
       }
     }
 

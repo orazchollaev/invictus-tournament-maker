@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from "vue"
+import { computed, ref, watch } from "vue"
 import { useRouter } from "vue-router"
 import { useI18n } from "vue-i18n"
 import { Swiper, SwiperSlide } from "swiper/vue"
@@ -14,8 +14,11 @@ import { ManualDraw, PlayoffManualDraw } from "@/modules/tournament/components/d
 import { TournamentStats } from "@/modules/tournament/components/stats"
 import { DrawCeremony } from "@/modules/tournament/components/draw-ceremony"
 import { AppModal, AppSubTabBar } from "@/components/ui"
-import { DetailHeader, DetailPhaseTabs, DetailMultiTierModal } from "../components/detail"
+import { DetailHeader, DetailPhaseTabs, DetailMultiTierModal, phaseIdOf } from "../components/detail"
+import { advancablePhases } from "@/engine"
+import { phaseTournamentView } from "../utils/phaseView"
 import { ManagerTeamPanel, ManagerTeamPickerModal } from "../components/manager"
+import { PhasePanel } from "../components/phases"
 import { hasPendingManagedFixture } from "../utils/managerFixtures"
 import { useTournamentDetail } from "../composables/useTournamentDetail"
 import { useTournamentTabs } from "../composables/useTournamentTabs"
@@ -75,6 +78,8 @@ const {
   isMultiTier,
   activeTierIdx,
   activeTab,
+  isCustom,
+  orderedPhases,
   groupSubTab,
   isGroupFormat,
   hasWildcards,
@@ -117,6 +122,7 @@ const {
   closeSeasonModal,
   handleQuickGroupDraw,
   onAdvance,
+  onAdvancePhase,
   handlePlayoffManualConfirm,
 } = useTournamentCeremonies(tournament, allTeams, startNewSeason, startNewLeagueSeason, isMultiTier)
 
@@ -124,9 +130,51 @@ const allGroupsDone = computed(
   () => tournament.value?.groups?.every((g) => g.matches.every((m) => m.result !== null)) ?? false
 )
 
-const showAdvanceButton = computed(
-  () => isGroupFormat.value && !tournament.value?.groupsDone && allGroupsDone.value
+
+
+
+
+/** Phases whose sources are all finished and which have not been drawn yet. */
+const readyPhases = computed(() => (tournament.value ? advancablePhases(tournament.value) : []))
+
+function advanceNextPhase() {
+  const next = readyPhases.value[0]
+  if (next) onAdvancePhase(next.id)
+}
+
+const showAdvanceButton = computed(() => {
+  if (isCustom.value) return readyPhases.value.length > 0
+  return isGroupFormat.value && !tournament.value?.groupsDone && allGroupsDone.value
+})
+
+/** Phases with a fixture to show — a pending one has nothing yet. */
+const startedPhases = computed(() => orderedPhases.value.filter((p) => p.status !== "pending"))
+
+const fixturePhaseId = ref("")
+watch(
+  startedPhases,
+  (phases) => {
+    // Follow the graph forward as phases open up, unless the user has picked
+    // one themselves and it is still there.
+    if (phases.some((p) => p.id === fixturePhaseId.value)) return
+    const live = phases.find((p) => p.status !== "done") ?? phases[phases.length - 1]
+    fixturePhaseId.value = live?.id ?? ""
+  },
+  { immediate: true }
 )
+
+/** Only the phase whose fixtures are on screen — built here rather than for
+ *  every phase at once, so a result in one does not rebuild the others. */
+const fixturePhaseView = computed(() => {
+  const t = tournament.value
+  const phase = t?.phases?.find((x) => x.id === fixturePhaseId.value)
+  return t && phase ? phaseTournamentView(t, phase) : undefined
+})
+
+const advanceLabel = computed(() => {
+  const next = readyPhases.value[0]
+  return next ? trns("tournament.phases.advance", { phase: next.name }) : undefined
+})
 
 const showStartPlayoffButton = computed(
   () =>
@@ -151,6 +199,7 @@ const showStartPlayoffButton = computed(
       <DetailHeader
         :is-finished="isFinished"
         :show-advance="showAdvanceButton"
+        :advance-label="advanceLabel"
         :show-start-playoff="showStartPlayoffButton"
         :seasons="seasons"
         :current-season-id="tournament.id"
@@ -161,7 +210,7 @@ const showStartPlayoffButton = computed(
         @open-manager-picker="showManagerPicker = true"
         @simulate-all="store.simulateTournament(tournament!.id)"
         @open-settings="router.push(`/tournaments/${tournament!.id}/settings`)"
-        @advance="onAdvance"
+        @advance="isCustom ? advanceNextPhase() : onAdvance()"
         @start-playoff="onStartLeaguePlayoff"
         @switch-season="switchSeason"
       />
@@ -173,6 +222,7 @@ const showStartPlayoffButton = computed(
         :is-swiss-format="isSwissFormat"
         :bracket-allowed="bracketAllowed"
         :manager-team-name="managedTeamName"
+        :phases="isCustom ? orderedPhases.map((p) => ({ id: p.id, name: p.name })) : undefined"
         @change-tab="changeTab"
       />
 
@@ -194,6 +244,16 @@ const showStartPlayoffButton = computed(
             <template v-if="isTabRendered(tab)">
               <div v-if="tab === 'manager'" class="tab-panel">
                 <ManagerTeamPanel :tournament-id="tournament.id" />
+              </div>
+              <!-- Custom format: one slide per phase. The panel resolves the
+                   phase itself, so this page asks for it once instead of a
+                   dozen times, and each phase re-renders on its own. -->
+              <div v-else-if="phaseIdOf(tab)" class="tab-panel">
+                <PhasePanel
+                  :tournament="tournament"
+                  :phase-id="phaseIdOf(tab)!"
+                  :teams="allTeams"
+                />
               </div>
               <div v-else-if="tab === 'league'" class="tab-panel">
                 <template v-if="isMultiTier && tournament.tiers">
@@ -259,7 +319,27 @@ const showStartPlayoffButton = computed(
                 </div>
               </div>
               <div v-else-if="tab === 'fixtures'" class="tab-panel">
-                <FixturesPanel :tournament="tournament" :teams="allTeams" />
+                <!-- Custom: one phase's fixtures at a time, picked the same way
+                     a multi-tier league picks a division. -->
+                <template v-if="isCustom">
+                  <div v-if="startedPhases.length > 1" class="gs-subtab-row">
+                    <AppSubTabBar
+                      v-model="fixturePhaseId"
+                      :options="startedPhases.map((p) => ({ value: p.id, label: p.name }))"
+                    />
+                  </div>
+                  <FixturesPanel
+                    v-if="fixturePhaseView"
+                    :key="fixturePhaseId"
+                    :tournament="fixturePhaseView"
+                    :teams="allTeams"
+                    :phase-id="fixturePhaseId"
+                  />
+                  <div v-else class="locked-panel">
+                    {{ trns("tournament.phases.notStarted") }}
+                  </div>
+                </template>
+                <FixturesPanel v-else :tournament="tournament" :teams="allTeams" />
               </div>
               <div v-else-if="tab === 'bracket'" class="tab-panel">
                 <BracketPanel

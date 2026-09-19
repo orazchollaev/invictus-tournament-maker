@@ -13,35 +13,22 @@ import {
   randomSeed,
   buildEmptyBracketRounds,
   applyLegModes,
+  playedMatches,
 } from "@/engine"
 
 export function useDrawActions(tournaments: Ref<Tournament[]>, getTeams: () => Team[]) {
+  /**
+   * Whether a ball has been kicked yet — the gate on redrawing a fixture and on
+   * taking charge of a team.
+   *
+   * Asked through the match iterator rather than by walking the containers by
+   * hand: the hand-written version knew about four of them, so a custom
+   * tournament (whose fixtures live inside its phases) always answered "no
+   * results" and let a draw be rebuilt over played matches.
+   */
   function hasAnyResults(tournamentId: string): boolean {
     const t = tournaments.value.find((t) => t.id === tournamentId)
-    if (!t) return false
-    if (t.tiers) {
-      for (const tier of t.tiers) {
-        for (const md of tier.league.matchdays) {
-          if (md.matches.some((m) => m.result !== null)) return true
-        }
-      }
-    }
-    if (t.league) {
-      for (const md of t.league.matchdays) {
-        if (md.matches.some((m) => m.result !== null)) return true
-      }
-    }
-    if (t.groups) {
-      for (const g of t.groups) {
-        if (g.matches.some((m) => m.result !== null)) return true
-      }
-    }
-    for (const round of t.rounds) {
-      for (const match of round.matches) {
-        if (match.result && match.homeId && match.awayId) return true
-      }
-    }
-    return false
+    return !!t && playedMatches(t).length > 0
   }
 
   function rebuildDraw(

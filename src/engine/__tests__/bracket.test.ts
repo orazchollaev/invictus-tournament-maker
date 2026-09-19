@@ -13,8 +13,8 @@ import {
   resolveRoundLegMode,
   spreadByeSlots,
   stageForDistance,
-  updateThirdPlaceSlots,
 } from "../bracket"
+import { updateThirdPlaceSlotsIn } from "../knockoutOps"
 import { createTournament, seedBracketFromGroups } from "../tournament"
 import { makeTeams, playGroupByRule, powerWins } from "./helpers"
 
@@ -361,7 +361,7 @@ describe("seedBracketFromGroups", () => {
   })
 })
 
-describe("updateThirdPlaceSlots", () => {
+describe("updateThirdPlaceSlotsIn", () => {
   it("fills the third-place match with the semifinal losers", () => {
     const t = {
       format: "bracket",
@@ -374,7 +374,7 @@ describe("updateThirdPlaceSlots", () => {
     t.rounds[0].matches[1].result = { home: 1, away: 0 } // t3 beats t4
     propagateWinners(t.rounds, makeTeams(4))
 
-    updateThirdPlaceSlots(t)
+    updateThirdPlaceSlotsIn(t)
     expect(t.thirdPlaceMatch!.homeId).toBe("t2")
     expect(t.thirdPlaceMatch!.awayId).toBe("t4")
   })

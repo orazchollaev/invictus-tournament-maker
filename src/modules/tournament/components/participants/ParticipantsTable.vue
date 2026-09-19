@@ -19,7 +19,13 @@ const { toggleSort, sortIcon, sortedRows } = useParticipantRows(
   toRef(props, "teams")
 )
 
-const isGroupFormat = computed(() => props.tournament.format === "group+bracket")
+// The Group column exists wherever a group stage does — including inside a
+// custom tournament's phases, where the groups are not on the tournament itself.
+const isGroupFormat = computed(
+  () =>
+    props.tournament.format === "group+bracket" ||
+    (props.tournament.phases ?? []).some((p) => !!p.groups?.length)
+)
 
 const columns = computed(() => {
   const cols: { key: SortKey; label: string; cls: string }[] = [

@@ -118,6 +118,12 @@ export function useTournamentSettingsDraft(
   const isLeagueFormat = computed(() => !!original.value && isLeagueLike(original.value))
   const isSwissFormat = computed(() => !!original.value && isSwiss(original.value))
   const isGroupFormat = computed(() => original.value?.format === "group+bracket")
+  /**
+   * The phase graph is fixed at creation, so this page only ever shows it.
+   * Every other format flag above is false for a custom tournament, which is
+   * what keeps the fixed-format config cards off the page on its own.
+   */
+  const isCustomFormat = computed(() => original.value?.format === "custom")
   const isMultiTier = computed(() => (original.value?.tiers?.length ?? 0) > 1)
   const usesStandings = computed(() => isLeagueFormat.value || isGroupFormat.value)
 
@@ -315,6 +321,7 @@ export function useTournamentSettingsDraft(
   }
 
   return {
+    isCustomFormat,
     // draft fields
     name,
     teamIds,

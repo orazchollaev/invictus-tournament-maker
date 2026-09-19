@@ -1,0 +1,480 @@
+/* Shared by every component in this folder (the editor, the canvas, the node
+   and the two sheets), so it lives here rather than in five scoped blocks.
+   Vue Flow's own stylesheet is imported from PhaseGraphCanvas.vue; everything
+   below either overrides one of its variables or styles our own markup. */
+
+.phase-editor {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  padding: var(--sp-2);
+}
+
+.phase-palette {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-1);
+}
+
+.phase-editor-help {
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+/* ── Canvas ──────────────────────────────────────────────────────
+   A fixed height because the graph pans and zooms inside it: letting it grow
+   with its content would put the canvas itself on the page scroll, and the two
+   gestures would fight. Shorter on a phone, where the modal is nearly
+   full-height already. */
+.phase-canvas {
+  height: 58vh;
+  min-height: 300px;
+  border: 2px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  background: var(--bg-elevated);
+  overflow: hidden;
+}
+
+@media (max-width: 600px) {
+  .phase-canvas {
+    height: 68vh;
+    min-height: 260px;
+  }
+}
+
+.phase-canvas :deep(.vue-flow__background) {
+  color: var(--border-light);
+}
+
+.phase-canvas :deep(.vue-flow__edge-path) {
+  stroke: var(--accent);
+  stroke-width: 2;
+}
+
+.phase-canvas :deep(.phase-edge--error .vue-flow__edge-path) {
+  stroke: var(--danger);
+}
+
+.phase-canvas :deep(.vue-flow__edge-text) {
+  fill: var(--text);
+  font-family: var(--font-ui);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.phase-canvas :deep(.vue-flow__edge-textbg) {
+  fill: var(--bg);
+}
+
+.phase-canvas :deep(.vue-flow__edge) {
+  cursor: pointer;
+}
+
+.phase-canvas :deep(.vue-flow__controls) {
+  box-shadow: var(--shadow-sm);
+}
+
+.phase-canvas :deep(.vue-flow__controls-button) {
+  background: var(--bg);
+  border-bottom: 1px solid var(--border-light);
+  fill: var(--text-muted);
+}
+
+.phase-canvas :deep(.vue-flow__controls-button:hover) {
+  background: var(--bg-elevated);
+}
+
+/* ── Node ────────────────────────────────────────────────────────── */
+.phase-node {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 182px;
+  box-sizing: border-box;
+  padding: var(--sp-2);
+  background: var(--bg);
+  border: 2px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  font-family: var(--font-ui);
+  box-shadow: var(--shadow-sm);
+}
+
+.phase-node--final {
+  border-color: var(--accent);
+}
+
+.phase-node--error {
+  border-color: var(--danger);
+}
+
+.phase-node-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.phase-node-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  color: var(--accent);
+}
+
+.phase-node-name {
+  flex: 1;
+  min-width: 0;
+  padding: 2px 4px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.phase-node-name:hover:not(.phase-node-name--static) {
+  border-color: var(--border-light);
+}
+
+.phase-node-name:focus {
+  outline: none;
+  border-color: var(--accent);
+  background: var(--bg-elevated);
+}
+
+.phase-node-name--static {
+  border-color: transparent;
+}
+
+.phase-node-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 6px;
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.phase-node-foot {
+  display: flex;
+  gap: 4px;
+}
+
+.phase-node-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 6px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.phase-node-action:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.phase-node-action:disabled {
+  cursor: default;
+  opacity: 0.5;
+}
+
+.phase-node-action--on {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  color: var(--accent);
+}
+
+.phase-node-action--remove {
+  flex-shrink: 0;
+  padding: 3px;
+  background: transparent;
+  border-color: transparent;
+}
+
+.phase-node-action--remove:hover {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+.phase-node-errors {
+  margin: 0;
+  padding-inline-start: var(--sp-2);
+  color: var(--danger);
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+/* The connection ports. A 10px dot was a fine mouse target and a miserable
+   finger one, so the dot is bigger and its *hit area* bigger still, via the
+   centred pseudo-element the tap-target note in variables.css describes. The
+   two ports sit on opposite edges of the node and the node's own buttons are
+   along the bottom, so nothing here overlaps another control. */
+.phase-handle {
+  width: 16px;
+  height: 16px;
+  background: var(--accent);
+  border: 3px solid var(--bg);
+  box-shadow: var(--shadow-sm);
+}
+
+.phase-handle::after {
+  content: "";
+  position: absolute;
+  inset: 50% auto auto 50%;
+  width: max(100%, 34px);
+  height: max(100%, 34px);
+  transform: translate(-50%, -50%);
+  border-radius: var(--radius-pill);
+}
+
+/* A finger has no hover to aim with, so the port grows to the full tap target
+   and the node's buttons grow with it. */
+@media (pointer: coarse) {
+  .phase-handle {
+    width: 20px;
+    height: 20px;
+  }
+
+  .phase-handle::after {
+    width: max(100%, var(--tap-min));
+    height: max(100%, var(--tap-min));
+  }
+
+  .phase-node {
+    width: 210px;
+    gap: var(--sp-2);
+  }
+
+  .phase-node-action {
+    min-height: 30px;
+    padding: 6px 8px;
+    font-size: 11px;
+  }
+
+  .phase-node-action--remove {
+    min-width: 30px;
+    padding: 6px;
+  }
+
+  .phase-node-name {
+    padding: 5px 6px;
+    font-size: 13px;
+  }
+}
+
+/* Dragging a connection out of a port is the one gesture that has to land, so
+   the port stays visible while it is happening rather than only on hover. */
+.phase-canvas :deep(.vue-flow__handle-connecting),
+.phase-canvas :deep(.vue-flow__handle-valid) {
+  background: var(--success, var(--accent));
+}
+
+/* ── Sheets ──────────────────────────────────────────────────────
+   AppSheet gives its default slot no padding — that is the caller's job, the
+   same way every other sheet in the app wraps its content in a padded body and
+   its actions in a padded footer. */
+.phase-config,
+.phase-sheet-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  min-width: 0;
+  /* A flex child will not shrink below its content without this, so without it
+     the sheet grows past its own max-height instead of the body scrolling. */
+  min-height: 0;
+  padding: var(--sp-3);
+  overflow-y: auto;
+}
+
+.phase-sheet-footer {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-2) var(--sp-3) calc(var(--sp-2) + var(--safe-bottom));
+  border-top: 1px solid var(--border-light);
+  background: var(--bg);
+  flex-shrink: 0;
+}
+
+.phase-sheet-footer > * {
+  flex: 1;
+}
+
+.phase-config-note {
+  margin: var(--sp-1) 0 0;
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+.phase-config-note--lead {
+  margin-top: 0;
+  color: var(--text);
+}
+
+/* ── First-run walkthrough ───────────────────────────────────────── */
+.phase-guide {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--sp-2);
+  padding: var(--sp-2);
+  background: color-mix(in srgb, var(--accent) 7%, var(--bg-elevated));
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--border-light));
+  border-radius: var(--radius-lg);
+}
+
+.phase-guide-lead {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.phase-guide-steps {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: none;
+}
+
+.phase-guide-step {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-1);
+  min-width: 0;
+}
+
+.phase-guide-num {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 17px;
+  height: 17px;
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+  color: var(--bg);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.phase-guide-icon {
+  flex-shrink: 0;
+  margin-top: 1px;
+  color: var(--accent);
+}
+
+.phase-guide-text {
+  font-size: 11.5px;
+  line-height: 1.45;
+  color: var(--text);
+  min-width: 0;
+}
+
+.phase-guide-example {
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+.phase-guide-reopen {
+  padding: 0;
+  background: none;
+  border: none;
+  color: var(--accent);
+  cursor: pointer;
+  font: inherit;
+  text-decoration: underline;
+}
+
+/* ── Connection list ─────────────────────────────────────────────
+   The canvas shows the shape; this shows the detail, and is the only way to
+   reach a connection that needs no aim. */
+.phase-links {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+}
+
+.phase-links-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.phase-links-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.phase-link {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-1);
+  padding: var(--sp-1);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius);
+  min-width: 0;
+}
+
+.phase-link-route {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.phase-link-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.phase-link-arrow {
+  flex-shrink: 0;
+  color: var(--accent);
+}
+
+.phase-link-carried {
+  flex-shrink: 0;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.phase-errors {
+  margin: 0;
+  padding-inline-start: var(--sp-3);
+  color: var(--danger);
+  font-size: 11px;
+  line-height: 1.5;
+}

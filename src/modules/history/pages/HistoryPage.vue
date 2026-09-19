@@ -68,6 +68,7 @@ function formatLabel(format: string) {
   if (format === "group+bracket") return t("tournaments.format.groupsKo")
   if (format === "league") return t("tournaments.format.league")
   if (format === "swiss") return t("tournaments.format.swiss")
+  if (format === "custom") return t("tournaments.format.custom")
   return t("tournaments.format.bracket")
 }
 </script>

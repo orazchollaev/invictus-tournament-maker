@@ -8,7 +8,14 @@ export {
   computeCrossDrawPlan,
   swissPlan,
 } from "./drawCeremony"
-export { isSwiss, isPureLeague, isLeagueLike, isGroupFormat, isBracketOnly } from "./formats"
+export {
+  isSwiss,
+  isPureLeague,
+  isLeagueLike,
+  isGroupFormat,
+  isBracketOnly,
+  isCustomFormat,
+} from "./formats"
 export {
   SWISS_MIN_TEAMS,
   buildSwissPots,
@@ -121,12 +128,33 @@ export {
   buildBracketRounds,
   buildEmptyBracketRounds,
   buildPureBracket,
-  updateThirdPlaceSlots,
   stageForDistance,
   resolveRoundLegMode,
   applyLegModes,
   applyThirdPlaceLegMode,
 } from "./bracket"
+export {
+  updateThirdPlaceSlotsIn,
+  knockoutWinnerId,
+  knockoutComplete,
+  clearThirdPlaceTie,
+  clearDownstreamFrom,
+  settleKnockout,
+  commitKnockoutResult,
+  clearKnockoutResult,
+  setKnockoutLeg2,
+  clearKnockoutLeg2,
+  decideLeg2Result,
+  simulateKnockoutLeg1,
+  simulateKnockoutLeg2,
+  simulateKnockoutTie,
+  simulateKnockoutRound,
+  simulateKnockoutAll,
+  simulateThirdPlaceTie,
+  hasTieFrom,
+} from "./knockoutOps"
+export type { SimulateAllOptions } from "./knockoutOps"
+export type { ScoringHost, GroupHost, LeagueHost, KnockoutHost } from "./hosts"
 export {
   buildGroupFixture,
   recalcStandings,
@@ -178,7 +206,59 @@ export {
   computeLeaguePlayoffPlan,
 } from "./leaguePlayoff"
 export { forEachMatch, allMatches, playedMatches, matchesForTeam, isBye } from "./matchIterator"
-export type { MatchEntry, MatchSource } from "./matchIterator"
+export type { MatchEntry, MatchSource, PhaseRef } from "./matchIterator"
+export {
+  PHASE_MIN_TEAMS,
+  incomingEdges,
+  outgoingEdges,
+  entryPhases,
+  terminalPhases,
+  findPhase,
+  topoOrder,
+  edgeSize,
+  edgeIntake,
+  groupOutputCount,
+  phaseOutputCount,
+  groupQualifierIds,
+  phaseIntakeSizes,
+  validatePhaseGraph,
+  isPhaseGraphValid,
+  phaseScoring,
+  groupHostOf,
+  leagueHostOf,
+  knockoutHostOf,
+  buildPhase,
+  resetPhase,
+  clearPhaseResults,
+  entryPhaseDrawOrder,
+  recalcPhase,
+  phaseStandingIds,
+  isPhaseComplete,
+  resolvePhaseQualifiers,
+  canAdvanceTo,
+  advancablePhases,
+  phaseDestinations,
+  seedPhaseFrom,
+  incomingQualifierIds,
+  refreshPhaseStatuses,
+  finalPhase,
+  customWinnerId,
+  isCustomFinished,
+  phaseOfMatch,
+} from "./customPhases"
+export type { PhaseGraphError } from "./customPhases"
+export {
+  defaultPhaseConfig,
+  createPhase,
+  createPhaseEdge,
+  createCustomTournament,
+  clonePhaseGraph,
+} from "./phaseFactory"
+export type {
+  PhaseScoringDefaults,
+  CreatePhaseOptions,
+  CreateCustomOptions,
+} from "./phaseFactory"
 export {
   buildLineup,
   generateMatchStats,

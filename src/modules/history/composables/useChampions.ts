@@ -1,9 +1,44 @@
 import { computed, type ComputedRef } from "vue"
-import type { Tournament } from "@/modules/tournament/types"
+import type { Match, Tournament } from "@/modules/tournament/types"
 import type { ChampEntry, FinalEntry } from "../types"
 import { buildScore } from "../utils/matchFormat"
 import { useTeamRef } from "./useTeamRef"
-import { isLeagueLike } from "@/engine"
+import { finalPhase, isCustomFormat, isLeagueLike, phaseStandingIds } from "@/engine"
+
+/**
+ * The tie that decided the title, when one was played.
+ *
+ * A custom tournament keeps its fixtures inside its phases, so the title match
+ * is the final of whichever phase the user marked as the final — and when that
+ * phase is a table, there is no match at all and the runner-up comes from the
+ * standings instead.
+ */
+function decidingMatch(t: Tournament): Match | undefined {
+  if (isCustomFormat(t)) {
+    const phase = finalPhase(t)
+    if (phase?.kind !== "knockout" || !phase.rounds?.length) return undefined
+    return phase.rounds[phase.rounds.length - 1].matches[0]
+  }
+  return t.rounds[t.rounds.length - 1]?.matches[0]
+}
+
+/** Whether the title was settled by a table rather than by a final. */
+function settledByTable(t: Tournament): boolean {
+  if (isCustomFormat(t)) return finalPhase(t)?.kind !== "knockout"
+  return isLeagueLike(t) && (!!t.league || !!t.tiers?.length)
+}
+
+/** Second place, read off whichever structure decided the title. */
+function runnerUpOf(t: Tournament, winnerId: string): string | null | undefined {
+  const match = decidingMatch(t)
+  if (match) return match.homeId === winnerId ? match.awayId : match.homeId
+  if (isCustomFormat(t)) {
+    const phase = finalPhase(t)
+    return phase ? phaseStandingIds(phase)[1] : undefined
+  }
+  const topStandings = t.tiers?.length ? t.tiers[0].league.standings : t.league?.standings
+  return topStandings?.[1]?.teamId
+}
 
 /** Title/runner-up tallies and the season-by-season list of finals. */
 export function useChampions(completedSeasons: ComputedRef<Tournament[]>) {
@@ -25,7 +60,7 @@ export function useChampions(completedSeasons: ComputedRef<Tournament[]>) {
 
       // Swiss counts as a league here: its champion comes from one table
       // (plus an optional playoff final), never from a group stage.
-      const isLeague = isLeagueLike(t) && (!!t.league || !!t.tiers?.length)
+      const isLeague = settledByTable(t)
 
       const w = map.get(wId)
       if (w) {
@@ -33,19 +68,7 @@ export function useChampions(completedSeasons: ComputedRef<Tournament[]>) {
         if (!isLeague) w.finals++
       } else map.set(wId, { wins: 1, finals: isLeague ? 0 : 1 })
 
-      if (isLeague) {
-        // Playoff league → runner-up is the final's loser; otherwise the table's 2nd place.
-        const playoffFinal = t.rounds[t.rounds.length - 1]?.matches[0]
-        if (playoffFinal?.result) {
-          countFinal(playoffFinal.homeId === wId ? playoffFinal.awayId : playoffFinal.homeId, wId)
-        } else {
-          const topStandings = t.tiers?.length ? t.tiers[0].league.standings : t.league?.standings
-          countFinal(topStandings?.[1]?.teamId, wId)
-        }
-      } else {
-        const fm = t.rounds[t.rounds.length - 1]?.matches[0]
-        if (fm) countFinal(fm.homeId === wId ? fm.awayId : fm.homeId, wId)
-      }
+      countFinal(runnerUpOf(t, wId), wId)
     }
 
     return [...map.entries()]
@@ -55,9 +78,9 @@ export function useChampions(completedSeasons: ComputedRef<Tournament[]>) {
 
   const finals = computed<FinalEntry[]>(() =>
     completedSeasons.value.map((t) => {
-      const fm = t.rounds[t.rounds.length - 1]?.matches[0]
+      const fm = decidingMatch(t)
       const champ = teamRef(t.winnerId)
-      const runner = teamRef(fm ? (fm.homeId === t.winnerId ? fm.awayId : fm.homeId) : null)
+      const runner = teamRef(t.winnerId ? (runnerUpOf(t, t.winnerId) ?? null) : null)
       return {
         season: t.season,
         champName: champ.name,

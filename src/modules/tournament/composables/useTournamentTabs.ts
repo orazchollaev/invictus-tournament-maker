@@ -1,9 +1,9 @@
 import { ref, computed, watch, nextTick, onScopeDispose, type ComputedRef } from "vue"
 import { useRoute } from "vue-router"
 import type { Swiper as SwiperInstance } from "swiper/types"
-import { getLeaguePlayoffData, isLeagueLike } from "@/engine"
-import type { Tournament } from "@/modules/tournament/types"
-import type { MainTab } from "../components/detail"
+import { getLeaguePlayoffData, isCustomFormat, isLeagueLike, topoOrder } from "@/engine"
+import type { Tournament, TournamentPhase } from "@/modules/tournament/types"
+import { phaseTab, type MainTab } from "../components/detail"
 
 export function useTournamentTabs(tournament: ComputedRef<Tournament | undefined>) {
   const route = useRoute()
@@ -18,8 +18,24 @@ export function useTournamentTabs(tournament: ComputedRef<Tournament | undefined
     }
   )
 
+  const isCustom = computed(() => !!tournament.value && isCustomFormat(tournament.value))
+
+  /** Phases in the order the graph runs, so the tabs read left to right. */
+  const orderedPhases = computed<TournamentPhase[]>(() => {
+    const t = tournament.value
+    if (!t?.phases?.length) return []
+    return topoOrder(t.phases, t.phaseEdges ?? []) ?? t.phases
+  })
+
   function defaultTab(): MainTab {
     const fmt = tournament.value?.format
+    if (fmt === "custom") {
+      // The first phase still unfinished, or the last one once it is all over —
+      // the same "where is the user now" rule the fixtures picker uses.
+      const phases = orderedPhases.value
+      const live = phases.find((p) => p.status !== "done") ?? phases[phases.length - 1]
+      return live ? phaseTab(live.id) : "fixtures"
+    }
     if (fmt === "league" || fmt === "swiss") return "league"
     if (fmt === "group+bracket") return "groups"
     return "bracket"
@@ -66,6 +82,11 @@ export function useTournamentTabs(tournament: ComputedRef<Tournament | undefined
   const visibleTabs = computed<MainTab[]>(() => {
     const tabs: MainTab[] = []
     if (tournament.value?.manager) tabs.push("manager")
+    if (isCustom.value) {
+      for (const phase of orderedPhases.value) tabs.push(phaseTab(phase.id))
+      tabs.push("fixtures", "stats", "participants")
+      return tabs
+    }
     if (isLeagueFormat.value) {
       tabs.push("league")
       if (bracketAllowed.value) tabs.push("bracket")
@@ -166,6 +187,17 @@ export function useTournamentTabs(tournament: ComputedRef<Tournament | undefined
     }
   )
 
+  // Advancing into a phase is the custom format's equivalent of a bracket being
+  // seeded: the stage the user pressed for has just appeared, so show it.
+  watch(
+    () => orderedPhases.value.filter((p) => p.status === "active").map((p) => p.id),
+    (activeIds, previous) => {
+      if (!isCustom.value) return
+      const fresh = activeIds.find((id) => !(previous ?? []).includes(id))
+      if (fresh) changeTab(phaseTab(fresh))
+    }
+  )
+
   watch(
     () => leaguePlayoffData.value?.started,
     (started) => {
@@ -193,6 +225,8 @@ export function useTournamentTabs(tournament: ComputedRef<Tournament | undefined
     activeTierIdx,
     activeTab,
     groupSubTab,
+    isCustom,
+    orderedPhases,
     isGroupFormat,
     hasWildcards,
     isLeagueFormat,

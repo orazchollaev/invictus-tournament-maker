@@ -2,10 +2,12 @@ import type { Ref } from "vue"
 import type {
   Tournament,
   LegMode,
+  PhaseEdge,
   PlayoffSeedMode,
   DrawType,
   Tiebreaker,
   KnockoutStage,
+  TournamentPhase,
 } from "../types"
 import type { Team } from "@/modules/teams/types"
 import {
@@ -15,9 +17,16 @@ import {
   createSwissTournament,
   isLeagueLike,
   isSwiss,
+  isCustomFormat,
+  createCustomTournament,
+  clonePhaseGraph,
+  entryPhases,
+  resetPhase,
+  clearPhaseResults,
+  isCustomFinished,
   randomSeed,
   uid,
-  updateThirdPlaceSlots,
+  updateThirdPlaceSlotsIn,
   recalcStandings,
   recalcLeagueStandings,
   applyThirdPlaceLegMode,
@@ -134,6 +143,37 @@ export function useCrudActions(
     return t.id
   }
 
+  /**
+   * A custom tournament from a phase graph the user drew. The graph is
+   * validated inside the factory, which returns null rather than a tournament
+   * that cannot be played — so does this, and the caller keeps its button
+   * disabled on the same check.
+   */
+  function createCustom(
+    name: string,
+    teamIds: string[],
+    graph: { phases: TournamentPhase[]; phaseEdges: PhaseEdge[] },
+    /** The order the entry phase's draw ceremony produced, when one was run. */
+    entryOrderedIds?: string[]
+  ): string | undefined {
+    const allTeams = getTeams()
+    const selected = allTeams.filter((t) => teamIds.includes(t.id))
+    const season =
+      tournaments.value
+        .filter((t) => t.name === name)
+        .reduce((max, t) => Math.max(max, t.season), 0) + 1
+    const t = createCustomTournament(name, selected, {
+      phases: graph.phases,
+      phaseEdges: graph.phaseEdges,
+      season,
+      entryOrderedIds,
+    })
+    if (!t) return undefined
+    tournaments.value.push(t)
+    active.value = t.id
+    return t.id
+  }
+
   function newSeason(
     id: string,
     seeded = false,
@@ -152,6 +192,27 @@ export function useCrudActions(
       tournaments.value
         .filter((tr) => tr.name === t.name)
         .reduce((max, tr) => Math.max(max, tr.season), 0) + 1
+
+    // Custom new season — the graph the user designed, replayed from scratch.
+    // No promotion or relegation: a custom graph has no notion of tiers, and
+    // guessing one would change a shape the user set deliberately.
+    if (isCustomFormat(t)) {
+      const graph = clonePhaseGraph(t)
+      const newT = createCustomTournament(t.name, selected, {
+        phases: graph.phases,
+        phaseEdges: graph.phaseEdges,
+        season,
+        // The draw ceremony's order, when one ran. Without it the entry phase
+        // draws itself, which for a seeded phase means a fresh shuffle within
+        // the power bands rather than a repeat of last season.
+        entryOrderedIds: orderedIds?.filter((id) => effectiveTeamIds.includes(id)),
+      })
+      if (!newT) return
+      carryManager(t, newT)
+      tournaments.value.push(newT)
+      active.value = newT.id
+      return newT.id
+    }
 
     // Swiss new season — same shape, fresh draw (new seed), results cleared.
     if (isSwiss(t) && t.swiss) {
@@ -239,7 +300,7 @@ export function useCrudActions(
       newT.hasThirdPlace = true
       newT.thirdPlaceMatch = { id: uid(), homeId: null, awayId: null, result: null }
       applyThirdPlaceLegMode(newT.thirdPlaceMatch, newT)
-      updateThirdPlaceSlots(newT)
+      updateThirdPlaceSlotsIn(newT)
     }
     carryManager(t, newT)
     tournaments.value.push(newT)
@@ -350,6 +411,21 @@ export function useCrudActions(
   function resetResults(tournamentId: string) {
     const t = tournaments.value.find((t) => t.id === tournamentId)
     if (!t) return
+    if (isCustomFormat(t)) {
+      // Only the entry phase keeps its field: every other phase was populated
+      // from results that no longer exist, so it goes back to waiting for them.
+      const entry = entryPhases(t.phases ?? [], t.phaseEdges ?? [])[0]
+      for (const phase of t.phases ?? []) {
+        if (phase === entry) continue
+        resetPhase(phase)
+      }
+      // The entry phase keeps the draw it was given and only loses its results —
+      // rebuilding it would redraw the groups, which resetting results in every
+      // other format does not do.
+      if (entry) clearPhaseResults(entry)
+      t.winnerId = null
+      return
+    }
     if (isLeagueLike(t)) {
       const winPts = t.winPoints ?? 3
       const drawPts = t.drawPoints ?? 1
@@ -408,6 +484,7 @@ export function useCrudActions(
   function isTournamentFinished(tournamentId: string): boolean {
     const t = tournaments.value.find((t) => t.id === tournamentId)
     if (!t) return false
+    if (isCustomFormat(t)) return isCustomFinished(t)
     if (isLeagueLike(t)) {
       if (t.tiers?.length) {
         return (
@@ -444,6 +521,7 @@ export function useCrudActions(
     create,
     createLeagueTournament,
     createSwiss,
+    createCustom,
     newSeason,
     newMultiTierSeason,
     setPromotionCount,

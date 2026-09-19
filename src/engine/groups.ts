@@ -6,8 +6,8 @@ import type {
   GroupStanding,
   MatchResult,
   Tiebreaker,
-  Tournament,
 } from "../modules/tournament/types"
+import type { GroupHost } from "./hosts"
 import { uid } from "./utils"
 import { simulateMatch } from "./simulation"
 import { fixtureAdjustments } from "./form"
@@ -187,7 +187,7 @@ export function recalcStandings(
 }
 
 export function setGroupMatchResult(
-  tournament: Tournament,
+  tournament: GroupHost,
   groupIdx: number,
   matchIdx: number,
   home: number,
@@ -197,12 +197,12 @@ export function setGroupMatchResult(
 }
 
 /** Back to unplayed — the score modal offers this for a mis-entered result. */
-export function clearGroupMatchResult(tournament: Tournament, groupIdx: number, matchIdx: number) {
+export function clearGroupMatchResult(tournament: GroupHost, groupIdx: number, matchIdx: number) {
   writeGroupMatchResult(tournament, groupIdx, matchIdx, null)
 }
 
 function writeGroupMatchResult(
-  tournament: Tournament,
+  tournament: GroupHost,
   groupIdx: number,
   matchIdx: number,
   result: MatchResult | null
@@ -220,7 +220,7 @@ function writeGroupMatchResult(
 }
 
 export function simulateGroupMatch(
-  tournament: Tournament,
+  tournament: GroupHost,
   groupIdx: number,
   matchIdx: number,
   teams: Team[]
@@ -238,7 +238,7 @@ export function simulateGroupMatch(
   )
 }
 
-export function simulateGroup(tournament: Tournament, groupIdx: number, teams: Team[]) {
+export function simulateGroup(tournament: GroupHost, groupIdx: number, teams: Team[]) {
   const group = tournament.groups![groupIdx]
   for (let i = 0; i < group.matches.length; i++) {
     if (!group.matches[i].result) {
@@ -256,14 +256,14 @@ export function simulateGroup(tournament: Tournament, groupIdx: number, teams: T
   )
 }
 
-export function simulateAllGroups(tournament: Tournament, teams: Team[]) {
+export function simulateAllGroups(tournament: GroupHost, teams: Team[]) {
   if (!tournament.groups) return
   for (let g = 0; g < tournament.groups.length; g++) {
     simulateGroup(tournament, g, teams)
   }
 }
 
-export function simulateGroupWeek(tournament: Tournament, groupIdx: number, teams: Team[]): number {
+export function simulateGroupWeek(tournament: GroupHost, groupIdx: number, teams: Team[]): number {
   const group = tournament.groups![groupIdx]
   const n = group.teamIds.length
   const mpr = Math.floor(n / 2)
@@ -289,7 +289,7 @@ export function simulateGroupWeek(tournament: Tournament, groupIdx: number, team
   return roundIdx
 }
 
-export function simulateWeek(tournament: Tournament, teams: Team[]): number {
+export function simulateWeek(tournament: GroupHost, teams: Team[]): number {
   if (!tournament.groups) return -1
   let simulatedRound = -1
   for (const group of tournament.groups) {
@@ -319,7 +319,7 @@ export function simulateWeek(tournament: Tournament, teams: Team[]): number {
   return simulatedRound
 }
 
-export function allGroupsDone(tournament: Tournament): boolean {
+export function allGroupsDone(tournament: GroupHost): boolean {
   if (!tournament.groups) return true
   return tournament.groups.every((g) => g.matches.every((m) => m.result !== null))
 }

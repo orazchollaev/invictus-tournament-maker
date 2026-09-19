@@ -14,17 +14,31 @@ import type { Tournament, Match, GroupMatch, MatchResult } from "@/modules/tourn
  * special-case leg 2.
  */
 
+/**
+ * Which phase of a custom tournament a match belongs to. Absent for every
+ * fixed format, where there is only one of each container.
+ *
+ * Carried on the source rather than on the entry so that every existing
+ * consumer keeps working untouched: a caller that ignores it walks a custom
+ * tournament exactly as it walks any other, and one that dispatches a result
+ * back (see the store's setFixtureResult) has the coordinate it needs.
+ */
+export interface PhaseRef {
+  phaseId?: string
+  phaseName?: string
+}
+
 export type MatchSource =
-  | { kind: "group"; groupIdx: number; groupName: string }
-  | {
+  | ({ kind: "group"; groupIdx: number; groupName: string } & PhaseRef)
+  | ({
       kind: "league"
       matchdayIdx: number
       matchdayName: string
       tierIdx?: number
       tierName?: string
-    }
-  | { kind: "knockout"; roundIdx: number; roundName: string; leg: 1 | 2 }
-  | { kind: "third-place"; leg: 1 | 2 }
+    } & PhaseRef)
+  | ({ kind: "knockout"; roundIdx: number; roundName: string; leg: 1 | 2 } & PhaseRef)
+  | ({ kind: "third-place"; leg: 1 | 2 } & PhaseRef)
 
 export interface MatchEntry {
   homeId: string | null
@@ -120,6 +134,49 @@ export function forEachMatch(t: Tournament, visit: (entry: MatchEntry) => void) 
   if (t.thirdPlaceMatch) {
     tieEntries(t.thirdPlaceMatch, (leg) => ({ kind: "third-place", leg })).forEach(visit)
   }
+
+  // A custom tournament keeps the five containers above empty and puts one set
+  // of them inside each phase instead. Walking them here is what makes phase
+  // fixtures visible to manager mode, team history, the participants table and
+  // the stats sweep without any of them learning what a phase is.
+  t.phases?.forEach((phase) => {
+    const ref = { phaseId: phase.id, phaseName: phase.name }
+
+    phase.groups?.forEach((group, groupIdx) => {
+      const source: MatchSource = { kind: "group", groupIdx, groupName: group.name, ...ref }
+      group.matches.forEach((m) => visit(groupEntry(m, source)))
+    })
+
+    phase.league?.matchdays.forEach((md, matchdayIdx) => {
+      const source: MatchSource = {
+        kind: "league",
+        matchdayIdx,
+        matchdayName: md.name,
+        ...ref,
+      }
+      md.matches.forEach((m) => visit(groupEntry(m, source)))
+    })
+
+    phase.rounds?.forEach((round, roundIdx) => {
+      round.matches.forEach((m) => {
+        tieEntries(m, (leg) => ({
+          kind: "knockout",
+          roundIdx,
+          roundName: round.name,
+          leg,
+          ...ref,
+        })).forEach(visit)
+      })
+    })
+
+    if (phase.thirdPlaceMatch) {
+      tieEntries(phase.thirdPlaceMatch, (leg) => ({
+        kind: "third-place",
+        leg,
+        ...ref,
+      })).forEach(visit)
+    }
+  })
 }
 
 /** Every match in a tournament as a flat array. */
