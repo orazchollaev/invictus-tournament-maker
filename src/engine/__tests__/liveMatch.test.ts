@@ -12,6 +12,7 @@ import {
   decideAiTactics,
   endMinute,
   finishLiveMatch,
+  liveFatigueByPlayer,
   onPitchFor,
   playToEnd,
   setTactics,
@@ -711,5 +712,85 @@ describe("with injuries switched off", () => {
       playToEnd(state)
       expect(state.home.subsUsed).toBe(0)
     }
+  })
+})
+
+describe("liveFatigueByPlayer", () => {
+  it("reads the pre-match figure for everyone before a minute has been played", () => {
+    const homeFatigue = new Map(squad("h").map((p) => [p.id, 0.2]))
+    const state = kickoff({ homeFatigue })
+    const live = liveFatigueByPlayer(state, "home")
+    for (const slot of onPitchFor(state, "home")) {
+      expect(live.get(slot.playerId!)).toBeCloseTo(0.2, 5)
+    }
+  })
+
+  it("climbs for whoever is actually out there, and keeps the bench at its pre-match figure", () => {
+    const homeFatigue = new Map(squad("h").map((p) => [p.id, 0]))
+    const state = kickoff({ managedSide: "home", homeFatigue })
+    for (let i = 0; i < 45; i++) advanceMinute(state)
+
+    const live = liveFatigueByPlayer(state, "home")
+    for (const slot of onPitchFor(state, "home")) {
+      expect(live.get(slot.playerId!)).toBeGreaterThan(0)
+    }
+    for (const player of benchFor(state, "home")) {
+      expect(live.get(player.id)).toBe(0)
+    }
+  })
+
+  it("reads a substitute as fresher than the starter he replaced, minute for minute", () => {
+    // Injuries roll their own, unrelated substitutions; switched off so the
+    // only sub in this match is the one the test itself makes. A red card
+    // can still take an original starter off the pitch, so each attempt
+    // checks for one still out there before comparing, rather than assuming
+    // it survived ninety-odd minutes unscathed.
+    setSimConfig({ injuriesEnabled: false })
+    let checked = false
+    for (let seed = 0; seed < 30 && !checked; seed++) {
+      const homeFatigue = new Map(squad("h").map((p) => [p.id, 0]))
+      const state = kickoff({ managedSide: "home", homeFatigue })
+      const startingIds = new Set(onPitchFor(state, "home").map((s) => s.playerId))
+      for (let i = 0; i < 60; i++) advanceMinute(state)
+
+      const outSlot = onPitchFor(state, "home")[0]
+      const inPlayer = benchFor(state, "home")[0]
+      applySubstitution(state, "home", outSlot, inPlayer)
+
+      for (let i = 0; i < 20; i++) advanceMinute(state)
+
+      const untouched = onPitchFor(state, "home").find(
+        (s) => s.playerId && s.playerId !== inPlayer.id && startingIds.has(s.playerId)
+      )
+      if (!untouched) continue
+      checked = true
+
+      const live = liveFatigueByPlayer(state, "home")
+      const substitute = live.get(inPlayer.id)!
+      const starter = live.get(untouched.playerId!)!
+      expect(substitute).toBeLessThan(starter)
+    }
+    expect(checked).toBe(true)
+  })
+})
+
+describe("fatigue raises injury risk", () => {
+  it("an exhausted side picks up more injuries than a fresh one, over many matches", () => {
+    setSimConfig({ injuriesEnabled: true, injuryFatigueImpact: true })
+
+    function injuryCount(fatigue: number): number {
+      const fatigueMap = new Map(squad("h").map((p) => [p.id, fatigue]))
+      let count = 0
+      for (let i = 0; i < 150; i++) {
+        const state = kickoff({ homeFatigue: fatigueMap })
+        playToEnd(state)
+        count += state.home.state.subs.filter((s) => s.reason === "injury").length
+      }
+      return count
+    }
+
+    const fresh = injuryCount(0)
+    const exhausted = injuryCount(1)
+    expect(exhausted).toBeGreaterThan(fresh)
   })
 })

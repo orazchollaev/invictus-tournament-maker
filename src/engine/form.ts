@@ -7,12 +7,21 @@
 // tournament has, so the whole-tournament history lives here once and every
 // simulator reads its adjustments through this one helper.
 //
-// Discipline (see discipline.ts) needs exactly the same thing — a team's
-// recent matches — so it rides the same channel rather than opening a second
-// one: every simulator takes one power-adjustment map, whatever produced it.
+// Discipline (see discipline.ts), fatigue (see fatigue.ts) and morale (see
+// morale.ts) all need exactly the same thing — a team's recent matches — so
+// they ride the same channel rather than each opening its own: every
+// simulator takes one power-adjustment map, whatever produced it.
 import type { MatchResult, Tournament } from "../modules/tournament/types"
-import { computeFormAdjustments, isFormFactorEnabled, isRedCardImpactEnabled } from "./simulation"
+import {
+  computeFormAdjustments,
+  isFormFactorEnabled,
+  isRedCardImpactEnabled,
+  isFatigueFactorEnabled,
+  isMoraleFactorEnabled,
+} from "./simulation"
 import { computeDisciplineAdjustments } from "./discipline"
+import { computeFatigueTeamAdjustments } from "./fatigue"
+import { computeMoraleAdjustments } from "./morale"
 import { playedMatches } from "./matchIterator"
 
 interface HistoryMatch {
@@ -55,17 +64,28 @@ export function fixtureAdjustments(
   const discipline = isRedCardImpactEnabled()
     ? computeDisciplineAdjustments(teamIds, matches)
     : undefined
-  return merge(form, discipline)
+  const morale = isMoraleFactorEnabled() ? computeMoraleAdjustments(teamIds, matches) : undefined
+  const fatigue = isFatigueFactorEnabled()
+    ? computeFatigueTeamAdjustments(teamIds, matches)
+    : undefined
+  return merge(merge(form, discipline), merge(morale, fatigue))
 }
 
 /**
  * Adjustments derived from every played match in the tournament — group,
  * league, tier, knockout leg and third-place alike. Returns `undefined` when
- * neither form nor discipline is switched on, which is exactly what
- * `simulateMatch` expects.
+ * none of form, discipline, morale or fatigue is switched on, which is
+ * exactly what `simulateMatch` expects.
  */
 export function tournamentAdjustments(t: Tournament): Map<string, number> | undefined {
-  if (!isFormFactorEnabled() && !isRedCardImpactEnabled()) return undefined
+  if (
+    !isFormFactorEnabled() &&
+    !isRedCardImpactEnabled() &&
+    !isMoraleFactorEnabled() &&
+    !isFatigueFactorEnabled()
+  ) {
+    return undefined
+  }
   const history = playedMatches(t).map((e) => ({
     homeId: e.homeId as string,
     awayId: e.awayId as string,

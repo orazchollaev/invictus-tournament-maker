@@ -234,9 +234,7 @@ describe("buildLineup", () => {
             // A few spares per position too, so a wrong pick has somewhere
             // to quietly come from if the engine ever regresses.
             for (let i = 0; i < need + 3; i++) {
-              squad.push(
-                makePlayer(`${formation}-${position}-${i}-${trial}`, position, 20 + i * 7)
-              )
+              squad.push(makePlayer(`${formation}-${position}-${i}-${trial}`, position, 20 + i * 7))
             }
           }
 
@@ -893,6 +891,20 @@ describe("computeRating", () => {
     const star = computeRating({ ...base, power: 99 })
     const ordinary = computeRating({ ...base, power: 40 })
     expect(star - ordinary).toBeLessThanOrEqual(0.7)
+  })
+
+  it("a tired player rates worse than a fresh one, all else equal", () => {
+    const base = {
+      position: "MID" as const,
+      outcome: "draw" as const,
+      goals: 0,
+      assists: 0,
+      cleanSheet: false,
+      performance: 0.5,
+    }
+    expect(computeRating({ ...base, fatigue: 0 })).toBeGreaterThan(
+      computeRating({ ...base, fatigue: 1 })
+    )
   })
 })
 

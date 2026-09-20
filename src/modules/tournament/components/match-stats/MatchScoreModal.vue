@@ -16,10 +16,14 @@ import { MAX_GOALS } from "@/constants"
 import {
   allMatches,
   buildLineup,
+  computeFatigueByPlayer,
   decideKnockoutResult,
   generateMatchStats,
   dropWatchedMatch,
+  isFatigueFactorEnabled,
+  isInjuryFatigueImpactEnabled,
   pendingKey,
+  playedMatches,
   resolvePower,
   simulateMatch,
   stashWatchedMatch,
@@ -249,6 +253,28 @@ const canWatch = computed(
 )
 const canReplay = computed(() => !!props.result?.stats)
 
+/**
+ * How tired each side's players are coming into this fixture (see
+ * engine/fatigue.ts) — read once per match from the tournament's own
+ * history, the same as `unavailable` is above. Empty when neither the
+ * fatigue nor the injury-fatigue setting is on, so every reader below can
+ * pass it straight through without checking twice.
+ */
+const fatigueByTeam = computed<{ home?: Map<string, number>; away?: Map<string, number> }>(() => {
+  const t = tournament.value
+  if (!t || !props.homeTeam || !props.awayTeam) return {}
+  if (!isFatigueFactorEnabled() && !isInjuryFatigueImpactEnabled()) return {}
+  const history = playedMatches(t).map((e) => ({
+    homeId: e.homeId,
+    awayId: e.awayId,
+    result: e.result,
+  }))
+  return {
+    home: computeFatigueByPlayer(props.homeTeam.id, history),
+    away: computeFatigueByPlayer(props.awayTeam.id, history),
+  }
+})
+
 function statsFor(decision: KnockoutDecision): MatchStats {
   const { result } = decision
   const homeSquad = playersStore
@@ -257,9 +283,24 @@ function statsFor(decision: KnockoutDecision): MatchStats {
   const awaySquad = playersStore
     .byTeam(props.awayTeam!.id)
     .filter((p) => !unavailable.value.away.has(p.id))
+  const { home: homeFatigue, away: awayFatigue } = fatigueByTeam.value
   return generateMatchStats({
-    homeLineup: buildLineup(homeSquad, Math.random, teamFormation(props.homeTeam!)),
-    awayLineup: buildLineup(awaySquad, Math.random, teamFormation(props.awayTeam!)),
+    homeLineup: buildLineup(
+      homeSquad,
+      Math.random,
+      teamFormation(props.homeTeam!),
+      [],
+      false,
+      homeFatigue
+    ),
+    awayLineup: buildLineup(
+      awaySquad,
+      Math.random,
+      teamFormation(props.awayTeam!),
+      [],
+      false,
+      awayFatigue
+    ),
     homePower: resolvePower(props.homeTeam!),
     awayPower: resolvePower(props.awayTeam!),
     homeGoals: result.home,
@@ -272,6 +313,8 @@ function statsFor(decision: KnockoutDecision): MatchStats {
     ...(result.reds ? { reds: result.reds } : {}),
     homeSquad,
     awaySquad,
+    ...(homeFatigue ? { homeFatigue } : {}),
+    ...(awayFatigue ? { awayFatigue } : {}),
   })
 }
 
@@ -572,6 +615,8 @@ const canShowStats = computed(() => !!props.result?.stats)
     :managed-side="managedSide"
     :tactics="managedTactics"
     :starting-xi="managedStartingXI"
+    :home-fatigue="fatigueByTeam.home"
+    :away-fatigue="fatigueByTeam.away"
     :requires-winner="requiresWinner"
     :aggregate-offset="aggregateOffset"
     :subtitle="subtitle"

@@ -38,7 +38,18 @@ import {
   emptyLineupSlots,
   lineupPlayerIds,
 } from "@/modules/tournament/utils/managerLineup"
-import { FORMATION_LIST, FORMATIONS, PLAY_STYLES } from "@/engine"
+import {
+  FORMATION_LIST,
+  FORMATIONS,
+  MORALE_STEP,
+  PLAY_STYLES,
+  computeFatigueByPlayer,
+  computeMoraleAdjustments,
+  isFatigueFactorEnabled,
+  isInjuryFatigueImpactEnabled,
+  isMoraleFactorEnabled,
+  playedMatches,
+} from "@/engine"
 import { useHaptic } from "@/composables/useHaptic"
 import type { Formation, PlayStyle } from "@/modules/teams/types"
 import type { PlayerPosition } from "@/modules/players/types"
@@ -154,6 +165,64 @@ const unavailableSlotIndexes = computed(() => {
   return set
 })
 
+// ─── Fatigue & morale ──────────────────────────────────────────────
+/** History read once per team, in `playedMatches` order, the shape every fatigue/morale call takes. */
+const managedHistory = computed(() => {
+  if (!tournament.value) return []
+  return playedMatches(tournament.value).map((e) => ({
+    homeId: e.homeId,
+    awayId: e.awayId,
+    result: e.result,
+  }))
+})
+
+/**
+ * Whether there is any fatigue to show at all — either setting that reads it
+ * (see engine/fatigue.ts) turns the underlying numbers on; a manager who only
+ * cares about the injury-risk side of fatigue still gets to see who's tired,
+ * exactly as the live match drawer and sub sheet already do (see
+ * MatchScoreModal's `fatigueByTeam`).
+ */
+const fatigueDisplayEnabled = computed(
+  () => isFatigueFactorEnabled() || isInjuryFatigueImpactEnabled()
+)
+
+const fatigueByPlayer = computed(() => {
+  if (!manager.value || !fatigueDisplayEnabled.value) return new Map<string, number>()
+  return computeFatigueByPlayer(manager.value.teamId, managedHistory.value)
+})
+
+/** Raw 0-1 fatigue per formation slot, for the pitch's percentage badge. */
+const fatigueSlotValues = computed(() => {
+  const map = new Map<number, number>()
+  slots.value.forEach((slot, index) => {
+    if (!slot.playerId) return
+    const fatigue = fatigueByPlayer.value.get(slot.playerId)
+    if (fatigue !== undefined) map.set(index, fatigue)
+  })
+  return map
+})
+
+/** The team's own current streak, ±. Zero when off or nothing has been played. */
+const moraleAdjustment = computed(() => {
+  if (!manager.value || !isMoraleFactorEnabled()) return 0
+  const teamId = manager.value.teamId
+  return computeMoraleAdjustments([teamId], managedHistory.value).get(teamId) ?? 0
+})
+
+/**
+ * A face for the team's current streak — how many `MORALE_STEP`s deep it is,
+ * not just its sign, so a two-game run reads calmer than a five-game one.
+ */
+const moraleEmoji = computed(() => {
+  const steps = Math.round(moraleAdjustment.value / MORALE_STEP)
+  if (steps >= 3) return "🔥"
+  if (steps >= 1) return "🙂"
+  if (steps <= -3) return "🥶"
+  if (steps <= -1) return "😟"
+  return ""
+})
+
 /** A pick that becomes unavailable after the fact (a red card just rolled,
  * say) drops out of the lineup on its own rather than leaving a ghost slot
  * the "eleven picked" count still trusts. */
@@ -252,7 +321,18 @@ function open11() {
       </template>
 
       <template v-if="fixture">
-        <AppChip square size="xs" class="mp-stage">{{ stageLabel }}</AppChip>
+        <div class="mp-badges">
+          <AppChip square size="xs" class="mp-stage">{{ stageLabel }}</AppChip>
+          <AppChip
+            v-if="moraleAdjustment !== 0"
+            square
+            size="xs"
+            :variant="moraleAdjustment > 0 ? 'success' : 'danger'"
+            class="mp-morale"
+          >
+            {{ moraleEmoji }} {{ t("manager.morale.label") }}
+          </AppChip>
+        </div>
 
         <div class="mp-fixture-row">
           <div class="mp-side">
@@ -320,6 +400,7 @@ function open11() {
         :player-by-id="playerById"
         :team-color="managedTeam.color"
         :unavailable-slot-indexes="unavailableSlotIndexes"
+        :fatigue-slot-values="fatigueSlotValues"
         @tap-slot="openSlot"
       />
     </AppCard>
@@ -329,6 +410,7 @@ function open11() {
       :position="activeSlot.position"
       :squad="activeSlotCandidates"
       :current-player-id="activeSlot.playerId"
+      :fatigue-by-player="fatigueByPlayer"
       @select="assignSlot"
       @clear="clearSlot"
       @close="closeSlot"
@@ -366,7 +448,10 @@ function open11() {
   color: var(--accent);
 }
 
-.mp-stage {
+.mp-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
   margin-bottom: var(--sp-3);
 }
 
@@ -416,6 +501,11 @@ function open11() {
   margin: 0 0 var(--sp-2);
   font-size: var(--fs-sm);
   color: var(--text-muted);
+}
+
+.mp-lineup-hint--fatigue {
+  margin-top: 0;
+  font-size: var(--fs-xs);
 }
 
 .mp-pitch {

@@ -8,6 +8,7 @@
 import { computed, ref } from "vue"
 import { useI18n } from "vue-i18n"
 import { AppButton, AppChip, AppEmptyState, AppSearchInput, AppSheet } from "@/components/ui"
+import ManagerFatigueChip from "./ManagerFatigueChip.vue"
 import type { Player, PlayerPosition } from "@/modules/players/types"
 
 const props = defineProps<{
@@ -15,6 +16,8 @@ const props = defineProps<{
   /** Eligible players: unavailable and slotted-elsewhere ones already excluded. */
   squad: Player[]
   currentPlayerId: string | null
+  /** How tired each candidate is, 0-1 (see engine/fatigue.ts). */
+  fatigueByPlayer?: Map<string, number>
 }>()
 const emit = defineEmits<{ select: [playerId: string]; clear: []; close: [] }>()
 
@@ -71,6 +74,7 @@ function clear() {
           <AppChip v-if="player.position !== position" square size="xs" variant="danger">
             {{ t("manager.lineup.outOfPosition") }}
           </AppChip>
+          <ManagerFatigueChip :fatigue="fatigueByPlayer?.get(player.id)" />
           <AppChip square size="xs">{{ player.power }}</AppChip>
         </button>
       </div>

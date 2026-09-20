@@ -518,6 +518,18 @@ export default {
         label: "Form Factor",
         desc: "Dynamically adjusts team strength based on last 5 match results. A team on a winning streak gains up to {plus} power, a team losing consistently drops up to {minus}.",
       },
+      fatigueFactor: {
+        label: "Player Fatigue",
+        desc: "Players tire as they play matches and only partly recover between them. A tired starting XI weakens its team, rates worse individually, and is picked less often by the AI.",
+      },
+      moraleFactor: {
+        label: "Team Morale",
+        desc: "A team's own current win or loss streak nudges its power, separately from its recent form.",
+      },
+      injuryFatigueImpact: {
+        label: "Fatigue Raises Injury Risk",
+        desc: "A tired player is more likely to pick up an injury. Requires Injuries to be on.",
+      },
       usePlayerPower: {
         label: "Use Player Power",
         desc: "Blend a team's power with its squad's average player power. Off = only the team's own power is used.",
@@ -1097,10 +1109,15 @@ export default {
     panel: {
       allPlayed: "Nothing left for you to play — everything else plays itself out.",
     },
+    morale: {
+      label: "Morale",
+    },
     lineup: {
       title: "Starting XI",
       count: "{n}/11",
       hint: "Pick your eleven, by position — the match won't kick off until every shirt is filled.",
+      fatigueHint:
+        "The badge on a shirt is that player's stamina — green is fresh, amber is tired, red is exhausted. 100% means fully fresh; it falls toward 0% as he tires.",
       noSquad: "No players registered for this team.",
       noneForPosition: "No players at this position.",
       incomplete: "{n} more to pick before you can kick off.",
@@ -1110,6 +1127,11 @@ export default {
       clear: "Remove from lineup",
       outOfPosition: "Out of position",
       searchPlaceholder: "Search players…",
+      fatigue: {
+        fresh: "Fresh",
+        tired: "Tired",
+        exhausted: "Exhausted",
+      },
     },
   },
   music: {

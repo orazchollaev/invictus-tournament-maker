@@ -5,6 +5,9 @@ import { MAX_GOALS } from "@/constants/limits"
 import {
   computeFormAdjustments,
   isFormFactorEnabled,
+  isFatigueFactorEnabled,
+  isMoraleFactorEnabled,
+  isInjuryFatigueImpactEnabled,
   setSimConfig,
   simulateMatch,
   simulatePenaltyShootout,
@@ -12,7 +15,14 @@ import {
 import { resolvePower } from "../power"
 import { makeTeams } from "./helpers"
 
-const DEFAULT_CONFIG = { surpriseFactor: 50, formFactor: false, homeAdvantage: 6 }
+const DEFAULT_CONFIG = {
+  surpriseFactor: 50,
+  formFactor: false,
+  homeAdvantage: 6,
+  fatigueFactor: false,
+  moraleFactor: false,
+  injuryFatigueImpact: true,
+}
 
 afterEach(() => {
   // Restore the module-level simulation config so tests never leak state.
@@ -130,6 +140,22 @@ describe("setSimConfig", () => {
     expect(isFormFactorEnabled()).toBe(true)
     setSimConfig({ formFactor: false })
     expect(isFormFactorEnabled()).toBe(false)
+  })
+
+  it("toggles fatigue, morale and injury-fatigue impact independently", () => {
+    expect(isFatigueFactorEnabled()).toBe(false)
+    expect(isMoraleFactorEnabled()).toBe(false)
+    expect(isInjuryFatigueImpactEnabled()).toBe(true)
+
+    setSimConfig({ fatigueFactor: true, moraleFactor: true, injuryFatigueImpact: false })
+    expect(isFatigueFactorEnabled()).toBe(true)
+    expect(isMoraleFactorEnabled()).toBe(true)
+    expect(isInjuryFatigueImpactEnabled()).toBe(false)
+
+    setSimConfig({ fatigueFactor: false, moraleFactor: false, injuryFatigueImpact: true })
+    expect(isFatigueFactorEnabled()).toBe(false)
+    expect(isMoraleFactorEnabled()).toBe(false)
+    expect(isInjuryFatigueImpactEnabled()).toBe(true)
   })
 })
 

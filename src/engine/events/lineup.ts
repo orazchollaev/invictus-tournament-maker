@@ -19,6 +19,7 @@ import type { Player, PlayerPosition } from "@/modules/players/types"
 import type { Formation } from "@/modules/teams/types"
 import type { ManagerLineupSlot } from "@/modules/tournament/types"
 import { DEFAULT_FORMATION, FORMATIONS } from "../tactics"
+import { fatigueSampleWeightMultiplier } from "../fatigue"
 
 /** The shape a side lines up in when nobody has told it otherwise. */
 export const FORMATION: Record<PlayerPosition, number> = FORMATIONS[DEFAULT_FORMATION]
@@ -60,13 +61,27 @@ export type Lineup = LineupSlot[]
  * power². Squaring keeps the best players in the side most weeks while
  * still letting a squad player rotate in — a plain power weighting
  * rotates far too much, and a straight sort never rotates at all.
+ *
+ * `fatigueByPlayer`, when given, further discounts a tired player's weight
+ * (see engine/fatigue.ts) — the mechanism that gives an unmanaged AI side
+ * something resembling squad rotation, with no persisted "usual XI" at all.
  */
-function sampleByPower(pool: Player[], count: number, rng: () => number): Player[] {
+function sampleByPower(
+  pool: Player[],
+  count: number,
+  rng: () => number,
+  fatigueByPlayer?: Map<string, number>
+): Player[] {
   const remaining = [...pool]
   const picked: Player[] = []
 
   while (picked.length < count && remaining.length > 0) {
-    const weights = remaining.map((p) => p.power * p.power)
+    const weights = remaining.map(
+      (p) =>
+        p.power *
+        p.power *
+        (fatigueByPlayer ? fatigueSampleWeightMultiplier(fatigueByPlayer.get(p.id) ?? 0) : 1)
+    )
     const total = weights.reduce((sum, w) => sum + w, 0)
     let roll = rng() * total
     let idx = remaining.length - 1
@@ -97,11 +112,12 @@ export function pickForPosition(
   pool: Player[],
   used: Set<string>,
   position: PlayerPosition,
-  rng: () => number = Math.random
+  rng: () => number = Math.random,
+  fatigueByPlayer?: Map<string, number>
 ): Player | undefined {
   for (const from of [position, ...COVER_ORDER[position]]) {
     const candidates = pool.filter((p) => p.position === from && !used.has(p.id))
-    if (candidates.length) return sampleByPower(candidates, 1, rng)[0]
+    if (candidates.length) return sampleByPower(candidates, 1, rng, fatigueByPlayer)[0]
   }
   return undefined
 }
@@ -146,7 +162,13 @@ export function buildLineup(
    * changes. False plays the whole squad through the power-weighted draw,
    * exactly as if no picks existed.
    */
-  managed = false
+  managed = false,
+  /**
+   * How tired each squad member is (see engine/fatigue.ts). Only discounts
+   * the unmanaged power-weighted draw and its bench cover — a manager's own
+   * picks are never second-guessed by it.
+   */
+  fatigueByPlayer?: Map<string, number>
 ): Lineup {
   const lineup: Lineup = []
   const used = new Set<string>()
@@ -169,9 +191,7 @@ export function buildLineup(
   // "the manager fielded nobody" — that case still draws from the whole
   // squad, same as an unmanaged side. Otherwise the bench-cover pass below
   // may only draw from players the manager picked somewhere.
-  const preferredIds = preferredSlots
-    .map((s) => s.playerId)
-    .filter((id): id is string => !!id)
+  const preferredIds = preferredSlots.map((s) => s.playerId).filter((id): id is string => !!id)
   const coverPool =
     managed && preferredIds.length > 0 ? squad.filter((p) => preferredIds.includes(p.id)) : squad
 
@@ -196,7 +216,7 @@ export function buildLineup(
     }
 
     const candidates = squad.filter((p) => p.position === position && !used.has(p.id))
-    const chosen = sampleByPower(candidates, slots, rng)
+    const chosen = sampleByPower(candidates, slots, rng, fatigueByPlayer)
 
     for (let i = 0; i < slots; i++) {
       const player = chosen[i]
@@ -212,7 +232,7 @@ export function buildLineup(
   }
 
   for (const slot of gaps) {
-    const cover = pickForPosition(coverPool, used, slot.position, rng)
+    const cover = pickForPosition(coverPool, used, slot.position, rng, fatigueByPlayer)
     if (!cover) continue
     used.add(cover.id)
     slot.playerId = cover.id

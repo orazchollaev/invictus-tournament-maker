@@ -23,6 +23,7 @@ import {
   endMinute,
   finishLiveMatch,
   generateTeamStats,
+  liveFatigueByPlayer,
   onPitchFor,
   setTactics,
   type LiveMatchState,
@@ -74,6 +75,14 @@ export function useManagerMatch(state: LiveMatchState, managed: Side, speed: Ref
   const score = ref({ home: 0, away: 0 })
   const pitch = shallowRef<LineupSlot[]>([])
   const bench = shallowRef<Player[]>([])
+  /**
+   * How tired the managed side's own players are *right now* — the pre-match
+   * figure plus whatever this match itself has added, per minute actually
+   * played (see engine/liveMatch.ts's `liveFatigueByPlayer`). Refreshed every
+   * `sync()`, unlike the pre-match figure the drawer read directly off
+   * `state` before this existed, which never moved once kick-off had fixed it.
+   */
+  const fatigue = shallowRef<Map<string, number>>(liveFatigueByPlayer(state, managed))
   const tactics = ref<LiveTactics>({ ...state[managed].tactics })
   const subsUsed = ref(0)
   const finished = ref(false)
@@ -154,6 +163,7 @@ export function useManagerMatch(state: LiveMatchState, managed: Side, speed: Ref
     extraTime.value = state.extraTime
     last.value = endMinute(state)
     teamStats.value = liveTeamStats()
+    fatigue.value = liveFatigueByPlayer(state, managed)
   }
   sync()
 
@@ -344,6 +354,7 @@ export function useManagerMatch(state: LiveMatchState, managed: Side, speed: Ref
     shootoutKicks,
     pitch,
     bench,
+    fatigue,
     tactics,
     teamStats,
     subsLeft,

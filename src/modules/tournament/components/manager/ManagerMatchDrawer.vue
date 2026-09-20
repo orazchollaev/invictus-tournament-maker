@@ -20,6 +20,7 @@ import MatchShootout from "../match-stats/MatchShootout.vue"
 import { formatMinute } from "../match-stats/matchTime"
 import ManagerTacticsSheet from "./ManagerTacticsSheet.vue"
 import ManagerSubSheet from "./ManagerSubSheet.vue"
+import ManagerFatigueChip from "./ManagerFatigueChip.vue"
 import {
   REGULATION_MINUTES,
   createLiveMatch,
@@ -55,6 +56,9 @@ const props = defineProps<{
    * reached this component: the match always fell back to a random draw.
    */
   startingXi?: ManagerLineupSlot[]
+  /** How tired each side's players are coming in (see engine/fatigue.ts). */
+  homeFatigue?: Map<string, number>
+  awayFatigue?: Map<string, number>
   requiresWinner?: boolean
   aggregateOffset?: { home: number; away: number } | null
   subtitle?: string
@@ -90,6 +94,8 @@ const state: LiveMatchState = createLiveMatch({
   managedSide: props.managedSide,
   managedTactics: props.tactics,
   managedStartingXI: props.startingXi ?? null,
+  homeFatigue: props.homeFatigue,
+  awayFatigue: props.awayFatigue,
   requiresWinner: props.requiresWinner ?? false,
   aggregateOffset: props.aggregateOffset ?? null,
 })
@@ -307,6 +313,7 @@ onMounted(match.start)
           <li v-for="(slot, i) in match.pitch.value" :key="i" class="mm-onpitch-row">
             <span class="mm-onpitch-pos">{{ slot.position }}</span>
             <span class="mm-onpitch-name">{{ nameOf(slot.playerId) }}</span>
+            <ManagerFatigueChip :fatigue="match.fatigue.value.get(slot.playerId ?? '')" />
             <span class="mm-onpitch-power">{{ slot.power }}</span>
           </li>
         </ul>
@@ -374,6 +381,7 @@ onMounted(match.start)
     :pitch="match.pitch.value"
     :bench="match.bench.value"
     :subs-left="match.subsLeft.value"
+    :fatigue-by-player="match.fatigue.value"
     @substitute="substitute"
     @close="closeSheet"
   />

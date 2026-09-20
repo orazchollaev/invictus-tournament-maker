@@ -17,6 +17,7 @@
 // Cards still do not count. A booking says nothing about how well someone
 // played, and docking for it made honest defending look like failure.
 import type { PlayerPosition } from "@/modules/players/types"
+import { fatigueRatingPenalty } from "../fatigue"
 
 export type MatchOutcome = "win" | "draw" | "loss"
 
@@ -67,6 +68,13 @@ export interface RatingInput {
    * sample, the closer the final number sits to the neutral baseline.
    */
   minutesShare?: number
+  /**
+   * 0-1, how tired this player is coming into the match (see fatigue.ts).
+   * Shaves a little off the rating before `minutesShare` dampens it — a
+   * gassed starter still gets his cameo's worth of the penalty, not the
+   * full ninety-minute one, if he is subbed off early.
+   */
+  fatigue?: number
 }
 
 /**
@@ -87,6 +95,10 @@ export function computeRating(input: RatingInput): number {
   if (input.power !== undefined && input.squadPower !== undefined) {
     const tilt = (input.power - input.squadPower) / POWER_TILT_SCALE
     rating += Math.max(-MAX_POWER_TILT, Math.min(MAX_POWER_TILT, tilt))
+  }
+
+  if (input.fatigue !== undefined) {
+    rating += fatigueRatingPenalty(input.fatigue)
   }
 
   rating += input.goals * GOAL_BONUS[input.position]

@@ -521,6 +521,18 @@ export default {
         label: "Form Faktörü",
         desc: "Son 5 maç sonucuna göre takım gücünü dinamik olarak ayarlar. Galibiyet serisi yapan takım {plus} güç kazanır, sürekli kaybeden takım {minus} düşer.",
       },
+      fatigueFactor: {
+        label: "Oyuncu Yorgunluğu",
+        desc: "Oyuncular maç oynadıkça yorulur ve maçlar arasında sadece kısmen toparlanır. Yorgun bir başlangıç 11'i takımı zayıflatır, bireysel olarak daha düşük puan alır ve yapay zeka tarafından daha az tercih edilir.",
+      },
+      moraleFactor: {
+        label: "Takım Morali",
+        desc: "Takımın güncel galibiyet veya mağlubiyet serisi, son formundan bağımsız olarak gücünü küçük bir şekilde etkiler.",
+      },
+      injuryFatigueImpact: {
+        label: "Yorgunluk Sakatlanma Riskini Artırır",
+        desc: "Yorgun bir oyuncunun sakatlanma ihtimali artar. Sakatlanmalar ayarının açık olmasını gerektirir.",
+      },
       usePlayerPower: {
         label: "Oyuncu Gücünü Kullan",
         desc: "Takımın gücünü, kadronun ortalama oyuncu gücüyle harmanlar. Kapalıysa sadece takımın kendi gücü kullanılır.",
@@ -1102,10 +1114,15 @@ export default {
     panel: {
       allPlayed: "Oynanacak maçın kalmadı — geri kalan her şey otomatik oynanır.",
     },
+    morale: {
+      label: "Moral",
+    },
     lineup: {
       title: "İlk 11",
       count: "{n}/11",
       hint: "İlk onbirini mevkilerine göre seç — tüm formalar dolmadan maç başlamaz.",
+      fatigueHint:
+        "Forma üzerindeki rozet o oyuncunun dayanıklılığı (stamina) — yeşil dinç, sarı yorgun, kırmızı bitkin demek. %100 tamamen dinç demek; yorgunlaştıkça %0'a doğru düşer.",
       noSquad: "Bu takımda kayıtlı oyuncu yok.",
       noneForPosition: "Bu mevkide oyuncu yok.",
       incomplete: "Maça çıkmadan önce {n} oyuncu daha seçmelisin.",
@@ -1115,6 +1132,11 @@ export default {
       clear: "Kadrodan çıkar",
       outOfPosition: "Mevki dışı",
       searchPlaceholder: "Oyuncu ara…",
+      fatigue: {
+        fresh: "Dinç",
+        tired: "Yorgun",
+        exhausted: "Bitkin",
+      },
     },
   },
   music: {

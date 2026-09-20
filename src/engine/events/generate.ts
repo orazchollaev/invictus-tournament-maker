@@ -27,7 +27,8 @@ import { generateTeamStats } from "./teamStats"
 import { reconstructShootout, type ShootoutKickOutcome, type ShootoutOutcome } from "../shootout"
 import { RED_CHANCE } from "../discipline"
 import { INJURY_CHANCE, rollInjuryDuration } from "../injuries"
-import { isInjuriesEnabled } from "../simulation"
+import { isInjuriesEnabled, isInjuryFatigueImpactEnabled } from "../simulation"
+import { averageFatigue, fatigueAfterMinutes, fatigueInjuryMultiplier } from "../fatigue"
 import {
   MAX_STOPPAGE,
   PERIOD_END,
@@ -387,7 +388,9 @@ const SUB_MAX_MINUTE = 90
  * minute (any time, not just the second half) and its `injuryMatches`,
  * which is what makes it cost the player his place in matches still to
  * come. See engine/injuries.ts for how that duration is later turned into
- * an unavailable squad.
+ * an unavailable squad. Its chance scales with how tired the starting
+ * eleven is on average (see engine/fatigue.ts) — a flat team-level nudge,
+ * since which player it lands on is not decided until after the roll.
  *
  * Only an original starting slot can go off — never a substitute who has
  * already come on. `buildLines` produces exactly two lines per substituted
@@ -396,7 +399,12 @@ const SUB_MAX_MINUTE = 90
  * cannot then be tactically subbed, or vice versa — whichever is rolled
  * first claims the slot.
  */
-function buildSubstitutions(state: SideState, squad: Player[], rng: () => number): void {
+function buildSubstitutions(
+  state: SideState,
+  squad: Player[],
+  rng: () => number,
+  fatigueByPlayer?: Map<string, number>
+): void {
   const count = SUB_MIN_COUNT + Math.floor(rng() * (SUB_MAX_COUNT - SUB_MIN_COUNT + 1))
   const startingIds = new Set(
     state.lineup.map((s) => s.playerId).filter((id): id is string => !!id)
@@ -410,7 +418,11 @@ function buildSubstitutions(state: SideState, squad: Player[], rng: () => number
       reason: "tactical" as const,
     }))
 
-  if (isInjuriesEnabled() && rng() < INJURY_CHANCE) {
+  const injuryChance =
+    fatigueByPlayer && isInjuryFatigueImpactEnabled()
+      ? INJURY_CHANCE * fatigueInjuryMultiplier(averageFatigue(fatigueByPlayer, startingIds))
+      : INJURY_CHANCE
+  if (isInjuriesEnabled() && rng() < injuryChance) {
     planned.push({
       minute: randomMinute(rng, "regulation", true),
       reason: "injury",
@@ -429,7 +441,7 @@ function buildSubstitutions(state: SideState, squad: Player[], rng: () => number
     const outSlot = pickSlot(pool, SUB_WEIGHT, rng)
     if (!outSlot) continue
 
-    const replacement = pickForPosition(bench, usedBenchIds, outSlot.position, rng)
+    const replacement = pickForPosition(bench, usedBenchIds, outSlot.position, rng, fatigueByPlayer)
     const inSlot: LineupSlot = replacement
       ? {
           playerId: replacement.id,
@@ -545,7 +557,8 @@ function buildLines(
   goalsAgainst: number,
   opponentOnTarget: number,
   matchMinutes: number,
-  rng: () => number
+  rng: () => number,
+  fatigueByPlayer?: Map<string, number>
 ): PlayerMatchLine[] {
   const outcome = outcomeFor(goalsFor, goalsAgainst)
   const cleanSheet = goalsAgainst === 0
@@ -578,6 +591,15 @@ function buildLines(
 
     const isKeeper = slot.position === "GK"
     const minutesShare = minutesPlayed !== undefined ? minutesPlayed / matchMinutes : undefined
+    // The pre-match figure alone would rate a substitute's ten minutes as
+    // harshly as the man he replaced's whole ninety; this adds back only
+    // what he himself actually played, at his own position's pace, so the
+    // penalty grows through a game rather than landing flat from kick-off.
+    const fatigueBaseline = slot.playerId ? fatigueByPlayer?.get(slot.playerId) : undefined
+    const fatigue =
+      fatigueBaseline !== undefined
+        ? fatigueAfterMinutes(fatigueBaseline, minutesPlayed ?? matchMinutes, slot.position)
+        : undefined
 
     return {
       playerId: slot.playerId,
@@ -601,6 +623,7 @@ function buildLines(
         squadPower,
         ...(isKeeper ? { saves, conceded: goalsAgainst } : {}),
         ...(minutesShare !== undefined ? { minutesShare } : {}),
+        ...(fatigue !== undefined ? { fatigue } : {}),
       }),
     }
   }
@@ -658,6 +681,9 @@ export interface AssembleMatchStatsInput {
    * a second set rolled here.
    */
   team?: TeamMatchStats
+  /** How tired each side's players are coming in (see engine/fatigue.ts). */
+  homeFatigue?: Map<string, number>
+  awayFatigue?: Map<string, number>
 }
 
 /**
@@ -688,6 +714,8 @@ export function assembleMatchStats(
     penHome,
     penAway,
     shootoutOutcome,
+    homeFatigue,
+    awayFatigue,
   } = input
 
   const team = input.team ?? generateTeamStats(homePower, awayPower, homeGoals, awayGoals, rng)
@@ -715,7 +743,8 @@ export function assembleMatchStats(
         awayGoals,
         team.onTarget[1],
         matchMinutes,
-        rng
+        rng,
+        homeFatigue
       ),
       ...buildLines(
         "away",
@@ -725,7 +754,8 @@ export function assembleMatchStats(
         homeGoals,
         team.onTarget[0],
         matchMinutes,
-        rng
+        rng,
+        awayFatigue
       ),
     ],
     team,
@@ -765,6 +795,9 @@ export interface GenerateMatchStatsInput {
    */
   homeSquad?: Player[]
   awaySquad?: Player[]
+  /** How tired each side's players are coming in (see engine/fatigue.ts). */
+  homeFatigue?: Map<string, number>
+  awayFatigue?: Map<string, number>
 }
 
 export function generateMatchStats(
@@ -785,6 +818,8 @@ export function generateMatchStats(
     reds,
     homeSquad,
     awaySquad,
+    homeFatigue,
+    awayFatigue,
   } = input
 
   const team: TeamMatchStats = generateTeamStats(homePower, awayPower, homeGoals, awayGoals, rng)
@@ -805,8 +840,8 @@ export function generateMatchStats(
   // Substitutions next, so the goals/penalty logic below already sees who
   // is actually out there — a substitute can score, get carded or take a
   // penalty; the man he replaced cannot do any of those past his minute.
-  buildSubstitutions(home.state, homeSquad ?? [], rng)
-  buildSubstitutions(away.state, awaySquad ?? [], rng)
+  buildSubstitutions(home.state, homeSquad ?? [], rng, homeFatigue)
+  buildSubstitutions(away.state, awaySquad ?? [], rng, awayFatigue)
 
   function subEventsFor(side: Side, state: SideState): MatchEvent[] {
     return state.subs.map((s) => ({
@@ -902,6 +937,8 @@ export function generateMatchStats(
       team,
       ...(penHome !== undefined && penAway !== undefined ? { penHome, penAway } : {}),
       ...(shootoutOutcome ? { shootoutOutcome } : {}),
+      ...(homeFatigue ? { homeFatigue } : {}),
+      ...(awayFatigue ? { awayFatigue } : {}),
     },
     rng
   )

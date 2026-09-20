@@ -66,6 +66,7 @@ export {
   onPitchFor,
   applySubstitution,
   finishLiveMatch,
+  liveFatigueByPlayer,
 } from "./liveMatch"
 export type { LiveMatchState, LiveSide, LiveTactics, CreateLiveMatchInput, Side } from "./liveMatch"
 export {
@@ -80,6 +81,9 @@ export {
   isFormFactorEnabled,
   isRedCardImpactEnabled,
   isInjuriesEnabled,
+  isFatigueFactorEnabled,
+  isMoraleFactorEnabled,
+  isInjuryFatigueImpactEnabled,
   computeFormAdjustments,
 } from "./simulation"
 export { decideKnockoutResult, extraTimeGoalsOf } from "./knockout"
@@ -119,6 +123,22 @@ export {
   unavailablePlayersByMatch,
 } from "./injuries"
 export type { InjuryMatch, InjuryAvailability } from "./injuries"
+export {
+  FATIGUE_DECAY_PER_MATCH,
+  FATIGUE_FULL_MATCH_LOAD,
+  FATIGUE_POSITION_LOAD,
+  FATIGUE_MAX,
+  FATIGUE_HISTORY_WINDOW,
+  computeFatigueByPlayer,
+  computeFatigueTeamAdjustments,
+  fatigueAfterMinutes,
+  averageFatigue,
+  fatigueRatingPenalty,
+  fatigueTeamPowerMalus,
+  fatigueSampleWeightMultiplier,
+  fatigueInjuryMultiplier,
+} from "./fatigue"
+export { MORALE_STEP, MORALE_MAX, MORALE_STREAK_WINDOW, computeMoraleAdjustments } from "./morale"
 export { setTableConfig } from "./tableConfig"
 export { setPowerResolver, resolvePower } from "./power"
 export {
@@ -254,11 +274,7 @@ export {
   createCustomTournament,
   clonePhaseGraph,
 } from "./phaseFactory"
-export type {
-  PhaseScoringDefaults,
-  CreatePhaseOptions,
-  CreateCustomOptions,
-} from "./phaseFactory"
+export type { PhaseScoringDefaults, CreatePhaseOptions, CreateCustomOptions } from "./phaseFactory"
 export {
   buildLineup,
   generateMatchStats,

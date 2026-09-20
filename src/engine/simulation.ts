@@ -13,6 +13,9 @@ let _formFactorEnabled = false
 let _homeAdvantage = 6 // power bonus for home team (0-20)
 let _redCardImpact = true
 let _injuriesEnabled = true
+let _fatigueFactorEnabled = false
+let _moraleFactorEnabled = false
+let _injuryFatigueImpact = true
 
 export function setSimConfig(config: {
   surpriseFactor?: number
@@ -20,6 +23,9 @@ export function setSimConfig(config: {
   homeAdvantage?: number
   redCardImpact?: boolean
   injuriesEnabled?: boolean
+  fatigueFactor?: boolean
+  moraleFactor?: boolean
+  injuryFatigueImpact?: boolean
 }) {
   if (config.surpriseFactor !== undefined) {
     _surpriseFactor = Math.max(0, Math.min(100, config.surpriseFactor))
@@ -36,10 +42,34 @@ export function setSimConfig(config: {
   if (config.injuriesEnabled !== undefined) {
     _injuriesEnabled = config.injuriesEnabled
   }
+  if (config.fatigueFactor !== undefined) {
+    _fatigueFactorEnabled = config.fatigueFactor
+  }
+  if (config.moraleFactor !== undefined) {
+    _moraleFactorEnabled = config.moraleFactor
+  }
+  if (config.injuryFatigueImpact !== undefined) {
+    _injuryFatigueImpact = config.injuryFatigueImpact
+  }
 }
 
 export function isFormFactorEnabled(): boolean {
   return _formFactorEnabled
+}
+
+/** Whether a tired squad plays lighter, rotates more and gets hurt more often. */
+export function isFatigueFactorEnabled(): boolean {
+  return _fatigueFactorEnabled
+}
+
+/** Whether a team's own recent result streak nudges its power. */
+export function isMoraleFactorEnabled(): boolean {
+  return _moraleFactorEnabled
+}
+
+/** Whether fatigue scales a player's chance of picking up an injury. Off means the flat rate only. */
+export function isInjuryFatigueImpactEnabled(): boolean {
+  return _injuryFatigueImpact
 }
 
 /**
@@ -72,6 +102,9 @@ export function getSimConfig(): {
   homeAdvantage: number
   redCardImpact: boolean
   injuriesEnabled: boolean
+  fatigueFactor: boolean
+  moraleFactor: boolean
+  injuryFatigueImpact: boolean
 } {
   return {
     surpriseFactor: _surpriseFactor,
@@ -79,6 +112,9 @@ export function getSimConfig(): {
     homeAdvantage: _homeAdvantage,
     redCardImpact: _redCardImpact,
     injuriesEnabled: _injuriesEnabled,
+    fatigueFactor: _fatigueFactorEnabled,
+    moraleFactor: _moraleFactorEnabled,
+    injuryFatigueImpact: _injuryFatigueImpact,
   }
 }
 

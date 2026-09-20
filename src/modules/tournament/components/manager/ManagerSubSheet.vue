@@ -8,6 +8,7 @@ import { computed, ref, shallowRef } from "vue"
 import { useI18n } from "vue-i18n"
 import { ArrowLeft } from "@lucide/vue"
 import { AppButton, AppChip, AppEmptyState, AppSheet } from "@/components/ui"
+import ManagerFatigueChip from "./ManagerFatigueChip.vue"
 import type { LineupSlot } from "@/engine"
 import type { Player } from "@/modules/players/types"
 import { usePlayersStore } from "@/modules/players/store"
@@ -16,6 +17,12 @@ const props = defineProps<{
   pitch: LineupSlot[]
   bench: Player[]
   subsLeft: number
+  /**
+   * How tired each squad member is right now, 0-1 — live for whoever is on
+   * the pitch, the fixed pre-match figure for anyone still on the bench (see
+   * engine/liveMatch.ts's `liveFatigueByPlayer`).
+   */
+  fatigueByPlayer?: Map<string, number>
 }>()
 const emit = defineEmits<{ substitute: [outSlot: LineupSlot, inPlayer: Player]; close: [] }>()
 
@@ -74,6 +81,7 @@ function choose(player: Player) {
         <button v-for="(slot, i) in pitch" :key="i" class="ms-row" @click="outSlot = slot">
           <AppChip square size="xs">{{ slot.position }}</AppChip>
           <span class="ms-name">{{ nameOf(slot.playerId) }}</span>
+          <ManagerFatigueChip :fatigue="fatigueByPlayer?.get(slot.playerId ?? '')" />
           <AppChip square size="xs">{{ slot.power }}</AppChip>
         </button>
       </div>
@@ -87,6 +95,7 @@ function choose(player: Player) {
         >
           <AppChip square size="xs">{{ player.position }}</AppChip>
           <span class="ms-name">{{ player.name }}</span>
+          <ManagerFatigueChip :fatigue="fatigueByPlayer?.get(player.id)" />
           <AppChip square size="xs">{{ player.power }}</AppChip>
         </button>
       </div>

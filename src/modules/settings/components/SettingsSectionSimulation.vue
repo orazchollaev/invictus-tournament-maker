@@ -98,6 +98,43 @@ const surpriseFactorLabel = computed(() => {
       />
     </AppField>
 
+    <AppField layout="split" :label="t('settings.simulation.injuryFatigueImpact.label')">
+      <template #description>
+        <SettingDesc>
+          {{ t("settings.simulation.injuryFatigueImpact.desc") }}
+        </SettingDesc>
+      </template>
+      <AppToggle
+        v-model="settings.injuryFatigueImpact"
+        :disabled="!settings.injuriesEnabled"
+        :aria-label="t('settings.simulation.injuryFatigueImpact.label')"
+      />
+    </AppField>
+
+    <AppField layout="split" :label="t('settings.simulation.fatigueFactor.label')">
+      <template #description>
+        <SettingDesc>
+          {{ t("settings.simulation.fatigueFactor.desc") }}
+        </SettingDesc>
+      </template>
+      <AppToggle
+        v-model="settings.fatigueFactorEnabled"
+        :aria-label="t('settings.simulation.fatigueFactor.label')"
+      />
+    </AppField>
+
+    <AppField layout="split" :label="t('settings.simulation.moraleFactor.label')">
+      <template #description>
+        <SettingDesc>
+          {{ t("settings.simulation.moraleFactor.desc") }}
+        </SettingDesc>
+      </template>
+      <AppToggle
+        v-model="settings.moraleFactorEnabled"
+        :aria-label="t('settings.simulation.moraleFactor.label')"
+      />
+    </AppField>
+
     <AppField layout="split" :label="t('settings.simulation.usePlayerPower.label')">
       <template #description>
         <SettingDesc>

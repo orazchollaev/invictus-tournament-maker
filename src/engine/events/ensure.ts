@@ -12,11 +12,13 @@
 import type { Player } from "@/modules/players/types"
 import type { Team } from "@/modules/teams/types"
 import type { Tournament, MatchStats, RedCard } from "@/modules/tournament/types"
-import { forEachMatch, isBye, type MatchEntry } from "../matchIterator"
+import { forEachMatch, playedMatches, isBye, type MatchEntry } from "../matchIterator"
 import { resolvePower } from "../power"
 import { teamFormation } from "../tactics"
 import { extraTimeGoalsOf } from "../knockout"
 import { unavailablePlayersByMatch, type InjuryAvailability } from "../injuries"
+import { computeFatigueByPlayer } from "../fatigue"
+import { isFatigueFactorEnabled, isInjuryFatigueImpactEnabled } from "../simulation"
 import { buildLineup } from "./lineup"
 import { generateMatchStats } from "./generate"
 import { claimWatchedMatch, pendingKey } from "./pending"
@@ -52,6 +54,14 @@ export interface PendingStatsJob {
    */
   unavailableHomeIds?: string[]
   unavailableAwayIds?: string[]
+  /**
+   * How tired each side's players are, snapshotted before the sweep the same
+   * way `unavailableHomeIds`/`unavailableAwayIds` are — see engine/fatigue.ts.
+   * A plain record rather than a `Map` only for symmetry with the rest of
+   * this flattened, `postMessage`-safe shape.
+   */
+  homeFatigue?: Record<string, number>
+  awayFatigue?: Record<string, number>
 }
 
 export interface StatsJobResult {
@@ -71,11 +81,21 @@ export interface StatsJobResult {
   penAway?: number
 }
 
-function jobFor(entry: MatchEntry, availability?: InjuryAvailability): PendingStatsJob | null {
+function toRecord(m: Map<string, number> | undefined): Record<string, number> | undefined {
+  return m?.size ? Object.fromEntries(m) : undefined
+}
+
+function jobFor(
+  entry: MatchEntry,
+  availability?: InjuryAvailability,
+  fatigueByTeam?: Map<string, Map<string, number>>
+): PendingStatsJob | null {
   const result = entry.result
   if (!result || isBye(entry)) return null
   const leg = "leg" in entry.source ? entry.source.leg : 1
   const extraTime = extraTimeGoalsOf(result)
+  const homeFatigue = toRecord(fatigueByTeam?.get(entry.homeId as string))
+  const awayFatigue = toRecord(fatigueByTeam?.get(entry.awayId as string))
   return {
     matchId: entry.match.id,
     leg,
@@ -94,7 +114,25 @@ function jobFor(entry: MatchEntry, availability?: InjuryAvailability): PendingSt
     ...(availability?.unavailableAwayIds.length
       ? { unavailableAwayIds: availability.unavailableAwayIds }
       : {}),
+    ...(homeFatigue ? { homeFatigue } : {}),
+    ...(awayFatigue ? { awayFatigue } : {}),
   }
+}
+
+/**
+ * Every team's players and how tired each of them is, snapshotted once
+ * before a sweep — the same "computed once, ahead of the batch" approximation
+ * `unavailablePlayersByMatch` already makes for injuries.
+ */
+function fatigueByTeamSnapshot(t: Tournament): Map<string, Map<string, number>> {
+  const history = playedMatches(t).map((e) => ({
+    homeId: e.homeId,
+    awayId: e.awayId,
+    result: e.result,
+  }))
+  const map = new Map<string, Map<string, number>>()
+  for (const id of t.teamIds) map.set(id, computeFatigueByPlayer(id, history))
+  return map
 }
 
 /**
@@ -131,12 +169,16 @@ export function pendingStatsJobs(t: Tournament): PendingStatsJob[] {
   // fixtureAdjustments already makes for form and discipline. See
   // engine/injuries.ts for what that trades away.
   const availabilityByKey = unavailablePlayersByMatch(t)
+  const fatigueByTeam =
+    isFatigueFactorEnabled() || isInjuryFatigueImpactEnabled()
+      ? fatigueByTeamSnapshot(t)
+      : undefined
 
   const jobs: PendingStatsJob[] = []
   forEachMatch(t, (entry) => {
     if (entry.result?.stats !== undefined) return
     const leg = "leg" in entry.source ? entry.source.leg : 1
-    const job = jobFor(entry, availabilityByKey.get(`${entry.match.id}:${leg}`))
+    const job = jobFor(entry, availabilityByKey.get(`${entry.match.id}:${leg}`), fatigueByTeam)
     if (job) jobs.push(job)
   })
   return jobs
@@ -160,9 +202,26 @@ export function computeStatsForJob(
   const homeSquad = (squads.get(job.homeId) ?? []).filter((p) => !homeOut.has(p.id))
   const awaySquad = (squads.get(job.awayId) ?? []).filter((p) => !awayOut.has(p.id))
 
+  const homeFatigue = job.homeFatigue ? new Map(Object.entries(job.homeFatigue)) : undefined
+  const awayFatigue = job.awayFatigue ? new Map(Object.entries(job.awayFatigue)) : undefined
+
   const stats = generateMatchStats({
-    homeLineup: buildLineup(homeSquad, Math.random, teamFormation(homeTeam)),
-    awayLineup: buildLineup(awaySquad, Math.random, teamFormation(awayTeam)),
+    homeLineup: buildLineup(
+      homeSquad,
+      Math.random,
+      teamFormation(homeTeam),
+      [],
+      false,
+      homeFatigue
+    ),
+    awayLineup: buildLineup(
+      awaySquad,
+      Math.random,
+      teamFormation(awayTeam),
+      [],
+      false,
+      awayFatigue
+    ),
     homePower: resolvePower(homeTeam),
     awayPower: resolvePower(awayTeam),
     homeGoals: job.homeGoals,
@@ -174,6 +233,8 @@ export function computeStatsForJob(
     ...(job.reds ? { reds: job.reds } : {}),
     homeSquad,
     awaySquad,
+    ...(homeFatigue ? { homeFatigue } : {}),
+    ...(awayFatigue ? { awayFatigue } : {}),
   })
 
   return {

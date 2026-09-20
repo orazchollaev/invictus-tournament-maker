@@ -52,7 +52,19 @@ import {
 } from "./events/generate"
 import { RED_CHANCE, RED_IN_MATCH_POWER_COST } from "./discipline"
 import { INJURY_CHANCE, rollInjuryDuration } from "./injuries"
-import { isInjuriesEnabled, isRedCardImpactEnabled, matchLambdas, penaltyRate } from "./simulation"
+import {
+  isInjuriesEnabled,
+  isInjuryFatigueImpactEnabled,
+  isRedCardImpactEnabled,
+  matchLambdas,
+  penaltyRate,
+} from "./simulation"
+import {
+  averageFatigue,
+  fatigueAfterMinutes,
+  fatigueInjuryMultiplier,
+  fatigueTeamPowerMalus,
+} from "./fatigue"
 import { resolvePower } from "./power"
 import { rollShootout, type ShootoutOutcome } from "./shootout"
 import { DEFAULT_STYLE, aiStyleFor, tacticsProfile, teamFormation } from "./tactics"
@@ -82,7 +94,10 @@ const AI_MAX_SUBS = 3
 
 export interface LiveSide {
   teamId: string
-  /** The squad rating plus the coach's own, fixed at kick-off. */
+  /**
+   * The squad rating plus the coach's own, minus the starting XI's own
+   * fatigue malus (see engine/fatigue.ts) — all fixed at kick-off.
+   */
   basePower: number
   /** Lineup, substitutions and dismissals — the shape the report assembler wants. */
   state: SideState
@@ -107,6 +122,8 @@ export interface LiveSide {
   aiSubMinutes: number[]
   /** Shirts already booked this match — a second one here is a sending-off. */
   yellowedOnce: Set<LineupSlot>
+  /** How tired each squad member was coming in, fixed at kick-off (see engine/fatigue.ts). */
+  fatigueByPlayer?: Map<string, number>
 }
 
 export interface LiveMatchState {
@@ -145,6 +162,9 @@ export interface CreateLiveMatchInput {
   managedTactics?: LiveTactics | null
   /** The user's own starting XI picks, one per formation slot. */
   managedStartingXI?: ManagerLineupSlot[] | null
+  /** How tired each side's players are coming in (see engine/fatigue.ts). */
+  homeFatigue?: Map<string, number>
+  awayFatigue?: Map<string, number>
   requiresWinner?: boolean
   /** Leg 2 of a tie: the first leg's score, in this match's home/away frame. */
   aggregateOffset?: { home: number; away: number } | null
@@ -156,7 +176,12 @@ export function createLiveMatch(
 ): LiveMatchState {
   const managedSide = input.managedSide ?? null
 
-  const buildSide = (team: Team, squad: Player[], which: Side): LiveSide => {
+  const buildSide = (
+    team: Team,
+    squad: Player[],
+    which: Side,
+    fatigueByPlayer?: Map<string, number>
+  ): LiveSide => {
     const managed = managedSide === which
     const tactics: LiveTactics =
       managed && input.managedTactics
@@ -167,11 +192,15 @@ export function createLiveMatch(
       rng,
       tactics.formation,
       managed ? (input.managedStartingXI ?? []) : [],
-      managed
+      managed,
+      fatigueByPlayer
     )
+    const startingIds = lineup.map((s) => s.playerId).filter((id): id is string => !!id)
+    const fatigueMalus = fatigueByPlayer ? fatigueTeamPowerMalus(fatigueByPlayer, startingIds) : 0
     return {
       teamId: team.id,
-      basePower: resolvePower(team) + tacticsProfile(tactics, team.coach?.power).powerBonus,
+      basePower:
+        resolvePower(team) + tacticsProfile(tactics, team.coach?.power).powerBonus + fatigueMalus,
       state: { lineup, dismissals: [], subs: [] },
       squad,
       tactics,
@@ -184,13 +213,14 @@ export function createLiveMatch(
       managed,
       aiSubMinutes: managed ? [] : planAiSubs(rng),
       yellowedOnce: new Set<LineupSlot>(),
+      ...(fatigueByPlayer ? { fatigueByPlayer } : {}),
     }
   }
 
   return {
     minute: 0,
-    home: buildSide(input.homeTeam, input.homeSquad, "home"),
-    away: buildSide(input.awayTeam, input.awaySquad, "away"),
+    home: buildSide(input.homeTeam, input.homeSquad, "home", input.homeFatigue),
+    away: buildSide(input.awayTeam, input.awaySquad, "away", input.awayFatigue),
     score: { home: 0, away: 0 },
     events: [],
     reds: [],
@@ -282,6 +312,40 @@ export function onPitchFor(state: LiveMatchState, which: Side): LineupSlot[] {
   return onPitch(state[which].state, state.minute)
 }
 
+/** How long the man currently wearing `slot` has actually been out there. */
+function minutesOnPitch(state: LiveMatchState, which: Side, slot: LineupSlot): number {
+  const sub = state[which].state.subs.find((s) => s.inSlot === slot)
+  const from = sub ? sub.minute : 0
+  return Math.max(0, state.minute - from)
+}
+
+/**
+ * How tired the eleven out there are *right now* — the fatigue they carried
+ * in (see engine/fatigue.ts), plus what this match itself has added them so
+ * far. A starter who has played the whole match reads far more tired than a
+ * substitute who has just come on, which the pre-match figure alone cannot
+ * show: that one is fixed at kick-off and never moves, and both would
+ * otherwise read identically all match long.
+ *
+ * Only covers whoever is actually on the pitch this minute — anyone still on
+ * the bench keeps reading the fixed, pre-match figure until he comes on,
+ * which is exactly what he should show before he has played a single minute
+ * of this match.
+ */
+export function liveFatigueByPlayer(state: LiveMatchState, which: Side): Map<string, number> {
+  const side = state[which]
+  if (!side.fatigueByPlayer) return new Map()
+
+  const map = new Map(side.fatigueByPlayer)
+  for (const slot of onPitch(side.state, state.minute)) {
+    if (!slot.playerId) continue
+    const baseline = side.fatigueByPlayer.get(slot.playerId) ?? 0
+    const minutes = minutesOnPitch(state, which, slot)
+    map.set(slot.playerId, fatigueAfterMinutes(baseline, minutes, slot.position))
+  }
+  return map
+}
+
 /**
  * Make a change. Returns false when it cannot be made — no changes left, the
  * man is already off, or the replacement is not actually on the bench.
@@ -361,6 +425,8 @@ export function finishLiveMatch(
       ...(shootout
         ? { penHome: shootout.penHome, penAway: shootout.penAway, shootoutOutcome: shootout }
         : {}),
+      ...(state.home.fatigueByPlayer ? { homeFatigue: state.home.fatigueByPlayer } : {}),
+      ...(state.away.fatigueByPlayer ? { awayFatigue: state.away.fatigueByPlayer } : {}),
     },
     rng
   )
@@ -494,12 +560,35 @@ function rollDiscipline(state: LiveMatchState, which: Side, rng: () => number): 
   return events
 }
 
-/** A player hurt badly enough to come off, when injuries are switched on. */
+/**
+ * A player hurt badly enough to come off, when injuries are switched on.
+ *
+ * The chance is scaled by the pitch's own average fatigue before anyone is
+ * picked — the same team-level nudge `buildSubstitutions` applies to the
+ * bulk simulator's injury roll, and it keeps this roll's rng call in the
+ * same place it always was: a side with nobody unusually tired sees no
+ * change at all.
+ *
+ * Reads `liveFatigueByPlayer` rather than the fixed pre-match figure, so the
+ * risk actually climbs as the match wears on a player, not just as a
+ * function of how tired he already was walking in.
+ */
 function rollInjury(state: LiveMatchState, which: Side, rng: () => number): MatchEvent[] {
   if (!isInjuriesEnabled()) return []
-  if (rng() >= INJURY_CHANCE / REGULATION_MINUTES) return []
 
-  const pitch = onPitch(state[which].state, state.minute)
+  const side = state[which]
+  const pitch = onPitch(side.state, state.minute)
+  const fatigue = side.fatigueByPlayer
+    ? averageFatigue(
+        liveFatigueByPlayer(state, which),
+        pitch.map((s) => s.playerId).filter((id): id is string => !!id)
+      )
+    : 0
+  const chance = isInjuryFatigueImpactEnabled()
+    ? INJURY_CHANCE * fatigueInjuryMultiplier(fatigue)
+    : INJURY_CHANCE
+  if (rng() >= chance / REGULATION_MINUTES) return []
+
   const slot = pickSlot(pitch, CARD_WEIGHT, rng)
   const bench = benchFor(state, which)
   if (!slot || !bench.length) return []
