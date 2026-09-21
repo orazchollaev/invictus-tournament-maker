@@ -1,5 +1,15 @@
 # Changelog
 
+## [3.0.1](https://github.com/orazchollaev/invictus-tournament-maker/compare/v3.0.0...v3.0.1) (2026-09-21)
+
+### 🐛 Bug Fixes
+
+- **persistence:** hydrate teams/players/settings before mount to stop data-loss race ([3007df7](https://github.com/orazchollaev/invictus-tournament-maker/commit/3007df74a5978c453508b3c0b1d280ad64f6241a))
+
+### 🔧 Maintenance
+
+- **gradle:** bump gradle version ([9533e36](https://github.com/orazchollaev/invictus-tournament-maker/commit/9533e36b7cedfeaf62b2aa89346af7aac53b88b3))
+
 ## [3.0.0](https://github.com/orazchollaev/invictus-tournament-maker/compare/v2.10.0...v3.0.0) (2026-09-21)
 
 ### 🚀 New Features
