@@ -1,0 +1,232 @@
+{
+  "label": "AFC Champions League Elite 26/27",
+  "description": "AFC Champions League Elite 2026/27 — 32 clubs",
+  "order": 6,
+  "type": "club",
+  "teams": [
+    {
+      "id": "afc-cl-01",
+      "name": "Al Wahda",
+      "color": "#1A1A1A",
+      "power": 74,
+      "flag": "ae"
+    },
+    {
+      "id": "afc-cl-02",
+      "name": "Nasaf",
+      "color": "#F7B500",
+      "power": 70,
+      "flag": "uz"
+    },
+    {
+      "id": "afc-cl-03",
+      "name": "Al-Khaldiya",
+      "color": "#0033A0",
+      "power": 62,
+      "flag": "bh"
+    },
+    {
+      "id": "afc-cl-04",
+      "name": "Al-Kuwait",
+      "color": "#0072BC",
+      "power": 61,
+      "flag": "kw"
+    },
+    {
+      "id": "afc-cl-05",
+      "name": "Arkadag",
+      "color": "#2E7D32",
+      "power": 60,
+      "flag": "tm"
+    },
+    {
+      "id": "afc-cl-06",
+      "name": "Al Jazira",
+      "color": "#FDB913",
+      "power": 73,
+      "flag": "ae"
+    },
+    {
+      "id": "afc-cl-07",
+      "name": "Gol Gohar",
+      "color": "#C8102E",
+      "power": 65,
+      "flag": "ir"
+    },
+    {
+      "id": "afc-cl-08",
+      "name": "Al-Muharraq",
+      "color": "#E4002B",
+      "power": 63,
+      "flag": "bh"
+    },
+    {
+      "id": "afc-cl-09",
+      "name": "Al-Rayyan",
+      "color": "#DA291C",
+      "power": 71,
+      "flag": "qa"
+    },
+    {
+      "id": "afc-cl-10",
+      "name": "Al Taawoun",
+      "color": "#FFD100",
+      "power": 69,
+      "flag": "sa"
+    },
+    {
+      "id": "afc-cl-11",
+      "name": "Al-Nahda",
+      "color": "#00843D",
+      "power": 60,
+      "flag": "om"
+    },
+    {
+      "id": "afc-cl-12",
+      "name": "Al-Faisaly",
+      "color": "#0072BC",
+      "power": 62,
+      "flag": "jo"
+    },
+    {
+      "id": "afc-cl-13",
+      "name": "Al-Shorta",
+      "color": "#00A651",
+      "power": 68,
+      "flag": "iq"
+    },
+    {
+      "id": "afc-cl-14",
+      "name": "East Bengal",
+      "color": "#DA291C",
+      "power": 61,
+      "flag": "in"
+    },
+    {
+      "id": "afc-cl-15",
+      "name": "Al-Hussein",
+      "color": "#009739",
+      "power": 60,
+      "flag": "jo"
+    },
+    {
+      "id": "afc-cl-16",
+      "name": "Al-Seeb",
+      "color": "#0033A0",
+      "power": 58,
+      "flag": "om"
+    },
+    {
+      "id": "afc-cl-17",
+      "name": "Persib",
+      "color": "#0033A0",
+      "power": 68,
+      "flag": "id"
+    },
+    {
+      "id": "afc-cl-18",
+      "name": "Melbourne Victory",
+      "color": "#1B3B6F",
+      "power": 70,
+      "flag": "au"
+    },
+    {
+      "id": "afc-cl-19",
+      "name": "Thể Công–Viettel",
+      "color": "#DA291C",
+      "power": 62,
+      "flag": "vn"
+    },
+    {
+      "id": "afc-cl-20",
+      "name": "FC Seoul",
+      "color": "#E4002B",
+      "power": 75,
+      "flag": "kr"
+    },
+    {
+      "id": "afc-cl-21",
+      "name": "Adelaide United",
+      "color": "#E4002B",
+      "power": 66,
+      "flag": "au"
+    },
+    {
+      "id": "afc-cl-22",
+      "name": "BG Pathum United",
+      "color": "#4B2E83",
+      "power": 64,
+      "flag": "th"
+    },
+    {
+      "id": "afc-cl-23",
+      "name": "Lion City Sailors",
+      "color": "#002D72",
+      "power": 63,
+      "flag": "sg"
+    },
+    {
+      "id": "afc-cl-24",
+      "name": "Tai Po",
+      "color": "#F7B500",
+      "power": 55,
+      "flag": "hk"
+    },
+    {
+      "id": "afc-cl-25",
+      "name": "Machida Zelvia",
+      "color": "#004098",
+      "power": 74,
+      "flag": "jp"
+    },
+    {
+      "id": "afc-cl-26",
+      "name": "Shanghai Shenhua",
+      "color": "#00529B",
+      "power": 72,
+      "flag": "cn"
+    },
+    {
+      "id": "afc-cl-27",
+      "name": "Tampines Rovers",
+      "color": "#00843D",
+      "power": 60,
+      "flag": "sg"
+    },
+    {
+      "id": "afc-cl-28",
+      "name": "PKR Svay Rieng",
+      "color": "#FFD100",
+      "power": 52,
+      "flag": "kh"
+    },
+    {
+      "id": "afc-cl-29",
+      "name": "Phnom Penh Crown",
+      "color": "#FFD100",
+      "power": 58,
+      "flag": "kh"
+    },
+    {
+      "id": "afc-cl-30",
+      "name": "Gangwon FC",
+      "color": "#F7941D",
+      "power": 68,
+      "flag": "kr"
+    },
+    {
+      "id": "afc-cl-31",
+      "name": "Kitchee",
+      "color": "#004B87",
+      "power": 60,
+      "flag": "hk"
+    },
+    {
+      "id": "afc-cl-32",
+      "name": "Kuching City",
+      "color": "#00843D",
+      "power": 54,
+      "flag": "my"
+    }
+  ]
+}
