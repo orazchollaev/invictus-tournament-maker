@@ -593,6 +593,7 @@
     about: "Sobre",
     aboutBy: "por",
     specialThanks: "Agradecimentos especiais",
+    disclaimer: "Simulador não oficial feito por fãs. Não afiliado, endossado ou associado à UEFA, AFC, CONMEBOL, FIFA ou a qualquer clube, liga ou competição mencionados no aplicativo.",
   },
   tournament: {
     exportExcel: "Exportar para Excel",

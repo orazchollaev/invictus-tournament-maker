@@ -590,6 +590,7 @@
     about: "Hakkında",
     aboutBy: "geliştirici",
     specialThanks: "Özel teşekkürler",
+    disclaimer: "Resmi olmayan, hayran yapımı bir simülasyondur. UEFA, AFC, CONMEBOL, FIFA veya uygulama içinde adı geçen herhangi bir kulüp, lig ya da turnuva ile bağlantılı, onaylı veya ilişkili değildir.",
   },
   tournament: {
     exportExcel: "Excel'e aktar",

@@ -575,6 +575,7 @@
     about: "O aplikacji",
     aboutBy: "autor",
     specialThanks: "Specjalne podziękowania",
+    disclaimer: "Nieoficjalny symulator stworzony przez fanów. Nie jest powiązany ani wspierany przez UEFA, AFC, CONMEBOL, FIFA ani żaden klub, ligę czy rozgrywki wymienione w aplikacji.",
   },
   tournament: {
     exportExcel: "Eksportuj do Excela",

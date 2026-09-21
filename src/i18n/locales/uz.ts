@@ -593,6 +593,7 @@
     about: "Ilova haqida",
     aboutBy: "muallif",
     specialThanks: "Alohida minnatdorchilik",
+    disclaimer: "Norasmiy, muxlislar tomonidan yaratilgan simulyator. UEFA, AFC, CONMEBOL, FIFA yoki ilovada nomi zikr etilgan hech qanday klub, liga yoki musobaqa bilan bog'liq yoki tasdiqlangan emas.",
   },
   tournament: {
     exportExcel: "Excel'ga eksport",

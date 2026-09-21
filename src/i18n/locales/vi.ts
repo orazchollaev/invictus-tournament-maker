@@ -576,6 +576,7 @@
     about: "Giới thiệu",
     aboutBy: "bởi",
     specialThanks: "Đặc biệt cảm ơn",
+    disclaimer: "Trình mô phỏng không chính thức do người hâm mộ tạo ra. Không liên kết, không được xác nhận và không có quan hệ với UEFA, AFC, CONMEBOL, FIFA hay bất kỳ câu lạc bộ, giải đấu nào được nhắc đến trong ứng dụng.",
   },
   tournament: {
     exportExcel: "Xuất ra Excel",

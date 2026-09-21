@@ -31,6 +31,8 @@ const CONTRIBUTORS = ["Rodrigo Hernandez", "Juninho"]
           <li v-for="name in CONTRIBUTORS" :key="name">{{ name }}</li>
         </ul>
       </div>
+
+      <p class="about-disclaimer">{{ t("settings.disclaimer") }}</p>
     </div>
   </AppModal>
 </template>
@@ -109,5 +111,13 @@ const CONTRIBUTORS = ["Rodrigo Hernandez", "Juninho"]
 .about-thanks-list li {
   font-size: var(--fs-base);
   color: var(--text-muted);
+}
+
+.about-disclaimer {
+  margin: var(--sp-4) 0 0;
+  font-size: var(--fs-xs);
+  line-height: 1.4;
+  color: var(--text-muted);
+  opacity: 0.7;
 }
 </style>

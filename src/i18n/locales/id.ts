@@ -578,6 +578,7 @@
     about: "Tentang",
     aboutBy: "oleh",
     specialThanks: "Terima kasih khusus",
+    disclaimer: "Simulator tidak resmi buatan penggemar. Tidak berafiliasi, didukung, atau terhubung dengan UEFA, AFC, CONMEBOL, FIFA, atau klub, liga, maupun kompetisi apa pun yang disebutkan dalam aplikasi.",
   },
   tournament: {
     exportExcel: "Ekspor ke Excel",

@@ -574,6 +574,7 @@
     about: "アプリについて",
     aboutBy: "開発:",
     specialThanks: "スペシャルサンクス",
+    disclaimer: "非公式のファン制作シミュレーターです。UEFA、AFC、CONMEBOL、FIFA、またはアプリ内で言及されているクラブ・リーグ・大会とは提携・承認・関係がありません。",
   },
   tournament: {
     exportExcel: "Excel に書き出す",

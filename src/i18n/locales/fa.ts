@@ -589,6 +589,7 @@
     about: "درباره",
     aboutBy: "توسط",
     specialThanks: "سپاس ویژه",
+    disclaimer: "این یک شبیه‌ساز غیررسمی و ساخته‌شده توسط هواداران است. هیچ ارتباطی با UEFA، AFC، CONMEBOL، FIFA یا هر باشگاه، لیگ یا مسابقه‌ای که در برنامه ذکر شده ندارد.",
   },
   tournament: {
     exportExcel: "خروجی Excel",

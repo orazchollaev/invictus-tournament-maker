@@ -574,6 +574,7 @@
     about: "정보",
     aboutBy: "제작",
     specialThanks: "특별 감사",
+    disclaimer: "비공식 팬 제작 시뮬레이터입니다. UEFA, AFC, CONMEBOL, FIFA 또는 앱에서 언급된 어떤 클럽, 리그, 대회와도 제휴, 후원, 연관되어 있지 않습니다.",
   },
   tournament: {
     exportExcel: "Excel로 내보내기",
