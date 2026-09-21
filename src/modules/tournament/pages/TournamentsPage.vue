@@ -16,7 +16,7 @@ import {
   AppSearchInput,
   AppButtonGroup,
 } from "@/components/ui"
-import { Trophy, X, Plus, List, Grid3x3 } from "@lucide/vue"
+import { Trophy, X, Plus, List, Grid3x3, Database } from "@lucide/vue"
 import { showConfirm } from "@/composables/useDialog"
 import { useI18n } from "vue-i18n"
 
@@ -175,8 +175,23 @@ async function deleteTournament(id: string) {
       :description="t('tournaments.empty', { action: t('tournaments.newBtn') })"
     >
       <template #action>
-        <AppButton variant="filled" @click="router.push('/tournaments/new')">
-          {{ t("tournaments.newBtn") }}
+        <div class="empty-actions">
+          <AppButton variant="filled" @click="router.push('/tournaments/new')">
+            {{ t("tournaments.newBtn") }}
+          </AppButton>
+          <AppButton variant="outlined" @click="router.push('/settings?category=sampleData')">
+            <AppIcon :icon="Database" size="xs" />
+            {{ t("tournaments.selectDatasetBtn") }}
+          </AppButton>
+        </div>
+      </template>
+    </AppEmptyState>
+
+    <AppEmptyState v-else-if="!store.tournaments.length" :icon="Trophy">
+      <template #action>
+        <AppButton variant="outlined" @click="router.push('/settings?category=sampleData')">
+          <AppIcon :icon="Database" size="xs" />
+          {{ t("tournaments.selectDatasetBtn") }}
         </AppButton>
       </template>
     </AppEmptyState>
@@ -184,6 +199,14 @@ async function deleteTournament(id: string) {
 </template>
 
 <style scoped>
+.empty-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
 .tour-card {
   cursor: pointer;
 }
