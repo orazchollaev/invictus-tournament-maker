@@ -20,7 +20,7 @@ import {
   AppSearchInput,
   AppButtonGroup,
 } from "@/components/ui"
-import { X, Pencil, Plus, Users, List, Grid3x3, ClipboardList } from "@lucide/vue"
+import { X, Pencil, Plus, Users, List, Grid3x3, ClipboardList, Database } from "@lucide/vue"
 import { useI18n } from "vue-i18n"
 
 const { t } = useI18n()
@@ -143,15 +143,32 @@ const pagedTeams = computed(() => {
       :description="t('teams.empty', { action: t('teams.addBtn') })"
     >
       <template #action>
-        <AppButton variant="filled" @click="showAddModal = true">
-          {{ t("teams.addBtn") }}
-        </AppButton>
+        <div class="empty-actions">
+          <AppButton variant="filled" @click="showAddModal = true">
+            {{ t("teams.addBtn") }}
+          </AppButton>
+          <AppButton variant="outlined" @click="router.push('/settings?category=sampleData')">
+            <AppIcon :icon="Database" size="xs" />
+            {{ t("tournaments.selectDatasetBtn") }}
+          </AppButton>
+        </div>
       </template>
     </AppEmptyState>
 
     <TeamFormModal v-if="showAddModal" @close="showAddModal = false" />
     <TeamFormModal v-if="editingTeam" :team="editingTeam" @close="editingTeam = null" />
     <GenerateCoachesModal v-if="showCoachesModal" @close="showCoachesModal = false" />
+
+    <button
+      v-if="store.teams.length"
+      type="button"
+      class="load-dataset-fab"
+      :title="t('teams.loadDatasetTitle')"
+      :aria-label="t('teams.loadDatasetTitle')"
+      @click="router.push('/settings?category=sampleData')"
+    >
+      <AppIcon :icon="Database" size="lg" />
+    </button>
   </div>
 </template>
 
@@ -189,6 +206,14 @@ const pagedTeams = computed(() => {
   font-weight: 400;
   color: var(--text-muted);
   margin-inline-start: var(--sp-2);
+}
+
+.empty-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .team-card {
@@ -248,5 +273,37 @@ const pagedTeams = computed(() => {
   position: absolute;
   top: var(--sp-2);
   inset-inline-end: var(--sp-2);
+}
+
+.load-dataset-fab {
+  position: fixed;
+  right: calc(var(--safe-right) + var(--sp-4));
+  bottom: calc(var(--safe-bottom) + var(--sp-4));
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  box-shadow: var(--shadow-md);
+  cursor: pointer;
+  z-index: var(--z-bottom-bar);
+  transition:
+    transform var(--dur-1) var(--ease),
+    box-shadow var(--dur-1) var(--ease);
+}
+
+.load-dataset-fab:hover {
+  transform: scale(1.05);
+  box-shadow: var(--elev-3);
+}
+
+@media (max-width: 600px) {
+  .load-dataset-fab {
+    bottom: calc(var(--safe-bottom) + var(--mobile-nav-height) + var(--sp-5));
+  }
 }
 </style>
