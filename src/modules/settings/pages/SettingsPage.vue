@@ -1,7 +1,18 @@
 <script setup lang="ts">
 import { ref, nextTick } from "vue"
+import { useRoute } from "vue-router"
 import { APP_VERSION } from "@/constants"
-import { Palette, LayoutGrid, Trophy, Dices, Database, Music, Menu, ChevronDown } from "@lucide/vue"
+import {
+  Palette,
+  LayoutGrid,
+  Trophy,
+  Dices,
+  Database,
+  FlaskConical,
+  Music,
+  Menu,
+  ChevronDown,
+} from "@lucide/vue"
 import type { Component } from "vue"
 import { useI18n } from "vue-i18n"
 import {
@@ -21,13 +32,25 @@ import {
 } from "@/modules/settings/components"
 
 const { t } = useI18n()
+const route = useRoute()
 
 // "appearance": language + theme/color, both about how the app looks & speaks.
 // "bracket": bracket rendering and win-celebration effects — visual feedback,
 // kept apart from app-wide appearance.
 // "tournament": rules & defaults that shape how tournaments play out.
 // "music": background music playback and track management.
-const CATEGORIES = ["appearance", "bracket", "tournament", "simulation", "music", "data"] as const
+// "sampleData" and "data" are split apart: one is about loading ready-made
+// team lists, the other is backup/export/import/clear — different enough
+// intents that they don't belong in the same tab.
+const CATEGORIES = [
+  "appearance",
+  "bracket",
+  "tournament",
+  "simulation",
+  "music",
+  "sampleData",
+  "data",
+] as const
 type Category = (typeof CATEGORIES)[number]
 
 const CATEGORY_ICONS: Record<Category, Component> = {
@@ -36,6 +59,7 @@ const CATEGORY_ICONS: Record<Category, Component> = {
   tournament: Trophy,
   simulation: Dices,
   music: Music,
+  sampleData: FlaskConical,
   data: Database,
 }
 
@@ -49,12 +73,17 @@ const GROUPS: Record<Category, Component[]> = {
   ],
   simulation: [SettingsSectionSimulation],
   music: [SettingsSectionMusic],
-  data: [SettingsSectionSampleData, SettingsSectionDataManagement],
+  sampleData: [SettingsSectionSampleData],
+  data: [SettingsSectionDataManagement],
 }
 
 const transitionName = ""
 
-const activeCategory = ref<Category>("appearance")
+const initialCategory = CATEGORIES.includes(route.query.category as Category)
+  ? (route.query.category as Category)
+  : "appearance"
+
+const activeCategory = ref<Category>(initialCategory)
 const menuOpen = ref(false)
 const aboutOpen = ref(false)
 
