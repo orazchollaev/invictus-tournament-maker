@@ -1,5 +1,15 @@
 # Changelog
 
+## [3.0.2](https://github.com/orazchollaev/invictus-tournament-maker/compare/v3.0.1...v3.0.2) (2026-09-21)
+
+### 🐛 Bug Fixes
+
+- **boot:** polyfill Object.hasOwn and add hydration timeout for old WebViews ([ba9b8e5](https://github.com/orazchollaev/invictus-tournament-maker/commit/ba9b8e526c65efe85610a06ada59edb6d28eb235))
+
+### 🔧 Maintenance
+
+- **gradle:** bump gradle version ([2e120bd](https://github.com/orazchollaev/invictus-tournament-maker/commit/2e120bd7fa921ddd52cb00799bb30cf3e73906a0))
+
 ## [3.0.1](https://github.com/orazchollaev/invictus-tournament-maker/compare/v3.0.0...v3.0.1) (2026-09-21)
 
 ### 🐛 Bug Fixes
