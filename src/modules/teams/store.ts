@@ -24,12 +24,7 @@ export const useTeamsStore = defineStore("teams", () => {
   const { tournaments } = useTournamentStore()
   const playersStore = usePlayersStore()
 
-  const teams = ref<Team[]>([
-    { id: "1", name: "Team 1", color: "#e63946", power: 82 },
-    { id: "2", name: "Team 2", color: "#457b9d", power: 80 },
-    { id: "3", name: "Team 3", color: "#2a9d8f", power: 75 },
-    { id: "4", name: "Team 4", color: "#e9c46a", power: 72 },
-  ])
+  const teams = ref<Team[]>([])
 
   function clampPower(power: number) {
     return Math.min(99, Math.max(1, Math.round(power)))
