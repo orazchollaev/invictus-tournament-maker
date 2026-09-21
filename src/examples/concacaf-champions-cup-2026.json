@@ -1,0 +1,197 @@
+{
+  "label": "2026 Concacaf Champions Cup",
+  "description": "Concacaf Champions Cup 2026 teams",
+  "order": 7,
+  "type": "club",
+  "teams": [
+    {
+      "id": "ccc-01",
+      "name": "Mount Pleasant",
+      "color": "#F7D117",
+      "power": 62,
+      "flag": "jm"
+    },
+    {
+      "id": "ccc-02",
+      "name": "Alajuelense",
+      "color": "#C8102E",
+      "power": 76,
+      "flag": "cr"
+    },
+    {
+      "id": "ccc-03",
+      "name": "Seattle Sounders",
+      "color": "#5D9741",
+      "power": 82,
+      "flag": "us"
+    },
+    {
+      "id": "ccc-04",
+      "name": "Toluca",
+      "color": "#C8102E",
+      "power": 88,
+      "flag": "mx"
+    },
+    {
+      "id": "ccc-05",
+      "name": "Inter Miami",
+      "color": "#F7B5CD",
+      "power": 85,
+      "flag": "us"
+    },
+    {
+      "id": "ccc-06",
+      "name": "Vancouver FC",
+      "color": "#172E5A",
+      "power": 59,
+      "flag": "ca"
+    },
+    {
+      "id": "ccc-07",
+      "name": "Atlético Ottawa",
+      "color": "#E21B2D",
+      "power": 61,
+      "flag": "ca"
+    },
+    {
+      "id": "ccc-08",
+      "name": "Forge FC",
+      "color": "#F7941D",
+      "power": 63,
+      "flag": "ca"
+    },
+    {
+      "id": "ccc-09",
+      "name": "O&M",
+      "color": "#006B3F",
+      "power": 57,
+      "flag": "do"
+    },
+    {
+      "id": "ccc-10",
+      "name": "Defence Force",
+      "color": "#F1C40F",
+      "power": 61,
+      "flag": "tt"
+    },
+    {
+      "id": "ccc-11",
+      "name": "Xelajú",
+      "color": "#C8102E",
+      "power": 67,
+      "flag": "gt"
+    },
+    {
+      "id": "ccc-12",
+      "name": "Real España",
+      "color": "#F5C400",
+      "power": 68,
+      "flag": "hn"
+    },
+    {
+      "id": "ccc-13",
+      "name": "Olimpia",
+      "color": "#FFFFFF",
+      "power": 74,
+      "flag": "hn"
+    },
+    {
+      "id": "ccc-14",
+      "name": "Cartaginés",
+      "color": "#0057B8",
+      "power": 66,
+      "flag": "cr"
+    },
+    {
+      "id": "ccc-15",
+      "name": "Sporting San Miguelito",
+      "color": "#0057B8",
+      "power": 62,
+      "flag": "pa"
+    },
+    {
+      "id": "ccc-16",
+      "name": "América",
+      "color": "#F7C600",
+      "power": 87,
+      "flag": "mx"
+    },
+    {
+      "id": "ccc-17",
+      "name": "Monterrey",
+      "color": "#1F4788",
+      "power": 84,
+      "flag": "mx"
+    },
+    {
+      "id": "ccc-18",
+      "name": "Cruz Azul",
+      "color": "#0057B8",
+      "power": 86,
+      "flag": "mx"
+    },
+    {
+      "id": "ccc-19",
+      "name": "Tigres UANL",
+      "color": "#F5C400",
+      "power": 82,
+      "flag": "mx"
+    },
+    {
+      "id": "ccc-20",
+      "name": "Pumas UNAM",
+      "color": "#002D62",
+      "power": 78,
+      "flag": "mx"
+    },
+    {
+      "id": "ccc-21",
+      "name": "LA Galaxy",
+      "color": "#FFD200",
+      "power": 79,
+      "flag": "us"
+    },
+    {
+      "id": "ccc-22",
+      "name": "Philadelphia Union",
+      "color": "#002B5C",
+      "power": 78,
+      "flag": "us"
+    },
+    {
+      "id": "ccc-23",
+      "name": "San Diego FC",
+      "color": "#FF6B35",
+      "power": 75,
+      "flag": "us"
+    },
+    {
+      "id": "ccc-24",
+      "name": "Vancouver Whitecaps",
+      "color": "#1E4D2B",
+      "power": 79,
+      "flag": "ca"
+    },
+    {
+      "id": "ccc-25",
+      "name": "FC Cincinnati",
+      "color": "#F36F21",
+      "power": 80,
+      "flag": "us"
+    },
+    {
+      "id": "ccc-26",
+      "name": "Los Angeles FC",
+      "color": "#C39E6D",
+      "power": 81,
+      "flag": "us"
+    },
+    {
+      "id": "ccc-27",
+      "name": "Nashville SC",
+      "color": "#F5E500",
+      "power": 73,
+      "flag": "us"
+    }
+  ]
+}

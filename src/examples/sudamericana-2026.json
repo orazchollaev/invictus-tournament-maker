@@ -1,0 +1,232 @@
+{
+  "label": "2026 Sudamericana",
+  "description": "CONMEBOL Sudamericana 2026 teams",
+  "order": 5,
+  "type": "club",
+  "teams": [
+    {
+      "id": "sud-01",
+      "name": "River Plate",
+      "color": "#E30613",
+      "power": 87,
+      "flag": "ar"
+    },
+    {
+      "id": "sud-02",
+      "name": "São Paulo",
+      "color": "#D71920",
+      "power": 85,
+      "flag": "br"
+    },
+    {
+      "id": "sud-03",
+      "name": "Atlético Mineiro",
+      "color": "#000000",
+      "power": 84,
+      "flag": "br"
+    },
+    {
+      "id": "sud-04",
+      "name": "Racing Club",
+      "color": "#75AADB",
+      "power": 83,
+      "flag": "ar"
+    },
+    {
+      "id": "sud-05",
+      "name": "Grêmio",
+      "color": "#00AEEF",
+      "power": 82,
+      "flag": "br"
+    },
+    {
+      "id": "sud-06",
+      "name": "Vasco da Gama",
+      "color": "#000000",
+      "power": 79,
+      "flag": "br"
+    },
+    {
+      "id": "sud-07",
+      "name": "Botafogo",
+      "color": "#000000",
+      "power": 79,
+      "flag": "br"
+    },
+    {
+      "id": "sud-08",
+      "name": "Olimpia",
+      "color": "#FFFFFF",
+      "power": 79,
+      "flag": "py"
+    },
+    {
+      "id": "sud-09",
+      "name": "Santos",
+      "color": "#000000",
+      "power": 78,
+      "flag": "br"
+    },
+    {
+      "id": "sud-10",
+      "name": "San Lorenzo",
+      "color": "#0F2044",
+      "power": 77,
+      "flag": "ar"
+    },
+    {
+      "id": "sud-11",
+      "name": "Red Bull Bragantino",
+      "color": "#E30613",
+      "power": 77,
+      "flag": "br"
+    },
+    {
+      "id": "sud-12",
+      "name": "Millonarios",
+      "color": "#0057B8",
+      "power": 76,
+      "flag": "co"
+    },
+    {
+      "id": "sud-13",
+      "name": "América de Cali",
+      "color": "#D71920",
+      "power": 75,
+      "flag": "co"
+    },
+    {
+      "id": "sud-14",
+      "name": "Palestino",
+      "color": "#009B3A",
+      "power": 72,
+      "flag": "cl"
+    },
+    {
+      "id": "sud-15",
+      "name": "Tigre",
+      "color": "#0057B8",
+      "power": 72,
+      "flag": "ar"
+    },
+    {
+      "id": "sud-16",
+      "name": "Caracas",
+      "color": "#D71920",
+      "power": 71,
+      "flag": "ve"
+    },
+    {
+      "id": "sud-17",
+      "name": "Barracas Central",
+      "color": "#FF0000",
+      "power": 70,
+      "flag": "ar"
+    },
+    {
+      "id": "sud-18",
+      "name": "Cienciano",
+      "color": "#D71920",
+      "power": 70,
+      "flag": "pe"
+    },
+    {
+      "id": "sud-19",
+      "name": "Deportivo Cuenca",
+      "color": "#E30613",
+      "power": 69,
+      "flag": "ec"
+    },
+    {
+      "id": "sud-20",
+      "name": "Audax Italiano",
+      "color": "#008C45",
+      "power": 68,
+      "flag": "cl"
+    },
+    {
+      "id": "sud-21",
+      "name": "Montevideo City Torque",
+      "color": "#75AADB",
+      "power": 68,
+      "flag": "uy"
+    },
+    {
+      "id": "sud-22",
+      "name": "Boston River",
+      "color": "#D71920",
+      "power": 67,
+      "flag": "uy"
+    },
+    {
+      "id": "sud-23",
+      "name": "O'Higgins",
+      "color": "#0057B8",
+      "power": 67,
+      "flag": "cl"
+    },
+    {
+      "id": "sud-24",
+      "name": "Deportivo Riestra",
+      "color": "#000000",
+      "power": 66,
+      "flag": "ar"
+    },
+    {
+      "id": "sud-25",
+      "name": "Blooming",
+      "color": "#009FE3",
+      "power": 65,
+      "flag": "bo"
+    },
+    {
+      "id": "sud-26",
+      "name": "Macará",
+      "color": "#0057B8",
+      "power": 65,
+      "flag": "ec"
+    },
+    {
+      "id": "sud-27",
+      "name": "Independiente Petrolero",
+      "color": "#E30613",
+      "power": 64,
+      "flag": "bo"
+    },
+    {
+      "id": "sud-28",
+      "name": "Academia Puerto Cabello",
+      "color": "#0057B8",
+      "power": 63,
+      "flag": "ve"
+    },
+    {
+      "id": "sud-29",
+      "name": "Carabobo",
+      "color": "#FFD700",
+      "power": 63,
+      "flag": "ve"
+    },
+    {
+      "id": "sud-30",
+      "name": "Recoleta",
+      "color": "#E30613",
+      "power": 62,
+      "flag": "py"
+    },
+    {
+      "id": "sud-31",
+      "name": "Juventud",
+      "color": "#006437",
+      "power": 61,
+      "flag": "uy"
+    },
+    {
+      "id": "sud-32",
+      "name": "Alianza Atlético",
+      "color": "#0057B8",
+      "power": 60,
+      "flag": "pe"
+    }
+  ]
+}

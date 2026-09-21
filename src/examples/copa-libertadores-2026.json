@@ -1,0 +1,232 @@
+{
+  "label": "2026 Libertadores",
+  "description": "CONMEBOL Libertadores 2026 teams",
+  "order": 3,
+  "type": "club",
+  "teams": [
+    {
+      "id": "lib-01",
+      "name": "Flamengo",
+      "color": "#E30613",
+      "power": 91,
+      "flag": "br"
+    },
+    {
+      "id": "lib-02",
+      "name": "Palmeiras",
+      "color": "#006437",
+      "power": 90,
+      "flag": "br"
+    },
+    {
+      "id": "lib-03",
+      "name": "Boca Juniors",
+      "color": "#003B7A",
+      "power": 87,
+      "flag": "ar"
+    },
+    {
+      "id": "lib-04",
+      "name": "Fluminense",
+      "color": "#7B1E3A",
+      "power": 87,
+      "flag": "br"
+    },
+    {
+      "id": "lib-05",
+      "name": "Peñarol",
+      "color": "#FFD700",
+      "power": 84,
+      "flag": "uy"
+    },
+    {
+      "id": "lib-06",
+      "name": "Corinthians",
+      "color": "#000000",
+      "power": 84,
+      "flag": "br"
+    },
+    {
+      "id": "lib-07",
+      "name": "Cruzeiro",
+      "color": "#003DA5",
+      "power": 83,
+      "flag": "br"
+    },
+    {
+      "id": "lib-08",
+      "name": "Liga de Quito",
+      "color": "#C8102E",
+      "power": 83,
+      "flag": "ec"
+    },
+    {
+      "id": "lib-09",
+      "name": "Estudiantes de La Plata",
+      "color": "#E30613",
+      "power": 82,
+      "flag": "ar"
+    },
+    {
+      "id": "lib-10",
+      "name": "Independiente del Valle",
+      "color": "#000000",
+      "power": 82,
+      "flag": "ec"
+    },
+    {
+      "id": "lib-11",
+      "name": "Cerro Porteño",
+      "color": "#1A3D8F",
+      "power": 80,
+      "flag": "py"
+    },
+    {
+      "id": "lib-12",
+      "name": "Lanús",
+      "color": "#8B1E3F",
+      "power": 80,
+      "flag": "ar"
+    },
+    {
+      "id": "lib-13",
+      "name": "Nacional",
+      "color": "#003DA5",
+      "power": 79,
+      "flag": "uy"
+    },
+    {
+      "id": "lib-14",
+      "name": "Libertad",
+      "color": "#000000",
+      "power": 79,
+      "flag": "py"
+    },
+    {
+      "id": "lib-15",
+      "name": "Rosario Central",
+      "color": "#FFD700",
+      "power": 78,
+      "flag": "ar"
+    },
+    {
+      "id": "lib-16",
+      "name": "Barcelona",
+      "color": "#FFD700",
+      "power": 78,
+      "flag": "ec"
+    },
+    {
+      "id": "lib-17",
+      "name": "Junior",
+      "color": "#D71920",
+      "power": 77,
+      "flag": "co"
+    },
+    {
+      "id": "lib-18",
+      "name": "Universitario",
+      "color": "#E30613",
+      "power": 77,
+      "flag": "pe"
+    },
+    {
+      "id": "lib-19",
+      "name": "Sporting Cristal",
+      "color": "#7AC8E8",
+      "power": 76,
+      "flag": "pe"
+    },
+    {
+      "id": "lib-20",
+      "name": "Santa Fe",
+      "color": "#D71920",
+      "power": 75,
+      "flag": "co"
+    },
+    {
+      "id": "lib-21",
+      "name": "Independiente Medellín",
+      "color": "#D71920",
+      "power": 75,
+      "flag": "co"
+    },
+    {
+      "id": "lib-22",
+      "name": "Coquimbo Unido",
+      "color": "#FFD500",
+      "power": 73,
+      "flag": "cl"
+    },
+    {
+      "id": "lib-23",
+      "name": "Bolívar",
+      "color": "#00AEEF",
+      "power": 73,
+      "flag": "bo"
+    },
+    {
+      "id": "lib-24",
+      "name": "Always Ready",
+      "color": "#E30613",
+      "power": 70,
+      "flag": "bo"
+    },
+    {
+      "id": "lib-25",
+      "name": "Deportes Tolima",
+      "color": "#FFD700",
+      "power": 72,
+      "flag": "co"
+    },
+    {
+      "id": "lib-26",
+      "name": "Platense",
+      "color": "#000000",
+      "power": 69,
+      "flag": "ar"
+    },
+    {
+      "id": "lib-27",
+      "name": "Independiente Rivadavia",
+      "color": "#003B7A",
+      "power": 68,
+      "flag": "ar"
+    },
+    {
+      "id": "lib-28",
+      "name": "Cusco",
+      "color": "#F5C400",
+      "power": 67,
+      "flag": "pe"
+    },
+    {
+      "id": "lib-29",
+      "name": "Mirassol",
+      "color": "#FFD700",
+      "power": 67,
+      "flag": "br"
+    },
+    {
+      "id": "lib-30",
+      "name": "Deportivo La Guaira",
+      "color": "#F7C600",
+      "power": 65,
+      "flag": "ve"
+    },
+    {
+      "id": "lib-31",
+      "name": "Universidad Católica",
+      "color": "#003DA5",
+      "power": 72,
+      "flag": "cl"
+    },
+    {
+      "id": "lib-32",
+      "name": "Universidad Central",
+      "color": "#F4C300",
+      "power": 64,
+      "flag": "ve"
+    }
+  ]
+}
