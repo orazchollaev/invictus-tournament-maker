@@ -114,8 +114,10 @@ export function useDataManagement() {
         .map((entry: unknown) => normalizeTournament(entry))
         .filter((t: Tournament | null): t is Tournament => t !== null)
     )
-    if (!dataset.tournaments)
-      await idbStorage.setItem("tournament", JSON.stringify({ active: null }))
+    // The previous dataset's `active` id names a tournament that has just been
+    // deleted, whether or not this dataset ships any of its own — carrying it
+    // over opens the app on a tournament that is not there any more.
+    await idbStorage.setItem("tournament", JSON.stringify({ active: null }))
     // A dataset either ships its own squads or has none. Either way the
     // previous dataset's players go — leaving them behind would orphan
     // entries pointing at team ids that no longer exist.
@@ -203,7 +205,10 @@ export function useDataManagement() {
     a.href = url
     a.download = filename
     a.click()
-    URL.revokeObjectURL(url)
+    // Revoking on the same tick can abort a download that has not actually
+    // started yet — the click only queues one. A turn of the event loop is
+    // enough for every browser to have taken its own reference.
+    setTimeout(() => URL.revokeObjectURL(url), 0)
   }
 
   function importData() {
@@ -263,10 +268,13 @@ export function useDataManagement() {
             writes.push(idbStorage.setItem("tournament", JSON.stringify({ active })))
           }
           if (!writes.length) throw new Error()
-          // A backup with no players section still replaces the team roster —
-          // leaving the old squad in place would orphan it against team ids
-          // that no longer exist. Same rule loadDataset() already follows.
+          // A section the backup does not carry is a section that has to go,
+          // not one that survives: leaving the old teams behind would orphan
+          // them against imported tournaments that never name them, and
+          // leaving the old squad behind would orphan it against team ids that
+          // no longer exist. Same rule loadDataset() already follows.
           if (!importedKeys.includes("players")) writes.push(idbStorage.removeItem("players"))
+          if (!importedKeys.includes("teams")) writes.push(idbStorage.removeItem("teams"))
           await Promise.all(writes)
           // Said before the reload, because after it there is nothing left to
           // explain why a tournament is missing.
