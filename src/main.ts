@@ -10,6 +10,9 @@ import { initPush } from "./composables/usePush"
 import { initAnalytics, logScreenView, logError } from "./composables/useAnalytics"
 import { idbStorage } from "./lib/idbStorage"
 import { useTournamentStore } from "./modules/tournament/store"
+import { useTeamsStore } from "./modules/teams/store"
+import { usePlayersStore } from "./modules/players/store"
+import { useSettingsStore } from "./modules/settings/store"
 
 import "./assets/style/index.css"
 
@@ -93,6 +96,24 @@ async function bootstrap() {
   } catch {}
   try {
     tournamentStore.migrateLegacyMatchStats()
+  } catch {}
+
+  // teams/players/settings hydrate through the persistedstate plugin, which
+  // reads idb asynchronously but starts persisting on mutation immediately —
+  // if any code mutated one of these stores before its read resolved, that
+  // mutation's $subscribe write would beat the read and permanently overwrite
+  // the real saved data with whatever the store started as (e.g. an empty
+  // teams list). Waiting for every store's own hydration here, before mount
+  // lets anything run, closes that window entirely.
+  const teamsStore = useTeamsStore()
+  const playersStore = usePlayersStore()
+  const settingsStore = useSettingsStore()
+  try {
+    await Promise.all([
+      teamsStore.$persistedState.isReady(),
+      playersStore.$persistedState.isReady(),
+      settingsStore.$persistedState.isReady(),
+    ])
   } catch {}
 
   app.mount("#app")
