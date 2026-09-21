@@ -28,6 +28,22 @@ export async function logScreenView(screenName: string): Promise<void> {
   }
 }
 
+/**
+ * A crash that got past every local `catch`, reported so it is visible as
+ * something other than a user's bug report.
+ *
+ * Deliberately lossy: Analytics caps an event parameter's length, and a stack
+ * is the part worth keeping under that cap. `where` says which net caught it
+ * (render, promise, window), because the same message means different things
+ * from each.
+ */
+export async function logError(where: string, error: unknown): Promise<void> {
+  const message = error instanceof Error ? `${error.name}: ${error.message}` : String(error)
+  const stack = error instanceof Error ? (error.stack ?? "") : ""
+  if (import.meta.env.DEV) console.error(`[${where}]`, error)
+  await logEvent("app_error", { where, message: message.slice(0, 100), stack: stack.slice(0, 300) })
+}
+
 export async function logEvent(name: string, params?: Record<string, unknown>): Promise<void> {
   if (!Capacitor.isNativePlatform()) return
 

@@ -3,14 +3,18 @@ import { ref, onErrorCaptured } from "vue"
 import { useI18n } from "vue-i18n"
 import { AlertTriangle } from "@lucide/vue"
 import { useHaptic } from "@/composables/useHaptic"
+import { logError } from "@/composables/useAnalytics"
 
 const { t } = useI18n()
 const haptic = useHaptic()
 const error = ref<Error | null>(null)
 
-onErrorCaptured((err) => {
+onErrorCaptured((err, _instance, info) => {
   error.value = err instanceof Error ? err : new Error(String(err))
   haptic.error()
+  // `return false` below stops this from reaching app.config.errorHandler, so
+  // the report has to be made here or the crash is never seen anywhere.
+  void logError(`boundary:${info}`, err)
   return false
 })
 

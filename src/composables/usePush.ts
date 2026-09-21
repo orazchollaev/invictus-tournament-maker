@@ -17,18 +17,22 @@ export async function initPush(): Promise<void> {
 
     await PushNotifications.register()
 
+    // A device's FCM token identifies that install, and a notification payload
+    // is whatever was broadcast to it — neither belongs in a release build's
+    // log, which anyone with the device attached can read. Kept for the one
+    // thing they are actually needed for: sending a test push from the
+    // Firebase Console against a development build.
     PushNotifications.addListener("registration", (token) => {
-      // Needed once to send a test push from the Firebase Console.
-      console.log("FCM token:", token.value)
+      if (import.meta.env.DEV) console.log("FCM token:", token.value)
     })
 
     PushNotifications.addListener("registrationError", (err) => {
-      console.warn("push registration error:", err)
+      if (import.meta.env.DEV) console.warn("push registration error:", err)
     })
 
     PushNotifications.addListener("pushNotificationActionPerformed", (action) => {
       // Fired when the user taps a notification. Hook navigation here later.
-      console.log("push tapped:", action.notification.data)
+      if (import.meta.env.DEV) console.log("push tapped:", action.notification.data)
     })
   } catch {
     // best-effort: silently ignore if unavailable

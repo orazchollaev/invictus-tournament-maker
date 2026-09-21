@@ -7,7 +7,7 @@ import App from "./App.vue"
 import i18n, { isRtl, loadLocale } from "./i18n"
 import type { Locale } from "./i18n"
 import { initPush } from "./composables/usePush"
-import { initAnalytics, logScreenView } from "./composables/useAnalytics"
+import { initAnalytics, logScreenView, logError } from "./composables/useAnalytics"
 import { idbStorage } from "./lib/idbStorage"
 import { useTournamentStore } from "./modules/tournament/store"
 
@@ -66,6 +66,13 @@ async function bootstrap() {
   } catch {}
 
   const app = createApp(App)
+  // ErrorBoundary catches what happens inside the router view and swaps in a
+  // retry panel. This is the net under everything it cannot see — a throw from
+  // the app shell itself, or from a lifecycle hook above the boundary — so a
+  // crash is at least reported rather than only leaving a dead screen.
+  app.config.errorHandler = (error, _instance, info) => {
+    void logError(`vue:${info}`, error)
+  }
   app.use(pinia)
   app.use(router)
   app.use(i18n)
@@ -97,4 +104,20 @@ async function bootstrap() {
   })
 }
 
-bootstrap()
+// A rejection nobody awaited used to surface as a console line and nothing
+// else. Both of these are best-effort reporters: they never swallow anything
+// the app was going to handle, they just make sure it was seen.
+window.addEventListener("unhandledrejection", (event) => {
+  void logError("unhandledrejection", event.reason)
+})
+window.addEventListener("error", (event) => {
+  void logError("window", event.error ?? event.message)
+})
+
+// Anything that escapes bootstrap's own try blocks — `app.mount` above all —
+// leaves a blank page. It cannot be recovered from here, but it can be
+// reported, which is the difference between a diagnosable crash and a silent
+// one.
+bootstrap().catch((error) => {
+  void logError("bootstrap", error)
+})
