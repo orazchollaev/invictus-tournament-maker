@@ -14,8 +14,8 @@ function ensureInitialized(): Promise<void> {
 }
 
 export function useInterstitialAd() {
-  /** weight: 1 for a brand-new tournament, 0.5 for a new season of an existing one. */
-  async function onTournamentCreated(weight: 1 | 0.5 = 1) {
+  /** weight: 1 for a brand-new tournament, 0.75 for a new season of an existing one. */
+  async function onTournamentCreated(weight: 1 | 0.75 = 1) {
     if (!Capacitor.isNativePlatform()) return
 
     const score = parseFloat(localStorage.getItem(CREATION_SCORE_KEY) ?? "0") + weight

@@ -154,7 +154,7 @@ export function useTournamentCeremonies(
       teams: t.teamIds.length,
       season: t.season + 1,
     })
-    void onTournamentCreated(0.5)
+    void onTournamentCreated(0.75)
 
     // Swiss redraws its own opponent graph inside the store (fresh seed), so
     // there are no pots for the user to edit — but it still gets the reveal
