@@ -14,6 +14,7 @@ import type { Tournament } from "@/modules/tournament/types"
 import { APP_VERSION } from "@/constants"
 import { uid } from "@/engine"
 import { useRewardedAd } from "@/composables/useRewardedAd"
+import { logEvent } from "@/composables/useAnalytics"
 
 interface Dataset {
   label: string
@@ -125,6 +126,8 @@ export function useDataManagement() {
       confirmLabel: t("settings.sampleData.loadLabel"),
     })
     if (!ok) return
+
+    void logEvent("select_sample_dataset", { dataset: dataset.label, type: dataset.type })
 
     // Datasets are added on top of whatever is already there, not swapped in
     // — a dataset's own ids are namespaced (e.g. "afc-01") so they normally
