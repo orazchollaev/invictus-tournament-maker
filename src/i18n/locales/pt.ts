@@ -159,6 +159,7 @@ export default {
       swiss: "Suíço",
       league: "Liga",
       bracket: "Chaveamento",
+      custom: "Personalizado",
     },
     deleteConfirm: "Excluir este torneio?",
     deleteLabel: "Excluir",
@@ -523,6 +524,18 @@ export default {
         label: "Usar poder dos jogadores",
         desc: "Combina o poder de um time com o poder médio dos jogadores do elenco. Desativado = usa apenas o poder próprio do time.",
       },
+      fatigueFactor: {
+        label: "Fadiga dos jogadores",
+        desc: "Os jogadores cansam-se à medida que jogam e só recuperam parcialmente entre partidas. Um onze inicial cansado enfraquece a equipa, recebe notas individuais piores e é escalado com menos frequência pela IA.",
+      },
+      moraleFactor: {
+        label: "Moral da equipa",
+        desc: "A sequência atual de vitórias ou derrotas de uma equipa influencia a sua força, independentemente da forma recente.",
+      },
+      injuryFatigueImpact: {
+        label: "A fadiga aumenta o risco de lesão",
+        desc: "Um jogador cansado lesiona-se mais facilmente. Requer que as Lesões estejam ativas.",
+      },
     },
     sampleData: {
       withSquads: "Elencos",
@@ -549,6 +562,7 @@ export default {
         btn: "Limpar tudo",
       },
       invalidFile: "Arquivo de backup inválido.",
+      partialImport: "Importado, mas {count} torneio(s) não puderam ser lidos e foram ignorados.",
     },
     resetSettings: {
       title: "Redefinir configurações",
@@ -648,6 +662,9 @@ export default {
         swiss: "Sistema Suíço",
         swissDesc:
           "Uma única tabela, mas cada equipa enfrenta apenas parte do plantel (no estilo da Champions League)",
+        custom: "Personalizado",
+        customDesc:
+          "Monte as suas próprias fases — grupos, tabelas e eliminatórias, na ordem que quiser",
       },
       swissConfig: {
         phase: "Fase de Liga",
@@ -886,6 +903,106 @@ export default {
         close: "Fechar",
       },
     },
+    phases: {
+      title: "Fases",
+      help: "Arraste a porta direita de uma fase até à porta esquerda da fase seguinte.",
+      summary: "{count} fases",
+      summaryEmpty: "Ainda sem fases",
+      button: "Fases",
+      kinds: {
+        group: "Grupos",
+        league: "Liga",
+        swiss: "Suíço",
+        knockout: "Eliminatória",
+      },
+      node: {
+        name: "Nome da fase",
+        teams: "{count} equipas",
+        config: "Definições",
+        final: "Final",
+        remove: "Remover fase",
+      },
+      guide: {
+        lead: "Construa o torneio a partir de fases e ligue-as entre si.",
+        add: "Adicione uma fase com os botões acima — uma fase de grupos, uma tabela, uma ronda suíça ou uma eliminatória.",
+        connect:
+          "Arraste da porta direita de uma fase até à porta esquerda da seguinte. Num ecrã tátil, toque numa porta e depois na outra.",
+        configure:
+          "Abra as Definições de uma fase para definir o seu formato, e a sua ligação para escolher que lugares avançam.",
+        final:
+          "Marque como Final a fase que decide o vencedor. Uma eliminatória não tem porta de saída — é aí que um ramo termina.",
+        example:
+          "Uma estrutura comum: Grupos → Liga → Taça. Os grupos enviam os apurados para a liga, os quatro primeiros da liga vão para a taça, e a taça é a final.",
+        dismiss: "Entendi",
+        reopen: "Como funciona isto?",
+      },
+      links: {
+        title: "Ligações",
+        edit: "Alterar que lugares avançam",
+        remove: "Remover ligação",
+      },
+      edge: {
+        single: "Lugar {rank}",
+        range: "Lugares {from}-{to}",
+        teams: "{count} equipas",
+      },
+      range: {
+        title: "Quem avança",
+        subtitle: "{from} a {to}",
+        from: "Do lugar",
+        to: "Até ao lugar",
+        hint: "{count} equipas seguem para {to}.",
+        disconnect: "Desligar",
+        groupNote:
+          "{from} decide quem avança nas suas próprias definições — apurados por grupo, mais os repescados.",
+      },
+      config: {
+        intake: "{count} equipas chegam a esta fase",
+        shape: "Formato",
+        groupCount: "Número de grupos",
+        seedMode: "Sorteio",
+        legs: "Jogos por confronto",
+        opponents: "Adversários por equipa",
+        pots: "Número de potes",
+        balance: "Equilibrar casa e fora",
+        finalLegs: "Final",
+        thirdPlace: "Jogo do 3.º lugar",
+        thirdPlaceLegs: "Jogos do 3.º lugar",
+        swissSize: "{matchdays} jornadas",
+        qualification: "Apuramento",
+        qualifiersPerGroup: "Avançam por grupo",
+        wildcards: "Repescados",
+        wildcardsHint: "As melhores equipas que terminam um lugar abaixo",
+        advancing: "{count} equipas avançam",
+      },
+      errors: {
+        noPhases: "Adicione pelo menos uma fase.",
+        noEntry: "Uma fase não pode ter ligações de entrada — é por aí que as equipas entram.",
+        multipleEntry: "Só uma fase pode ser a fase inicial.",
+        cycle: "As ligações formam um ciclo.",
+        unnamed: "Dê um nome a esta fase.",
+        knockoutHasOutput: "Uma eliminatória não pode enviar equipas para a frente.",
+        noFinal: "Marque uma fase como final.",
+        multipleFinal: "Só uma fase pode ser a final.",
+        finalNotTerminal: "A fase final não pode enviar equipas para a frente.",
+        edgeRankRange: "Os lugares {from}-{to} não existem — esta fase tem {available} equipas.",
+        rangeOverlap: "Duas ligações reivindicam os mesmos lugares.",
+        phaseTooSmall: "{intake} equipas são poucas — esta fase precisa de pelo menos {min}.",
+        groupCount: "Defina pelo menos dois grupos.",
+        groupsTooSmall: "{intake} equipas não chegam para {groupCount} grupos.",
+        groupSingleOutput:
+          "Uma fase de grupos envia os apurados como um só conjunto — só pode ter uma ligação.",
+        groupQualifiers: "{qualifiers} por grupo são demasiados — no máximo {max}.",
+        groupWildcards: "{wildcards} repescados são demasiados — no máximo {max}, um por grupo.",
+        swissOpponents: "{opponents} adversários são demasiados — no máximo {max}.",
+        configMismatch: "As definições desta fase não correspondem ao seu tipo.",
+        danglingEdge: "Uma ligação aponta para uma fase que já não existe.",
+        selfEdge: "Uma fase não pode ligar-se a si própria.",
+      },
+      advance: "Avançar para {phase}",
+      locked: "Termine {phase} para desbloquear esta etapa.",
+      notStarted: "Esta fase ainda não começou.",
+    },
   },
   teamSelector: {
     searchPlaceholder: "Pesquisar equipes…",
@@ -966,6 +1083,7 @@ export default {
     match: {
       title: "Treinador",
       manage: "Gerenciar",
+      onPitch: "Em campo",
     },
     tactics: {
       title: "Tática",
@@ -981,6 +1099,7 @@ export default {
       noneLeft: "Não há mais substituições",
       emptyBench: "Ninguém no banco",
       unknownPlayer: "Jogador Desconhecido",
+      failed: "Não foi possível fazer essa substituição",
     },
     banner: {
       title: "{team} — sua próxima partida",
@@ -1006,6 +1125,20 @@ export default {
       incomplete: "Faltam {n} para escolher antes de começar.",
       injured: "Machucado",
       suspended: "Suspenso",
+      fatigueHint:
+        "O emblema na camisola é a resistência do jogador — verde é fresco, âmbar é cansado, vermelho é exausto. 100% significa totalmente fresco; desce para 0% à medida que se cansa.",
+      pickTitle: "Escolher um jogador",
+      clear: "Retirar do onze",
+      outOfPosition: "Fora de posição",
+      searchPlaceholder: "Procurar jogadores…",
+      fatigue: {
+        fresh: "Fresco",
+        tired: "Cansado",
+        exhausted: "Exausto",
+      },
+    },
+    morale: {
+      label: "Moral",
     },
   },
   music: {
@@ -1194,6 +1327,7 @@ export default {
     semiFinals: "Meias-finais",
     quarterFinals: "Quartos de final",
     roundOf: "Fase de {n}",
+    thirdPlace: "Jogo do 3.º lugar",
   },
   notFound: {
     message: "Página não encontrada",

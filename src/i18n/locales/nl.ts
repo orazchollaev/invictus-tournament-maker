@@ -525,6 +525,18 @@ export default {
         label: "Spelerssterkte gebruiken",
         desc: "Combineer de sterkte van een team met de gemiddelde sterkte van zijn spelers. Uit = alleen de teamsterkte telt.",
       },
+      fatigueFactor: {
+        label: "Spelersvermoeidheid",
+        desc: "Spelers raken vermoeid naarmate ze wedstrijden spelen en herstellen daartussen slechts gedeeltelijk. Een vermoeide basiself verzwakt het team, krijgt lagere individuele beoordelingen en wordt minder vaak opgesteld door de AI.",
+      },
+      moraleFactor: {
+        label: "Teammoraal",
+        desc: "De huidige reeks overwinningen of nederlagen van een team beïnvloedt de kracht, los van de recente vorm.",
+      },
+      injuryFatigueImpact: {
+        label: "Vermoeidheid verhoogt blessurerisico",
+        desc: "Een vermoeide speler raakt sneller geblesseerd. Vereist dat Blessures aanstaat.",
+      },
     },
     sampleData: {
       withSquads: "Selecties",
@@ -1080,6 +1092,7 @@ export default {
     match: {
       title: "Trainer",
       manage: "Coachen",
+      onPitch: "In het veld",
     },
     tactics: {
       title: "Tactiek",
@@ -1095,6 +1108,7 @@ export default {
       noneLeft: "Geen wissels meer",
       emptyBench: "Niemand op de bank",
       unknownPlayer: "Onbekende speler",
+      failed: "Die wissel kon niet worden doorgevoerd",
     },
     banner: {
       title: "{team} — je volgende wedstrijd",
@@ -1120,6 +1134,20 @@ export default {
       incomplete: "Nog {n} te kiezen voordat je kunt aftrappen.",
       injured: "Geblesseerd",
       suspended: "Geschorst",
+      fatigueHint:
+        "De badge op een shirt is het uithoudingsvermogen van die speler — groen is fit, oranje is vermoeid, rood is uitgeput. 100% betekent volledig fit; het daalt richting 0% naarmate hij vermoeid raakt.",
+      pickTitle: "Kies een speler",
+      clear: "Uit opstelling halen",
+      outOfPosition: "Uit positie",
+      searchPlaceholder: "Spelers zoeken…",
+      fatigue: {
+        fresh: "Fit",
+        tired: "Vermoeid",
+        exhausted: "Uitgeput",
+      },
+    },
+    morale: {
+      label: "Moraal",
     },
   },
   music: {
@@ -1314,4 +1342,4 @@ export default {
     message: "Pagina niet gevonden",
     goHome: "Naar start",
   },
-}
+} as const

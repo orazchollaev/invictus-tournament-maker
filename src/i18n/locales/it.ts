@@ -161,6 +161,7 @@ export default {
       swiss: "Svizzero",
       league: "Campionato",
       bracket: "Tabellone",
+      custom: "Personalizzato",
     },
     deleteConfirm: "Eliminare questo torneo?",
     deleteLabel: "Elimina",
@@ -525,6 +526,18 @@ export default {
         label: "Usa Potenza Giocatori",
         desc: "Combina la potenza di una squadra con la potenza media dei giocatori della sua rosa. Disattivato = si usa solo la potenza propria della squadra.",
       },
+      fatigueFactor: {
+        label: "Affaticamento dei giocatori",
+        desc: "I giocatori si affaticano giocando le partite e recuperano solo in parte tra una e l’altra. Un undici titolare affaticato indebolisce la squadra, ottiene voti individuali più bassi e viene schierato meno spesso dall’IA.",
+      },
+      moraleFactor: {
+        label: "Morale della squadra",
+        desc: "La striscia di vittorie o sconfitte in corso di una squadra incide sulla sua forza, indipendentemente dalla forma recente.",
+      },
+      injuryFatigueImpact: {
+        label: "L’affaticamento aumenta il rischio di infortunio",
+        desc: "Un giocatore affaticato si infortuna più facilmente. Richiede che gli Infortuni siano attivi.",
+      },
     },
     sampleData: {
       withSquads: "Rose",
@@ -552,6 +565,8 @@ export default {
         btn: "Cancella Tutto",
       },
       invalidFile: "File di backup non valido.",
+      partialImport:
+        "Importato, ma {count} torneo/i non è stato possibile leggerli e sono stati saltati.",
     },
     resetSettings: {
       title: "Reimposta Impostazioni",
@@ -651,6 +666,9 @@ export default {
         swiss: "Sistema Svizzero",
         swissDesc:
           "Un'unica classifica, ma ogni squadra affronta solo parte delle altre (stile Champions League)",
+        custom: "Personalizzato",
+        customDesc:
+          "Componi le tue fasi: gironi, classifiche ed eliminazioni dirette, nell’ordine che preferisci",
       },
       swissConfig: {
         phase: "Fase a Campionato",
@@ -892,6 +910,106 @@ export default {
         close: "Chiudi",
       },
     },
+    phases: {
+      title: "Fasi",
+      help: "Trascina la porta destra di una fase sulla porta sinistra della fase successiva.",
+      summary: "{count} fasi",
+      summaryEmpty: "Ancora nessuna fase",
+      button: "Fasi",
+      kinds: {
+        group: "Gironi",
+        league: "Campionato",
+        swiss: "Svizzero",
+        knockout: "Eliminazione diretta",
+      },
+      node: {
+        name: "Nome della fase",
+        teams: "{count} squadre",
+        config: "Impostazioni",
+        final: "Finale",
+        remove: "Rimuovi fase",
+      },
+      guide: {
+        lead: "Costruisci il torneo con le fasi e collegale tra loro.",
+        add: "Aggiungi una fase dai pulsanti qui sopra: una fase a gironi, una classifica, un turno svizzero o un’eliminazione diretta.",
+        connect:
+          "Trascina dalla porta destra di una fase alla porta sinistra della successiva. Su uno schermo touch, tocca prima una porta e poi l’altra.",
+        configure:
+          "Apri le Impostazioni di una fase per definirne la forma, e la sua connessione per scegliere quali posizioni avanzano.",
+        final:
+          "Contrassegna come Finale la fase che decide il vincitore. Un’eliminazione diretta non ha porta di uscita: è lì che un ramo finisce.",
+        example:
+          "Una struttura comune: Gironi → Campionato → Coppa. I gironi mandano le qualificate al campionato, le prime quattro del campionato vanno in coppa, e la coppa è la finale.",
+        dismiss: "Ho capito",
+        reopen: "Come funziona?",
+      },
+      links: {
+        title: "Connessioni",
+        edit: "Cambia quali posizioni avanzano",
+        remove: "Rimuovi connessione",
+      },
+      edge: {
+        single: "Posizione {rank}",
+        range: "Posizioni {from}-{to}",
+        teams: "{count} squadre",
+      },
+      range: {
+        title: "Chi avanza",
+        subtitle: "Da {from} a {to}",
+        from: "Dalla posizione",
+        to: "Alla posizione",
+        hint: "{count} squadre passano a {to}.",
+        disconnect: "Disconnetti",
+        groupNote:
+          "{from} decide chi avanza nelle proprie impostazioni: qualificate per girone, più i ripescaggi.",
+      },
+      config: {
+        intake: "{count} squadre raggiungono questa fase",
+        shape: "Formato",
+        groupCount: "Numero di gironi",
+        seedMode: "Sorteggio",
+        legs: "Partite per accoppiamento",
+        opponents: "Avversari per squadra",
+        pots: "Numero di urne",
+        balance: "Bilancia casa e trasferta",
+        finalLegs: "Finale",
+        thirdPlace: "Finale 3º posto",
+        thirdPlaceLegs: "Partite per il 3º posto",
+        swissSize: "{matchdays} giornate",
+        qualification: "Qualificazione",
+        qualifiersPerGroup: "Avanzano per girone",
+        wildcards: "Ripescaggi",
+        wildcardsHint: "Le migliori squadre che chiudono una posizione più sotto",
+        advancing: "{count} squadre avanzano",
+      },
+      errors: {
+        noPhases: "Aggiungi almeno una fase.",
+        noEntry: "Una fase non deve avere connessioni in entrata: è da lì che entrano le squadre.",
+        multipleEntry: "Solo una fase può essere quella iniziale.",
+        cycle: "Le connessioni formano un anello.",
+        unnamed: "Dai un nome a questa fase.",
+        knockoutHasOutput: "Un’eliminazione diretta non può mandare avanti altre squadre.",
+        noFinal: "Contrassegna una fase come finale.",
+        multipleFinal: "Solo una fase può essere la finale.",
+        finalNotTerminal: "La fase finale non può mandare avanti altre squadre.",
+        edgeRankRange: "Le posizioni {from}-{to} non esistono: questa fase ha {available} squadre.",
+        rangeOverlap: "Due connessioni rivendicano le stesse posizioni.",
+        phaseTooSmall: "{intake} squadre sono troppo poche: questa fase ne richiede almeno {min}.",
+        groupCount: "Imposta almeno due gironi.",
+        groupsTooSmall: "{intake} squadre non possono riempire {groupCount} gironi.",
+        groupSingleOutput:
+          "Una fase a gironi manda avanti le qualificate come un unico gruppo: può avere una sola connessione.",
+        groupQualifiers: "{qualifiers} per girone sono troppe: al massimo {max}.",
+        groupWildcards: "{wildcards} ripescaggi sono troppi: al massimo {max}, uno per girone.",
+        swissOpponents: "{opponents} avversari sono troppi: al massimo {max}.",
+        configMismatch: "Le impostazioni di questa fase non corrispondono al suo tipo.",
+        danglingEdge: "Una connessione punta a una fase che non esiste più.",
+        selfEdge: "Una fase non può collegarsi a sé stessa.",
+      },
+      advance: "Avanza a {phase}",
+      locked: "Completa {phase} per sbloccare questa fase.",
+      notStarted: "Questa fase non è ancora iniziata.",
+    },
   },
   teamSelector: {
     searchPlaceholder: "Cerca squadre…",
@@ -972,6 +1090,7 @@ export default {
     match: {
       title: "Allenatore",
       manage: "Gestisci",
+      onPitch: "In campo",
     },
     tactics: {
       title: "Tattica",
@@ -987,6 +1106,7 @@ export default {
       noneLeft: "Nessuna sostituzione rimasta",
       emptyBench: "Nessuno in panchina",
       unknownPlayer: "Giocatore Sconosciuto",
+      failed: "Non è stato possibile effettuare quella sostituzione",
     },
     banner: {
       title: "{team} — la tua prossima partita",
@@ -1012,6 +1132,20 @@ export default {
       incomplete: "Ancora {n} da scegliere prima di poter iniziare.",
       injured: "Infortunato",
       suspended: "Squalificato",
+      fatigueHint:
+        "Il distintivo sulla maglia indica la resistenza del giocatore: verde fresco, ambra affaticato, rosso esausto. 100% significa del tutto fresco; scende verso 0% man mano che si stanca.",
+      pickTitle: "Scegli un giocatore",
+      clear: "Togli dalla formazione",
+      outOfPosition: "Fuori ruolo",
+      searchPlaceholder: "Cerca giocatori…",
+      fatigue: {
+        fresh: "Fresco",
+        tired: "Affaticato",
+        exhausted: "Esausto",
+      },
+    },
+    morale: {
+      label: "Morale",
     },
   },
   music: {

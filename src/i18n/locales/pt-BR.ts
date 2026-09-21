@@ -161,6 +161,7 @@ export default {
       swiss: "Suíço",
       league: "Pontos Corridos",
       bracket: "Mata-Mata",
+      custom: "Personalizado",
     },
     deleteConfirm: "Excluir este torneio?",
     deleteLabel: "Excluir",
@@ -525,6 +526,18 @@ export default {
         label: "Usar Força dos Jogadores",
         desc: "Combina a força de um time com a força média dos jogadores do elenco. Desativado = usa apenas a força própria do time.",
       },
+      fatigueFactor: {
+        label: "Fadiga dos jogadores",
+        desc: "Os jogadores se cansam conforme jogam partidas e só se recuperam parcialmente entre elas. Um time titular cansado enfraquece a equipe, recebe notas individuais piores e é escalado com menos frequência pela IA.",
+      },
+      moraleFactor: {
+        label: "Moral do time",
+        desc: "A sequência atual de vitórias ou derrotas de um time influencia sua força, independentemente da forma recente.",
+      },
+      injuryFatigueImpact: {
+        label: "A fadiga aumenta o risco de lesão",
+        desc: "Um jogador cansado se lesiona com mais facilidade. Requer que as Lesões estejam ativadas.",
+      },
     },
     sampleData: {
       withSquads: "Elencos",
@@ -551,6 +564,7 @@ export default {
         btn: "Apagar Tudo",
       },
       invalidFile: "Arquivo de backup inválido.",
+      partialImport: "Importado, mas {count} torneio(s) não puderam ser lidos e foram ignorados.",
     },
     resetSettings: {
       title: "Redefinir Configurações",
@@ -650,6 +664,8 @@ export default {
         swiss: "Sistema Suíço",
         swissDesc:
           "Uma única tabela, mas cada time enfrenta apenas parte do grupo (estilo Champions League)",
+        custom: "Personalizado",
+        customDesc: "Monte suas próprias fases — grupos, tabelas e mata-matas, na ordem que quiser",
       },
       swissConfig: {
         phase: "Fase de Pontos Corridos",
@@ -895,6 +911,106 @@ export default {
         close: "Fechar",
       },
     },
+    phases: {
+      title: "Fases",
+      help: "Arraste a porta direita de uma fase até a porta esquerda da fase seguinte.",
+      summary: "{count} fases",
+      summaryEmpty: "Ainda sem fases",
+      button: "Fases",
+      kinds: {
+        group: "Grupos",
+        league: "Pontos Corridos",
+        swiss: "Suíço",
+        knockout: "Mata-Mata",
+      },
+      node: {
+        name: "Nome da fase",
+        teams: "{count} times",
+        config: "Configurações",
+        final: "Final",
+        remove: "Remover fase",
+      },
+      guide: {
+        lead: "Monte o torneio a partir de fases e conecte-as entre si.",
+        add: "Adicione uma fase pelos botões acima — uma fase de grupos, uma tabela, uma rodada suíça ou um mata-mata.",
+        connect:
+          "Arraste da porta direita de uma fase até a porta esquerda da seguinte. Em uma tela sensível ao toque, toque em uma porta e depois na outra.",
+        configure:
+          "Abra as Configurações de uma fase para definir seu formato, e a conexão dela para escolher quais colocações avançam.",
+        final:
+          "Marque como Final a fase que decide o campeão. Um mata-mata não tem porta de saída — é onde um ramo termina.",
+        example:
+          "Uma estrutura comum: Grupos → Pontos Corridos → Copa. Os grupos enviam os classificados para os pontos corridos, os quatro primeiros vão para a copa, e a copa é a final.",
+        dismiss: "Entendi",
+        reopen: "Como isso funciona?",
+      },
+      links: {
+        title: "Conexões",
+        edit: "Alterar quais colocações avançam",
+        remove: "Remover conexão",
+      },
+      edge: {
+        single: "Colocação {rank}",
+        range: "Colocações {from}-{to}",
+        teams: "{count} times",
+      },
+      range: {
+        title: "Quem avança",
+        subtitle: "{from} a {to}",
+        from: "Da colocação",
+        to: "Até a colocação",
+        hint: "{count} times seguem para {to}.",
+        disconnect: "Desconectar",
+        groupNote:
+          "{from} decide quem avança nas próprias configurações — classificados por grupo, mais os repescados.",
+      },
+      config: {
+        intake: "{count} times chegam a esta fase",
+        shape: "Formato",
+        groupCount: "Número de grupos",
+        seedMode: "Sorteio",
+        legs: "Jogos por confronto",
+        opponents: "Adversários por time",
+        pots: "Número de potes",
+        balance: "Equilibrar casa e fora",
+        finalLegs: "Final",
+        thirdPlace: "Disputa de 3º lugar",
+        thirdPlaceLegs: "Jogos da disputa de 3º lugar",
+        swissSize: "{matchdays} rodadas",
+        qualification: "Classificação",
+        qualifiersPerGroup: "Avançam por grupo",
+        wildcards: "Repescados",
+        wildcardsHint: "Os melhores times que terminam uma colocação abaixo",
+        advancing: "{count} times avançam",
+      },
+      errors: {
+        noPhases: "Adicione pelo menos uma fase.",
+        noEntry: "Uma fase não pode ter conexões de entrada — é por ali que os times entram.",
+        multipleEntry: "Só uma fase pode ser a fase inicial.",
+        cycle: "As conexões formam um ciclo.",
+        unnamed: "Dê um nome a esta fase.",
+        knockoutHasOutput: "Um mata-mata não pode enviar times adiante.",
+        noFinal: "Marque uma fase como final.",
+        multipleFinal: "Só uma fase pode ser a final.",
+        finalNotTerminal: "A fase final não pode enviar times adiante.",
+        edgeRankRange: "As colocações {from}-{to} não existem — esta fase tem {available} times.",
+        rangeOverlap: "Duas conexões reivindicam as mesmas colocações.",
+        phaseTooSmall: "{intake} times é pouco — esta fase precisa de pelo menos {min}.",
+        groupCount: "Defina pelo menos dois grupos.",
+        groupsTooSmall: "{intake} times não preenchem {groupCount} grupos.",
+        groupSingleOutput:
+          "Uma fase de grupos envia os classificados como um único conjunto — ela só pode ter uma conexão.",
+        groupQualifiers: "{qualifiers} por grupo é demais — no máximo {max}.",
+        groupWildcards: "{wildcards} repescados é demais — no máximo {max}, um por grupo.",
+        swissOpponents: "{opponents} adversários é demais — no máximo {max}.",
+        configMismatch: "As configurações desta fase não correspondem ao seu tipo.",
+        danglingEdge: "Uma conexão aponta para uma fase que não existe mais.",
+        selfEdge: "Uma fase não pode se conectar a si mesma.",
+      },
+      advance: "Avançar para {phase}",
+      locked: "Conclua {phase} para desbloquear esta etapa.",
+      notStarted: "Esta fase ainda não começou.",
+    },
   },
   teamSelector: {
     searchPlaceholder: "Buscar times…",
@@ -975,6 +1091,7 @@ export default {
     match: {
       title: "Técnico",
       manage: "Gerenciar",
+      onPitch: "Em campo",
     },
     tactics: {
       title: "Tática",
@@ -990,6 +1107,7 @@ export default {
       noneLeft: "Nenhuma substituição restante",
       emptyBench: "Ninguém no banco",
       unknownPlayer: "Jogador Desconhecido",
+      failed: "Não foi possível fazer essa substituição",
     },
     banner: {
       title: "{team} — sua próxima partida",
@@ -1015,6 +1133,20 @@ export default {
       incomplete: "Faltam {n} para poder começar a partida.",
       injured: "Lesionado",
       suspended: "Suspenso",
+      fatigueHint:
+        "O emblema na camisa é o fôlego do jogador — verde é descansado, âmbar é cansado, vermelho é exausto. 100% significa totalmente descansado; cai para 0% conforme ele se cansa.",
+      pickTitle: "Escolher um jogador",
+      clear: "Tirar da escalação",
+      outOfPosition: "Fora de posição",
+      searchPlaceholder: "Buscar jogadores…",
+      fatigue: {
+        fresh: "Descansado",
+        tired: "Cansado",
+        exhausted: "Exausto",
+      },
+    },
+    morale: {
+      label: "Moral",
     },
   },
   music: {

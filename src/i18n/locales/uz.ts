@@ -525,6 +525,18 @@ export default {
         label: "O'yinchilar kuchidan foydalanish",
         desc: "Jamoa kuchini tarkibning o'rtacha o'yinchi kuchi bilan birlashtirish. O'ch = faqat jamoaning o'z kuchi ishlatiladi.",
       },
+      fatigueFactor: {
+        label: "O'yinchi charchog'i",
+        desc: "O'yinchilar o'yin o'ynagani sayin charchaydi va o'yinlar orasida faqat qisman tiklanadi. Charchagan asosiy tarkib jamoani zaiflashtiradi, individual bahosi pasayadi va sun'iy intellekt uni kamroq tanlaydi.",
+      },
+      moraleFactor: {
+        label: "Jamoa ruhiyati",
+        desc: "Jamoaning joriy g'alaba yoki mag'lubiyat seriyasi, so'nggi o'yin ko'rsatkichidan alohida, uning kuchiga ta'sir qiladi.",
+      },
+      injuryFatigueImpact: {
+        label: "Charchoq jarohat xavfini oshiradi",
+        desc: "Charchagan o'yinchi ko'proq jarohat oladi. Buning uchun Jarohatlar yoqilgan bo'lishi kerak.",
+      },
     },
     sampleData: {
       withSquads: "Tarkiblar",
@@ -1075,6 +1087,7 @@ export default {
     match: {
       title: "Murabbiy",
       manage: "Boshqarish",
+      onPitch: "Maydonda",
     },
     tactics: {
       title: "Taktika",
@@ -1090,6 +1103,7 @@ export default {
       noneLeft: "Almashtirishlar qolmadi",
       emptyBench: "Zaxirada hech kim yo'q",
       unknownPlayer: "Noma'lum o'yinchi",
+      failed: "Bu almashtirishni amalga oshirib bo'lmadi",
     },
     banner: {
       title: "{team} — keyingi o'yiningiz",
@@ -1115,6 +1129,20 @@ export default {
       incomplete: "O'yinni boshlash uchun yana {n} kishini tanlang.",
       injured: "Jarohatlangan",
       suspended: "Diskvalifikatsiya",
+      fatigueHint:
+        "Futbolkadagi belgi — o'yinchining chidamliligi: yashil — tetik, sariq — charchagan, qizil — holdan toygan. 100% to'liq tetik degani; charchagani sayin 0% tomon pasayadi.",
+      pickTitle: "O'yinchini tanlang",
+      clear: "Tarkibdan chiqarish",
+      outOfPosition: "O'z o'rnida emas",
+      searchPlaceholder: "O'yinchilarni qidirish…",
+      fatigue: {
+        fresh: "Tetik",
+        tired: "Charchagan",
+        exhausted: "Holdan toygan",
+      },
+    },
+    morale: {
+      label: "Ruhiyat",
     },
   },
   music: {
@@ -1309,4 +1337,4 @@ export default {
     message: "Sahifa topilmadi",
     goHome: "Bosh sahifaga",
   },
-}
+} as const

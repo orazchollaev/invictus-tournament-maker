@@ -162,6 +162,7 @@ export default {
       swiss: "Schweizer",
       league: "Liga",
       bracket: "Turnierbaum",
+      custom: "Benutzerdefiniert",
     },
     deleteConfirm: "Dieses Turnier löschen?",
     deleteLabel: "Löschen",
@@ -526,6 +527,18 @@ export default {
         label: "Spielerstärke verwenden",
         desc: "Vermischt die Stärke eines Teams mit der durchschnittlichen Spielerstärke seines Kaders. Aus = nur die eigene Stärke des Teams wird verwendet.",
       },
+      fatigueFactor: {
+        label: "Spielermüdigkeit",
+        desc: "Spieler ermüden im Laufe der Spiele und erholen sich dazwischen nur teilweise. Eine müde Startelf schwächt ihr Team, wird individuell schlechter bewertet und von der KI seltener aufgestellt.",
+      },
+      moraleFactor: {
+        label: "Teammoral",
+        desc: "Die aktuelle Sieges- oder Niederlagenserie eines Teams beeinflusst seine Stärke – unabhängig von der jüngsten Form.",
+      },
+      injuryFatigueImpact: {
+        label: "Müdigkeit erhöht Verletzungsrisiko",
+        desc: "Ein müder Spieler verletzt sich eher. Erfordert aktivierte Verletzungen.",
+      },
     },
     sampleData: {
       withSquads: "Kader",
@@ -552,6 +565,8 @@ export default {
         btn: "Alles löschen",
       },
       invalidFile: "Ungültige Sicherungsdatei.",
+      partialImport:
+        "Importiert, aber {count} Turnier(e) konnten nicht gelesen werden und wurden übersprungen.",
     },
     resetSettings: {
       title: "Einstellungen zurücksetzen",
@@ -651,6 +666,9 @@ export default {
         swiss: "Schweizer System",
         swissDesc:
           "Eine Tabelle, aber jedes Team spielt nur gegen einen Teil des Feldes (im Champions-League-Stil)",
+        custom: "Benutzerdefiniert",
+        customDesc:
+          "Stelle eigene Phasen zusammen – Gruppen, Tabellen und K.-o.-Runden in beliebiger Reihenfolge",
       },
       swissConfig: {
         phase: "Ligaphase",
@@ -894,6 +912,106 @@ export default {
         close: "Schließen",
       },
     },
+    phases: {
+      title: "Phasen",
+      help: "Ziehe den rechten Port einer Phase auf den linken Port der nächsten Phase.",
+      summary: "{count} Phasen",
+      summaryEmpty: "Noch keine Phasen",
+      button: "Phasen",
+      kinds: {
+        group: "Gruppen",
+        league: "Liga",
+        swiss: "Schweizer",
+        knockout: "K.-o.-Runde",
+      },
+      node: {
+        name: "Phasenname",
+        teams: "{count} Teams",
+        config: "Einstellungen",
+        final: "Finale",
+        remove: "Phase entfernen",
+      },
+      guide: {
+        lead: "Baue das Turnier aus Phasen auf und verbinde sie miteinander.",
+        add: "Füge oben über die Schaltflächen eine Phase hinzu – eine Gruppenphase, eine Tabelle, eine Schweizer Runde oder eine K.-o.-Runde.",
+        connect:
+          "Ziehe vom rechten Port einer Phase auf den linken Port der nächsten. Auf einem Touchscreen tippe erst den einen, dann den anderen Port an.",
+        configure:
+          "Öffne die Einstellungen einer Phase, um ihre Form festzulegen, und ihre Verbindung, um zu wählen, welche Plätze weiterkommen.",
+        final:
+          "Markiere die Phase, die den Sieger bestimmt, als Finale. Eine K.-o.-Runde hat keinen Ausgangsport – dort endet ein Zweig.",
+        example:
+          "Eine gängige Form: Gruppen → Liga → Pokal. Die Gruppen schicken ihre Qualifizierten in die Liga, die besten vier der Liga in den Pokal, und der Pokal ist das Finale.",
+        dismiss: "Verstanden",
+        reopen: "Wie funktioniert das?",
+      },
+      links: {
+        title: "Verbindungen",
+        edit: "Ändern, welche Plätze weiterkommen",
+        remove: "Verbindung entfernen",
+      },
+      edge: {
+        single: "Platz {rank}",
+        range: "Plätze {from}-{to}",
+        teams: "{count} Teams",
+      },
+      range: {
+        title: "Wer kommt weiter",
+        subtitle: "{from} bis {to}",
+        from: "Von Platz",
+        to: "Bis Platz",
+        hint: "{count} Teams ziehen weiter zu {to}.",
+        disconnect: "Trennen",
+        groupNote:
+          "{from} entscheidet in den eigenen Einstellungen, wer weiterkommt – Qualifizierte pro Gruppe plus Wildcards.",
+      },
+      config: {
+        intake: "{count} Teams erreichen diese Phase",
+        shape: "Form",
+        groupCount: "Anzahl der Gruppen",
+        seedMode: "Setzliste",
+        legs: "Spiele pro Paarung",
+        opponents: "Gegner pro Team",
+        pots: "Anzahl der Töpfe",
+        balance: "Heim & Auswärts ausgleichen",
+        finalLegs: "Finale",
+        thirdPlace: "Spiel um Platz 3",
+        thirdPlaceLegs: "Spiele um Platz 3",
+        swissSize: "{matchdays} Spieltage",
+        qualification: "Qualifikation",
+        qualifiersPerGroup: "Weiter pro Gruppe",
+        wildcards: "Wildcards",
+        wildcardsHint: "Die besten Teams, die einen Platz darunter landen",
+        advancing: "{count} Teams kommen weiter",
+      },
+      errors: {
+        noPhases: "Füge mindestens eine Phase hinzu.",
+        noEntry: "Eine Phase darf keine eingehende Verbindung haben – dort treten die Teams ein.",
+        multipleEntry: "Nur eine Phase kann die Startphase sein.",
+        cycle: "Die Verbindungen bilden eine Schleife.",
+        unnamed: "Gib dieser Phase einen Namen.",
+        knockoutHasOutput: "Eine K.-o.-Runde kann keine Teams weiterschicken.",
+        noFinal: "Markiere eine Phase als Finale.",
+        multipleFinal: "Nur eine Phase kann das Finale sein.",
+        finalNotTerminal: "Die Finalphase kann keine Teams weiterschicken.",
+        edgeRankRange: "Plätze {from}-{to} existieren nicht – diese Phase hat {available} Teams.",
+        rangeOverlap: "Zwei Verbindungen beanspruchen dieselben Plätze.",
+        phaseTooSmall: "{intake} Teams sind zu wenige – diese Phase braucht mindestens {min}.",
+        groupCount: "Lege mindestens zwei Gruppen fest.",
+        groupsTooSmall: "{intake} Teams können {groupCount} Gruppen nicht füllen.",
+        groupSingleOutput:
+          "Eine Gruppenphase schickt ihre Qualifizierten als eine Gruppe weiter – sie kann nur eine Verbindung haben.",
+        groupQualifiers: "{qualifiers} pro Gruppe sind zu viele – höchstens {max}.",
+        groupWildcards: "{wildcards} Wildcards sind zu viele – höchstens {max}, eine pro Gruppe.",
+        swissOpponents: "{opponents} Gegner sind zu viele – höchstens {max}.",
+        configMismatch: "Die Einstellungen dieser Phase passen nicht zu ihrem Typ.",
+        danglingEdge: "Eine Verbindung zeigt auf eine Phase, die nicht mehr existiert.",
+        selfEdge: "Eine Phase kann sich nicht mit sich selbst verbinden.",
+      },
+      advance: "Weiter zu {phase}",
+      locked: "Beende {phase}, um diese Stufe freizuschalten.",
+      notStarted: "Diese Phase hat noch nicht begonnen.",
+    },
   },
   teamSelector: {
     searchPlaceholder: "Teams durchsuchen…",
@@ -974,6 +1092,7 @@ export default {
     match: {
       title: "Manager",
       manage: "Verwalten",
+      onPitch: "Auf dem Platz",
     },
     tactics: {
       title: "Taktik",
@@ -989,6 +1108,7 @@ export default {
       noneLeft: "Keine Auswechslungen mehr",
       emptyBench: "Niemand auf der Bank",
       unknownPlayer: "Unbekannter Spieler",
+      failed: "Diese Auswechslung war nicht möglich",
     },
     banner: {
       title: "{team} — dein nächstes Spiel",
@@ -1014,6 +1134,20 @@ export default {
       incomplete: "Noch {n} auszuwählen, bevor du anpfeifen kannst.",
       injured: "Verletzt",
       suspended: "Gesperrt",
+      fatigueHint:
+        "Das Abzeichen auf dem Trikot ist die Ausdauer des Spielers – Grün ist frisch, Orange müde, Rot erschöpft. 100 % heißt völlig frisch; der Wert fällt Richtung 0 %, je müder er wird.",
+      pickTitle: "Spieler auswählen",
+      clear: "Aus der Aufstellung nehmen",
+      outOfPosition: "Nicht auf Position",
+      searchPlaceholder: "Spieler suchen…",
+      fatigue: {
+        fresh: "Frisch",
+        tired: "Müde",
+        exhausted: "Erschöpft",
+      },
+    },
+    morale: {
+      label: "Moral",
     },
   },
   music: {
@@ -1202,6 +1336,7 @@ export default {
     semiFinals: "Halbfinale",
     quarterFinals: "Viertelfinale",
     roundOf: "Runde der letzten {n}",
+    thirdPlace: "Spiel um Platz 3",
   },
   notFound: {
     message: "Seite nicht gefunden",

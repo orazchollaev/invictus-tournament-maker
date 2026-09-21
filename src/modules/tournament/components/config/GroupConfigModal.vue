@@ -80,7 +80,7 @@ function handleSave() {
 <template>
   <AppModal
     ref="modalRef"
-    :title="t('tournament.create.config.groups')"
+    :title="t('tournament.create.config.group')"
     width="420px"
     @close="emit('close')"
   >

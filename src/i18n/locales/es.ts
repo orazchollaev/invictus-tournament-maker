@@ -159,6 +159,7 @@ export default {
       swiss: "Suizo",
       league: "Liga",
       bracket: "Eliminatoria",
+      custom: "Personalizado",
     },
     deleteConfirm: "¿Eliminar este torneo?",
     deleteLabel: "Eliminar",
@@ -523,6 +524,18 @@ export default {
         label: "Usar potencia de jugadores",
         desc: "Combina la potencia de un equipo con la potencia media de los jugadores de su plantilla. Desactivado = solo se usa la potencia propia del equipo.",
       },
+      fatigueFactor: {
+        label: "Fatiga de los jugadores",
+        desc: "Los jugadores se cansan a medida que juegan partidos y solo se recuperan parcialmente entre ellos. Un once titular cansado debilita a su equipo, recibe peores notas individuales y la IA lo alinea con menos frecuencia.",
+      },
+      moraleFactor: {
+        label: "Moral del equipo",
+        desc: "La racha actual de victorias o derrotas de un equipo influye en su potencia, al margen de su forma reciente.",
+      },
+      injuryFatigueImpact: {
+        label: "La fatiga aumenta el riesgo de lesión",
+        desc: "Un jugador cansado se lesiona con más facilidad. Requiere que las Lesiones estén activadas.",
+      },
     },
     sampleData: {
       withSquads: "Plantillas",
@@ -549,6 +562,7 @@ export default {
         btn: "Borrar todo",
       },
       invalidFile: "Archivo de copia de seguridad no válido.",
+      partialImport: "Importado, pero no se pudieron leer {count} torneo(s) y se omitieron.",
     },
     resetSettings: {
       title: "Restablecer configuración",
@@ -648,6 +662,9 @@ export default {
         swiss: "Sistema Suizo",
         swissDesc:
           "Una sola tabla, pero cada equipo se enfrenta solo a parte del campo (al estilo de la Champions League)",
+        custom: "Personalizado",
+        customDesc:
+          "Monta tus propias fases: grupos, tablas y eliminatorias, en el orden que quieras",
       },
       swissConfig: {
         phase: "Fase de Liga",
@@ -887,6 +904,106 @@ export default {
         close: "Cerrar",
       },
     },
+    phases: {
+      title: "Fases",
+      help: "Arrastra el puerto derecho de una fase hasta el puerto izquierdo de la siguiente.",
+      summary: "{count} fases",
+      summaryEmpty: "Aún no hay fases",
+      button: "Fases",
+      kinds: {
+        group: "Grupos",
+        league: "Liga",
+        swiss: "Suizo",
+        knockout: "Eliminatoria",
+      },
+      node: {
+        name: "Nombre de la fase",
+        teams: "{count} equipos",
+        config: "Ajustes",
+        final: "Final",
+        remove: "Eliminar fase",
+      },
+      guide: {
+        lead: "Construye el torneo con fases y conéctalas entre sí.",
+        add: "Añade una fase con los botones de arriba: una fase de grupos, una tabla, una ronda suiza o una eliminatoria.",
+        connect:
+          "Arrastra desde el puerto derecho de una fase hasta el puerto izquierdo de la siguiente. En una pantalla táctil, toca un puerto y luego el otro.",
+        configure:
+          "Abre los Ajustes de una fase para definir su formato, y su conexión para elegir qué puestos avanzan.",
+        final:
+          "Marca como Final la fase que decide el campeón. Una eliminatoria no tiene puerto de salida: ahí termina una rama.",
+        example:
+          "Una estructura habitual: Grupos → Liga → Copa. Los grupos envían sus clasificados a la liga, los cuatro primeros de la liga pasan a la copa, y la copa es la final.",
+        dismiss: "Entendido",
+        reopen: "¿Cómo funciona esto?",
+      },
+      links: {
+        title: "Conexiones",
+        edit: "Cambiar qué puestos avanzan",
+        remove: "Eliminar conexión",
+      },
+      edge: {
+        single: "Puesto {rank}",
+        range: "Puestos {from}-{to}",
+        teams: "{count} equipos",
+      },
+      range: {
+        title: "Quién avanza",
+        subtitle: "{from} a {to}",
+        from: "Desde el puesto",
+        to: "Hasta el puesto",
+        hint: "{count} equipos pasan a {to}.",
+        disconnect: "Desconectar",
+        groupNote:
+          "{from} decide quién avanza en sus propios ajustes: clasificados por grupo, más los comodines.",
+      },
+      config: {
+        intake: "{count} equipos llegan a esta fase",
+        shape: "Formato",
+        groupCount: "Número de grupos",
+        seedMode: "Sorteo",
+        legs: "Partidos por enfrentamiento",
+        opponents: "Rivales por equipo",
+        pots: "Número de bombos",
+        balance: "Equilibrar local y visitante",
+        finalLegs: "Final",
+        thirdPlace: "Partido por el tercer puesto",
+        thirdPlaceLegs: "Partidos por el tercer puesto",
+        swissSize: "{matchdays} jornadas",
+        qualification: "Clasificación",
+        qualifiersPerGroup: "Avanzan por grupo",
+        wildcards: "Comodines",
+        wildcardsHint: "Los mejores equipos que terminan un puesto por debajo",
+        advancing: "{count} equipos avanzan",
+      },
+      errors: {
+        noPhases: "Añade al menos una fase.",
+        noEntry: "Una fase no debe tener ninguna conexión entrante: por ahí entran los equipos.",
+        multipleEntry: "Solo una fase puede ser la fase inicial.",
+        cycle: "Las conexiones forman un bucle.",
+        unnamed: "Dale un nombre a esta fase.",
+        knockoutHasOutput: "Una eliminatoria no puede enviar equipos más adelante.",
+        noFinal: "Marca una fase como final.",
+        multipleFinal: "Solo una fase puede ser la final.",
+        finalNotTerminal: "La fase final no puede enviar equipos más adelante.",
+        edgeRankRange: "Los puestos {from}-{to} no existen: esta fase tiene {available} equipos.",
+        rangeOverlap: "Dos conexiones reclaman los mismos puestos.",
+        phaseTooSmall: "{intake} equipos son muy pocos: esta fase necesita al menos {min}.",
+        groupCount: "Establece al menos dos grupos.",
+        groupsTooSmall: "{intake} equipos no pueden llenar {groupCount} grupos.",
+        groupSingleOutput:
+          "Una fase de grupos envía a sus clasificados como un solo conjunto: solo puede tener una conexión.",
+        groupQualifiers: "{qualifiers} por grupo son demasiados: como máximo {max}.",
+        groupWildcards: "{wildcards} comodines son demasiados: como máximo {max}, uno por grupo.",
+        swissOpponents: "{opponents} rivales son demasiados: como máximo {max}.",
+        configMismatch: "Los ajustes de esta fase no coinciden con su tipo.",
+        danglingEdge: "Una conexión apunta a una fase que ya no existe.",
+        selfEdge: "Una fase no puede conectarse consigo misma.",
+      },
+      advance: "Avanzar a {phase}",
+      locked: "Termina {phase} para desbloquear esta etapa.",
+      notStarted: "Esta fase aún no ha comenzado.",
+    },
   },
   teamSelector: {
     searchPlaceholder: "Buscar equipos…",
@@ -967,6 +1084,7 @@ export default {
     match: {
       title: "Entrenador",
       manage: "Gestionar",
+      onPitch: "En el campo",
     },
     tactics: {
       title: "Táctica",
@@ -982,6 +1100,7 @@ export default {
       noneLeft: "No quedan sustituciones",
       emptyBench: "Nadie en el banquillo",
       unknownPlayer: "Jugador desconocido",
+      failed: "No se pudo hacer esa sustitución",
     },
     banner: {
       title: "{team} — tu próximo partido",
@@ -1007,6 +1126,20 @@ export default {
       incomplete: "Te faltan {n} por elegir antes de poder empezar.",
       injured: "Lesionado",
       suspended: "Sancionado",
+      fatigueHint:
+        "El distintivo de la camiseta es la resistencia del jugador: verde, fresco; ámbar, cansado; rojo, agotado. 100 % significa totalmente fresco; baja hacia 0 % a medida que se cansa.",
+      pickTitle: "Elegir jugador",
+      clear: "Quitar de la alineación",
+      outOfPosition: "Fuera de posición",
+      searchPlaceholder: "Buscar jugadores…",
+      fatigue: {
+        fresh: "Fresco",
+        tired: "Cansado",
+        exhausted: "Agotado",
+      },
+    },
+    morale: {
+      label: "Moral",
     },
   },
   music: {
@@ -1195,6 +1328,7 @@ export default {
     semiFinals: "Semifinales",
     quarterFinals: "Cuartos de final",
     roundOf: "Ronda de {n}",
+    thirdPlace: "Partido por el tercer puesto",
   },
   notFound: {
     message: "Página no encontrada",
