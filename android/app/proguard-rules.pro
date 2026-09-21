@@ -13,18 +13,16 @@
 }
 
 # ==============================================================================
-# WEBVIEW & WEBKIT
-# ==============================================================================
--keep class android.webkit.** { *; }
--keepclassmembers class android.webkit.** { *; }
-
-# ==============================================================================
 # ANDROID SUPPORT / X & GMS (Play Services)
 # ==============================================================================
--keep class androidx.** { *; }
+# No blanket -keep: each androidx/GMS artifact ships its own consumer
+# proguard rules inside its AAR, which R8 merges in automatically — a
+# package-wide "{ *; }" here just disables shrinking/obfuscation for most of
+# the app's DEX (androidx + Play Services + OkHttp is the bulk of it) without
+# protecting anything those consumer rules don't already cover. Only
+# -dontwarn is kept, since some optional/reflective references in these
+# libraries would otherwise fail the R8 build.
 -dontwarn androidx.**
-
--keep class com.google.android.gms.** { *; }
 -dontwarn com.google.android.gms.**
 
 # ==============================================================================
@@ -32,7 +30,6 @@
 # ==============================================================================
 -dontwarn okhttp3.**
 -dontwarn okio.**
--keep class okhttp3.** { *; }
 
 # ==============================================================================
 # CRASH REPORTING & DEBUGGING (Hata Analizleri İçin Satır Numaraları)
