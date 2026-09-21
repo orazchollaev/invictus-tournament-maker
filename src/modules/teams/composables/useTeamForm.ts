@@ -1,6 +1,7 @@
 import { ref } from "vue"
 import { useTeamsStore } from "../store"
 import type { Team } from "../types"
+import { logEvent } from "@/composables/useAnalytics"
 
 export function useTeamForm() {
   const store = useTeamsStore()
@@ -14,6 +15,7 @@ export function useTeamForm() {
   function addTeam() {
     if (!newName.value.trim()) return
     store.add(newName.value.trim(), newColor.value, newPower.value, newAbbr.value, newFlag.value)
+    void logEvent("team_created")
     newName.value = ""
     newAbbr.value = ""
     newPower.value = 70

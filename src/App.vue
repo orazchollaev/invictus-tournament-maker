@@ -7,6 +7,7 @@ import { AppDialog } from "@/components/ui"
 import { MusicController } from "@/modules/music/components"
 import { useSettingsStore } from "@/modules/settings/store"
 import { useStatusBar } from "@/composables/useStatusBar"
+import { logEvent } from "@/composables/useAnalytics"
 
 const settings = useSettingsStore()
 const { setTheme } = useStatusBar()
@@ -29,9 +30,19 @@ const hideBottomNav = computed(() =>
 const transitionName = ref("page")
 
 let backButtonListener: (() => void) | null = null
+let appStateListener: (() => void) | null = null
+
+// A foreground period is what "a session" means for this event: it starts
+// when the app comes to front (cold start, or resumed from background) and
+// ends when it goes back — a launch nobody returns to reads the same as one
+// that was closed right away, since `visibilitychange`/`beforeunload` are not
+// reliable on Android once the OS can kill the process outright.
+let sessionStartedAt = Date.now()
 
 onMounted(async () => {
-  const handle = await App.addListener("backButton", () => {
+  void logEvent("app_open")
+
+  const backHandle = await App.addListener("backButton", () => {
     const currentPath = router.currentRoute.value.path
     if (ROOT_PATHS.includes(currentPath)) {
       App.exitApp()
@@ -39,11 +50,22 @@ onMounted(async () => {
       router.back()
     }
   })
-  backButtonListener = () => handle.remove()
+  backButtonListener = () => backHandle.remove()
+
+  const stateHandle = await App.addListener("appStateChange", ({ isActive }) => {
+    if (isActive) {
+      sessionStartedAt = Date.now()
+      return
+    }
+    const minutes = Math.round(((Date.now() - sessionStartedAt) / 60000) * 10) / 10
+    void logEvent("session_end", { minutes })
+  })
+  appStateListener = () => stateHandle.remove()
 })
 
 onUnmounted(() => {
   backButtonListener?.()
+  appStateListener?.()
 })
 </script>
 

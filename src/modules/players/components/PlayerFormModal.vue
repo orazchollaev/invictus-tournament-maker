@@ -11,6 +11,7 @@ import { randomPlayerName } from "@/composables/useRandomNames"
 import { Shuffle } from "@lucide/vue"
 import type { Player, PlayerPosition } from "../types"
 import { useI18n } from "vue-i18n"
+import { logEvent } from "@/composables/useAnalytics"
 
 const props = defineProps<{ player?: Player; teamId?: string }>()
 const emit = defineEmits<{ close: [] }>()
@@ -56,6 +57,7 @@ function submit() {
       power.value,
       shirtNumber.value ?? undefined
     )
+    void logEvent("player_created", { position: position.value })
   }
   modal.value?.close()
 }

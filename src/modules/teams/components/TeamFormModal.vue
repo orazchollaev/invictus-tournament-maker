@@ -22,6 +22,7 @@ import { showAlert } from "@/composables/useDialog"
 import { Shuffle, X } from "@lucide/vue"
 import type { Team } from "../types"
 import { useI18n } from "vue-i18n"
+import { logEvent } from "@/composables/useAnalytics"
 
 const props = defineProps<{ team?: Team }>()
 const emit = defineEmits<{ close: [] }>()
@@ -127,6 +128,7 @@ function submit() {
       flag.value,
       image.value
     )
+    void logEvent("team_created")
   }
   modal.value?.close()
 }

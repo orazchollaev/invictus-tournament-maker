@@ -6,9 +6,22 @@ import { LOCALES } from "@/i18n"
 import { AppCard, AppField, AppIcon, AppSelect } from "@/components/ui"
 import SettingDesc from "./SettingDesc.vue"
 import { FlagCircle } from "@/modules/teams/components"
+import { logEvent } from "@/composables/useAnalytics"
+import type { Locale } from "@/i18n"
 
 const { t } = useI18n()
 const settings = useSettingsStore()
+
+/* Logged from the control rather than from the store's locale watcher: that
+   watcher also fires when the persisted value hydrates on launch, which
+   would count every app start as a deliberate switch. */
+function selectLocale(value: string) {
+  const next = value as Locale
+  if (next === settings.locale) return
+  const from = settings.locale
+  settings.locale = next
+  void logEvent("locale_changed", { from, to: next })
+}
 </script>
 
 <template>
@@ -22,7 +35,11 @@ const settings = useSettingsStore()
       <template #description>
         <SettingDesc>{{ t("settings.language.desc") }}</SettingDesc>
       </template>
-      <AppSelect v-model="settings.locale" :options="LOCALES">
+      <AppSelect
+        :model-value="settings.locale"
+        :options="LOCALES"
+        @update:model-value="selectLocale"
+      >
         <template #value="{ option }">
           <span v-if="option" class="lang-row">
             <FlagCircle :code="option.flag" :size="18" />

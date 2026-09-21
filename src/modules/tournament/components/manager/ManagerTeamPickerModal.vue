@@ -5,6 +5,7 @@ import { useI18n } from "vue-i18n"
 import { AppButton, AppField, AppSelect, AppSheet } from "@/components/ui"
 import { useTournamentStore } from "@/modules/tournament/store"
 import { useTeamsStore } from "@/modules/teams/store"
+import { logEvent } from "@/composables/useAnalytics"
 
 const props = defineProps<{ tournamentId: string }>()
 const emit = defineEmits<{ close: []; confirmed: [] }>()
@@ -27,7 +28,9 @@ const teamId = ref("")
 
 function confirm() {
   if (!teamId.value) return
+  const teamName = teamsStore.teams.find((tm) => tm.id === teamId.value)?.name
   store.setManagerTeam(props.tournamentId, teamId.value)
+  void logEvent("manager_mode_started", { format: tournament.value?.format, team: teamName })
   emit("confirmed")
   sheet.value?.close()
 }

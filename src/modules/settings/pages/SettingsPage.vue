@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { ref, nextTick } from "vue"
+import { ref, nextTick, onMounted, onUnmounted } from "vue"
 import { useRoute } from "vue-router"
 import { APP_VERSION } from "@/constants"
+import { useSettingsStore } from "@/modules/settings/store"
+import { logEvent } from "@/composables/useAnalytics"
 import {
   Palette,
   LayoutGrid,
@@ -33,6 +35,64 @@ import {
 
 const { t } = useI18n()
 const route = useRoute()
+const settings = useSettingsStore()
+
+/* Locale and design language get their own precise from/to events at the
+   control that changes them (see SettingsSectionLanguage / -Appearance) — a
+   generic snapshot diff can only say "something changed", not what to. This
+   covers the rest of the settings surface, where a per-control event for
+   every toggle would be a lot of near-identical wiring for little gain.
+   Diffed on unmount rather than watched, so hydrating the persisted values
+   on app launch never counts as the user changing anything. */
+const TRACKED_SETTINGS_KEYS = [
+  "theme",
+  "primaryColor",
+  "groupLegMode",
+  "knockoutLegMode",
+  "finalLegMode",
+  "surpriseFactor",
+  "showTeamAbbr",
+  "confettiOnWin",
+  "soundOnWin",
+  "drawCeremony",
+  "newSeasonDrawType",
+  "newSeasonGroupDrawType",
+  "newSeasonPlayoffSeedMode",
+  "tiebreaker",
+  "formFactorEnabled",
+  "homeAdvantage",
+  "redCardImpact",
+  "injuriesEnabled",
+  "fatigueFactorEnabled",
+  "moraleFactorEnabled",
+  "injuryFatigueImpact",
+  "usePlayerPower",
+  "bracketStyle",
+  "bracketQuality",
+  "bracketHighlightOnHover",
+  "bracketConnectorColors",
+  "winPoints",
+  "drawPoints",
+  "lossPoints",
+  "gradualReveal",
+  "autoAdvanceFixtureStage",
+  "liveMatchSpeed",
+] as const satisfies readonly (keyof typeof settings)[]
+
+let settingsSnapshot: Partial<Record<(typeof TRACKED_SETTINGS_KEYS)[number], unknown>> = {}
+
+onMounted(() => {
+  settingsSnapshot = Object.fromEntries(TRACKED_SETTINGS_KEYS.map((key) => [key, settings[key]]))
+})
+
+onUnmounted(() => {
+  for (const key of TRACKED_SETTINGS_KEYS) {
+    const value = settings[key]
+    if (settingsSnapshot[key] !== value) {
+      void logEvent("setting_changed", { key, value: String(value) })
+    }
+  }
+})
 
 // "appearance": language + theme/color, both about how the app looks & speaks.
 // "bracket": bracket rendering and win-celebration effects — visual feedback,

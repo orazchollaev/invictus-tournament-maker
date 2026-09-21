@@ -259,6 +259,7 @@ export function useTournamentCeremonies(
     ceremonySeasonOpts.value = { thirdPlace, playoffSeedMode }
     ceremonyAction.value = "season"
     showCeremony.value = true
+    void logEvent("draw_ceremony_viewed", { action: "season", kind: ceremonyContext.value?.kind })
   }
 
   function openSwissSeasonCeremony(t: Tournament) {
@@ -280,6 +281,7 @@ export function useTournamentCeremonies(
     ceremonySeasonOpts.value = undefined
     ceremonyAction.value = "swissSeason"
     showCeremony.value = true
+    void logEvent("draw_ceremony_viewed", { action: "swissSeason", kind: "swiss" })
   }
 
   function onCeremonyUseOldDraw() {
@@ -317,6 +319,7 @@ export function useTournamentCeremonies(
     ceremonySeasonOpts.value = undefined
     ceremonyAction.value = "playoff"
     showCeremony.value = true
+    void logEvent("draw_ceremony_viewed", { action: "playoff", kind: "playoff" })
   }
 
   function onCeremonyComplete(orderedIds: string[]) {
@@ -420,6 +423,7 @@ export function useTournamentCeremonies(
     ceremonySeasonOpts.value = undefined
     ceremonyAction.value = "leaguePlayoff"
     showCeremony.value = true
+    void logEvent("draw_ceremony_viewed", { action: "leaguePlayoff", kind: "playoff" })
   }
 
   function handleLeaguePlayoffManualConfirm(orderedIds: string[]) {
@@ -542,6 +546,7 @@ export function useTournamentCeremonies(
     ceremonyPhaseId.value = phaseId
     ceremonyAction.value = "phase"
     showCeremony.value = true
+    void logEvent("draw_ceremony_viewed", { action: "phase", kind: ctx.kind })
     return true
   }
 
