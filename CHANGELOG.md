@@ -1,5 +1,50 @@
 # Changelog
 
+## [3.0.0](https://github.com/orazchollaev/invictus-tournament-maker/compare/v2.10.0...v3.0.0) (2026-09-21)
+
+### 🚀 New Features
+
+- **analytics:** log which sample dataset was selected ([f94a312](https://github.com/orazchollaev/invictus-tournament-maker/commit/f94a3123c2190cce383f7afff9d5d1cd4e7b65c2))
+- **examples:** add AFC Champions League Elite 26/27 dataset ([7893759](https://github.com/orazchollaev/invictus-tournament-maker/commit/7893759c76b25cb484f03ba3fcb0bf27bdc12db4))
+- **examples:** add Concacaf Champions Cup, Libertadores and Sudamericana datasets ([fb3c2e5](https://github.com/orazchollaev/invictus-tournament-maker/commit/fb3c2e5859122b4ad289efb138e69e58c0da485e))
+- **examples:** relabel ACL Two dataset and add real ACL Elite 26/27 roster ([874f268](https://github.com/orazchollaev/invictus-tournament-maker/commit/874f268a8a649e38fe332c0e0bd4a5d9a36d7015))
+- **langs:** added persian, dutch and uzbek languages ([61ab28d](https://github.com/orazchollaev/invictus-tournament-maker/commit/61ab28d15ff9d7d5fc4abb3fa6e5ecdfb0a73cb5))
+- **manager:** add player fatigue and team morale to manager mode ([f8f8b90](https://github.com/orazchollaev/invictus-tournament-maker/commit/f8f8b90be103196ca8924a833100888f1f9a91d5))
+- **settings:** add unofficial fan-made disclaimer to about modal ([6601984](https://github.com/orazchollaev/invictus-tournament-maker/commit/6601984bc54bc3c00b2b17deb0646bac9bc80890))
+- **settings:** show a rewarded ad every 2nd sample dataset load ([cd2a195](https://github.com/orazchollaev/invictus-tournament-maker/commit/cd2a19588dafa7866434cc52df951bbee519ab4f))
+- **settings:** support deep-linking to a category via query param ([6550e65](https://github.com/orazchollaev/invictus-tournament-maker/commit/6550e659a7893457dacc7f8246810fe5d0ebcbf6))
+- **teams:** add dataset fab and empty state dataset button ([18468aa](https://github.com/orazchollaev/invictus-tournament-maker/commit/18468aaefa7fd9e04df6364b162f7c0e28bc7c32))
+- **tournaments:** add select dataset button to empty state ([26819f6](https://github.com/orazchollaev/invictus-tournament-maker/commit/26819f63f2cb1e8991faf2991f69e8126127be22))
+
+### 🐛 Bug Fixes
+
+- **app:** recover from stale chunks and report crashes instead of swallowing them ([ead0346](https://github.com/orazchollaev/invictus-tournament-maker/commit/ead0346701d609399986c60b5a17b99c94ec9e76))
+- **examples:** match Champions League label to UEFA detection set ([9ea8b90](https://github.com/orazchollaev/invictus-tournament-maker/commit/9ea8b9042c76b35857333197351b8970541d1f79))
+- **i18n:** correct group config title key and fill in 9 locales ([09466fc](https://github.com/orazchollaev/invictus-tournament-maker/commit/09466fc8c0687581bb804877e77f1242f4ec91bc))
+- **langs:** translate sample dataset ad and section strings ([0265c3a](https://github.com/orazchollaev/invictus-tournament-maker/commit/0265c3a2e274bc47b6e7a845a0075d889e8be39c))
+- **manager:** honor the picked starting XI and make substitutions actually apply ([bfb20b6](https://github.com/orazchollaev/invictus-tournament-maker/commit/bfb20b685ed5591d064cc843bed64d0f6c56f453))
+- **manager:** stop redundant lineup writes and validate stored manager state ([7b5cf79](https://github.com/orazchollaev/invictus-tournament-maker/commit/7b5cf7912150f01155118ace6e8144be1c2c0d04))
+- **settings:** append sample datasets instead of wiping existing data ([70d84a9](https://github.com/orazchollaev/invictus-tournament-maker/commit/70d84a900d14cea6ec1c2455dea926f96499c4d8))
+- **settings:** keep backup export, import and dataset swap consistent ([2787bcd](https://github.com/orazchollaev/invictus-tournament-maker/commit/2787bcda9c64f4f7f563668c4c805ffa893af14c))
+- **teams:** remove default seed teams on first launch ([09141e1](https://github.com/orazchollaev/invictus-tournament-maker/commit/09141e190a003f048c3b55c5cc018c8e94c69ab9))
+- **ui:** clear pending timers, blob urls and stale simulation results ([2b64cf1](https://github.com/orazchollaev/invictus-tournament-maker/commit/2b64cf1fd3619d247220c09e9ab4c7f613af38af))
+- **ui:** keep unprefixed backdrop-filter in prod build ([b6eb331](https://github.com/orazchollaev/invictus-tournament-maker/commit/b6eb33199310fe29b8051a52f7faec2e28580e03))
+
+### ♻️ Refactoring
+
+- **manager:** redesign starting XI picker as a tap-to-fill pitch ([cdf6dfc](https://github.com/orazchollaev/invictus-tournament-maker/commit/cdf6dfc84af29aef8d9a0107ef5d34634a9c4e89))
+- **settings:** redesign sample dataset picker cards ([cd10cbe](https://github.com/orazchollaev/invictus-tournament-maker/commit/cd10cbed417f00aa030ad248c5c80218d07a610c))
+
+### 🔧 Maintenance
+
+- **ads:** raise new-season interstitial ad weight to 0.75 ([e76004e](https://github.com/orazchollaev/invictus-tournament-maker/commit/e76004e2a356e645af4a9fba7211d4c3680dbe2d))
+- **examples:** remove old duplicate sample datasets ([fe16bc0](https://github.com/orazchollaev/invictus-tournament-maker/commit/fe16bc053c0e95e9ac03dde6f005b33b8a787fcb))
+- **gradle:** bump gradle version ([bfedbbe](https://github.com/orazchollaev/invictus-tournament-maker/commit/bfedbbef134d9506f69f8bc7d1877f18fa8bd6e5))
+
+### 🎨 Styles
+
+- phase sections style fixed ([33a19f3](https://github.com/orazchollaev/invictus-tournament-maker/commit/33a19f314042afd3731e26d30c68e3411db67648))
+
 ## [2.10.0](https://github.com/orazchollaev/invictus-tournament-maker/compare/v2.9.4...v2.10.0) (2026-09-19)
 
 ### 🚀 New Features
