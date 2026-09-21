@@ -176,9 +176,7 @@ async function migrateFromLegacyBlob(): Promise<Tournament[]> {
   // already in hand and returned either way, so the worst case is that the
   // split runs again next launch rather than the user seeing nothing.
   await Promise.all(
-    tournaments.map((t) =>
-      Promise.resolve(set(itemKey(t.id), JSON.stringify(t))).catch(() => {})
-    )
+    tournaments.map((t) => Promise.resolve(set(itemKey(t.id), JSON.stringify(t))).catch(() => {}))
   )
   saveIndex(tournaments.map((t) => t.id))
   // The persistence plugin still owns `active`/`statsMigrated` under this

@@ -12,6 +12,8 @@ import {
 import { normalizeTournament } from "@/modules/tournament/services/tournamentSchema"
 import type { Tournament } from "@/modules/tournament/types"
 import { APP_VERSION } from "@/constants"
+import { uid } from "@/engine"
+import { useRewardedAd } from "@/composables/useRewardedAd"
 
 interface Dataset {
   label: string
@@ -89,44 +91,79 @@ function bytesToBase64(bytes: Uint8Array): string {
   return btoa(binary)
 }
 
+/**
+ * Rewrite every quoted occurrence of an old team id to its new one, inside a
+ * dataset's own tournaments. Team ids show up all over a Tournament — group
+ * standings, match sides, manager state, per-team adjustment maps — so this
+ * goes through the serialized form once instead of chasing each field by
+ * hand. Safe here because the map only ever holds a *dataset's own* team ids
+ * (see the collision check in loadDataset), so it can't touch an unrelated
+ * id that happens to share a value with something else in the tournament.
+ */
+function remapTeamIds<T>(value: T, idMap: Map<string, string>): T {
+  if (!idMap.size) return value
+  let json = JSON.stringify(value)
+  for (const [oldId, newId] of idMap) {
+    json = json.split(`"${oldId}"`).join(`"${newId}"`)
+  }
+  return JSON.parse(json)
+}
+
 export function useDataManagement() {
   const { t } = useI18n()
   const teamsStore = useTeamsStore()
   const tournamentStore = useTournamentStore()
   const playersStore = usePlayersStore()
+  const { nextSelectionShowsAd, onSampleDataSelected } = useRewardedAd()
 
   async function loadDataset(dataset: Dataset) {
-    const ok = await showConfirm(t("settings.sampleData.loadConfirm", { name: dataset.label }), {
+    const willShowAd = nextSelectionShowsAd.value
+    const confirmMsg = willShowAd
+      ? t("settings.sampleData.loadConfirmAd", { name: dataset.label })
+      : t("settings.sampleData.loadConfirm", { name: dataset.label })
+    const ok = await showConfirm(confirmMsg, {
       confirmLabel: t("settings.sampleData.loadLabel"),
-      dangerous: true,
     })
     if (!ok) return
-    await idbStorage.setItem("teams", JSON.stringify({ teams: dataset.teams }))
-    // `tournaments` lives one-per-record now (see modules/tournament/persistence.ts),
-    // not in the legacy "tournament" blob — swapping datasets has to replace
-    // those records directly, or the previous dataset's tournaments survive
-    // in the index and come back after reload.
-    // Normalized like an import: a sample file is checked into the repo and can
-    // fall behind the shape the app reads, and a bundled dataset that breaks the
-    // launch is worse than one that loads a tournament short.
-    await replaceAllTournaments(
-      (Array.isArray(dataset.tournaments) ? dataset.tournaments : [])
-        .map((entry: unknown) => normalizeTournament(entry))
-        .filter((t: Tournament | null): t is Tournament => t !== null)
-    )
-    // The previous dataset's `active` id names a tournament that has just been
-    // deleted, whether or not this dataset ships any of its own — carrying it
-    // over opens the app on a tournament that is not there any more.
-    await idbStorage.setItem("tournament", JSON.stringify({ active: null }))
-    // A dataset either ships its own squads or has none. Either way the
-    // previous dataset's players go — leaving them behind would orphan
-    // entries pointing at team ids that no longer exist.
-    if (dataset.players?.length) {
-      await idbStorage.setItem("players", JSON.stringify({ players: dataset.players }))
-    } else {
-      await idbStorage.removeItem("players")
-    }
-    location.reload()
+
+    // Datasets are added on top of whatever is already there, not swapped in
+    // — a dataset's own ids are namespaced (e.g. "afc-01") so they normally
+    // never collide with what is already loaded, but the same dataset can be
+    // picked twice. Any id that does collide gets a fresh one so the new
+    // teams, squads and tournaments never overwrite or get merged into the
+    // existing ones.
+    const idMap = new Map<string, string>()
+    const existingIds = new Set(teamsStore.teams.map((t) => t.id))
+    const newTeams = dataset.teams.map((team) => {
+      if (!existingIds.has(team.id)) return team
+      const newId = uid()
+      idMap.set(team.id, newId)
+      return { ...team, id: newId }
+    })
+    // Pushed straight into the live stores rather than written to idbStorage
+    // and reloaded: teams/players persist themselves on mutation (the pinia
+    // plugin in main.ts), and the tournament store has its own per-item
+    // watcher (see modules/tournament/store/index.ts) — so this is visible
+    // and saved immediately, no reload needed.
+    teamsStore.teams.push(...newTeams)
+
+    const newPlayers = (dataset.players ?? []).map((p) => ({
+      ...p,
+      teamId: idMap.get(p.teamId) ?? p.teamId,
+    }))
+    playersStore.players.push(...newPlayers)
+
+    // Normalized like an import: a sample file is checked into the repo and
+    // can fall behind the shape the app reads, and a bundled dataset that
+    // breaks the launch is worse than one that loads a tournament short.
+    const newTournaments = (Array.isArray(dataset.tournaments) ? dataset.tournaments : [])
+      .map((entry: unknown) => normalizeTournament(entry))
+      .filter((t: Tournament | null): t is Tournament => t !== null)
+      .map((t) => remapTeamIds(t, idMap))
+    tournamentStore.tournaments.push(...newTournaments)
+
+    // Every 2nd dataset picked shows a rewarded ad — best effort.
+    void onSampleDataSelected()
   }
 
   async function clearData() {
