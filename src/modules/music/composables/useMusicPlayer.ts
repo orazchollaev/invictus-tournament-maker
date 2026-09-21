@@ -61,10 +61,14 @@ export function useMusicPlayer() {
   const track = computed(() => resolveTrack(store.allTracks(), store.currentTrackId))
 
   async function sourceFor(id: string): Promise<string | null> {
+    // Whatever the previous track left behind goes first, on every path.
+    // Releasing only just before creating the next object URL leaked one per
+    // upload → built-in switch, because the built-in has a plain URL and
+    // returned before ever reaching that line.
+    releaseUrl()
     if (id === BUILT_IN_TRACK_ID) return BUILT_IN_TRACK_URL
     const blob = await loadTrackBlob(id)
     if (!blob) return null
-    releaseUrl()
     objectUrl = URL.createObjectURL(blob)
     return objectUrl
   }

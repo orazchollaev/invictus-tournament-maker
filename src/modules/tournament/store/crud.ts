@@ -10,6 +10,7 @@ import type {
   TournamentPhase,
 } from "../types"
 import type { Team } from "@/modules/teams/types"
+import { dropSimResult } from "../utils/simulationCache"
 import {
   createTournament,
   createLeague,
@@ -402,6 +403,10 @@ export function useCrudActions(
   function remove(id: string) {
     tournaments.value = tournaments.value.filter((t) => t.id !== id)
     if (active.value === id) active.value = tournaments.value[0]?.id ?? null
+    // Nothing else ever frees a parked Monte Carlo run, and a new tournament
+    // could be handed the same id only by reusing it — either way it is not
+    // this tournament's result any more.
+    dropSimResult(id)
   }
 
   function getById(id: string) {

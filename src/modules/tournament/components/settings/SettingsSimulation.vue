@@ -31,7 +31,7 @@ async function handleSimulate() {
   simDone.value = false
   const result = await runSim(props.tournament, teamsStore.teams, 10_000)
   if (result) {
-    cacheSimResult(props.tournamentId, result)
+    cacheSimResult(props.tournamentId, props.tournament, result)
     simDone.value = true
   }
 }

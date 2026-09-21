@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n"
-import { ref } from "vue"
+import { onUnmounted, ref } from "vue"
 import {
   DialogRoot,
   DialogPortal,
@@ -39,11 +39,27 @@ const { t } = useI18n()
 
 const closing = ref(false)
 
+/**
+ * `close` reports only after the exit animation has run, so there is a window
+ * where the timer is armed and the modal can still be torn down under it — a
+ * route change, or a parent whose `v-if` flipped. Firing `@close` then runs the
+ * parent's handler for a modal that is already gone, which is how a freshly
+ * reopened one gets closed again by its predecessor's timer.
+ */
+let closeTimer: ReturnType<typeof setTimeout> | null = null
+
 function close() {
   if (closing.value) return
   closing.value = true
-  setTimeout(() => emit("close"), 220)
+  closeTimer = setTimeout(() => {
+    closeTimer = null
+    emit("close")
+  }, 220)
 }
+
+onUnmounted(() => {
+  if (closeTimer !== null) clearTimeout(closeTimer)
+})
 
 defineExpose({ close })
 </script>

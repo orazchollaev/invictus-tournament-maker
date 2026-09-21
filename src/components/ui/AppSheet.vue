@@ -14,7 +14,7 @@
  * backdrop and the panel are siblings: a property set on one would never
  * reach the other.
  */
-import { computed, ref } from "vue"
+import { computed, onUnmounted, ref } from "vue"
 import { DialogRoot, DialogPortal, DialogOverlay, DialogContent, DialogTitle } from "reka-ui"
 import { X } from "@lucide/vue"
 import { useI18n } from "vue-i18n"
@@ -60,11 +60,23 @@ const panelStyle = computed(() => ({
  * Runs the exit animation, then reports. Callers that need to know *why* it
  * closed park that intent before calling this and read it back in `@close`.
  */
+let closeTimer: ReturnType<typeof setTimeout> | null = null
+
 function close() {
   if (closing.value) return
   closing.value = true
-  setTimeout(() => emit("close"), 180)
+  closeTimer = setTimeout(() => {
+    closeTimer = null
+    emit("close")
+  }, 180)
 }
+
+// Torn down mid-animation (a route change, a parent's `v-if`), the pending
+// report would land on a parent that has already moved on — see AppModal for
+// the same guard and the reasoning behind it.
+onUnmounted(() => {
+  if (closeTimer !== null) clearTimeout(closeTimer)
+})
 
 defineExpose({ close })
 </script>

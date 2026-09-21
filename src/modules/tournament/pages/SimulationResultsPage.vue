@@ -20,7 +20,7 @@ const teamsStore = useTeamsStore()
 
 const tournamentId = computed(() => route.params.id as string)
 const tournament = computed(() => store.getById(tournamentId.value))
-const result = computed(() => getCachedSimResult(tournamentId.value))
+const result = computed(() => getCachedSimResult(tournamentId.value, tournament.value))
 
 const teams = computed(() => teamsStore.teams)
 
