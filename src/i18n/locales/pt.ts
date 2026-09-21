@@ -1,4 +1,4 @@
-export default {
+﻿export default {
   drawCeremony: {
     potLabel: "Pote {n}",
     potSingle: "Pote",
@@ -163,12 +163,14 @@ export default {
     },
     deleteConfirm: "Excluir este torneio?",
     deleteLabel: "Excluir",
+    selectDatasetBtn: "Selecionar conjunto de dados",
   },
   teams: {
     deleteInUse: "Esta equipa não pode ser eliminada porque está a ser usada num torneio.",
     title: "Times",
     notFound: "Time não encontrado.",
     addBtn: "Adicionar time",
+    loadDatasetTitle: "Carregar conjunto de dados",
     searchPlaceholder: "Buscar times…",
     empty: "Nenhum time ainda. Clique em {action} para começar.",
     noMatch: 'Nenhum time corresponde a "{query}".',
@@ -542,10 +544,16 @@ export default {
       title: "Dados de exemplo",
       countries: "Seleções",
       clubs: "Clubes",
+      uefa: "Competições europeias",
       intro:
-        "Carregue uma lista de times predefinida. Isso substituirá seus times atuais e apagará todos os torneios.",
+        "Carregue uma lista de times predefinida. Ela é adicionada aos seus times e torneios atuais — nada existente é apagado.",
       loadConfirm:
-        'Carregar o conjunto de dados "{name}"? Isso substituirá seus times e apagará todos os torneios.',
+        'Carregar o conjunto de dados "{name}"? Será adicionado aos seus times e torneios atuais.',
+      loadConfirmAd:
+        'Carregar o conjunto de dados "{name}"? Será adicionado aos seus times e torneios atuais. A cada 2 conjuntos de dados carregados é exibido um breve anúncio com recompensa — este é um deles.',
+      adNotice:
+        "A próxima vez que carregar um conjunto de dados será exibido um breve anúncio com recompensa.",
+      adBadge: "Ver anúncio",
       loadLabel: "Carregar",
     },
     dataManagement: {
@@ -576,6 +584,7 @@ export default {
       tournament: "Regras do Torneio",
       simulation: "Simulação",
       music: "Música",
+      sampleData: "Dados de exemplo",
       data: "Dados",
     },
     tutorials: "Tutoriais",

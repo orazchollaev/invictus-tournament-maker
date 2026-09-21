@@ -1,4 +1,4 @@
-export default {
+﻿export default {
   drawCeremony: {
     potLabel: "Savat {n}",
     potSingle: "Savat",
@@ -164,12 +164,14 @@ export default {
     },
     deleteConfirm: "Ushbu turnir o'chirilsinmi?",
     deleteLabel: "O'chirish",
+    selectDatasetBtn: "Ma'lumotlar to'plamini tanlash",
   },
   teams: {
     deleteInUse: "Bu jamoani o'chirib bo'lmaydi, chunki u turnirda ishtirok etmoqda.",
     title: "Jamoalar",
     notFound: "Jamoa topilmadi.",
     addBtn: "Jamoa qo'shish",
+    loadDatasetTitle: "Ma'lumotlar to'plamini yuklash",
     searchPlaceholder: "Jamoalarni qidirish…",
     empty: "Hali jamoalar yo'q. Boshlash uchun {action} tugmasini bosing.",
     noMatch: '"{query}" bo\'yicha jamoa topilmadi.',
@@ -543,10 +545,15 @@ export default {
       title: "Namuna ma'lumotlar",
       countries: "Mamlakatlar",
       clubs: "Klublar",
+      uefa: "Yevropa turnirlari",
       intro:
-        "Tayyor jamoalar ro'yxatini yuklang. Bu joriy jamoalaringizni almashtiradi va barcha turnirlarni o'chiradi.",
+        "Tayyor jamoalar ro'yxatini yuklang. Bu joriy jamoalaringiz va turnirlaringizga qo'shiladi — hech narsa o'chirilmaydi.",
       loadConfirm:
-        "\"{name}\" to'plami yuklansinmi? Bu jamoalaringizni almashtiradi va barcha turnirlarni o'chiradi.",
+        "\"{name}\" to'plami yuklansinmi? Bu joriy jamoalaringiz va turnirlaringizga qo'shiladi.",
+      loadConfirmAd:
+        "\"{name}\" to'plami yuklansinmi? Bu joriy jamoalaringiz va turnirlaringizga qo'shiladi. Har 2-marta to'plam yuklaganingizda qisqa mukofotli reklama ko'rsatiladi — bu ham ulardan biri.",
+      adNotice: "Keyingi to'plamni yuklaganingizda qisqa mukofotli reklama ko'rsatiladi.",
+      adBadge: "Reklamani ko'rish",
       loadLabel: "Yuklash",
     },
     dataManagement: {
@@ -579,6 +586,7 @@ export default {
       tournament: "Turnir qoidalari",
       simulation: "Simulyatsiya",
       music: "Musiqa",
+      sampleData: "Namuna ma'lumotlar",
       data: "Ma'lumotlar",
     },
     tutorials: "Qo'llanmalar",

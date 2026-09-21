@@ -1,4 +1,4 @@
-export default {
+﻿export default {
   drawCeremony: {
     potLabel: "Pot {n}",
     potSingle: "Pot",
@@ -163,12 +163,14 @@ export default {
     },
     deleteConfirm: "Hapus turnamen ini?",
     deleteLabel: "Hapus",
+    selectDatasetBtn: "Pilih Dataset",
   },
   teams: {
     deleteInUse: "Tim ini tidak dapat dihapus karena sedang dipakai di sebuah turnamen.",
     title: "Tim",
     notFound: "Tim tidak ditemukan.",
     addBtn: "Tambah Tim",
+    loadDatasetTitle: "Muat Dataset",
     searchPlaceholder: "Cari tim…",
     empty: "Belum ada tim. Klik {action} untuk memulai.",
     noMatch: 'Tidak ada tim untuk "{query}".',
@@ -530,10 +532,16 @@ export default {
       title: "Data Sampel",
       countries: "Negara",
       clubs: "Klub",
+      uefa: "Kompetisi Eropa",
       intro:
-        "Muat daftar tim prasetel. Ini akan menggantikan tim Anda saat ini dan menghapus semua turnamen.",
+        "Muat daftar tim prasetel. Ini akan ditambahkan ke tim dan turnamen Anda saat ini — tidak ada yang dihapus.",
       loadConfirm:
-        'Muat himpunan data "{name}"? Ini akan menggantikan tim Anda dan menghapus semua turnamen.',
+        'Muat himpunan data "{name}"? Ini akan ditambahkan ke tim dan turnamen Anda saat ini.',
+      loadConfirmAd:
+        'Muat himpunan data "{name}"? Ini akan ditambahkan ke tim dan turnamen Anda saat ini. Setiap 2 himpunan data yang Anda muat akan menampilkan iklan berhadiah singkat — ini salah satunya.',
+      adNotice:
+        "Saat Anda memuat himpunan data berikutnya, iklan berhadiah singkat akan ditampilkan.",
+      adBadge: "Tonton iklan",
       loadLabel: "Muat",
     },
     dataManagement: {
@@ -563,6 +571,7 @@ export default {
       tournament: "Aturan Turnamen",
       simulation: "Simulasi",
       music: "Musik",
+      sampleData: "Data Sampel",
       data: "Data",
     },
     tutorials: "Tutorial",

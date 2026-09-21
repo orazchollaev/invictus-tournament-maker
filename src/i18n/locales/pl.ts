@@ -1,4 +1,4 @@
-export default {
+﻿export default {
   drawCeremony: {
     potLabel: "Koszyk {n}",
     potSingle: "Koszyk",
@@ -161,12 +161,14 @@ export default {
     },
     deleteConfirm: "Usunąć ten turniej?",
     deleteLabel: "Usuń",
+    selectDatasetBtn: "Wybierz zestaw danych",
   },
   teams: {
     deleteInUse: "Tej drużyny nie można usunąć, ponieważ jest używana w turnieju.",
     title: "Drużyny",
     notFound: "Nie znaleziono drużyny.",
     addBtn: "Dodaj drużynę",
+    loadDatasetTitle: "Wczytaj zestaw danych",
     searchPlaceholder: "Szukaj drużyn…",
     empty: "Brak drużyn. Kliknij {action}, aby zacząć.",
     noMatch: 'Brak drużyn pasujących do "{query}".',
@@ -528,10 +530,15 @@ export default {
       title: "Dane przykładowe",
       countries: "Kraje",
       clubs: "Kluby",
+      uefa: "Rozgrywki europejskie",
       intro:
-        "Wczytaj gotową listę drużyn. To zastąpi Twoje obecne drużyny i usunie wszystkie turnieje.",
+        "Wczytaj gotową listę drużyn. Zostanie dodana do Twoich obecnych drużyn i turniejów — nic istniejącego nie zostanie usunięte.",
       loadConfirm:
-        'Wczytać zestaw danych "{name}"? To zastąpi Twoje drużyny i usunie wszystkie turnieje.',
+        'Wczytać zestaw danych "{name}"? Zostanie dodany do Twoich obecnych drużyn i turniejów.',
+      loadConfirmAd:
+        'Wczytać zestaw danych "{name}"? Zostanie dodany do Twoich obecnych drużyn i turniejów. Co 2. wczytany zestaw danych pokazuje krótką reklamę z nagrodą — to jest jedna z nich.',
+      adNotice: "Przy następnym wczytaniu zestawu danych pojawi się krótka reklama z nagrodą.",
+      adBadge: "Obejrzyj reklamę",
       loadLabel: "Wczytaj",
     },
     dataManagement: {
@@ -561,6 +568,7 @@ export default {
       tournament: "Zasady turnieju",
       simulation: "Symulacja",
       music: "Muzyka",
+      sampleData: "Dane przykładowe",
       data: "Dane",
     },
     tutorials: "Samouczki",

@@ -1,4 +1,4 @@
-export default {
+﻿export default {
   drawCeremony: {
     potLabel: "Urna {n}",
     potSingle: "Urna",
@@ -165,12 +165,14 @@ export default {
     },
     deleteConfirm: "Eliminare questo torneo?",
     deleteLabel: "Elimina",
+    selectDatasetBtn: "Seleziona Dataset",
   },
   teams: {
     deleteInUse: "Questa squadra non può essere eliminata perché è usata in un torneo.",
     title: "Squadre",
     notFound: "Squadra non trovata.",
     addBtn: "Aggiungi Squadra",
+    loadDatasetTitle: "Carica Dataset",
     searchPlaceholder: "Cerca squadre…",
     empty: "Ancora nessuna squadra. Clicca {action} per iniziare.",
     noMatch: 'Nessuna squadra corrisponde a "{query}".',
@@ -544,10 +546,15 @@ export default {
       title: "Dati di Esempio",
       countries: "Nazioni",
       clubs: "Club",
+      uefa: "Competizioni europee",
       intro:
-        "Carica un elenco squadre predefinito. Questo sostituirà le tue squadre attuali e cancellerà tutti i tornei.",
+        "Carica un elenco squadre predefinito. Verrà aggiunto alle tue squadre e ai tuoi tornei attuali — nulla viene eliminato.",
       loadConfirm:
-        'Caricare il set di dati "{name}"? Questo sostituirà le tue squadre e cancellerà tutti i tornei.',
+        'Caricare il set di dati "{name}"? Verrà aggiunto alle tue squadre e ai tuoi tornei attuali.',
+      loadConfirmAd:
+        'Caricare il set di dati "{name}"? Verrà aggiunto alle tue squadre e ai tuoi tornei attuali. Ogni 2 set di dati caricati viene mostrato un breve annuncio con premio — questo è uno di quelli.',
+      adNotice: "Il prossimo caricamento di un set di dati mostrerà un breve annuncio con premio.",
+      adBadge: "Guarda l'annuncio",
       loadLabel: "Carica",
     },
     dataManagement: {
@@ -580,6 +587,7 @@ export default {
       tournament: "Regole Torneo",
       simulation: "Simulazione",
       music: "Musica",
+      sampleData: "Dati di Esempio",
       data: "Dati",
     },
     tutorials: "Tutorial",

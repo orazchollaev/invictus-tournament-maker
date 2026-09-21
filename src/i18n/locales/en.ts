@@ -1,4 +1,4 @@
-export default {
+﻿export default {
   drawCeremony: {
     potLabel: "Pot {n}",
     potSingle: "Pot",
@@ -162,12 +162,14 @@ export default {
     },
     deleteConfirm: "Delete this tournament?",
     deleteLabel: "Delete",
+    selectDatasetBtn: "Select Dataset",
   },
   teams: {
     deleteInUse: "This team cannot be deleted because it is used in a tournament.",
     title: "Teams",
     notFound: "Team not found.",
     addBtn: "Add Team",
+    loadDatasetTitle: "Load Dataset",
     searchPlaceholder: "Search teams…",
     empty: "No teams yet. Click {action} to get started.",
     noMatch: 'No teams match "{query}".',
@@ -540,10 +542,15 @@ export default {
       title: "Sample Data",
       countries: "Countries",
       clubs: "Clubs",
+      uefa: "European Competitions",
       intro:
-        "Load a preset team list. This will replace your current teams and clear all tournaments.",
-      loadConfirm: 'Load "{name}" dataset? This will replace your teams and clear all tournaments.',
+        "Load a preset team list. This is added alongside your current teams and tournaments — nothing existing gets deleted.",
+      loadConfirm: 'Load "{name}" dataset? It will be added to your current teams and tournaments.',
+      loadConfirmAd:
+        'Load "{name}" dataset? It will be added to your current teams and tournaments. A short rewarded ad plays every 2nd dataset you load — this is one of them.',
       loadLabel: "Load",
+      adNotice: "Your next dataset load will show a short rewarded ad.",
+      adBadge: "Watch ad",
     },
     dataManagement: {
       title: "Data Management",
@@ -573,6 +580,7 @@ export default {
       tournament: "Tournament Rules",
       simulation: "Simulation",
       music: "Music",
+      sampleData: "Sample Data",
       data: "Data",
     },
     tutorials: "Tutorials",

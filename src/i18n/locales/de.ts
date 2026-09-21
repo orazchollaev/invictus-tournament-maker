@@ -1,4 +1,4 @@
-export default {
+﻿export default {
   drawCeremony: {
     potLabel: "Topf {n}",
     potSingle: "Topf",
@@ -166,12 +166,14 @@ export default {
     },
     deleteConfirm: "Dieses Turnier löschen?",
     deleteLabel: "Löschen",
+    selectDatasetBtn: "Datensatz auswählen",
   },
   teams: {
     deleteInUse: "Dieses Team kann nicht gelöscht werden, da es in einem Turnier verwendet wird.",
     title: "Teams",
     notFound: "Team nicht gefunden.",
     addBtn: "Team hinzufügen",
+    loadDatasetTitle: "Datensatz laden",
     searchPlaceholder: "Teams durchsuchen…",
     empty: "Noch keine Teams. Klicke auf {action}, um loszulegen.",
     noMatch: "Keine Teams für „{query}“.",
@@ -545,10 +547,17 @@ export default {
       title: "Beispieldaten",
       countries: "Länder",
       clubs: "Vereine",
+      uefa: "Europapokal-Wettbewerbe",
       intro:
-        "Lade eine vorgefertigte Teamliste. Dies ersetzt deine aktuellen Teams und löscht alle Turniere.",
-      loadConfirm: "Datensatz „{name}“ laden? Dies ersetzt deine Teams und löscht alle Turniere.",
+        "Lade eine vorgefertigte Teamliste. Sie wird zu deinen aktuellen Teams und Turnieren hinzugefügt — nichts Vorhandenes wird gelöscht.",
+      loadConfirm:
+        "Datensatz „{name}“ laden? Er wird zu deinen aktuellen Teams und Turnieren hinzugefügt.",
+      loadConfirmAd:
+        "Datensatz „{name}“ laden? Er wird zu deinen aktuellen Teams und Turnieren hinzugefügt. Bei jedem 2. geladenen Datensatz wird eine kurze Werbevideo-Belohnung gezeigt — das hier ist einer davon.",
       loadLabel: "Laden",
+      adNotice:
+        "Beim nächsten Laden eines Datensatzes wird eine kurze Werbevideo-Belohnung angezeigt.",
+      adBadge: "Werbung ansehen",
     },
     dataManagement: {
       title: "Datenverwaltung",
@@ -580,6 +589,7 @@ export default {
       tournament: "Turnierregeln",
       simulation: "Simulation",
       music: "Musik",
+      sampleData: "Beispieldaten",
       data: "Daten",
     },
     tutorials: "Anleitungen",

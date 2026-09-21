@@ -1,4 +1,4 @@
-export default {
+﻿export default {
   drawCeremony: {
     potLabel: "Chapeau {n}",
     potSingle: "Chapeau",
@@ -164,12 +164,14 @@ export default {
     },
     deleteConfirm: "Supprimer ce tournoi ?",
     deleteLabel: "Supprimer",
+    selectDatasetBtn: "Choisir un jeu de données",
   },
   teams: {
     deleteInUse: "Cette équipe ne peut pas être supprimée car elle est utilisée dans un tournoi.",
     title: "Équipes",
     notFound: "Équipe introuvable.",
     addBtn: "Ajouter une équipe",
+    loadDatasetTitle: "Charger un jeu de données",
     searchPlaceholder: "Rechercher des équipes…",
     empty: "Aucune équipe pour l'instant. Cliquez sur {action} pour commencer.",
     noMatch: "Aucune équipe pour « {query} ».",
@@ -543,10 +545,16 @@ export default {
       title: "Données d’exemple",
       countries: "Pays",
       clubs: "Clubs",
+      uefa: "Compétitions européennes",
       intro:
-        "Chargez une liste d'équipes prédéfinie. Cela remplacera vos équipes actuelles et effacera tous les tournois.",
+        "Chargez une liste d'équipes prédéfinie. Elle s'ajoute à vos équipes et tournois actuels — rien n'est supprimé.",
       loadConfirm:
-        "Charger le jeu de données « {name} » ? Cela remplacera vos équipes et effacera tous les tournois.",
+        "Charger le jeu de données « {name} » ? Il sera ajouté à vos équipes et tournois actuels.",
+      loadConfirmAd:
+        "Charger le jeu de données « {name} » ? Il sera ajouté à vos équipes et tournois actuels. Une courte publicité récompensée s'affiche tous les 2 jeux de données chargés — celui-ci en fait partie.",
+      adNotice:
+        "Le prochain chargement d'un jeu de données affichera une courte publicité récompensée.",
+      adBadge: "Voir la pub",
       loadLabel: "Charger",
     },
     dataManagement: {
@@ -578,6 +586,7 @@ export default {
       tournament: "Règles du tournoi",
       simulation: "Simulation",
       music: "Musique",
+      sampleData: "Données d’exemple",
       data: "Données",
     },
     tutorials: "Tutoriels",

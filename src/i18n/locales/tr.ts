@@ -1,4 +1,4 @@
-export default {
+﻿export default {
   drawCeremony: {
     potLabel: "Torba {n}",
     potSingle: "Torba",
@@ -164,12 +164,14 @@ export default {
     },
     deleteConfirm: "Bu turnuva silinsin mi?",
     deleteLabel: "Sil",
+    selectDatasetBtn: "Veri Seti Seç",
   },
   teams: {
     deleteInUse: "Bu takım bir turnuvada kullanıldığı için silinemez.",
     title: "Takımlar",
     notFound: "Takım bulunamadı.",
     addBtn: "Takım Ekle",
+    loadDatasetTitle: "Veri Seti Yükle",
     searchPlaceholder: "Takım ara…",
     empty: "Henüz takım yok. Başlamak için {action} tıklayın.",
     noMatch: '"{query}" ile eşleşen takım yok.',
@@ -543,11 +545,15 @@ export default {
       title: "Örnek Veriler",
       countries: "Ülkeler",
       clubs: "Kulüpler",
+      uefa: "Avrupa Kupaları",
       intro:
-        "Hazır takım listesi yükleyin. Bu işlem mevcut takımlarınızın yerini alır ve tüm turnuvaları siler.",
-      loadConfirm:
-        '"{name}" veri seti yüklensin mi? Bu işlem takımlarınızı değiştirecek ve tüm turnuvaları silecek.',
+        "Hazır takım listesi yükleyin. Bu, mevcut takım ve turnuvalarınızın yanına eklenir — hiçbir şey silinmez.",
+      loadConfirm: '"{name}" veri seti yüklensin mi? Mevcut takım ve turnuvalarınıza eklenecek.',
+      loadConfirmAd:
+        '"{name}" veri seti yüklensin mi? Mevcut takım ve turnuvalarınıza eklenecek. Her 2 veri setinde bir kısa bir ödüllü reklam gösterilir — bu seçim de onlardan biri.',
       loadLabel: "Yükle",
+      adNotice: "Bir sonraki veri seti yüklemenizde kısa bir ödüllü reklam gösterilecek.",
+      adBadge: "Reklam izle",
     },
     dataManagement: {
       title: "Veri Yönetimi",
@@ -577,6 +583,7 @@ export default {
       tournament: "Turnuva Kuralları",
       simulation: "Simülasyon",
       music: "Müzik",
+      sampleData: "Örnek Veriler",
       data: "Veriler",
     },
     tutorials: "Eğitim Videoları",

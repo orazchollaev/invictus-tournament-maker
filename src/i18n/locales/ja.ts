@@ -1,4 +1,4 @@
-export default {
+﻿export default {
   drawCeremony: {
     potLabel: "ポット{n}",
     potSingle: "ポット",
@@ -162,12 +162,14 @@ export default {
     },
     deleteConfirm: "この大会を削除しますか？",
     deleteLabel: "削除",
+    selectDatasetBtn: "データセットを選択",
   },
   teams: {
     deleteInUse: "このチームは大会で使用中のため削除できません。",
     title: "チーム",
     notFound: "チームが見つかりません。",
     addBtn: "チームを追加",
+    loadDatasetTitle: "データセットを読み込む",
     searchPlaceholder: "チームを検索…",
     empty: "まだチームがありません。「{action}」をクリックして始めましょう。",
     noMatch: '"{query}" に一致するチームはありません。',
@@ -528,10 +530,14 @@ export default {
       title: "サンプルデータ",
       countries: "国（代表チーム）",
       clubs: "クラブチーム",
+      uefa: "欧州カップ戦",
       intro:
-        "プリセットのチームリストを読み込みます。現在のチームは置き換えられ、すべての大会データがクリアされます。",
-      loadConfirm:
-        'データセット "{name}" を読み込みますか？ 現在のチームは置き換えられ、すべての大会データがクリアされます。',
+        "プリセットのチームリストを読み込みます。現在のチームや大会に追加され、既存のデータは削除されません。",
+      loadConfirm: 'データセット "{name}" を読み込みますか？ 現在のチームや大会に追加されます。',
+      loadConfirmAd:
+        'データセット "{name}" を読み込みますか？ 現在のチームや大会に追加されます。データセットを2回読み込むごとに短いリワード広告が表示されます — 今回がその1回です。',
+      adNotice: "次にデータセットを読み込むと、短いリワード広告が表示されます。",
+      adBadge: "広告を見る",
       loadLabel: "読み込む",
     },
     dataManagement: {
@@ -561,6 +567,7 @@ export default {
       tournament: "大会ルール",
       simulation: "シミュレーション",
       music: "音楽",
+      sampleData: "サンプルデータ",
       data: "データ",
     },
     tutorials: "チュートリアル",

@@ -1,4 +1,4 @@
-export default {
+﻿export default {
   drawCeremony: {
     potLabel: "Pot {n}",
     potSingle: "Pot",
@@ -164,12 +164,14 @@ export default {
     },
     deleteConfirm: "Dit toernooi verwijderen?",
     deleteLabel: "Verwijderen",
+    selectDatasetBtn: "Dataset selecteren",
   },
   teams: {
     deleteInUse: "Dit team kan niet worden verwijderd omdat het in een toernooi wordt gebruikt.",
     title: "Teams",
     notFound: "Team niet gevonden.",
     addBtn: "Team toevoegen",
+    loadDatasetTitle: "Dataset laden",
     searchPlaceholder: "Teams zoeken…",
     empty: "Nog geen teams. Klik op {action} om te beginnen.",
     noMatch: 'Geen teams voor "{query}".',
@@ -543,9 +545,15 @@ export default {
       title: "Voorbeeldgegevens",
       countries: "Landen",
       clubs: "Clubs",
+      uefa: "Europese competities",
       intro:
-        "Laad een vooraf ingestelde teamlijst. Dit vervangt je huidige teams en wist alle toernooien.",
-      loadConfirm: 'Dataset "{name}" laden? Dit vervangt je teams en wist alle toernooien.',
+        "Laad een vooraf ingestelde teamlijst. Deze wordt toegevoegd aan je huidige teams en toernooien — er wordt niets verwijderd.",
+      loadConfirm:
+        'Dataset "{name}" laden? Deze wordt toegevoegd aan je huidige teams en toernooien.',
+      loadConfirmAd:
+        'Dataset "{name}" laden? Deze wordt toegevoegd aan je huidige teams en toernooien. Elke 2e dataset die je laadt, verschijnt er een korte beloningsadvertentie — dit is er een van.',
+      adNotice: "Bij het laden van je volgende dataset verschijnt een korte beloningsadvertentie.",
+      adBadge: "Advertentie bekijken",
       loadLabel: "Laden",
     },
     dataManagement: {
@@ -578,6 +586,7 @@ export default {
       tournament: "Toernooiregels",
       simulation: "Simulatie",
       music: "Muziek",
+      sampleData: "Voorbeeldgegevens",
       data: "Gegevens",
     },
     tutorials: "Handleidingen",

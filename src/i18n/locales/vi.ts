@@ -1,4 +1,4 @@
-export default {
+﻿export default {
   drawCeremony: {
     potLabel: "Nhóm {n}",
     potSingle: "Nhóm",
@@ -162,12 +162,14 @@ export default {
     },
     deleteConfirm: "Xóa giải đấu này?",
     deleteLabel: "Xóa",
+    selectDatasetBtn: "Chọn bộ dữ liệu",
   },
   teams: {
     deleteInUse: "Không thể xóa đội này vì đội đang được dùng trong một giải đấu.",
     title: "Đội",
     notFound: "Không tìm thấy đội.",
     addBtn: "Thêm đội",
+    loadDatasetTitle: "Tải bộ dữ liệu",
     searchPlaceholder: "Tìm kiếm đội…",
     empty: "Chưa có đội. Nhấn {action} để bắt đầu.",
     noMatch: 'Không có đội phù hợp với "{query}".',
@@ -529,10 +531,15 @@ export default {
       title: "Dữ liệu mẫu",
       countries: "Quốc gia",
       clubs: "Câu lạc bộ",
+      uefa: "Các giải đấu châu Âu",
       intro:
-        "Tải danh sách đội có sẵn. Thao tác này sẽ thay thế các đội hiện tại và xóa tất cả giải đấu.",
+        "Tải danh sách đội có sẵn. Dữ liệu này sẽ được thêm vào các đội và giải đấu hiện tại của bạn — không có gì bị xóa.",
       loadConfirm:
-        'Tải bộ dữ liệu "{name}"? Thao tác này sẽ thay thế các đội hiện tại và xóa tất cả giải đấu.',
+        'Tải bộ dữ liệu "{name}"? Dữ liệu này sẽ được thêm vào các đội và giải đấu hiện tại của bạn.',
+      loadConfirmAd:
+        'Tải bộ dữ liệu "{name}"? Dữ liệu này sẽ được thêm vào các đội và giải đấu hiện tại của bạn. Cứ mỗi 2 bộ dữ liệu bạn tải, một quảng cáo có thưởng ngắn sẽ hiện ra — đây là một trong số đó.',
+      adNotice: "Lần tải bộ dữ liệu tiếp theo sẽ hiển thị một quảng cáo có thưởng ngắn.",
+      adBadge: "Xem quảng cáo",
       loadLabel: "Tải",
     },
     dataManagement: {
@@ -562,6 +569,7 @@ export default {
       tournament: "Luật giải đấu",
       simulation: "Mô phỏng",
       music: "Âm nhạc",
+      sampleData: "Dữ liệu mẫu",
       data: "Dữ liệu",
     },
     tutorials: "Hướng dẫn",
