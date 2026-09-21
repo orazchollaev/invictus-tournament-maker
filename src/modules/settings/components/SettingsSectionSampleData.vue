@@ -1,28 +1,53 @@
 <script setup lang="ts">
 import { computed } from "vue"
 import { useI18n } from "vue-i18n"
-import { FlaskConical, Trophy, Star, Shield } from "@lucide/vue"
+import { FlaskConical, Trophy, Star, Shield, Globe, CirclePlay } from "@lucide/vue"
 import { AppCard, AppIcon } from "@/components/ui"
+import { FlagCircle } from "@/modules/teams/components"
 import { SAMPLE_DATASETS, useDataManagement } from "../composables/useDataManagement"
+import { useRewardedAd } from "@/composables/useRewardedAd"
 
 const { t } = useI18n()
 const { loadDataset } = useDataManagement()
+const { nextSelectionShowsAd } = useRewardedAd()
 
-const isUefaCompetition = (label: string) =>
-  label.includes("Champions League") ||
-  label.includes("Europa League") ||
-  label.includes("Conference League")
+/** How many flags to preview on a card before collapsing the rest into "+N". */
+const FLAG_PREVIEW_LIMIT = 5
 
-const uefaDatasets = computed(() => SAMPLE_DATASETS.filter((ds) => isUefaCompetition(ds.label)))
-const otherClubDatasets = computed(() =>
-  SAMPLE_DATASETS.filter((ds) => ds.type === "club" && !isUefaCompetition(ds.label))
-)
-const countryDatasets = computed(() => SAMPLE_DATASETS.filter((ds) => ds.type === "country"))
+// Exact labels, not a substring match — a non-UEFA competition can still have
+// "Champions League" in its name (e.g. the AFC one) without belonging here.
+const UEFA_LABELS = new Set([
+  "2026/27 Champions League",
+  "2026/27 Europa League",
+  "2026/27 Conference League",
+])
+const isUefaCompetition = (label: string) => UEFA_LABELS.has(label)
 
 function getUefaIcon(label: string) {
   if (label.includes("Champions League")) return Trophy
   if (label.includes("Europa League")) return Star
   return Shield
+}
+
+const groups = computed(() => {
+  const uefa = SAMPLE_DATASETS.filter((ds) => isUefaCompetition(ds.label))
+  const clubs = SAMPLE_DATASETS.filter((ds) => ds.type === "club" && !isUefaCompetition(ds.label))
+  const countries = SAMPLE_DATASETS.filter((ds) => ds.type === "country")
+  return [
+    { key: "uefa", title: t("settings.sampleData.uefa"), icon: Trophy, items: uefa },
+    { key: "clubs", title: t("settings.sampleData.clubs"), icon: null, items: clubs },
+    { key: "countries", title: t("settings.sampleData.countries"), icon: Globe, items: countries },
+  ].filter((g) => g.items.length)
+})
+
+function flagPreview(ds: (typeof SAMPLE_DATASETS)[number]) {
+  const codes: string[] = []
+  for (const team of ds.teams) {
+    if (!team.flag || codes.includes(team.flag)) continue
+    codes.push(team.flag)
+    if (codes.length === FLAG_PREVIEW_LIMIT) break
+  }
+  return codes
 }
 </script>
 
@@ -34,119 +59,118 @@ function getUefaIcon(label: string) {
     </template>
 
     <p class="section-intro">{{ t("settings.sampleData.intro") }}</p>
+    <p v-if="nextSelectionShowsAd" class="ad-notice">
+      <AppIcon :icon="CirclePlay" size="sm" />
+      {{ t("settings.sampleData.adNotice") }}
+    </p>
 
-    <!-- UEFA Competitions – Featured -->
-    <h3 class="dataset-group-title uefa-title">
-      <span class="uefa-badge">UEFA</span>
-      European Competitions
-    </h3>
-    <div class="uefa-grid">
-      <button
-        v-for="ds in uefaDatasets"
-        :key="ds.label"
-        type="button"
-        class="uefa-card"
-        @click="loadDataset(ds)"
-      >
-        <AppIcon :icon="getUefaIcon(ds.label)" size="lg" class="uefa-icon" />
-        <span class="uefa-name">{{ ds.label }}</span>
-        <span class="uefa-desc">{{ ds.description }}</span>
-      </button>
-    </div>
+    <section v-for="group in groups" :key="group.key" class="dataset-section">
+      <h3 class="dataset-group-title">
+        <AppIcon v-if="group.icon" :icon="group.icon" size="sm" />
+        {{ group.title }}
+      </h3>
 
-    <!-- Other Club Datasets -->
-    <template v-if="otherClubDatasets.length">
-      <h3 class="dataset-group-title">{{ t("settings.sampleData.clubs") }}</h3>
       <div class="dataset-grid">
         <button
-          v-for="ds in otherClubDatasets"
+          v-for="ds in group.items"
           :key="ds.label"
           type="button"
           class="dataset-card"
           @click="loadDataset(ds)"
         >
-          <span class="dataset-name">
-            {{ ds.label }}
-            <span v-if="ds.players?.length" class="dataset-squads">
-              {{ t("settings.sampleData.withSquads") }}
-            </span>
-          </span>
-          <span class="dataset-desc">{{ ds.description }}</span>
-        </button>
-      </div>
-    </template>
+          <div class="dataset-card-top">
+            <div class="flag-stack" aria-hidden="true">
+              <FlagCircle
+                v-for="code in flagPreview(ds)"
+                :key="code"
+                :code="code"
+                :size="22"
+                class="flag-chip"
+              />
+              <span v-if="ds.teams.length > FLAG_PREVIEW_LIMIT" class="flag-overflow">
+                +{{ ds.teams.length - FLAG_PREVIEW_LIMIT }}
+              </span>
+            </div>
+            <AppIcon
+              v-if="isUefaCompetition(ds.label)"
+              :icon="getUefaIcon(ds.label)"
+              size="sm"
+              class="dataset-comp-icon"
+            />
+          </div>
 
-    <!-- Country Datasets -->
-    <template v-if="countryDatasets.length">
-      <h3 class="dataset-group-title">{{ t("settings.sampleData.countries") }}</h3>
-      <div class="dataset-grid">
-        <button
-          v-for="ds in countryDatasets"
-          :key="ds.label"
-          type="button"
-          class="dataset-card"
-          @click="loadDataset(ds)"
-        >
-          <span class="dataset-name">
-            {{ ds.label }}
-            <span v-if="ds.players?.length" class="dataset-squads">
+          <span class="dataset-name">{{ ds.label }}</span>
+          <span class="dataset-desc">{{ ds.description }}</span>
+
+          <div class="dataset-footer">
+            <span class="dataset-count">{{ t("common.teams", { n: ds.teams.length }) }}</span>
+            <span v-if="ds.players?.length" class="tag tag-squad">
               {{ t("settings.sampleData.withSquads") }}
             </span>
-          </span>
-          <span class="dataset-desc">{{ ds.description }}</span>
+            <span v-if="nextSelectionShowsAd" class="tag tag-ad">
+              <AppIcon :icon="CirclePlay" size="sm" />
+              {{ t("settings.sampleData.adBadge") }}
+            </span>
+          </div>
         </button>
       </div>
-    </template>
+    </section>
   </AppCard>
 </template>
 
 <style scoped>
-/* ── Group Titles ── */
-.dataset-group-title {
-  font-size: var(--fs-sm);
-  font-weight: 600;
+.section-intro {
   color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
-  margin: var(--sp-5) 0 var(--sp-2);
-}
-.dataset-group-title:first-of-type {
-  margin-top: var(--sp-1);
+  font-size: var(--fs-sm);
+  margin: 0 0 var(--sp-3);
 }
 
-.uefa-title {
+/* ── Rewarded-ad notice ── */
+.ad-notice {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  margin: 0 0 var(--sp-4);
+  padding: var(--sp-2) var(--sp-3);
+  border-radius: var(--radius);
+  background: var(--accent-subtle);
+  color: var(--accent);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+}
+
+/* ── Section / group titles ── */
+.dataset-section + .dataset-section {
+  margin-top: var(--sp-5);
+}
+
+.dataset-group-title {
   display: flex;
   align-items: center;
   gap: var(--sp-2);
   color: var(--text);
+  font-size: var(--fs-sm);
   font-weight: 700;
+  margin: 0 0 var(--sp-3);
 }
 
-.uefa-badge {
-  display: inline-flex;
-  align-items: center;
-  padding: 2px 8px;
-  border-radius: var(--radius-pill);
-  background: linear-gradient(135deg, #003399, #0055a4);
-  color: #fff;
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 0.08em;
+.dataset-group-title :deep(svg) {
+  color: var(--text-muted);
 }
 
-/* ── UEFA Featured Cards ── */
-.uefa-grid {
+/* ── Dataset grid & cards ── */
+.dataset-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: var(--sp-3);
 }
 
-.uefa-card {
+.dataset-card {
   display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: var(--sp-3);
-  padding: var(--sp-3) var(--sp-4);
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--sp-1);
+  padding: var(--sp-3);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   background: var(--surface);
@@ -155,105 +179,119 @@ function getUefaIcon(label: string) {
   text-align: start;
   transition:
     border-color var(--dur-fast) var(--ease),
-    background var(--dur-fast) var(--ease),
-    box-shadow var(--dur-fast) var(--ease);
-}
-.uefa-card:hover {
-  border-color: var(--accent);
-  background: var(--border-light);
-  box-shadow: 0 2px 12px color-mix(in srgb, var(--accent) 12%, transparent);
-}
-
-.uefa-icon {
-  flex-shrink: 0;
-  color: var(--accent);
-  opacity: 0.8;
-}
-
-.uefa-name {
-  font-size: var(--fs-sm);
-  font-weight: 700;
-  line-height: 1.2;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.uefa-desc {
-  display: none;
-}
-
-@media (max-width: 600px) {
-  .uefa-grid {
-    grid-template-columns: 1fr;
-    gap: var(--sp-2);
-  }
-
-  .uefa-card {
-    padding: var(--sp-3);
-  }
-}
-
-/* ── Standard Dataset Grid ── */
-.dataset-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: var(--sp-2);
-}
-
-.dataset-card {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 3px;
-  padding: var(--sp-3) var(--sp-4);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: var(--surface);
-  color: var(--text);
-  cursor: pointer;
-  text-align: start;
-  transition:
-    border-color var(--dur-fast) var(--ease),
-    background var(--dur-fast) var(--ease);
+    box-shadow var(--dur-fast) var(--ease),
+    transform var(--dur-fast) var(--ease);
 }
 .dataset-card:hover {
-  border-color: var(--accent);
-  background: var(--border-light);
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
+  box-shadow: var(--elev-2);
+  transform: translateY(-1px);
+}
+.dataset-card:active {
+  transform: translateY(0);
+  box-shadow: var(--elev-1);
 }
 
-.dataset-name,
-.dataset-desc {
+.dataset-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   width: 100%;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+}
+
+.flag-stack {
+  display: flex;
+  align-items: center;
+}
+
+.flag-chip {
+  border: 2px solid var(--surface);
+  box-shadow: 0 0 0 1px var(--border);
+  margin-inline-start: -8px;
+}
+.flag-chip:first-child {
+  margin-inline-start: 0;
+}
+
+.flag-overflow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  margin-inline-start: -8px;
+  border: 2px solid var(--surface);
+  box-shadow: 0 0 0 1px var(--border);
+  border-radius: 50%;
+  background: var(--border-light);
+  color: var(--text-muted);
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.dataset-comp-icon {
+  color: var(--accent);
+  opacity: 0.85;
 }
 
 .dataset-name {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-2);
+  width: 100%;
+  margin-top: var(--sp-1);
   font-size: var(--fs-base);
-  font-weight: 600;
-}
-
-.dataset-squads {
-  flex-shrink: 0;
-  padding: 1px var(--sp-2);
-  border-radius: var(--radius-pill);
-  background: var(--accent-subtle);
-  border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
-  color: var(--accent);
-  font-family: var(--font-ui);
-  font-size: 10px;
   font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .dataset-desc {
+  width: 100%;
   font-size: var(--fs-xs);
   color: var(--text-muted);
+  line-height: 1.35;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.dataset-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-2);
+  margin-top: var(--sp-2);
+}
+
+.dataset-count {
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 1px var(--sp-2);
+  border-radius: var(--radius-pill);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.tag-squad {
+  background: var(--accent-subtle);
+  border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+  color: var(--accent);
+  text-transform: uppercase;
+}
+
+.tag-ad {
+  background: var(--accent-subtle);
+  border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+  color: var(--accent);
 }
 </style>
