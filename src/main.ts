@@ -16,6 +16,15 @@ import { useSettingsStore } from "./modules/settings/store"
 
 import "./assets/style/index.css"
 
+// Android WebViews older than Chromium 93 don't have Object.hasOwn — Pinia's
+// $patch (used on every hydration) and some UI internals call it directly,
+// and it throwing there crashes hydration before app.mount() ever runs. A
+// tiny polyfill up front is cheaper than pinning every dependency around it.
+if (typeof Object.hasOwn !== "function") {
+  Object.hasOwn = (obj: object, prop: PropertyKey) =>
+    Object.prototype.hasOwnProperty.call(obj, prop)
+}
+
 /**
  * The persistence plugin fires on every state mutation and, by default,
  * `JSON.stringify`s the whole store synchronously right then — on the same
@@ -109,10 +118,18 @@ async function bootstrap() {
   const playersStore = usePlayersStore()
   const settingsStore = useSettingsStore()
   try {
-    await Promise.all([
-      teamsStore.$persistedState.isReady(),
-      playersStore.$persistedState.isReady(),
-      settingsStore.$persistedState.isReady(),
+    // isReady() only ever resolves via the plugin's own internal callback —
+    // if hydration throws before that callback runs, the promise never
+    // settles at all, not even a rejection. A timeout race keeps a stuck
+    // hydration from turning into a permanently blank screen.
+    const timeout = new Promise((resolve) => setTimeout(resolve, 3000))
+    await Promise.race([
+      Promise.all([
+        teamsStore.$persistedState.isReady(),
+        playersStore.$persistedState.isReady(),
+        settingsStore.$persistedState.isReady(),
+      ]),
+      timeout,
     ])
   } catch {}
 
