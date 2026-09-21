@@ -22,6 +22,8 @@ import type {
   League,
   LeagueMatchday,
   LeagueTier,
+  ManagerLineupSlot,
+  ManagerState,
   Match,
   MatchResult,
   PhaseConfig,
@@ -33,6 +35,11 @@ import type {
   TournamentFormat,
   TournamentPhase,
 } from "../types"
+import type { Formation, PlayStyle } from "@/modules/teams/types"
+import type { PlayerPosition } from "@/modules/players/types"
+import { PLAYER_POSITIONS } from "@/modules/players/types"
+import { DEFAULT_FORMATION, DEFAULT_STYLE, FORMATION_LIST, PLAY_STYLES } from "@/engine"
+import { reconcileLineupSlots } from "../utils/managerLineup"
 
 const FORMATS: TournamentFormat[] = ["bracket", "group+bracket", "league", "swiss", "custom"]
 const PHASE_KINDS: PhaseKind[] = ["group", "league", "swiss", "knockout"]
@@ -327,6 +334,52 @@ function normalizePhaseGraph(raw: Raw): {
 }
 
 /**
+ * The managed side, or undefined when there isn't a usable one.
+ *
+ * Two things have to be true for the rest of the app, and neither was checked
+ * while this rode the passthrough list. A `teamId` outside `teamIds` makes
+ * every "is this my match?" check silently false and locks bulk simulation out
+ * of nothing. A `formation` outside `FORMATIONS` is worse: `FORMATIONS[value]`
+ * is then `undefined` and the first read of a slot count throws, which is a
+ * blank manager tab rather than a degraded one. Both are unrepairable as
+ * written and both have an obvious floor — drop the manager for the first,
+ * fall back to the default shape for the second.
+ *
+ * The lineup is reshaped onto whatever formation survives, so its length
+ * always matches the formation's slot count, which is the invariant every
+ * pitch renderer indexes against.
+ */
+function normalizeManager(value: unknown, teamIds: string[]): ManagerState | undefined {
+  if (!isObject(value)) return undefined
+  const teamId = str(value.teamId)
+  if (!teamId || !teamIds.includes(teamId)) return undefined
+
+  const formationRaw = str(value.formation) as Formation | undefined
+  const formation =
+    formationRaw && FORMATION_LIST.includes(formationRaw) ? formationRaw : DEFAULT_FORMATION
+
+  const styleRaw = str(value.style) as PlayStyle | undefined
+  const style = styleRaw && PLAY_STYLES.includes(styleRaw) ? styleRaw : DEFAULT_STYLE
+
+  const slots = arr(value.lineup)
+    .map((slot): ManagerLineupSlot | null => {
+      if (!isObject(slot)) return null
+      const position = str(slot.position) as PlayerPosition | undefined
+      if (!position || !PLAYER_POSITIONS.includes(position)) return null
+      return { position, playerId: strOrNull(slot.playerId) }
+    })
+    .filter((slot): slot is ManagerLineupSlot => slot !== null)
+
+  return {
+    teamId,
+    formation,
+    style,
+    startedAt: num(value.startedAt, Date.now()),
+    lineup: reconcileLineupSlots(slots, formation),
+  }
+}
+
+/**
  * Turns one stored record into a Tournament, or null when it cannot be one.
  *
  * Null is returned only for the identity fields — without an id the record
@@ -400,7 +453,6 @@ export function normalizeTournament(raw: unknown): Tournament | null {
     "winPoints",
     "drawPoints",
     "lossPoints",
-    "manager",
   ] as const
   for (const key of passthrough) {
     if (raw[key] !== undefined) (tournament as unknown as Record<string, unknown>)[key] = raw[key]
@@ -411,13 +463,8 @@ export function normalizeTournament(raw: unknown): Tournament | null {
   const powerAdj = numberRecord(raw.teamPowerAdjustments)
   if (powerAdj) tournament.teamPowerAdjustments = powerAdj
 
-  // A manager entry naming a team that is not in the tournament would make
-  // every "is this my match?" check silently false and lock bulk simulation
-  // out of nothing. Drop it rather than carry it.
-  const manager = tournament.manager
-  if (manager && (!str(manager.teamId) || !tournament.teamIds.includes(manager.teamId))) {
-    tournament.manager = undefined
-  }
+  const manager = normalizeManager(raw.manager, tournament.teamIds)
+  if (manager) tournament.manager = manager
 
   return tournament
 }

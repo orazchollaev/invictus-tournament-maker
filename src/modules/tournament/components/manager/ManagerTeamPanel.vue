@@ -39,6 +39,7 @@ import {
   lineupPlayerIds,
 } from "@/modules/tournament/utils/managerLineup"
 import {
+  DEFAULT_FORMATION,
   FORMATION_LIST,
   FORMATIONS,
   MORALE_STEP,
@@ -119,7 +120,7 @@ const styleOptions = computed(() =>
 )
 
 const formation = computed({
-  get: () => manager.value?.formation ?? "4-4-2",
+  get: () => manager.value?.formation ?? DEFAULT_FORMATION,
   set: (value: Formation) => store.setManagerTactics(props.tournamentId, { formation: value }),
 })
 

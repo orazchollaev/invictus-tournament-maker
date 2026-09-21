@@ -78,11 +78,18 @@ export function assignLineupSlot(
 }
 
 /** Empty out whichever slot (if any) currently holds this player — used when
- *  he becomes unavailable (injured, suspended, sold) after being picked. */
+ *  he becomes unavailable (injured, suspended, sold) after being picked.
+ *
+ *  Returns `slots` itself when he was not in it. Callers chain this over every
+ *  unavailable id and then decide whether to write the result back to the
+ *  store; a `.map()` that always allocated made that check (`next !== slots`)
+ *  always true, so a squad with any injured player at all rewrote — and
+ *  re-persisted — an identical lineup on every recompute. */
 export function clearLineupPlayer(
   slots: ManagerLineupSlot[],
   playerId: string
 ): ManagerLineupSlot[] {
+  if (!slots.some((slot) => slot.playerId === playerId)) return slots
   return slots.map((slot) => (slot.playerId === playerId ? { ...slot, playerId: null } : slot))
 }
 
