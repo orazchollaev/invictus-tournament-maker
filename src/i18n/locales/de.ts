@@ -548,6 +548,8 @@
       countries: "Länder",
       clubs: "Vereine",
       uefa: "Europapokal-Wettbewerbe",
+      leagues: "Ligen",
+      classics: "Klassiker",
       intro:
         "Lade eine vorgefertigte Teamliste. Sie wird zu deinen aktuellen Teams und Turnieren hinzugefügt — nichts Vorhandenes wird gelöscht.",
       loadConfirm:

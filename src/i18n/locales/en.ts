@@ -543,6 +543,8 @@
       countries: "Countries",
       clubs: "Clubs",
       uefa: "European Competitions",
+      leagues: "Leagues",
+      classics: "Classics",
       intro:
         "Load a preset team list. This is added alongside your current teams and tournaments — nothing existing gets deleted.",
       loadConfirm: 'Load "{name}" dataset? It will be added to your current teams and tournaments.',

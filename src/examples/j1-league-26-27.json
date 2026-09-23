@@ -1,0 +1,149 @@
+{
+  "label": "J1 League 26/27",
+  "description": "Japanese J1 League 2026/27 — 20 clubs",
+  "order": 19,
+  "type": "club",
+  "category": "league",
+  "teams": [
+    {
+      "id": "j1-01",
+      "name": "Kashima Antlers",
+      "color": "#B80C2E",
+      "power": 80,
+      "flag": "jp"
+    },
+    {
+      "id": "j1-02",
+      "name": "Kashiwa Reysol",
+      "color": "#E9C400",
+      "power": 79,
+      "flag": "jp"
+    },
+    {
+      "id": "j1-03",
+      "name": "Vissel Kobe",
+      "color": "#A50044",
+      "power": 79,
+      "flag": "jp"
+    },
+    {
+      "id": "j1-04",
+      "name": "Sanfrecce Hiroshima",
+      "color": "#52307B",
+      "power": 78,
+      "flag": "jp"
+    },
+    {
+      "id": "j1-05",
+      "name": "Machida Zelvia",
+      "color": "#0B3A7E",
+      "power": 78,
+      "flag": "jp"
+    },
+    {
+      "id": "j1-06",
+      "name": "Kyoto Sanga",
+      "color": "#8B2C87",
+      "power": 77,
+      "flag": "jp"
+    },
+    {
+      "id": "j1-07",
+      "name": "Urawa Red Diamonds",
+      "color": "#E6002D",
+      "power": 77,
+      "flag": "jp"
+    },
+    {
+      "id": "j1-08",
+      "name": "Kawasaki Frontale",
+      "color": "#1A9CD8",
+      "power": 77,
+      "flag": "jp"
+    },
+    {
+      "id": "j1-09",
+      "name": "Gamba Osaka",
+      "color": "#1D3F9A",
+      "power": 75,
+      "flag": "jp"
+    },
+    {
+      "id": "j1-10",
+      "name": "FC Tokyo",
+      "color": "#003A70",
+      "power": 75,
+      "flag": "jp"
+    },
+    {
+      "id": "j1-11",
+      "name": "Cerezo Osaka",
+      "color": "#EC008C",
+      "power": 74,
+      "flag": "jp"
+    },
+    {
+      "id": "j1-12",
+      "name": "Yokohama F. Marinos",
+      "color": "#00338D",
+      "power": 74,
+      "flag": "jp"
+    },
+    {
+      "id": "j1-13",
+      "name": "Nagoya Grampus",
+      "color": "#D71920",
+      "power": 73,
+      "flag": "jp"
+    },
+    {
+      "id": "j1-14",
+      "name": "Avispa Fukuoka",
+      "color": "#0C2C59",
+      "power": 72,
+      "flag": "jp"
+    },
+    {
+      "id": "j1-15",
+      "name": "Tokyo Verdy",
+      "color": "#00863E",
+      "power": 72,
+      "flag": "jp"
+    },
+    {
+      "id": "j1-16",
+      "name": "Shimizu S-Pulse",
+      "color": "#FF8C00",
+      "power": 72,
+      "flag": "jp"
+    },
+    {
+      "id": "j1-17",
+      "name": "Fagiano Okayama",
+      "color": "#A6192E",
+      "power": 71,
+      "flag": "jp"
+    },
+    {
+      "id": "j1-18",
+      "name": "V-Varen Nagasaki",
+      "color": "#005BAC",
+      "power": 71,
+      "flag": "jp"
+    },
+    {
+      "id": "j1-19",
+      "name": "JEF United Chiba",
+      "color": "#F8D210",
+      "power": 70,
+      "flag": "jp"
+    },
+    {
+      "id": "j1-20",
+      "name": "Mito HollyHock",
+      "color": "#0A2E6E",
+      "power": 69,
+      "flag": "jp"
+    }
+  ]
+}

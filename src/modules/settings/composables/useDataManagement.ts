@@ -21,6 +21,8 @@ interface Dataset {
   description: string
   order?: number
   type: "country" | "club"
+  /** Sub-section on the sample data card; unset falls under clubs/countries by `type`. */
+  category?: "league" | "classic"
   teams: { id: string; name: string; color: string; power: number; flag?: string }[]
   /** Optional squads. Player.teamId must match an id in `teams`. */
   players?: {

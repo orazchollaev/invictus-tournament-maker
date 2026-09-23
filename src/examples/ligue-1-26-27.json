@@ -1,0 +1,135 @@
+{
+  "label": "Ligue 1 26/27",
+  "description": "French Ligue 1 2026/27 — 18 clubs",
+  "order": 14,
+  "type": "club",
+  "category": "league",
+  "teams": [
+    {
+      "id": "l1-01",
+      "name": "Paris Saint-Germain",
+      "color": "#004170",
+      "power": 94,
+      "flag": "fr"
+    },
+    {
+      "id": "l1-02",
+      "name": "Marseille",
+      "color": "#2FAEE0",
+      "power": 84,
+      "flag": "fr"
+    },
+    {
+      "id": "l1-03",
+      "name": "Monaco",
+      "color": "#E7192A",
+      "power": 83,
+      "flag": "fr"
+    },
+    {
+      "id": "l1-04",
+      "name": "Lille",
+      "color": "#E01E13",
+      "power": 81,
+      "flag": "fr"
+    },
+    {
+      "id": "l1-05",
+      "name": "Lyon",
+      "color": "#1B3C87",
+      "power": 81,
+      "flag": "fr"
+    },
+    {
+      "id": "l1-06",
+      "name": "Lens",
+      "color": "#FFD500",
+      "power": 80,
+      "flag": "fr"
+    },
+    {
+      "id": "l1-07",
+      "name": "Nice",
+      "color": "#C8102E",
+      "power": 77,
+      "flag": "fr"
+    },
+    {
+      "id": "l1-08",
+      "name": "Rennes",
+      "color": "#E13327",
+      "power": 77,
+      "flag": "fr"
+    },
+    {
+      "id": "l1-09",
+      "name": "Strasbourg",
+      "color": "#009FE3",
+      "power": 77,
+      "flag": "fr"
+    },
+    {
+      "id": "l1-10",
+      "name": "Toulouse",
+      "color": "#5B2E8C",
+      "power": 73,
+      "flag": "fr"
+    },
+    {
+      "id": "l1-11",
+      "name": "Brest",
+      "color": "#E30613",
+      "power": 73,
+      "flag": "fr"
+    },
+    {
+      "id": "l1-12",
+      "name": "Paris FC",
+      "color": "#1B2A4A",
+      "power": 72,
+      "flag": "fr"
+    },
+    {
+      "id": "l1-13",
+      "name": "Auxerre",
+      "color": "#0D4F9E",
+      "power": 69,
+      "flag": "fr"
+    },
+    {
+      "id": "l1-14",
+      "name": "Lorient",
+      "color": "#F58113",
+      "power": 69,
+      "flag": "fr"
+    },
+    {
+      "id": "l1-15",
+      "name": "Angers",
+      "color": "#1A1A1A",
+      "power": 68,
+      "flag": "fr"
+    },
+    {
+      "id": "l1-16",
+      "name": "Le Havre",
+      "color": "#6DB5E4",
+      "power": 68,
+      "flag": "fr"
+    },
+    {
+      "id": "l1-17",
+      "name": "Troyes",
+      "color": "#0055A4",
+      "power": 66,
+      "flag": "fr"
+    },
+    {
+      "id": "l1-18",
+      "name": "Le Mans",
+      "color": "#D2242A",
+      "power": 65,
+      "flag": "fr"
+    }
+  ]
+}

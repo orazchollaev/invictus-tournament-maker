@@ -546,6 +546,8 @@
       countries: "Mamlakatlar",
       clubs: "Klublar",
       uefa: "Yevropa turnirlari",
+      leagues: "Ligalar",
+      classics: "Klassika",
       intro:
         "Tayyor jamoalar ro'yxatini yuklang. Bu joriy jamoalaringiz va turnirlaringizga qo'shiladi — hech narsa o'chirilmaydi.",
       loadConfirm:

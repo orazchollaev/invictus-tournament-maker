@@ -1,0 +1,149 @@
+{
+  "label": "La Liga 26/27",
+  "description": "Spanish La Liga 2026/27 — 20 clubs",
+  "order": 11,
+  "type": "club",
+  "category": "league",
+  "teams": [
+    {
+      "id": "lal-01",
+      "name": "Real Madrid",
+      "color": "#FEBE10",
+      "power": 96,
+      "flag": "es"
+    },
+    {
+      "id": "lal-02",
+      "name": "Barcelona",
+      "color": "#A50044",
+      "power": 95,
+      "flag": "es"
+    },
+    {
+      "id": "lal-03",
+      "name": "Atlético Madrid",
+      "color": "#CB3524",
+      "power": 89,
+      "flag": "es"
+    },
+    {
+      "id": "lal-04",
+      "name": "Villarreal",
+      "color": "#FFE667",
+      "power": 83,
+      "flag": "es"
+    },
+    {
+      "id": "lal-05",
+      "name": "Athletic Bilbao",
+      "color": "#EE2523",
+      "power": 82,
+      "flag": "es"
+    },
+    {
+      "id": "lal-06",
+      "name": "Real Betis",
+      "color": "#0BB363",
+      "power": 81,
+      "flag": "es"
+    },
+    {
+      "id": "lal-07",
+      "name": "Real Sociedad",
+      "color": "#0067B1",
+      "power": 79,
+      "flag": "es"
+    },
+    {
+      "id": "lal-08",
+      "name": "Celta Vigo",
+      "color": "#8AC3EE",
+      "power": 76,
+      "flag": "es"
+    },
+    {
+      "id": "lal-09",
+      "name": "Valencia",
+      "color": "#EE3524",
+      "power": 75,
+      "flag": "es"
+    },
+    {
+      "id": "lal-10",
+      "name": "Sevilla",
+      "color": "#D81E05",
+      "power": 75,
+      "flag": "es"
+    },
+    {
+      "id": "lal-11",
+      "name": "Osasuna",
+      "color": "#D91A21",
+      "power": 74,
+      "flag": "es"
+    },
+    {
+      "id": "lal-12",
+      "name": "Rayo Vallecano",
+      "color": "#E53027",
+      "power": 73,
+      "flag": "es"
+    },
+    {
+      "id": "lal-13",
+      "name": "Espanyol",
+      "color": "#007FC8",
+      "power": 73,
+      "flag": "es"
+    },
+    {
+      "id": "lal-14",
+      "name": "Getafe",
+      "color": "#005999",
+      "power": 72,
+      "flag": "es"
+    },
+    {
+      "id": "lal-15",
+      "name": "Alavés",
+      "color": "#0761AF",
+      "power": 71,
+      "flag": "es"
+    },
+    {
+      "id": "lal-16",
+      "name": "Elche",
+      "color": "#05642C",
+      "power": 70,
+      "flag": "es"
+    },
+    {
+      "id": "lal-17",
+      "name": "Levante",
+      "color": "#B4053F",
+      "power": 69,
+      "flag": "es"
+    },
+    {
+      "id": "lal-18",
+      "name": "Deportivo La Coruña",
+      "color": "#1B4F9C",
+      "power": 68,
+      "flag": "es"
+    },
+    {
+      "id": "lal-19",
+      "name": "Racing Santander",
+      "color": "#0F8A3C",
+      "power": 67,
+      "flag": "es"
+    },
+    {
+      "id": "lal-20",
+      "name": "Málaga",
+      "color": "#0E7FC1",
+      "power": 67,
+      "flag": "es"
+    }
+  ]
+}

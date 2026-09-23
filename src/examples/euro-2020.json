@@ -1,0 +1,894 @@
+{
+  "label": "UEFA Euro 2020",
+  "description": "Pan-European 2020 — 24 teams, real groups",
+  "order": 31,
+  "type": "country",
+  "category": "classic",
+  "teams": [
+    {
+      "id": "eu20-01",
+      "name": "Turkey",
+      "color": "#E30A17",
+      "power": 76,
+      "flag": "tr"
+    },
+    {
+      "id": "eu20-02",
+      "name": "Italy",
+      "color": "#008C45",
+      "power": 88,
+      "flag": "it"
+    },
+    {
+      "id": "eu20-03",
+      "name": "Wales",
+      "color": "#D30731",
+      "power": 74,
+      "flag": "gb-wls"
+    },
+    {
+      "id": "eu20-04",
+      "name": "Switzerland",
+      "color": "#D52B1E",
+      "power": 79,
+      "flag": "ch"
+    },
+    {
+      "id": "eu20-05",
+      "name": "Denmark",
+      "color": "#C60C30",
+      "power": 81,
+      "flag": "dk"
+    },
+    {
+      "id": "eu20-06",
+      "name": "Finland",
+      "color": "#003580",
+      "power": 66,
+      "flag": "fi"
+    },
+    {
+      "id": "eu20-07",
+      "name": "Belgium",
+      "color": "#EF3340",
+      "power": 90,
+      "flag": "be"
+    },
+    {
+      "id": "eu20-08",
+      "name": "Russia",
+      "color": "#0039A6",
+      "power": 75,
+      "flag": "ru"
+    },
+    {
+      "id": "eu20-09",
+      "name": "Netherlands",
+      "color": "#FF6600",
+      "power": 84,
+      "flag": "nl"
+    },
+    {
+      "id": "eu20-10",
+      "name": "Ukraine",
+      "color": "#005BBB",
+      "power": 75,
+      "flag": "ua"
+    },
+    {
+      "id": "eu20-11",
+      "name": "Austria",
+      "color": "#ED2939",
+      "power": 76,
+      "flag": "at"
+    },
+    {
+      "id": "eu20-12",
+      "name": "North Macedonia",
+      "color": "#D20000",
+      "power": 63,
+      "flag": "mk"
+    },
+    {
+      "id": "eu20-13",
+      "name": "England",
+      "color": "#CF081F",
+      "power": 89,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "eu20-14",
+      "name": "Croatia",
+      "color": "#E63946",
+      "power": 82,
+      "flag": "hr"
+    },
+    {
+      "id": "eu20-15",
+      "name": "Scotland",
+      "color": "#003087",
+      "power": 71,
+      "flag": "gb-sct"
+    },
+    {
+      "id": "eu20-16",
+      "name": "Czech Republic",
+      "color": "#D7141A",
+      "power": 74,
+      "flag": "cz"
+    },
+    {
+      "id": "eu20-17",
+      "name": "Spain",
+      "color": "#AA151B",
+      "power": 87,
+      "flag": "es"
+    },
+    {
+      "id": "eu20-18",
+      "name": "Sweden",
+      "color": "#006AA7",
+      "power": 77,
+      "flag": "se"
+    },
+    {
+      "id": "eu20-19",
+      "name": "Poland",
+      "color": "#DC143C",
+      "power": 75,
+      "flag": "pl"
+    },
+    {
+      "id": "eu20-20",
+      "name": "Slovakia",
+      "color": "#0B4EA2",
+      "power": 70,
+      "flag": "sk"
+    },
+    {
+      "id": "eu20-21",
+      "name": "Hungary",
+      "color": "#436F4D",
+      "power": 70,
+      "flag": "hu"
+    },
+    {
+      "id": "eu20-22",
+      "name": "Portugal",
+      "color": "#006600",
+      "power": 88,
+      "flag": "pt"
+    },
+    {
+      "id": "eu20-23",
+      "name": "France",
+      "color": "#003189",
+      "power": 92,
+      "flag": "fr"
+    },
+    {
+      "id": "eu20-24",
+      "name": "Germany",
+      "color": "#1A1A1A",
+      "power": 87,
+      "flag": "de"
+    }
+  ],
+  "tournaments": [
+    {
+      "id": "zfgzbtrdogs",
+      "name": "Euro 2020",
+      "season": 1,
+      "format": "group+bracket",
+      "teamIds": [
+        "eu20-01",
+        "eu20-02",
+        "eu20-03",
+        "eu20-04",
+        "eu20-05",
+        "eu20-06",
+        "eu20-07",
+        "eu20-08",
+        "eu20-09",
+        "eu20-10",
+        "eu20-11",
+        "eu20-12",
+        "eu20-13",
+        "eu20-14",
+        "eu20-15",
+        "eu20-16",
+        "eu20-17",
+        "eu20-18",
+        "eu20-19",
+        "eu20-20",
+        "eu20-21",
+        "eu20-22",
+        "eu20-23",
+        "eu20-24"
+      ],
+      "groups": [
+        {
+          "name": "Group A",
+          "teamIds": [
+            "eu20-01",
+            "eu20-02",
+            "eu20-03",
+            "eu20-04"
+          ],
+          "matches": [
+            {
+              "id": "9f4i17ogxgh",
+              "homeId": "eu20-04",
+              "awayId": "eu20-01",
+              "result": null
+            },
+            {
+              "id": "tmqwwjnkczc",
+              "homeId": "eu20-03",
+              "awayId": "eu20-02",
+              "result": null
+            },
+            {
+              "id": "42wfn11t9wq",
+              "homeId": "eu20-01",
+              "awayId": "eu20-03",
+              "result": null
+            },
+            {
+              "id": "hlnjyx4uvf8",
+              "homeId": "eu20-02",
+              "awayId": "eu20-04",
+              "result": null
+            },
+            {
+              "id": "ad8azsre4yq",
+              "homeId": "eu20-02",
+              "awayId": "eu20-01",
+              "result": null
+            },
+            {
+              "id": "4gcmf814dtd",
+              "homeId": "eu20-04",
+              "awayId": "eu20-03",
+              "result": null
+            }
+          ],
+          "standings": [
+            {
+              "teamId": "eu20-01",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "eu20-02",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "eu20-03",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "eu20-04",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            }
+          ]
+        },
+        {
+          "name": "Group B",
+          "teamIds": [
+            "eu20-05",
+            "eu20-06",
+            "eu20-07",
+            "eu20-08"
+          ],
+          "matches": [
+            {
+              "id": "tqgomptu1dd",
+              "homeId": "eu20-08",
+              "awayId": "eu20-05",
+              "result": null
+            },
+            {
+              "id": "bb2dxxwfvg8",
+              "homeId": "eu20-07",
+              "awayId": "eu20-06",
+              "result": null
+            },
+            {
+              "id": "v7xtd7bgy6",
+              "homeId": "eu20-05",
+              "awayId": "eu20-07",
+              "result": null
+            },
+            {
+              "id": "hr5a1o60nye",
+              "homeId": "eu20-06",
+              "awayId": "eu20-08",
+              "result": null
+            },
+            {
+              "id": "hzyg40uina",
+              "homeId": "eu20-06",
+              "awayId": "eu20-05",
+              "result": null
+            },
+            {
+              "id": "ajtd1n6jmuf",
+              "homeId": "eu20-08",
+              "awayId": "eu20-07",
+              "result": null
+            }
+          ],
+          "standings": [
+            {
+              "teamId": "eu20-05",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "eu20-06",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "eu20-07",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "eu20-08",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            }
+          ]
+        },
+        {
+          "name": "Group C",
+          "teamIds": [
+            "eu20-09",
+            "eu20-10",
+            "eu20-11",
+            "eu20-12"
+          ],
+          "matches": [
+            {
+              "id": "yirpxyo7hvl",
+              "homeId": "eu20-12",
+              "awayId": "eu20-09",
+              "result": null
+            },
+            {
+              "id": "aa5s9mwy71k",
+              "homeId": "eu20-11",
+              "awayId": "eu20-10",
+              "result": null
+            },
+            {
+              "id": "5rfvjdwfr1u",
+              "homeId": "eu20-09",
+              "awayId": "eu20-11",
+              "result": null
+            },
+            {
+              "id": "9y1dsa8g6eu",
+              "homeId": "eu20-10",
+              "awayId": "eu20-12",
+              "result": null
+            },
+            {
+              "id": "0m4308q9y42",
+              "homeId": "eu20-10",
+              "awayId": "eu20-09",
+              "result": null
+            },
+            {
+              "id": "eadcau1zso",
+              "homeId": "eu20-12",
+              "awayId": "eu20-11",
+              "result": null
+            }
+          ],
+          "standings": [
+            {
+              "teamId": "eu20-09",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "eu20-10",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "eu20-11",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "eu20-12",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            }
+          ]
+        },
+        {
+          "name": "Group D",
+          "teamIds": [
+            "eu20-13",
+            "eu20-14",
+            "eu20-15",
+            "eu20-16"
+          ],
+          "matches": [
+            {
+              "id": "q32imubj1j",
+              "homeId": "eu20-16",
+              "awayId": "eu20-13",
+              "result": null
+            },
+            {
+              "id": "yree8ob0tcj",
+              "homeId": "eu20-15",
+              "awayId": "eu20-14",
+              "result": null
+            },
+            {
+              "id": "059acilgvd0y",
+              "homeId": "eu20-13",
+              "awayId": "eu20-15",
+              "result": null
+            },
+            {
+              "id": "9a2c204wlni",
+              "homeId": "eu20-14",
+              "awayId": "eu20-16",
+              "result": null
+            },
+            {
+              "id": "smtw3pc14s",
+              "homeId": "eu20-14",
+              "awayId": "eu20-13",
+              "result": null
+            },
+            {
+              "id": "on93jus7wwc",
+              "homeId": "eu20-16",
+              "awayId": "eu20-15",
+              "result": null
+            }
+          ],
+          "standings": [
+            {
+              "teamId": "eu20-13",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "eu20-14",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "eu20-15",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "eu20-16",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            }
+          ]
+        },
+        {
+          "name": "Group E",
+          "teamIds": [
+            "eu20-17",
+            "eu20-18",
+            "eu20-19",
+            "eu20-20"
+          ],
+          "matches": [
+            {
+              "id": "8w2dbk5se5r",
+              "homeId": "eu20-20",
+              "awayId": "eu20-17",
+              "result": null
+            },
+            {
+              "id": "nhlp31vmnj",
+              "homeId": "eu20-19",
+              "awayId": "eu20-18",
+              "result": null
+            },
+            {
+              "id": "r6z89qpc9w",
+              "homeId": "eu20-17",
+              "awayId": "eu20-19",
+              "result": null
+            },
+            {
+              "id": "pv4ufgpgnj",
+              "homeId": "eu20-18",
+              "awayId": "eu20-20",
+              "result": null
+            },
+            {
+              "id": "dcv9bwa0095",
+              "homeId": "eu20-18",
+              "awayId": "eu20-17",
+              "result": null
+            },
+            {
+              "id": "xm3k1gjabs7",
+              "homeId": "eu20-20",
+              "awayId": "eu20-19",
+              "result": null
+            }
+          ],
+          "standings": [
+            {
+              "teamId": "eu20-17",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "eu20-18",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "eu20-19",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "eu20-20",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            }
+          ]
+        },
+        {
+          "name": "Group F",
+          "teamIds": [
+            "eu20-21",
+            "eu20-22",
+            "eu20-23",
+            "eu20-24"
+          ],
+          "matches": [
+            {
+              "id": "gt67ybj938",
+              "homeId": "eu20-24",
+              "awayId": "eu20-21",
+              "result": null
+            },
+            {
+              "id": "t91k4bfs7qa",
+              "homeId": "eu20-23",
+              "awayId": "eu20-22",
+              "result": null
+            },
+            {
+              "id": "lfdz7r9mk0j",
+              "homeId": "eu20-21",
+              "awayId": "eu20-23",
+              "result": null
+            },
+            {
+              "id": "87x0jsb3hdq",
+              "homeId": "eu20-22",
+              "awayId": "eu20-24",
+              "result": null
+            },
+            {
+              "id": "1s6j5h7qopn",
+              "homeId": "eu20-22",
+              "awayId": "eu20-21",
+              "result": null
+            },
+            {
+              "id": "4sl8an1hl5w",
+              "homeId": "eu20-24",
+              "awayId": "eu20-23",
+              "result": null
+            }
+          ],
+          "standings": [
+            {
+              "teamId": "eu20-21",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "eu20-22",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "eu20-23",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "eu20-24",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            }
+          ]
+        }
+      ],
+      "groupsDone": false,
+      "qualifiersPerGroup": 2,
+      "wildcardCount": 4,
+      "rounds": [
+        {
+          "name": "Round of 16",
+          "matches": [
+            {
+              "id": "gsot5ta0dko",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            },
+            {
+              "id": "n0qikwgdpoe",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            },
+            {
+              "id": "g1lotthzk2c",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            },
+            {
+              "id": "bczzjpjbf65",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            },
+            {
+              "id": "hjo37a2i816",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            },
+            {
+              "id": "lo2nzyazajk",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            },
+            {
+              "id": "i18pp1ydwzo",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            },
+            {
+              "id": "ansk9kdhiyd",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            }
+          ]
+        },
+        {
+          "name": "Quarter-Finals",
+          "matches": [
+            {
+              "id": "qp2mbiaoeda",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            },
+            {
+              "id": "ktpbxtw0z9d",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            },
+            {
+              "id": "i5hljzf9kzn",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            },
+            {
+              "id": "z10tuvh20ai",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            }
+          ]
+        },
+        {
+          "name": "Semi-Finals",
+          "matches": [
+            {
+              "id": "r9s28ncepc",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            },
+            {
+              "id": "9o0ym8fl5de",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            }
+          ]
+        },
+        {
+          "name": "Final",
+          "matches": [
+            {
+              "id": "2lkxpis2295",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            }
+          ]
+        }
+      ],
+      "winnerId": null,
+      "groupLegMode": "single",
+      "knockoutLegMode": "single",
+      "finalLegMode": "single",
+      "createdAt": 1790171493871,
+      "drawType": "manual",
+      "tiebreaker": "goal-diff",
+      "playoffSeedMode": "cross"
+    }
+  ]
+}

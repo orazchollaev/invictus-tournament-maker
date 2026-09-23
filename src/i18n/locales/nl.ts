@@ -546,6 +546,8 @@
       countries: "Landen",
       clubs: "Clubs",
       uefa: "Europese competities",
+      leagues: "Competities",
+      classics: "Klassiekers",
       intro:
         "Laad een vooraf ingestelde teamlijst. Deze wordt toegevoegd aan je huidige teams en toernooien — er wordt niets verwijderd.",
       loadConfirm:

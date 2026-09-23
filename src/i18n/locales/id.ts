@@ -533,6 +533,8 @@
       countries: "Negara",
       clubs: "Klub",
       uefa: "Kompetisi Eropa",
+      leagues: "Liga",
+      classics: "Klasik",
       intro:
         "Muat daftar tim prasetel. Ini akan ditambahkan ke tim dan turnamen Anda saat ini — tidak ada yang dihapus.",
       loadConfirm:

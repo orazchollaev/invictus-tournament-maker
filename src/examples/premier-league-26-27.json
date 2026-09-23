@@ -1,0 +1,149 @@
+{
+  "label": "Premier League 26/27",
+  "description": "English Premier League 2026/27 — 20 clubs",
+  "order": 10,
+  "type": "club",
+  "category": "league",
+  "teams": [
+    {
+      "id": "epl-01",
+      "name": "Liverpool",
+      "color": "#C8102E",
+      "power": 93,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "epl-02",
+      "name": "Arsenal",
+      "color": "#EF0107",
+      "power": 93,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "epl-03",
+      "name": "Manchester City",
+      "color": "#6CABDD",
+      "power": 92,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "epl-04",
+      "name": "Chelsea",
+      "color": "#034694",
+      "power": 89,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "epl-05",
+      "name": "Newcastle United",
+      "color": "#241F20",
+      "power": 85,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "epl-06",
+      "name": "Manchester United",
+      "color": "#DA291C",
+      "power": 85,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "epl-07",
+      "name": "Aston Villa",
+      "color": "#670E36",
+      "power": 84,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "epl-08",
+      "name": "Tottenham Hotspur",
+      "color": "#132257",
+      "power": 83,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "epl-09",
+      "name": "Brighton & Hove Albion",
+      "color": "#0057B8",
+      "power": 80,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "epl-10",
+      "name": "Crystal Palace",
+      "color": "#1B458F",
+      "power": 79,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "epl-11",
+      "name": "Nottingham Forest",
+      "color": "#DD0000",
+      "power": 78,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "epl-12",
+      "name": "Bournemouth",
+      "color": "#B50E12",
+      "power": 78,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "epl-13",
+      "name": "Brentford",
+      "color": "#E30613",
+      "power": 77,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "epl-14",
+      "name": "Fulham",
+      "color": "#1A1A1A",
+      "power": 76,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "epl-15",
+      "name": "Everton",
+      "color": "#003399",
+      "power": 76,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "epl-16",
+      "name": "Leeds United",
+      "color": "#FFCD00",
+      "power": 74,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "epl-17",
+      "name": "Sunderland",
+      "color": "#EB172B",
+      "power": 73,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "epl-18",
+      "name": "Coventry City",
+      "color": "#6CB4EE",
+      "power": 70,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "epl-19",
+      "name": "Ipswich Town",
+      "color": "#3A64A3",
+      "power": 70,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "epl-20",
+      "name": "Hull City",
+      "color": "#F5A12D",
+      "power": 68,
+      "flag": "gb-eng"
+    }
+  ]
+}

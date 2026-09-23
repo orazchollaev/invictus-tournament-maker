@@ -1,0 +1,219 @@
+{
+  "label": "Liga Profesional 2026",
+  "description": "Argentine Primera División 2026 — 30 clubs",
+  "order": 18,
+  "type": "club",
+  "category": "league",
+  "teams": [
+    {
+      "id": "arg-01",
+      "name": "River Plate",
+      "color": "#EB192E",
+      "power": 83,
+      "flag": "ar"
+    },
+    {
+      "id": "arg-02",
+      "name": "Boca Juniors",
+      "color": "#103F79",
+      "power": 83,
+      "flag": "ar"
+    },
+    {
+      "id": "arg-03",
+      "name": "Racing Club",
+      "color": "#6BB5E4",
+      "power": 80,
+      "flag": "ar"
+    },
+    {
+      "id": "arg-04",
+      "name": "Estudiantes (LP)",
+      "color": "#D6001C",
+      "power": 78,
+      "flag": "ar"
+    },
+    {
+      "id": "arg-05",
+      "name": "Independiente",
+      "color": "#E30613",
+      "power": 77,
+      "flag": "ar"
+    },
+    {
+      "id": "arg-06",
+      "name": "Vélez Sarsfield",
+      "color": "#1C4E9D",
+      "power": 76,
+      "flag": "ar"
+    },
+    {
+      "id": "arg-07",
+      "name": "Talleres",
+      "color": "#0B2A5B",
+      "power": 76,
+      "flag": "ar"
+    },
+    {
+      "id": "arg-08",
+      "name": "Argentinos Juniors",
+      "color": "#E4002B",
+      "power": 76,
+      "flag": "ar"
+    },
+    {
+      "id": "arg-09",
+      "name": "Rosario Central",
+      "color": "#0033A0",
+      "power": 76,
+      "flag": "ar"
+    },
+    {
+      "id": "arg-10",
+      "name": "Lanús",
+      "color": "#7B1E3A",
+      "power": 76,
+      "flag": "ar"
+    },
+    {
+      "id": "arg-11",
+      "name": "Belgrano",
+      "color": "#6CB4EE",
+      "power": 75,
+      "flag": "ar"
+    },
+    {
+      "id": "arg-12",
+      "name": "San Lorenzo",
+      "color": "#1D3F8F",
+      "power": 74,
+      "flag": "ar"
+    },
+    {
+      "id": "arg-13",
+      "name": "Huracán",
+      "color": "#B0B0B0",
+      "power": 73,
+      "flag": "ar"
+    },
+    {
+      "id": "arg-14",
+      "name": "Newell's Old Boys",
+      "color": "#D71920",
+      "power": 73,
+      "flag": "ar"
+    },
+    {
+      "id": "arg-15",
+      "name": "Tigre",
+      "color": "#1D4E9E",
+      "power": 72,
+      "flag": "ar"
+    },
+    {
+      "id": "arg-16",
+      "name": "Defensa y Justicia",
+      "color": "#009B3A",
+      "power": 72,
+      "flag": "ar"
+    },
+    {
+      "id": "arg-17",
+      "name": "Unión",
+      "color": "#C8102E",
+      "power": 71,
+      "flag": "ar"
+    },
+    {
+      "id": "arg-18",
+      "name": "Platense",
+      "color": "#6D4C41",
+      "power": 71,
+      "flag": "ar"
+    },
+    {
+      "id": "arg-19",
+      "name": "Instituto",
+      "color": "#E2001A",
+      "power": 71,
+      "flag": "ar"
+    },
+    {
+      "id": "arg-20",
+      "name": "Independiente Rivadavia",
+      "color": "#1D3C8C",
+      "power": 71,
+      "flag": "ar"
+    },
+    {
+      "id": "arg-21",
+      "name": "Gimnasia y Esgrima (LP)",
+      "color": "#1A2F5A",
+      "power": 70,
+      "flag": "ar"
+    },
+    {
+      "id": "arg-22",
+      "name": "Banfield",
+      "color": "#00843D",
+      "power": 70,
+      "flag": "ar"
+    },
+    {
+      "id": "arg-23",
+      "name": "Barracas Central",
+      "color": "#B22222",
+      "power": 69,
+      "flag": "ar"
+    },
+    {
+      "id": "arg-24",
+      "name": "Central Córdoba",
+      "color": "#1A1A1A",
+      "power": 69,
+      "flag": "ar"
+    },
+    {
+      "id": "arg-25",
+      "name": "Atlético Tucumán",
+      "color": "#5DADE2",
+      "power": 69,
+      "flag": "ar"
+    },
+    {
+      "id": "arg-26",
+      "name": "Sarmiento",
+      "color": "#0B6E3B",
+      "power": 68,
+      "flag": "ar"
+    },
+    {
+      "id": "arg-27",
+      "name": "Deportivo Riestra",
+      "color": "#2B2B2B",
+      "power": 68,
+      "flag": "ar"
+    },
+    {
+      "id": "arg-28",
+      "name": "Aldosivi",
+      "color": "#FFD100",
+      "power": 67,
+      "flag": "ar"
+    },
+    {
+      "id": "arg-29",
+      "name": "Gimnasia y Esgrima (M)",
+      "color": "#3A3A3A",
+      "power": 66,
+      "flag": "ar"
+    },
+    {
+      "id": "arg-30",
+      "name": "Estudiantes (RC)",
+      "color": "#27408B",
+      "power": 66,
+      "flag": "ar"
+    }
+  ]
+}

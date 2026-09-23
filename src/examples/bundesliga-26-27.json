@@ -1,0 +1,135 @@
+{
+  "label": "Bundesliga 26/27",
+  "description": "German Bundesliga 2026/27 — 18 clubs",
+  "order": 13,
+  "type": "club",
+  "category": "league",
+  "teams": [
+    {
+      "id": "bun-01",
+      "name": "Bayern Munich",
+      "color": "#DC052D",
+      "power": 95,
+      "flag": "de"
+    },
+    {
+      "id": "bun-02",
+      "name": "Bayer Leverkusen",
+      "color": "#E32221",
+      "power": 87,
+      "flag": "de"
+    },
+    {
+      "id": "bun-03",
+      "name": "Borussia Dortmund",
+      "color": "#FDE100",
+      "power": 87,
+      "flag": "de"
+    },
+    {
+      "id": "bun-04",
+      "name": "RB Leipzig",
+      "color": "#DD0741",
+      "power": 84,
+      "flag": "de"
+    },
+    {
+      "id": "bun-05",
+      "name": "VfB Stuttgart",
+      "color": "#E32219",
+      "power": 82,
+      "flag": "de"
+    },
+    {
+      "id": "bun-06",
+      "name": "Eintracht Frankfurt",
+      "color": "#1A1A1A",
+      "power": 82,
+      "flag": "de"
+    },
+    {
+      "id": "bun-07",
+      "name": "SC Freiburg",
+      "color": "#A6192E",
+      "power": 78,
+      "flag": "de"
+    },
+    {
+      "id": "bun-08",
+      "name": "TSG Hoffenheim",
+      "color": "#1961B5",
+      "power": 78,
+      "flag": "de"
+    },
+    {
+      "id": "bun-09",
+      "name": "Mainz 05",
+      "color": "#C3141E",
+      "power": 76,
+      "flag": "de"
+    },
+    {
+      "id": "bun-10",
+      "name": "Borussia Mönchengladbach",
+      "color": "#00A94F",
+      "power": 76,
+      "flag": "de"
+    },
+    {
+      "id": "bun-11",
+      "name": "Werder Bremen",
+      "color": "#1D9053",
+      "power": 75,
+      "flag": "de"
+    },
+    {
+      "id": "bun-12",
+      "name": "Union Berlin",
+      "color": "#EB1923",
+      "power": 74,
+      "flag": "de"
+    },
+    {
+      "id": "bun-13",
+      "name": "Hamburger SV",
+      "color": "#0A3F86",
+      "power": 74,
+      "flag": "de"
+    },
+    {
+      "id": "bun-14",
+      "name": "FC Augsburg",
+      "color": "#BA3733",
+      "power": 73,
+      "flag": "de"
+    },
+    {
+      "id": "bun-15",
+      "name": "1. FC Köln",
+      "color": "#ED1C24",
+      "power": 73,
+      "flag": "de"
+    },
+    {
+      "id": "bun-16",
+      "name": "Schalke 04",
+      "color": "#004D9D",
+      "power": 72,
+      "flag": "de"
+    },
+    {
+      "id": "bun-17",
+      "name": "SC Paderborn",
+      "color": "#005CA9",
+      "power": 68,
+      "flag": "de"
+    },
+    {
+      "id": "bun-18",
+      "name": "SV Elversberg",
+      "color": "#333333",
+      "power": 67,
+      "flag": "de"
+    }
+  ]
+}

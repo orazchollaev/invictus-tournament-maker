@@ -532,6 +532,8 @@
       countries: "Quốc gia",
       clubs: "Câu lạc bộ",
       uefa: "Các giải đấu châu Âu",
+      leagues: "Giải VĐQG",
+      classics: "Kinh điển",
       intro:
         "Tải danh sách đội có sẵn. Dữ liệu này sẽ được thêm vào các đội và giải đấu hiện tại của bạn — không có gì bị xóa.",
       loadConfirm:

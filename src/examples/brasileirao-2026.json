@@ -1,0 +1,149 @@
+{
+  "label": "Brasileirão 2026",
+  "description": "Campeonato Brasileiro Série A 2026 — 20 clubs",
+  "order": 17,
+  "type": "club",
+  "category": "league",
+  "teams": [
+    {
+      "id": "bra-01",
+      "name": "Flamengo",
+      "color": "#C3281E",
+      "power": 86,
+      "flag": "br"
+    },
+    {
+      "id": "bra-02",
+      "name": "Palmeiras",
+      "color": "#006437",
+      "power": 86,
+      "flag": "br"
+    },
+    {
+      "id": "bra-03",
+      "name": "Cruzeiro",
+      "color": "#2F529E",
+      "power": 82,
+      "flag": "br"
+    },
+    {
+      "id": "bra-04",
+      "name": "Botafogo",
+      "color": "#1A1A1A",
+      "power": 81,
+      "flag": "br"
+    },
+    {
+      "id": "bra-05",
+      "name": "Fluminense",
+      "color": "#7A0026",
+      "power": 80,
+      "flag": "br"
+    },
+    {
+      "id": "bra-06",
+      "name": "São Paulo",
+      "color": "#FE0000",
+      "power": 80,
+      "flag": "br"
+    },
+    {
+      "id": "bra-07",
+      "name": "Internacional",
+      "color": "#E5050F",
+      "power": 79,
+      "flag": "br"
+    },
+    {
+      "id": "bra-08",
+      "name": "Corinthians",
+      "color": "#404040",
+      "power": 79,
+      "flag": "br"
+    },
+    {
+      "id": "bra-09",
+      "name": "Atlético Mineiro",
+      "color": "#111111",
+      "power": 79,
+      "flag": "br"
+    },
+    {
+      "id": "bra-10",
+      "name": "Bahia",
+      "color": "#0066B3",
+      "power": 79,
+      "flag": "br"
+    },
+    {
+      "id": "bra-11",
+      "name": "Grêmio",
+      "color": "#0D80BF",
+      "power": 77,
+      "flag": "br"
+    },
+    {
+      "id": "bra-12",
+      "name": "Vasco da Gama",
+      "color": "#231F20",
+      "power": 76,
+      "flag": "br"
+    },
+    {
+      "id": "bra-13",
+      "name": "Mirassol",
+      "color": "#F6D90F",
+      "power": 76,
+      "flag": "br"
+    },
+    {
+      "id": "bra-14",
+      "name": "Red Bull Bragantino",
+      "color": "#D6001C",
+      "power": 76,
+      "flag": "br"
+    },
+    {
+      "id": "bra-15",
+      "name": "Santos",
+      "color": "#9E9E9E",
+      "power": 75,
+      "flag": "br"
+    },
+    {
+      "id": "bra-16",
+      "name": "Athletico Paranaense",
+      "color": "#CE181E",
+      "power": 74,
+      "flag": "br"
+    },
+    {
+      "id": "bra-17",
+      "name": "Vitória",
+      "color": "#D71920",
+      "power": 72,
+      "flag": "br"
+    },
+    {
+      "id": "bra-18",
+      "name": "Coritiba",
+      "color": "#00544D",
+      "power": 71,
+      "flag": "br"
+    },
+    {
+      "id": "bra-19",
+      "name": "Chapecoense",
+      "color": "#00923F",
+      "power": 70,
+      "flag": "br"
+    },
+    {
+      "id": "bra-20",
+      "name": "Remo",
+      "color": "#1E3A8A",
+      "power": 69,
+      "flag": "br"
+    }
+  ]
+}

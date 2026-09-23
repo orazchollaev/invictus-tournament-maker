@@ -1,0 +1,135 @@
+{
+  "label": "Saudi Pro League 26/27",
+  "description": "Saudi Pro League 2026/27 — 18 clubs",
+  "order": 15,
+  "type": "club",
+  "category": "league",
+  "teams": [
+    {
+      "id": "spl-01",
+      "name": "Al-Hilal",
+      "color": "#0033A0",
+      "power": 88,
+      "flag": "sa"
+    },
+    {
+      "id": "spl-02",
+      "name": "Al-Nassr",
+      "color": "#F9D71C",
+      "power": 88,
+      "flag": "sa"
+    },
+    {
+      "id": "spl-03",
+      "name": "Al-Ittihad",
+      "color": "#E8B90F",
+      "power": 86,
+      "flag": "sa"
+    },
+    {
+      "id": "spl-04",
+      "name": "Al-Ahli",
+      "color": "#006341",
+      "power": 86,
+      "flag": "sa"
+    },
+    {
+      "id": "spl-05",
+      "name": "Al-Qadsiah",
+      "color": "#E30613",
+      "power": 80,
+      "flag": "sa"
+    },
+    {
+      "id": "spl-06",
+      "name": "Al-Shabab",
+      "color": "#444444",
+      "power": 76,
+      "flag": "sa"
+    },
+    {
+      "id": "spl-07",
+      "name": "Al-Ettifaq",
+      "color": "#007A33",
+      "power": 75,
+      "flag": "sa"
+    },
+    {
+      "id": "spl-08",
+      "name": "Al-Taawoun",
+      "color": "#F7D117",
+      "power": 74,
+      "flag": "sa"
+    },
+    {
+      "id": "spl-09",
+      "name": "Neom",
+      "color": "#1E88E5",
+      "power": 71,
+      "flag": "sa"
+    },
+    {
+      "id": "spl-10",
+      "name": "Al-Khaleej",
+      "color": "#0E7C3A",
+      "power": 70,
+      "flag": "sa"
+    },
+    {
+      "id": "spl-11",
+      "name": "Al-Fateh",
+      "color": "#0B7A3B",
+      "power": 70,
+      "flag": "sa"
+    },
+    {
+      "id": "spl-12",
+      "name": "Al-Fayha",
+      "color": "#F58220",
+      "power": 69,
+      "flag": "sa"
+    },
+    {
+      "id": "spl-13",
+      "name": "Al-Kholood",
+      "color": "#D71920",
+      "power": 67,
+      "flag": "sa"
+    },
+    {
+      "id": "spl-14",
+      "name": "Al-Hazem",
+      "color": "#6A2C91",
+      "power": 66,
+      "flag": "sa"
+    },
+    {
+      "id": "spl-15",
+      "name": "Al-Riyadh",
+      "color": "#1A1A1A",
+      "power": 66,
+      "flag": "sa"
+    },
+    {
+      "id": "spl-16",
+      "name": "Al-Faisaly",
+      "color": "#8B0000",
+      "power": 65,
+      "flag": "sa"
+    },
+    {
+      "id": "spl-17",
+      "name": "Abha",
+      "color": "#008C45",
+      "power": 64,
+      "flag": "sa"
+    },
+    {
+      "id": "spl-18",
+      "name": "Al-Diriyah",
+      "color": "#C9A227",
+      "power": 62,
+      "flag": "sa"
+    }
+  ]
+}

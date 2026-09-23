@@ -1,0 +1,1143 @@
+{
+  "label": "FIFA World Cup 2018",
+  "description": "Russia 2018 — 32 teams, real groups",
+  "order": 21,
+  "type": "country",
+  "category": "classic",
+  "teams": [
+    {
+      "id": "wc18-01",
+      "name": "Russia",
+      "color": "#0039A6",
+      "power": 72,
+      "flag": "ru"
+    },
+    {
+      "id": "wc18-02",
+      "name": "Saudi Arabia",
+      "color": "#006C35",
+      "power": 62,
+      "flag": "sa"
+    },
+    {
+      "id": "wc18-03",
+      "name": "Egypt",
+      "color": "#CE1126",
+      "power": 70,
+      "flag": "eg"
+    },
+    {
+      "id": "wc18-04",
+      "name": "Uruguay",
+      "color": "#0038A8",
+      "power": 82,
+      "flag": "uy"
+    },
+    {
+      "id": "wc18-05",
+      "name": "Portugal",
+      "color": "#006600",
+      "power": 86,
+      "flag": "pt"
+    },
+    {
+      "id": "wc18-06",
+      "name": "Spain",
+      "color": "#AA151B",
+      "power": 90,
+      "flag": "es"
+    },
+    {
+      "id": "wc18-07",
+      "name": "Morocco",
+      "color": "#C1272D",
+      "power": 74,
+      "flag": "ma"
+    },
+    {
+      "id": "wc18-08",
+      "name": "Iran",
+      "color": "#239F40",
+      "power": 70,
+      "flag": "ir"
+    },
+    {
+      "id": "wc18-09",
+      "name": "France",
+      "color": "#003189",
+      "power": 92,
+      "flag": "fr"
+    },
+    {
+      "id": "wc18-10",
+      "name": "Australia",
+      "color": "#FFCD00",
+      "power": 70,
+      "flag": "au"
+    },
+    {
+      "id": "wc18-11",
+      "name": "Peru",
+      "color": "#D91023",
+      "power": 73,
+      "flag": "pe"
+    },
+    {
+      "id": "wc18-12",
+      "name": "Denmark",
+      "color": "#C60C30",
+      "power": 78,
+      "flag": "dk"
+    },
+    {
+      "id": "wc18-13",
+      "name": "Argentina",
+      "color": "#43A1D5",
+      "power": 88,
+      "flag": "ar"
+    },
+    {
+      "id": "wc18-14",
+      "name": "Iceland",
+      "color": "#02529C",
+      "power": 70,
+      "flag": "is"
+    },
+    {
+      "id": "wc18-15",
+      "name": "Croatia",
+      "color": "#E63946",
+      "power": 86,
+      "flag": "hr"
+    },
+    {
+      "id": "wc18-16",
+      "name": "Nigeria",
+      "color": "#008751",
+      "power": 73,
+      "flag": "ng"
+    },
+    {
+      "id": "wc18-17",
+      "name": "Brazil",
+      "color": "#009B3A",
+      "power": 92,
+      "flag": "br"
+    },
+    {
+      "id": "wc18-18",
+      "name": "Switzerland",
+      "color": "#D52B1E",
+      "power": 78,
+      "flag": "ch"
+    },
+    {
+      "id": "wc18-19",
+      "name": "Costa Rica",
+      "color": "#002B7F",
+      "power": 70,
+      "flag": "cr"
+    },
+    {
+      "id": "wc18-20",
+      "name": "Serbia",
+      "color": "#C6363C",
+      "power": 75,
+      "flag": "rs"
+    },
+    {
+      "id": "wc18-21",
+      "name": "Germany",
+      "color": "#1A1A1A",
+      "power": 91,
+      "flag": "de"
+    },
+    {
+      "id": "wc18-22",
+      "name": "Mexico",
+      "color": "#006847",
+      "power": 78,
+      "flag": "mx"
+    },
+    {
+      "id": "wc18-23",
+      "name": "Sweden",
+      "color": "#006AA7",
+      "power": 77,
+      "flag": "se"
+    },
+    {
+      "id": "wc18-24",
+      "name": "South Korea",
+      "color": "#C21920",
+      "power": 72,
+      "flag": "kr"
+    },
+    {
+      "id": "wc18-25",
+      "name": "Belgium",
+      "color": "#EF3340",
+      "power": 89,
+      "flag": "be"
+    },
+    {
+      "id": "wc18-26",
+      "name": "Panama",
+      "color": "#C8102E",
+      "power": 60,
+      "flag": "pa"
+    },
+    {
+      "id": "wc18-27",
+      "name": "Tunisia",
+      "color": "#E70013",
+      "power": 67,
+      "flag": "tn"
+    },
+    {
+      "id": "wc18-28",
+      "name": "England",
+      "color": "#CF081F",
+      "power": 86,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "wc18-29",
+      "name": "Poland",
+      "color": "#DC143C",
+      "power": 77,
+      "flag": "pl"
+    },
+    {
+      "id": "wc18-30",
+      "name": "Senegal",
+      "color": "#00853F",
+      "power": 76,
+      "flag": "sn"
+    },
+    {
+      "id": "wc18-31",
+      "name": "Colombia",
+      "color": "#FCD116",
+      "power": 81,
+      "flag": "co"
+    },
+    {
+      "id": "wc18-32",
+      "name": "Japan",
+      "color": "#000555",
+      "power": 73,
+      "flag": "jp"
+    }
+  ],
+  "tournaments": [
+    {
+      "id": "44471tuqi0v",
+      "name": "World Cup 2018",
+      "season": 1,
+      "format": "group+bracket",
+      "teamIds": [
+        "wc18-01",
+        "wc18-02",
+        "wc18-03",
+        "wc18-04",
+        "wc18-05",
+        "wc18-06",
+        "wc18-07",
+        "wc18-08",
+        "wc18-09",
+        "wc18-10",
+        "wc18-11",
+        "wc18-12",
+        "wc18-13",
+        "wc18-14",
+        "wc18-15",
+        "wc18-16",
+        "wc18-17",
+        "wc18-18",
+        "wc18-19",
+        "wc18-20",
+        "wc18-21",
+        "wc18-22",
+        "wc18-23",
+        "wc18-24",
+        "wc18-25",
+        "wc18-26",
+        "wc18-27",
+        "wc18-28",
+        "wc18-29",
+        "wc18-30",
+        "wc18-31",
+        "wc18-32"
+      ],
+      "groups": [
+        {
+          "name": "Group A",
+          "teamIds": [
+            "wc18-01",
+            "wc18-02",
+            "wc18-03",
+            "wc18-04"
+          ],
+          "matches": [
+            {
+              "id": "rp8qw9p2td",
+              "homeId": "wc18-04",
+              "awayId": "wc18-01",
+              "result": null
+            },
+            {
+              "id": "lft34flrcr",
+              "homeId": "wc18-03",
+              "awayId": "wc18-02",
+              "result": null
+            },
+            {
+              "id": "2voqmawp93r",
+              "homeId": "wc18-01",
+              "awayId": "wc18-03",
+              "result": null
+            },
+            {
+              "id": "l6u8a9qlzho",
+              "homeId": "wc18-02",
+              "awayId": "wc18-04",
+              "result": null
+            },
+            {
+              "id": "ixj07mvo8cr",
+              "homeId": "wc18-02",
+              "awayId": "wc18-01",
+              "result": null
+            },
+            {
+              "id": "itf2bhebhxm",
+              "homeId": "wc18-04",
+              "awayId": "wc18-03",
+              "result": null
+            }
+          ],
+          "standings": [
+            {
+              "teamId": "wc18-01",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "wc18-02",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "wc18-03",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "wc18-04",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            }
+          ]
+        },
+        {
+          "name": "Group B",
+          "teamIds": [
+            "wc18-05",
+            "wc18-06",
+            "wc18-07",
+            "wc18-08"
+          ],
+          "matches": [
+            {
+              "id": "f9wsphhawvu",
+              "homeId": "wc18-08",
+              "awayId": "wc18-05",
+              "result": null
+            },
+            {
+              "id": "ib8qbfebi9l",
+              "homeId": "wc18-07",
+              "awayId": "wc18-06",
+              "result": null
+            },
+            {
+              "id": "rv9tcdjfa3c",
+              "homeId": "wc18-05",
+              "awayId": "wc18-07",
+              "result": null
+            },
+            {
+              "id": "lbtbauk1tbk",
+              "homeId": "wc18-06",
+              "awayId": "wc18-08",
+              "result": null
+            },
+            {
+              "id": "tprlt6p5e9",
+              "homeId": "wc18-06",
+              "awayId": "wc18-05",
+              "result": null
+            },
+            {
+              "id": "yjoqvdqmqrg",
+              "homeId": "wc18-08",
+              "awayId": "wc18-07",
+              "result": null
+            }
+          ],
+          "standings": [
+            {
+              "teamId": "wc18-05",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "wc18-06",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "wc18-07",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "wc18-08",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            }
+          ]
+        },
+        {
+          "name": "Group C",
+          "teamIds": [
+            "wc18-09",
+            "wc18-10",
+            "wc18-11",
+            "wc18-12"
+          ],
+          "matches": [
+            {
+              "id": "yt22skivpr",
+              "homeId": "wc18-12",
+              "awayId": "wc18-09",
+              "result": null
+            },
+            {
+              "id": "tgntd4cwr08",
+              "homeId": "wc18-11",
+              "awayId": "wc18-10",
+              "result": null
+            },
+            {
+              "id": "acs4e432k55",
+              "homeId": "wc18-09",
+              "awayId": "wc18-11",
+              "result": null
+            },
+            {
+              "id": "jec2sgs85e",
+              "homeId": "wc18-10",
+              "awayId": "wc18-12",
+              "result": null
+            },
+            {
+              "id": "t3ihzq0alro",
+              "homeId": "wc18-10",
+              "awayId": "wc18-09",
+              "result": null
+            },
+            {
+              "id": "1rbxtz8qv9k",
+              "homeId": "wc18-12",
+              "awayId": "wc18-11",
+              "result": null
+            }
+          ],
+          "standings": [
+            {
+              "teamId": "wc18-09",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "wc18-10",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "wc18-11",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "wc18-12",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            }
+          ]
+        },
+        {
+          "name": "Group D",
+          "teamIds": [
+            "wc18-13",
+            "wc18-14",
+            "wc18-15",
+            "wc18-16"
+          ],
+          "matches": [
+            {
+              "id": "i4hmtc3q4kq",
+              "homeId": "wc18-16",
+              "awayId": "wc18-13",
+              "result": null
+            },
+            {
+              "id": "fchfcvhqtrs",
+              "homeId": "wc18-15",
+              "awayId": "wc18-14",
+              "result": null
+            },
+            {
+              "id": "mxcl27qer7c",
+              "homeId": "wc18-13",
+              "awayId": "wc18-15",
+              "result": null
+            },
+            {
+              "id": "jaopc8zceqn",
+              "homeId": "wc18-14",
+              "awayId": "wc18-16",
+              "result": null
+            },
+            {
+              "id": "pu2n8kb4gl",
+              "homeId": "wc18-14",
+              "awayId": "wc18-13",
+              "result": null
+            },
+            {
+              "id": "0ro0hl5yxdz",
+              "homeId": "wc18-16",
+              "awayId": "wc18-15",
+              "result": null
+            }
+          ],
+          "standings": [
+            {
+              "teamId": "wc18-13",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "wc18-14",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "wc18-15",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "wc18-16",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            }
+          ]
+        },
+        {
+          "name": "Group E",
+          "teamIds": [
+            "wc18-17",
+            "wc18-18",
+            "wc18-19",
+            "wc18-20"
+          ],
+          "matches": [
+            {
+              "id": "2ndmcbn1rkl",
+              "homeId": "wc18-20",
+              "awayId": "wc18-17",
+              "result": null
+            },
+            {
+              "id": "izksimznrm",
+              "homeId": "wc18-19",
+              "awayId": "wc18-18",
+              "result": null
+            },
+            {
+              "id": "tx1xlzmm4da",
+              "homeId": "wc18-17",
+              "awayId": "wc18-19",
+              "result": null
+            },
+            {
+              "id": "nqrl15qwwt",
+              "homeId": "wc18-18",
+              "awayId": "wc18-20",
+              "result": null
+            },
+            {
+              "id": "0wqjcjkf9dah",
+              "homeId": "wc18-18",
+              "awayId": "wc18-17",
+              "result": null
+            },
+            {
+              "id": "veray87v1j",
+              "homeId": "wc18-20",
+              "awayId": "wc18-19",
+              "result": null
+            }
+          ],
+          "standings": [
+            {
+              "teamId": "wc18-17",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "wc18-18",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "wc18-19",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "wc18-20",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            }
+          ]
+        },
+        {
+          "name": "Group F",
+          "teamIds": [
+            "wc18-21",
+            "wc18-22",
+            "wc18-23",
+            "wc18-24"
+          ],
+          "matches": [
+            {
+              "id": "wmq0d38zd1c",
+              "homeId": "wc18-24",
+              "awayId": "wc18-21",
+              "result": null
+            },
+            {
+              "id": "ja0jlywdwpc",
+              "homeId": "wc18-23",
+              "awayId": "wc18-22",
+              "result": null
+            },
+            {
+              "id": "lx29zpqk8mk",
+              "homeId": "wc18-21",
+              "awayId": "wc18-23",
+              "result": null
+            },
+            {
+              "id": "z2i8mj7uq3i",
+              "homeId": "wc18-22",
+              "awayId": "wc18-24",
+              "result": null
+            },
+            {
+              "id": "g0x2wwbps5",
+              "homeId": "wc18-22",
+              "awayId": "wc18-21",
+              "result": null
+            },
+            {
+              "id": "f2snebr79z9",
+              "homeId": "wc18-24",
+              "awayId": "wc18-23",
+              "result": null
+            }
+          ],
+          "standings": [
+            {
+              "teamId": "wc18-21",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "wc18-22",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "wc18-23",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "wc18-24",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            }
+          ]
+        },
+        {
+          "name": "Group G",
+          "teamIds": [
+            "wc18-25",
+            "wc18-26",
+            "wc18-27",
+            "wc18-28"
+          ],
+          "matches": [
+            {
+              "id": "trlycydwcki",
+              "homeId": "wc18-28",
+              "awayId": "wc18-25",
+              "result": null
+            },
+            {
+              "id": "lfp08ew4khr",
+              "homeId": "wc18-27",
+              "awayId": "wc18-26",
+              "result": null
+            },
+            {
+              "id": "t6won8bpyjq",
+              "homeId": "wc18-25",
+              "awayId": "wc18-27",
+              "result": null
+            },
+            {
+              "id": "5e9oggf8eys",
+              "homeId": "wc18-26",
+              "awayId": "wc18-28",
+              "result": null
+            },
+            {
+              "id": "b0g98h2ne9p",
+              "homeId": "wc18-26",
+              "awayId": "wc18-25",
+              "result": null
+            },
+            {
+              "id": "t78uytnkuzf",
+              "homeId": "wc18-28",
+              "awayId": "wc18-27",
+              "result": null
+            }
+          ],
+          "standings": [
+            {
+              "teamId": "wc18-25",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "wc18-26",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "wc18-27",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "wc18-28",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            }
+          ]
+        },
+        {
+          "name": "Group H",
+          "teamIds": [
+            "wc18-29",
+            "wc18-30",
+            "wc18-31",
+            "wc18-32"
+          ],
+          "matches": [
+            {
+              "id": "pdq82btklr",
+              "homeId": "wc18-32",
+              "awayId": "wc18-29",
+              "result": null
+            },
+            {
+              "id": "x81oew7mkl",
+              "homeId": "wc18-31",
+              "awayId": "wc18-30",
+              "result": null
+            },
+            {
+              "id": "eg56k36s02",
+              "homeId": "wc18-29",
+              "awayId": "wc18-31",
+              "result": null
+            },
+            {
+              "id": "3t3xqawrf4l",
+              "homeId": "wc18-30",
+              "awayId": "wc18-32",
+              "result": null
+            },
+            {
+              "id": "bhw314igid7",
+              "homeId": "wc18-30",
+              "awayId": "wc18-29",
+              "result": null
+            },
+            {
+              "id": "aqnt766hsiv",
+              "homeId": "wc18-32",
+              "awayId": "wc18-31",
+              "result": null
+            }
+          ],
+          "standings": [
+            {
+              "teamId": "wc18-29",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "wc18-30",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "wc18-31",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "wc18-32",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            }
+          ]
+        }
+      ],
+      "groupsDone": false,
+      "qualifiersPerGroup": 2,
+      "rounds": [
+        {
+          "name": "Round of 16",
+          "matches": [
+            {
+              "id": "zzhz8tlrkl",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            },
+            {
+              "id": "d8ctw0jldn",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            },
+            {
+              "id": "311uy0kbueu",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            },
+            {
+              "id": "0jz41zdzl80j",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            },
+            {
+              "id": "36bubgwigod",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            },
+            {
+              "id": "g7tc23yfihh",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            },
+            {
+              "id": "loy9c746jq",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            },
+            {
+              "id": "a4cqx8py08p",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            }
+          ]
+        },
+        {
+          "name": "Quarter-Finals",
+          "matches": [
+            {
+              "id": "9gok3x944om",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            },
+            {
+              "id": "nfvnnd3a4m",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            },
+            {
+              "id": "cyq465lb8og",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            },
+            {
+              "id": "7mszumroaae",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            }
+          ]
+        },
+        {
+          "name": "Semi-Finals",
+          "matches": [
+            {
+              "id": "67pj21s0ezc",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            },
+            {
+              "id": "lh4zf53wkx",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            }
+          ]
+        },
+        {
+          "name": "Final",
+          "matches": [
+            {
+              "id": "8jx073nrjg",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            }
+          ]
+        }
+      ],
+      "winnerId": null,
+      "groupLegMode": "single",
+      "knockoutLegMode": "single",
+      "finalLegMode": "single",
+      "createdAt": 1790171493853,
+      "drawType": "manual",
+      "tiebreaker": "goal-diff",
+      "playoffSeedMode": "cross"
+    }
+  ]
+}

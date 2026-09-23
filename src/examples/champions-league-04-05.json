@@ -1,0 +1,1157 @@
+{
+  "label": "2004/05 Champions League",
+  "description": "UEFA Champions League 2004/05 — 32 clubs, real groups",
+  "order": 41,
+  "type": "club",
+  "category": "classic",
+  "teams": [
+    {
+      "id": "cl05-01",
+      "name": "Liverpool",
+      "color": "#C8102E",
+      "power": 86,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "cl05-02",
+      "name": "Monaco",
+      "color": "#E7192A",
+      "power": 80,
+      "flag": "fr"
+    },
+    {
+      "id": "cl05-03",
+      "name": "Olympiacos",
+      "color": "#E30613",
+      "power": 75,
+      "flag": "gr"
+    },
+    {
+      "id": "cl05-04",
+      "name": "Deportivo La Coruña",
+      "color": "#1B4F9C",
+      "power": 80,
+      "flag": "es"
+    },
+    {
+      "id": "cl05-05",
+      "name": "Bayer Leverkusen",
+      "color": "#E32221",
+      "power": 80,
+      "flag": "de"
+    },
+    {
+      "id": "cl05-06",
+      "name": "Real Madrid",
+      "color": "#FEBE10",
+      "power": 90,
+      "flag": "es"
+    },
+    {
+      "id": "cl05-07",
+      "name": "Dynamo Kyiv",
+      "color": "#0057B8",
+      "power": 77,
+      "flag": "ua"
+    },
+    {
+      "id": "cl05-08",
+      "name": "Roma",
+      "color": "#8E1F2F",
+      "power": 80,
+      "flag": "it"
+    },
+    {
+      "id": "cl05-09",
+      "name": "Juventus",
+      "color": "#1A1A1A",
+      "power": 90,
+      "flag": "it"
+    },
+    {
+      "id": "cl05-10",
+      "name": "Bayern Munich",
+      "color": "#DC052D",
+      "power": 88,
+      "flag": "de"
+    },
+    {
+      "id": "cl05-11",
+      "name": "Ajax",
+      "color": "#D2122E",
+      "power": 79,
+      "flag": "nl"
+    },
+    {
+      "id": "cl05-12",
+      "name": "Maccabi Tel Aviv",
+      "color": "#F2C200",
+      "power": 65,
+      "flag": "il"
+    },
+    {
+      "id": "cl05-13",
+      "name": "Lyon",
+      "color": "#1B3C87",
+      "power": 85,
+      "flag": "fr"
+    },
+    {
+      "id": "cl05-14",
+      "name": "Manchester United",
+      "color": "#DA291C",
+      "power": 88,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "cl05-15",
+      "name": "Fenerbahçe",
+      "color": "#0F2B5B",
+      "power": 76,
+      "flag": "tr"
+    },
+    {
+      "id": "cl05-16",
+      "name": "Sparta Prague",
+      "color": "#A6192E",
+      "power": 70,
+      "flag": "cz"
+    },
+    {
+      "id": "cl05-17",
+      "name": "Arsenal",
+      "color": "#EF0107",
+      "power": 89,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "cl05-18",
+      "name": "PSV",
+      "color": "#ED1C24",
+      "power": 82,
+      "flag": "nl"
+    },
+    {
+      "id": "cl05-19",
+      "name": "Panathinaikos",
+      "color": "#007A33",
+      "power": 73,
+      "flag": "gr"
+    },
+    {
+      "id": "cl05-20",
+      "name": "Rosenborg",
+      "color": "#333333",
+      "power": 70,
+      "flag": "no"
+    },
+    {
+      "id": "cl05-21",
+      "name": "Milan",
+      "color": "#FB090B",
+      "power": 92,
+      "flag": "it"
+    },
+    {
+      "id": "cl05-22",
+      "name": "Barcelona",
+      "color": "#A50044",
+      "power": 90,
+      "flag": "es"
+    },
+    {
+      "id": "cl05-23",
+      "name": "Shakhtar Donetsk",
+      "color": "#F58220",
+      "power": 74,
+      "flag": "ua"
+    },
+    {
+      "id": "cl05-24",
+      "name": "Celtic",
+      "color": "#018749",
+      "power": 76,
+      "flag": "gb-sct"
+    },
+    {
+      "id": "cl05-25",
+      "name": "Inter",
+      "color": "#0068A8",
+      "power": 87,
+      "flag": "it"
+    },
+    {
+      "id": "cl05-26",
+      "name": "Werder Bremen",
+      "color": "#1D9053",
+      "power": 80,
+      "flag": "de"
+    },
+    {
+      "id": "cl05-27",
+      "name": "Valencia",
+      "color": "#EE3524",
+      "power": 84,
+      "flag": "es"
+    },
+    {
+      "id": "cl05-28",
+      "name": "Anderlecht",
+      "color": "#4C2A85",
+      "power": 74,
+      "flag": "be"
+    },
+    {
+      "id": "cl05-29",
+      "name": "Chelsea",
+      "color": "#034694",
+      "power": 91,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "cl05-30",
+      "name": "Porto",
+      "color": "#1C4E9E",
+      "power": 83,
+      "flag": "pt"
+    },
+    {
+      "id": "cl05-31",
+      "name": "CSKA Moscow",
+      "color": "#1C3F94",
+      "power": 76,
+      "flag": "ru"
+    },
+    {
+      "id": "cl05-32",
+      "name": "Paris Saint-Germain",
+      "color": "#004170",
+      "power": 76,
+      "flag": "fr"
+    }
+  ],
+  "tournaments": [
+    {
+      "id": "pd2jkpvh61",
+      "name": "Champions League 2004/05",
+      "season": 1,
+      "format": "group+bracket",
+      "teamIds": [
+        "cl05-01",
+        "cl05-02",
+        "cl05-03",
+        "cl05-04",
+        "cl05-05",
+        "cl05-06",
+        "cl05-07",
+        "cl05-08",
+        "cl05-09",
+        "cl05-10",
+        "cl05-11",
+        "cl05-12",
+        "cl05-13",
+        "cl05-14",
+        "cl05-15",
+        "cl05-16",
+        "cl05-17",
+        "cl05-18",
+        "cl05-19",
+        "cl05-20",
+        "cl05-21",
+        "cl05-22",
+        "cl05-23",
+        "cl05-24",
+        "cl05-25",
+        "cl05-26",
+        "cl05-27",
+        "cl05-28",
+        "cl05-29",
+        "cl05-30",
+        "cl05-31",
+        "cl05-32"
+      ],
+      "groups": [
+        {
+          "name": "Group A",
+          "teamIds": [
+            "cl05-01",
+            "cl05-02",
+            "cl05-03",
+            "cl05-04"
+          ],
+          "matches": [
+            {
+              "id": "1665qytcj9f",
+              "homeId": "cl05-04",
+              "awayId": "cl05-01",
+              "result": null
+            },
+            {
+              "id": "9vllmohd57s",
+              "homeId": "cl05-03",
+              "awayId": "cl05-02",
+              "result": null
+            },
+            {
+              "id": "a176kza4mc4",
+              "homeId": "cl05-01",
+              "awayId": "cl05-03",
+              "result": null
+            },
+            {
+              "id": "bmgtcmid7jo",
+              "homeId": "cl05-02",
+              "awayId": "cl05-04",
+              "result": null
+            },
+            {
+              "id": "037ib1i3ys47",
+              "homeId": "cl05-02",
+              "awayId": "cl05-01",
+              "result": null
+            },
+            {
+              "id": "i0h92bq90vl",
+              "homeId": "cl05-04",
+              "awayId": "cl05-03",
+              "result": null
+            }
+          ],
+          "standings": [
+            {
+              "teamId": "cl05-01",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "cl05-02",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "cl05-03",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "cl05-04",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            }
+          ]
+        },
+        {
+          "name": "Group B",
+          "teamIds": [
+            "cl05-05",
+            "cl05-06",
+            "cl05-07",
+            "cl05-08"
+          ],
+          "matches": [
+            {
+              "id": "mgjuwnmzz4c",
+              "homeId": "cl05-08",
+              "awayId": "cl05-05",
+              "result": null
+            },
+            {
+              "id": "o9z4nl2p0ng",
+              "homeId": "cl05-07",
+              "awayId": "cl05-06",
+              "result": null
+            },
+            {
+              "id": "viipq3aux5n",
+              "homeId": "cl05-05",
+              "awayId": "cl05-07",
+              "result": null
+            },
+            {
+              "id": "87ytx0do7la",
+              "homeId": "cl05-06",
+              "awayId": "cl05-08",
+              "result": null
+            },
+            {
+              "id": "93t93djm0b5",
+              "homeId": "cl05-06",
+              "awayId": "cl05-05",
+              "result": null
+            },
+            {
+              "id": "fxqbg4y35cg",
+              "homeId": "cl05-08",
+              "awayId": "cl05-07",
+              "result": null
+            }
+          ],
+          "standings": [
+            {
+              "teamId": "cl05-05",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "cl05-06",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "cl05-07",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "cl05-08",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            }
+          ]
+        },
+        {
+          "name": "Group C",
+          "teamIds": [
+            "cl05-09",
+            "cl05-10",
+            "cl05-11",
+            "cl05-12"
+          ],
+          "matches": [
+            {
+              "id": "q403xoh957",
+              "homeId": "cl05-12",
+              "awayId": "cl05-09",
+              "result": null
+            },
+            {
+              "id": "a167ujvrwht",
+              "homeId": "cl05-11",
+              "awayId": "cl05-10",
+              "result": null
+            },
+            {
+              "id": "l0rfgputey",
+              "homeId": "cl05-09",
+              "awayId": "cl05-11",
+              "result": null
+            },
+            {
+              "id": "zl1jruvc33m",
+              "homeId": "cl05-10",
+              "awayId": "cl05-12",
+              "result": null
+            },
+            {
+              "id": "wkahvu1d5v",
+              "homeId": "cl05-10",
+              "awayId": "cl05-09",
+              "result": null
+            },
+            {
+              "id": "3nbgr5zwzpm",
+              "homeId": "cl05-12",
+              "awayId": "cl05-11",
+              "result": null
+            }
+          ],
+          "standings": [
+            {
+              "teamId": "cl05-09",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "cl05-10",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "cl05-11",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "cl05-12",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            }
+          ]
+        },
+        {
+          "name": "Group D",
+          "teamIds": [
+            "cl05-13",
+            "cl05-14",
+            "cl05-15",
+            "cl05-16"
+          ],
+          "matches": [
+            {
+              "id": "veomkudis7",
+              "homeId": "cl05-16",
+              "awayId": "cl05-13",
+              "result": null
+            },
+            {
+              "id": "qbkezf18n",
+              "homeId": "cl05-15",
+              "awayId": "cl05-14",
+              "result": null
+            },
+            {
+              "id": "8auk3jz7oqn",
+              "homeId": "cl05-13",
+              "awayId": "cl05-15",
+              "result": null
+            },
+            {
+              "id": "txpbwcsaub8",
+              "homeId": "cl05-14",
+              "awayId": "cl05-16",
+              "result": null
+            },
+            {
+              "id": "c5sf2o5hk6",
+              "homeId": "cl05-14",
+              "awayId": "cl05-13",
+              "result": null
+            },
+            {
+              "id": "rad6lpjetgo",
+              "homeId": "cl05-16",
+              "awayId": "cl05-15",
+              "result": null
+            }
+          ],
+          "standings": [
+            {
+              "teamId": "cl05-13",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "cl05-14",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "cl05-15",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "cl05-16",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            }
+          ]
+        },
+        {
+          "name": "Group E",
+          "teamIds": [
+            "cl05-17",
+            "cl05-18",
+            "cl05-19",
+            "cl05-20"
+          ],
+          "matches": [
+            {
+              "id": "66f29jfrqzw",
+              "homeId": "cl05-20",
+              "awayId": "cl05-17",
+              "result": null
+            },
+            {
+              "id": "kavd13761a",
+              "homeId": "cl05-19",
+              "awayId": "cl05-18",
+              "result": null
+            },
+            {
+              "id": "r4exqzti9lq",
+              "homeId": "cl05-17",
+              "awayId": "cl05-19",
+              "result": null
+            },
+            {
+              "id": "fs6s5uumjr",
+              "homeId": "cl05-18",
+              "awayId": "cl05-20",
+              "result": null
+            },
+            {
+              "id": "9u1upv8izpw",
+              "homeId": "cl05-18",
+              "awayId": "cl05-17",
+              "result": null
+            },
+            {
+              "id": "cmau5dohm9e",
+              "homeId": "cl05-20",
+              "awayId": "cl05-19",
+              "result": null
+            }
+          ],
+          "standings": [
+            {
+              "teamId": "cl05-17",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "cl05-18",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "cl05-19",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "cl05-20",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            }
+          ]
+        },
+        {
+          "name": "Group F",
+          "teamIds": [
+            "cl05-21",
+            "cl05-22",
+            "cl05-23",
+            "cl05-24"
+          ],
+          "matches": [
+            {
+              "id": "pkc5te34ro",
+              "homeId": "cl05-24",
+              "awayId": "cl05-21",
+              "result": null
+            },
+            {
+              "id": "mq6gtf7iryh",
+              "homeId": "cl05-23",
+              "awayId": "cl05-22",
+              "result": null
+            },
+            {
+              "id": "5dyvron7ryg",
+              "homeId": "cl05-21",
+              "awayId": "cl05-23",
+              "result": null
+            },
+            {
+              "id": "vypxpw7cm1",
+              "homeId": "cl05-22",
+              "awayId": "cl05-24",
+              "result": null
+            },
+            {
+              "id": "tpagtvo0gpi",
+              "homeId": "cl05-22",
+              "awayId": "cl05-21",
+              "result": null
+            },
+            {
+              "id": "it96pdt7b1s",
+              "homeId": "cl05-24",
+              "awayId": "cl05-23",
+              "result": null
+            }
+          ],
+          "standings": [
+            {
+              "teamId": "cl05-21",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "cl05-22",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "cl05-23",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "cl05-24",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            }
+          ]
+        },
+        {
+          "name": "Group G",
+          "teamIds": [
+            "cl05-25",
+            "cl05-26",
+            "cl05-27",
+            "cl05-28"
+          ],
+          "matches": [
+            {
+              "id": "pqpb5xhpby",
+              "homeId": "cl05-28",
+              "awayId": "cl05-25",
+              "result": null
+            },
+            {
+              "id": "81aih4idvcn",
+              "homeId": "cl05-27",
+              "awayId": "cl05-26",
+              "result": null
+            },
+            {
+              "id": "f7h5mzp4t3g",
+              "homeId": "cl05-25",
+              "awayId": "cl05-27",
+              "result": null
+            },
+            {
+              "id": "av8ppicbrvc",
+              "homeId": "cl05-26",
+              "awayId": "cl05-28",
+              "result": null
+            },
+            {
+              "id": "5fu7vbmrxk",
+              "homeId": "cl05-26",
+              "awayId": "cl05-25",
+              "result": null
+            },
+            {
+              "id": "84jhvp613cp",
+              "homeId": "cl05-28",
+              "awayId": "cl05-27",
+              "result": null
+            }
+          ],
+          "standings": [
+            {
+              "teamId": "cl05-25",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "cl05-26",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "cl05-27",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "cl05-28",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            }
+          ]
+        },
+        {
+          "name": "Group H",
+          "teamIds": [
+            "cl05-29",
+            "cl05-30",
+            "cl05-31",
+            "cl05-32"
+          ],
+          "matches": [
+            {
+              "id": "7dj8kmdjf6o",
+              "homeId": "cl05-32",
+              "awayId": "cl05-29",
+              "result": null
+            },
+            {
+              "id": "2407whie9io",
+              "homeId": "cl05-31",
+              "awayId": "cl05-30",
+              "result": null
+            },
+            {
+              "id": "vqbibyelw3",
+              "homeId": "cl05-29",
+              "awayId": "cl05-31",
+              "result": null
+            },
+            {
+              "id": "j7s09ri4gi8",
+              "homeId": "cl05-30",
+              "awayId": "cl05-32",
+              "result": null
+            },
+            {
+              "id": "wvydx6dzp7",
+              "homeId": "cl05-30",
+              "awayId": "cl05-29",
+              "result": null
+            },
+            {
+              "id": "ylkj04rejol",
+              "homeId": "cl05-32",
+              "awayId": "cl05-31",
+              "result": null
+            }
+          ],
+          "standings": [
+            {
+              "teamId": "cl05-29",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "cl05-30",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "cl05-31",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "cl05-32",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            }
+          ]
+        }
+      ],
+      "groupsDone": false,
+      "qualifiersPerGroup": 2,
+      "rounds": [
+        {
+          "name": "Round of 16",
+          "matches": [
+            {
+              "id": "ezfuemzvqug",
+              "homeId": null,
+              "awayId": null,
+              "result": null,
+              "leg2Result": null
+            },
+            {
+              "id": "w88pnj98nvo",
+              "homeId": null,
+              "awayId": null,
+              "result": null,
+              "leg2Result": null
+            },
+            {
+              "id": "9cztjzxle68",
+              "homeId": null,
+              "awayId": null,
+              "result": null,
+              "leg2Result": null
+            },
+            {
+              "id": "q9sqitzjljo",
+              "homeId": null,
+              "awayId": null,
+              "result": null,
+              "leg2Result": null
+            },
+            {
+              "id": "7b24ohj9neu",
+              "homeId": null,
+              "awayId": null,
+              "result": null,
+              "leg2Result": null
+            },
+            {
+              "id": "mxif3uf29m",
+              "homeId": null,
+              "awayId": null,
+              "result": null,
+              "leg2Result": null
+            },
+            {
+              "id": "nuxwl1dma5s",
+              "homeId": null,
+              "awayId": null,
+              "result": null,
+              "leg2Result": null
+            },
+            {
+              "id": "yy2hy0qgv8m",
+              "homeId": null,
+              "awayId": null,
+              "result": null,
+              "leg2Result": null
+            }
+          ]
+        },
+        {
+          "name": "Quarter-Finals",
+          "matches": [
+            {
+              "id": "31ku87n3fy",
+              "homeId": null,
+              "awayId": null,
+              "result": null,
+              "leg2Result": null
+            },
+            {
+              "id": "2q4d842jj2v",
+              "homeId": null,
+              "awayId": null,
+              "result": null,
+              "leg2Result": null
+            },
+            {
+              "id": "6iyww6f6mfv",
+              "homeId": null,
+              "awayId": null,
+              "result": null,
+              "leg2Result": null
+            },
+            {
+              "id": "4qhe80da1ul",
+              "homeId": null,
+              "awayId": null,
+              "result": null,
+              "leg2Result": null
+            }
+          ]
+        },
+        {
+          "name": "Semi-Finals",
+          "matches": [
+            {
+              "id": "mgkumwbkb6",
+              "homeId": null,
+              "awayId": null,
+              "result": null,
+              "leg2Result": null
+            },
+            {
+              "id": "j9krv4543v8",
+              "homeId": null,
+              "awayId": null,
+              "result": null,
+              "leg2Result": null
+            }
+          ]
+        },
+        {
+          "name": "Final",
+          "matches": [
+            {
+              "id": "oo2zvqn7uig",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            }
+          ]
+        }
+      ],
+      "winnerId": null,
+      "groupLegMode": "single",
+      "knockoutLegMode": "double",
+      "finalLegMode": "single",
+      "createdAt": 1790171493843,
+      "drawType": "manual",
+      "tiebreaker": "goal-diff",
+      "playoffSeedMode": "cross"
+    }
+  ]
+}

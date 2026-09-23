@@ -1,0 +1,149 @@
+{
+  "label": "Serie A 26/27",
+  "description": "Italian Serie A 2026/27 — 20 clubs",
+  "order": 12,
+  "type": "club",
+  "category": "league",
+  "teams": [
+    {
+      "id": "sea-01",
+      "name": "Inter",
+      "color": "#0068A8",
+      "power": 90,
+      "flag": "it"
+    },
+    {
+      "id": "sea-02",
+      "name": "Napoli",
+      "color": "#12A0D7",
+      "power": 88,
+      "flag": "it"
+    },
+    {
+      "id": "sea-03",
+      "name": "Milan",
+      "color": "#FB090B",
+      "power": 86,
+      "flag": "it"
+    },
+    {
+      "id": "sea-04",
+      "name": "Juventus",
+      "color": "#1A1A1A",
+      "power": 86,
+      "flag": "it"
+    },
+    {
+      "id": "sea-05",
+      "name": "Roma",
+      "color": "#8E1F2F",
+      "power": 84,
+      "flag": "it"
+    },
+    {
+      "id": "sea-06",
+      "name": "Atalanta",
+      "color": "#1E71B8",
+      "power": 83,
+      "flag": "it"
+    },
+    {
+      "id": "sea-07",
+      "name": "Como",
+      "color": "#0E3A69",
+      "power": 81,
+      "flag": "it"
+    },
+    {
+      "id": "sea-08",
+      "name": "Lazio",
+      "color": "#87D8F7",
+      "power": 80,
+      "flag": "it"
+    },
+    {
+      "id": "sea-09",
+      "name": "Bologna",
+      "color": "#1A2F48",
+      "power": 79,
+      "flag": "it"
+    },
+    {
+      "id": "sea-10",
+      "name": "Fiorentina",
+      "color": "#482E92",
+      "power": 77,
+      "flag": "it"
+    },
+    {
+      "id": "sea-11",
+      "name": "Torino",
+      "color": "#8A1E03",
+      "power": 73,
+      "flag": "it"
+    },
+    {
+      "id": "sea-12",
+      "name": "Udinese",
+      "color": "#2B2B2B",
+      "power": 72,
+      "flag": "it"
+    },
+    {
+      "id": "sea-13",
+      "name": "Sassuolo",
+      "color": "#00A752",
+      "power": 72,
+      "flag": "it"
+    },
+    {
+      "id": "sea-14",
+      "name": "Genoa",
+      "color": "#A51D32",
+      "power": 71,
+      "flag": "it"
+    },
+    {
+      "id": "sea-15",
+      "name": "Cagliari",
+      "color": "#002350",
+      "power": 70,
+      "flag": "it"
+    },
+    {
+      "id": "sea-16",
+      "name": "Parma",
+      "color": "#FFD200",
+      "power": 70,
+      "flag": "it"
+    },
+    {
+      "id": "sea-17",
+      "name": "Lecce",
+      "color": "#D71920",
+      "power": 68,
+      "flag": "it"
+    },
+    {
+      "id": "sea-18",
+      "name": "Monza",
+      "color": "#E4032E",
+      "power": 68,
+      "flag": "it"
+    },
+    {
+      "id": "sea-19",
+      "name": "Venezia",
+      "color": "#F26722",
+      "power": 68,
+      "flag": "it"
+    },
+    {
+      "id": "sea-20",
+      "name": "Frosinone",
+      "color": "#1B3F8B",
+      "power": 66,
+      "flag": "it"
+    }
+  ]
+}

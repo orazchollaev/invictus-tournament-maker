@@ -547,6 +547,8 @@
       countries: "Nazioni",
       clubs: "Club",
       uefa: "Competizioni europee",
+      leagues: "Campionati",
+      classics: "Classici",
       intro:
         "Carica un elenco squadre predefinito. Verrà aggiunto alle tue squadre e ai tuoi tornei attuali — nulla viene eliminato.",
       loadConfirm:

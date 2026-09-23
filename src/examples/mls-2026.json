@@ -1,0 +1,219 @@
+{
+  "label": "MLS 2026",
+  "description": "Major League Soccer 2026 — 30 clubs",
+  "order": 16,
+  "type": "club",
+  "category": "league",
+  "teams": [
+    {
+      "id": "mls-01",
+      "name": "Inter Miami",
+      "color": "#F7B5CD",
+      "power": 82,
+      "flag": "us"
+    },
+    {
+      "id": "mls-02",
+      "name": "LAFC",
+      "color": "#C39E6D",
+      "power": 81,
+      "flag": "us"
+    },
+    {
+      "id": "mls-03",
+      "name": "Columbus Crew",
+      "color": "#FEDD00",
+      "power": 79,
+      "flag": "us"
+    },
+    {
+      "id": "mls-04",
+      "name": "FC Cincinnati",
+      "color": "#F05323",
+      "power": 79,
+      "flag": "us"
+    },
+    {
+      "id": "mls-05",
+      "name": "Seattle Sounders",
+      "color": "#5D9741",
+      "power": 78,
+      "flag": "us"
+    },
+    {
+      "id": "mls-06",
+      "name": "Philadelphia Union",
+      "color": "#071B2C",
+      "power": 78,
+      "flag": "us"
+    },
+    {
+      "id": "mls-07",
+      "name": "LA Galaxy",
+      "color": "#00245D",
+      "power": 77,
+      "flag": "us"
+    },
+    {
+      "id": "mls-08",
+      "name": "Vancouver Whitecaps",
+      "color": "#9DC2EA",
+      "power": 77,
+      "flag": "ca"
+    },
+    {
+      "id": "mls-09",
+      "name": "San Diego FC",
+      "color": "#1C2B4A",
+      "power": 77,
+      "flag": "us"
+    },
+    {
+      "id": "mls-10",
+      "name": "Orlando City",
+      "color": "#633492",
+      "power": 76,
+      "flag": "us"
+    },
+    {
+      "id": "mls-11",
+      "name": "New York City FC",
+      "color": "#6CACE4",
+      "power": 75,
+      "flag": "us"
+    },
+    {
+      "id": "mls-12",
+      "name": "Minnesota United",
+      "color": "#8CD2F4",
+      "power": 75,
+      "flag": "us"
+    },
+    {
+      "id": "mls-13",
+      "name": "Nashville SC",
+      "color": "#ECE83A",
+      "power": 75,
+      "flag": "us"
+    },
+    {
+      "id": "mls-14",
+      "name": "Charlotte FC",
+      "color": "#1A85C8",
+      "power": 74,
+      "flag": "us"
+    },
+    {
+      "id": "mls-15",
+      "name": "Atlanta United",
+      "color": "#80000A",
+      "power": 73,
+      "flag": "us"
+    },
+    {
+      "id": "mls-16",
+      "name": "Austin FC",
+      "color": "#00B140",
+      "power": 72,
+      "flag": "us"
+    },
+    {
+      "id": "mls-17",
+      "name": "Houston Dynamo",
+      "color": "#FF6B00",
+      "power": 72,
+      "flag": "us"
+    },
+    {
+      "id": "mls-18",
+      "name": "Real Salt Lake",
+      "color": "#B30838",
+      "power": 72,
+      "flag": "us"
+    },
+    {
+      "id": "mls-19",
+      "name": "Portland Timbers",
+      "color": "#004812",
+      "power": 72,
+      "flag": "us"
+    },
+    {
+      "id": "mls-20",
+      "name": "Chicago Fire",
+      "color": "#FF0000",
+      "power": 72,
+      "flag": "us"
+    },
+    {
+      "id": "mls-21",
+      "name": "New York Red Bulls",
+      "color": "#ED1E36",
+      "power": 71,
+      "flag": "us"
+    },
+    {
+      "id": "mls-22",
+      "name": "Colorado Rapids",
+      "color": "#862633",
+      "power": 70,
+      "flag": "us"
+    },
+    {
+      "id": "mls-23",
+      "name": "New England Revolution",
+      "color": "#0A2240",
+      "power": 70,
+      "flag": "us"
+    },
+    {
+      "id": "mls-24",
+      "name": "FC Dallas",
+      "color": "#BF0D3E",
+      "power": 70,
+      "flag": "us"
+    },
+    {
+      "id": "mls-25",
+      "name": "Sporting Kansas City",
+      "color": "#93B1D7",
+      "power": 70,
+      "flag": "us"
+    },
+    {
+      "id": "mls-26",
+      "name": "St. Louis City",
+      "color": "#DD004A",
+      "power": 69,
+      "flag": "us"
+    },
+    {
+      "id": "mls-27",
+      "name": "San Jose Earthquakes",
+      "color": "#0067B1",
+      "power": 69,
+      "flag": "us"
+    },
+    {
+      "id": "mls-28",
+      "name": "D.C. United",
+      "color": "#1A1A1A",
+      "power": 68,
+      "flag": "us"
+    },
+    {
+      "id": "mls-29",
+      "name": "Toronto FC",
+      "color": "#B81137",
+      "power": 68,
+      "flag": "ca"
+    },
+    {
+      "id": "mls-30",
+      "name": "CF Montréal",
+      "color": "#0033A1",
+      "power": 67,
+      "flag": "ca"
+    }
+  ]
+}

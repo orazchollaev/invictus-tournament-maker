@@ -546,6 +546,8 @@
       countries: "Ülkeler",
       clubs: "Kulüpler",
       uefa: "Avrupa Kupaları",
+      leagues: "Ligler",
+      classics: "Klasikler",
       intro:
         "Hazır takım listesi yükleyin. Bu, mevcut takım ve turnuvalarınızın yanına eklenir — hiçbir şey silinmez.",
       loadConfirm: '"{name}" veri seti yüklensin mi? Mevcut takım ve turnuvalarınıza eklenecek.',

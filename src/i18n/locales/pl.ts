@@ -531,6 +531,8 @@
       countries: "Kraje",
       clubs: "Kluby",
       uefa: "Rozgrywki europejskie",
+      leagues: "Ligi",
+      classics: "Klasyki",
       intro:
         "Wczytaj gotową listę drużyn. Zostanie dodana do Twoich obecnych drużyn i turniejów — nic istniejącego nie zostanie usunięte.",
       loadConfirm:

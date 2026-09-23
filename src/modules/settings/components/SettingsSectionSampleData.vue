@@ -1,7 +1,16 @@
 <script setup lang="ts">
 import { computed } from "vue"
 import { useI18n } from "vue-i18n"
-import { FlaskConical, Trophy, Star, Shield, Globe, CirclePlay } from "@lucide/vue"
+import {
+  FlaskConical,
+  Trophy,
+  Star,
+  Shield,
+  Globe,
+  CirclePlay,
+  ListOrdered,
+  History,
+} from "@lucide/vue"
 import { AppCard, AppIcon } from "@/components/ui"
 import { FlagCircle } from "@/modules/teams/components"
 import { SAMPLE_DATASETS, useDataManagement } from "../composables/useDataManagement"
@@ -30,13 +39,18 @@ function getUefaIcon(label: string) {
 }
 
 const groups = computed(() => {
-  const uefa = SAMPLE_DATASETS.filter((ds) => isUefaCompetition(ds.label))
-  const clubs = SAMPLE_DATASETS.filter((ds) => ds.type === "club" && !isUefaCompetition(ds.label))
-  const countries = SAMPLE_DATASETS.filter((ds) => ds.type === "country")
+  const current = SAMPLE_DATASETS.filter((ds) => !ds.category)
+  const uefa = current.filter((ds) => isUefaCompetition(ds.label))
+  const leagues = SAMPLE_DATASETS.filter((ds) => ds.category === "league")
+  const clubs = current.filter((ds) => ds.type === "club" && !isUefaCompetition(ds.label))
+  const countries = current.filter((ds) => ds.type === "country")
+  const classics = SAMPLE_DATASETS.filter((ds) => ds.category === "classic")
   return [
     { key: "uefa", title: t("settings.sampleData.uefa"), icon: Trophy, items: uefa },
+    { key: "leagues", title: t("settings.sampleData.leagues"), icon: ListOrdered, items: leagues },
     { key: "clubs", title: t("settings.sampleData.clubs"), icon: null, items: clubs },
     { key: "countries", title: t("settings.sampleData.countries"), icon: Globe, items: countries },
+    { key: "classics", title: t("settings.sampleData.classics"), icon: History, items: classics },
   ].filter((g) => g.items.length)
 })
 
