@@ -337,15 +337,38 @@ async function simStage() {
   } else if (stage.kind === "third-place") {
     bracketActions.onSimThirdPlace()
   } else if (stage.kind === "group-week") {
-    const cbs = groupWeekSections.value.flatMap((section) =>
-      section.rows
-        .filter((r) => !r.match.result)
-        .map((r) => () => simGroupRow(section.groupIdx, r.mi))
-    )
-    await runSequential(cbs)
+    // The row-by-row loop re-derives per-tournament team adjustments and
+    // re-sorts every group's table once per match — fine for the gradual
+    // reveal's own pacing, but with gradual reveal off it made an instant
+    // "simulate this week" visibly slow once a tournament had more than a
+    // handful of groups. The engine already has a batched version of the
+    // same operation (one pass per group instead of one per match).
+    if (!settings.gradualReveal) {
+      if (props.phaseId) store.simPhaseWeek(props.tournament.id, props.phaseId)
+      else store.simWeek(props.tournament.id)
+    } else {
+      const cbs = groupWeekSections.value.flatMap((section) =>
+        section.rows
+          .filter((r) => !r.match.result)
+          .map((r) => () => simGroupRow(section.groupIdx, r.mi))
+      )
+      await runSequential(cbs)
+    }
   } else {
-    const cbs = leagueRows.value.filter((r) => !r.match.result).map((r) => () => simLeagueRow(r.mi))
-    await runSequential(cbs)
+    if (!settings.gradualReveal) {
+      if (props.phaseId) {
+        store.simPhaseLeagueMatchday(props.tournament.id, props.phaseId, stage.matchdayIdx)
+      } else if (stage.tierIdx === null) {
+        store.simLeagueMatchday(props.tournament.id, stage.matchdayIdx)
+      } else {
+        store.simTierMatchday(props.tournament.id, stage.tierIdx, stage.matchdayIdx)
+      }
+    } else {
+      const cbs = leagueRows.value
+        .filter((r) => !r.match.result)
+        .map((r) => () => simLeagueRow(r.mi))
+      await runSequential(cbs)
+    }
   }
 
   if (settings.autoAdvanceFixtureStage && !isLast.value) goNext()
