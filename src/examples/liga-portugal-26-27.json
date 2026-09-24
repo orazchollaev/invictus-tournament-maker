@@ -1,0 +1,135 @@
+{
+  "label": "Liga Portugal 26/27",
+  "description": "Portuguese Primeira Liga 2026/27 — 18 clubs",
+  "order": 14.2,
+  "type": "club",
+  "category": "league",
+  "teams": [
+    {
+      "id": "lpt-01",
+      "name": "Benfica",
+      "color": "#E83030",
+      "power": 87,
+      "flag": "pt"
+    },
+    {
+      "id": "lpt-02",
+      "name": "Porto",
+      "color": "#1C4E9E",
+      "power": 87,
+      "flag": "pt"
+    },
+    {
+      "id": "lpt-03",
+      "name": "Sporting CP",
+      "color": "#008057",
+      "power": 87,
+      "flag": "pt"
+    },
+    {
+      "id": "lpt-04",
+      "name": "Braga",
+      "color": "#C8102E",
+      "power": 81,
+      "flag": "pt"
+    },
+    {
+      "id": "lpt-05",
+      "name": "Vitória de Guimarães",
+      "color": "#1A1A1A",
+      "power": 75,
+      "flag": "pt"
+    },
+    {
+      "id": "lpt-06",
+      "name": "Famalicão",
+      "color": "#1D3F8F",
+      "power": 74,
+      "flag": "pt"
+    },
+    {
+      "id": "lpt-07",
+      "name": "Gil Vicente",
+      "color": "#D71920",
+      "power": 73,
+      "flag": "pt"
+    },
+    {
+      "id": "lpt-08",
+      "name": "Santa Clara",
+      "color": "#E30613",
+      "power": 72,
+      "flag": "pt"
+    },
+    {
+      "id": "lpt-09",
+      "name": "Moreirense",
+      "color": "#00843D",
+      "power": 71,
+      "flag": "pt"
+    },
+    {
+      "id": "lpt-10",
+      "name": "Estoril",
+      "color": "#FFD100",
+      "power": 71,
+      "flag": "pt"
+    },
+    {
+      "id": "lpt-11",
+      "name": "Casa Pia",
+      "color": "#2B2B2B",
+      "power": 70,
+      "flag": "pt"
+    },
+    {
+      "id": "lpt-12",
+      "name": "Rio Ave",
+      "color": "#007A33",
+      "power": 70,
+      "flag": "pt"
+    },
+    {
+      "id": "lpt-13",
+      "name": "Arouca",
+      "color": "#FDB913",
+      "power": 70,
+      "flag": "pt"
+    },
+    {
+      "id": "lpt-14",
+      "name": "Estrela da Amadora",
+      "color": "#B22222",
+      "power": 68,
+      "flag": "pt"
+    },
+    {
+      "id": "lpt-15",
+      "name": "Nacional",
+      "color": "#333333",
+      "power": 67,
+      "flag": "pt"
+    },
+    {
+      "id": "lpt-16",
+      "name": "Alverca",
+      "color": "#0055A4",
+      "power": 67,
+      "flag": "pt"
+    },
+    {
+      "id": "lpt-17",
+      "name": "Marítimo",
+      "color": "#006B3F",
+      "power": 67,
+      "flag": "pt"
+    },
+    {
+      "id": "lpt-18",
+      "name": "Académico de Viseu",
+      "color": "#1A1A1A",
+      "power": 65,
+      "flag": "pt"
+    }
+  ]
+}

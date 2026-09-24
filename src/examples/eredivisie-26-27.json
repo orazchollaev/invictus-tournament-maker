@@ -1,0 +1,135 @@
+{
+  "label": "Eredivisie 26/27",
+  "description": "Dutch Eredivisie 2026/27 — 18 clubs",
+  "order": 14.3,
+  "type": "club",
+  "category": "league",
+  "teams": [
+    {
+      "id": "ere-01",
+      "name": "PSV",
+      "color": "#ED1C24",
+      "power": 86,
+      "flag": "nl"
+    },
+    {
+      "id": "ere-02",
+      "name": "Feyenoord",
+      "color": "#D71920",
+      "power": 84,
+      "flag": "nl"
+    },
+    {
+      "id": "ere-03",
+      "name": "Ajax",
+      "color": "#D2122E",
+      "power": 83,
+      "flag": "nl"
+    },
+    {
+      "id": "ere-04",
+      "name": "AZ",
+      "color": "#E30613",
+      "power": 80,
+      "flag": "nl"
+    },
+    {
+      "id": "ere-05",
+      "name": "Twente",
+      "color": "#C8102E",
+      "power": 78,
+      "flag": "nl"
+    },
+    {
+      "id": "ere-06",
+      "name": "Utrecht",
+      "color": "#B22222",
+      "power": 77,
+      "flag": "nl"
+    },
+    {
+      "id": "ere-07",
+      "name": "NEC",
+      "color": "#00843D",
+      "power": 75,
+      "flag": "nl"
+    },
+    {
+      "id": "ere-08",
+      "name": "Go Ahead Eagles",
+      "color": "#E4032E",
+      "power": 74,
+      "flag": "nl"
+    },
+    {
+      "id": "ere-09",
+      "name": "Heerenveen",
+      "color": "#0055A4",
+      "power": 73,
+      "flag": "nl"
+    },
+    {
+      "id": "ere-10",
+      "name": "Sparta Rotterdam",
+      "color": "#A6192E",
+      "power": 72,
+      "flag": "nl"
+    },
+    {
+      "id": "ere-11",
+      "name": "Groningen",
+      "color": "#00A551",
+      "power": 72,
+      "flag": "nl"
+    },
+    {
+      "id": "ere-12",
+      "name": "Fortuna Sittard",
+      "color": "#FFD100",
+      "power": 71,
+      "flag": "nl"
+    },
+    {
+      "id": "ere-13",
+      "name": "PEC Zwolle",
+      "color": "#1C3F94",
+      "power": 70,
+      "flag": "nl"
+    },
+    {
+      "id": "ere-14",
+      "name": "Excelsior",
+      "color": "#1A1A1A",
+      "power": 68,
+      "flag": "nl"
+    },
+    {
+      "id": "ere-15",
+      "name": "Telstar",
+      "color": "#8A8A8A",
+      "power": 67,
+      "flag": "nl"
+    },
+    {
+      "id": "ere-16",
+      "name": "ADO Den Haag",
+      "color": "#006B3F",
+      "power": 67,
+      "flag": "nl"
+    },
+    {
+      "id": "ere-17",
+      "name": "Willem II",
+      "color": "#C8102E",
+      "power": 67,
+      "flag": "nl"
+    },
+    {
+      "id": "ere-18",
+      "name": "Cambuur",
+      "color": "#FFD700",
+      "power": 66,
+      "flag": "nl"
+    }
+  ]
+}

@@ -1,0 +1,135 @@
+{
+  "label": "Süper Lig 26/27",
+  "description": "Turkish Süper Lig 2026/27 — 18 clubs",
+  "order": 14.1,
+  "type": "club",
+  "category": "league",
+  "teams": [
+    {
+      "id": "tsl-01",
+      "name": "Galatasaray",
+      "color": "#A90432",
+      "power": 86,
+      "flag": "tr"
+    },
+    {
+      "id": "tsl-02",
+      "name": "Fenerbahçe",
+      "color": "#0F2B5B",
+      "power": 85,
+      "flag": "tr"
+    },
+    {
+      "id": "tsl-03",
+      "name": "Beşiktaş",
+      "color": "#1A1A1A",
+      "power": 81,
+      "flag": "tr"
+    },
+    {
+      "id": "tsl-04",
+      "name": "Trabzonspor",
+      "color": "#7B1E3A",
+      "power": 79,
+      "flag": "tr"
+    },
+    {
+      "id": "tsl-05",
+      "name": "Başakşehir",
+      "color": "#F26522",
+      "power": 76,
+      "flag": "tr"
+    },
+    {
+      "id": "tsl-06",
+      "name": "Samsunspor",
+      "color": "#E30613",
+      "power": 75,
+      "flag": "tr"
+    },
+    {
+      "id": "tsl-07",
+      "name": "Göztepe",
+      "color": "#FFD200",
+      "power": 74,
+      "flag": "tr"
+    },
+    {
+      "id": "tsl-08",
+      "name": "Kasımpaşa",
+      "color": "#1C3F94",
+      "power": 71,
+      "flag": "tr"
+    },
+    {
+      "id": "tsl-09",
+      "name": "Rizespor",
+      "color": "#00843D",
+      "power": 71,
+      "flag": "tr"
+    },
+    {
+      "id": "tsl-10",
+      "name": "Konyaspor",
+      "color": "#00A551",
+      "power": 70,
+      "flag": "tr"
+    },
+    {
+      "id": "tsl-11",
+      "name": "Alanyaspor",
+      "color": "#F58220",
+      "power": 70,
+      "flag": "tr"
+    },
+    {
+      "id": "tsl-12",
+      "name": "Gaziantep FK",
+      "color": "#D71920",
+      "power": 70,
+      "flag": "tr"
+    },
+    {
+      "id": "tsl-13",
+      "name": "Kocaelispor",
+      "color": "#0B6E3B",
+      "power": 69,
+      "flag": "tr"
+    },
+    {
+      "id": "tsl-14",
+      "name": "Eyüpspor",
+      "color": "#6A2C91",
+      "power": 69,
+      "flag": "tr"
+    },
+    {
+      "id": "tsl-15",
+      "name": "Gençlerbirliği",
+      "color": "#C8102E",
+      "power": 68,
+      "flag": "tr"
+    },
+    {
+      "id": "tsl-16",
+      "name": "Erzurumspor",
+      "color": "#0055A4",
+      "power": 66,
+      "flag": "tr"
+    },
+    {
+      "id": "tsl-17",
+      "name": "Amedspor",
+      "color": "#1E7B3A",
+      "power": 65,
+      "flag": "tr"
+    },
+    {
+      "id": "tsl-18",
+      "name": "Çorumspor",
+      "color": "#B22222",
+      "power": 65,
+      "flag": "tr"
+    }
+  ]
+}
