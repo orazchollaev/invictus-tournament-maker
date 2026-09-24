@@ -311,14 +311,16 @@ function handleSave() {
              seeded would leave results that no longer belong to any stage. -->
         <AppCard v-if="draft.isCustomFormat.value" padding="md">
           <div class="form-section-title">{{ t("tournament.phases.title") }}</div>
-          <PhaseGraphCanvas
-            :phases="tournament.phases ?? []"
-            :edges="tournament.phaseEdges ?? []"
-            :errors="[]"
-            :intake-of="(id) => (tournament?.phases?.find((p) => p.id === id)?.teamIds.length ?? 0)"
-            readonly
-            @configure="configuringPhaseId = $event"
-          />
+          <div class="phase-preview">
+            <PhaseGraphCanvas
+              :phases="tournament.phases ?? []"
+              :edges="tournament.phaseEdges ?? []"
+              :errors="[]"
+              :intake-of="(id) => (tournament?.phases?.find((p) => p.id === id)?.teamIds.length ?? 0)"
+              readonly
+              @configure="configuringPhaseId = $event"
+            />
+          </div>
         </AppCard>
 
         <PhaseConfigSheet
@@ -494,6 +496,15 @@ function handleSave() {
 </template>
 
 <style scoped>
+/* .phase-canvas sizes itself via flex:1 1 auto — outside a flex ancestor its
+   min-height never becomes a definite height, so the canvas's own 100%-height
+   internals (Vue Flow) collapse to nothing and no nodes are drawn. */
+.phase-preview {
+  display: flex;
+  height: 320px;
+  margin-top: var(--sp-3);
+}
+
 .title-row {
   display: flex;
   align-items: center;
