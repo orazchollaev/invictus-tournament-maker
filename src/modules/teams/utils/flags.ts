@@ -31,9 +31,23 @@ export async function flagSvg(code: string): Promise<string | undefined> {
   }
 }
 
+const dataUrlCache = new Map<string, string>()
+
 export async function flagDataUrl(code: string): Promise<string | undefined> {
+  const key = code.toLowerCase()
+  const cached = dataUrlCache.get(key)
+  if (cached) return cached
+
   const svg = await flagSvg(code)
-  return svg ? "data:image/svg+xml;utf8," + encodeURIComponent(svg) : undefined
+  if (!svg) return undefined
+
+  // encodeURIComponent on a multi-KB SVG string isn't free — a long fixture
+  // list can mount the same handful of flags hundreds of times, so caching
+  // the finished data URL (not just the raw SVG) skips re-encoding for every
+  // repeat.
+  const url = "data:image/svg+xml;utf8," + encodeURIComponent(svg)
+  dataUrlCache.set(key, url)
+  return url
 }
 
 export function hasFlag(code: string | undefined | null): boolean {

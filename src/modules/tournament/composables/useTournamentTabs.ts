@@ -171,12 +171,19 @@ export function useTournamentTabs(tournament: ComputedRef<Tournament | undefined
   watch(activeIndex, (idx) => {
     if (idx >= 0 && swiperInstance && swiperInstance.activeIndex !== idx) {
       const from = settledIndex.value
-      if (Math.abs(from - idx) > 1 || jumpRange.value) {
+      const isFarJump = Math.abs(from - idx) > 1
+      if (isFarJump || jumpRange.value) {
         const [lo, hi] = jumpRange.value ?? [from, from]
         jumpRange.value = [Math.min(lo, from, idx), Math.max(hi, from, idx)]
       }
       isProgrammaticJump = true
-      swiperInstance.slideTo(idx)
+      // A tab click several tabs away mounts every slide in between (the
+      // native css-mode scroll needs their width to land on the right
+      // offset) — each can be a full phase panel (group tables, bracket,
+      // Vue Flow). Animating across all of them at once is what made a
+      // first-to-last tab click visibly stutter; jumping straight there
+      // keeps the mount brief instead of stretching it over a scroll.
+      swiperInstance.slideTo(idx, isFarJump ? 0 : undefined)
     }
   })
 

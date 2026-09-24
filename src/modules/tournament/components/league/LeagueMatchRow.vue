@@ -89,6 +89,14 @@ function scoreAccentColor(): string {
   font-size: var(--fs-base);
   padding: var(--sp-1) 0;
   min-width: 0;
+  /* A long fixture list (many groups, many matchdays) is one unbroken column
+     of these with no virtualization — off-screen rows still cost layout and
+     paint on every scroll frame without this. content-visibility skips that
+     work until a row is actually near the viewport; contain-intrinsic-size
+     is the row's approximate height so the scrollbar doesn't jump once it
+     does. */
+  content-visibility: auto;
+  contain-intrinsic-size: auto 40px;
 }
 
 .lv-report {
