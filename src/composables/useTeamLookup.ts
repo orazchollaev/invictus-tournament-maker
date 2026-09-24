@@ -1,4 +1,4 @@
-import { toValue } from "vue"
+import { computed, toValue } from "vue"
 import type { MaybeRefOrGetter } from "vue"
 import type { Team, TeamLike } from "@/modules/teams/types"
 
@@ -18,9 +18,14 @@ export function teamAbbr(team: TeamLike): string {
 }
 
 export function useTeamLookup(teams: MaybeRefOrGetter<Team[]>) {
+  // A linear .find() per lookup turns every group/fixture/bracket render into
+  // O(rows × teams) — quadratic as the tournament grows. Indexed once per
+  // teams-array change, every id lookup is O(1) instead.
+  const byId = computed(() => new Map(toValue(teams).map((t) => [t.id, t])))
+
   function teamById(id: string | null | undefined) {
     if (!id) return undefined
-    return toValue(teams).find((t) => t.id === id)
+    return byId.value.get(id)
   }
 
   function getTeamName(id: string | null | undefined) {
