@@ -25,7 +25,7 @@ onMounted(() => {
   check()
   const target = el.value?.parentElement
   if (target) {
-    ro = new ResizeObserver(check)
+    ro = new ResizeObserver(() => requestAnimationFrame(check))
     ro.observe(target)
   }
 })

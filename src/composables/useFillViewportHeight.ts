@@ -24,7 +24,7 @@ export function useFillViewportHeight(anchor: Ref<HTMLElement | null>) {
     // Anything above the anchor (title, tab bar) can wrap and shift it down.
     const parent = anchor.value?.parentElement
     if (parent) {
-      observer = new ResizeObserver(measure)
+      observer = new ResizeObserver(() => requestAnimationFrame(measure))
       observer.observe(parent)
     }
   })
