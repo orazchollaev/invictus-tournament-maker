@@ -36,6 +36,9 @@ import { GroupConfigModal, SwissConfigModal } from "../components/config"
 const PhaseGraphCanvas = defineAsyncComponent(
   () => import("../components/phases/PhaseGraphCanvas.vue")
 )
+const PhaseConfigSheet = defineAsyncComponent(
+  () => import("../components/phases/PhaseConfigSheet.vue")
+)
 import { useTournamentSettingsDraft } from "../composables/useTournamentSettingsDraft"
 import { useTournamentExcelExport } from "../composables/useTournamentExcelExport"
 import { useUnsavedChangesGuard } from "@/composables/useUnsavedChangesGuard"
@@ -79,6 +82,10 @@ const showGroupModal = ref(false)
 const showKnockoutModal = ref(false)
 const showLeagueModal = ref(false)
 const showSwissModal = ref(false)
+const configuringPhaseId = ref<string | null>(null)
+const configuringPhase = computed(() =>
+  tournament.value?.phases?.find((p) => p.id === configuringPhaseId.value)
+)
 
 const { open: showLeaveModal, choose: chooseLeave } = useUnsavedChangesGuard({
   hasChanges: draft.hasChanges,
@@ -310,8 +317,17 @@ function handleSave() {
             :errors="[]"
             :intake-of="(id) => (tournament?.phases?.find((p) => p.id === id)?.teamIds.length ?? 0)"
             readonly
+            @configure="configuringPhaseId = $event"
           />
         </AppCard>
+
+        <PhaseConfigSheet
+          v-if="configuringPhase"
+          :phase="configuringPhase"
+          :intake="configuringPhase.teamIds.length"
+          readonly
+          @close="configuringPhaseId = null"
+        />
 
         <div v-if="!draft.isCustomFormat.value" class="form-card config-button-stack">
           <AppConfigButton

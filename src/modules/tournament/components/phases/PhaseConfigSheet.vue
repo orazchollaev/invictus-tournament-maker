@@ -15,6 +15,7 @@ import { computed, ref, watch } from "vue"
 import { useI18n } from "vue-i18n"
 import { AppSheet, AppButton, AppStepper, AppButtonGroup, AppToggle } from "@/components/ui"
 import type {
+  KnockoutStage,
   LegMode,
   PhaseConfig,
   PhaseSeedMode,
@@ -24,15 +25,29 @@ import type {
 import { clampSwissOpponentCount, legModeToCount, PHASE_MIN_TEAMS } from "@/engine"
 import { useLegOptions } from "@/modules/tournament/composables/useLegOptions"
 import { useGroupSizeHint } from "@/modules/tournament/composables/useGroupSizeHint"
+import {
+  knockoutStagesForRoundCount,
+  totalRoundsForSize,
+} from "@/modules/tournament/composables/useKnockoutRoundStages"
 import { ScoringFields, TiebreakerField } from "@/modules/tournament/components/config"
 
 const props = defineProps<{
   phase: TournamentPhase
   /** How many teams reach this phase — every limit below is measured against it. */
   intake: number
+  /** View-only: opened from a locked (already-drawn) tournament's settings. No Save. */
+  readonly?: boolean
 }>()
 
 const emit = defineEmits<{ save: [PhaseConfig]; close: [] }>()
+
+const STAGE_LABEL_KEYS: Record<KnockoutStage, string> = {
+  r64: "tournament.settingsPage.legsPerMatch.r64",
+  r32: "tournament.settingsPage.legsPerMatch.r32",
+  r16: "tournament.settingsPage.legsPerMatch.r16",
+  quarterfinal: "tournament.settingsPage.legsPerMatch.quarterFinal",
+  semifinal: "tournament.settingsPage.legsPerMatch.semiFinal",
+}
 
 const { t } = useI18n()
 const { multiLegOptions, leagueLegOptions } = useLegOptions()
@@ -107,8 +122,24 @@ const finalLegMode = ref<LegMode>(cfg.kind === "knockout" ? cfg.knockout.finalLe
 const thirdPlaceLegMode = ref<LegMode>(
   cfg.kind === "knockout" ? cfg.knockout.thirdPlaceLegMode : "single"
 )
+const ALL_KNOCKOUT_STAGES: KnockoutStage[] = ["r64", "r32", "r16", "quarterfinal", "semifinal"]
+const roundLegModes = ref<Record<KnockoutStage, LegMode>>(
+  Object.fromEntries(
+    ALL_KNOCKOUT_STAGES.map((stage) => [
+      stage,
+      (cfg.kind === "knockout" ? cfg.knockout.roundLegModes[stage] : undefined) ??
+        (cfg.kind === "knockout" ? cfg.knockout.knockoutLegMode : "single"),
+    ])
+  ) as Record<KnockoutStage, LegMode>
+)
 
 const teamCount = computed(() => Math.max(props.intake, PHASE_MIN_TEAMS[props.phase.kind]))
+
+/** Round rows shown for a knockout phase, same rule the create-time modal
+ *  uses: derived from how many teams actually reach the bracket. */
+const visibleKnockoutStages = computed(() =>
+  knockoutStagesForRoundCount(totalRoundsForSize(teamCount.value))
+)
 const maxGroups = computed(() => Math.max(2, Math.floor(teamCount.value / 2)))
 const maxOpponents = computed(() => Math.max(1, teamCount.value - 1))
 const maxPots = computed(() => Math.max(1, Math.min(8, Math.floor(teamCount.value / 2))))
@@ -212,7 +243,7 @@ function build(): PhaseConfig {
       seedMode: knockoutSeedMode.value,
       hasThirdPlace: hasThirdPlace.value,
       knockoutLegMode: knockoutLegMode.value,
-      roundLegModes: cfg.kind === "knockout" ? { ...cfg.knockout.roundLegModes } : {},
+      roundLegModes: { ...roundLegModes.value },
       finalLegMode: finalLegMode.value,
       thirdPlaceLegMode: thirdPlaceLegMode.value,
     },
@@ -236,45 +267,51 @@ function handleSave() {
     max-height-mobile="86vh"
     @close="emit('close')"
   >
-    <div class="phase-config">
+    <div class="phase-config" :class="{ 'phase-config--readonly': readonly }">
       <template v-if="phase.kind === 'group'">
         <div class="form-card">
           <div class="form-section-title">{{ t("tournament.phases.config.shape") }}</div>
-          <AppStepper
-            v-model="groupCount"
-            :label="t('tournament.phases.config.groupCount')"
-            :min="2"
-            :max="maxGroups"
-            :hint="groupSizeHint"
-          />
-          <div class="form-row">
-            <span class="form-label form-label--md">
-              {{ t("tournament.phases.config.seedMode") }}
-            </span>
-            <AppButtonGroup v-model="groupSeedMode" :options="seedModeOptions" />
-          </div>
-          <div class="form-row">
-            <span class="form-label form-label--md">{{ t("tournament.phases.config.legs") }}</span>
-            <AppButtonGroup v-model="legMode" :options="legOptionsForKind" />
+          <div class="form-rows">
+            <AppStepper
+              v-model="groupCount"
+              :label="t('tournament.phases.config.groupCount')"
+              :min="2"
+              :max="maxGroups"
+              :hint="groupSizeHint"
+            />
+            <div class="form-row">
+              <span class="form-label form-label--md">
+                {{ t("tournament.phases.config.seedMode") }}
+              </span>
+              <AppButtonGroup v-model="groupSeedMode" :options="seedModeOptions" />
+            </div>
+            <div class="form-row">
+              <span class="form-label form-label--md">
+                {{ t("tournament.phases.config.legs") }}
+              </span>
+              <AppButtonGroup v-model="legMode" :options="legOptionsForKind" />
+            </div>
           </div>
         </div>
 
         <div class="form-card">
           <div class="form-section-title">{{ t("tournament.phases.config.qualification") }}</div>
-          <AppStepper
-            v-model="qualifiersPerGroup"
-            :label="t('tournament.phases.config.qualifiersPerGroup')"
-            :min="1"
-            :max="maxQualifiers"
-          />
-          <AppStepper
-            v-if="showWildcards"
-            v-model="wildcardCount"
-            :label="t('tournament.phases.config.wildcards')"
-            :hint="t('tournament.phases.config.wildcardsHint')"
-            :min="0"
-            :max="groupCount"
-          />
+          <div class="form-rows">
+            <AppStepper
+              v-model="qualifiersPerGroup"
+              :label="t('tournament.phases.config.qualifiersPerGroup')"
+              :min="1"
+              :max="maxQualifiers"
+            />
+            <AppStepper
+              v-if="showWildcards"
+              v-model="wildcardCount"
+              :label="t('tournament.phases.config.wildcards')"
+              :hint="t('tournament.phases.config.wildcardsHint')"
+              :min="0"
+              :max="groupCount"
+            />
+          </div>
           <p class="phase-config-note">
             {{ t("tournament.phases.config.advancing", { count: groupAdvancing }) }}
           </p>
@@ -294,27 +331,31 @@ function handleSave() {
       <template v-else-if="phase.kind === 'swiss'">
         <div class="form-card">
           <div class="form-section-title">{{ t("tournament.phases.config.shape") }}</div>
-          <AppStepper
-            v-model="opponentCount"
-            :label="t('tournament.phases.config.opponents')"
-            :min="1"
-            :max="maxOpponents"
-          />
-          <AppStepper
-            v-model="potCount"
-            :label="t('tournament.phases.config.pots')"
-            :min="1"
-            :max="maxPots"
-          />
-          <div class="form-row">
-            <span class="form-label form-label--md">{{ t("tournament.phases.config.legs") }}</span>
-            <AppButtonGroup v-model="legMode" :options="legOptionsForKind" />
-          </div>
-          <div class="form-row">
-            <span class="form-label form-label--md">
-              {{ t("tournament.phases.config.balance") }}
-            </span>
-            <AppToggle v-model="balanceHomeAway" />
+          <div class="form-rows">
+            <AppStepper
+              v-model="opponentCount"
+              :label="t('tournament.phases.config.opponents')"
+              :min="1"
+              :max="maxOpponents"
+            />
+            <AppStepper
+              v-model="potCount"
+              :label="t('tournament.phases.config.pots')"
+              :min="1"
+              :max="maxPots"
+            />
+            <div class="form-row">
+              <span class="form-label form-label--md">
+                {{ t("tournament.phases.config.legs") }}
+              </span>
+              <AppButtonGroup v-model="legMode" :options="legOptionsForKind" />
+            </div>
+            <div class="form-row">
+              <span class="form-label form-label--md">
+                {{ t("tournament.phases.config.balance") }}
+              </span>
+              <AppToggle v-model="balanceHomeAway" />
+            </div>
           </div>
           <p class="phase-config-note">
             {{ t("tournament.phases.config.swissSize", { matchdays: swissMatchdays }) }}
@@ -325,33 +366,45 @@ function handleSave() {
       <template v-else>
         <div class="form-card">
           <div class="form-section-title">{{ t("tournament.phases.config.shape") }}</div>
-          <div class="form-row">
-            <span class="form-label form-label--md">
-              {{ t("tournament.phases.config.seedMode") }}
-            </span>
-            <AppButtonGroup v-model="knockoutSeedMode" :options="seedModeOptions" />
+          <div class="form-rows">
+            <div class="form-row">
+              <span class="form-label form-label--md">
+                {{ t("tournament.phases.config.seedMode") }}
+              </span>
+              <AppButtonGroup v-model="knockoutSeedMode" :options="seedModeOptions" />
+            </div>
+            <div class="form-row">
+              <span class="form-label form-label--md">
+                {{ t("tournament.phases.config.legs") }}
+              </span>
+              <AppButtonGroup v-model="knockoutLegMode" :options="multiLegOptions" />
+            </div>
+            <div class="form-row">
+              <span class="form-label form-label--md">
+                {{ t("tournament.phases.config.thirdPlace") }}
+              </span>
+              <AppToggle v-model="hasThirdPlace" />
+            </div>
           </div>
-          <div class="form-row">
-            <span class="form-label form-label--md">{{ t("tournament.phases.config.legs") }}</span>
-            <AppButtonGroup v-model="knockoutLegMode" :options="multiLegOptions" />
-          </div>
-          <div class="form-row">
-            <span class="form-label form-label--md">
-              {{ t("tournament.phases.config.finalLegs") }}
-            </span>
-            <AppButtonGroup v-model="finalLegMode" :options="multiLegOptions" />
-          </div>
-          <div class="form-row">
-            <span class="form-label form-label--md">
-              {{ t("tournament.phases.config.thirdPlace") }}
-            </span>
-            <AppToggle v-model="hasThirdPlace" />
-          </div>
-          <div v-if="hasThirdPlace" class="form-row">
-            <span class="form-label form-label--md">
-              {{ t("tournament.phases.config.thirdPlaceLegs") }}
-            </span>
-            <AppButtonGroup v-model="thirdPlaceLegMode" :options="multiLegOptions" />
+        </div>
+
+        <div class="form-card">
+          <div class="form-section-title">{{ t("tournament.settingsPage.legsPerMatch.title") }}</div>
+          <div class="form-rows">
+            <div v-for="stage in visibleKnockoutStages" :key="stage" class="form-row">
+              <span class="form-label">{{ t(STAGE_LABEL_KEYS[stage]) }}</span>
+              <AppButtonGroup v-model="roundLegModes[stage]" :options="multiLegOptions" />
+            </div>
+            <div class="form-row">
+              <span class="form-label">{{ t("tournament.settingsPage.legsPerMatch.final") }}</span>
+              <AppButtonGroup v-model="finalLegMode" :options="multiLegOptions" />
+            </div>
+            <div v-if="hasThirdPlace" class="form-row">
+              <span class="form-label">
+                {{ t("tournament.settingsPage.legsPerMatch.thirdPlace") }}
+              </span>
+              <AppButtonGroup v-model="thirdPlaceLegMode" :options="multiLegOptions" />
+            </div>
           </div>
         </div>
       </template>
@@ -366,7 +419,7 @@ function handleSave() {
       </template>
     </div>
 
-    <template #footer>
+    <template v-if="!readonly" #footer>
       <div class="phase-sheet-footer">
         <AppButton variant="filled" block @click="handleSave">
           {{ t("common.save") }}

@@ -303,6 +303,11 @@
   overflow-y: auto;
 }
 
+.phase-config--readonly {
+  pointer-events: none;
+  opacity: 0.85;
+}
+
 .phase-sheet-footer {
   display: flex;
   align-items: center;

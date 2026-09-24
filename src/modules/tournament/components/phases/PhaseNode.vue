@@ -90,7 +90,6 @@ function onNameInput(event: Event) {
       <button
         type="button"
         class="phase-node-action"
-        :disabled="data.readonly"
         @click.stop="emit('configure')"
       >
         <Settings2 :size="13" />
