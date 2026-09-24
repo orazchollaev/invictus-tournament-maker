@@ -1,3 +1,4 @@
+import { toRaw } from "vue"
 import { get, set, del, keys } from "idb-keyval"
 import { idbStorage } from "@/lib/idbStorage"
 import type { Tournament } from "../types"
@@ -45,7 +46,12 @@ export function saveTournament(t: Tournament): Promise<void> {
     // the app running on the state it already has in memory; the next save
     // attempt is one mutation away.
     try {
-      const json = JSON.stringify(t)
+      // t is a Pinia-reactive proxy; JSON.stringify walks every property of
+      // every nested match/group/team through the Proxy's get trap, which
+      // gets very slow on a large tournament (hundreds of teams, thousands
+      // of matches). toRaw hands stringify the plain underlying object
+      // instead, so the walk is a normal property read the whole way down.
+      const json = JSON.stringify(toRaw(t))
       void Promise.resolve(set(itemKey(t.id), json)).catch(() => {})
     } catch {}
   })
@@ -176,7 +182,9 @@ async function migrateFromLegacyBlob(): Promise<Tournament[]> {
   // already in hand and returned either way, so the worst case is that the
   // split runs again next launch rather than the user seeing nothing.
   await Promise.all(
-    tournaments.map((t) => Promise.resolve(set(itemKey(t.id), JSON.stringify(t))).catch(() => {}))
+    tournaments.map((t) =>
+      Promise.resolve(set(itemKey(t.id), JSON.stringify(toRaw(t)))).catch(() => {})
+    )
   )
   saveIndex(tournaments.map((t) => t.id))
   // The persistence plugin still owns `active`/`statsMigrated` under this
@@ -273,6 +281,6 @@ export async function clearAllTournaments(): Promise<void> {
  */
 export async function replaceAllTournaments(tournaments: Tournament[]): Promise<void> {
   await clearAllTournaments()
-  await Promise.all(tournaments.map((t) => set(itemKey(t.id), JSON.stringify(t))))
+  await Promise.all(tournaments.map((t) => set(itemKey(t.id), JSON.stringify(toRaw(t)))))
   await set(INDEX_KEY, JSON.stringify(tournaments.map((t) => t.id)))
 }
