@@ -209,12 +209,7 @@
       "groups": [
         {
           "name": "Group A",
-          "teamIds": [
-            "cl99-01",
-            "cl99-02",
-            "cl99-03",
-            "cl99-04"
-          ],
+          "teamIds": ["cl99-01", "cl99-02", "cl99-03", "cl99-04"],
           "matches": [
             {
               "id": "y7e3azifghb",
@@ -250,6 +245,42 @@
               "id": "k7qk7xoj8j",
               "homeId": "cl99-04",
               "awayId": "cl99-03",
+              "result": null
+            },
+            {
+              "id": "ljvycfzgbc",
+              "homeId": "cl99-01",
+              "awayId": "cl99-04",
+              "result": null
+            },
+            {
+              "id": "anl4zj1rh7",
+              "homeId": "cl99-02",
+              "awayId": "cl99-03",
+              "result": null
+            },
+            {
+              "id": "tei61rndgn",
+              "homeId": "cl99-03",
+              "awayId": "cl99-01",
+              "result": null
+            },
+            {
+              "id": "etv0jtzru8",
+              "homeId": "cl99-04",
+              "awayId": "cl99-02",
+              "result": null
+            },
+            {
+              "id": "vfen38gy5z",
+              "homeId": "cl99-01",
+              "awayId": "cl99-02",
+              "result": null
+            },
+            {
+              "id": "m1zg81p5ij",
+              "homeId": "cl99-03",
+              "awayId": "cl99-04",
               "result": null
             }
           ],
@@ -302,12 +333,7 @@
         },
         {
           "name": "Group B",
-          "teamIds": [
-            "cl99-05",
-            "cl99-06",
-            "cl99-07",
-            "cl99-08"
-          ],
+          "teamIds": ["cl99-05", "cl99-06", "cl99-07", "cl99-08"],
           "matches": [
             {
               "id": "vcutfvtew7e",
@@ -343,6 +369,42 @@
               "id": "x1x5c44ilyl",
               "homeId": "cl99-08",
               "awayId": "cl99-07",
+              "result": null
+            },
+            {
+              "id": "66zcfc60iw",
+              "homeId": "cl99-05",
+              "awayId": "cl99-08",
+              "result": null
+            },
+            {
+              "id": "c1i2uawq2q",
+              "homeId": "cl99-06",
+              "awayId": "cl99-07",
+              "result": null
+            },
+            {
+              "id": "tdow6u6ln0",
+              "homeId": "cl99-07",
+              "awayId": "cl99-05",
+              "result": null
+            },
+            {
+              "id": "t351hrg38z",
+              "homeId": "cl99-08",
+              "awayId": "cl99-06",
+              "result": null
+            },
+            {
+              "id": "s27l0upywq",
+              "homeId": "cl99-05",
+              "awayId": "cl99-06",
+              "result": null
+            },
+            {
+              "id": "iepi7iurgh",
+              "homeId": "cl99-07",
+              "awayId": "cl99-08",
               "result": null
             }
           ],
@@ -395,12 +457,7 @@
         },
         {
           "name": "Group C",
-          "teamIds": [
-            "cl99-09",
-            "cl99-10",
-            "cl99-11",
-            "cl99-12"
-          ],
+          "teamIds": ["cl99-09", "cl99-10", "cl99-11", "cl99-12"],
           "matches": [
             {
               "id": "chhbzvtmg7",
@@ -436,6 +493,42 @@
               "id": "5x2g2owtri",
               "homeId": "cl99-12",
               "awayId": "cl99-11",
+              "result": null
+            },
+            {
+              "id": "zwi2fk0x3",
+              "homeId": "cl99-09",
+              "awayId": "cl99-12",
+              "result": null
+            },
+            {
+              "id": "evp020d177",
+              "homeId": "cl99-10",
+              "awayId": "cl99-11",
+              "result": null
+            },
+            {
+              "id": "dqpd47dexk",
+              "homeId": "cl99-11",
+              "awayId": "cl99-09",
+              "result": null
+            },
+            {
+              "id": "ptytb4ne73",
+              "homeId": "cl99-12",
+              "awayId": "cl99-10",
+              "result": null
+            },
+            {
+              "id": "58hxq1b16k",
+              "homeId": "cl99-09",
+              "awayId": "cl99-10",
+              "result": null
+            },
+            {
+              "id": "srtzdo7g1n",
+              "homeId": "cl99-11",
+              "awayId": "cl99-12",
               "result": null
             }
           ],
@@ -488,12 +581,7 @@
         },
         {
           "name": "Group D",
-          "teamIds": [
-            "cl99-13",
-            "cl99-14",
-            "cl99-15",
-            "cl99-16"
-          ],
+          "teamIds": ["cl99-13", "cl99-14", "cl99-15", "cl99-16"],
           "matches": [
             {
               "id": "h0tia665twd",
@@ -529,6 +617,42 @@
               "id": "lyda65vje",
               "homeId": "cl99-16",
               "awayId": "cl99-15",
+              "result": null
+            },
+            {
+              "id": "t4vn07ymy7",
+              "homeId": "cl99-13",
+              "awayId": "cl99-16",
+              "result": null
+            },
+            {
+              "id": "hkj638sce3",
+              "homeId": "cl99-14",
+              "awayId": "cl99-15",
+              "result": null
+            },
+            {
+              "id": "03f3jdspz8",
+              "homeId": "cl99-15",
+              "awayId": "cl99-13",
+              "result": null
+            },
+            {
+              "id": "16w8sj5mp7",
+              "homeId": "cl99-16",
+              "awayId": "cl99-14",
+              "result": null
+            },
+            {
+              "id": "rcmlezso44",
+              "homeId": "cl99-13",
+              "awayId": "cl99-14",
+              "result": null
+            },
+            {
+              "id": "fig88cbofj",
+              "homeId": "cl99-15",
+              "awayId": "cl99-16",
               "result": null
             }
           ],
@@ -581,12 +705,7 @@
         },
         {
           "name": "Group E",
-          "teamIds": [
-            "cl99-17",
-            "cl99-18",
-            "cl99-19",
-            "cl99-20"
-          ],
+          "teamIds": ["cl99-17", "cl99-18", "cl99-19", "cl99-20"],
           "matches": [
             {
               "id": "i8hp8l6uy1r",
@@ -622,6 +741,42 @@
               "id": "ldy7dkfvexn",
               "homeId": "cl99-20",
               "awayId": "cl99-19",
+              "result": null
+            },
+            {
+              "id": "bd2iy3hm24",
+              "homeId": "cl99-17",
+              "awayId": "cl99-20",
+              "result": null
+            },
+            {
+              "id": "b1wiwx2ef9",
+              "homeId": "cl99-18",
+              "awayId": "cl99-19",
+              "result": null
+            },
+            {
+              "id": "bqblzbl4hr",
+              "homeId": "cl99-19",
+              "awayId": "cl99-17",
+              "result": null
+            },
+            {
+              "id": "4dz5x61j4g",
+              "homeId": "cl99-20",
+              "awayId": "cl99-18",
+              "result": null
+            },
+            {
+              "id": "2idsl6yt27",
+              "homeId": "cl99-17",
+              "awayId": "cl99-18",
+              "result": null
+            },
+            {
+              "id": "v6jymutg2h",
+              "homeId": "cl99-19",
+              "awayId": "cl99-20",
               "result": null
             }
           ],
@@ -674,12 +829,7 @@
         },
         {
           "name": "Group F",
-          "teamIds": [
-            "cl99-21",
-            "cl99-22",
-            "cl99-23",
-            "cl99-24"
-          ],
+          "teamIds": ["cl99-21", "cl99-22", "cl99-23", "cl99-24"],
           "matches": [
             {
               "id": "3fuficuw8yd",
@@ -715,6 +865,42 @@
               "id": "bu13fnusgi",
               "homeId": "cl99-24",
               "awayId": "cl99-23",
+              "result": null
+            },
+            {
+              "id": "rfrc8xkwh9",
+              "homeId": "cl99-21",
+              "awayId": "cl99-24",
+              "result": null
+            },
+            {
+              "id": "1h3t1j1hwr",
+              "homeId": "cl99-22",
+              "awayId": "cl99-23",
+              "result": null
+            },
+            {
+              "id": "yuckytjezd",
+              "homeId": "cl99-23",
+              "awayId": "cl99-21",
+              "result": null
+            },
+            {
+              "id": "5w9j8mb4xx",
+              "homeId": "cl99-24",
+              "awayId": "cl99-22",
+              "result": null
+            },
+            {
+              "id": "nlirgpyz4z",
+              "homeId": "cl99-21",
+              "awayId": "cl99-22",
+              "result": null
+            },
+            {
+              "id": "90tgyh1qam",
+              "homeId": "cl99-23",
+              "awayId": "cl99-24",
               "result": null
             }
           ],
@@ -835,7 +1021,7 @@
         }
       ],
       "winnerId": null,
-      "groupLegMode": "single",
+      "groupLegMode": "double",
       "knockoutLegMode": "double",
       "finalLegMode": "single",
       "createdAt": 1790171493835,

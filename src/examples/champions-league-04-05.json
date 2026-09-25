@@ -273,12 +273,7 @@
       "groups": [
         {
           "name": "Group A",
-          "teamIds": [
-            "cl05-01",
-            "cl05-02",
-            "cl05-03",
-            "cl05-04"
-          ],
+          "teamIds": ["cl05-01", "cl05-02", "cl05-03", "cl05-04"],
           "matches": [
             {
               "id": "1665qytcj9f",
@@ -314,6 +309,42 @@
               "id": "i0h92bq90vl",
               "homeId": "cl05-04",
               "awayId": "cl05-03",
+              "result": null
+            },
+            {
+              "id": "lgjtyj3kyx",
+              "homeId": "cl05-01",
+              "awayId": "cl05-04",
+              "result": null
+            },
+            {
+              "id": "bnc4gq4lpg",
+              "homeId": "cl05-02",
+              "awayId": "cl05-03",
+              "result": null
+            },
+            {
+              "id": "3d031na1uk",
+              "homeId": "cl05-03",
+              "awayId": "cl05-01",
+              "result": null
+            },
+            {
+              "id": "vb3gmohhs1",
+              "homeId": "cl05-04",
+              "awayId": "cl05-02",
+              "result": null
+            },
+            {
+              "id": "zeg4qiw81z",
+              "homeId": "cl05-01",
+              "awayId": "cl05-02",
+              "result": null
+            },
+            {
+              "id": "inf7ypj7cb",
+              "homeId": "cl05-03",
+              "awayId": "cl05-04",
               "result": null
             }
           ],
@@ -366,12 +397,7 @@
         },
         {
           "name": "Group B",
-          "teamIds": [
-            "cl05-05",
-            "cl05-06",
-            "cl05-07",
-            "cl05-08"
-          ],
+          "teamIds": ["cl05-05", "cl05-06", "cl05-07", "cl05-08"],
           "matches": [
             {
               "id": "mgjuwnmzz4c",
@@ -407,6 +433,42 @@
               "id": "fxqbg4y35cg",
               "homeId": "cl05-08",
               "awayId": "cl05-07",
+              "result": null
+            },
+            {
+              "id": "bod1w1w42b",
+              "homeId": "cl05-05",
+              "awayId": "cl05-08",
+              "result": null
+            },
+            {
+              "id": "cms1oajkgv",
+              "homeId": "cl05-06",
+              "awayId": "cl05-07",
+              "result": null
+            },
+            {
+              "id": "ip76jngepx",
+              "homeId": "cl05-07",
+              "awayId": "cl05-05",
+              "result": null
+            },
+            {
+              "id": "n6aw0oft4k",
+              "homeId": "cl05-08",
+              "awayId": "cl05-06",
+              "result": null
+            },
+            {
+              "id": "252c31rb74",
+              "homeId": "cl05-05",
+              "awayId": "cl05-06",
+              "result": null
+            },
+            {
+              "id": "d7y0w7hze3",
+              "homeId": "cl05-07",
+              "awayId": "cl05-08",
               "result": null
             }
           ],
@@ -459,12 +521,7 @@
         },
         {
           "name": "Group C",
-          "teamIds": [
-            "cl05-09",
-            "cl05-10",
-            "cl05-11",
-            "cl05-12"
-          ],
+          "teamIds": ["cl05-09", "cl05-10", "cl05-11", "cl05-12"],
           "matches": [
             {
               "id": "q403xoh957",
@@ -500,6 +557,42 @@
               "id": "3nbgr5zwzpm",
               "homeId": "cl05-12",
               "awayId": "cl05-11",
+              "result": null
+            },
+            {
+              "id": "1f2xxsrsrk",
+              "homeId": "cl05-09",
+              "awayId": "cl05-12",
+              "result": null
+            },
+            {
+              "id": "9fxzxa4u5g",
+              "homeId": "cl05-10",
+              "awayId": "cl05-11",
+              "result": null
+            },
+            {
+              "id": "bqwle68hkm",
+              "homeId": "cl05-11",
+              "awayId": "cl05-09",
+              "result": null
+            },
+            {
+              "id": "m6rlhne1cw",
+              "homeId": "cl05-12",
+              "awayId": "cl05-10",
+              "result": null
+            },
+            {
+              "id": "opqbmdxk6q",
+              "homeId": "cl05-09",
+              "awayId": "cl05-10",
+              "result": null
+            },
+            {
+              "id": "7lt6u9buu3",
+              "homeId": "cl05-11",
+              "awayId": "cl05-12",
               "result": null
             }
           ],
@@ -552,12 +645,7 @@
         },
         {
           "name": "Group D",
-          "teamIds": [
-            "cl05-13",
-            "cl05-14",
-            "cl05-15",
-            "cl05-16"
-          ],
+          "teamIds": ["cl05-13", "cl05-14", "cl05-15", "cl05-16"],
           "matches": [
             {
               "id": "veomkudis7",
@@ -593,6 +681,42 @@
               "id": "rad6lpjetgo",
               "homeId": "cl05-16",
               "awayId": "cl05-15",
+              "result": null
+            },
+            {
+              "id": "f30birlh0m",
+              "homeId": "cl05-13",
+              "awayId": "cl05-16",
+              "result": null
+            },
+            {
+              "id": "r5lc3ht42t",
+              "homeId": "cl05-14",
+              "awayId": "cl05-15",
+              "result": null
+            },
+            {
+              "id": "bziqyrlruu",
+              "homeId": "cl05-15",
+              "awayId": "cl05-13",
+              "result": null
+            },
+            {
+              "id": "cyqizyjd3k",
+              "homeId": "cl05-16",
+              "awayId": "cl05-14",
+              "result": null
+            },
+            {
+              "id": "ahul5zqmgj",
+              "homeId": "cl05-13",
+              "awayId": "cl05-14",
+              "result": null
+            },
+            {
+              "id": "7vwbf1b4l5",
+              "homeId": "cl05-15",
+              "awayId": "cl05-16",
               "result": null
             }
           ],
@@ -645,12 +769,7 @@
         },
         {
           "name": "Group E",
-          "teamIds": [
-            "cl05-17",
-            "cl05-18",
-            "cl05-19",
-            "cl05-20"
-          ],
+          "teamIds": ["cl05-17", "cl05-18", "cl05-19", "cl05-20"],
           "matches": [
             {
               "id": "66f29jfrqzw",
@@ -686,6 +805,42 @@
               "id": "cmau5dohm9e",
               "homeId": "cl05-20",
               "awayId": "cl05-19",
+              "result": null
+            },
+            {
+              "id": "qnktszfu24",
+              "homeId": "cl05-17",
+              "awayId": "cl05-20",
+              "result": null
+            },
+            {
+              "id": "la3686szkj",
+              "homeId": "cl05-18",
+              "awayId": "cl05-19",
+              "result": null
+            },
+            {
+              "id": "3ddva2wsbr",
+              "homeId": "cl05-19",
+              "awayId": "cl05-17",
+              "result": null
+            },
+            {
+              "id": "p8rmm026vl",
+              "homeId": "cl05-20",
+              "awayId": "cl05-18",
+              "result": null
+            },
+            {
+              "id": "lzn639yv2y",
+              "homeId": "cl05-17",
+              "awayId": "cl05-18",
+              "result": null
+            },
+            {
+              "id": "2pm3wz4p1r",
+              "homeId": "cl05-19",
+              "awayId": "cl05-20",
               "result": null
             }
           ],
@@ -738,12 +893,7 @@
         },
         {
           "name": "Group F",
-          "teamIds": [
-            "cl05-21",
-            "cl05-22",
-            "cl05-23",
-            "cl05-24"
-          ],
+          "teamIds": ["cl05-21", "cl05-22", "cl05-23", "cl05-24"],
           "matches": [
             {
               "id": "pkc5te34ro",
@@ -779,6 +929,42 @@
               "id": "it96pdt7b1s",
               "homeId": "cl05-24",
               "awayId": "cl05-23",
+              "result": null
+            },
+            {
+              "id": "rugikv3qo6",
+              "homeId": "cl05-21",
+              "awayId": "cl05-24",
+              "result": null
+            },
+            {
+              "id": "7kwb9zvhxx",
+              "homeId": "cl05-22",
+              "awayId": "cl05-23",
+              "result": null
+            },
+            {
+              "id": "2hjj2aey3j",
+              "homeId": "cl05-23",
+              "awayId": "cl05-21",
+              "result": null
+            },
+            {
+              "id": "fezjaqf3ip",
+              "homeId": "cl05-24",
+              "awayId": "cl05-22",
+              "result": null
+            },
+            {
+              "id": "t2co7zqdu7",
+              "homeId": "cl05-21",
+              "awayId": "cl05-22",
+              "result": null
+            },
+            {
+              "id": "ooiue14rms",
+              "homeId": "cl05-23",
+              "awayId": "cl05-24",
               "result": null
             }
           ],
@@ -831,12 +1017,7 @@
         },
         {
           "name": "Group G",
-          "teamIds": [
-            "cl05-25",
-            "cl05-26",
-            "cl05-27",
-            "cl05-28"
-          ],
+          "teamIds": ["cl05-25", "cl05-26", "cl05-27", "cl05-28"],
           "matches": [
             {
               "id": "pqpb5xhpby",
@@ -872,6 +1053,42 @@
               "id": "84jhvp613cp",
               "homeId": "cl05-28",
               "awayId": "cl05-27",
+              "result": null
+            },
+            {
+              "id": "vg9978rvk5",
+              "homeId": "cl05-25",
+              "awayId": "cl05-28",
+              "result": null
+            },
+            {
+              "id": "cpm7y0vxm2",
+              "homeId": "cl05-26",
+              "awayId": "cl05-27",
+              "result": null
+            },
+            {
+              "id": "j8c17qeyz9",
+              "homeId": "cl05-27",
+              "awayId": "cl05-25",
+              "result": null
+            },
+            {
+              "id": "mon3lk4z7v",
+              "homeId": "cl05-28",
+              "awayId": "cl05-26",
+              "result": null
+            },
+            {
+              "id": "tnhtdtle3r",
+              "homeId": "cl05-25",
+              "awayId": "cl05-26",
+              "result": null
+            },
+            {
+              "id": "1wbodckrk4",
+              "homeId": "cl05-27",
+              "awayId": "cl05-28",
               "result": null
             }
           ],
@@ -924,12 +1141,7 @@
         },
         {
           "name": "Group H",
-          "teamIds": [
-            "cl05-29",
-            "cl05-30",
-            "cl05-31",
-            "cl05-32"
-          ],
+          "teamIds": ["cl05-29", "cl05-30", "cl05-31", "cl05-32"],
           "matches": [
             {
               "id": "7dj8kmdjf6o",
@@ -965,6 +1177,42 @@
               "id": "ylkj04rejol",
               "homeId": "cl05-32",
               "awayId": "cl05-31",
+              "result": null
+            },
+            {
+              "id": "8bwqkbtftc",
+              "homeId": "cl05-29",
+              "awayId": "cl05-32",
+              "result": null
+            },
+            {
+              "id": "b7ztfbvehx",
+              "homeId": "cl05-30",
+              "awayId": "cl05-31",
+              "result": null
+            },
+            {
+              "id": "ugy9s3kp9v",
+              "homeId": "cl05-31",
+              "awayId": "cl05-29",
+              "result": null
+            },
+            {
+              "id": "jo7b80uhpz",
+              "homeId": "cl05-32",
+              "awayId": "cl05-30",
+              "result": null
+            },
+            {
+              "id": "f36z8udoct",
+              "homeId": "cl05-29",
+              "awayId": "cl05-30",
+              "result": null
+            },
+            {
+              "id": "mg1sncwbhq",
+              "homeId": "cl05-31",
+              "awayId": "cl05-32",
               "result": null
             }
           ],
@@ -1145,7 +1393,7 @@
         }
       ],
       "winnerId": null,
-      "groupLegMode": "single",
+      "groupLegMode": "double",
       "knockoutLegMode": "double",
       "finalLegMode": "single",
       "createdAt": 1790171493843,
