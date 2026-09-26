@@ -1,19 +1,11 @@
 import { computed, ref } from "vue"
 import { Capacitor } from "@capacitor/core"
+import { loadAdMob } from "@/lib/admob"
 
 const REWARDED_AD_UNIT_ID = "ca-app-pub-5867331300737777/4106543143"
 const SELECTION_COUNT_KEY = "invictus_sample_data_selection_count"
 /** Every 2nd sample-data selection shows a rewarded ad. */
 const AD_EVERY = 2
-
-let initialized: Promise<void> | null = null
-
-function ensureInitialized(): Promise<void> {
-  if (!initialized) {
-    initialized = import("@capacitor-community/admob").then(({ AdMob }) => AdMob.initialize())
-  }
-  return initialized
-}
 
 function readCount(): number {
   return parseInt(localStorage.getItem(SELECTION_COUNT_KEY) ?? "0", 10) || 0
@@ -35,8 +27,7 @@ export function useRewardedAd() {
 
     if (!Capacitor.isNativePlatform()) return
     try {
-      await ensureInitialized()
-      const { AdMob } = await import("@capacitor-community/admob")
+      const { AdMob } = await loadAdMob()
       await AdMob.prepareRewardVideoAd({ adId: REWARDED_AD_UNIT_ID })
       await AdMob.showRewardVideoAd()
     } catch {
