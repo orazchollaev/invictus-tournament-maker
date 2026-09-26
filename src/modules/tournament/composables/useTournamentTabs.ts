@@ -1,6 +1,5 @@
-import { ref, computed, watch, nextTick, onScopeDispose, type ComputedRef } from "vue"
+import { ref, computed, watch, type ComputedRef } from "vue"
 import { useRoute } from "vue-router"
-import type { Swiper as SwiperInstance } from "swiper/types"
 import { getLeaguePlayoffData, isCustomFormat, isLeagueLike, topoOrder } from "@/engine"
 import type { Tournament, TournamentPhase } from "@/modules/tournament/types"
 import { phaseTab, type MainTab } from "../components/detail"
@@ -100,94 +99,6 @@ export function useTournamentTabs(tournament: ComputedRef<Tournament | undefined
     tabs.push("fixtures", "stats", "participants")
     return tabs
   })
-  const activeIndex = computed(() => visibleTabs.value.indexOf(activeTab.value))
-
-  const jumpRange = ref<[number, number] | null>(null)
-  const settledIndex = ref(activeIndex.value)
-
-  function isTabRendered(tab: MainTab) {
-    const idx = visibleTabs.value.indexOf(tab)
-    if (jumpRange.value) {
-      const [from, to] = jumpRange.value
-      return idx >= from && idx <= to
-    }
-    return Math.abs(idx - activeIndex.value) <= 1
-  }
-
-  let swiperInstance: SwiperInstance | null = null
-
-  const SETTLE_MS = 120
-  let settleTimer: ReturnType<typeof setTimeout> | null = null
-  function scheduleSettleCheck() {
-    if (settleTimer) clearTimeout(settleTimer)
-    settleTimer = setTimeout(() => {
-      settleTimer = null
-      onSlideChangeEnd()
-    }, SETTLE_MS)
-  }
-
-  function onSwiperReady(s: SwiperInstance) {
-    swiperInstance = s
-    s.wrapperEl?.addEventListener("scroll", scheduleSettleCheck, { passive: true })
-  }
-
-  onScopeDispose(() => {
-    if (settleTimer) clearTimeout(settleTimer)
-    swiperInstance?.wrapperEl?.removeEventListener("scroll", scheduleSettleCheck)
-  })
-
-  // Set while a tab click drives the slide programmatically. css-mode
-  // still fires "slide-change" for every slide the scroll passes over,
-  // so without this guard a first-tab-to-last click would flash the tab
-  // pill active on each slide in between before landing on the real one.
-  let isProgrammaticJump = false
-
-  function onSlideChange(s: SwiperInstance) {
-    if (isProgrammaticJump) return
-    const tab = visibleTabs.value[s.activeIndex]
-    if (!tab || tab === activeTab.value) return
-    activeTab.value = tab
-  }
-
-  function onSlideChangeEnd() {
-    isProgrammaticJump = false
-    if (swiperInstance) settledIndex.value = swiperInstance.activeIndex
-    // Only collapse the mounted window once the settled slide matches
-    // the tab we actually want — if a rapid click retargeted mid-flight,
-    // this "end" belongs to a superseded jump and another is still coming.
-    if (settledIndex.value === activeIndex.value) jumpRange.value = null
-  }
-
-  watch(
-    () => visibleTabs.value.join("|"),
-    () => {
-      nextTick(() => {
-        if (!swiperInstance) return
-        swiperInstance.update()
-        swiperInstance.slideTo(activeIndex.value, 0)
-        settledIndex.value = activeIndex.value
-      })
-    }
-  )
-
-  watch(activeIndex, (idx) => {
-    if (idx >= 0 && swiperInstance && swiperInstance.activeIndex !== idx) {
-      const from = settledIndex.value
-      const isFarJump = Math.abs(from - idx) > 1
-      if (isFarJump || jumpRange.value) {
-        const [lo, hi] = jumpRange.value ?? [from, from]
-        jumpRange.value = [Math.min(lo, from, idx), Math.max(hi, from, idx)]
-      }
-      isProgrammaticJump = true
-      // A tab click several tabs away mounts every slide in between (the
-      // native css-mode scroll needs their width to land on the right
-      // offset) — each can be a full phase panel (group tables, bracket,
-      // Vue Flow). Animating across all of them at once is what made a
-      // first-to-last tab click visibly stutter; jumping straight there
-      // keeps the mount brief instead of stretching it over a scroll.
-      swiperInstance.slideTo(idx, isFarJump ? 0 : undefined)
-    }
-  })
 
   // The auto-jumps below are for someone watching a stage unfold. A manager
   // stays on their own tab: the next stage arriving is not theirs to look at
@@ -251,9 +162,5 @@ export function useTournamentTabs(tournament: ComputedRef<Tournament | undefined
     bracketReady,
     changeTab,
     visibleTabs,
-    activeIndex,
-    isTabRendered,
-    onSwiperReady,
-    onSlideChange,
   }
 }

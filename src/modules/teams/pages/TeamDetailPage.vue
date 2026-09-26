@@ -2,8 +2,6 @@
 import { computed, ref } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import { useI18n } from "vue-i18n"
-import { Swiper, SwiperSlide } from "swiper/vue"
-import "swiper/css"
 import { ArrowLeft, BarChart3, CalendarDays, Users } from "@lucide/vue"
 import { useTeamsStore } from "../store"
 import { useTournamentStore } from "@/modules/tournament/store"
@@ -14,6 +12,7 @@ import {
   AppEmptyState,
   AppIcon,
   AppSectionHeader,
+  AppSwipeView,
   AppTab,
   AppTabs,
 } from "@/components/ui"
@@ -65,15 +64,7 @@ const filteredMatches = computed(() => {
   )
 })
 
-const {
-  activeTab,
-  changeTab,
-  visibleTabs,
-  activeIndex,
-  isTabRendered,
-  onSwiperReady,
-  onSlideChange,
-} = useTeamDetailTabs()
+const { activeTab, changeTab, visibleTabs } = useTeamDetailTabs()
 
 const tabValue = computed({
   get: () => activeTab.value,
@@ -113,63 +104,45 @@ const tabValue = computed({
       </AppTabs>
 
       <div ref="tabSurface" class="tab-surface" :style="{ height: tabSurfaceHeight }">
-        <Swiper
-          class="tab-swiper"
-          :initial-slide="activeIndex"
-          :auto-height="false"
-          :speed="300"
-          :threshold="10"
-          :space-between="10"
-          css-mode
-          @swiper="onSwiperReady"
-          @slide-change="onSlideChange"
-        >
-          <SwiperSlide v-for="tab in visibleTabs" :key="tab">
-            <template v-if="isTabRendered(tab)">
-              <div v-if="tab === 'overview'" class="tab-panel">
-                <TeamStatsGrid :stats="stats" :titles="tournamentWins.length" />
+        <AppSwipeView v-model="activeTab" :tabs="visibleTabs">
+          <template #default="{ tab }">
+            <div v-if="tab === 'overview'" class="tab-panel">
+              <TeamStatsGrid :stats="stats" :titles="tournamentWins.length" />
 
-                <TeamFormRow
-                  v-if="matches.length"
-                  :form="recentForm"
-                  :get-team-name="getTeamName"
-                />
+              <TeamFormRow v-if="matches.length" :form="recentForm" :get-team-name="getTeamName" />
 
-                <div v-if="seasonStats.length >= 1" class="section">
-                  <AppSectionHeader :title="t('teams.detail.seasonHistory')">
-                    <template #actions>
-                      <span class="count">
-                        {{ seasonStats.length }}
-                        {{
-                          seasonStats.length === 1 ? t("common.season", 1) : t("common.season", 2)
-                        }}
-                      </span>
-                    </template>
-                  </AppSectionHeader>
-                  <div class="section-body">
-                    <SeasonChart :stats="seasonStats" />
-                  </div>
+              <div v-if="seasonStats.length >= 1" class="section">
+                <AppSectionHeader :title="t('teams.detail.seasonHistory')">
+                  <template #actions>
+                    <span class="count">
+                      {{ seasonStats.length }}
+                      {{ seasonStats.length === 1 ? t("common.season", 1) : t("common.season", 2) }}
+                    </span>
+                  </template>
+                </AppSectionHeader>
+                <div class="section-body">
+                  <SeasonChart :stats="seasonStats" />
                 </div>
-
-                <TeamTrophyList v-if="tournamentWins.length" :wins="tournamentWins" />
               </div>
 
-              <div v-else-if="tab === 'squad'" class="tab-panel tab-panel--flush">
-                <TeamCoachCard :team-id="team.id" />
-                <TeamSquadCard :team-id="team.id" :team-color="team.color" />
-              </div>
+              <TeamTrophyList v-if="tournamentWins.length" :wins="tournamentWins" />
+            </div>
 
-              <div v-else class="tab-panel tab-panel--flush">
-                <TeamMatchList
-                  v-model:selected="selectedTournamentKey"
-                  :matches="filteredMatches"
-                  :teams="teamsStore.teams"
-                  :tournament-options="tournamentOptions"
-                />
-              </div>
-            </template>
-          </SwiperSlide>
-        </Swiper>
+            <div v-else-if="tab === 'squad'" class="tab-panel tab-panel--flush">
+              <TeamCoachCard :team-id="team.id" />
+              <TeamSquadCard :team-id="team.id" :team-color="team.color" />
+            </div>
+
+            <div v-else class="tab-panel tab-panel--flush">
+              <TeamMatchList
+                v-model:selected="selectedTournamentKey"
+                :matches="filteredMatches"
+                :teams="teamsStore.teams"
+                :tournament-options="tournamentOptions"
+              />
+            </div>
+          </template>
+        </AppSwipeView>
       </div>
     </div>
   </div>
@@ -181,12 +154,6 @@ const tabValue = computed({
   border-radius: var(--radius-lg);
   background: var(--surface);
   overflow: hidden;
-}
-
-/* The surface carries a measured static height, so the swiper's own
-   height: 100% chain (swiper → wrapper → slide) resolves without autoHeight. */
-.tab-swiper {
-  height: 100%;
 }
 
 .tab-panel {

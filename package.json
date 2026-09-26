@@ -51,7 +51,6 @@
     "pinia-plugin-persistedstate-2": "^2.0.32",
     "reka-ui": "^2.10.4",
     "sharp": "^0.35.4",
-    "swiper": "^14.2.0",
     "vue": "^3.5.43",
     "vue-draggable-plus": "^0.6.1",
     "vue-i18n": "^11.4.12",

@@ -2,8 +2,6 @@
 import { computed, ref, watch } from "vue"
 import { useRouter } from "vue-router"
 import { useI18n } from "vue-i18n"
-import { Swiper, SwiperSlide } from "swiper/vue"
-import "swiper/css"
 
 import { BracketPanel } from "@/modules/tournament/components/bracket"
 import { GroupStage, GroupDraw, WildcardRankings } from "@/modules/tournament/components/group"
@@ -13,7 +11,7 @@ import { ParticipantsTable } from "@/modules/tournament/components/participants"
 import { ManualDraw, PlayoffManualDraw } from "@/modules/tournament/components/draw"
 import { TournamentStats } from "@/modules/tournament/components/stats"
 import { DrawCeremony } from "@/modules/tournament/components/draw-ceremony"
-import { AppModal, AppSubTabBar } from "@/components/ui"
+import { AppModal, AppSubTabBar, AppSwipeView } from "@/components/ui"
 import {
   DetailHeader,
   DetailPhaseTabs,
@@ -99,10 +97,6 @@ const {
   bracketReady,
   changeTab,
   visibleTabs,
-  activeIndex,
-  isTabRendered,
-  onSwiperReady,
-  onSlideChange,
 } = useTournamentTabs(tournament)
 
 const {
@@ -232,148 +226,130 @@ const showStartPlayoffButton = computed(
       />
 
       <div ref="tabSurface" class="tab-surface" :style="{ height: tabSurfaceHeight }">
-        <Swiper
-          class="tab-swiper"
-          :initial-slide="activeIndex"
-          :auto-height="false"
-          :speed="300"
-          :threshold="10"
-          :space-between="10"
-          :no-swiping="true"
-          no-swiping-class="swiper-no-swiping"
-          css-mode
-          @swiper="onSwiperReady"
-          @slide-change="onSlideChange"
-        >
-          <SwiperSlide v-for="tab in visibleTabs" :key="tab">
-            <template v-if="isTabRendered(tab)">
-              <div v-if="tab === 'manager'" class="tab-panel">
-                <ManagerTeamPanel :tournament-id="tournament.id" :active="activeTab === 'manager'" />
-              </div>
-              <!-- Custom format: one slide per phase. The panel resolves the
+        <AppSwipeView v-model="activeTab" :tabs="visibleTabs">
+          <template #default="{ tab }">
+            <div v-if="tab === 'manager'" class="tab-panel">
+              <ManagerTeamPanel :tournament-id="tournament.id" :active="activeTab === 'manager'" />
+            </div>
+            <!-- Custom format: one slide per phase. The panel resolves the
                    phase itself, so this page asks for it once instead of a
                    dozen times, and each phase re-renders on its own. -->
-              <div v-else-if="phaseIdOf(tab)" class="tab-panel">
-                <PhasePanel
-                  :tournament="tournament"
-                  :phase-id="phaseIdOf(tab)!"
-                  :teams="allTeams"
-                />
-              </div>
-              <div v-else-if="tab === 'league'" class="tab-panel">
-                <template v-if="isMultiTier && tournament.tiers">
-                  <div class="gs-subtab-row">
-                    <AppSubTabBar
-                      :options="
-                        tournament.tiers.map((tier, ti) => ({
-                          value: String(ti),
-                          label: tier.name,
-                        }))
-                      "
-                      :model-value="String(activeTierIdx)"
-                      @update:model-value="(v) => changeTab('league', Number(v))"
-                    />
-                  </div>
-                  <Transition name="tab" mode="out-in">
-                    <LeagueView
-                      :key="activeTierIdx"
-                      :tournament="tournament"
-                      :teams="allTeams"
-                      :league-override="tournament.tiers[activeTierIdx]?.league"
-                      :relegation-count-override="
-                        activeTierIdx < tournament.tiers.length - 1
-                          ? (tournament.promotionCount ?? 0)
-                          : 0
-                      "
-                      :promotion-count="activeTierIdx > 0 ? (tournament.promotionCount ?? 0) : 0"
-                      :playoff-qualifier-count="
-                        activeTierIdx === 0 && leaguePlayoffData?.enabled
-                          ? leaguePlayoffData.qualifierCount
-                          : 0
-                      "
-                    />
-                  </Transition>
-                </template>
-                <template v-else>
+            <div v-else-if="phaseIdOf(tab)" class="tab-panel">
+              <PhasePanel :tournament="tournament" :phase-id="phaseIdOf(tab)!" :teams="allTeams" />
+            </div>
+            <div v-else-if="tab === 'league'" class="tab-panel">
+              <template v-if="isMultiTier && tournament.tiers">
+                <div class="gs-subtab-row">
+                  <AppSubTabBar
+                    :options="
+                      tournament.tiers.map((tier, ti) => ({
+                        value: String(ti),
+                        label: tier.name,
+                      }))
+                    "
+                    :model-value="String(activeTierIdx)"
+                    @update:model-value="(v) => changeTab('league', Number(v))"
+                  />
+                </div>
+                <Transition name="tab" mode="out-in">
                   <LeagueView
+                    :key="activeTierIdx"
                     :tournament="tournament"
                     :teams="allTeams"
+                    :league-override="tournament.tiers[activeTierIdx]?.league"
+                    :relegation-count-override="
+                      activeTierIdx < tournament.tiers.length - 1
+                        ? (tournament.promotionCount ?? 0)
+                        : 0
+                    "
+                    :promotion-count="activeTierIdx > 0 ? (tournament.promotionCount ?? 0) : 0"
                     :playoff-qualifier-count="
-                      leaguePlayoffData?.enabled ? leaguePlayoffData.qualifierCount : 0
+                      activeTierIdx === 0 && leaguePlayoffData?.enabled
+                        ? leaguePlayoffData.qualifierCount
+                        : 0
                     "
                   />
-                </template>
-              </div>
-              <div v-else-if="tab === 'groups'" class="tab-panel">
-                <div v-if="hasWildcards" class="gs-subtab-row">
-                  <AppSubTabBar
-                    v-model="groupSubTab"
-                    :options="[
-                      { value: 'groups', label: trns('tournament.tabs.groups') },
-                      { value: 'wildcards', label: trns('tournament.tabs.wildcards') },
-                    ]"
-                  />
-                </div>
-                <div class="gs-body">
-                  <GroupStage
-                    v-if="!hasWildcards || groupSubTab === 'groups'"
-                    :tournament="tournament"
-                    :teams="allTeams"
-                  />
-                  <WildcardRankings v-else :tournament="tournament" :teams="allTeams" />
-                </div>
-              </div>
-              <div v-else-if="tab === 'fixtures'" class="tab-panel">
-                <!-- Custom: one phase's fixtures at a time, picked the same way
-                     a multi-tier league picks a division. -->
-                <template v-if="isCustom">
-                  <div v-if="startedPhases.length > 1" class="gs-subtab-row">
-                    <AppSubTabBar
-                      v-model="fixturePhaseId"
-                      :options="startedPhases.map((p) => ({ value: p.id, label: p.name }))"
-                    />
-                  </div>
-                  <FixturesPanel
-                    v-if="fixturePhaseView"
-                    :key="fixturePhaseId"
-                    :tournament="fixturePhaseView"
-                    :teams="allTeams"
-                    :phase-id="fixturePhaseId"
-                  />
-                  <div v-else class="locked-panel">
-                    {{ trns("tournament.phases.notStarted") }}
-                  </div>
-                </template>
-                <FixturesPanel v-else :tournament="tournament" :teams="allTeams" />
-              </div>
-              <div v-else-if="tab === 'bracket'" class="tab-panel">
-                <BracketPanel
-                  v-if="bracketReady"
+                </Transition>
+              </template>
+              <template v-else>
+                <LeagueView
                   :tournament="tournament"
                   :teams="allTeams"
-                  :title="trns('tournament.tabs.bracket')"
+                  :playoff-qualifier-count="
+                    leaguePlayoffData?.enabled ? leaguePlayoffData.qualifierCount : 0
+                  "
+                />
+              </template>
+            </div>
+            <div v-else-if="tab === 'groups'" class="tab-panel">
+              <div v-if="hasWildcards" class="gs-subtab-row">
+                <AppSubTabBar
+                  v-model="groupSubTab"
+                  :options="[
+                    { value: 'groups', label: trns('tournament.tabs.groups') },
+                    { value: 'wildcards', label: trns('tournament.tabs.wildcards') },
+                  ]"
+                />
+              </div>
+              <div class="gs-body">
+                <GroupStage
+                  v-if="!hasWildcards || groupSubTab === 'groups'"
+                  :tournament="tournament"
+                  :teams="allTeams"
+                />
+                <WildcardRankings v-else :tournament="tournament" :teams="allTeams" />
+              </div>
+            </div>
+            <div v-else-if="tab === 'fixtures'" class="tab-panel">
+              <!-- Custom: one phase's fixtures at a time, picked the same way
+                     a multi-tier league picks a division. -->
+              <template v-if="isCustom">
+                <div v-if="startedPhases.length > 1" class="gs-subtab-row">
+                  <AppSubTabBar
+                    v-model="fixturePhaseId"
+                    :options="startedPhases.map((p) => ({ value: p.id, label: p.name }))"
+                  />
+                </div>
+                <FixturesPanel
+                  v-if="fixturePhaseView"
+                  :key="fixturePhaseId"
+                  :tournament="fixturePhaseView"
+                  :teams="allTeams"
+                  :phase-id="fixturePhaseId"
                 />
                 <div v-else class="locked-panel">
-                  {{
-                    trns(
-                      isGroupFormat
-                        ? "tournament.locked.bracketNeedsGroups"
-                        : "tournament.locked.bracketNeedsPlayoff"
-                    )
-                  }}
+                  {{ trns("tournament.phases.notStarted") }}
                 </div>
+              </template>
+              <FixturesPanel v-else :tournament="tournament" :teams="allTeams" />
+            </div>
+            <div v-else-if="tab === 'bracket'" class="tab-panel">
+              <BracketPanel
+                v-if="bracketReady"
+                :tournament="tournament"
+                :teams="allTeams"
+                :title="trns('tournament.tabs.bracket')"
+              />
+              <div v-else class="locked-panel">
+                {{
+                  trns(
+                    isGroupFormat
+                      ? "tournament.locked.bracketNeedsGroups"
+                      : "tournament.locked.bracketNeedsPlayoff"
+                  )
+                }}
               </div>
-              <div v-else-if="tab === 'stats'" class="tab-panel">
-                <TournamentStats v-if="hasAnyResults" :tournament="tournament" :teams="allTeams" />
-                <div v-else class="locked-panel">{{ trns("tournament.locked.stats") }}</div>
-              </div>
-              <!-- The table draws its own cell padding. -->
-              <div v-else class="tab-panel tab-panel--flush">
-                <ParticipantsTable :teams="allTeams" :tournament="tournament" />
-              </div>
-            </template>
-          </SwiperSlide>
-        </Swiper>
+            </div>
+            <div v-else-if="tab === 'stats'" class="tab-panel">
+              <TournamentStats v-if="hasAnyResults" :tournament="tournament" :teams="allTeams" />
+              <div v-else class="locked-panel">{{ trns("tournament.locked.stats") }}</div>
+            </div>
+            <!-- The table draws its own cell padding. -->
+            <div v-else class="tab-panel tab-panel--flush">
+              <ParticipantsTable :teams="allTeams" :tournament="tournament" />
+            </div>
+          </template>
+        </AppSwipeView>
       </div>
     </template>
 
@@ -467,12 +443,6 @@ const showStartPlayoffButton = computed(
   background: var(--surface);
   box-shadow: var(--elev-1);
   overflow: hidden;
-}
-
-/* The surface carries a measured static height, so the swiper's own
-   height: 100% chain (swiper → wrapper → slide) resolves without autoHeight. */
-.tab-swiper {
-  height: 100%;
 }
 
 .tab-panel {

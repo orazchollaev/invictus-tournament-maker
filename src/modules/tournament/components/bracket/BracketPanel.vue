@@ -122,7 +122,7 @@ const { isExporting, exportPng } = useBracketExport({
     <div class="bracket-body">
       <div
         :ref="(el) => (wrapperRef = el as HTMLElement | null)"
-        class="bracket-viewport bracket-wrapper swiper-no-swiping"
+        class="bracket-viewport bracket-wrapper no-swipe"
         :class="{ dragging: isDragging }"
         @mousedown="onMouseDown"
         @wheel.prevent="onWheel"

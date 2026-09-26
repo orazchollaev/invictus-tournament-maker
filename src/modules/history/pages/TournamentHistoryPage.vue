@@ -5,9 +5,15 @@ import { useTournamentStore } from "@/modules/tournament/store"
 import { isLeagueLike } from "@/engine"
 import { ArrowLeft, Trophy, Medal, BarChart3, Table2, Users, Goal } from "@lucide/vue"
 import { useI18n } from "vue-i18n"
-import { Swiper, SwiperSlide } from "swiper/vue"
-import "swiper/css"
-import { AppButton, AppChip, AppEmptyState, AppIcon, AppTab, AppTabs } from "@/components/ui"
+import {
+  AppButton,
+  AppChip,
+  AppEmptyState,
+  AppIcon,
+  AppSwipeView,
+  AppTab,
+  AppTabs,
+} from "@/components/ui"
 import {
   ChampionsTab,
   AllFinalsTab,
@@ -50,15 +56,7 @@ const { champions, finals, leagueSeasons, allTimeRows, stats, teamStats } =
 
 const { playerRows } = useHistoryPlayerStats(completedSeasons)
 
-const {
-  activeTab,
-  changeTab,
-  visibleTabs,
-  activeIndex,
-  isTabRendered,
-  onSwiperReady,
-  onSlideChange,
-} = useHistoryTabs(isLeagueSeries)
+const { activeTab, changeTab, visibleTabs } = useHistoryTabs(isLeagueSeries)
 
 const tabValue = computed({
   get: () => activeTab.value,
@@ -114,20 +112,9 @@ const tabValue = computed({
       </AppTabs>
 
       <div ref="tabSurface" class="tab-surface" :style="{ height: tabSurfaceHeight }">
-        <Swiper
-          :key="visibleTabs.join('|')"
-          class="tab-swiper"
-          :initial-slide="activeIndex"
-          :auto-height="false"
-          :speed="300"
-          :threshold="10"
-          :space-between="10"
-          css-mode
-          @swiper="onSwiperReady"
-          @slide-change="onSlideChange"
-        >
-          <SwiperSlide v-for="tab in visibleTabs" :key="tab">
-            <div v-if="isTabRendered(tab)" class="tab-panel">
+        <AppSwipeView v-model="activeTab" :tabs="visibleTabs">
+          <template #default="{ tab }">
+            <div class="tab-panel">
               <ChampionsTab
                 v-if="tab === 'champions'"
                 :champions="champions"
@@ -143,8 +130,8 @@ const tabValue = computed({
               <TeamStatsTab v-else-if="tab === 'teams'" :teams="teamStats" />
               <PlayersTab v-else :players="playerRows" />
             </div>
-          </SwiperSlide>
-        </Swiper>
+          </template>
+        </AppSwipeView>
       </div>
     </template>
   </div>
@@ -157,12 +144,6 @@ const tabValue = computed({
   background: var(--surface);
   box-shadow: var(--elev-1);
   overflow: hidden;
-}
-
-/* The surface carries a measured static height, so the swiper's own
-   height: 100% chain (swiper → wrapper → slide) resolves without autoHeight. */
-.tab-swiper {
-  height: 100%;
 }
 
 .tab-panel {
