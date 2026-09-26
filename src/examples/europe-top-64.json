@@ -1,0 +1,457 @@
+{
+  "label": "Europe Top 64 Clubs",
+  "description": "The 64 strongest clubs in European football",
+  "order": 8,
+  "type": "club",
+  "category": "ranking",
+  "teams": [
+    {
+      "id": "eu64-01",
+      "name": "Real Madrid",
+      "color": "#FEBE10",
+      "power": 97,
+      "flag": "es"
+    },
+    {
+      "id": "eu64-02",
+      "name": "Manchester City",
+      "color": "#6CABDD",
+      "power": 96,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "eu64-03",
+      "name": "Bayern Munich",
+      "color": "#DC052D",
+      "power": 95,
+      "flag": "de"
+    },
+    {
+      "id": "eu64-04",
+      "name": "Liverpool",
+      "color": "#C8102E",
+      "power": 94,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "eu64-05",
+      "name": "Barcelona",
+      "color": "#A50044",
+      "power": 93,
+      "flag": "es"
+    },
+    {
+      "id": "eu64-06",
+      "name": "Paris Saint-Germain",
+      "color": "#004170",
+      "power": 93,
+      "flag": "fr"
+    },
+    {
+      "id": "eu64-07",
+      "name": "Arsenal",
+      "color": "#EF0107",
+      "power": 92,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "eu64-08",
+      "name": "Inter Milan",
+      "color": "#0055A4",
+      "power": 90,
+      "flag": "it"
+    },
+    {
+      "id": "eu64-09",
+      "name": "Atlético Madrid",
+      "color": "#CE3524",
+      "power": 89,
+      "flag": "es"
+    },
+    {
+      "id": "eu64-10",
+      "name": "Chelsea",
+      "color": "#034694",
+      "power": 88,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "eu64-11",
+      "name": "Bayer Leverkusen",
+      "color": "#E32221",
+      "power": 87,
+      "flag": "de"
+    },
+    {
+      "id": "eu64-12",
+      "name": "Borussia Dortmund",
+      "color": "#FDE100",
+      "power": 86,
+      "flag": "de"
+    },
+    {
+      "id": "eu64-13",
+      "name": "Napoli",
+      "color": "#008BD2",
+      "power": 86,
+      "flag": "it"
+    },
+    {
+      "id": "eu64-14",
+      "name": "Juventus",
+      "color": "#000000",
+      "power": 85,
+      "flag": "it"
+    },
+    {
+      "id": "eu64-15",
+      "name": "AC Milan",
+      "color": "#FB090B",
+      "power": 85,
+      "flag": "it"
+    },
+    {
+      "id": "eu64-16",
+      "name": "Tottenham Hotspur",
+      "color": "#132257",
+      "power": 84,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "eu64-17",
+      "name": "Newcastle United",
+      "color": "#241F20",
+      "power": 84,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "eu64-18",
+      "name": "Atalanta",
+      "color": "#1E71B8",
+      "power": 83,
+      "flag": "it"
+    },
+    {
+      "id": "eu64-19",
+      "name": "Sporting CP",
+      "color": "#008F39",
+      "power": 83,
+      "flag": "pt"
+    },
+    {
+      "id": "eu64-20",
+      "name": "Benfica",
+      "color": "#E83030",
+      "power": 83,
+      "flag": "pt"
+    },
+    {
+      "id": "eu64-21",
+      "name": "Aston Villa",
+      "color": "#670E36",
+      "power": 82,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "eu64-22",
+      "name": "RB Leipzig",
+      "color": "#DD013F",
+      "power": 82,
+      "flag": "de"
+    },
+    {
+      "id": "eu64-23",
+      "name": "Porto",
+      "color": "#003399",
+      "power": 81,
+      "flag": "pt"
+    },
+    {
+      "id": "eu64-24",
+      "name": "Manchester United",
+      "color": "#DA291C",
+      "power": 81,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "eu64-25",
+      "name": "Athletic Club",
+      "color": "#EE2523",
+      "power": 80,
+      "flag": "es"
+    },
+    {
+      "id": "eu64-26",
+      "name": "Roma",
+      "color": "#8E1F2F",
+      "power": 79,
+      "flag": "it"
+    },
+    {
+      "id": "eu64-27",
+      "name": "Eintracht Frankfurt",
+      "color": "#E1000F",
+      "power": 79,
+      "flag": "de"
+    },
+    {
+      "id": "eu64-28",
+      "name": "VfB Stuttgart",
+      "color": "#E32221",
+      "power": 78,
+      "flag": "de"
+    },
+    {
+      "id": "eu64-29",
+      "name": "Lazio",
+      "color": "#87D8F7",
+      "power": 78,
+      "flag": "it"
+    },
+    {
+      "id": "eu64-30",
+      "name": "Real Sociedad",
+      "color": "#0067B1",
+      "power": 78,
+      "flag": "es"
+    },
+    {
+      "id": "eu64-31",
+      "name": "Villarreal",
+      "color": "#FFD700",
+      "power": 78,
+      "flag": "es"
+    },
+    {
+      "id": "eu64-32",
+      "name": "PSV Eindhoven",
+      "color": "#E31E24",
+      "power": 78,
+      "flag": "nl"
+    },
+    {
+      "id": "eu64-33",
+      "name": "Marseille",
+      "color": "#2FAEE0",
+      "power": 77,
+      "flag": "fr"
+    },
+    {
+      "id": "eu64-34",
+      "name": "Monaco",
+      "color": "#E2001A",
+      "power": 77,
+      "flag": "fr"
+    },
+    {
+      "id": "eu64-35",
+      "name": "Real Betis",
+      "color": "#009543",
+      "power": 77,
+      "flag": "es"
+    },
+    {
+      "id": "eu64-36",
+      "name": "Galatasaray",
+      "color": "#A32638",
+      "power": 77,
+      "flag": "tr"
+    },
+    {
+      "id": "eu64-37",
+      "name": "Fiorentina",
+      "color": "#482E92",
+      "power": 76,
+      "flag": "it"
+    },
+    {
+      "id": "eu64-38",
+      "name": "Bologna",
+      "color": "#1A2F48",
+      "power": 76,
+      "flag": "it"
+    },
+    {
+      "id": "eu64-39",
+      "name": "Lille",
+      "color": "#E30613",
+      "power": 76,
+      "flag": "fr"
+    },
+    {
+      "id": "eu64-40",
+      "name": "Brighton & Hove Albion",
+      "color": "#0057B8",
+      "power": 76,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "eu64-41",
+      "name": "Feyenoord",
+      "color": "#E31E24",
+      "power": 76,
+      "flag": "nl"
+    },
+    {
+      "id": "eu64-42",
+      "name": "Ajax",
+      "color": "#D2122E",
+      "power": 76,
+      "flag": "nl"
+    },
+    {
+      "id": "eu64-43",
+      "name": "Fenerbahçe",
+      "color": "#001489",
+      "power": 75,
+      "flag": "tr"
+    },
+    {
+      "id": "eu64-44",
+      "name": "Club Brugge",
+      "color": "#0055A4",
+      "power": 75,
+      "flag": "be"
+    },
+    {
+      "id": "eu64-45",
+      "name": "Lyon",
+      "color": "#DA0812",
+      "power": 75,
+      "flag": "fr"
+    },
+    {
+      "id": "eu64-46",
+      "name": "Celtic",
+      "color": "#018749",
+      "power": 74,
+      "flag": "gb-sct"
+    },
+    {
+      "id": "eu64-47",
+      "name": "Nice",
+      "color": "#C8102E",
+      "power": 73,
+      "flag": "fr"
+    },
+    {
+      "id": "eu64-48",
+      "name": "Braga",
+      "color": "#E30613",
+      "power": 73,
+      "flag": "pt"
+    },
+    {
+      "id": "eu64-49",
+      "name": "Shakhtar Donetsk",
+      "color": "#FF6A00",
+      "power": 73,
+      "flag": "ua"
+    },
+    {
+      "id": "eu64-50",
+      "name": "Olympiacos",
+      "color": "#E30613",
+      "power": 73,
+      "flag": "gr"
+    },
+    {
+      "id": "eu64-51",
+      "name": "Rangers",
+      "color": "#1B458F",
+      "power": 72,
+      "flag": "gb-sct"
+    },
+    {
+      "id": "eu64-52",
+      "name": "Beşiktaş",
+      "color": "#000000",
+      "power": 72,
+      "flag": "tr"
+    },
+    {
+      "id": "eu64-53",
+      "name": "Red Bull Salzburg",
+      "color": "#D6001C",
+      "power": 72,
+      "flag": "at"
+    },
+    {
+      "id": "eu64-54",
+      "name": "Dinamo Zagreb",
+      "color": "#0055A4",
+      "power": 71,
+      "flag": "hr"
+    },
+    {
+      "id": "eu64-55",
+      "name": "Crvena Zvezda",
+      "color": "#E30613",
+      "power": 71,
+      "flag": "rs"
+    },
+    {
+      "id": "eu64-56",
+      "name": "Slavia Prague",
+      "color": "#E30613",
+      "power": 70,
+      "flag": "cz"
+    },
+    {
+      "id": "eu64-57",
+      "name": "Sparta Prague",
+      "color": "#A6192E",
+      "power": 69,
+      "flag": "cz"
+    },
+    {
+      "id": "eu64-58",
+      "name": "Copenhagen",
+      "color": "#FFFFFF",
+      "power": 69,
+      "flag": "dk"
+    },
+    {
+      "id": "eu64-59",
+      "name": "Young Boys",
+      "color": "#FFD700",
+      "power": 69,
+      "flag": "ch"
+    },
+    {
+      "id": "eu64-60",
+      "name": "PAOK",
+      "color": "#000000",
+      "power": 69,
+      "flag": "gr"
+    },
+    {
+      "id": "eu64-61",
+      "name": "Union Saint-Gilloise",
+      "color": "#FFD700",
+      "power": 68,
+      "flag": "be"
+    },
+    {
+      "id": "eu64-62",
+      "name": "Bodø/Glimt",
+      "color": "#FFD700",
+      "power": 68,
+      "flag": "no"
+    },
+    {
+      "id": "eu64-63",
+      "name": "Ferencváros",
+      "color": "#009A44",
+      "power": 67,
+      "flag": "hu"
+    },
+    {
+      "id": "eu64-64",
+      "name": "Midtjylland",
+      "color": "#000000",
+      "power": 66,
+      "flag": "dk"
+    }
+  ]
+}

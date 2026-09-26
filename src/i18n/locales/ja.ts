@@ -540,6 +540,9 @@
         'データセット "{name}" を読み込みますか？ 現在のチームや大会に追加されます。データセットを2回読み込むごとに短いリワード広告が表示されます — 今回がその1回です。',
       adNotice: "次にデータセットを読み込むと、短いリワード広告が表示されます。",
       adBadge: "広告を見る",
+      all: "すべて",
+      topClubs: "トップクラブ",
+      searchPlaceholder: "データセットやチームを検索…",
       loadLabel: "読み込む",
     },
     dataManagement: {
@@ -576,7 +579,8 @@
     about: "アプリについて",
     aboutBy: "開発:",
     specialThanks: "スペシャルサンクス",
-    disclaimer: "非公式のファン制作シミュレーターです。UEFA、AFC、CONMEBOL、FIFA、またはアプリ内で言及されているクラブ・リーグ・大会とは提携・承認・関係がありません。",
+    disclaimer:
+      "非公式のファン制作シミュレーターです。UEFA、AFC、CONMEBOL、FIFA、またはアプリ内で言及されているクラブ・リーグ・大会とは提携・承認・関係がありません。",
   },
   tournament: {
     exportExcel: "Excel に書き出す",

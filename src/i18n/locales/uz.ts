@@ -556,6 +556,9 @@
         "\"{name}\" to'plami yuklansinmi? Bu joriy jamoalaringiz va turnirlaringizga qo'shiladi. Har 2-marta to'plam yuklaganingizda qisqa mukofotli reklama ko'rsatiladi — bu ham ulardan biri.",
       adNotice: "Keyingi to'plamni yuklaganingizda qisqa mukofotli reklama ko'rsatiladi.",
       adBadge: "Reklamani ko'rish",
+      all: "Hammasi",
+      topClubs: "Eng yaxshi klublar",
+      searchPlaceholder: "Ma'lumotlar to'plami yoki jamoa qidirish…",
       loadLabel: "Yuklash",
     },
     dataManagement: {
@@ -595,7 +598,8 @@
     about: "Ilova haqida",
     aboutBy: "muallif",
     specialThanks: "Alohida minnatdorchilik",
-    disclaimer: "Norasmiy, muxlislar tomonidan yaratilgan simulyator. UEFA, AFC, CONMEBOL, FIFA yoki ilovada nomi zikr etilgan hech qanday klub, liga yoki musobaqa bilan bog'liq yoki tasdiqlangan emas.",
+    disclaimer:
+      "Norasmiy, muxlislar tomonidan yaratilgan simulyator. UEFA, AFC, CONMEBOL, FIFA yoki ilovada nomi zikr etilgan hech qanday klub, liga yoki musobaqa bilan bog'liq yoki tasdiqlangan emas.",
   },
   tournament: {
     exportExcel: "Excel'ga eksport",

@@ -553,6 +553,9 @@
       loadLabel: "Load",
       adNotice: "Your next dataset load will show a short rewarded ad.",
       adBadge: "Watch ad",
+      all: "All",
+      topClubs: "Top Clubs",
+      searchPlaceholder: "Search datasets or teams…",
     },
     dataManagement: {
       title: "Data Management",
@@ -589,7 +592,8 @@
     about: "About",
     aboutBy: "by",
     specialThanks: "Special thanks",
-    disclaimer: "Unofficial fan-made simulator. Not affiliated with, endorsed by, or connected to UEFA, AFC, CONMEBOL, FIFA, or any club, league or competition referenced in the app.",
+    disclaimer:
+      "Unofficial fan-made simulator. Not affiliated with, endorsed by, or connected to UEFA, AFC, CONMEBOL, FIFA, or any club, league or competition referenced in the app.",
   },
   tournament: {
     exportExcel: "Export to Excel",

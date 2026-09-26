@@ -541,6 +541,9 @@
         'Wczytać zestaw danych "{name}"? Zostanie dodany do Twoich obecnych drużyn i turniejów. Co 2. wczytany zestaw danych pokazuje krótką reklamę z nagrodą — to jest jedna z nich.',
       adNotice: "Przy następnym wczytaniu zestawu danych pojawi się krótka reklama z nagrodą.",
       adBadge: "Obejrzyj reklamę",
+      all: "Wszystkie",
+      topClubs: "Najlepsze kluby",
+      searchPlaceholder: "Szukaj zestawów lub drużyn…",
       loadLabel: "Wczytaj",
     },
     dataManagement: {
@@ -577,7 +580,8 @@
     about: "O aplikacji",
     aboutBy: "autor",
     specialThanks: "Specjalne podziękowania",
-    disclaimer: "Nieoficjalny symulator stworzony przez fanów. Nie jest powiązany ani wspierany przez UEFA, AFC, CONMEBOL, FIFA ani żaden klub, ligę czy rozgrywki wymienione w aplikacji.",
+    disclaimer:
+      "Nieoficjalny symulator stworzony przez fanów. Nie jest powiązany ani wspierany przez UEFA, AFC, CONMEBOL, FIFA ani żaden klub, ligę czy rozgrywki wymienione w aplikacji.",
   },
   tournament: {
     exportExcel: "Eksportuj do Excela",

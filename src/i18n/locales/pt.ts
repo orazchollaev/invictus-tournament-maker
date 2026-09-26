@@ -556,6 +556,9 @@
       adNotice:
         "A próxima vez que carregar um conjunto de dados será exibido um breve anúncio com recompensa.",
       adBadge: "Ver anúncio",
+      all: "Todos",
+      topClubs: "Melhores clubes",
+      searchPlaceholder: "Pesquisar conjuntos ou equipas…",
       loadLabel: "Carregar",
     },
     dataManagement: {
@@ -593,7 +596,8 @@
     about: "Sobre",
     aboutBy: "por",
     specialThanks: "Agradecimento especial",
-    disclaimer: "Simulador não oficial feito por fãs. Não afiliado, endossado ou associado à UEFA, AFC, CONMEBOL, FIFA ou a qualquer clube, liga ou competição mencionados na aplicação.",
+    disclaimer:
+      "Simulador não oficial feito por fãs. Não afiliado, endossado ou associado à UEFA, AFC, CONMEBOL, FIFA ou a qualquer clube, liga ou competição mencionados na aplicação.",
   },
   tournament: {
     exportExcel: "Exportar para Excel",

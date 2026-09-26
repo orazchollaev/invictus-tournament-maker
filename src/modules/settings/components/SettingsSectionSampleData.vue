@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from "vue"
+import { computed, ref } from "vue"
 import { useI18n } from "vue-i18n"
 import {
   FlaskConical,
@@ -10,8 +10,9 @@ import {
   CirclePlay,
   ListOrdered,
   History,
+  Medal,
 } from "@lucide/vue"
-import { AppCard, AppIcon } from "@/components/ui"
+import { AppCard, AppEmptyState, AppIcon, AppSearchInput } from "@/components/ui"
 import { FlagCircle } from "@/modules/teams/components"
 import { SAMPLE_DATASETS, useDataManagement } from "../composables/useDataManagement"
 import { useRewardedAd } from "@/composables/useRewardedAd"
@@ -45,13 +46,38 @@ const groups = computed(() => {
   const clubs = current.filter((ds) => ds.type === "club" && !isUefaCompetition(ds.label))
   const countries = current.filter((ds) => ds.type === "country")
   const classics = SAMPLE_DATASETS.filter((ds) => ds.category === "classic")
+  const rankings = SAMPLE_DATASETS.filter((ds) => ds.category === "ranking")
   return [
     { key: "uefa", title: t("settings.sampleData.uefa"), icon: Trophy, items: uefa },
     { key: "leagues", title: t("settings.sampleData.leagues"), icon: ListOrdered, items: leagues },
     { key: "clubs", title: t("settings.sampleData.clubs"), icon: null, items: clubs },
+    { key: "rankings", title: t("settings.sampleData.topClubs"), icon: Medal, items: rankings },
     { key: "countries", title: t("settings.sampleData.countries"), icon: Globe, items: countries },
     { key: "classics", title: t("settings.sampleData.classics"), icon: History, items: classics },
   ].filter((g) => g.items.length)
+})
+
+// The full list runs very long on a phone — a category chip narrows it to one
+// section, and the search matches a dataset's name, description or any team in it.
+const activeGroup = ref("all")
+const query = ref("")
+
+const filters = computed(() => [
+  { key: "all", title: t("settings.sampleData.all") },
+  ...groups.value.map((g) => ({ key: g.key, title: g.title })),
+])
+
+const visibleGroups = computed(() => {
+  const q = query.value.trim().toLocaleLowerCase()
+  const matches = (ds: (typeof SAMPLE_DATASETS)[number]) =>
+    !q ||
+    ds.label.toLocaleLowerCase().includes(q) ||
+    ds.description.toLocaleLowerCase().includes(q) ||
+    ds.teams.some((team) => team.name.toLocaleLowerCase().includes(q))
+  return groups.value
+    .filter((g) => activeGroup.value === "all" || g.key === activeGroup.value)
+    .map((g) => ({ ...g, items: g.items.filter(matches) }))
+    .filter((g) => g.items.length)
 })
 
 function flagPreview(ds: (typeof SAMPLE_DATASETS)[number]) {
@@ -78,7 +104,27 @@ function flagPreview(ds: (typeof SAMPLE_DATASETS)[number]) {
       {{ t("settings.sampleData.adNotice") }}
     </p>
 
-    <section v-for="group in groups" :key="group.key" class="dataset-section">
+    <div class="dataset-toolbar">
+      <AppSearchInput v-model="query" :placeholder="t('settings.sampleData.searchPlaceholder')" />
+      <div class="dataset-filters" role="tablist">
+        <button
+          v-for="f in filters"
+          :key="f.key"
+          type="button"
+          role="tab"
+          class="dataset-filter"
+          :class="{ active: activeGroup === f.key }"
+          :aria-selected="activeGroup === f.key"
+          @click="activeGroup = f.key"
+        >
+          {{ f.title }}
+        </button>
+      </div>
+    </div>
+
+    <AppEmptyState v-if="!visibleGroups.length" :description="t('common.noMatch', { query })" />
+
+    <section v-for="group in visibleGroups" :key="group.key" class="dataset-section">
       <h3 class="dataset-group-title">
         <AppIcon v-if="group.icon" :icon="group.icon" size="sm" />
         {{ group.title }}
@@ -151,6 +197,47 @@ function flagPreview(ds: (typeof SAMPLE_DATASETS)[number]) {
   color: var(--accent);
   font-size: var(--fs-sm);
   font-weight: 600;
+}
+
+/* ── Search + category filter ── */
+.dataset-toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-4);
+}
+
+.dataset-filters {
+  display: flex;
+  gap: var(--sp-2);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.dataset-filters::-webkit-scrollbar {
+  display: none;
+}
+
+.dataset-filter {
+  flex-shrink: 0;
+  padding: var(--sp-1) var(--sp-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--text-muted);
+  font-family: var(--font-ui);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background var(--dur-fast) var(--ease),
+    border-color var(--dur-fast) var(--ease),
+    color var(--dur-fast) var(--ease);
+}
+.dataset-filter.active {
+  background: var(--accent-subtle);
+  border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+  color: var(--accent);
 }
 
 /* ── Section / group titles ── */

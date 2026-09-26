@@ -556,6 +556,9 @@
         'Dataset "{name}" laden? Deze wordt toegevoegd aan je huidige teams en toernooien. Elke 2e dataset die je laadt, verschijnt er een korte beloningsadvertentie — dit is er een van.',
       adNotice: "Bij het laden van je volgende dataset verschijnt een korte beloningsadvertentie.",
       adBadge: "Advertentie bekijken",
+      all: "Alle",
+      topClubs: "Topclubs",
+      searchPlaceholder: "Datasets of teams zoeken…",
       loadLabel: "Laden",
     },
     dataManagement: {
@@ -595,7 +598,8 @@
     about: "Over",
     aboutBy: "door",
     specialThanks: "Speciale dank",
-    disclaimer: "Niet-officiële, door fans gemaakte simulator. Niet verbonden met, goedgekeurd door of gelieerd aan UEFA, AFC, CONMEBOL, FIFA of enige club, competitie of toernooi dat in de app wordt genoemd.",
+    disclaimer:
+      "Niet-officiële, door fans gemaakte simulator. Niet verbonden met, goedgekeurd door of gelieerd aan UEFA, AFC, CONMEBOL, FIFA of enige club, competitie of toernooi dat in de app wordt genoemd.",
   },
   tournament: {
     exportExcel: "Exporteren naar Excel",

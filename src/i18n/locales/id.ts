@@ -544,6 +544,9 @@
       adNotice:
         "Saat Anda memuat himpunan data berikutnya, iklan berhadiah singkat akan ditampilkan.",
       adBadge: "Tonton iklan",
+      all: "Semua",
+      topClubs: "Klub Teratas",
+      searchPlaceholder: "Cari set data atau tim…",
       loadLabel: "Muat",
     },
     dataManagement: {
@@ -580,7 +583,8 @@
     about: "Tentang",
     aboutBy: "oleh",
     specialThanks: "Terima kasih khusus",
-    disclaimer: "Simulator tidak resmi buatan penggemar. Tidak berafiliasi, didukung, atau terhubung dengan UEFA, AFC, CONMEBOL, FIFA, atau klub, liga, maupun kompetisi apa pun yang disebutkan dalam aplikasi.",
+    disclaimer:
+      "Simulator tidak resmi buatan penggemar. Tidak berafiliasi, didukung, atau terhubung dengan UEFA, AFC, CONMEBOL, FIFA, atau klub, liga, maupun kompetisi apa pun yang disebutkan dalam aplikasi.",
   },
   tournament: {
     exportExcel: "Ekspor ke Excel",

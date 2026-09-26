@@ -560,6 +560,9 @@
       adNotice:
         "Beim nächsten Laden eines Datensatzes wird eine kurze Werbevideo-Belohnung angezeigt.",
       adBadge: "Werbung ansehen",
+      all: "Alle",
+      topClubs: "Top-Vereine",
+      searchPlaceholder: "Datensätze oder Teams suchen…",
     },
     dataManagement: {
       title: "Datenverwaltung",
@@ -598,7 +601,8 @@
     about: "Über",
     aboutBy: "von",
     specialThanks: "Besonderer Dank",
-    disclaimer: "Inoffizieller, von Fans erstellter Simulator. Nicht verbunden mit oder unterstützt von UEFA, AFC, CONMEBOL, FIFA oder anderen in der App genannten Vereinen, Ligen oder Wettbewerben.",
+    disclaimer:
+      "Inoffizieller, von Fans erstellter Simulator. Nicht verbunden mit oder unterstützt von UEFA, AFC, CONMEBOL, FIFA oder anderen in der App genannten Vereinen, Ligen oder Wettbewerben.",
   },
   tournament: {
     exportExcel: "Nach Excel exportieren",

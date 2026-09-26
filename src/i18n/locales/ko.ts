@@ -540,6 +540,9 @@
         '"{name}" 데이터셋을 불러오시겠습니까? 현재 팀과 토너먼트에 추가됩니다. 데이터셋을 2번 불러올 때마다 짧은 보상형 광고가 표시됩니다 — 이번이 그중 하나입니다.',
       adNotice: "다음 데이터셋을 불러올 때 짧은 보상형 광고가 표시됩니다.",
       adBadge: "광고 보기",
+      all: "전체",
+      topClubs: "최고의 클럽",
+      searchPlaceholder: "데이터셋 또는 팀 검색…",
       loadLabel: "불러오기",
     },
     dataManagement: {
@@ -576,7 +579,8 @@
     about: "정보",
     aboutBy: "제작",
     specialThanks: "특별 감사",
-    disclaimer: "비공식 팬 제작 시뮬레이터입니다. UEFA, AFC, CONMEBOL, FIFA 또는 앱에서 언급된 어떤 클럽, 리그, 대회와도 제휴, 후원, 연관되어 있지 않습니다.",
+    disclaimer:
+      "비공식 팬 제작 시뮬레이터입니다. UEFA, AFC, CONMEBOL, FIFA 또는 앱에서 언급된 어떤 클럽, 리그, 대회와도 제휴, 후원, 연관되어 있지 않습니다.",
   },
   tournament: {
     exportExcel: "Excel로 내보내기",

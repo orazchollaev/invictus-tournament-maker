@@ -1,0 +1,457 @@
+{
+  "label": "Americas Top 64 Clubs",
+  "description": "The 64 strongest clubs across North, Central and South America",
+  "order": 8.1,
+  "type": "club",
+  "category": "ranking",
+  "teams": [
+    {
+      "id": "am64-01",
+      "name": "Flamengo",
+      "color": "#E30613",
+      "power": 91,
+      "flag": "br"
+    },
+    {
+      "id": "am64-02",
+      "name": "Palmeiras",
+      "color": "#006437",
+      "power": 90,
+      "flag": "br"
+    },
+    {
+      "id": "am64-03",
+      "name": "River Plate",
+      "color": "#E30613",
+      "power": 88,
+      "flag": "ar"
+    },
+    {
+      "id": "am64-04",
+      "name": "Boca Juniors",
+      "color": "#003B7A",
+      "power": 87,
+      "flag": "ar"
+    },
+    {
+      "id": "am64-05",
+      "name": "Botafogo",
+      "color": "#000000",
+      "power": 87,
+      "flag": "br"
+    },
+    {
+      "id": "am64-06",
+      "name": "Fluminense",
+      "color": "#7B1E3A",
+      "power": 86,
+      "flag": "br"
+    },
+    {
+      "id": "am64-07",
+      "name": "Atlético Mineiro",
+      "color": "#000000",
+      "power": 85,
+      "flag": "br"
+    },
+    {
+      "id": "am64-08",
+      "name": "São Paulo",
+      "color": "#E30613",
+      "power": 85,
+      "flag": "br"
+    },
+    {
+      "id": "am64-09",
+      "name": "Internacional",
+      "color": "#E30613",
+      "power": 84,
+      "flag": "br"
+    },
+    {
+      "id": "am64-10",
+      "name": "Corinthians",
+      "color": "#000000",
+      "power": 84,
+      "flag": "br"
+    },
+    {
+      "id": "am64-11",
+      "name": "Cruzeiro",
+      "color": "#003DA5",
+      "power": 84,
+      "flag": "br"
+    },
+    {
+      "id": "am64-12",
+      "name": "Racing Club",
+      "color": "#6CB4EE",
+      "power": 83,
+      "flag": "ar"
+    },
+    {
+      "id": "am64-13",
+      "name": "Monterrey",
+      "color": "#0A2240",
+      "power": 84,
+      "flag": "mx"
+    },
+    {
+      "id": "am64-14",
+      "name": "América",
+      "color": "#FFD700",
+      "power": 84,
+      "flag": "mx"
+    },
+    {
+      "id": "am64-15",
+      "name": "Toluca",
+      "color": "#C8102E",
+      "power": 83,
+      "flag": "mx"
+    },
+    {
+      "id": "am64-16",
+      "name": "Cruz Azul",
+      "color": "#003DA5",
+      "power": 83,
+      "flag": "mx"
+    },
+    {
+      "id": "am64-17",
+      "name": "Tigres UANL",
+      "color": "#FDB913",
+      "power": 83,
+      "flag": "mx"
+    },
+    {
+      "id": "am64-18",
+      "name": "Inter Miami",
+      "color": "#F7B5CD",
+      "power": 84,
+      "flag": "us"
+    },
+    {
+      "id": "am64-19",
+      "name": "LA Galaxy",
+      "color": "#00245D",
+      "power": 81,
+      "flag": "us"
+    },
+    {
+      "id": "am64-20",
+      "name": "Los Angeles FC",
+      "color": "#000000",
+      "power": 82,
+      "flag": "us"
+    },
+    {
+      "id": "am64-21",
+      "name": "Columbus Crew",
+      "color": "#FEDD00",
+      "power": 80,
+      "flag": "us"
+    },
+    {
+      "id": "am64-22",
+      "name": "Seattle Sounders",
+      "color": "#5D9741",
+      "power": 80,
+      "flag": "us"
+    },
+    {
+      "id": "am64-23",
+      "name": "Peñarol",
+      "color": "#FFD700",
+      "power": 82,
+      "flag": "uy"
+    },
+    {
+      "id": "am64-24",
+      "name": "Nacional",
+      "color": "#003DA5",
+      "power": 80,
+      "flag": "uy"
+    },
+    {
+      "id": "am64-25",
+      "name": "Liga de Quito",
+      "color": "#C8102E",
+      "power": 82,
+      "flag": "ec"
+    },
+    {
+      "id": "am64-26",
+      "name": "Independiente del Valle",
+      "color": "#000000",
+      "power": 82,
+      "flag": "ec"
+    },
+    {
+      "id": "am64-27",
+      "name": "Estudiantes de La Plata",
+      "color": "#E30613",
+      "power": 81,
+      "flag": "ar"
+    },
+    {
+      "id": "am64-28",
+      "name": "Vélez Sarsfield",
+      "color": "#003DA5",
+      "power": 80,
+      "flag": "ar"
+    },
+    {
+      "id": "am64-29",
+      "name": "Grêmio",
+      "color": "#0D80BF",
+      "power": 81,
+      "flag": "br"
+    },
+    {
+      "id": "am64-30",
+      "name": "Vasco da Gama",
+      "color": "#000000",
+      "power": 80,
+      "flag": "br"
+    },
+    {
+      "id": "am64-31",
+      "name": "Bahia",
+      "color": "#003DA5",
+      "power": 80,
+      "flag": "br"
+    },
+    {
+      "id": "am64-32",
+      "name": "Pachuca",
+      "color": "#003DA5",
+      "power": 80,
+      "flag": "mx"
+    },
+    {
+      "id": "am64-33",
+      "name": "Guadalajara",
+      "color": "#C8102E",
+      "power": 80,
+      "flag": "mx"
+    },
+    {
+      "id": "am64-34",
+      "name": "Pumas UNAM",
+      "color": "#D4AF37",
+      "power": 78,
+      "flag": "mx"
+    },
+    {
+      "id": "am64-35",
+      "name": "Cerro Porteño",
+      "color": "#1A3D8F",
+      "power": 79,
+      "flag": "py"
+    },
+    {
+      "id": "am64-36",
+      "name": "Olimpia",
+      "color": "#000000",
+      "power": 78,
+      "flag": "py"
+    },
+    {
+      "id": "am64-37",
+      "name": "Libertad",
+      "color": "#000000",
+      "power": 78,
+      "flag": "py"
+    },
+    {
+      "id": "am64-38",
+      "name": "San Lorenzo",
+      "color": "#003DA5",
+      "power": 78,
+      "flag": "ar"
+    },
+    {
+      "id": "am64-39",
+      "name": "Independiente",
+      "color": "#E30613",
+      "power": 78,
+      "flag": "ar"
+    },
+    {
+      "id": "am64-40",
+      "name": "Talleres",
+      "color": "#003DA5",
+      "power": 78,
+      "flag": "ar"
+    },
+    {
+      "id": "am64-41",
+      "name": "Lanús",
+      "color": "#8B1E3F",
+      "power": 78,
+      "flag": "ar"
+    },
+    {
+      "id": "am64-42",
+      "name": "Atlético Nacional",
+      "color": "#00843D",
+      "power": 78,
+      "flag": "co"
+    },
+    {
+      "id": "am64-43",
+      "name": "Junior",
+      "color": "#D71920",
+      "power": 77,
+      "flag": "co"
+    },
+    {
+      "id": "am64-44",
+      "name": "Millonarios",
+      "color": "#003DA5",
+      "power": 76,
+      "flag": "co"
+    },
+    {
+      "id": "am64-45",
+      "name": "Colo-Colo",
+      "color": "#000000",
+      "power": 77,
+      "flag": "cl"
+    },
+    {
+      "id": "am64-46",
+      "name": "Universidad de Chile",
+      "color": "#003DA5",
+      "power": 76,
+      "flag": "cl"
+    },
+    {
+      "id": "am64-47",
+      "name": "Universitario",
+      "color": "#E30613",
+      "power": 76,
+      "flag": "pe"
+    },
+    {
+      "id": "am64-48",
+      "name": "Alianza Lima",
+      "color": "#003DA5",
+      "power": 75,
+      "flag": "pe"
+    },
+    {
+      "id": "am64-49",
+      "name": "Sporting Cristal",
+      "color": "#7AC8E8",
+      "power": 75,
+      "flag": "pe"
+    },
+    {
+      "id": "am64-50",
+      "name": "Bolívar",
+      "color": "#00AEEF",
+      "power": 73,
+      "flag": "bo"
+    },
+    {
+      "id": "am64-51",
+      "name": "Philadelphia Union",
+      "color": "#071B2C",
+      "power": 78,
+      "flag": "us"
+    },
+    {
+      "id": "am64-52",
+      "name": "FC Cincinnati",
+      "color": "#F05323",
+      "power": 78,
+      "flag": "us"
+    },
+    {
+      "id": "am64-53",
+      "name": "New York Red Bulls",
+      "color": "#D6001C",
+      "power": 76,
+      "flag": "us"
+    },
+    {
+      "id": "am64-54",
+      "name": "Orlando City",
+      "color": "#633492",
+      "power": 77,
+      "flag": "us"
+    },
+    {
+      "id": "am64-55",
+      "name": "Vancouver Whitecaps",
+      "color": "#00245E",
+      "power": 77,
+      "flag": "ca"
+    },
+    {
+      "id": "am64-56",
+      "name": "Toronto FC",
+      "color": "#B81137",
+      "power": 74,
+      "flag": "ca"
+    },
+    {
+      "id": "am64-57",
+      "name": "CF Montréal",
+      "color": "#000000",
+      "power": 73,
+      "flag": "ca"
+    },
+    {
+      "id": "am64-58",
+      "name": "Alajuelense",
+      "color": "#C8102E",
+      "power": 75,
+      "flag": "cr"
+    },
+    {
+      "id": "am64-59",
+      "name": "Saprissa",
+      "color": "#5B2C83",
+      "power": 74,
+      "flag": "cr"
+    },
+    {
+      "id": "am64-60",
+      "name": "Herediano",
+      "color": "#FFD700",
+      "power": 72,
+      "flag": "cr"
+    },
+    {
+      "id": "am64-61",
+      "name": "Olimpia Honduras",
+      "color": "#003DA5",
+      "power": 71,
+      "flag": "hn"
+    },
+    {
+      "id": "am64-62",
+      "name": "Motagua",
+      "color": "#003DA5",
+      "power": 70,
+      "flag": "hn"
+    },
+    {
+      "id": "am64-63",
+      "name": "Municipal",
+      "color": "#C8102E",
+      "power": 69,
+      "flag": "gt"
+    },
+    {
+      "id": "am64-64",
+      "name": "Deportivo La Guaira",
+      "color": "#F7C600",
+      "power": 68,
+      "flag": "ve"
+    }
+  ]
+}

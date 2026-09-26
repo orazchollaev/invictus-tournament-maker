@@ -1,0 +1,232 @@
+{
+  "label": "2026/27 CAF Champions League",
+  "description": "CAF Champions League 2026/27 teams",
+  "order": 7.5,
+  "type": "club",
+  "teams": [
+    {
+      "id": "caf-01",
+      "name": "Al Ahly",
+      "color": "#C8102E",
+      "power": 87,
+      "flag": "eg"
+    },
+    {
+      "id": "caf-02",
+      "name": "Mamelodi Sundowns",
+      "color": "#FFD100",
+      "power": 86,
+      "flag": "za"
+    },
+    {
+      "id": "caf-03",
+      "name": "Pyramids FC",
+      "color": "#0A2A5E",
+      "power": 84,
+      "flag": "eg"
+    },
+    {
+      "id": "caf-04",
+      "name": "Espérance de Tunis",
+      "color": "#C8102E",
+      "power": 83,
+      "flag": "tn"
+    },
+    {
+      "id": "caf-05",
+      "name": "RS Berkane",
+      "color": "#F58220",
+      "power": 82,
+      "flag": "ma"
+    },
+    {
+      "id": "caf-06",
+      "name": "Wydad Casablanca",
+      "color": "#D71920",
+      "power": 82,
+      "flag": "ma"
+    },
+    {
+      "id": "caf-07",
+      "name": "Raja Casablanca",
+      "color": "#00843D",
+      "power": 81,
+      "flag": "ma"
+    },
+    {
+      "id": "caf-08",
+      "name": "AS FAR",
+      "color": "#C8102E",
+      "power": 80,
+      "flag": "ma"
+    },
+    {
+      "id": "caf-09",
+      "name": "Zamalek",
+      "color": "#FFFFFF",
+      "power": 81,
+      "flag": "eg"
+    },
+    {
+      "id": "caf-10",
+      "name": "Orlando Pirates",
+      "color": "#000000",
+      "power": 80,
+      "flag": "za"
+    },
+    {
+      "id": "caf-11",
+      "name": "Al Hilal Omdurman",
+      "color": "#0055A4",
+      "power": 78,
+      "flag": "sd"
+    },
+    {
+      "id": "caf-12",
+      "name": "Simba SC",
+      "color": "#E30613",
+      "power": 79,
+      "flag": "tz"
+    },
+    {
+      "id": "caf-13",
+      "name": "Young Africans",
+      "color": "#FFD100",
+      "power": 79,
+      "flag": "tz"
+    },
+    {
+      "id": "caf-14",
+      "name": "TP Mazembe",
+      "color": "#000000",
+      "power": 78,
+      "flag": "cd"
+    },
+    {
+      "id": "caf-15",
+      "name": "Petro de Luanda",
+      "color": "#003DA5",
+      "power": 77,
+      "flag": "ao"
+    },
+    {
+      "id": "caf-16",
+      "name": "MC Alger",
+      "color": "#00843D",
+      "power": 78,
+      "flag": "dz"
+    },
+    {
+      "id": "caf-17",
+      "name": "CR Belouizdad",
+      "color": "#C8102E",
+      "power": 77,
+      "flag": "dz"
+    },
+    {
+      "id": "caf-18",
+      "name": "JS Kabylie",
+      "color": "#FFD100",
+      "power": 75,
+      "flag": "dz"
+    },
+    {
+      "id": "caf-19",
+      "name": "US Monastir",
+      "color": "#0055A4",
+      "power": 74,
+      "flag": "tn"
+    },
+    {
+      "id": "caf-20",
+      "name": "Étoile du Sahel",
+      "color": "#C8102E",
+      "power": 75,
+      "flag": "tn"
+    },
+    {
+      "id": "caf-21",
+      "name": "ASEC Mimosas",
+      "color": "#F58220",
+      "power": 75,
+      "flag": "ci"
+    },
+    {
+      "id": "caf-22",
+      "name": "Stade Malien",
+      "color": "#FFFFFF",
+      "power": 72,
+      "flag": "ml"
+    },
+    {
+      "id": "caf-23",
+      "name": "Djoliba AC",
+      "color": "#C8102E",
+      "power": 70,
+      "flag": "ml"
+    },
+    {
+      "id": "caf-24",
+      "name": "Horoya AC",
+      "color": "#C8102E",
+      "power": 71,
+      "flag": "gn"
+    },
+    {
+      "id": "caf-25",
+      "name": "AS Vita Club",
+      "color": "#00843D",
+      "power": 71,
+      "flag": "cd"
+    },
+    {
+      "id": "caf-26",
+      "name": "Sagrada Esperança",
+      "color": "#00843D",
+      "power": 69,
+      "flag": "ao"
+    },
+    {
+      "id": "caf-27",
+      "name": "Al Ittihad Tripoli",
+      "color": "#00843D",
+      "power": 70,
+      "flag": "ly"
+    },
+    {
+      "id": "caf-28",
+      "name": "Enyimba",
+      "color": "#003DA5",
+      "power": 70,
+      "flag": "ng"
+    },
+    {
+      "id": "caf-29",
+      "name": "Rivers United",
+      "color": "#0055A4",
+      "power": 69,
+      "flag": "ng"
+    },
+    {
+      "id": "caf-30",
+      "name": "Medeama",
+      "color": "#FFD100",
+      "power": 67,
+      "flag": "gh"
+    },
+    {
+      "id": "caf-31",
+      "name": "Power Dynamos",
+      "color": "#F58220",
+      "power": 68,
+      "flag": "zm"
+    },
+    {
+      "id": "caf-32",
+      "name": "Teungueth FC",
+      "color": "#003DA5",
+      "power": 66,
+      "flag": "sn"
+    }
+  ]
+}

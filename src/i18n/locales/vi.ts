@@ -542,6 +542,9 @@
         'Tải bộ dữ liệu "{name}"? Dữ liệu này sẽ được thêm vào các đội và giải đấu hiện tại của bạn. Cứ mỗi 2 bộ dữ liệu bạn tải, một quảng cáo có thưởng ngắn sẽ hiện ra — đây là một trong số đó.',
       adNotice: "Lần tải bộ dữ liệu tiếp theo sẽ hiển thị một quảng cáo có thưởng ngắn.",
       adBadge: "Xem quảng cáo",
+      all: "Tất cả",
+      topClubs: "CLB hàng đầu",
+      searchPlaceholder: "Tìm bộ dữ liệu hoặc đội…",
       loadLabel: "Tải",
     },
     dataManagement: {
@@ -578,7 +581,8 @@
     about: "Giới thiệu",
     aboutBy: "bởi",
     specialThanks: "Đặc biệt cảm ơn",
-    disclaimer: "Trình mô phỏng không chính thức do người hâm mộ tạo ra. Không liên kết, không được xác nhận và không có quan hệ với UEFA, AFC, CONMEBOL, FIFA hay bất kỳ câu lạc bộ, giải đấu nào được nhắc đến trong ứng dụng.",
+    disclaimer:
+      "Trình mô phỏng không chính thức do người hâm mộ tạo ra. Không liên kết, không được xác nhận và không có quan hệ với UEFA, AFC, CONMEBOL, FIFA hay bất kỳ câu lạc bộ, giải đấu nào được nhắc đến trong ứng dụng.",
   },
   tournament: {
     exportExcel: "Xuất ra Excel",
