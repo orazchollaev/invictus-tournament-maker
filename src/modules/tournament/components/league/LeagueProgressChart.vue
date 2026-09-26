@@ -64,20 +64,53 @@ function getVisibilityMap(): Map<string, boolean> {
   return map
 }
 
+function hexToRgb(hex: string): [number, number, number] | null {
+  const m = /^#?([0-9a-f]{6})$/i.exec(hex.trim())
+  if (!m) return null
+  const n = parseInt(m[1]!, 16)
+  return [(n >> 16) & 255, (n >> 8) & 255, n & 255]
+}
+
+/**
+ * Team colours often collide (two red kits in one group). A line whose colour
+ * is close to an earlier one gets a dash pattern and point shape so the two
+ * stay tell-apart-able.
+ */
+const DASHES = [[], [6, 4], [2, 3], [10, 3, 2, 3]]
+const POINT_STYLES = ["circle", "rectRot", "triangle", "rect"] as const
+
+function lineStyles(colors: string[]): number[] {
+  const rgbs = colors.map(hexToRgb)
+  return rgbs.map((rgb, i) => {
+    if (!rgb) return 0
+    let clashes = 0
+    for (let j = 0; j < i; j++) {
+      const other = rgbs[j]
+      if (!other) continue
+      const d = Math.hypot(rgb[0] - other[0], rgb[1] - other[1], rgb[2] - other[2])
+      if (d < 90) clashes++
+    }
+    return clashes % DASHES.length
+  })
+}
+
 function buildChartData(
   hiddenMap?: Map<string, boolean>
 ): ChartData<"line", (number | null)[], string> {
+  const styles = lineStyles(datasets.value.map((ds) => ds.color))
   return {
     labels: labels.value,
     datasets: datasets.value.map((ds, i) => ({
       label: ds.name,
       data: ds.data,
       borderColor: ds.color,
-      backgroundColor: ds.color + "22",
+      backgroundColor: ds.color,
       borderWidth: 2,
+      borderDash: DASHES[styles[i]!],
+      pointStyle: POINT_STYLES[styles[i]!],
       pointRadius: labels.value.length > 20 ? 2 : 3,
       pointHoverRadius: 5,
-      tension: 0.3,
+      tension: 0,
       spanGaps: true,
       clip: false as const,
       hidden: hiddenMap ? (hiddenMap.get(ds.name) ?? i >= 4) : i >= 4,
@@ -97,14 +130,15 @@ function buildChartOptions(): ChartOptions<"line"> {
     maintainAspectRatio: false,
     animation: { duration: 200 },
     layout: {
-      padding: { top: 8, bottom: 8, left: 4, right: 4 },
+      padding: { top: 8, bottom: 8, left: 4, right: 8 },
     },
     plugins: {
       legend: {
         position: isMobile ? ("bottom" as const) : ("right" as const),
         labels: {
-          boxWidth: 10,
-          boxHeight: 10,
+          usePointStyle: true,
+          boxWidth: 8,
+          boxHeight: 8,
           padding: isMobile ? 6 : 8,
           font: { size: 10 },
           color: textMuted,
@@ -130,13 +164,16 @@ function buildChartOptions(): ChartOptions<"line"> {
       },
       y: {
         reverse: isPosition,
-        min: isPosition ? 0.5 : 0,
-        max: isPosition ? maxPos + 0.5 : undefined,
+        // Integer bounds so every tick lands on a rank (0.5 offsets left every label blank).
+        min: isPosition ? 1 : 0,
+        max: isPosition ? maxPos : undefined,
+        grace: isPosition ? 0 : "5%",
         ticks: {
           stepSize: isPosition ? 1 : undefined,
+          precision: 0,
           font: { size: 10 },
           color: textMuted,
-          callback: (v: string | number) => (isPosition ? (Number.isInteger(v) ? `#${v}` : "") : v),
+          callback: (v: string | number) => (isPosition ? `#${v}` : v),
         },
         grid: { color: gridColor },
       },
@@ -176,7 +213,7 @@ watch([labels, datasets, mode], () => {
 </script>
 
 <template>
-  <AppCard v-if="hasData" variant="outlined" :title="t('progressChart.title')">
+  <AppCard v-if="hasData" variant="outlined" :title="title ?? t('progressChart.title')">
     <div class="chart-header">
       <div class="mode-toggle">
         <button :class="{ active: mode === 'position' }" @click="mode = 'position'">

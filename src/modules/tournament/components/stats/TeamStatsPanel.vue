@@ -7,7 +7,7 @@ import { useTournamentStats } from "@/modules/tournament/composables/useTourname
 import { isCustomFormat, isLeagueLike } from "@/engine"
 import { LeagueProgressChart } from "@/modules/tournament/components/league"
 import { TeamBadge } from "@/modules/teams/components"
-import { AppCard, AppTable, AppButtonGroup } from "@/components/ui"
+import { AppCard, AppTable, AppButtonGroup, AppSelect } from "@/components/ui"
 import { useEngineLabels } from "@/composables/useEngineLabels"
 
 const props = defineProps<{
@@ -88,6 +88,9 @@ const tabs = computed(() => {
   return []
 })
 
+/** Past this many tables the button group wraps into a wall; use a dropdown instead. */
+const MAX_BUTTON_TABS = 4
+
 const tierOptions = computed(() => tabs.value.map((label, i) => ({ value: String(i), label })))
 
 const chartTitle = computed(() => {
@@ -110,8 +113,16 @@ const chartTitle = computed(() => {
 <template>
   <div v-if="hasStats" class="stats-wrap">
     <template v-if="showChart && activeLeague">
+      <AppSelect
+        v-if="tabs.length > MAX_BUTTON_TABS"
+        class="table-select"
+        :model-value="String(activeIdx)"
+        :options="tierOptions"
+        searchable
+        @update:model-value="(v) => (activeIdx = Number(v))"
+      />
       <AppButtonGroup
-        v-if="tabs.length > 1"
+        v-else-if="tabs.length > 1"
         size="xs"
         :model-value="String(activeIdx)"
         :options="tierOptions"
@@ -185,6 +196,9 @@ const chartTitle = computed(() => {
   display: flex;
   flex-direction: column;
   gap: var(--sp-3);
+}
+.table-select {
+  max-width: 320px;
 }
 .stats-grid {
   display: grid;
