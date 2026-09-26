@@ -19,7 +19,7 @@ import { useModal } from "@/composables/useModal"
 import { autoAbbr } from "@/composables/useTeamLookup"
 import { randomTeamName } from "@/composables/useRandomNames"
 import { showAlert } from "@/composables/useDialog"
-import { Shuffle, X } from "@lucide/vue"
+import { Pencil, Shuffle, X } from "@lucide/vue"
 import type { Team } from "../types"
 import { useI18n } from "vue-i18n"
 import { logEvent } from "@/composables/useAnalytics"
@@ -165,6 +165,10 @@ function submit() {
           >
             <AppIcon :icon="X" size="xs" />
           </button>
+          <!-- Tells users the crest is tappable; the tap itself is the crest's. -->
+          <span class="crest-edit" aria-hidden="true">
+            <AppIcon :icon="Pencil" size="xs" />
+          </span>
         </div>
         <input
           ref="fileInput"
@@ -345,6 +349,23 @@ function submit() {
 .crest-clear:hover {
   color: var(--danger);
   border-color: var(--danger);
+}
+
+.crest-edit {
+  position: absolute;
+  right: -5px;
+  bottom: -5px;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: var(--elev-1);
+  pointer-events: none;
 }
 
 .preview-text {
