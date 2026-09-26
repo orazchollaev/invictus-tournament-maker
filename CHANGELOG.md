@@ -1,5 +1,40 @@
 # Changelog
 
+## [3.1.0](https://github.com/orazchollaev/invictus-tournament-maker/compare/v3.0.1...v3.1.0) (2026-09-26)
+
+### 🚀 New Features
+
+- **ads:** add draw ceremony banner ([5567b79](https://github.com/orazchollaev/invictus-tournament-maker/commit/5567b7960f860a3e23bf0c37ebef4079d45b5a68))
+- **analytics:** track draw ceremonies, creation, settings and sessions ([b219074](https://github.com/orazchollaev/invictus-tournament-maker/commit/b2190741e7e452c5f3ad38e6459ac48cd47a152a))
+- **manager:** open on manager tab, status panel, team highlight, locked bracket ([5c64306](https://github.com/orazchollaev/invictus-tournament-maker/commit/5c64306554154f193f139319bf845b24d5fddc6b))
+- **sample-data:** add leagues, classic World Cups, Euros and CL seasons ([40c452c](https://github.com/orazchollaev/invictus-tournament-maker/commit/40c452c242ff1bef4c15fb8f4babf497ad1b36b7))
+- **sample-data:** add Süper Lig, Liga Portugal and Eredivisie ([c492c7e](https://github.com/orazchollaev/invictus-tournament-maker/commit/c492c7e877c3ff054d5b7a6c3d6267ec55344140))
+- **teams:** add edit icon to crest ([7f2b9b8](https://github.com/orazchollaev/invictus-tournament-maker/commit/7f2b9b820725ea63b4804ddfba251f94eac0f521))
+
+### 🐛 Bug Fixes
+
+- **boot:** polyfill Object.hasOwn and add hydration timeout for old WebViews ([ba9b8e5](https://github.com/orazchollaev/invictus-tournament-maker/commit/ba9b8e526c65efe85610a06ada59edb6d28eb235))
+- **examples:** play Champions League group stages home and away ([d87a0d3](https://github.com/orazchollaev/invictus-tournament-maker/commit/d87a0d366394305ea02040ef6740df69ad010c04))
+- **stats:** dropdown for many groups, readable progress chart ([f41aef6](https://github.com/orazchollaev/invictus-tournament-maker/commit/f41aef6f0ead308158babd353f906e430fc1d087))
+- **tournament:** detail knockout phase config, fix row spacing, view phases in settings ([22a709d](https://github.com/orazchollaev/invictus-tournament-maker/commit/22a709d84e3fc75141e42b75239199c77a7ef281))
+- **tournament:** phases blueprint was invisible in settings ([5599e98](https://github.com/orazchollaev/invictus-tournament-maker/commit/5599e983947ea2027119aaca9f28caba4b179239))
+- **ui:** defer ResizeObserver callbacks to next frame ([fb1c258](https://github.com/orazchollaev/invictus-tournament-maker/commit/fb1c258115ded630d3ed1784d51ee9a3f789f1e3))
+
+### ♻️ Refactoring
+
+- **ads:** share AdMob init ([c513b0f](https://github.com/orazchollaev/invictus-tournament-maker/commit/c513b0f7159e9ebe3bf0b5c36fdf8ca51058b1ee))
+- **ui:** replace swiper with AppSwipeView ([5b59a37](https://github.com/orazchollaev/invictus-tournament-maker/commit/5b59a379830d5440fdf676bcbb92ff69a2d47473))
+
+### 🔧 Maintenance
+
+- **gradle:** bump gradle version ([6b47132](https://github.com/orazchollaev/invictus-tournament-maker/commit/6b47132c187b98749ead9a6294b8b832e13c8178))
+- **gradle:** bump gradle version ([2e120bd](https://github.com/orazchollaev/invictus-tournament-maker/commit/2e120bd7fa921ddd52cb00799bb30cf3e73906a0))
+- **release:** v3.0.2 ([8149add](https://github.com/orazchollaev/invictus-tournament-maker/commit/8149add46acd24c8538706dd56620fdf8392ece1))
+
+### 🎨 Styles
+
+- **forms:** space label and control apart in .form-row ([4948a97](https://github.com/orazchollaev/invictus-tournament-maker/commit/4948a97d35d564473f27515c3c2c98b5760968dc))
+
 ## [3.0.2](https://github.com/orazchollaev/invictus-tournament-maker/compare/v3.0.1...v3.0.2) (2026-09-21)
 
 ### 🐛 Bug Fixes
