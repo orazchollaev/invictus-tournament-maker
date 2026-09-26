@@ -1,7 +1,9 @@
 package com.orazchollaev.invictustournamentmaker;
 
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.view.View;
+import android.webkit.RenderProcessGoneDetail;
 import android.webkit.WebView;
 
 import androidx.core.graphics.Insets;
@@ -10,6 +12,7 @@ import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.getcapacitor.BridgeActivity;
+import com.getcapacitor.WebViewListener;
 
 /**
  * Bridges the real window insets into CSS.
@@ -36,11 +39,37 @@ public class MainActivity extends BridgeActivity {
         "  r.setProperty('--safe-area-inset-right',s[3]+'px');" +
         "})([%f,%f,%f,%f]);";
 
+    // A renderer that dies again this soon after a recovery is crashing on
+    // load; recreating once more would only loop.
+    private static final long RECOVERY_LOOP_WINDOW_MS = 10_000;
+    private static long lastRecoveryAt = 0;
+
     private float[] lastInsets;
+    private boolean rendererGone = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // No bridge means the device has no usable WebView and Capacitor has
+        // already shown its fallback screen.
+        if (getBridge() == null) return;
+
+        // When the WebView renderer process dies (OOM kill, GPU driver fault),
+        // Capacitor reports it as unhandled and Android then kills the whole
+        // app with a native crash in libwebviewchromium.so. Claiming it and
+        // rebuilding the activity with a fresh WebView turns that into a reload.
+        getBridge().addWebViewListener(new WebViewListener() {
+            @Override
+            public boolean onRenderProcessGone(WebView view, RenderProcessGoneDetail detail) {
+                rendererGone = true;
+                long now = SystemClock.elapsedRealtime();
+                boolean looping = lastRecoveryAt != 0 && now - lastRecoveryAt < RECOVERY_LOOP_WINDOW_MS;
+                lastRecoveryAt = now;
+                if (looping) finish();
+                else recreate();
+                return true;
+            }
+        });
 
         // Explicit for API < 35, where edge to edge is not yet the default.
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
@@ -73,7 +102,7 @@ public class MainActivity extends BridgeActivity {
     }
 
     private void applyInsets() {
-        if (lastInsets == null || getBridge() == null) return;
+        if (rendererGone || lastInsets == null || getBridge() == null) return;
         WebView webView = getBridge().getWebView();
         if (webView == null) return;
 
