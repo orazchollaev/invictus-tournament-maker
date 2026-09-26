@@ -1006,6 +1006,18 @@
     },
     panel: {
       allPlayed: "Nie masz już nic do rozegrania — reszta toczy się sama.",
+      nextMatch: "Następny mecz",
+      tactics: "Taktyka",
+      awaitingDraw: "Awansowałeś — następny mecz poznasz po losowaniu.",
+      awaitingOpponent: "Awansowałeś — czekasz na kolejnego rywala.",
+    },
+    status: {
+      position: "{n}. miejsce z {total}",
+      inRound: "Wciąż w grze",
+      eliminated: "Odpadł",
+      qualified: "Awans",
+      champion: "Mistrz",
+      thirdPlace: "Mecz o 3. miejsce",
     },
     lineup: {
       title: "Wyjściowa jedenastka",

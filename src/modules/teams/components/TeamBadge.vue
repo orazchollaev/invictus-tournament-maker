@@ -3,6 +3,7 @@ import { computed, ref, watch } from "vue"
 import type { Team, TeamLike } from "../types"
 import TeamNameAuto from "./TeamNameAuto.vue"
 import FlagCircle from "./FlagCircle.vue"
+import { useManagedTeamId } from "@/composables/useManagedTeam"
 
 const props = withDefaults(
   defineProps<{
@@ -16,6 +17,11 @@ const props = withDefaults(
   { size: 16, reverse: false, fallback: "TBD" }
 )
 const team = computed(() => props.team ?? props.teams?.find((t) => t.id === props.teamId))
+const managedTeamId = useManagedTeamId()
+const isMine = computed(() => {
+  const id = team.value && "id" in team.value ? team.value.id : props.teamId
+  return !!id && id === managedTeamId.value
+})
 const dotBorderWidth = computed(() => Math.max(1, Math.round(props.size / 6)))
 
 const imgError = ref(false)
@@ -28,7 +34,7 @@ watch(
 </script>
 
 <template>
-  <span class="team-badge" :class="{ reverse }">
+  <span class="team-badge" :class="{ reverse, 'team-badge--mine': isMine }">
     <img
       v-if="team?.image && !imgError"
       :src="team.image"
@@ -85,5 +91,10 @@ watch(
   font-size: 12px;
   flex: 1;
   min-width: 0;
+}
+/* The side the user manages, picked out wherever it appears. */
+.team-badge--mine .name {
+  color: var(--gold-text);
+  font-weight: 700;
 }
 </style>

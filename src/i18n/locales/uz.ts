@@ -1130,6 +1130,18 @@
     },
     panel: {
       allPlayed: "Siz uchun o'ynaydigan narsa qolmadi — qolganlari o'zi o'tadi.",
+      nextMatch: "Keyingi o‘yin",
+      tactics: "Taktika",
+      awaitingDraw: "Keyingi bosqichga chiqdingiz — keyingi o‘yin qur’adan so‘ng aniqlanadi.",
+      awaitingOpponent: "Keyingi bosqichga chiqdingiz — keyingi raqib kutilmoqda.",
+    },
+    status: {
+      position: "{total} tadan {n}-o‘rin",
+      inRound: "Hali kurashda",
+      eliminated: "Chiqib ketdi",
+      qualified: "Yo‘llanma oldi",
+      champion: "Chempion",
+      thirdPlace: "3-o‘rin uchun o‘yin",
     },
     lineup: {
       title: "Asosiy tarkib",

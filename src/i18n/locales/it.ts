@@ -1133,6 +1133,18 @@
     },
     panel: {
       allPlayed: "Non c'è più nulla da giocare per te — tutto il resto si svolge da solo.",
+      nextMatch: "Prossima partita",
+      tactics: "Tattica",
+      awaitingDraw: "Sei passato — la prossima partita si saprà dopo il sorteggio.",
+      awaitingOpponent: "Sei passato — in attesa del prossimo avversario.",
+    },
+    status: {
+      position: "{n}° su {total}",
+      inRound: "Ancora in corsa",
+      eliminated: "Eliminato",
+      qualified: "Qualificato",
+      champion: "Campione",
+      thirdPlace: "Finale per il 3° posto",
     },
     lineup: {
       title: "Formazione Titolare",

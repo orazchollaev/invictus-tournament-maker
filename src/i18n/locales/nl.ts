@@ -1136,6 +1136,18 @@
     },
     panel: {
       allPlayed: "Niets meer voor jou om te spelen — de rest speelt zichzelf uit.",
+      nextMatch: "Volgende wedstrijd",
+      tactics: "Tactiek",
+      awaitingDraw: "Je bent door — je volgende wedstrijd volgt na de loting.",
+      awaitingOpponent: "Je bent door — wachten op je volgende tegenstander.",
+    },
+    status: {
+      position: "{n}e van {total}",
+      inRound: "Nog in de race",
+      eliminated: "Uitgeschakeld",
+      qualified: "Geplaatst",
+      champion: "Kampioen",
+      thirdPlace: "Wedstrijd om de 3e plaats",
     },
     lineup: {
       title: "Basiself",

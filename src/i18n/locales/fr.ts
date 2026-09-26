@@ -1137,6 +1137,18 @@
     },
     panel: {
       allPlayed: "Il ne reste rien à jouer pour vous — le reste se joue tout seul.",
+      nextMatch: "Prochain match",
+      tactics: "Tactique",
+      awaitingDraw: "Qualifié — ton prochain match sera connu après le tirage.",
+      awaitingOpponent: "Qualifié — en attente de ton prochain adversaire.",
+    },
+    status: {
+      position: "{n}e sur {total}",
+      inRound: "Toujours en lice",
+      eliminated: "Éliminé",
+      qualified: "Qualifié",
+      champion: "Champion",
+      thirdPlace: "Match pour la 3e place",
     },
     lineup: {
       title: "Onze de départ",

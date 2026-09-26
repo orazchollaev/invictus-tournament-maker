@@ -1008,6 +1008,18 @@
     },
     panel: {
       allPlayed: "Tidak ada lagi yang perlu kamu mainkan — sisanya berjalan sendiri.",
+      nextMatch: "Laga berikutnya",
+      tactics: "Taktik",
+      awaitingDraw: "Kamu lolos — laga berikutnya ditentukan setelah undian.",
+      awaitingOpponent: "Kamu lolos — menunggu lawan berikutnya.",
+    },
+    status: {
+      position: "Peringkat {n} dari {total}",
+      inRound: "Masih bertahan",
+      eliminated: "Tersingkir",
+      qualified: "Lolos",
+      champion: "Juara",
+      thirdPlace: "Perebutan tempat ke-3",
     },
     lineup: {
       title: "Susunan Pemain Inti",

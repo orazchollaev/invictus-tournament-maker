@@ -1128,6 +1128,18 @@
     },
     panel: {
       allPlayed: "No te queda nada por jugar — el resto se resuelve solo.",
+      nextMatch: "Próximo partido",
+      tactics: "Táctica",
+      awaitingDraw: "Te has clasificado — tu próximo partido se conocerá tras el sorteo.",
+      awaitingOpponent: "Te has clasificado — esperando a tu próximo rival.",
+    },
+    status: {
+      position: "{n}º de {total}",
+      inRound: "Sigue en competición",
+      eliminated: "Eliminado",
+      qualified: "Clasificado",
+      champion: "Campeón",
+      thirdPlace: "Partido por el 3.er puesto",
     },
     lineup: {
       title: "Once inicial",

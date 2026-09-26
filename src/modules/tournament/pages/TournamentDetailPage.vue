@@ -14,7 +14,12 @@ import { ManualDraw, PlayoffManualDraw } from "@/modules/tournament/components/d
 import { TournamentStats } from "@/modules/tournament/components/stats"
 import { DrawCeremony } from "@/modules/tournament/components/draw-ceremony"
 import { AppModal, AppSubTabBar } from "@/components/ui"
-import { DetailHeader, DetailPhaseTabs, DetailMultiTierModal, phaseIdOf } from "../components/detail"
+import {
+  DetailHeader,
+  DetailPhaseTabs,
+  DetailMultiTierModal,
+  phaseIdOf,
+} from "../components/detail"
 import { advancablePhases } from "@/engine"
 import { phaseTournamentView } from "../utils/phaseView"
 import { ManagerTeamPanel, ManagerTeamPickerModal } from "../components/manager"
@@ -24,6 +29,7 @@ import { useTournamentDetail } from "../composables/useTournamentDetail"
 import { useTournamentTabs } from "../composables/useTournamentTabs"
 import { useTournamentCeremonies } from "../composables/useTournamentCeremonies"
 import { useFillViewportHeight } from "@/composables/useFillViewportHeight"
+import { provideManagedTeam } from "@/composables/useManagedTeam"
 
 const { t: trns } = useI18n()
 const router = useRouter()
@@ -38,6 +44,9 @@ const {
   startNewLeagueSeason,
   hasAnyResults,
 } = useTournamentDetail()
+
+// Every badge and card under this page picks the managed side out on its own.
+provideManagedTeam(() => tournament.value?.manager?.teamId)
 
 const isFinished = computed(
   () => !!tournament.value && store.isTournamentFinished(tournament.value.id)
@@ -129,10 +138,6 @@ const {
 const allGroupsDone = computed(
   () => tournament.value?.groups?.every((g) => g.matches.every((m) => m.result !== null)) ?? false
 )
-
-
-
-
 
 /** Phases whose sources are all finished and which have not been drawn yet. */
 const readyPhases = computed(() => (tournament.value ? advancablePhases(tournament.value) : []))
@@ -243,7 +248,7 @@ const showStartPlayoffButton = computed(
           <SwiperSlide v-for="tab in visibleTabs" :key="tab">
             <template v-if="isTabRendered(tab)">
               <div v-if="tab === 'manager'" class="tab-panel">
-                <ManagerTeamPanel :tournament-id="tournament.id" />
+                <ManagerTeamPanel :tournament-id="tournament.id" :active="activeTab === 'manager'" />
               </div>
               <!-- Custom format: one slide per phase. The panel resolves the
                    phase itself, so this page asks for it once instead of a

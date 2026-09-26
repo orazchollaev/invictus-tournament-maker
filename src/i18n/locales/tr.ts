@@ -1123,6 +1123,18 @@
     },
     panel: {
       allPlayed: "Oynanacak maçın kalmadı — geri kalan her şey otomatik oynanır.",
+      nextMatch: "Sıradaki maç",
+      tactics: "Taktik",
+      awaitingDraw: "Tur atladın — sıradaki maçın kura çekilince belli olacak.",
+      awaitingOpponent: "Tur atladın — sıradaki rakibin bekleniyor.",
+    },
+    status: {
+      position: "{total} takımda {n}. sıra",
+      inRound: "Turnuvada",
+      eliminated: "Elendi",
+      qualified: "Tur atladı",
+      champion: "Şampiyon",
+      thirdPlace: "3.lük maçı",
     },
     morale: {
       label: "Moral",

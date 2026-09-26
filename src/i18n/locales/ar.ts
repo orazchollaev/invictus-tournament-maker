@@ -1000,6 +1000,18 @@
     },
     panel: {
       allPlayed: "لم يتبقَّ لك شيء لتلعبه — البقية تُلعب من تلقاء نفسها.",
+      nextMatch: "المباراة التالية",
+      tactics: "التكتيك",
+      awaitingDraw: "تأهلت — ستُحدَّد مباراتك التالية بعد القرعة.",
+      awaitingOpponent: "تأهلت — بانتظار خصمك التالي.",
+    },
+    status: {
+      position: "المركز {n} من {total}",
+      inRound: "ما زال في المنافسة",
+      eliminated: "خرج",
+      qualified: "تأهل",
+      champion: "البطل",
+      thirdPlace: "مباراة المركز الثالث",
     },
     lineup: {
       title: "التشكيلة الأساسية",

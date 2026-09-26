@@ -1001,6 +1001,18 @@
     },
     panel: {
       allPlayed: "더 이상 플레이할 경기가 없습니다 — 나머지는 자동으로 진행됩니다.",
+      nextMatch: "다음 경기",
+      tactics: "전술",
+      awaitingDraw: "진출 — 다음 경기는 추첨 후에 정해집니다.",
+      awaitingOpponent: "진출 — 다음 상대를 기다리는 중입니다.",
+    },
+    status: {
+      position: "{total}팀 중 {n}위",
+      inRound: "생존",
+      eliminated: "탈락",
+      qualified: "진출",
+      champion: "우승",
+      thirdPlace: "3·4위전",
     },
     lineup: {
       title: "선발 명단",

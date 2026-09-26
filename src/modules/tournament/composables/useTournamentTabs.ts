@@ -28,6 +28,8 @@ export function useTournamentTabs(tournament: ComputedRef<Tournament | undefined
   })
 
   function defaultTab(): MainTab {
+    // A managed side is what the user came back for — the rest is scenery.
+    if (tournament.value?.manager) return "manager"
     const fmt = tournament.value?.format
     if (fmt === "custom") {
       // The first phase still unfinished, or the last one once it is all over —
@@ -187,10 +189,15 @@ export function useTournamentTabs(tournament: ComputedRef<Tournament | undefined
     }
   })
 
+  // The auto-jumps below are for someone watching a stage unfold. A manager
+  // stays on their own tab: the next stage arriving is not theirs to look at
+  // until they choose to.
+  const isManaged = () => !!tournament.value?.manager
+
   watch(
     () => tournament.value?.groupsDone,
     (done) => {
-      if (done) changeTab("bracket")
+      if (done && !isManaged()) changeTab("bracket")
     }
   )
 
@@ -199,7 +206,7 @@ export function useTournamentTabs(tournament: ComputedRef<Tournament | undefined
   watch(
     () => orderedPhases.value.filter((p) => p.status === "active").map((p) => p.id),
     (activeIds, previous) => {
-      if (!isCustom.value) return
+      if (!isCustom.value || isManaged()) return
       const fresh = activeIds.find((id) => !(previous ?? []).includes(id))
       if (fresh) changeTab(phaseTab(fresh))
     }
@@ -208,7 +215,7 @@ export function useTournamentTabs(tournament: ComputedRef<Tournament | undefined
   watch(
     () => leaguePlayoffData.value?.started,
     (started) => {
-      if (started) changeTab("bracket")
+      if (started && !isManaged()) changeTab("bracket")
     }
   )
 

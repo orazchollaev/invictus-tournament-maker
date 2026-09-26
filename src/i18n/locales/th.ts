@@ -1002,6 +1002,18 @@
     },
     panel: {
       allPlayed: "ไม่มีแมตช์ให้คุณเล่นแล้ว — ที่เหลือจะดำเนินไปเอง",
+      nextMatch: "นัดถัดไป",
+      tactics: "แท็กติก",
+      awaitingDraw: "ผ่านเข้ารอบแล้ว — นัดถัดไปจะรู้หลังการจับสลาก",
+      awaitingOpponent: "ผ่านเข้ารอบแล้ว — รอคู่แข่งคนถัดไป",
+    },
+    status: {
+      position: "อันดับ {n} จาก {total}",
+      inRound: "ยังอยู่ในการแข่งขัน",
+      eliminated: "ตกรอบ",
+      qualified: "ผ่านเข้ารอบ",
+      champion: "แชมป์",
+      thirdPlace: "นัดชิงอันดับ 3",
     },
     lineup: {
       title: "ตัวจริง 11 คน",

@@ -1005,6 +1005,18 @@
     },
     panel: {
       allPlayed: "プレーする試合は残っていません — 残りは自動で進行します。",
+      nextMatch: "次の試合",
+      tactics: "戦術",
+      awaitingDraw: "突破 — 次の試合は抽選後に決まります。",
+      awaitingOpponent: "突破 — 次の対戦相手を待っています。",
+    },
+    status: {
+      position: "{total}チーム中{n}位",
+      inRound: "勝ち残り",
+      eliminated: "敗退",
+      qualified: "突破",
+      champion: "優勝",
+      thirdPlace: "3位決定戦",
     },
     lineup: {
       title: "スターティングイレブン",

@@ -1006,6 +1006,18 @@
     },
     panel: {
       allPlayed: "Không còn trận nào để bạn chơi — phần còn lại sẽ tự diễn ra.",
+      nextMatch: "Trận tiếp theo",
+      tactics: "Chiến thuật",
+      awaitingDraw: "Bạn đã đi tiếp — trận tiếp theo sẽ có sau lễ bốc thăm.",
+      awaitingOpponent: "Bạn đã đi tiếp — đang chờ đối thủ tiếp theo.",
+    },
+    status: {
+      position: "Hạng {n}/{total}",
+      inRound: "Vẫn còn trong cuộc đua",
+      eliminated: "Bị loại",
+      qualified: "Đi tiếp",
+      champion: "Vô địch",
+      thirdPlace: "Tranh hạng 3",
     },
     lineup: {
       title: "Đội hình xuất phát",

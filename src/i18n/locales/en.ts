@@ -1119,6 +1119,18 @@
     },
     panel: {
       allPlayed: "Nothing left for you to play — everything else plays itself out.",
+      nextMatch: "Next match",
+      tactics: "Tactics",
+      awaitingDraw: "You're through — your next match is set once the draw is made.",
+      awaitingOpponent: "You're through — waiting for your next opponent.",
+    },
+    status: {
+      position: "#{n} of {total}",
+      inRound: "Still in",
+      eliminated: "Eliminated",
+      qualified: "Qualified",
+      champion: "Champion",
+      thirdPlace: "3rd place match",
     },
     morale: {
       label: "Morale",

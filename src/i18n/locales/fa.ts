@@ -1121,6 +1121,18 @@
     },
     panel: {
       allPlayed: "بازی دیگری برای شما نمانده — بقیه خودشان انجام می‌شوند.",
+      nextMatch: "بازی بعدی",
+      tactics: "تاکتیک",
+      awaitingDraw: "صعود کردی — بازی بعدی‌ات پس از قرعه‌کشی مشخص می‌شود.",
+      awaitingOpponent: "صعود کردی — در انتظار حریف بعدی.",
+    },
+    status: {
+      position: "رتبه {n} از {total}",
+      inRound: "هنوز در رقابت",
+      eliminated: "حذف شد",
+      qualified: "صعود کرد",
+      champion: "قهرمان",
+      thirdPlace: "بازی رده‌بندی",
     },
     lineup: {
       title: "ترکیب اصلی",

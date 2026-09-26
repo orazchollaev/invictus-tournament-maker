@@ -1005,6 +1005,18 @@
     },
     panel: {
       allPlayed: "आपके खेलने के लिए कुछ नहीं बचा — बाकी सब अपने आप खेला जाएगा।",
+      nextMatch: "Laga berikutnya",
+      tactics: "Taktik",
+      awaitingDraw: "Kamu lolos — laga berikutnya ditentukan setelah undian.",
+      awaitingOpponent: "Kamu lolos — menunggu lawan berikutnya.",
+    },
+    status: {
+      position: "Peringkat {n} dari {total}",
+      inRound: "Masih bertahan",
+      eliminated: "Tersingkir",
+      qualified: "Lolos",
+      champion: "Juara",
+      thirdPlace: "Perebutan tempat ke-3",
     },
     lineup: {
       title: "शुरुआती एकादश",

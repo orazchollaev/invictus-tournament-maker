@@ -1137,6 +1137,18 @@
     },
     panel: {
       allPlayed: "Nichts mehr für dich zu spielen — der Rest läuft von allein.",
+      nextMatch: "Nächstes Spiel",
+      tactics: "Taktik",
+      awaitingDraw: "Du bist weiter — dein nächstes Spiel steht nach der Auslosung fest.",
+      awaitingOpponent: "Du bist weiter — dein nächster Gegner steht noch aus.",
+    },
+    status: {
+      position: "Platz {n} von {total}",
+      inRound: "Noch dabei",
+      eliminated: "Ausgeschieden",
+      qualified: "Qualifiziert",
+      champion: "Meister",
+      thirdPlace: "Spiel um Platz 3",
     },
     lineup: {
       title: "Startelf",

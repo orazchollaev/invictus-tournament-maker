@@ -7,6 +7,7 @@ import { TeamBadge } from "@/modules/teams/components"
 import { NO_TEAM_COLOR } from "@/modules/teams/utils/color"
 import { getWinnerId } from "@/engine"
 import { useSettingsStore } from "@/modules/settings/store"
+import { useManagedTeamId } from "@/composables/useManagedTeam"
 import { MatchScoreModal } from "@/modules/tournament/components/match-stats"
 import { Pencil } from "@lucide/vue"
 
@@ -85,7 +86,12 @@ const awayTeam = computed(() => props.teams.find((t) => t.id === props.match.awa
 const editingLeg = ref<null | 1 | 2>(null)
 const pickingLeg = ref(false)
 const closingPicker = ref(false)
-const canEdit = computed(() => !props.isExporting && !!props.match.homeId && !!props.match.awayId)
+/** Managing a side makes the bracket watch-only — the manager plays their own
+ *  ties from the manager tab, and nobody else's. */
+const managedTeamId = useManagedTeamId()
+const canEdit = computed(
+  () => !props.isExporting && !managedTeamId.value && !!props.match.homeId && !!props.match.awayId
+)
 
 /** Leg 2 is played reversed, so its rows read away-first against this card. */
 const modalHome = computed(() => (editingLeg.value === 2 ? awayTeam.value : homeTeam.value))

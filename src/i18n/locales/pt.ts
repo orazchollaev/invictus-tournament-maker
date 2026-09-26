@@ -1127,6 +1127,18 @@
     },
     panel: {
       allPlayed: "Não sobrou nada para você jogar — o resto se resolve sozinho.",
+      nextMatch: "Próximo jogo",
+      tactics: "Tática",
+      awaitingDraw: "Estás apurado — o próximo jogo fica definido após o sorteio.",
+      awaitingOpponent: "Estás apurado — à espera do próximo adversário.",
+    },
+    status: {
+      position: "{n}.º de {total}",
+      inRound: "Ainda em prova",
+      eliminated: "Eliminado",
+      qualified: "Apurado",
+      champion: "Campeão",
+      thirdPlace: "Jogo do 3.º lugar",
     },
     lineup: {
       title: "Escalação Titular",

@@ -10,7 +10,7 @@
  */
 import { computed, ref, watch } from "vue"
 import { useI18n } from "vue-i18n"
-import { ClipboardList, Users } from "@lucide/vue"
+import { Users } from "@lucide/vue"
 import {
   AppButton,
   AppButtonGroup,
@@ -32,6 +32,8 @@ import {
   managedUnavailability,
   nextManagedFixture,
 } from "@/modules/tournament/utils/managerFixtures"
+import { managerStatus } from "@/modules/tournament/utils/managerStatus"
+import { useEngineLabels } from "@/composables/useEngineLabels"
 import {
   assignLineupSlot,
   clearLineupPlayer,
@@ -52,13 +54,41 @@ import {
   playedMatches,
 } from "@/engine"
 import { useHaptic } from "@/composables/useHaptic"
+import { useBannerAd } from "@/composables/useBannerAd"
 import type { Formation, PlayStyle } from "@/modules/teams/types"
 import type { PlayerPosition } from "@/modules/players/types"
 import type { MatchEntry } from "@/engine"
 
-const props = defineProps<{ tournamentId: string }>()
+const props = defineProps<{ tournamentId: string; active: boolean }>()
 
 const { t } = useI18n()
+const { engineLabel } = useEngineLabels()
+
+const MANAGER_MODE_BANNER_ID = "ca-app-pub-5867331300737777/1358968605"
+const adSlot = ref<HTMLElement | null>(null)
+const scrolledToTop = ref(true)
+
+// The native banner can't scroll with the page, so it is pinned over the
+// slot only while the panel sits at the top, and hidden once it scrolls.
+watch(adSlot, (slot, _, onCleanup) => {
+  let scroller = slot?.parentElement ?? null
+  while (scroller && !/(auto|scroll)/.test(getComputedStyle(scroller).overflowY)) {
+    scroller = scroller.parentElement
+  }
+  if (!scroller) return
+  const el = scroller
+  const onScroll = () => (scrolledToTop.value = el.scrollTop <= 1)
+  onScroll()
+  el.addEventListener("scroll", onScroll, { passive: true })
+  onCleanup(() => el.removeEventListener("scroll", onScroll))
+})
+
+const { enabled: hasBanner, preview: adPreview } = useBannerAd(MANAGER_MODE_BANNER_ID, {
+  visible: () => props.active && scrolledToTop.value && !!adSlot.value,
+  edge: "top",
+  offset: () => `${adSlot.value?.getBoundingClientRect().top ?? 0}px`,
+  hideUnderOverlays: true,
+})
 const store = useTournamentStore()
 const teamsStore = useTeamsStore()
 const playersStore = usePlayersStore()
@@ -70,27 +100,80 @@ const managedTeam = computed(() =>
   teamsStore.teams.find((tm) => tm.id === tournament.value?.manager?.teamId)
 )
 
+// ─── Status ──────────────────────────────────────────────────────
+const status = computed(() => (tournament.value ? managerStatus(tournament.value) : null))
+
+type StatusChip = { label: string; variant: "neutral" | "accent" | "success" | "danger" | "gold" }
+
+/** Stage first, then how the side is doing in it. */
+const statusChips = computed<StatusChip[]>(() => {
+  const s = status.value
+  if (!s) return []
+  if (s.kind === "champion")
+    return [{ label: `🏆 ${t("manager.status.champion")}`, variant: "gold" }]
+  if (s.kind === "table") {
+    const chips: StatusChip[] = [
+      { label: engineLabel(s.stage), variant: "neutral" },
+      {
+        label: t("manager.status.position", { n: s.position, total: s.total }),
+        variant: "accent",
+      },
+    ]
+    if (s.state === "qualified") chips.push({ label: t("manager.status.qualified"), variant: "success" })
+    if (s.state === "out") chips.push({ label: t("manager.status.eliminated"), variant: "danger" })
+    return chips
+  }
+  const stage = s.stage ? engineLabel(s.stage) : t("manager.status.thirdPlace")
+  return [
+    { label: stage, variant: "neutral" },
+    s.state === "out"
+      ? { label: t("manager.status.eliminated"), variant: "danger" }
+      : { label: t("manager.status.inRound"), variant: "success" },
+  ]
+})
+
+/**
+ * With no fixture to hand over: still in it and waiting on a draw or on the
+ * other half of the bracket, or genuinely done for the season.
+ */
+const emptyMessage = computed(() => {
+  const s = status.value
+  if (s?.kind === "table" && s.state === "qualified") return t("manager.panel.awaitingDraw")
+  if (s?.kind === "knockout" && s.state === "alive") return t("manager.panel.awaitingOpponent")
+  return t("manager.panel.allPlayed")
+})
+
 // ─── Next fixture ────────────────────────────────────────────────
 const fixture = computed<MatchEntry | null>(() =>
   tournament.value ? nextManagedFixture(tournament.value) : null
 )
 
-const homeTeam = computed(() => teamsStore.teams.find((tm) => tm.id === fixture.value?.homeId))
-const awayTeam = computed(() => teamsStore.teams.find((tm) => tm.id === fixture.value?.awayId))
+/**
+ * The fixture the open match modal is about, pinned when it opens. Saving
+ * moves `fixture` on to the next match while the sheet is still animating
+ * shut — bound to that, the modal would swap to a match nobody asked for.
+ */
+const playing = ref<MatchEntry | null>(null)
+const shown = computed(() => playing.value ?? fixture.value)
+
+const homeTeam = computed(() => teamsStore.teams.find((tm) => tm.id === shown.value?.homeId))
+const awayTeam = computed(() => teamsStore.teams.find((tm) => tm.id === shown.value?.awayId))
 
 const stageLabel = computed(() => {
-  const src = fixture.value?.source
+  const src = shown.value?.source
   if (!src) return ""
-  if (src.kind === "group") return src.groupName
+  if (src.kind === "group") return engineLabel(src.groupName)
   if (src.kind === "league")
-    return src.tierName ? `${src.tierName} · ${src.matchdayName}` : src.matchdayName
+    return src.tierName
+      ? `${src.tierName} · ${engineLabel(src.matchdayName)}`
+      : engineLabel(src.matchdayName)
   if (src.kind === "third-place") return t("rounds.thirdPlace")
-  return src.roundName
+  return engineLabel(src.roundName)
 })
 
 /** A knockout tie has to produce a winner — except in the first leg of two. */
 const requiresWinner = computed(() => {
-  const entry = fixture.value
+  const entry = shown.value
   if (!entry) return false
   if (entry.source.kind !== "knockout" && entry.source.kind !== "third-place") return false
   return !entry.isDoubleLeg || legOf(entry) === 2
@@ -98,19 +181,21 @@ const requiresWinner = computed(() => {
 
 /** Leg 2 counts the first leg, flipped into this leg's home/away frame. */
 const aggregateOffset = computed(() => {
-  const entry = fixture.value
+  const entry = shown.value
   if (!entry || legOf(entry) !== 2) return null
   const leg1 = entry.match.result
   if (!leg1) return null
   return { home: leg1.away, away: leg1.home }
 })
 
-const open = ref(false)
-
 function save(home: number, away: number, penHome?: number, penAway?: number) {
-  const entry = fixture.value
+  const entry = playing.value
   if (!entry) return
   store.setFixtureResult(props.tournamentId, entry, home, away, penHome, penAway)
+}
+
+function closeMatch() {
+  playing.value = null
 }
 
 // ─── Tactics ─────────────────────────────────────────────────────
@@ -308,75 +393,76 @@ function clearSlot() {
 }
 
 function open11() {
-  if (!lineupReady.value) return
-  open.value = true
+  if (!lineupReady.value || !fixture.value) return
+  playing.value = fixture.value
 }
 </script>
 
 <template>
   <div v-if="manager && managedTeam" class="mp">
-    <AppCard variant="outlined" padding="md" class="mp-fixture-card">
-      <template #title>
-        <ClipboardList :size="15" class="mp-icon" />
-        {{ t("manager.banner.title", { team: managedTeam.name }) }}
-      </template>
+    <section class="mp-hero" :style="{ '--team': managedTeam.color }">
+      <div class="mp-hero-head">
+        <TeamBadge :team="managedTeam" :size="30" class="mp-hero-team" />
+        <AppChip
+          v-if="moraleAdjustment !== 0"
+          square
+          :variant="moraleAdjustment > 0 ? 'success' : 'danger'"
+        >
+          {{ moraleEmoji }} {{ t("manager.morale.label") }}
+        </AppChip>
+      </div>
 
-      <template v-if="fixture">
-        <div class="mp-badges">
-          <AppChip square size="xs" class="mp-stage">{{ stageLabel }}</AppChip>
-          <AppChip
-            v-if="moraleAdjustment !== 0"
-            square
-            size="xs"
-            :variant="moraleAdjustment > 0 ? 'success' : 'danger'"
-            class="mp-morale"
-          >
-            {{ moraleEmoji }} {{ t("manager.morale.label") }}
-          </AppChip>
-        </div>
+      <div v-if="statusChips.length" class="mp-status">
+        <AppChip
+          v-for="chip in statusChips"
+          :key="chip.label"
+          square
+          size="sm"
+          :variant="chip.variant"
+        >
+          {{ chip.label }}
+        </AppChip>
+      </div>
 
-        <div class="mp-fixture-row">
-          <div class="mp-side">
-            <TeamBadge :team="homeTeam" :size="28" reverse />
+      <div class="mp-next">
+        <template v-if="fixture">
+          <div class="mp-next-label">
+            {{ t("manager.panel.nextMatch") }}
+            <span class="mp-next-stage">· {{ stageLabel }}</span>
           </div>
-          <span class="mp-vs">{{ t("common.vs") }}</span>
-          <div class="mp-side mp-side--away">
-            <TeamBadge :team="awayTeam" :size="28" />
+          <div class="mp-fixture-row">
+            <TeamBadge :team="homeTeam" :size="24" reverse class="mp-side" />
+            <span class="mp-vs">{{ t("common.vs") }}</span>
+            <TeamBadge :team="awayTeam" :size="24" class="mp-side" />
           </div>
-        </div>
+          <AppButton variant="filled" block :disabled="!lineupReady" @click="open11">
+            {{ t("manager.banner.play") }}
+          </AppButton>
+          <p v-if="!lineupReady" class="mp-fixture-hint">
+            {{ t("manager.lineup.incomplete", { n: missingCount }) }}
+          </p>
+        </template>
+        <p v-else class="mp-empty">{{ emptyMessage }}</p>
+      </div>
+    </section>
 
-        <AppButton variant="filled" block :disabled="!lineupReady" @click="open11">
-          {{ t("manager.banner.play") }}
-        </AppButton>
-        <p v-if="!lineupReady" class="mp-fixture-hint">
-          {{ t("manager.lineup.incomplete", { n: missingCount }) }}
-        </p>
-      </template>
-
-      <AppEmptyState v-else :title="t('manager.panel.allPlayed')" />
-    </AppCard>
+    <!-- Space the native banner is pinned over; a red preview in dev. -->
+    <div
+      v-if="hasBanner || adPreview"
+      ref="adSlot"
+      class="mp-ad-slot"
+      :class="{ 'mp-ad-slot--preview': adPreview }"
+    />
 
     <AppCard padding="md">
-      <template #title>{{ t("manager.settings.title") }}</template>
-
+      <template #title>{{ t("manager.panel.tactics") }}</template>
       <div class="mp-tactics">
         <AppField layout="stack" :label="t('coach.form.formation')">
           <AppSelect v-model="formation" :options="formationOptions" />
         </AppField>
-
-        <AppField
-          layout="stack"
-          :label="t('coach.form.style')"
-          :hint="t(`coach.styleHints.${style}`)"
-        >
+        <AppField layout="stack" :label="t('coach.form.style')">
           <AppButtonGroup v-model="style" :options="styleOptions" block />
         </AppField>
-
-        <div class="mp-actions">
-          <AppButton variant="danger" size="xs" @click="standDown">
-            {{ t("manager.settings.standDown") }}
-          </AppButton>
-        </div>
       </div>
     </AppCard>
 
@@ -417,18 +503,24 @@ function open11() {
       @close="closeSlot"
     />
 
+    <div class="mp-footer">
+      <AppButton variant="text" size="xs" class="mp-stand-down" @click="standDown">
+        {{ t("manager.settings.standDown") }}
+      </AppButton>
+    </div>
+
     <MatchScoreModal
-      v-if="open && fixture"
+      v-if="playing"
       :home-team="homeTeam"
       :away-team="awayTeam"
-      :result="fixture.result"
+      :result="playing.result"
       :requires-winner="requiresWinner"
       :subtitle="stageLabel"
-      :match-id="fixture.match.id"
-      :leg="legOf(fixture)"
+      :match-id="playing.match.id"
+      :leg="legOf(playing)"
       :aggregate-offset="aggregateOffset"
       @save="save"
-      @close="open = false"
+      @close="closeMatch"
     />
   </div>
 </template>
@@ -441,19 +533,71 @@ function open11() {
   padding-bottom: var(--sp-3);
 }
 
-.mp-fixture-card {
-  border-color: color-mix(in srgb, var(--accent) 40%, var(--border));
+.mp-ad-slot {
+  flex-shrink: 0;
+  align-self: center;
+  width: 320px;
+  max-width: 100%;
+  height: 50px;
 }
 
-.mp-icon {
-  color: var(--accent);
+.mp-ad-slot--preview {
+  background: var(--danger);
 }
 
-.mp-badges {
+/* ── Hero: who you are, where you stand, what's next ── */
+.mp-hero {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  padding: var(--sp-4);
+  border: 1px solid color-mix(in srgb, var(--team, var(--accent)) 35%, var(--border-light));
+  border-radius: var(--radius-lg);
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--team, var(--accent)) 14%, transparent),
+      transparent 60%
+    ),
+    var(--surface);
+  box-shadow: var(--elev-1);
+}
+
+.mp-hero-head {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+.mp-hero-team {
+  min-width: 0;
+}
+.mp-hero-team :deep(.name) {
+  font-size: var(--fs-lg);
+}
+
+.mp-status {
   display: flex;
   flex-wrap: wrap;
   gap: var(--sp-2);
-  margin-bottom: var(--sp-3);
+}
+
+.mp-next {
+  padding-top: var(--sp-3);
+  border-top: 1px solid var(--border-light);
+}
+
+.mp-next-label {
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.mp-next-stage {
+  font-weight: 500;
+  letter-spacing: normal;
+  text-transform: none;
 }
 
 .mp-fixture-row {
@@ -461,41 +605,37 @@ function open11() {
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
   gap: var(--sp-3);
-  padding: var(--sp-2) 0 var(--sp-4);
+  padding: var(--sp-3) 0;
 }
 
 .mp-side {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
   min-width: 0;
-}
-.mp-side--away {
-  justify-content: flex-start;
 }
 
 .mp-vs {
   font-size: var(--fs-xs);
   color: var(--text-muted);
-  flex-shrink: 0;
 }
 
-.mp-tactics {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sp-3);
-}
-
-.mp-actions {
-  display: flex;
-  justify-content: flex-end;
-}
-
-.mp-fixture-hint {
+.mp-fixture-hint,
+.mp-empty {
   margin: var(--sp-2) 0 0;
   text-align: center;
   font-size: var(--fs-xs);
   color: var(--text-muted);
+}
+
+/* ── Tactics ── */
+.mp-tactics {
+  display: grid;
+  grid-template-columns: minmax(120px, 1fr) 2fr;
+  gap: var(--sp-3);
+  align-items: start;
+}
+
+/* ── Lineup ── */
+.mp-icon {
+  color: var(--accent);
 }
 
 .mp-lineup-hint {
@@ -504,18 +644,24 @@ function open11() {
   color: var(--text-muted);
 }
 
-.mp-lineup-hint--fatigue {
-  margin-top: 0;
-  font-size: var(--fs-xs);
-}
-
 .mp-pitch {
   margin-bottom: var(--sp-1);
 }
 
+.mp-footer {
+  display: flex;
+  justify-content: center;
+}
+.mp-stand-down {
+  color: var(--danger);
+}
+
 @media (max-width: 600px) {
-  .mp-fixture-row {
-    gap: var(--sp-3);
+  .mp-hero {
+    padding: var(--sp-3);
+  }
+  .mp-tactics {
+    grid-template-columns: 1fr;
   }
 }
 </style>
