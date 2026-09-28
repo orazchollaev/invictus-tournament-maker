@@ -70,7 +70,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div style="height: 100vh">
+  <div class="app-root">
     <AppHeader />
     <main class="app-main" :class="{ 'app-main--no-nav': hideBottomNav }">
       <ErrorBoundary>
@@ -90,8 +90,12 @@ onUnmounted(() => {
 </template>
 
 <style>
-.app-main {
-  height: 100%;
+/* 100% rather than 100vh: <html> already pads the status bar (--safe-top),
+   so #app is shorter than the viewport and 100vh would overflow it by that
+   inset, leaving a small scroll on Android. min-height (not height) keeps the
+   bottom-nav spacer in .app-main::after inside the scrolling content. */
+.app-root {
+  min-height: 100%;
 }
 
 .app-main::after {
