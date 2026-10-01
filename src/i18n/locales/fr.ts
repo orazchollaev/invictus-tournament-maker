@@ -561,6 +561,7 @@
       topClubs: "Meilleurs clubs",
       searchPlaceholder: "Rechercher un jeu de données ou une équipe…",
       loadLabel: "Charger",
+      seeAll: "Tout voir",
     },
     dataManagement: {
       title: "Gestion des données",

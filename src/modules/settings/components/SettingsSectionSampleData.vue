@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from "vue"
+import { computed, nextTick, ref } from "vue"
 import { useI18n } from "vue-i18n"
 import {
   FlaskConical,
@@ -11,6 +11,7 @@ import {
   ListOrdered,
   History,
   Medal,
+  ChevronRight,
 } from "@lucide/vue"
 import { AppCard, AppEmptyState, AppIcon, AppSearchInput } from "@/components/ui"
 import { FlagCircle } from "@/modules/teams/components"
@@ -67,6 +68,26 @@ const filters = computed(() => [
   ...groups.value.map((g) => ({ key: g.key, title: g.title })),
 ])
 
+// On the unfiltered "All" view every section is a single swipeable row, so the
+// page is one row per category instead of 60+ stacked cards. Picking a chip,
+// tapping "See all" or typing a search switches back to the full grid.
+const browsing = computed(() => activeGroup.value === "all" && !query.value.trim())
+
+const toolbar = ref<HTMLElement>()
+
+// "See all" sits halfway down the page; jump back to the toolbar so the grid
+// starts on screen and the now-active chip is visible.
+async function showGroup(key: string) {
+  activeGroup.value = key
+  await nextTick()
+  // Centre the chip first: a second scrollIntoView would cancel a smooth one.
+  toolbar.value?.querySelector(".dataset-filter.active")?.scrollIntoView({
+    block: "nearest",
+    inline: "center",
+  })
+  toolbar.value?.scrollIntoView({ block: "start", behavior: "smooth" })
+}
+
 const visibleGroups = computed(() => {
   const q = query.value.trim().toLocaleLowerCase()
   const matches = (ds: (typeof SAMPLE_DATASETS)[number]) =>
@@ -104,7 +125,7 @@ function flagPreview(ds: (typeof SAMPLE_DATASETS)[number]) {
       {{ t("settings.sampleData.adNotice") }}
     </p>
 
-    <div class="dataset-toolbar">
+    <div ref="toolbar" class="dataset-toolbar">
       <AppSearchInput v-model="query" :placeholder="t('settings.sampleData.searchPlaceholder')" />
       <div class="dataset-filters" role="tablist">
         <button
@@ -125,12 +146,19 @@ function flagPreview(ds: (typeof SAMPLE_DATASETS)[number]) {
     <AppEmptyState v-if="!visibleGroups.length" :description="t('common.noMatch', { query })" />
 
     <section v-for="group in visibleGroups" :key="group.key" class="dataset-section">
-      <h3 class="dataset-group-title">
-        <AppIcon v-if="group.icon" :icon="group.icon" size="sm" />
-        {{ group.title }}
-      </h3>
+      <div class="dataset-group-head">
+        <h3 class="dataset-group-title">
+          <AppIcon v-if="group.icon" :icon="group.icon" size="sm" />
+          {{ group.title }}
+          <span class="dataset-group-count">{{ group.items.length }}</span>
+        </h3>
+        <button v-if="browsing" type="button" class="dataset-see-all" @click="showGroup(group.key)">
+          {{ t("settings.sampleData.seeAll") }}
+          <AppIcon :icon="ChevronRight" size="sm" />
+        </button>
+      </div>
 
-      <div class="dataset-grid">
+      <div :class="browsing ? 'dataset-rail' : 'dataset-grid'">
         <button
           v-for="ds in group.items"
           :key="ds.label"
@@ -205,6 +233,8 @@ function flagPreview(ds: (typeof SAMPLE_DATASETS)[number]) {
   flex-direction: column;
   gap: var(--sp-2);
   margin-bottom: var(--sp-4);
+  /* Clears the sticky header and settings nav when scrolled into view. */
+  scroll-margin-top: calc(var(--sticky-top) + 72px);
 }
 
 .dataset-filters {
@@ -245,6 +275,14 @@ function flagPreview(ds: (typeof SAMPLE_DATASETS)[number]) {
   margin-top: var(--sp-5);
 }
 
+.dataset-group-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-2);
+  margin: 0 0 var(--sp-3);
+}
+
 .dataset-group-title {
   display: flex;
   align-items: center;
@@ -252,7 +290,31 @@ function flagPreview(ds: (typeof SAMPLE_DATASETS)[number]) {
   color: var(--text);
   font-size: var(--fs-sm);
   font-weight: 700;
-  margin: 0 0 var(--sp-3);
+  margin: 0;
+}
+
+.dataset-group-count {
+  color: var(--text-muted);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+}
+
+.dataset-see-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+  padding: var(--sp-1) 0;
+  border: none;
+  background: none;
+  color: var(--accent);
+  font-family: var(--font-ui);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  cursor: pointer;
+}
+[dir="rtl"] .dataset-see-all :deep(svg) {
+  transform: scaleX(-1);
 }
 
 .dataset-group-title :deep(svg) {
@@ -264,6 +326,29 @@ function flagPreview(ds: (typeof SAMPLE_DATASETS)[number]) {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: var(--sp-3);
+}
+
+/* Horizontal row for the "All" view. The negative margin lets cards scroll
+   edge to edge through the card's padding; the vertical padding keeps hover
+   shadows from being clipped by the overflow. */
+.dataset-rail {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(200px, 240px);
+  gap: var(--sp-3);
+  margin-inline: calc(-1 * var(--sp-3));
+  padding: var(--sp-1) var(--sp-3) var(--sp-2);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity;
+  scroll-padding-inline: var(--sp-3);
+  scrollbar-width: none;
+}
+.dataset-rail::-webkit-scrollbar {
+  display: none;
+}
+.dataset-rail > .dataset-card {
+  scroll-snap-align: start;
 }
 
 .dataset-card {

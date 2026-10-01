@@ -545,6 +545,7 @@
       topClubs: "शीर्ष क्लब",
       searchPlaceholder: "डेटासेट या टीम खोजें…",
       loadLabel: "लोड करें",
+      seeAll: "सभी देखें",
     },
     dataManagement: {
       title: "डेटा प्रबंधन",

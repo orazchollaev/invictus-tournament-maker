@@ -563,6 +563,7 @@
       all: "Alle",
       topClubs: "Top-Vereine",
       searchPlaceholder: "Datensätze oder Teams suchen…",
+      seeAll: "Alle anzeigen",
     },
     dataManagement: {
       title: "Datenverwaltung",

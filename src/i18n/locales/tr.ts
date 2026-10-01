@@ -559,6 +559,7 @@
       all: "Tümü",
       topClubs: "En İyi Kulüpler",
       searchPlaceholder: "Veri seti veya takım ara…",
+      seeAll: "Tümünü gör",
     },
     dataManagement: {
       title: "Veri Yönetimi",

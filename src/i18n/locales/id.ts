@@ -548,6 +548,7 @@
       topClubs: "Klub Teratas",
       searchPlaceholder: "Cari set data atau tim…",
       loadLabel: "Muat",
+      seeAll: "Lihat semua",
     },
     dataManagement: {
       title: "Manajemen Data",

@@ -560,6 +560,7 @@
       topClubs: "Melhores clubes",
       searchPlaceholder: "Pesquisar conjuntos ou equipas…",
       loadLabel: "Carregar",
+      seeAll: "Ver tudo",
     },
     dataManagement: {
       title: "Gerenciamento de dados",

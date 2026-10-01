@@ -548,6 +548,7 @@
       topClubs: "Лучшие клубы",
       searchPlaceholder: "Поиск наборов или команд…",
       loadLabel: "Загрузить",
+      seeAll: "Показать все",
     },
     dataManagement: {
       title: "Управление данными",

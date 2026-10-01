@@ -558,6 +558,7 @@
       topClubs: "برترین باشگاه‌ها",
       searchPlaceholder: "جستجوی مجموعه داده یا تیم…",
       loadLabel: "بارگذاری",
+      seeAll: "مشاهده همه",
     },
     dataManagement: {
       title: "مدیریت داده‌ها",

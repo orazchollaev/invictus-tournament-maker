@@ -556,6 +556,7 @@
       all: "All",
       topClubs: "Top Clubs",
       searchPlaceholder: "Search datasets or teams…",
+      seeAll: "See all",
     },
     dataManagement: {
       title: "Data Management",

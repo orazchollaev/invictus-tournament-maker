@@ -560,6 +560,7 @@
       topClubs: "Topclubs",
       searchPlaceholder: "Datasets of teams zoeken…",
       loadLabel: "Laden",
+      seeAll: "Alles bekijken",
     },
     dataManagement: {
       title: "Gegevensbeheer",

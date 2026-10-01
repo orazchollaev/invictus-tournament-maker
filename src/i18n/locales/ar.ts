@@ -543,6 +543,7 @@
       topClubs: "أفضل الأندية",
       searchPlaceholder: "ابحث عن مجموعة بيانات أو فريق…",
       loadLabel: "تحميل",
+      seeAll: "عرض الكل",
     },
     dataManagement: {
       title: "إدارة البيانات",

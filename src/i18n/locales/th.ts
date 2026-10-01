@@ -544,6 +544,7 @@
       topClubs: "สโมสรชั้นนำ",
       searchPlaceholder: "ค้นหาชุดข้อมูลหรือทีม…",
       loadLabel: "โหลด",
+      seeAll: "ดูทั้งหมด",
     },
     dataManagement: {
       title: "การจัดการข้อมูล",

@@ -544,6 +544,7 @@
       topClubs: "トップクラブ",
       searchPlaceholder: "データセットやチームを検索…",
       loadLabel: "読み込む",
+      seeAll: "すべて表示",
     },
     dataManagement: {
       title: "データ管理",

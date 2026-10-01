@@ -562,6 +562,7 @@
       topClubs: "Melhores clubes",
       searchPlaceholder: "Buscar conjuntos ou times…",
       loadLabel: "Carregar",
+      seeAll: "Ver tudo",
     },
     dataManagement: {
       title: "Gerenciamento de Dados",

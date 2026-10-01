@@ -544,6 +544,7 @@
       topClubs: "최고의 클럽",
       searchPlaceholder: "데이터셋 또는 팀 검색…",
       loadLabel: "불러오기",
+      seeAll: "모두 보기",
     },
     dataManagement: {
       title: "데이터 관리",

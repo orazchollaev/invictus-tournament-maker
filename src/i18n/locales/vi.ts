@@ -546,6 +546,7 @@
       topClubs: "CLB hàng đầu",
       searchPlaceholder: "Tìm bộ dữ liệu hoặc đội…",
       loadLabel: "Tải",
+      seeAll: "Xem tất cả",
     },
     dataManagement: {
       title: "Quản lý dữ liệu",

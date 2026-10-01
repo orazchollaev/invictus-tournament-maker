@@ -545,6 +545,7 @@
       topClubs: "Najlepsze kluby",
       searchPlaceholder: "Szukaj zestawów lub drużyn…",
       loadLabel: "Wczytaj",
+      seeAll: "Zobacz wszystkie",
     },
     dataManagement: {
       title: "Zarządzanie danymi",

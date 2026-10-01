@@ -561,6 +561,7 @@
       topClubs: "Migliori club",
       searchPlaceholder: "Cerca dataset o squadre…",
       loadLabel: "Carica",
+      seeAll: "Vedi tutti",
     },
     dataManagement: {
       title: "Gestione Dati",

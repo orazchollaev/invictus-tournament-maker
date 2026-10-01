@@ -560,6 +560,7 @@
       topClubs: "Eng yaxshi klublar",
       searchPlaceholder: "Ma'lumotlar to'plami yoki jamoa qidirish…",
       loadLabel: "Yuklash",
+      seeAll: "Hammasini ko‘rish",
     },
     dataManagement: {
       title: "Ma'lumotlarni boshqarish",
