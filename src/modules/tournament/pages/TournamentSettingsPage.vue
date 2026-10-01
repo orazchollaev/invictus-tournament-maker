@@ -6,14 +6,13 @@ import { useTeamsStore } from "@/modules/teams/store"
 import { useTournamentStore } from "@/modules/tournament/store"
 import { ManualDraw } from "@/modules/tournament/components/draw"
 import { GroupDraw } from "@/modules/tournament/components/group"
-import { TeamSelector, TeamSelectorFullscreenModal } from "@/modules/tournament/components/shared"
+import { TeamSelectorButton, TeamSelectorFullscreenModal } from "@/modules/tournament/components/shared"
 import { AppButton, AppCard, AppChip, AppConfigButton, AppIcon, AppModal } from "@/components/ui"
 import {
   ArrowLeft,
   LayoutGrid,
   List,
   Lock,
-  Maximize2,
   Save,
   Settings,
   Sheet,
@@ -275,22 +274,14 @@ function handleSave() {
               <AppIcon :icon="Lock" size="xs" />
               {{ t("tournament.settingsPage.locked") }}
             </AppChip>
-            <AppButton
-              v-else
-              variant="outlined"
-              size="xs"
-              :title="t('teamSelector.fullView')"
-              @click="showTeamsFullscreen = true"
-            >
-              <AppIcon :icon="Maximize2" size="sm" />
-            </AppButton>
           </template>
 
-          <TeamSelector
+          <TeamSelectorButton
             v-if="!hasAnyResults"
             :teams="allTeams"
             :selected="draft.teamIds.value"
-            @update:selected="draft.teamIds.value = $event"
+            :label="t('teamSelector.title')"
+            @click="showTeamsFullscreen = true"
           />
           <p v-else class="locked-banner">
             <AppIcon :icon="Lock" size="sm" />
