@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n"
 import type { Team } from "@/modules/teams/types"
-import { AppModal } from "@/components/ui"
+import { Check } from "@lucide/vue"
+import { AppButton, AppModal } from "@/components/ui"
 import TeamSelector from "./TeamSelector.vue"
 
 withDefaults(
@@ -31,6 +32,13 @@ const { t } = useI18n()
       fullscreen
       @update:selected="emit('update:selected', $event)"
     />
+
+    <template #footer>
+      <AppButton variant="filled" block @click="open = false">
+        <Check :size="16" />
+        {{ t("common.teams", { n: selected.length }) }}
+      </AppButton>
+    </template>
   </AppModal>
 </template>
 

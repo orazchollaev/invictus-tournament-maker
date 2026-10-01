@@ -40,6 +40,26 @@ const sortedFilteredTeams = computed(() => {
   })
 })
 
+/** Letter sections while sorted by name; one flat run while sorted by power. */
+const sections = computed(() => {
+  if (sortKey.value !== "name") return [{ key: "", teams: sortedFilteredTeams.value }]
+  const out: { key: string; teams: Team[] }[] = []
+  for (const tm of sortedFilteredTeams.value) {
+    const letter = tm.name.charAt(0).toLocaleUpperCase()
+    const last = out[out.length - 1]
+    if (last?.key === letter) last.teams.push(tm)
+    else out.push({ key: letter, teams: [tm] })
+  }
+  return out
+})
+
+function powerTier(power: number) {
+  if (power >= 85) return "elite"
+  if (power >= 75) return "strong"
+  if (power >= 65) return "mid"
+  return "low"
+}
+
 const selectedSet = computed(() => new Set(props.selected))
 const allSelected = computed(
   () => props.teams.length > 0 && props.teams.every((tm) => selectedSet.value.has(tm.id))
@@ -122,22 +142,27 @@ function toggleAll() {
 
     <!-- Fixed height so filtering does not shift the surrounding form; grows in fullscreen. -->
     <div class="ts-list" :class="{ 'ts-list--full': fullscreen }">
-      <button
-        v-for="team in sortedFilteredTeams"
-        :key="team.id"
-        type="button"
-        class="ts-row"
-        :class="{ 'ts-row--on': selectedSet.has(team.id) }"
-        :aria-pressed="selectedSet.has(team.id)"
-        :disabled="disabled"
-        @click="toggleTeam(team.id)"
-      >
-        <span class="ts-check">
-          <Check v-if="selectedSet.has(team.id)" :size="11" :stroke-width="3.5" />
-        </span>
-        <TeamBadge class="ts-team" :team-id="team.id" :teams="teams" />
-        <span v-if="showPower" class="ts-power">{{ team.power }}</span>
-      </button>
+      <template v-for="section in sections" :key="section.key">
+        <div v-if="section.key" class="ts-section">{{ section.key }}</div>
+        <button
+          v-for="team in section.teams"
+          :key="team.id"
+          type="button"
+          class="ts-row"
+          :class="{ 'ts-row--on': selectedSet.has(team.id) }"
+          :aria-pressed="selectedSet.has(team.id)"
+          :disabled="disabled"
+          @click="toggleTeam(team.id)"
+        >
+          <span class="ts-check">
+            <Check v-if="selectedSet.has(team.id)" :size="11" :stroke-width="3.5" />
+          </span>
+          <TeamBadge class="ts-team" :team-id="team.id" :teams="teams" />
+          <span v-if="showPower" class="ts-power" :class="`ts-power--${powerTier(team.power)}`">
+            {{ team.power }}
+          </span>
+        </button>
+      </template>
       <p v-if="!sortedFilteredTeams.length" class="empty-inline">
         {{ t("teamSelector.emptyAvailable") }}
       </p>
@@ -226,12 +251,40 @@ function toggleAll() {
   min-width: 0;
 }
 
-.ts-power {
+.ts-section {
+  position: sticky;
+  top: 0;
+  z-index: 1;
   flex-shrink: 0;
-  font-size: var(--fs-xs);
-  font-weight: 600;
+  padding: var(--sp-2) var(--sp-2) 2px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: var(--accent);
+  background: var(--surface);
+}
+
+.ts-power {
+  --tier: var(--text-muted);
+  flex-shrink: 0;
+  min-width: 30px;
+  padding: 2px 6px;
+  border-radius: var(--radius-pill);
+  font-size: 11px;
+  font-weight: 700;
   font-variant-numeric: tabular-nums;
-  color: var(--text-muted);
+  text-align: center;
+  color: var(--tier);
+  background: color-mix(in srgb, var(--tier) 14%, transparent);
+}
+.ts-power--elite {
+  --tier: var(--gold);
+}
+.ts-power--strong {
+  --tier: var(--success);
+}
+.ts-power--mid {
+  --tier: var(--warning);
 }
 
 .ts-check {
