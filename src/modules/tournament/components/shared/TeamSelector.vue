@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { computed, ref } from "vue"
 import { useI18n } from "vue-i18n"
-import { ArrowDown, ArrowUp, Check } from "@lucide/vue"
+import { Check } from "@lucide/vue"
 import type { Team } from "@/modules/teams/types"
 import { TeamBadge } from "@/modules/teams/components"
-import { AppButton, AppChip, AppIcon, AppSearchInput } from "@/components/ui"
+import { AppButton, AppButtonGroup, AppChip, AppSearchInput } from "@/components/ui"
 
 const props = withDefaults(
   defineProps<{
@@ -40,6 +40,11 @@ const sortedFilteredTeams = computed(() => {
   })
 })
 
+const selectedSet = computed(() => new Set(props.selected))
+const allSelected = computed(
+  () => props.teams.length > 0 && props.teams.every((tm) => selectedSet.value.has(tm.id))
+)
+
 /** Warn while a selection exists but is too small to draw. */
 const belowMinimum = computed(() => props.selected.length > 0 && props.selected.length < MIN_TEAMS)
 
@@ -48,22 +53,25 @@ const countVariant = computed(() => {
   return props.selected.length >= MIN_TEAMS ? "accent" : "neutral"
 })
 
-function toggleSort(key: SortKey) {
+const sortOptions = computed(() =>
+  (["name", "power"] as const).map((key) => {
+    const label = key === "name" ? t("teamSelector.sortName") : t("teamSelector.sortPower")
+    const arrow = sortKey.value === key ? (sortAsc.value ? " ↑" : " ↓") : ""
+    return { value: key, label: label + arrow, disabled: props.disabled }
+  })
+)
+
+function setSort(key: string) {
   if (sortKey.value === key) sortAsc.value = !sortAsc.value
   else {
-    sortKey.value = key
+    sortKey.value = key as SortKey
     sortAsc.value = key === "name"
   }
 }
 
-function sortArrow(key: SortKey) {
-  if (sortKey.value !== key) return null
-  return sortAsc.value ? ArrowUp : ArrowDown
-}
-
 function toggleTeam(teamId: string) {
   if (props.disabled) return
-  if (props.selected.includes(teamId)) {
+  if (selectedSet.value.has(teamId)) {
     emit(
       "update:selected",
       props.selected.filter((id) => id !== teamId)
@@ -73,17 +81,9 @@ function toggleTeam(teamId: string) {
   }
 }
 
-function selectAll() {
+function toggleAll() {
   if (props.disabled) return
-  emit(
-    "update:selected",
-    props.teams.map((tm) => tm.id)
-  )
-}
-
-function deselectAll() {
-  if (props.disabled) return
-  emit("update:selected", [])
+  emit("update:selected", allSelected.value ? [] : props.teams.map((tm) => tm.id))
 }
 </script>
 
@@ -96,51 +96,48 @@ function deselectAll() {
         :disabled="disabled"
         :placeholder="t('teamSelector.searchPlaceholder')"
       />
-      <div class="ts-header-right">
-        <div v-if="showPower" class="ts-sort-group">
-          <AppButton
-            v-for="key in ['name', 'power'] as const"
-            :key="key"
-            variant="outlined"
-            size="xs"
-            :class="{ 'ts-sort--active': sortKey === key }"
-            :disabled="disabled"
-            @click="toggleSort(key)"
-          >
-            {{ key === "name" ? t("teamSelector.sortName") : t("teamSelector.sortPower") }}
-            <AppIcon v-if="sortArrow(key)" :icon="sortArrow(key)!" size="xs" />
-          </AppButton>
-        </div>
-        <AppChip :variant="countVariant">
-          {{ selected.length }}&thinsp;/&thinsp;{{ teams.length }}
-        </AppChip>
-      </div>
+      <AppChip :variant="countVariant">
+        {{ selected.length }}&thinsp;/&thinsp;{{ teams.length }}
+      </AppChip>
     </div>
 
-    <div class="ts-actions">
-      <AppButton variant="outlined" size="xs" :disabled="disabled" @click="selectAll">
-        {{ t("teamSelector.selectAll") }}
-      </AppButton>
-      <AppButton variant="danger" size="xs" :disabled="disabled" @click="deselectAll">
-        {{ t("teamSelector.deselectAll") }}
+    <div class="ts-toolbar">
+      <AppButtonGroup
+        v-if="showPower"
+        :model-value="sortKey"
+        :options="sortOptions"
+        size="md"
+        @update:model-value="setSort"
+      />
+      <AppButton
+        class="ts-toggle-all"
+        variant="text"
+        size="xs"
+        :disabled="disabled"
+        @click="toggleAll"
+      >
+        {{ allSelected ? t("teamSelector.deselectAll") : t("teamSelector.selectAll") }}
       </AppButton>
     </div>
 
     <!-- Fixed height so filtering does not shift the surrounding form; grows in fullscreen. -->
     <div class="ts-list" :class="{ 'ts-list--full': fullscreen }">
-      <div
+      <button
         v-for="team in sortedFilteredTeams"
         :key="team.id"
+        type="button"
         class="ts-row"
-        :class="{ 'ts-row--on': selected.includes(team.id), 'ts-row--disabled': disabled }"
+        :class="{ 'ts-row--on': selectedSet.has(team.id) }"
+        :aria-pressed="selectedSet.has(team.id)"
+        :disabled="disabled"
         @click="toggleTeam(team.id)"
       >
         <span class="ts-check">
-          <AppIcon v-if="selected.includes(team.id)" :icon="Check" size="xs" />
+          <Check v-if="selectedSet.has(team.id)" :size="11" :stroke-width="3.5" />
         </span>
-        <TeamBadge :team-id="team.id" :teams="teams" />
+        <TeamBadge class="ts-team" :team-id="team.id" :teams="teams" />
         <span v-if="showPower" class="ts-power">{{ team.power }}</span>
-      </div>
+      </button>
       <p v-if="!sortedFilteredTeams.length" class="empty-inline">
         {{ t("teamSelector.emptyAvailable") }}
       </p>
@@ -170,37 +167,23 @@ function deselectAll() {
   gap: var(--sp-2);
 }
 
-.ts-header-right {
+.ts-toolbar {
   display: flex;
   align-items: center;
   gap: var(--sp-2);
-  flex-shrink: 0;
 }
 
-.ts-sort-group {
-  display: flex;
-  gap: 3px;
-}
-
-.ts-sort--active {
-  border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+.ts-toggle-all {
+  margin-inline-start: auto;
   color: var(--accent);
-  background: color-mix(in srgb, var(--accent) 8%, var(--surface));
-}
-
-.ts-actions {
-  display: flex;
-  gap: var(--sp-1);
 }
 
 .ts-list {
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius);
-  background: var(--surface);
-  overflow-y: auto;
-  height: 240px;
   display: flex;
   flex-direction: column;
+  gap: 2px;
+  height: 240px;
+  overflow-y: auto;
 }
 
 .ts-list--full {
@@ -212,44 +195,58 @@ function deselectAll() {
   display: flex;
   align-items: center;
   gap: var(--sp-2);
-  padding: var(--sp-2) var(--sp-3);
+  flex-shrink: 0;
+  min-height: 34px;
+  padding: 0 var(--sp-2);
+  border: none;
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: var(--fs-sm);
+  text-align: start;
   cursor: pointer;
   user-select: none;
-  border-bottom: 1px solid var(--border-light);
-  transition: background var(--dur-fast) var(--ease);
-}
-.ts-row:last-child {
-  border-bottom: none;
-}
-.ts-row:hover:not(.ts-row--disabled) {
-  background: color-mix(in srgb, var(--accent) 5%, var(--surface));
+  -webkit-tap-highlight-color: transparent;
 }
 .ts-row--on {
-  background: color-mix(in srgb, var(--accent) 8%, var(--surface));
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
 }
-.ts-row--on:hover {
-  background: color-mix(in srgb, var(--accent) 12%, var(--surface));
-}
-.ts-row--disabled {
+.ts-row:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
+.ts-row:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
 
-.ts-check {
-  width: 16px;
-  height: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--accent);
-  flex-shrink: 0;
+.ts-team {
+  flex: 1;
+  min-width: 0;
 }
 
 .ts-power {
-  font-size: var(--fs-xs);
-  color: var(--text-muted);
-  font-weight: 600;
   flex-shrink: 0;
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
+}
+
+.ts-check {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-pill);
+  color: var(--on-accent);
+}
+.ts-row--on .ts-check {
+  border-color: var(--accent);
+  background: var(--accent);
 }
 
 .ts-warn {
@@ -265,7 +262,7 @@ function deselectAll() {
 
 @media (max-width: 480px) {
   .ts-list {
-    height: 200px;
+    height: 320px;
   }
 }
 </style>
