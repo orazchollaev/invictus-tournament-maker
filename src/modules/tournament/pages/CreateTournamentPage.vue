@@ -3,7 +3,7 @@ import { computed, defineAsyncComponent, ref } from "vue"
 import { useSettingsStore } from "@/modules/settings/store"
 import { ManualDraw } from "../components/draw"
 import { GroupDraw } from "../components/group"
-import { TeamSelector, TeamSelectorFullscreenModal } from "../components/shared"
+import { TeamSelectorButton, TeamSelectorFullscreenModal } from "../components/shared"
 import { DrawCeremony } from "../components/draw-ceremony"
 import {
   Shuffle,
@@ -12,7 +12,6 @@ import {
   LayoutGrid,
   Trophy,
   List,
-  Maximize2,
   Workflow,
 } from "@lucide/vue"
 import { randomTournamentName } from "@/composables/useRandomNames"
@@ -259,18 +258,11 @@ function onCeremonyComplete(orderedIds: string[]) {
 
       <!-- Teams -->
       <div class="form-card">
-        <div class="form-section-header">
-          <div class="form-section-title">{{ $t("tournament.create.teams") }}</div>
-          <AppButton
-            variant="outlined"
-            size="xs"
-            :title="t('teamSelector.fullView')"
-            @click="showTeamsFullscreen = true"
-          >
-            <AppIcon :icon="Maximize2" size="sm" />
-          </AppButton>
-        </div>
-        <TeamSelector :teams="allTeams" :selected="selected" @update:selected="selected = $event" />
+        <TeamSelectorButton
+          :teams="allTeams"
+          :selected="selected"
+          @click="showTeamsFullscreen = true"
+        />
       </div>
 
       <TeamSelectorFullscreenModal
