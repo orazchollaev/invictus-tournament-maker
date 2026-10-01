@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Trophy, LayoutGrid, List, Swords, Shuffle, Workflow } from "@lucide/vue"
+import { Trophy, LayoutGrid, List, Swords, Shuffle, Workflow, type LucideIcon } from "@lucide/vue"
 import type { TournamentFormat } from "@/modules/tournament/types"
 import { SWISS_MIN_TEAMS } from "@/engine"
 
@@ -9,6 +9,59 @@ const format = defineModel<TournamentFormat>("format", { required: true })
 const playoffEnabled = defineModel<boolean>("playoffEnabled", { required: true })
 const groupCount = defineModel<number>("groupCount", { required: true })
 const qualifiersPerGroup = defineModel<number>("qualifiersPerGroup", { required: true })
+
+interface FormatOption {
+  key: string
+  icon: LucideIcon
+  minTeams: number
+  isOn: () => boolean
+  select: () => void
+}
+
+const options: FormatOption[] = [
+  {
+    key: "bracket",
+    icon: Trophy,
+    minTeams: 0,
+    isOn: () => format.value === "bracket",
+    select: () => setFormat("bracket"),
+  },
+  {
+    key: "groupsKo",
+    icon: LayoutGrid,
+    minTeams: 4,
+    isOn: () => format.value === "group+bracket",
+    select: () => setFormat("group+bracket"),
+  },
+  {
+    key: "league",
+    icon: List,
+    minTeams: 2,
+    isOn: () => format.value === "league" && !playoffEnabled.value,
+    select: () => setLeague(false),
+  },
+  {
+    key: "leagueKo",
+    icon: Swords,
+    minTeams: 2,
+    isOn: () => format.value === "league" && playoffEnabled.value,
+    select: () => setLeague(true),
+  },
+  {
+    key: "swiss",
+    icon: Shuffle,
+    minTeams: SWISS_MIN_TEAMS,
+    isOn: () => format.value === "swiss",
+    select: () => setFormat("swiss"),
+  },
+  {
+    key: "custom",
+    icon: Workflow,
+    minTeams: 2,
+    isOn: () => format.value === "custom",
+    select: () => setFormat("custom"),
+  },
+]
 
 function setFormat(f: TournamentFormat) {
   format.value = f
@@ -35,105 +88,28 @@ function setLeague(withPlayoff: boolean) {
       {{ $t("tournament.create.format") }}
     </div>
 
-    <div class="ctp-format-row">
+    <div class="ctp-format-row" role="radiogroup" :aria-label="$t('tournament.create.format')">
       <button
+        v-for="opt in options"
+        :key="opt.key"
+        type="button"
+        role="radio"
         class="ctp-format-card"
-        :class="{ 'ctp-format-card--on': format === 'bracket' }"
-        @click="setFormat('bracket')"
+        :class="{ 'ctp-format-card--on': opt.isOn() }"
+        :aria-checked="opt.isOn()"
+        :disabled="selectedCount < opt.minTeams"
+        @click="opt.select()"
       >
-        <Trophy :size="28" class="ctp-format-icon" />
+        <span class="ctp-format-icon">
+          <component :is="opt.icon" :size="20" />
+        </span>
 
         <span class="ctp-format-title">
-          {{ $t("tournament.create.formats.bracket") }}
+          {{ $t(`tournament.create.formats.${opt.key}`) }}
         </span>
 
         <span class="ctp-format-desc">
-          {{ $t("tournament.create.formats.bracketDesc") }}
-        </span>
-      </button>
-
-      <button
-        class="ctp-format-card"
-        :class="{ 'ctp-format-card--on': format === 'group+bracket' }"
-        :disabled="selectedCount < 4"
-        @click="setFormat('group+bracket')"
-      >
-        <LayoutGrid :size="28" class="ctp-format-icon" />
-
-        <span class="ctp-format-title">
-          {{ $t("tournament.create.formats.groupsKo") }}
-        </span>
-
-        <span class="ctp-format-desc">
-          {{ $t("tournament.create.formats.groupsKoDesc") }}
-        </span>
-      </button>
-
-      <button
-        class="ctp-format-card"
-        :class="{ 'ctp-format-card--on': format === 'league' && !playoffEnabled }"
-        :disabled="selectedCount < 2"
-        @click="setLeague(false)"
-      >
-        <List :size="28" class="ctp-format-icon" />
-
-        <span class="ctp-format-title">
-          {{ $t("tournament.create.formats.league") }}
-        </span>
-
-        <span class="ctp-format-desc">
-          {{ $t("tournament.create.formats.leagueDesc") }}
-        </span>
-      </button>
-
-      <button
-        class="ctp-format-card"
-        :class="{ 'ctp-format-card--on': format === 'league' && playoffEnabled }"
-        :disabled="selectedCount < 2"
-        @click="setLeague(true)"
-      >
-        <Swords :size="28" class="ctp-format-icon" />
-
-        <span class="ctp-format-title">
-          {{ $t("tournament.create.formats.leagueKo") }}
-        </span>
-
-        <span class="ctp-format-desc">
-          {{ $t("tournament.create.formats.leagueKoDesc") }}
-        </span>
-      </button>
-
-      <button
-        class="ctp-format-card"
-        :class="{ 'ctp-format-card--on': format === 'swiss' }"
-        :disabled="selectedCount < SWISS_MIN_TEAMS"
-        @click="setFormat('swiss')"
-      >
-        <Shuffle :size="28" class="ctp-format-icon" />
-
-        <span class="ctp-format-title">
-          {{ $t("tournament.create.formats.swiss") }}
-        </span>
-
-        <span class="ctp-format-desc">
-          {{ $t("tournament.create.formats.swissDesc") }}
-        </span>
-      </button>
-
-      <button
-        class="ctp-format-card"
-        :class="{ 'ctp-format-card--on': format === 'custom' }"
-        :disabled="selectedCount < 2"
-        @click="setFormat('custom')"
-      >
-        <Workflow :size="28" class="ctp-format-icon" />
-
-        <span class="ctp-format-title">
-          {{ $t("tournament.create.formats.custom") }}
-        </span>
-
-        <span class="ctp-format-desc">
-          {{ $t("tournament.create.formats.customDesc") }}
+          {{ $t(`tournament.create.formats.${opt.key}Desc`) }}
         </span>
       </button>
     </div>
