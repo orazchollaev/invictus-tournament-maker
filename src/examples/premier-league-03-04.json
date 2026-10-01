@@ -1,0 +1,149 @@
+{
+  "label": "Premier League 03/04",
+  "description": "The Invincibles season — 20 clubs",
+  "order": 50,
+  "type": "club",
+  "category": "classic",
+  "teams": [
+    {
+      "id": "pl04-01",
+      "name": "Arsenal",
+      "color": "#EF0107",
+      "power": 91,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "pl04-02",
+      "name": "Chelsea",
+      "color": "#034694",
+      "power": 87,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "pl04-03",
+      "name": "Manchester United",
+      "color": "#DA291C",
+      "power": 88,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "pl04-04",
+      "name": "Liverpool",
+      "color": "#C8102E",
+      "power": 83,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "pl04-05",
+      "name": "Newcastle United",
+      "color": "#241F20",
+      "power": 80,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "pl04-06",
+      "name": "Aston Villa",
+      "color": "#670E36",
+      "power": 76,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "pl04-07",
+      "name": "Charlton Athletic",
+      "color": "#D4021D",
+      "power": 73,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "pl04-08",
+      "name": "Bolton Wanderers",
+      "color": "#263C7E",
+      "power": 74,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "pl04-09",
+      "name": "Fulham",
+      "color": "#1A1A1A",
+      "power": 74,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "pl04-10",
+      "name": "Birmingham City",
+      "color": "#0000FF",
+      "power": 73,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "pl04-11",
+      "name": "Middlesbrough",
+      "color": "#E11B22",
+      "power": 74,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "pl04-12",
+      "name": "Southampton",
+      "color": "#D71920",
+      "power": 74,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "pl04-13",
+      "name": "Portsmouth",
+      "color": "#001489",
+      "power": 72,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "pl04-14",
+      "name": "Tottenham Hotspur",
+      "color": "#132257",
+      "power": 76,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "pl04-15",
+      "name": "Blackburn Rovers",
+      "color": "#009EE0",
+      "power": 74,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "pl04-16",
+      "name": "Manchester City",
+      "color": "#6CABDD",
+      "power": 75,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "pl04-17",
+      "name": "Everton",
+      "color": "#003399",
+      "power": 75,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "pl04-18",
+      "name": "Leicester City",
+      "color": "#003090",
+      "power": 70,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "pl04-19",
+      "name": "Leeds United",
+      "color": "#FFCD00",
+      "power": 71,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "pl04-20",
+      "name": "Wolverhampton Wanderers",
+      "color": "#FDB913",
+      "power": 69,
+      "flag": "gb-eng"
+    }
+  ]
+}

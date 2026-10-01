@@ -1,0 +1,894 @@
+{
+  "label": "Africa Cup of Nations 2025",
+  "description": "Morocco 2025 — 24 teams, real groups",
+  "order": 38,
+  "type": "country",
+  "category": "classic",
+  "teams": [
+    {
+      "id": "af25-01",
+      "name": "Morocco",
+      "color": "#C1272D",
+      "power": 86,
+      "flag": "ma"
+    },
+    {
+      "id": "af25-02",
+      "name": "Mali",
+      "color": "#14B53A",
+      "power": 76,
+      "flag": "ml"
+    },
+    {
+      "id": "af25-03",
+      "name": "Zambia",
+      "color": "#198A00",
+      "power": 70,
+      "flag": "zm"
+    },
+    {
+      "id": "af25-04",
+      "name": "Comoros",
+      "color": "#3A75C4",
+      "power": 64,
+      "flag": "km"
+    },
+    {
+      "id": "af25-05",
+      "name": "Egypt",
+      "color": "#CE1126",
+      "power": 80,
+      "flag": "eg"
+    },
+    {
+      "id": "af25-06",
+      "name": "South Africa",
+      "color": "#007749",
+      "power": 75,
+      "flag": "za"
+    },
+    {
+      "id": "af25-07",
+      "name": "Angola",
+      "color": "#CC092F",
+      "power": 70,
+      "flag": "ao"
+    },
+    {
+      "id": "af25-08",
+      "name": "Zimbabwe",
+      "color": "#006400",
+      "power": 64,
+      "flag": "zw"
+    },
+    {
+      "id": "af25-09",
+      "name": "Nigeria",
+      "color": "#008751",
+      "power": 82,
+      "flag": "ng"
+    },
+    {
+      "id": "af25-10",
+      "name": "Tunisia",
+      "color": "#E70013",
+      "power": 76,
+      "flag": "tn"
+    },
+    {
+      "id": "af25-11",
+      "name": "Uganda",
+      "color": "#FCDC04",
+      "power": 67,
+      "flag": "ug"
+    },
+    {
+      "id": "af25-12",
+      "name": "Tanzania",
+      "color": "#1EB53A",
+      "power": 63,
+      "flag": "tz"
+    },
+    {
+      "id": "af25-13",
+      "name": "Senegal",
+      "color": "#00853F",
+      "power": 84,
+      "flag": "sn"
+    },
+    {
+      "id": "af25-14",
+      "name": "DR Congo",
+      "color": "#007FFF",
+      "power": 76,
+      "flag": "cd"
+    },
+    {
+      "id": "af25-15",
+      "name": "Benin",
+      "color": "#008751",
+      "power": 66,
+      "flag": "bj"
+    },
+    {
+      "id": "af25-16",
+      "name": "Botswana",
+      "color": "#75AADB",
+      "power": 60,
+      "flag": "bw"
+    },
+    {
+      "id": "af25-17",
+      "name": "Algeria",
+      "color": "#006233",
+      "power": 81,
+      "flag": "dz"
+    },
+    {
+      "id": "af25-18",
+      "name": "Burkina Faso",
+      "color": "#EF2B2D",
+      "power": 73,
+      "flag": "bf"
+    },
+    {
+      "id": "af25-19",
+      "name": "Equatorial Guinea",
+      "color": "#3E9A00",
+      "power": 64,
+      "flag": "gq"
+    },
+    {
+      "id": "af25-20",
+      "name": "Sudan",
+      "color": "#D21034",
+      "power": 60,
+      "flag": "sd"
+    },
+    {
+      "id": "af25-21",
+      "name": "Ivory Coast",
+      "color": "#FF8200",
+      "power": 82,
+      "flag": "ci"
+    },
+    {
+      "id": "af25-22",
+      "name": "Cameroon",
+      "color": "#007A5E",
+      "power": 78,
+      "flag": "cm"
+    },
+    {
+      "id": "af25-23",
+      "name": "Gabon",
+      "color": "#009E60",
+      "power": 69,
+      "flag": "ga"
+    },
+    {
+      "id": "af25-24",
+      "name": "Mozambique",
+      "color": "#007168",
+      "power": 62,
+      "flag": "mz"
+    }
+  ],
+  "tournaments": [
+    {
+      "id": "idvnhmgppi",
+      "name": "AFCON 2025",
+      "season": 1,
+      "format": "group+bracket",
+      "teamIds": [
+        "af25-01",
+        "af25-02",
+        "af25-03",
+        "af25-04",
+        "af25-05",
+        "af25-06",
+        "af25-07",
+        "af25-08",
+        "af25-09",
+        "af25-10",
+        "af25-11",
+        "af25-12",
+        "af25-13",
+        "af25-14",
+        "af25-15",
+        "af25-16",
+        "af25-17",
+        "af25-18",
+        "af25-19",
+        "af25-20",
+        "af25-21",
+        "af25-22",
+        "af25-23",
+        "af25-24"
+      ],
+      "groups": [
+        {
+          "name": "Group A",
+          "teamIds": [
+            "af25-01",
+            "af25-02",
+            "af25-03",
+            "af25-04"
+          ],
+          "matches": [
+            {
+              "id": "a06ro9nibq",
+              "homeId": "af25-04",
+              "awayId": "af25-01",
+              "result": null
+            },
+            {
+              "id": "4tnc5gaddn",
+              "homeId": "af25-03",
+              "awayId": "af25-02",
+              "result": null
+            },
+            {
+              "id": "dcv8qt73ft",
+              "homeId": "af25-01",
+              "awayId": "af25-03",
+              "result": null
+            },
+            {
+              "id": "jtdrrc0wvq",
+              "homeId": "af25-02",
+              "awayId": "af25-04",
+              "result": null
+            },
+            {
+              "id": "1avzb4z5sj",
+              "homeId": "af25-02",
+              "awayId": "af25-01",
+              "result": null
+            },
+            {
+              "id": "kc8mjv8xc1",
+              "homeId": "af25-04",
+              "awayId": "af25-03",
+              "result": null
+            }
+          ],
+          "standings": [
+            {
+              "teamId": "af25-01",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "af25-02",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "af25-03",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "af25-04",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            }
+          ]
+        },
+        {
+          "name": "Group B",
+          "teamIds": [
+            "af25-05",
+            "af25-06",
+            "af25-07",
+            "af25-08"
+          ],
+          "matches": [
+            {
+              "id": "u0p1556iiv",
+              "homeId": "af25-08",
+              "awayId": "af25-05",
+              "result": null
+            },
+            {
+              "id": "bri42b3u7a",
+              "homeId": "af25-07",
+              "awayId": "af25-06",
+              "result": null
+            },
+            {
+              "id": "tzn7m23h0a",
+              "homeId": "af25-05",
+              "awayId": "af25-07",
+              "result": null
+            },
+            {
+              "id": "ioroenavg6",
+              "homeId": "af25-06",
+              "awayId": "af25-08",
+              "result": null
+            },
+            {
+              "id": "7pcga9ljqx",
+              "homeId": "af25-06",
+              "awayId": "af25-05",
+              "result": null
+            },
+            {
+              "id": "2gje5anr4s",
+              "homeId": "af25-08",
+              "awayId": "af25-07",
+              "result": null
+            }
+          ],
+          "standings": [
+            {
+              "teamId": "af25-05",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "af25-06",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "af25-07",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "af25-08",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            }
+          ]
+        },
+        {
+          "name": "Group C",
+          "teamIds": [
+            "af25-09",
+            "af25-10",
+            "af25-11",
+            "af25-12"
+          ],
+          "matches": [
+            {
+              "id": "nda98bqtjy",
+              "homeId": "af25-12",
+              "awayId": "af25-09",
+              "result": null
+            },
+            {
+              "id": "6z31x8cwmh",
+              "homeId": "af25-11",
+              "awayId": "af25-10",
+              "result": null
+            },
+            {
+              "id": "tuqu8m0ntb",
+              "homeId": "af25-09",
+              "awayId": "af25-11",
+              "result": null
+            },
+            {
+              "id": "bllrd8nc29",
+              "homeId": "af25-10",
+              "awayId": "af25-12",
+              "result": null
+            },
+            {
+              "id": "qxl0421ws0",
+              "homeId": "af25-10",
+              "awayId": "af25-09",
+              "result": null
+            },
+            {
+              "id": "fc680zlgt0",
+              "homeId": "af25-12",
+              "awayId": "af25-11",
+              "result": null
+            }
+          ],
+          "standings": [
+            {
+              "teamId": "af25-09",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "af25-10",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "af25-11",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "af25-12",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            }
+          ]
+        },
+        {
+          "name": "Group D",
+          "teamIds": [
+            "af25-13",
+            "af25-14",
+            "af25-15",
+            "af25-16"
+          ],
+          "matches": [
+            {
+              "id": "83f4cz9xob",
+              "homeId": "af25-16",
+              "awayId": "af25-13",
+              "result": null
+            },
+            {
+              "id": "eu7npz7k85",
+              "homeId": "af25-15",
+              "awayId": "af25-14",
+              "result": null
+            },
+            {
+              "id": "x4wy2brc0m",
+              "homeId": "af25-13",
+              "awayId": "af25-15",
+              "result": null
+            },
+            {
+              "id": "c2qy1wf5i4",
+              "homeId": "af25-14",
+              "awayId": "af25-16",
+              "result": null
+            },
+            {
+              "id": "g3jead307f",
+              "homeId": "af25-14",
+              "awayId": "af25-13",
+              "result": null
+            },
+            {
+              "id": "3p8sexvpn8",
+              "homeId": "af25-16",
+              "awayId": "af25-15",
+              "result": null
+            }
+          ],
+          "standings": [
+            {
+              "teamId": "af25-13",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "af25-14",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "af25-15",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "af25-16",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            }
+          ]
+        },
+        {
+          "name": "Group E",
+          "teamIds": [
+            "af25-17",
+            "af25-18",
+            "af25-19",
+            "af25-20"
+          ],
+          "matches": [
+            {
+              "id": "fu1zoo6ozj",
+              "homeId": "af25-20",
+              "awayId": "af25-17",
+              "result": null
+            },
+            {
+              "id": "oxn0vk97lg",
+              "homeId": "af25-19",
+              "awayId": "af25-18",
+              "result": null
+            },
+            {
+              "id": "60oai4bpa4",
+              "homeId": "af25-17",
+              "awayId": "af25-19",
+              "result": null
+            },
+            {
+              "id": "ldktbeuf02",
+              "homeId": "af25-18",
+              "awayId": "af25-20",
+              "result": null
+            },
+            {
+              "id": "7r7sudap5n",
+              "homeId": "af25-18",
+              "awayId": "af25-17",
+              "result": null
+            },
+            {
+              "id": "vtj1pnvsfy",
+              "homeId": "af25-20",
+              "awayId": "af25-19",
+              "result": null
+            }
+          ],
+          "standings": [
+            {
+              "teamId": "af25-17",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "af25-18",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "af25-19",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "af25-20",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            }
+          ]
+        },
+        {
+          "name": "Group F",
+          "teamIds": [
+            "af25-21",
+            "af25-22",
+            "af25-23",
+            "af25-24"
+          ],
+          "matches": [
+            {
+              "id": "ntihy673pg",
+              "homeId": "af25-24",
+              "awayId": "af25-21",
+              "result": null
+            },
+            {
+              "id": "u4s36df26a",
+              "homeId": "af25-23",
+              "awayId": "af25-22",
+              "result": null
+            },
+            {
+              "id": "jv1xlq2oot",
+              "homeId": "af25-21",
+              "awayId": "af25-23",
+              "result": null
+            },
+            {
+              "id": "d0mw8374kv",
+              "homeId": "af25-22",
+              "awayId": "af25-24",
+              "result": null
+            },
+            {
+              "id": "b1r6c0w86i",
+              "homeId": "af25-22",
+              "awayId": "af25-21",
+              "result": null
+            },
+            {
+              "id": "z38raw5tc6",
+              "homeId": "af25-24",
+              "awayId": "af25-23",
+              "result": null
+            }
+          ],
+          "standings": [
+            {
+              "teamId": "af25-21",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "af25-22",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "af25-23",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "af25-24",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            }
+          ]
+        }
+      ],
+      "groupsDone": false,
+      "qualifiersPerGroup": 2,
+      "wildcardCount": 4,
+      "rounds": [
+        {
+          "name": "Round of 16",
+          "matches": [
+            {
+              "id": "kfkvujfk22",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            },
+            {
+              "id": "dar8nkhg68",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            },
+            {
+              "id": "tu7rmt0xly",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            },
+            {
+              "id": "ilzyyv94nw",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            },
+            {
+              "id": "j3127w10lo",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            },
+            {
+              "id": "zdbh1g2f6p",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            },
+            {
+              "id": "n7yai6ouif",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            },
+            {
+              "id": "37ggf8vvz2",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            }
+          ]
+        },
+        {
+          "name": "Quarter-Finals",
+          "matches": [
+            {
+              "id": "a1e8a7peb7",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            },
+            {
+              "id": "1bjmcx30rl",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            },
+            {
+              "id": "tv468xhzr3",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            },
+            {
+              "id": "xjyky82q5f",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            }
+          ]
+        },
+        {
+          "name": "Semi-Finals",
+          "matches": [
+            {
+              "id": "fainkq12dx",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            },
+            {
+              "id": "gmlcyz79e8",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            }
+          ]
+        },
+        {
+          "name": "Final",
+          "matches": [
+            {
+              "id": "ypzcbgre2z",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            }
+          ]
+        }
+      ],
+      "winnerId": null,
+      "groupLegMode": "single",
+      "knockoutLegMode": "single",
+      "finalLegMode": "single",
+      "createdAt": 1790171494006,
+      "drawType": "manual",
+      "tiebreaker": "goal-diff",
+      "playoffSeedMode": "cross"
+    }
+  ]
+}

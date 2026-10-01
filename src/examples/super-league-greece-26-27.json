@@ -1,0 +1,107 @@
+{
+  "label": "Super League Greece 26/27",
+  "description": "Greek Super League 2026/27 — 14 clubs",
+  "order": 14.7,
+  "type": "club",
+  "category": "league",
+  "teams": [
+    {
+      "id": "gre-01",
+      "name": "Olympiacos",
+      "color": "#E30613",
+      "power": 82,
+      "flag": "gr"
+    },
+    {
+      "id": "gre-02",
+      "name": "PAOK",
+      "color": "#000000",
+      "power": 80,
+      "flag": "gr"
+    },
+    {
+      "id": "gre-03",
+      "name": "AEK Athens",
+      "color": "#FFD700",
+      "power": 80,
+      "flag": "gr"
+    },
+    {
+      "id": "gre-04",
+      "name": "Panathinaikos",
+      "color": "#007A33",
+      "power": 78,
+      "flag": "gr"
+    },
+    {
+      "id": "gre-05",
+      "name": "Aris",
+      "color": "#FFD100",
+      "power": 73,
+      "flag": "gr"
+    },
+    {
+      "id": "gre-06",
+      "name": "OFI",
+      "color": "#1A1A1A",
+      "power": 70,
+      "flag": "gr"
+    },
+    {
+      "id": "gre-07",
+      "name": "Levadiakos",
+      "color": "#007A33",
+      "power": 69,
+      "flag": "gr"
+    },
+    {
+      "id": "gre-08",
+      "name": "Volos",
+      "color": "#E30613",
+      "power": 68,
+      "flag": "gr"
+    },
+    {
+      "id": "gre-09",
+      "name": "Atromitos",
+      "color": "#0055A4",
+      "power": 68,
+      "flag": "gr"
+    },
+    {
+      "id": "gre-10",
+      "name": "Asteras Tripolis",
+      "color": "#FFD100",
+      "power": 67,
+      "flag": "gr"
+    },
+    {
+      "id": "gre-11",
+      "name": "Panetolikos",
+      "color": "#FFD100",
+      "power": 66,
+      "flag": "gr"
+    },
+    {
+      "id": "gre-12",
+      "name": "A.E. Kifisia",
+      "color": "#0055A4",
+      "power": 66,
+      "flag": "gr"
+    },
+    {
+      "id": "gre-13",
+      "name": "Iraklis",
+      "color": "#0055A4",
+      "power": 65,
+      "flag": "gr"
+    },
+    {
+      "id": "gre-14",
+      "name": "Kalamata",
+      "color": "#1A1A1A",
+      "power": 64,
+      "flag": "gr"
+    }
+  ]
+}

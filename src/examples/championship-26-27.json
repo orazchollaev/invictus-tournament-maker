@@ -1,0 +1,177 @@
+{
+  "label": "Championship 26/27",
+  "description": "English Championship 2026/27 — 24 clubs",
+  "order": 14.4,
+  "type": "club",
+  "category": "league",
+  "teams": [
+    {
+      "id": "efl-01",
+      "name": "West Ham United",
+      "color": "#7A263A",
+      "power": 78,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "efl-02",
+      "name": "Wolverhampton Wanderers",
+      "color": "#FDB913",
+      "power": 77,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "efl-03",
+      "name": "Burnley",
+      "color": "#6C1D45",
+      "power": 77,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "efl-04",
+      "name": "Southampton",
+      "color": "#D71920",
+      "power": 76,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "efl-05",
+      "name": "Middlesbrough",
+      "color": "#E11B22",
+      "power": 75,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "efl-06",
+      "name": "Sheffield United",
+      "color": "#EE2737",
+      "power": 74,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "efl-07",
+      "name": "Norwich City",
+      "color": "#00A650",
+      "power": 73,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "efl-08",
+      "name": "West Bromwich Albion",
+      "color": "#122F67",
+      "power": 73,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "efl-09",
+      "name": "Watford",
+      "color": "#FBEE23",
+      "power": 72,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "efl-10",
+      "name": "Bristol City",
+      "color": "#E21B23",
+      "power": 72,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "efl-11",
+      "name": "Millwall",
+      "color": "#001D5E",
+      "power": 72,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "efl-12",
+      "name": "Stoke City",
+      "color": "#E03A3E",
+      "power": 71,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "efl-13",
+      "name": "Wrexham",
+      "color": "#D71920",
+      "power": 72,
+      "flag": "gb-wls"
+    },
+    {
+      "id": "efl-14",
+      "name": "Birmingham City",
+      "color": "#0000FF",
+      "power": 72,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "efl-15",
+      "name": "Blackburn Rovers",
+      "color": "#009EE0",
+      "power": 71,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "efl-16",
+      "name": "Preston North End",
+      "color": "#1A1A1A",
+      "power": 71,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "efl-17",
+      "name": "Derby County",
+      "color": "#1A1A1A",
+      "power": 70,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "efl-18",
+      "name": "Swansea City",
+      "color": "#121212",
+      "power": 70,
+      "flag": "gb-wls"
+    },
+    {
+      "id": "efl-19",
+      "name": "Queens Park Rangers",
+      "color": "#1D5BA4",
+      "power": 69,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "efl-20",
+      "name": "Portsmouth",
+      "color": "#001489",
+      "power": 69,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "efl-21",
+      "name": "Charlton Athletic",
+      "color": "#D4021D",
+      "power": 68,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "efl-22",
+      "name": "Cardiff City",
+      "color": "#0070B5",
+      "power": 68,
+      "flag": "gb-wls"
+    },
+    {
+      "id": "efl-23",
+      "name": "Bolton Wanderers",
+      "color": "#263C7E",
+      "power": 68,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "efl-24",
+      "name": "Lincoln City",
+      "color": "#D71920",
+      "power": 66,
+      "flag": "gb-eng"
+    }
+  ]
+}

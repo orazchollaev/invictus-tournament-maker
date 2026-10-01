@@ -1,0 +1,590 @@
+{
+  "label": "Copa América 2024",
+  "description": "USA 2024 — 16 teams, real groups",
+  "order": 37,
+  "type": "country",
+  "category": "classic",
+  "teams": [
+    {
+      "id": "ca24-01",
+      "name": "Argentina",
+      "color": "#43A1D5",
+      "power": 90,
+      "flag": "ar"
+    },
+    {
+      "id": "ca24-02",
+      "name": "Canada",
+      "color": "#FF0000",
+      "power": 74,
+      "flag": "ca"
+    },
+    {
+      "id": "ca24-03",
+      "name": "Chile",
+      "color": "#D52B1E",
+      "power": 72,
+      "flag": "cl"
+    },
+    {
+      "id": "ca24-04",
+      "name": "Peru",
+      "color": "#D91023",
+      "power": 70,
+      "flag": "pe"
+    },
+    {
+      "id": "ca24-05",
+      "name": "Mexico",
+      "color": "#006847",
+      "power": 77,
+      "flag": "mx"
+    },
+    {
+      "id": "ca24-06",
+      "name": "Jamaica",
+      "color": "#009B3A",
+      "power": 68,
+      "flag": "jm"
+    },
+    {
+      "id": "ca24-07",
+      "name": "Venezuela",
+      "color": "#CF142B",
+      "power": 72,
+      "flag": "ve"
+    },
+    {
+      "id": "ca24-08",
+      "name": "Ecuador",
+      "color": "#FFD100",
+      "power": 78,
+      "flag": "ec"
+    },
+    {
+      "id": "ca24-09",
+      "name": "USA",
+      "color": "#0A3161",
+      "power": 79,
+      "flag": "us"
+    },
+    {
+      "id": "ca24-10",
+      "name": "Bolivia",
+      "color": "#007934",
+      "power": 64,
+      "flag": "bo"
+    },
+    {
+      "id": "ca24-11",
+      "name": "Uruguay",
+      "color": "#0038A8",
+      "power": 85,
+      "flag": "uy"
+    },
+    {
+      "id": "ca24-12",
+      "name": "Panama",
+      "color": "#C8102E",
+      "power": 71,
+      "flag": "pa"
+    },
+    {
+      "id": "ca24-13",
+      "name": "Brazil",
+      "color": "#009B3A",
+      "power": 87,
+      "flag": "br"
+    },
+    {
+      "id": "ca24-14",
+      "name": "Costa Rica",
+      "color": "#002B7F",
+      "power": 68,
+      "flag": "cr"
+    },
+    {
+      "id": "ca24-15",
+      "name": "Colombia",
+      "color": "#FCD116",
+      "power": 84,
+      "flag": "co"
+    },
+    {
+      "id": "ca24-16",
+      "name": "Paraguay",
+      "color": "#D52B1E",
+      "power": 72,
+      "flag": "py"
+    }
+  ],
+  "tournaments": [
+    {
+      "id": "z9amssfu4h",
+      "name": "Copa América 2024",
+      "season": 1,
+      "format": "group+bracket",
+      "teamIds": [
+        "ca24-01",
+        "ca24-02",
+        "ca24-03",
+        "ca24-04",
+        "ca24-05",
+        "ca24-06",
+        "ca24-07",
+        "ca24-08",
+        "ca24-09",
+        "ca24-10",
+        "ca24-11",
+        "ca24-12",
+        "ca24-13",
+        "ca24-14",
+        "ca24-15",
+        "ca24-16"
+      ],
+      "groups": [
+        {
+          "name": "Group A",
+          "teamIds": [
+            "ca24-01",
+            "ca24-02",
+            "ca24-03",
+            "ca24-04"
+          ],
+          "matches": [
+            {
+              "id": "u8obuo5cv6",
+              "homeId": "ca24-04",
+              "awayId": "ca24-01",
+              "result": null
+            },
+            {
+              "id": "z2z8m18fjg",
+              "homeId": "ca24-03",
+              "awayId": "ca24-02",
+              "result": null
+            },
+            {
+              "id": "m8lklgweir",
+              "homeId": "ca24-01",
+              "awayId": "ca24-03",
+              "result": null
+            },
+            {
+              "id": "2ypyopz5ph",
+              "homeId": "ca24-02",
+              "awayId": "ca24-04",
+              "result": null
+            },
+            {
+              "id": "otbk8m1f01",
+              "homeId": "ca24-02",
+              "awayId": "ca24-01",
+              "result": null
+            },
+            {
+              "id": "641vd7xnfp",
+              "homeId": "ca24-04",
+              "awayId": "ca24-03",
+              "result": null
+            }
+          ],
+          "standings": [
+            {
+              "teamId": "ca24-01",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "ca24-02",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "ca24-03",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "ca24-04",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            }
+          ]
+        },
+        {
+          "name": "Group B",
+          "teamIds": [
+            "ca24-05",
+            "ca24-06",
+            "ca24-07",
+            "ca24-08"
+          ],
+          "matches": [
+            {
+              "id": "dkb8z5rrpw",
+              "homeId": "ca24-08",
+              "awayId": "ca24-05",
+              "result": null
+            },
+            {
+              "id": "dog9gozji3",
+              "homeId": "ca24-07",
+              "awayId": "ca24-06",
+              "result": null
+            },
+            {
+              "id": "vqwakwqmiw",
+              "homeId": "ca24-05",
+              "awayId": "ca24-07",
+              "result": null
+            },
+            {
+              "id": "7etzz8ab8f",
+              "homeId": "ca24-06",
+              "awayId": "ca24-08",
+              "result": null
+            },
+            {
+              "id": "0388ab7gbr",
+              "homeId": "ca24-06",
+              "awayId": "ca24-05",
+              "result": null
+            },
+            {
+              "id": "wvpgtyb9az",
+              "homeId": "ca24-08",
+              "awayId": "ca24-07",
+              "result": null
+            }
+          ],
+          "standings": [
+            {
+              "teamId": "ca24-05",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "ca24-06",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "ca24-07",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "ca24-08",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            }
+          ]
+        },
+        {
+          "name": "Group C",
+          "teamIds": [
+            "ca24-09",
+            "ca24-10",
+            "ca24-11",
+            "ca24-12"
+          ],
+          "matches": [
+            {
+              "id": "ybt9f82rh3",
+              "homeId": "ca24-12",
+              "awayId": "ca24-09",
+              "result": null
+            },
+            {
+              "id": "f0efmszg8u",
+              "homeId": "ca24-11",
+              "awayId": "ca24-10",
+              "result": null
+            },
+            {
+              "id": "lfqsvwifsv",
+              "homeId": "ca24-09",
+              "awayId": "ca24-11",
+              "result": null
+            },
+            {
+              "id": "u8juzve87c",
+              "homeId": "ca24-10",
+              "awayId": "ca24-12",
+              "result": null
+            },
+            {
+              "id": "uct7ige8kb",
+              "homeId": "ca24-10",
+              "awayId": "ca24-09",
+              "result": null
+            },
+            {
+              "id": "9nurblhpm2",
+              "homeId": "ca24-12",
+              "awayId": "ca24-11",
+              "result": null
+            }
+          ],
+          "standings": [
+            {
+              "teamId": "ca24-09",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "ca24-10",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "ca24-11",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "ca24-12",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            }
+          ]
+        },
+        {
+          "name": "Group D",
+          "teamIds": [
+            "ca24-13",
+            "ca24-14",
+            "ca24-15",
+            "ca24-16"
+          ],
+          "matches": [
+            {
+              "id": "ur46recpkx",
+              "homeId": "ca24-16",
+              "awayId": "ca24-13",
+              "result": null
+            },
+            {
+              "id": "ibjhhpzy9b",
+              "homeId": "ca24-15",
+              "awayId": "ca24-14",
+              "result": null
+            },
+            {
+              "id": "16c7y9ka32",
+              "homeId": "ca24-13",
+              "awayId": "ca24-15",
+              "result": null
+            },
+            {
+              "id": "hlvbjefjd1",
+              "homeId": "ca24-14",
+              "awayId": "ca24-16",
+              "result": null
+            },
+            {
+              "id": "i8wxmedr9b",
+              "homeId": "ca24-14",
+              "awayId": "ca24-13",
+              "result": null
+            },
+            {
+              "id": "n8d9tawzv5",
+              "homeId": "ca24-16",
+              "awayId": "ca24-15",
+              "result": null
+            }
+          ],
+          "standings": [
+            {
+              "teamId": "ca24-13",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "ca24-14",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "ca24-15",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "ca24-16",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            }
+          ]
+        }
+      ],
+      "groupsDone": false,
+      "qualifiersPerGroup": 2,
+      "rounds": [
+        {
+          "name": "Quarter-Finals",
+          "matches": [
+            {
+              "id": "bjxagml37z",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            },
+            {
+              "id": "4ar2dycu8n",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            },
+            {
+              "id": "5q56lrmcq0",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            },
+            {
+              "id": "2hx5o61c48",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            }
+          ]
+        },
+        {
+          "name": "Semi-Finals",
+          "matches": [
+            {
+              "id": "y0dfgh0zgj",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            },
+            {
+              "id": "jdpgc9r8xd",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            }
+          ]
+        },
+        {
+          "name": "Final",
+          "matches": [
+            {
+              "id": "de6313v4xe",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            }
+          ]
+        }
+      ],
+      "winnerId": null,
+      "groupLegMode": "single",
+      "knockoutLegMode": "single",
+      "finalLegMode": "single",
+      "createdAt": 1790171494005,
+      "drawType": "manual",
+      "tiebreaker": "goal-diff",
+      "playoffSeedMode": "cross"
+    }
+  ]
+}

@@ -1,0 +1,135 @@
+{
+  "label": "Liga MX Apertura 2026",
+  "description": "Mexican Liga MX Apertura 2026 — 18 clubs",
+  "order": 16.5,
+  "type": "club",
+  "category": "league",
+  "teams": [
+    {
+      "id": "lmx-01",
+      "name": "Toluca",
+      "color": "#C8102E",
+      "power": 81,
+      "flag": "mx"
+    },
+    {
+      "id": "lmx-02",
+      "name": "América",
+      "color": "#FFD700",
+      "power": 81,
+      "flag": "mx"
+    },
+    {
+      "id": "lmx-03",
+      "name": "Cruz Azul",
+      "color": "#003DA5",
+      "power": 80,
+      "flag": "mx"
+    },
+    {
+      "id": "lmx-04",
+      "name": "Tigres UANL",
+      "color": "#FDB913",
+      "power": 80,
+      "flag": "mx"
+    },
+    {
+      "id": "lmx-05",
+      "name": "Monterrey",
+      "color": "#0A2240",
+      "power": 79,
+      "flag": "mx"
+    },
+    {
+      "id": "lmx-06",
+      "name": "Pachuca",
+      "color": "#003DA5",
+      "power": 76,
+      "flag": "mx"
+    },
+    {
+      "id": "lmx-07",
+      "name": "Guadalajara",
+      "color": "#C8102E",
+      "power": 76,
+      "flag": "mx"
+    },
+    {
+      "id": "lmx-08",
+      "name": "Pumas UNAM",
+      "color": "#D4AF37",
+      "power": 75,
+      "flag": "mx"
+    },
+    {
+      "id": "lmx-09",
+      "name": "León",
+      "color": "#006341",
+      "power": 73,
+      "flag": "mx"
+    },
+    {
+      "id": "lmx-10",
+      "name": "Tijuana",
+      "color": "#C8102E",
+      "power": 73,
+      "flag": "mx"
+    },
+    {
+      "id": "lmx-11",
+      "name": "Juárez",
+      "color": "#4CAF50",
+      "power": 72,
+      "flag": "mx"
+    },
+    {
+      "id": "lmx-12",
+      "name": "Necaxa",
+      "color": "#D71920",
+      "power": 71,
+      "flag": "mx"
+    },
+    {
+      "id": "lmx-13",
+      "name": "Santos Laguna",
+      "color": "#00843D",
+      "power": 70,
+      "flag": "mx"
+    },
+    {
+      "id": "lmx-14",
+      "name": "Atlas",
+      "color": "#B0001E",
+      "power": 70,
+      "flag": "mx"
+    },
+    {
+      "id": "lmx-15",
+      "name": "Atlético San Luis",
+      "color": "#D71920",
+      "power": 70,
+      "flag": "mx"
+    },
+    {
+      "id": "lmx-16",
+      "name": "Querétaro",
+      "color": "#0055A4",
+      "power": 69,
+      "flag": "mx"
+    },
+    {
+      "id": "lmx-17",
+      "name": "Puebla",
+      "color": "#0033A0",
+      "power": 68,
+      "flag": "mx"
+    },
+    {
+      "id": "lmx-18",
+      "name": "Atlante",
+      "color": "#0033A0",
+      "power": 68,
+      "flag": "mx"
+    }
+  ]
+}

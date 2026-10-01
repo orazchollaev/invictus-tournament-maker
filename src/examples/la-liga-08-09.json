@@ -1,0 +1,149 @@
+{
+  "label": "La Liga 08/09",
+  "description": "Guardiola's treble season — 20 clubs",
+  "order": 52,
+  "type": "club",
+  "category": "classic",
+  "teams": [
+    {
+      "id": "ll09-01",
+      "name": "Barcelona",
+      "color": "#A50044",
+      "power": 93,
+      "flag": "es"
+    },
+    {
+      "id": "ll09-02",
+      "name": "Real Madrid",
+      "color": "#FEBE10",
+      "power": 88,
+      "flag": "es"
+    },
+    {
+      "id": "ll09-03",
+      "name": "Sevilla",
+      "color": "#D81E05",
+      "power": 83,
+      "flag": "es"
+    },
+    {
+      "id": "ll09-04",
+      "name": "Atlético Madrid",
+      "color": "#CE3524",
+      "power": 82,
+      "flag": "es"
+    },
+    {
+      "id": "ll09-05",
+      "name": "Villarreal",
+      "color": "#FFD700",
+      "power": 83,
+      "flag": "es"
+    },
+    {
+      "id": "ll09-06",
+      "name": "Valencia",
+      "color": "#EE3524",
+      "power": 83,
+      "flag": "es"
+    },
+    {
+      "id": "ll09-07",
+      "name": "Deportivo La Coruña",
+      "color": "#0067B1",
+      "power": 75,
+      "flag": "es"
+    },
+    {
+      "id": "ll09-08",
+      "name": "Málaga",
+      "color": "#0077C8",
+      "power": 72,
+      "flag": "es"
+    },
+    {
+      "id": "ll09-09",
+      "name": "Mallorca",
+      "color": "#E20613",
+      "power": 73,
+      "flag": "es"
+    },
+    {
+      "id": "ll09-10",
+      "name": "Espanyol",
+      "color": "#007FC8",
+      "power": 74,
+      "flag": "es"
+    },
+    {
+      "id": "ll09-11",
+      "name": "Almería",
+      "color": "#D71920",
+      "power": 71,
+      "flag": "es"
+    },
+    {
+      "id": "ll09-12",
+      "name": "Racing Santander",
+      "color": "#00843D",
+      "power": 72,
+      "flag": "es"
+    },
+    {
+      "id": "ll09-13",
+      "name": "Athletic Bilbao",
+      "color": "#EE2523",
+      "power": 75,
+      "flag": "es"
+    },
+    {
+      "id": "ll09-14",
+      "name": "Sporting Gijón",
+      "color": "#D71920",
+      "power": 70,
+      "flag": "es"
+    },
+    {
+      "id": "ll09-15",
+      "name": "Osasuna",
+      "color": "#D91A21",
+      "power": 72,
+      "flag": "es"
+    },
+    {
+      "id": "ll09-16",
+      "name": "Real Valladolid",
+      "color": "#5B2B82",
+      "power": 71,
+      "flag": "es"
+    },
+    {
+      "id": "ll09-17",
+      "name": "Getafe",
+      "color": "#0055A4",
+      "power": 73,
+      "flag": "es"
+    },
+    {
+      "id": "ll09-18",
+      "name": "Real Betis",
+      "color": "#009543",
+      "power": 74,
+      "flag": "es"
+    },
+    {
+      "id": "ll09-19",
+      "name": "Numancia",
+      "color": "#D71920",
+      "power": 68,
+      "flag": "es"
+    },
+    {
+      "id": "ll09-20",
+      "name": "Recreativo Huelva",
+      "color": "#0055A4",
+      "power": 69,
+      "flag": "es"
+    }
+  ]
+}

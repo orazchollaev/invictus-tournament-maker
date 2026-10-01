@@ -1,0 +1,135 @@
+{
+  "label": "Serie A 89/90",
+  "description": "Maradona's Napoli, Sacchi's Milan — 18 clubs",
+  "order": 51,
+  "type": "club",
+  "category": "classic",
+  "teams": [
+    {
+      "id": "sa90-01",
+      "name": "Napoli",
+      "color": "#008BD2",
+      "power": 89,
+      "flag": "it"
+    },
+    {
+      "id": "sa90-02",
+      "name": "Milan",
+      "color": "#FB090B",
+      "power": 90,
+      "flag": "it"
+    },
+    {
+      "id": "sa90-03",
+      "name": "Inter",
+      "color": "#0068A8",
+      "power": 86,
+      "flag": "it"
+    },
+    {
+      "id": "sa90-04",
+      "name": "Juventus",
+      "color": "#1A1A1A",
+      "power": 85,
+      "flag": "it"
+    },
+    {
+      "id": "sa90-05",
+      "name": "Sampdoria",
+      "color": "#1B5AA6",
+      "power": 85,
+      "flag": "it"
+    },
+    {
+      "id": "sa90-06",
+      "name": "Roma",
+      "color": "#8E1F2F",
+      "power": 80,
+      "flag": "it"
+    },
+    {
+      "id": "sa90-07",
+      "name": "Atalanta",
+      "color": "#1E71B8",
+      "power": 76,
+      "flag": "it"
+    },
+    {
+      "id": "sa90-08",
+      "name": "Bologna",
+      "color": "#1A2F48",
+      "power": 75,
+      "flag": "it"
+    },
+    {
+      "id": "sa90-09",
+      "name": "Fiorentina",
+      "color": "#482E92",
+      "power": 78,
+      "flag": "it"
+    },
+    {
+      "id": "sa90-10",
+      "name": "Lazio",
+      "color": "#87D8F7",
+      "power": 76,
+      "flag": "it"
+    },
+    {
+      "id": "sa90-11",
+      "name": "Bari",
+      "color": "#E30613",
+      "power": 72,
+      "flag": "it"
+    },
+    {
+      "id": "sa90-12",
+      "name": "Genoa",
+      "color": "#A51D32",
+      "power": 74,
+      "flag": "it"
+    },
+    {
+      "id": "sa90-13",
+      "name": "Lecce",
+      "color": "#D71920",
+      "power": 70,
+      "flag": "it"
+    },
+    {
+      "id": "sa90-14",
+      "name": "Cesena",
+      "color": "#1A1A1A",
+      "power": 69,
+      "flag": "it"
+    },
+    {
+      "id": "sa90-15",
+      "name": "Cremonese",
+      "color": "#C8102E",
+      "power": 68,
+      "flag": "it"
+    },
+    {
+      "id": "sa90-16",
+      "name": "Udinese",
+      "color": "#2B2B2B",
+      "power": 70,
+      "flag": "it"
+    },
+    {
+      "id": "sa90-17",
+      "name": "Verona",
+      "color": "#FFD100",
+      "power": 69,
+      "flag": "it"
+    },
+    {
+      "id": "sa90-18",
+      "name": "Ascoli",
+      "color": "#1A1A1A",
+      "power": 67,
+      "flag": "it"
+    }
+  ]
+}

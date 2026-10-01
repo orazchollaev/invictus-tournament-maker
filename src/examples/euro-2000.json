@@ -1,0 +1,590 @@
+{
+  "label": "UEFA Euro 2000",
+  "description": "Belgium & Netherlands 2000 — 16 teams, real groups",
+  "order": 36,
+  "type": "country",
+  "category": "classic",
+  "teams": [
+    {
+      "id": "eu00-01",
+      "name": "Germany",
+      "color": "#1A1A1A",
+      "power": 80,
+      "flag": "de"
+    },
+    {
+      "id": "eu00-02",
+      "name": "Romania",
+      "color": "#FCD116",
+      "power": 77,
+      "flag": "ro"
+    },
+    {
+      "id": "eu00-03",
+      "name": "Portugal",
+      "color": "#006600",
+      "power": 85,
+      "flag": "pt"
+    },
+    {
+      "id": "eu00-04",
+      "name": "England",
+      "color": "#CF081F",
+      "power": 82,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "eu00-05",
+      "name": "Belgium",
+      "color": "#EF3340",
+      "power": 75,
+      "flag": "be"
+    },
+    {
+      "id": "eu00-06",
+      "name": "Sweden",
+      "color": "#006AA7",
+      "power": 76,
+      "flag": "se"
+    },
+    {
+      "id": "eu00-07",
+      "name": "Italy",
+      "color": "#008C45",
+      "power": 87,
+      "flag": "it"
+    },
+    {
+      "id": "eu00-08",
+      "name": "Turkey",
+      "color": "#E30A17",
+      "power": 76,
+      "flag": "tr"
+    },
+    {
+      "id": "eu00-09",
+      "name": "Spain",
+      "color": "#AA151B",
+      "power": 85,
+      "flag": "es"
+    },
+    {
+      "id": "eu00-10",
+      "name": "Norway",
+      "color": "#EF2B2D",
+      "power": 75,
+      "flag": "no"
+    },
+    {
+      "id": "eu00-11",
+      "name": "Yugoslavia",
+      "color": "#0C4076",
+      "power": 80,
+      "flag": "yu"
+    },
+    {
+      "id": "eu00-12",
+      "name": "Slovenia",
+      "color": "#005DA4",
+      "power": 69,
+      "flag": "si"
+    },
+    {
+      "id": "eu00-13",
+      "name": "France",
+      "color": "#003189",
+      "power": 91,
+      "flag": "fr"
+    },
+    {
+      "id": "eu00-14",
+      "name": "Denmark",
+      "color": "#C60C30",
+      "power": 75,
+      "flag": "dk"
+    },
+    {
+      "id": "eu00-15",
+      "name": "Netherlands",
+      "color": "#FF6600",
+      "power": 88,
+      "flag": "nl"
+    },
+    {
+      "id": "eu00-16",
+      "name": "Czech Republic",
+      "color": "#D7141A",
+      "power": 81,
+      "flag": "cz"
+    }
+  ],
+  "tournaments": [
+    {
+      "id": "a4x2lhnfoi",
+      "name": "Euro 2000",
+      "season": 1,
+      "format": "group+bracket",
+      "teamIds": [
+        "eu00-01",
+        "eu00-02",
+        "eu00-03",
+        "eu00-04",
+        "eu00-05",
+        "eu00-06",
+        "eu00-07",
+        "eu00-08",
+        "eu00-09",
+        "eu00-10",
+        "eu00-11",
+        "eu00-12",
+        "eu00-13",
+        "eu00-14",
+        "eu00-15",
+        "eu00-16"
+      ],
+      "groups": [
+        {
+          "name": "Group A",
+          "teamIds": [
+            "eu00-01",
+            "eu00-02",
+            "eu00-03",
+            "eu00-04"
+          ],
+          "matches": [
+            {
+              "id": "25aq3nphee",
+              "homeId": "eu00-04",
+              "awayId": "eu00-01",
+              "result": null
+            },
+            {
+              "id": "lx83cjunap",
+              "homeId": "eu00-03",
+              "awayId": "eu00-02",
+              "result": null
+            },
+            {
+              "id": "75kq1a178x",
+              "homeId": "eu00-01",
+              "awayId": "eu00-03",
+              "result": null
+            },
+            {
+              "id": "ntbc5tsdui",
+              "homeId": "eu00-02",
+              "awayId": "eu00-04",
+              "result": null
+            },
+            {
+              "id": "lpg42d0qf5",
+              "homeId": "eu00-02",
+              "awayId": "eu00-01",
+              "result": null
+            },
+            {
+              "id": "mfrx2zuxhh",
+              "homeId": "eu00-04",
+              "awayId": "eu00-03",
+              "result": null
+            }
+          ],
+          "standings": [
+            {
+              "teamId": "eu00-01",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "eu00-02",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "eu00-03",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "eu00-04",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            }
+          ]
+        },
+        {
+          "name": "Group B",
+          "teamIds": [
+            "eu00-05",
+            "eu00-06",
+            "eu00-07",
+            "eu00-08"
+          ],
+          "matches": [
+            {
+              "id": "9nspu4l0y5",
+              "homeId": "eu00-08",
+              "awayId": "eu00-05",
+              "result": null
+            },
+            {
+              "id": "zabzialcs7",
+              "homeId": "eu00-07",
+              "awayId": "eu00-06",
+              "result": null
+            },
+            {
+              "id": "usqdqu3y3",
+              "homeId": "eu00-05",
+              "awayId": "eu00-07",
+              "result": null
+            },
+            {
+              "id": "29rvkjrj6z",
+              "homeId": "eu00-06",
+              "awayId": "eu00-08",
+              "result": null
+            },
+            {
+              "id": "qrbrtb6xjq",
+              "homeId": "eu00-06",
+              "awayId": "eu00-05",
+              "result": null
+            },
+            {
+              "id": "fc4v82v852",
+              "homeId": "eu00-08",
+              "awayId": "eu00-07",
+              "result": null
+            }
+          ],
+          "standings": [
+            {
+              "teamId": "eu00-05",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "eu00-06",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "eu00-07",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "eu00-08",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            }
+          ]
+        },
+        {
+          "name": "Group C",
+          "teamIds": [
+            "eu00-09",
+            "eu00-10",
+            "eu00-11",
+            "eu00-12"
+          ],
+          "matches": [
+            {
+              "id": "8tnhb22ziq",
+              "homeId": "eu00-12",
+              "awayId": "eu00-09",
+              "result": null
+            },
+            {
+              "id": "mzesmz96bi",
+              "homeId": "eu00-11",
+              "awayId": "eu00-10",
+              "result": null
+            },
+            {
+              "id": "1t2ltxnka3",
+              "homeId": "eu00-09",
+              "awayId": "eu00-11",
+              "result": null
+            },
+            {
+              "id": "ftg65krnnh",
+              "homeId": "eu00-10",
+              "awayId": "eu00-12",
+              "result": null
+            },
+            {
+              "id": "2xccnxbitj",
+              "homeId": "eu00-10",
+              "awayId": "eu00-09",
+              "result": null
+            },
+            {
+              "id": "41xe00i2x4",
+              "homeId": "eu00-12",
+              "awayId": "eu00-11",
+              "result": null
+            }
+          ],
+          "standings": [
+            {
+              "teamId": "eu00-09",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "eu00-10",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "eu00-11",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "eu00-12",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            }
+          ]
+        },
+        {
+          "name": "Group D",
+          "teamIds": [
+            "eu00-13",
+            "eu00-14",
+            "eu00-15",
+            "eu00-16"
+          ],
+          "matches": [
+            {
+              "id": "66p95nnyep",
+              "homeId": "eu00-16",
+              "awayId": "eu00-13",
+              "result": null
+            },
+            {
+              "id": "wbs3p1vb3j",
+              "homeId": "eu00-15",
+              "awayId": "eu00-14",
+              "result": null
+            },
+            {
+              "id": "f2hrwo8qkc",
+              "homeId": "eu00-13",
+              "awayId": "eu00-15",
+              "result": null
+            },
+            {
+              "id": "nwx0utfa9o",
+              "homeId": "eu00-14",
+              "awayId": "eu00-16",
+              "result": null
+            },
+            {
+              "id": "xxgywar0wl",
+              "homeId": "eu00-14",
+              "awayId": "eu00-13",
+              "result": null
+            },
+            {
+              "id": "crle7bcodd",
+              "homeId": "eu00-16",
+              "awayId": "eu00-15",
+              "result": null
+            }
+          ],
+          "standings": [
+            {
+              "teamId": "eu00-13",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "eu00-14",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "eu00-15",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "eu00-16",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            }
+          ]
+        }
+      ],
+      "groupsDone": false,
+      "qualifiersPerGroup": 2,
+      "rounds": [
+        {
+          "name": "Quarter-Finals",
+          "matches": [
+            {
+              "id": "l1tuzmd2i1",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            },
+            {
+              "id": "ccokxaiiqg",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            },
+            {
+              "id": "rjdnq8i2mb",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            },
+            {
+              "id": "vugyx7c2he",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            }
+          ]
+        },
+        {
+          "name": "Semi-Finals",
+          "matches": [
+            {
+              "id": "82fqk5g8r0",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            },
+            {
+              "id": "qx3o8q0z0j",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            }
+          ]
+        },
+        {
+          "name": "Final",
+          "matches": [
+            {
+              "id": "3wdxqbaqs7",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            }
+          ]
+        }
+      ],
+      "winnerId": null,
+      "groupLegMode": "single",
+      "knockoutLegMode": "single",
+      "finalLegMode": "single",
+      "createdAt": 1790171494004,
+      "drawType": "manual",
+      "tiebreaker": "goal-diff",
+      "playoffSeedMode": "cross"
+    }
+  ]
+}

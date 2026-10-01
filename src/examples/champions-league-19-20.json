@@ -1,0 +1,1445 @@
+{
+  "label": "2019/20 Champions League",
+  "description": "UEFA Champions League 2019/20 — 32 clubs, real groups",
+  "order": 42.3,
+  "type": "club",
+  "category": "classic",
+  "teams": [
+    {
+      "id": "cl20-01",
+      "name": "Paris Saint-Germain",
+      "color": "#004170",
+      "power": 88,
+      "flag": "fr"
+    },
+    {
+      "id": "cl20-02",
+      "name": "Real Madrid",
+      "color": "#FEBE10",
+      "power": 89,
+      "flag": "es"
+    },
+    {
+      "id": "cl20-03",
+      "name": "Club Brugge",
+      "color": "#0055A4",
+      "power": 74,
+      "flag": "be"
+    },
+    {
+      "id": "cl20-04",
+      "name": "Galatasaray",
+      "color": "#A32638",
+      "power": 75,
+      "flag": "tr"
+    },
+    {
+      "id": "cl20-05",
+      "name": "Bayern Munich",
+      "color": "#DC052D",
+      "power": 92,
+      "flag": "de"
+    },
+    {
+      "id": "cl20-06",
+      "name": "Tottenham Hotspur",
+      "color": "#132257",
+      "power": 85,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "cl20-07",
+      "name": "Olympiacos",
+      "color": "#E30613",
+      "power": 73,
+      "flag": "gr"
+    },
+    {
+      "id": "cl20-08",
+      "name": "Red Star Belgrade",
+      "color": "#D71920",
+      "power": 70,
+      "flag": "rs"
+    },
+    {
+      "id": "cl20-09",
+      "name": "Manchester City",
+      "color": "#6CABDD",
+      "power": 91,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "cl20-10",
+      "name": "Shakhtar Donetsk",
+      "color": "#F58220",
+      "power": 76,
+      "flag": "ua"
+    },
+    {
+      "id": "cl20-11",
+      "name": "Dinamo Zagreb",
+      "color": "#0057B8",
+      "power": 72,
+      "flag": "hr"
+    },
+    {
+      "id": "cl20-12",
+      "name": "Atalanta",
+      "color": "#1E71B8",
+      "power": 82,
+      "flag": "it"
+    },
+    {
+      "id": "cl20-13",
+      "name": "Juventus",
+      "color": "#1A1A1A",
+      "power": 89,
+      "flag": "it"
+    },
+    {
+      "id": "cl20-14",
+      "name": "Atlético Madrid",
+      "color": "#CE3524",
+      "power": 87,
+      "flag": "es"
+    },
+    {
+      "id": "cl20-15",
+      "name": "Bayer Leverkusen",
+      "color": "#E32221",
+      "power": 81,
+      "flag": "de"
+    },
+    {
+      "id": "cl20-16",
+      "name": "Lokomotiv Moscow",
+      "color": "#007A33",
+      "power": 71,
+      "flag": "ru"
+    },
+    {
+      "id": "cl20-17",
+      "name": "Liverpool",
+      "color": "#C8102E",
+      "power": 92,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "cl20-18",
+      "name": "Napoli",
+      "color": "#008BD2",
+      "power": 84,
+      "flag": "it"
+    },
+    {
+      "id": "cl20-19",
+      "name": "Red Bull Salzburg",
+      "color": "#E30613",
+      "power": 77,
+      "flag": "at"
+    },
+    {
+      "id": "cl20-20",
+      "name": "Genk",
+      "color": "#0055A4",
+      "power": 72,
+      "flag": "be"
+    },
+    {
+      "id": "cl20-21",
+      "name": "Barcelona",
+      "color": "#A50044",
+      "power": 90,
+      "flag": "es"
+    },
+    {
+      "id": "cl20-22",
+      "name": "Borussia Dortmund",
+      "color": "#FDE100",
+      "power": 85,
+      "flag": "de"
+    },
+    {
+      "id": "cl20-23",
+      "name": "Inter",
+      "color": "#0068A8",
+      "power": 85,
+      "flag": "it"
+    },
+    {
+      "id": "cl20-24",
+      "name": "Slavia Prague",
+      "color": "#C8102E",
+      "power": 72,
+      "flag": "cz"
+    },
+    {
+      "id": "cl20-25",
+      "name": "Zenit",
+      "color": "#0099DA",
+      "power": 77,
+      "flag": "ru"
+    },
+    {
+      "id": "cl20-26",
+      "name": "Benfica",
+      "color": "#E83030",
+      "power": 80,
+      "flag": "pt"
+    },
+    {
+      "id": "cl20-27",
+      "name": "Lyon",
+      "color": "#1B3C87",
+      "power": 80,
+      "flag": "fr"
+    },
+    {
+      "id": "cl20-28",
+      "name": "RB Leipzig",
+      "color": "#DD0741",
+      "power": 85,
+      "flag": "de"
+    },
+    {
+      "id": "cl20-29",
+      "name": "Chelsea",
+      "color": "#034694",
+      "power": 85,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "cl20-30",
+      "name": "Ajax",
+      "color": "#D2122E",
+      "power": 83,
+      "flag": "nl"
+    },
+    {
+      "id": "cl20-31",
+      "name": "Valencia",
+      "color": "#EE3524",
+      "power": 81,
+      "flag": "es"
+    },
+    {
+      "id": "cl20-32",
+      "name": "Lille",
+      "color": "#E30613",
+      "power": 78,
+      "flag": "fr"
+    }
+  ],
+  "tournaments": [
+    {
+      "id": "kk7nujzo6s",
+      "name": "Champions League 2019/20",
+      "season": 1,
+      "format": "group+bracket",
+      "teamIds": [
+        "cl20-01",
+        "cl20-02",
+        "cl20-03",
+        "cl20-04",
+        "cl20-05",
+        "cl20-06",
+        "cl20-07",
+        "cl20-08",
+        "cl20-09",
+        "cl20-10",
+        "cl20-11",
+        "cl20-12",
+        "cl20-13",
+        "cl20-14",
+        "cl20-15",
+        "cl20-16",
+        "cl20-17",
+        "cl20-18",
+        "cl20-19",
+        "cl20-20",
+        "cl20-21",
+        "cl20-22",
+        "cl20-23",
+        "cl20-24",
+        "cl20-25",
+        "cl20-26",
+        "cl20-27",
+        "cl20-28",
+        "cl20-29",
+        "cl20-30",
+        "cl20-31",
+        "cl20-32"
+      ],
+      "groups": [
+        {
+          "name": "Group A",
+          "teamIds": [
+            "cl20-01",
+            "cl20-02",
+            "cl20-03",
+            "cl20-04"
+          ],
+          "matches": [
+            {
+              "id": "842wd6ta3o",
+              "homeId": "cl20-04",
+              "awayId": "cl20-01",
+              "result": null
+            },
+            {
+              "id": "zwf1c4qz8o",
+              "homeId": "cl20-03",
+              "awayId": "cl20-02",
+              "result": null
+            },
+            {
+              "id": "74rkwvhh3u",
+              "homeId": "cl20-01",
+              "awayId": "cl20-03",
+              "result": null
+            },
+            {
+              "id": "tla5ksslqz",
+              "homeId": "cl20-02",
+              "awayId": "cl20-04",
+              "result": null
+            },
+            {
+              "id": "k3r0t9i73d",
+              "homeId": "cl20-02",
+              "awayId": "cl20-01",
+              "result": null
+            },
+            {
+              "id": "kk2vcuqgj0",
+              "homeId": "cl20-04",
+              "awayId": "cl20-03",
+              "result": null
+            },
+            {
+              "id": "3v1unt89ok",
+              "homeId": "cl20-01",
+              "awayId": "cl20-04",
+              "result": null
+            },
+            {
+              "id": "cu84t9h838",
+              "homeId": "cl20-02",
+              "awayId": "cl20-03",
+              "result": null
+            },
+            {
+              "id": "ykipahz5ut",
+              "homeId": "cl20-03",
+              "awayId": "cl20-01",
+              "result": null
+            },
+            {
+              "id": "b1scmrj0u5",
+              "homeId": "cl20-04",
+              "awayId": "cl20-02",
+              "result": null
+            },
+            {
+              "id": "elyqsgifjz",
+              "homeId": "cl20-01",
+              "awayId": "cl20-02",
+              "result": null
+            },
+            {
+              "id": "hrmo16ox8u",
+              "homeId": "cl20-03",
+              "awayId": "cl20-04",
+              "result": null
+            }
+          ],
+          "standings": [
+            {
+              "teamId": "cl20-01",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "cl20-02",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "cl20-03",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "cl20-04",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            }
+          ]
+        },
+        {
+          "name": "Group B",
+          "teamIds": [
+            "cl20-05",
+            "cl20-06",
+            "cl20-07",
+            "cl20-08"
+          ],
+          "matches": [
+            {
+              "id": "weh99xkk9u",
+              "homeId": "cl20-08",
+              "awayId": "cl20-05",
+              "result": null
+            },
+            {
+              "id": "pjho2xiody",
+              "homeId": "cl20-07",
+              "awayId": "cl20-06",
+              "result": null
+            },
+            {
+              "id": "y27nil50jg",
+              "homeId": "cl20-05",
+              "awayId": "cl20-07",
+              "result": null
+            },
+            {
+              "id": "60y57dtvux",
+              "homeId": "cl20-06",
+              "awayId": "cl20-08",
+              "result": null
+            },
+            {
+              "id": "2p9gbwo7mu",
+              "homeId": "cl20-06",
+              "awayId": "cl20-05",
+              "result": null
+            },
+            {
+              "id": "xjyovsgm3s",
+              "homeId": "cl20-08",
+              "awayId": "cl20-07",
+              "result": null
+            },
+            {
+              "id": "n0zc7wi0vk",
+              "homeId": "cl20-05",
+              "awayId": "cl20-08",
+              "result": null
+            },
+            {
+              "id": "3byjmac26i",
+              "homeId": "cl20-06",
+              "awayId": "cl20-07",
+              "result": null
+            },
+            {
+              "id": "w9xri1ose9",
+              "homeId": "cl20-07",
+              "awayId": "cl20-05",
+              "result": null
+            },
+            {
+              "id": "3nk4355lia",
+              "homeId": "cl20-08",
+              "awayId": "cl20-06",
+              "result": null
+            },
+            {
+              "id": "znk1euvrq1",
+              "homeId": "cl20-05",
+              "awayId": "cl20-06",
+              "result": null
+            },
+            {
+              "id": "lfacwrmak9",
+              "homeId": "cl20-07",
+              "awayId": "cl20-08",
+              "result": null
+            }
+          ],
+          "standings": [
+            {
+              "teamId": "cl20-05",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "cl20-06",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "cl20-07",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "cl20-08",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            }
+          ]
+        },
+        {
+          "name": "Group C",
+          "teamIds": [
+            "cl20-09",
+            "cl20-10",
+            "cl20-11",
+            "cl20-12"
+          ],
+          "matches": [
+            {
+              "id": "ma8wv4m75r",
+              "homeId": "cl20-12",
+              "awayId": "cl20-09",
+              "result": null
+            },
+            {
+              "id": "8eb5xypfhf",
+              "homeId": "cl20-11",
+              "awayId": "cl20-10",
+              "result": null
+            },
+            {
+              "id": "jmhxjlp3hw",
+              "homeId": "cl20-09",
+              "awayId": "cl20-11",
+              "result": null
+            },
+            {
+              "id": "82n2y1naq7",
+              "homeId": "cl20-10",
+              "awayId": "cl20-12",
+              "result": null
+            },
+            {
+              "id": "3o04oobc2o",
+              "homeId": "cl20-10",
+              "awayId": "cl20-09",
+              "result": null
+            },
+            {
+              "id": "nau2us3tlt",
+              "homeId": "cl20-12",
+              "awayId": "cl20-11",
+              "result": null
+            },
+            {
+              "id": "dogz17ngat",
+              "homeId": "cl20-09",
+              "awayId": "cl20-12",
+              "result": null
+            },
+            {
+              "id": "gptvg8blif",
+              "homeId": "cl20-10",
+              "awayId": "cl20-11",
+              "result": null
+            },
+            {
+              "id": "xzhy7aakiy",
+              "homeId": "cl20-11",
+              "awayId": "cl20-09",
+              "result": null
+            },
+            {
+              "id": "y48fu50qja",
+              "homeId": "cl20-12",
+              "awayId": "cl20-10",
+              "result": null
+            },
+            {
+              "id": "dmzw6k9jji",
+              "homeId": "cl20-09",
+              "awayId": "cl20-10",
+              "result": null
+            },
+            {
+              "id": "ayy3h6z7fv",
+              "homeId": "cl20-11",
+              "awayId": "cl20-12",
+              "result": null
+            }
+          ],
+          "standings": [
+            {
+              "teamId": "cl20-09",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "cl20-10",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "cl20-11",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "cl20-12",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            }
+          ]
+        },
+        {
+          "name": "Group D",
+          "teamIds": [
+            "cl20-13",
+            "cl20-14",
+            "cl20-15",
+            "cl20-16"
+          ],
+          "matches": [
+            {
+              "id": "f1pjoqeen7",
+              "homeId": "cl20-16",
+              "awayId": "cl20-13",
+              "result": null
+            },
+            {
+              "id": "48nvljl2b3",
+              "homeId": "cl20-15",
+              "awayId": "cl20-14",
+              "result": null
+            },
+            {
+              "id": "1x0w6tvkcc",
+              "homeId": "cl20-13",
+              "awayId": "cl20-15",
+              "result": null
+            },
+            {
+              "id": "rhuvnyrhu7",
+              "homeId": "cl20-14",
+              "awayId": "cl20-16",
+              "result": null
+            },
+            {
+              "id": "va9u49e1ij",
+              "homeId": "cl20-14",
+              "awayId": "cl20-13",
+              "result": null
+            },
+            {
+              "id": "i9kxbs0kee",
+              "homeId": "cl20-16",
+              "awayId": "cl20-15",
+              "result": null
+            },
+            {
+              "id": "wgwys5qpv2",
+              "homeId": "cl20-13",
+              "awayId": "cl20-16",
+              "result": null
+            },
+            {
+              "id": "t2spnzn2ko",
+              "homeId": "cl20-14",
+              "awayId": "cl20-15",
+              "result": null
+            },
+            {
+              "id": "ewxyim0muq",
+              "homeId": "cl20-15",
+              "awayId": "cl20-13",
+              "result": null
+            },
+            {
+              "id": "4kn1ynylea",
+              "homeId": "cl20-16",
+              "awayId": "cl20-14",
+              "result": null
+            },
+            {
+              "id": "oj8ofqucdl",
+              "homeId": "cl20-13",
+              "awayId": "cl20-14",
+              "result": null
+            },
+            {
+              "id": "poxa8d8x8i",
+              "homeId": "cl20-15",
+              "awayId": "cl20-16",
+              "result": null
+            }
+          ],
+          "standings": [
+            {
+              "teamId": "cl20-13",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "cl20-14",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "cl20-15",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "cl20-16",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            }
+          ]
+        },
+        {
+          "name": "Group E",
+          "teamIds": [
+            "cl20-17",
+            "cl20-18",
+            "cl20-19",
+            "cl20-20"
+          ],
+          "matches": [
+            {
+              "id": "nh655pgouu",
+              "homeId": "cl20-20",
+              "awayId": "cl20-17",
+              "result": null
+            },
+            {
+              "id": "intyyb5kll",
+              "homeId": "cl20-19",
+              "awayId": "cl20-18",
+              "result": null
+            },
+            {
+              "id": "nfrlglydns",
+              "homeId": "cl20-17",
+              "awayId": "cl20-19",
+              "result": null
+            },
+            {
+              "id": "baysd3c6ew",
+              "homeId": "cl20-18",
+              "awayId": "cl20-20",
+              "result": null
+            },
+            {
+              "id": "g2fh4h0yye",
+              "homeId": "cl20-18",
+              "awayId": "cl20-17",
+              "result": null
+            },
+            {
+              "id": "sdrr8c76ec",
+              "homeId": "cl20-20",
+              "awayId": "cl20-19",
+              "result": null
+            },
+            {
+              "id": "cggpb5lain",
+              "homeId": "cl20-17",
+              "awayId": "cl20-20",
+              "result": null
+            },
+            {
+              "id": "pppyzflbqq",
+              "homeId": "cl20-18",
+              "awayId": "cl20-19",
+              "result": null
+            },
+            {
+              "id": "x5uw3mgz2j",
+              "homeId": "cl20-19",
+              "awayId": "cl20-17",
+              "result": null
+            },
+            {
+              "id": "p3ccmnlduz",
+              "homeId": "cl20-20",
+              "awayId": "cl20-18",
+              "result": null
+            },
+            {
+              "id": "ics2g9aepw",
+              "homeId": "cl20-17",
+              "awayId": "cl20-18",
+              "result": null
+            },
+            {
+              "id": "at7i0hxh1f",
+              "homeId": "cl20-19",
+              "awayId": "cl20-20",
+              "result": null
+            }
+          ],
+          "standings": [
+            {
+              "teamId": "cl20-17",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "cl20-18",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "cl20-19",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "cl20-20",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            }
+          ]
+        },
+        {
+          "name": "Group F",
+          "teamIds": [
+            "cl20-21",
+            "cl20-22",
+            "cl20-23",
+            "cl20-24"
+          ],
+          "matches": [
+            {
+              "id": "58tckw5c90",
+              "homeId": "cl20-24",
+              "awayId": "cl20-21",
+              "result": null
+            },
+            {
+              "id": "qbhzr2dsbx",
+              "homeId": "cl20-23",
+              "awayId": "cl20-22",
+              "result": null
+            },
+            {
+              "id": "hll4b4oem8",
+              "homeId": "cl20-21",
+              "awayId": "cl20-23",
+              "result": null
+            },
+            {
+              "id": "56xk0riq2k",
+              "homeId": "cl20-22",
+              "awayId": "cl20-24",
+              "result": null
+            },
+            {
+              "id": "wyjwcw8ex5",
+              "homeId": "cl20-22",
+              "awayId": "cl20-21",
+              "result": null
+            },
+            {
+              "id": "t928441ndx",
+              "homeId": "cl20-24",
+              "awayId": "cl20-23",
+              "result": null
+            },
+            {
+              "id": "t3rbxhvl2u",
+              "homeId": "cl20-21",
+              "awayId": "cl20-24",
+              "result": null
+            },
+            {
+              "id": "eohhzuj86j",
+              "homeId": "cl20-22",
+              "awayId": "cl20-23",
+              "result": null
+            },
+            {
+              "id": "flweauy34f",
+              "homeId": "cl20-23",
+              "awayId": "cl20-21",
+              "result": null
+            },
+            {
+              "id": "8qz2unc09l",
+              "homeId": "cl20-24",
+              "awayId": "cl20-22",
+              "result": null
+            },
+            {
+              "id": "j027hapofs",
+              "homeId": "cl20-21",
+              "awayId": "cl20-22",
+              "result": null
+            },
+            {
+              "id": "x1vt5fggz5",
+              "homeId": "cl20-23",
+              "awayId": "cl20-24",
+              "result": null
+            }
+          ],
+          "standings": [
+            {
+              "teamId": "cl20-21",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "cl20-22",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "cl20-23",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "cl20-24",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            }
+          ]
+        },
+        {
+          "name": "Group G",
+          "teamIds": [
+            "cl20-25",
+            "cl20-26",
+            "cl20-27",
+            "cl20-28"
+          ],
+          "matches": [
+            {
+              "id": "xjzwgrt7wf",
+              "homeId": "cl20-28",
+              "awayId": "cl20-25",
+              "result": null
+            },
+            {
+              "id": "hc0eu1b4hv",
+              "homeId": "cl20-27",
+              "awayId": "cl20-26",
+              "result": null
+            },
+            {
+              "id": "t5142hta0o",
+              "homeId": "cl20-25",
+              "awayId": "cl20-27",
+              "result": null
+            },
+            {
+              "id": "4d56u3jn4m",
+              "homeId": "cl20-26",
+              "awayId": "cl20-28",
+              "result": null
+            },
+            {
+              "id": "0phkmfsqkt",
+              "homeId": "cl20-26",
+              "awayId": "cl20-25",
+              "result": null
+            },
+            {
+              "id": "sz75fsmo4y",
+              "homeId": "cl20-28",
+              "awayId": "cl20-27",
+              "result": null
+            },
+            {
+              "id": "h4gjfp2g9x",
+              "homeId": "cl20-25",
+              "awayId": "cl20-28",
+              "result": null
+            },
+            {
+              "id": "plsrmd65cw",
+              "homeId": "cl20-26",
+              "awayId": "cl20-27",
+              "result": null
+            },
+            {
+              "id": "81764g4qbm",
+              "homeId": "cl20-27",
+              "awayId": "cl20-25",
+              "result": null
+            },
+            {
+              "id": "rio9ctab2a",
+              "homeId": "cl20-28",
+              "awayId": "cl20-26",
+              "result": null
+            },
+            {
+              "id": "dxtn8zmzfn",
+              "homeId": "cl20-25",
+              "awayId": "cl20-26",
+              "result": null
+            },
+            {
+              "id": "gtllzok8c7",
+              "homeId": "cl20-27",
+              "awayId": "cl20-28",
+              "result": null
+            }
+          ],
+          "standings": [
+            {
+              "teamId": "cl20-25",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "cl20-26",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "cl20-27",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "cl20-28",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            }
+          ]
+        },
+        {
+          "name": "Group H",
+          "teamIds": [
+            "cl20-29",
+            "cl20-30",
+            "cl20-31",
+            "cl20-32"
+          ],
+          "matches": [
+            {
+              "id": "uwssrub8xx",
+              "homeId": "cl20-32",
+              "awayId": "cl20-29",
+              "result": null
+            },
+            {
+              "id": "oe2haroghf",
+              "homeId": "cl20-31",
+              "awayId": "cl20-30",
+              "result": null
+            },
+            {
+              "id": "7osugi0ci6",
+              "homeId": "cl20-29",
+              "awayId": "cl20-31",
+              "result": null
+            },
+            {
+              "id": "5vy7ybf1av",
+              "homeId": "cl20-30",
+              "awayId": "cl20-32",
+              "result": null
+            },
+            {
+              "id": "kvnltpdxe2",
+              "homeId": "cl20-30",
+              "awayId": "cl20-29",
+              "result": null
+            },
+            {
+              "id": "jrq46rb730",
+              "homeId": "cl20-32",
+              "awayId": "cl20-31",
+              "result": null
+            },
+            {
+              "id": "5zkkjnzmgr",
+              "homeId": "cl20-29",
+              "awayId": "cl20-32",
+              "result": null
+            },
+            {
+              "id": "qgqa1wlm72",
+              "homeId": "cl20-30",
+              "awayId": "cl20-31",
+              "result": null
+            },
+            {
+              "id": "hps9upc22b",
+              "homeId": "cl20-31",
+              "awayId": "cl20-29",
+              "result": null
+            },
+            {
+              "id": "srse1vgcf5",
+              "homeId": "cl20-32",
+              "awayId": "cl20-30",
+              "result": null
+            },
+            {
+              "id": "n6uf4szz88",
+              "homeId": "cl20-29",
+              "awayId": "cl20-30",
+              "result": null
+            },
+            {
+              "id": "im2sgerplw",
+              "homeId": "cl20-31",
+              "awayId": "cl20-32",
+              "result": null
+            }
+          ],
+          "standings": [
+            {
+              "teamId": "cl20-29",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "cl20-30",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "cl20-31",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "cl20-32",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            }
+          ]
+        }
+      ],
+      "groupsDone": false,
+      "qualifiersPerGroup": 2,
+      "rounds": [
+        {
+          "name": "Round of 16",
+          "matches": [
+            {
+              "id": "8uala7byvi",
+              "homeId": null,
+              "awayId": null,
+              "result": null,
+              "leg2Result": null
+            },
+            {
+              "id": "3mwv34c88o",
+              "homeId": null,
+              "awayId": null,
+              "result": null,
+              "leg2Result": null
+            },
+            {
+              "id": "f3b4120sn1",
+              "homeId": null,
+              "awayId": null,
+              "result": null,
+              "leg2Result": null
+            },
+            {
+              "id": "e58b6a3l18",
+              "homeId": null,
+              "awayId": null,
+              "result": null,
+              "leg2Result": null
+            },
+            {
+              "id": "svl356prwh",
+              "homeId": null,
+              "awayId": null,
+              "result": null,
+              "leg2Result": null
+            },
+            {
+              "id": "4u487z4em4",
+              "homeId": null,
+              "awayId": null,
+              "result": null,
+              "leg2Result": null
+            },
+            {
+              "id": "mxripatd6m",
+              "homeId": null,
+              "awayId": null,
+              "result": null,
+              "leg2Result": null
+            },
+            {
+              "id": "dcfl8jlglk",
+              "homeId": null,
+              "awayId": null,
+              "result": null,
+              "leg2Result": null
+            }
+          ]
+        },
+        {
+          "name": "Quarter-Finals",
+          "matches": [
+            {
+              "id": "yobw4mzcsp",
+              "homeId": null,
+              "awayId": null,
+              "result": null,
+              "leg2Result": null
+            },
+            {
+              "id": "d456jcx4b6",
+              "homeId": null,
+              "awayId": null,
+              "result": null,
+              "leg2Result": null
+            },
+            {
+              "id": "99bvmceary",
+              "homeId": null,
+              "awayId": null,
+              "result": null,
+              "leg2Result": null
+            },
+            {
+              "id": "tii999jyin",
+              "homeId": null,
+              "awayId": null,
+              "result": null,
+              "leg2Result": null
+            }
+          ]
+        },
+        {
+          "name": "Semi-Finals",
+          "matches": [
+            {
+              "id": "jgqfpc88s3",
+              "homeId": null,
+              "awayId": null,
+              "result": null,
+              "leg2Result": null
+            },
+            {
+              "id": "7g38k82kgu",
+              "homeId": null,
+              "awayId": null,
+              "result": null,
+              "leg2Result": null
+            }
+          ]
+        },
+        {
+          "name": "Final",
+          "matches": [
+            {
+              "id": "xftiq0zhj4",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            }
+          ]
+        }
+      ],
+      "winnerId": null,
+      "groupLegMode": "double",
+      "knockoutLegMode": "double",
+      "finalLegMode": "single",
+      "createdAt": 1790171494011,
+      "drawType": "manual",
+      "tiebreaker": "goal-diff",
+      "playoffSeedMode": "cross"
+    }
+  ]
+}

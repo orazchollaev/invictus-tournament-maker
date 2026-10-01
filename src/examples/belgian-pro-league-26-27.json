@@ -1,0 +1,135 @@
+{
+  "label": "Belgian Pro League 26/27",
+  "description": "Belgian Pro League 2026/27 — 18 clubs",
+  "order": 14.5,
+  "type": "club",
+  "category": "league",
+  "teams": [
+    {
+      "id": "bel-01",
+      "name": "Club Brugge",
+      "color": "#0055A4",
+      "power": 81,
+      "flag": "be"
+    },
+    {
+      "id": "bel-02",
+      "name": "Union SG",
+      "color": "#FFD100",
+      "power": 80,
+      "flag": "be"
+    },
+    {
+      "id": "bel-03",
+      "name": "Anderlecht",
+      "color": "#4C2A85",
+      "power": 78,
+      "flag": "be"
+    },
+    {
+      "id": "bel-04",
+      "name": "Genk",
+      "color": "#0055A4",
+      "power": 77,
+      "flag": "be"
+    },
+    {
+      "id": "bel-05",
+      "name": "Gent",
+      "color": "#004C99",
+      "power": 75,
+      "flag": "be"
+    },
+    {
+      "id": "bel-06",
+      "name": "Antwerp",
+      "color": "#D71920",
+      "power": 74,
+      "flag": "be"
+    },
+    {
+      "id": "bel-07",
+      "name": "Standard Liège",
+      "color": "#D71920",
+      "power": 73,
+      "flag": "be"
+    },
+    {
+      "id": "bel-08",
+      "name": "Mechelen",
+      "color": "#FFD100",
+      "power": 72,
+      "flag": "be"
+    },
+    {
+      "id": "bel-09",
+      "name": "Charleroi",
+      "color": "#1A1A1A",
+      "power": 71,
+      "flag": "be"
+    },
+    {
+      "id": "bel-10",
+      "name": "Westerlo",
+      "color": "#FFD100",
+      "power": 70,
+      "flag": "be"
+    },
+    {
+      "id": "bel-11",
+      "name": "Sint-Truiden",
+      "color": "#FFD100",
+      "power": 70,
+      "flag": "be"
+    },
+    {
+      "id": "bel-12",
+      "name": "OH Leuven",
+      "color": "#E30613",
+      "power": 69,
+      "flag": "be"
+    },
+    {
+      "id": "bel-13",
+      "name": "Cercle Brugge",
+      "color": "#00843D",
+      "power": 69,
+      "flag": "be"
+    },
+    {
+      "id": "bel-14",
+      "name": "Zulte Waregem",
+      "color": "#E30613",
+      "power": 68,
+      "flag": "be"
+    },
+    {
+      "id": "bel-15",
+      "name": "Kortrijk",
+      "color": "#D71920",
+      "power": 67,
+      "flag": "be"
+    },
+    {
+      "id": "bel-16",
+      "name": "La Louvière",
+      "color": "#008C45",
+      "power": 66,
+      "flag": "be"
+    },
+    {
+      "id": "bel-17",
+      "name": "Lommel",
+      "color": "#008C45",
+      "power": 66,
+      "flag": "be"
+    },
+    {
+      "id": "bel-18",
+      "name": "Beveren",
+      "color": "#FFD100",
+      "power": 65,
+      "flag": "be"
+    }
+  ]
+}

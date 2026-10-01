@@ -1,0 +1,894 @@
+{
+  "label": "FIFA World Cup 1990",
+  "description": "Italy 1990 — 24 teams, real groups",
+  "order": 27,
+  "type": "country",
+  "category": "classic",
+  "teams": [
+    {
+      "id": "wc90-01",
+      "name": "Italy",
+      "color": "#008C45",
+      "power": 89,
+      "flag": "it"
+    },
+    {
+      "id": "wc90-02",
+      "name": "Austria",
+      "color": "#ED2939",
+      "power": 72,
+      "flag": "at"
+    },
+    {
+      "id": "wc90-03",
+      "name": "USA",
+      "color": "#0A3161",
+      "power": 62,
+      "flag": "us"
+    },
+    {
+      "id": "wc90-04",
+      "name": "Czechoslovakia",
+      "color": "#11457E",
+      "power": 77,
+      "flag": "cz"
+    },
+    {
+      "id": "wc90-05",
+      "name": "Argentina",
+      "color": "#43A1D5",
+      "power": 86,
+      "flag": "ar"
+    },
+    {
+      "id": "wc90-06",
+      "name": "Cameroon",
+      "color": "#007A5E",
+      "power": 73,
+      "flag": "cm"
+    },
+    {
+      "id": "wc90-07",
+      "name": "Soviet Union",
+      "color": "#CC0000",
+      "power": 80,
+      "flag": "su"
+    },
+    {
+      "id": "wc90-08",
+      "name": "Romania",
+      "color": "#FCD116",
+      "power": 77,
+      "flag": "ro"
+    },
+    {
+      "id": "wc90-09",
+      "name": "Brazil",
+      "color": "#009B3A",
+      "power": 87,
+      "flag": "br"
+    },
+    {
+      "id": "wc90-10",
+      "name": "Sweden",
+      "color": "#006AA7",
+      "power": 76,
+      "flag": "se"
+    },
+    {
+      "id": "wc90-11",
+      "name": "Costa Rica",
+      "color": "#002B7F",
+      "power": 66,
+      "flag": "cr"
+    },
+    {
+      "id": "wc90-12",
+      "name": "Scotland",
+      "color": "#003087",
+      "power": 72,
+      "flag": "gb-sct"
+    },
+    {
+      "id": "wc90-13",
+      "name": "West Germany",
+      "color": "#1A1A1A",
+      "power": 90,
+      "flag": "de"
+    },
+    {
+      "id": "wc90-14",
+      "name": "Yugoslavia",
+      "color": "#0C4076",
+      "power": 81,
+      "flag": "yu"
+    },
+    {
+      "id": "wc90-15",
+      "name": "United Arab Emirates",
+      "color": "#00732F",
+      "power": 58,
+      "flag": "ae"
+    },
+    {
+      "id": "wc90-16",
+      "name": "Colombia",
+      "color": "#FCD116",
+      "power": 75,
+      "flag": "co"
+    },
+    {
+      "id": "wc90-17",
+      "name": "Belgium",
+      "color": "#EF3340",
+      "power": 79,
+      "flag": "be"
+    },
+    {
+      "id": "wc90-18",
+      "name": "South Korea",
+      "color": "#C21920",
+      "power": 64,
+      "flag": "kr"
+    },
+    {
+      "id": "wc90-19",
+      "name": "Uruguay",
+      "color": "#0038A8",
+      "power": 77,
+      "flag": "uy"
+    },
+    {
+      "id": "wc90-20",
+      "name": "Spain",
+      "color": "#AA151B",
+      "power": 81,
+      "flag": "es"
+    },
+    {
+      "id": "wc90-21",
+      "name": "England",
+      "color": "#CF081F",
+      "power": 84,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "wc90-22",
+      "name": "Ireland",
+      "color": "#169B62",
+      "power": 73,
+      "flag": "ie"
+    },
+    {
+      "id": "wc90-23",
+      "name": "Netherlands",
+      "color": "#FF6600",
+      "power": 85,
+      "flag": "nl"
+    },
+    {
+      "id": "wc90-24",
+      "name": "Egypt",
+      "color": "#CE1126",
+      "power": 66,
+      "flag": "eg"
+    }
+  ],
+  "tournaments": [
+    {
+      "id": "611ddkfxs3",
+      "name": "World Cup 1990",
+      "season": 1,
+      "format": "group+bracket",
+      "teamIds": [
+        "wc90-01",
+        "wc90-02",
+        "wc90-03",
+        "wc90-04",
+        "wc90-05",
+        "wc90-06",
+        "wc90-07",
+        "wc90-08",
+        "wc90-09",
+        "wc90-10",
+        "wc90-11",
+        "wc90-12",
+        "wc90-13",
+        "wc90-14",
+        "wc90-15",
+        "wc90-16",
+        "wc90-17",
+        "wc90-18",
+        "wc90-19",
+        "wc90-20",
+        "wc90-21",
+        "wc90-22",
+        "wc90-23",
+        "wc90-24"
+      ],
+      "groups": [
+        {
+          "name": "Group A",
+          "teamIds": [
+            "wc90-01",
+            "wc90-02",
+            "wc90-03",
+            "wc90-04"
+          ],
+          "matches": [
+            {
+              "id": "7wffpyovtl",
+              "homeId": "wc90-04",
+              "awayId": "wc90-01",
+              "result": null
+            },
+            {
+              "id": "wrqoi79rv2",
+              "homeId": "wc90-03",
+              "awayId": "wc90-02",
+              "result": null
+            },
+            {
+              "id": "e4z8qbaiuq",
+              "homeId": "wc90-01",
+              "awayId": "wc90-03",
+              "result": null
+            },
+            {
+              "id": "nm8t9d4p95",
+              "homeId": "wc90-02",
+              "awayId": "wc90-04",
+              "result": null
+            },
+            {
+              "id": "osy5xsrorr",
+              "homeId": "wc90-02",
+              "awayId": "wc90-01",
+              "result": null
+            },
+            {
+              "id": "hz7i4h863v",
+              "homeId": "wc90-04",
+              "awayId": "wc90-03",
+              "result": null
+            }
+          ],
+          "standings": [
+            {
+              "teamId": "wc90-01",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "wc90-02",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "wc90-03",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "wc90-04",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            }
+          ]
+        },
+        {
+          "name": "Group B",
+          "teamIds": [
+            "wc90-05",
+            "wc90-06",
+            "wc90-07",
+            "wc90-08"
+          ],
+          "matches": [
+            {
+              "id": "5g29rtwj03",
+              "homeId": "wc90-08",
+              "awayId": "wc90-05",
+              "result": null
+            },
+            {
+              "id": "2uf6kmuirm",
+              "homeId": "wc90-07",
+              "awayId": "wc90-06",
+              "result": null
+            },
+            {
+              "id": "3tj7gw4s07",
+              "homeId": "wc90-05",
+              "awayId": "wc90-07",
+              "result": null
+            },
+            {
+              "id": "f4wmdszlj3",
+              "homeId": "wc90-06",
+              "awayId": "wc90-08",
+              "result": null
+            },
+            {
+              "id": "azd9yy0e8p",
+              "homeId": "wc90-06",
+              "awayId": "wc90-05",
+              "result": null
+            },
+            {
+              "id": "d8f1383nde",
+              "homeId": "wc90-08",
+              "awayId": "wc90-07",
+              "result": null
+            }
+          ],
+          "standings": [
+            {
+              "teamId": "wc90-05",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "wc90-06",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "wc90-07",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "wc90-08",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            }
+          ]
+        },
+        {
+          "name": "Group C",
+          "teamIds": [
+            "wc90-09",
+            "wc90-10",
+            "wc90-11",
+            "wc90-12"
+          ],
+          "matches": [
+            {
+              "id": "6h19hdaxia",
+              "homeId": "wc90-12",
+              "awayId": "wc90-09",
+              "result": null
+            },
+            {
+              "id": "o4zrsygyli",
+              "homeId": "wc90-11",
+              "awayId": "wc90-10",
+              "result": null
+            },
+            {
+              "id": "t5hsqflifo",
+              "homeId": "wc90-09",
+              "awayId": "wc90-11",
+              "result": null
+            },
+            {
+              "id": "ip2dexctsj",
+              "homeId": "wc90-10",
+              "awayId": "wc90-12",
+              "result": null
+            },
+            {
+              "id": "nszzoexclm",
+              "homeId": "wc90-10",
+              "awayId": "wc90-09",
+              "result": null
+            },
+            {
+              "id": "6ozqo1bezq",
+              "homeId": "wc90-12",
+              "awayId": "wc90-11",
+              "result": null
+            }
+          ],
+          "standings": [
+            {
+              "teamId": "wc90-09",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "wc90-10",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "wc90-11",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "wc90-12",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            }
+          ]
+        },
+        {
+          "name": "Group D",
+          "teamIds": [
+            "wc90-13",
+            "wc90-14",
+            "wc90-15",
+            "wc90-16"
+          ],
+          "matches": [
+            {
+              "id": "gfusbjpyik",
+              "homeId": "wc90-16",
+              "awayId": "wc90-13",
+              "result": null
+            },
+            {
+              "id": "uj76fkwq1c",
+              "homeId": "wc90-15",
+              "awayId": "wc90-14",
+              "result": null
+            },
+            {
+              "id": "qz26n2vf4r",
+              "homeId": "wc90-13",
+              "awayId": "wc90-15",
+              "result": null
+            },
+            {
+              "id": "2b5k1i3m9y",
+              "homeId": "wc90-14",
+              "awayId": "wc90-16",
+              "result": null
+            },
+            {
+              "id": "21zyhpqpq6",
+              "homeId": "wc90-14",
+              "awayId": "wc90-13",
+              "result": null
+            },
+            {
+              "id": "xiqiwqplo7",
+              "homeId": "wc90-16",
+              "awayId": "wc90-15",
+              "result": null
+            }
+          ],
+          "standings": [
+            {
+              "teamId": "wc90-13",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "wc90-14",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "wc90-15",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "wc90-16",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            }
+          ]
+        },
+        {
+          "name": "Group E",
+          "teamIds": [
+            "wc90-17",
+            "wc90-18",
+            "wc90-19",
+            "wc90-20"
+          ],
+          "matches": [
+            {
+              "id": "ctt96w7ltk",
+              "homeId": "wc90-20",
+              "awayId": "wc90-17",
+              "result": null
+            },
+            {
+              "id": "rfys8ayge5",
+              "homeId": "wc90-19",
+              "awayId": "wc90-18",
+              "result": null
+            },
+            {
+              "id": "ejsluf5moa",
+              "homeId": "wc90-17",
+              "awayId": "wc90-19",
+              "result": null
+            },
+            {
+              "id": "3j8eq8pxvc",
+              "homeId": "wc90-18",
+              "awayId": "wc90-20",
+              "result": null
+            },
+            {
+              "id": "hp8a25nwlb",
+              "homeId": "wc90-18",
+              "awayId": "wc90-17",
+              "result": null
+            },
+            {
+              "id": "jilkzujo73",
+              "homeId": "wc90-20",
+              "awayId": "wc90-19",
+              "result": null
+            }
+          ],
+          "standings": [
+            {
+              "teamId": "wc90-17",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "wc90-18",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "wc90-19",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "wc90-20",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            }
+          ]
+        },
+        {
+          "name": "Group F",
+          "teamIds": [
+            "wc90-21",
+            "wc90-22",
+            "wc90-23",
+            "wc90-24"
+          ],
+          "matches": [
+            {
+              "id": "ihw18olsil",
+              "homeId": "wc90-24",
+              "awayId": "wc90-21",
+              "result": null
+            },
+            {
+              "id": "51gyw83c9g",
+              "homeId": "wc90-23",
+              "awayId": "wc90-22",
+              "result": null
+            },
+            {
+              "id": "sts2mxpr55",
+              "homeId": "wc90-21",
+              "awayId": "wc90-23",
+              "result": null
+            },
+            {
+              "id": "n57rle4z1m",
+              "homeId": "wc90-22",
+              "awayId": "wc90-24",
+              "result": null
+            },
+            {
+              "id": "ffjtgv7i0r",
+              "homeId": "wc90-22",
+              "awayId": "wc90-21",
+              "result": null
+            },
+            {
+              "id": "68e5zc7ehn",
+              "homeId": "wc90-24",
+              "awayId": "wc90-23",
+              "result": null
+            }
+          ],
+          "standings": [
+            {
+              "teamId": "wc90-21",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "wc90-22",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "wc90-23",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "wc90-24",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            }
+          ]
+        }
+      ],
+      "groupsDone": false,
+      "qualifiersPerGroup": 2,
+      "wildcardCount": 4,
+      "rounds": [
+        {
+          "name": "Round of 16",
+          "matches": [
+            {
+              "id": "1ds910jzox",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            },
+            {
+              "id": "jvp5ot8emb",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            },
+            {
+              "id": "5v64t4kdhn",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            },
+            {
+              "id": "6vnlbjc1dw",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            },
+            {
+              "id": "5y6w4o09jf",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            },
+            {
+              "id": "bes1i82hsc",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            },
+            {
+              "id": "hxfqnnmsoq",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            },
+            {
+              "id": "6j6b5umrch",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            }
+          ]
+        },
+        {
+          "name": "Quarter-Finals",
+          "matches": [
+            {
+              "id": "kw1w1tvckj",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            },
+            {
+              "id": "ok1ffwljx6",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            },
+            {
+              "id": "tw4mslizk9",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            },
+            {
+              "id": "tbp3h4p23u",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            }
+          ]
+        },
+        {
+          "name": "Semi-Finals",
+          "matches": [
+            {
+              "id": "2vd3i3gpc8",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            },
+            {
+              "id": "pr0ij7qnru",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            }
+          ]
+        },
+        {
+          "name": "Final",
+          "matches": [
+            {
+              "id": "8j8stzar4d",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            }
+          ]
+        }
+      ],
+      "winnerId": null,
+      "groupLegMode": "single",
+      "knockoutLegMode": "single",
+      "finalLegMode": "single",
+      "createdAt": 1790171494002,
+      "drawType": "manual",
+      "tiebreaker": "goal-diff",
+      "playoffSeedMode": "cross"
+    }
+  ]
+}

@@ -1,0 +1,1445 @@
+{
+  "label": "2007/08 Champions League",
+  "description": "UEFA Champions League 2007/08 — 32 clubs, real groups",
+  "order": 41.5,
+  "type": "club",
+  "category": "classic",
+  "teams": [
+    {
+      "id": "cl08-01",
+      "name": "Porto",
+      "color": "#1C4E9E",
+      "power": 81,
+      "flag": "pt"
+    },
+    {
+      "id": "cl08-02",
+      "name": "Liverpool",
+      "color": "#C8102E",
+      "power": 87,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "cl08-03",
+      "name": "Marseille",
+      "color": "#2FAEE0",
+      "power": 78,
+      "flag": "fr"
+    },
+    {
+      "id": "cl08-04",
+      "name": "Beşiktaş",
+      "color": "#000000",
+      "power": 75,
+      "flag": "tr"
+    },
+    {
+      "id": "cl08-05",
+      "name": "Chelsea",
+      "color": "#034694",
+      "power": 88,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "cl08-06",
+      "name": "Schalke 04",
+      "color": "#004D9D",
+      "power": 79,
+      "flag": "de"
+    },
+    {
+      "id": "cl08-07",
+      "name": "Rosenborg",
+      "color": "#1A1A1A",
+      "power": 70,
+      "flag": "no"
+    },
+    {
+      "id": "cl08-08",
+      "name": "Valencia",
+      "color": "#EE3524",
+      "power": 81,
+      "flag": "es"
+    },
+    {
+      "id": "cl08-09",
+      "name": "Real Madrid",
+      "color": "#FEBE10",
+      "power": 87,
+      "flag": "es"
+    },
+    {
+      "id": "cl08-10",
+      "name": "Olympiacos",
+      "color": "#E30613",
+      "power": 75,
+      "flag": "gr"
+    },
+    {
+      "id": "cl08-11",
+      "name": "Werder Bremen",
+      "color": "#1D9053",
+      "power": 79,
+      "flag": "de"
+    },
+    {
+      "id": "cl08-12",
+      "name": "Lazio",
+      "color": "#87D8F7",
+      "power": 77,
+      "flag": "it"
+    },
+    {
+      "id": "cl08-13",
+      "name": "Milan",
+      "color": "#FB090B",
+      "power": 88,
+      "flag": "it"
+    },
+    {
+      "id": "cl08-14",
+      "name": "Benfica",
+      "color": "#E83030",
+      "power": 79,
+      "flag": "pt"
+    },
+    {
+      "id": "cl08-15",
+      "name": "Celtic",
+      "color": "#018749",
+      "power": 75,
+      "flag": "gb-sct"
+    },
+    {
+      "id": "cl08-16",
+      "name": "Shakhtar Donetsk",
+      "color": "#F58220",
+      "power": 76,
+      "flag": "ua"
+    },
+    {
+      "id": "cl08-17",
+      "name": "Barcelona",
+      "color": "#A50044",
+      "power": 89,
+      "flag": "es"
+    },
+    {
+      "id": "cl08-18",
+      "name": "Lyon",
+      "color": "#1B3C87",
+      "power": 83,
+      "flag": "fr"
+    },
+    {
+      "id": "cl08-19",
+      "name": "Rangers",
+      "color": "#1B458F",
+      "power": 74,
+      "flag": "gb-sct"
+    },
+    {
+      "id": "cl08-20",
+      "name": "Stuttgart",
+      "color": "#E32219",
+      "power": 77,
+      "flag": "de"
+    },
+    {
+      "id": "cl08-21",
+      "name": "Manchester United",
+      "color": "#DA291C",
+      "power": 90,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "cl08-22",
+      "name": "Roma",
+      "color": "#8E1F2F",
+      "power": 82,
+      "flag": "it"
+    },
+    {
+      "id": "cl08-23",
+      "name": "Sporting CP",
+      "color": "#008F39",
+      "power": 76,
+      "flag": "pt"
+    },
+    {
+      "id": "cl08-24",
+      "name": "Dynamo Kyiv",
+      "color": "#0057B8",
+      "power": 73,
+      "flag": "ua"
+    },
+    {
+      "id": "cl08-25",
+      "name": "Inter",
+      "color": "#0068A8",
+      "power": 87,
+      "flag": "it"
+    },
+    {
+      "id": "cl08-26",
+      "name": "Fenerbahçe",
+      "color": "#0F2B5B",
+      "power": 78,
+      "flag": "tr"
+    },
+    {
+      "id": "cl08-27",
+      "name": "PSV",
+      "color": "#ED1C24",
+      "power": 77,
+      "flag": "nl"
+    },
+    {
+      "id": "cl08-28",
+      "name": "CSKA Moscow",
+      "color": "#1C3F94",
+      "power": 75,
+      "flag": "ru"
+    },
+    {
+      "id": "cl08-29",
+      "name": "Arsenal",
+      "color": "#EF0107",
+      "power": 86,
+      "flag": "gb-eng"
+    },
+    {
+      "id": "cl08-30",
+      "name": "Sevilla",
+      "color": "#D81E05",
+      "power": 82,
+      "flag": "es"
+    },
+    {
+      "id": "cl08-31",
+      "name": "Steaua București",
+      "color": "#E30613",
+      "power": 71,
+      "flag": "ro"
+    },
+    {
+      "id": "cl08-32",
+      "name": "Slavia Prague",
+      "color": "#C8102E",
+      "power": 69,
+      "flag": "cz"
+    }
+  ],
+  "tournaments": [
+    {
+      "id": "5wbrm8hfuv",
+      "name": "Champions League 2007/08",
+      "season": 1,
+      "format": "group+bracket",
+      "teamIds": [
+        "cl08-01",
+        "cl08-02",
+        "cl08-03",
+        "cl08-04",
+        "cl08-05",
+        "cl08-06",
+        "cl08-07",
+        "cl08-08",
+        "cl08-09",
+        "cl08-10",
+        "cl08-11",
+        "cl08-12",
+        "cl08-13",
+        "cl08-14",
+        "cl08-15",
+        "cl08-16",
+        "cl08-17",
+        "cl08-18",
+        "cl08-19",
+        "cl08-20",
+        "cl08-21",
+        "cl08-22",
+        "cl08-23",
+        "cl08-24",
+        "cl08-25",
+        "cl08-26",
+        "cl08-27",
+        "cl08-28",
+        "cl08-29",
+        "cl08-30",
+        "cl08-31",
+        "cl08-32"
+      ],
+      "groups": [
+        {
+          "name": "Group A",
+          "teamIds": [
+            "cl08-01",
+            "cl08-02",
+            "cl08-03",
+            "cl08-04"
+          ],
+          "matches": [
+            {
+              "id": "yt7rlnzng2",
+              "homeId": "cl08-04",
+              "awayId": "cl08-01",
+              "result": null
+            },
+            {
+              "id": "g8n8yao0c7",
+              "homeId": "cl08-03",
+              "awayId": "cl08-02",
+              "result": null
+            },
+            {
+              "id": "zap9pyi6fk",
+              "homeId": "cl08-01",
+              "awayId": "cl08-03",
+              "result": null
+            },
+            {
+              "id": "25sk0ni3r7",
+              "homeId": "cl08-02",
+              "awayId": "cl08-04",
+              "result": null
+            },
+            {
+              "id": "h7isyrk18a",
+              "homeId": "cl08-02",
+              "awayId": "cl08-01",
+              "result": null
+            },
+            {
+              "id": "xkp91lpk9u",
+              "homeId": "cl08-04",
+              "awayId": "cl08-03",
+              "result": null
+            },
+            {
+              "id": "nmyrq7s2ho",
+              "homeId": "cl08-01",
+              "awayId": "cl08-04",
+              "result": null
+            },
+            {
+              "id": "8no1gx3khp",
+              "homeId": "cl08-02",
+              "awayId": "cl08-03",
+              "result": null
+            },
+            {
+              "id": "wvudr73law",
+              "homeId": "cl08-03",
+              "awayId": "cl08-01",
+              "result": null
+            },
+            {
+              "id": "5r30p4bvge",
+              "homeId": "cl08-04",
+              "awayId": "cl08-02",
+              "result": null
+            },
+            {
+              "id": "kvl8hj0wsp",
+              "homeId": "cl08-01",
+              "awayId": "cl08-02",
+              "result": null
+            },
+            {
+              "id": "n5pk9yjlvq",
+              "homeId": "cl08-03",
+              "awayId": "cl08-04",
+              "result": null
+            }
+          ],
+          "standings": [
+            {
+              "teamId": "cl08-01",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "cl08-02",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "cl08-03",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "cl08-04",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            }
+          ]
+        },
+        {
+          "name": "Group B",
+          "teamIds": [
+            "cl08-05",
+            "cl08-06",
+            "cl08-07",
+            "cl08-08"
+          ],
+          "matches": [
+            {
+              "id": "7tcaumpjl6",
+              "homeId": "cl08-08",
+              "awayId": "cl08-05",
+              "result": null
+            },
+            {
+              "id": "sylqvly151",
+              "homeId": "cl08-07",
+              "awayId": "cl08-06",
+              "result": null
+            },
+            {
+              "id": "1amjceqmy8",
+              "homeId": "cl08-05",
+              "awayId": "cl08-07",
+              "result": null
+            },
+            {
+              "id": "typd6qhej8",
+              "homeId": "cl08-06",
+              "awayId": "cl08-08",
+              "result": null
+            },
+            {
+              "id": "njdmqexdnj",
+              "homeId": "cl08-06",
+              "awayId": "cl08-05",
+              "result": null
+            },
+            {
+              "id": "lofejzgnap",
+              "homeId": "cl08-08",
+              "awayId": "cl08-07",
+              "result": null
+            },
+            {
+              "id": "b3d08xjzny",
+              "homeId": "cl08-05",
+              "awayId": "cl08-08",
+              "result": null
+            },
+            {
+              "id": "7za0b231jg",
+              "homeId": "cl08-06",
+              "awayId": "cl08-07",
+              "result": null
+            },
+            {
+              "id": "rrz31544pt",
+              "homeId": "cl08-07",
+              "awayId": "cl08-05",
+              "result": null
+            },
+            {
+              "id": "jnhdn1pyjh",
+              "homeId": "cl08-08",
+              "awayId": "cl08-06",
+              "result": null
+            },
+            {
+              "id": "wg0a1i55yt",
+              "homeId": "cl08-05",
+              "awayId": "cl08-06",
+              "result": null
+            },
+            {
+              "id": "e5ygmk2vm7",
+              "homeId": "cl08-07",
+              "awayId": "cl08-08",
+              "result": null
+            }
+          ],
+          "standings": [
+            {
+              "teamId": "cl08-05",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "cl08-06",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "cl08-07",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "cl08-08",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            }
+          ]
+        },
+        {
+          "name": "Group C",
+          "teamIds": [
+            "cl08-09",
+            "cl08-10",
+            "cl08-11",
+            "cl08-12"
+          ],
+          "matches": [
+            {
+              "id": "ycccouj02r",
+              "homeId": "cl08-12",
+              "awayId": "cl08-09",
+              "result": null
+            },
+            {
+              "id": "wtyhsp1wic",
+              "homeId": "cl08-11",
+              "awayId": "cl08-10",
+              "result": null
+            },
+            {
+              "id": "6ltg9kl1eo",
+              "homeId": "cl08-09",
+              "awayId": "cl08-11",
+              "result": null
+            },
+            {
+              "id": "o1rtlxyftj",
+              "homeId": "cl08-10",
+              "awayId": "cl08-12",
+              "result": null
+            },
+            {
+              "id": "9uh3p6enu7",
+              "homeId": "cl08-10",
+              "awayId": "cl08-09",
+              "result": null
+            },
+            {
+              "id": "89xh9epipx",
+              "homeId": "cl08-12",
+              "awayId": "cl08-11",
+              "result": null
+            },
+            {
+              "id": "kkt994agf4",
+              "homeId": "cl08-09",
+              "awayId": "cl08-12",
+              "result": null
+            },
+            {
+              "id": "5y69d6mbh1",
+              "homeId": "cl08-10",
+              "awayId": "cl08-11",
+              "result": null
+            },
+            {
+              "id": "blp3qrcwpr",
+              "homeId": "cl08-11",
+              "awayId": "cl08-09",
+              "result": null
+            },
+            {
+              "id": "d7y5qku8qm",
+              "homeId": "cl08-12",
+              "awayId": "cl08-10",
+              "result": null
+            },
+            {
+              "id": "4sh2ch5hrh",
+              "homeId": "cl08-09",
+              "awayId": "cl08-10",
+              "result": null
+            },
+            {
+              "id": "jizjywuzqs",
+              "homeId": "cl08-11",
+              "awayId": "cl08-12",
+              "result": null
+            }
+          ],
+          "standings": [
+            {
+              "teamId": "cl08-09",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "cl08-10",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "cl08-11",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "cl08-12",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            }
+          ]
+        },
+        {
+          "name": "Group D",
+          "teamIds": [
+            "cl08-13",
+            "cl08-14",
+            "cl08-15",
+            "cl08-16"
+          ],
+          "matches": [
+            {
+              "id": "as4jb9zamz",
+              "homeId": "cl08-16",
+              "awayId": "cl08-13",
+              "result": null
+            },
+            {
+              "id": "gug2srluil",
+              "homeId": "cl08-15",
+              "awayId": "cl08-14",
+              "result": null
+            },
+            {
+              "id": "xl39j1rweb",
+              "homeId": "cl08-13",
+              "awayId": "cl08-15",
+              "result": null
+            },
+            {
+              "id": "l0j3g9gksr",
+              "homeId": "cl08-14",
+              "awayId": "cl08-16",
+              "result": null
+            },
+            {
+              "id": "73lxw0kmf0",
+              "homeId": "cl08-14",
+              "awayId": "cl08-13",
+              "result": null
+            },
+            {
+              "id": "gevanm1hqq",
+              "homeId": "cl08-16",
+              "awayId": "cl08-15",
+              "result": null
+            },
+            {
+              "id": "la2z62gzfl",
+              "homeId": "cl08-13",
+              "awayId": "cl08-16",
+              "result": null
+            },
+            {
+              "id": "reqwkyvehn",
+              "homeId": "cl08-14",
+              "awayId": "cl08-15",
+              "result": null
+            },
+            {
+              "id": "kdo3kv65yk",
+              "homeId": "cl08-15",
+              "awayId": "cl08-13",
+              "result": null
+            },
+            {
+              "id": "menn9umg19",
+              "homeId": "cl08-16",
+              "awayId": "cl08-14",
+              "result": null
+            },
+            {
+              "id": "b5rzxv1w7n",
+              "homeId": "cl08-13",
+              "awayId": "cl08-14",
+              "result": null
+            },
+            {
+              "id": "4h7aea0efg",
+              "homeId": "cl08-15",
+              "awayId": "cl08-16",
+              "result": null
+            }
+          ],
+          "standings": [
+            {
+              "teamId": "cl08-13",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "cl08-14",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "cl08-15",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "cl08-16",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            }
+          ]
+        },
+        {
+          "name": "Group E",
+          "teamIds": [
+            "cl08-17",
+            "cl08-18",
+            "cl08-19",
+            "cl08-20"
+          ],
+          "matches": [
+            {
+              "id": "4yyfocjnm1",
+              "homeId": "cl08-20",
+              "awayId": "cl08-17",
+              "result": null
+            },
+            {
+              "id": "j8wos8b0e6",
+              "homeId": "cl08-19",
+              "awayId": "cl08-18",
+              "result": null
+            },
+            {
+              "id": "rb7x2zq3ns",
+              "homeId": "cl08-17",
+              "awayId": "cl08-19",
+              "result": null
+            },
+            {
+              "id": "cj2qd6df4p",
+              "homeId": "cl08-18",
+              "awayId": "cl08-20",
+              "result": null
+            },
+            {
+              "id": "s3cusvd0n9",
+              "homeId": "cl08-18",
+              "awayId": "cl08-17",
+              "result": null
+            },
+            {
+              "id": "qxhxywezms",
+              "homeId": "cl08-20",
+              "awayId": "cl08-19",
+              "result": null
+            },
+            {
+              "id": "schbszvvht",
+              "homeId": "cl08-17",
+              "awayId": "cl08-20",
+              "result": null
+            },
+            {
+              "id": "nwxqtttfr7",
+              "homeId": "cl08-18",
+              "awayId": "cl08-19",
+              "result": null
+            },
+            {
+              "id": "pzyhhk5eg1",
+              "homeId": "cl08-19",
+              "awayId": "cl08-17",
+              "result": null
+            },
+            {
+              "id": "0bqarcv3f4",
+              "homeId": "cl08-20",
+              "awayId": "cl08-18",
+              "result": null
+            },
+            {
+              "id": "rcvgwujknw",
+              "homeId": "cl08-17",
+              "awayId": "cl08-18",
+              "result": null
+            },
+            {
+              "id": "zn1jwprdt7",
+              "homeId": "cl08-19",
+              "awayId": "cl08-20",
+              "result": null
+            }
+          ],
+          "standings": [
+            {
+              "teamId": "cl08-17",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "cl08-18",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "cl08-19",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "cl08-20",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            }
+          ]
+        },
+        {
+          "name": "Group F",
+          "teamIds": [
+            "cl08-21",
+            "cl08-22",
+            "cl08-23",
+            "cl08-24"
+          ],
+          "matches": [
+            {
+              "id": "1g2ajm88w5",
+              "homeId": "cl08-24",
+              "awayId": "cl08-21",
+              "result": null
+            },
+            {
+              "id": "2476z6nxu5",
+              "homeId": "cl08-23",
+              "awayId": "cl08-22",
+              "result": null
+            },
+            {
+              "id": "a82ih8rrtp",
+              "homeId": "cl08-21",
+              "awayId": "cl08-23",
+              "result": null
+            },
+            {
+              "id": "3mdlg7wb2x",
+              "homeId": "cl08-22",
+              "awayId": "cl08-24",
+              "result": null
+            },
+            {
+              "id": "dy6updx6ge",
+              "homeId": "cl08-22",
+              "awayId": "cl08-21",
+              "result": null
+            },
+            {
+              "id": "ih2h57wj14",
+              "homeId": "cl08-24",
+              "awayId": "cl08-23",
+              "result": null
+            },
+            {
+              "id": "cu3clmlch8",
+              "homeId": "cl08-21",
+              "awayId": "cl08-24",
+              "result": null
+            },
+            {
+              "id": "004kcr26p7",
+              "homeId": "cl08-22",
+              "awayId": "cl08-23",
+              "result": null
+            },
+            {
+              "id": "kg4t3uzzjl",
+              "homeId": "cl08-23",
+              "awayId": "cl08-21",
+              "result": null
+            },
+            {
+              "id": "mhuv8sxlt1",
+              "homeId": "cl08-24",
+              "awayId": "cl08-22",
+              "result": null
+            },
+            {
+              "id": "jzj221xi1z",
+              "homeId": "cl08-21",
+              "awayId": "cl08-22",
+              "result": null
+            },
+            {
+              "id": "caiui5rgrd",
+              "homeId": "cl08-23",
+              "awayId": "cl08-24",
+              "result": null
+            }
+          ],
+          "standings": [
+            {
+              "teamId": "cl08-21",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "cl08-22",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "cl08-23",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "cl08-24",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            }
+          ]
+        },
+        {
+          "name": "Group G",
+          "teamIds": [
+            "cl08-25",
+            "cl08-26",
+            "cl08-27",
+            "cl08-28"
+          ],
+          "matches": [
+            {
+              "id": "rn5yhgjrm7",
+              "homeId": "cl08-28",
+              "awayId": "cl08-25",
+              "result": null
+            },
+            {
+              "id": "yugwz0ed4e",
+              "homeId": "cl08-27",
+              "awayId": "cl08-26",
+              "result": null
+            },
+            {
+              "id": "3logsfkwfv",
+              "homeId": "cl08-25",
+              "awayId": "cl08-27",
+              "result": null
+            },
+            {
+              "id": "e1k0w9v6y5",
+              "homeId": "cl08-26",
+              "awayId": "cl08-28",
+              "result": null
+            },
+            {
+              "id": "w6dc5ae60b",
+              "homeId": "cl08-26",
+              "awayId": "cl08-25",
+              "result": null
+            },
+            {
+              "id": "a1w4xt6dh5",
+              "homeId": "cl08-28",
+              "awayId": "cl08-27",
+              "result": null
+            },
+            {
+              "id": "k2kh18lhwj",
+              "homeId": "cl08-25",
+              "awayId": "cl08-28",
+              "result": null
+            },
+            {
+              "id": "3jviok4fbw",
+              "homeId": "cl08-26",
+              "awayId": "cl08-27",
+              "result": null
+            },
+            {
+              "id": "4im01bxufm",
+              "homeId": "cl08-27",
+              "awayId": "cl08-25",
+              "result": null
+            },
+            {
+              "id": "i3rf1kljxz",
+              "homeId": "cl08-28",
+              "awayId": "cl08-26",
+              "result": null
+            },
+            {
+              "id": "cbzbz1g0pp",
+              "homeId": "cl08-25",
+              "awayId": "cl08-26",
+              "result": null
+            },
+            {
+              "id": "l0p2xqc8y5",
+              "homeId": "cl08-27",
+              "awayId": "cl08-28",
+              "result": null
+            }
+          ],
+          "standings": [
+            {
+              "teamId": "cl08-25",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "cl08-26",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "cl08-27",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "cl08-28",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            }
+          ]
+        },
+        {
+          "name": "Group H",
+          "teamIds": [
+            "cl08-29",
+            "cl08-30",
+            "cl08-31",
+            "cl08-32"
+          ],
+          "matches": [
+            {
+              "id": "l1h7amjzpe",
+              "homeId": "cl08-32",
+              "awayId": "cl08-29",
+              "result": null
+            },
+            {
+              "id": "v9bswb8jc6",
+              "homeId": "cl08-31",
+              "awayId": "cl08-30",
+              "result": null
+            },
+            {
+              "id": "xgurwetgdp",
+              "homeId": "cl08-29",
+              "awayId": "cl08-31",
+              "result": null
+            },
+            {
+              "id": "3nd8uv15kh",
+              "homeId": "cl08-30",
+              "awayId": "cl08-32",
+              "result": null
+            },
+            {
+              "id": "2not1v7dhp",
+              "homeId": "cl08-30",
+              "awayId": "cl08-29",
+              "result": null
+            },
+            {
+              "id": "ktp8dst4n2",
+              "homeId": "cl08-32",
+              "awayId": "cl08-31",
+              "result": null
+            },
+            {
+              "id": "mww2e72asr",
+              "homeId": "cl08-29",
+              "awayId": "cl08-32",
+              "result": null
+            },
+            {
+              "id": "36l0prl076",
+              "homeId": "cl08-30",
+              "awayId": "cl08-31",
+              "result": null
+            },
+            {
+              "id": "oflwrote4l",
+              "homeId": "cl08-31",
+              "awayId": "cl08-29",
+              "result": null
+            },
+            {
+              "id": "ua02rs4nuw",
+              "homeId": "cl08-32",
+              "awayId": "cl08-30",
+              "result": null
+            },
+            {
+              "id": "29yoowj8fi",
+              "homeId": "cl08-29",
+              "awayId": "cl08-30",
+              "result": null
+            },
+            {
+              "id": "gou6lnjza5",
+              "homeId": "cl08-31",
+              "awayId": "cl08-32",
+              "result": null
+            }
+          ],
+          "standings": [
+            {
+              "teamId": "cl08-29",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "cl08-30",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "cl08-31",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            },
+            {
+              "teamId": "cl08-32",
+              "played": 0,
+              "won": 0,
+              "drawn": 0,
+              "lost": 0,
+              "gf": 0,
+              "ga": 0,
+              "gd": 0,
+              "pts": 0
+            }
+          ]
+        }
+      ],
+      "groupsDone": false,
+      "qualifiersPerGroup": 2,
+      "rounds": [
+        {
+          "name": "Round of 16",
+          "matches": [
+            {
+              "id": "h72tjou0ji",
+              "homeId": null,
+              "awayId": null,
+              "result": null,
+              "leg2Result": null
+            },
+            {
+              "id": "ixhh1yx2wc",
+              "homeId": null,
+              "awayId": null,
+              "result": null,
+              "leg2Result": null
+            },
+            {
+              "id": "h8tgrtwf9t",
+              "homeId": null,
+              "awayId": null,
+              "result": null,
+              "leg2Result": null
+            },
+            {
+              "id": "341wdg6r1g",
+              "homeId": null,
+              "awayId": null,
+              "result": null,
+              "leg2Result": null
+            },
+            {
+              "id": "7uoj2ow3ab",
+              "homeId": null,
+              "awayId": null,
+              "result": null,
+              "leg2Result": null
+            },
+            {
+              "id": "2sgsozi08p",
+              "homeId": null,
+              "awayId": null,
+              "result": null,
+              "leg2Result": null
+            },
+            {
+              "id": "nsxbaw3yau",
+              "homeId": null,
+              "awayId": null,
+              "result": null,
+              "leg2Result": null
+            },
+            {
+              "id": "9tqn2kcs57",
+              "homeId": null,
+              "awayId": null,
+              "result": null,
+              "leg2Result": null
+            }
+          ]
+        },
+        {
+          "name": "Quarter-Finals",
+          "matches": [
+            {
+              "id": "ihzql5497g",
+              "homeId": null,
+              "awayId": null,
+              "result": null,
+              "leg2Result": null
+            },
+            {
+              "id": "knqpm50d0v",
+              "homeId": null,
+              "awayId": null,
+              "result": null,
+              "leg2Result": null
+            },
+            {
+              "id": "olayf9vawy",
+              "homeId": null,
+              "awayId": null,
+              "result": null,
+              "leg2Result": null
+            },
+            {
+              "id": "5r3mqp1ckr",
+              "homeId": null,
+              "awayId": null,
+              "result": null,
+              "leg2Result": null
+            }
+          ]
+        },
+        {
+          "name": "Semi-Finals",
+          "matches": [
+            {
+              "id": "vm0njxwgix",
+              "homeId": null,
+              "awayId": null,
+              "result": null,
+              "leg2Result": null
+            },
+            {
+              "id": "p02kyeie5r",
+              "homeId": null,
+              "awayId": null,
+              "result": null,
+              "leg2Result": null
+            }
+          ]
+        },
+        {
+          "name": "Final",
+          "matches": [
+            {
+              "id": "uzc3tujrfv",
+              "homeId": null,
+              "awayId": null,
+              "result": null
+            }
+          ]
+        }
+      ],
+      "winnerId": null,
+      "groupLegMode": "double",
+      "knockoutLegMode": "double",
+      "finalLegMode": "single",
+      "createdAt": 1790171494008,
+      "drawType": "manual",
+      "tiebreaker": "goal-diff",
+      "playoffSeedMode": "cross"
+    }
+  ]
+}

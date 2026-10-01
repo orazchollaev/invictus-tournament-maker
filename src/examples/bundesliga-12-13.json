@@ -1,0 +1,135 @@
+{
+  "label": "Bundesliga 12/13",
+  "description": "Bayern's treble season — 18 clubs",
+  "order": 53,
+  "type": "club",
+  "category": "classic",
+  "teams": [
+    {
+      "id": "bl13-01",
+      "name": "Bayern Munich",
+      "color": "#DC052D",
+      "power": 93,
+      "flag": "de"
+    },
+    {
+      "id": "bl13-02",
+      "name": "Borussia Dortmund",
+      "color": "#FDE100",
+      "power": 88,
+      "flag": "de"
+    },
+    {
+      "id": "bl13-03",
+      "name": "Bayer Leverkusen",
+      "color": "#E32221",
+      "power": 81,
+      "flag": "de"
+    },
+    {
+      "id": "bl13-04",
+      "name": "Schalke 04",
+      "color": "#004D9D",
+      "power": 81,
+      "flag": "de"
+    },
+    {
+      "id": "bl13-05",
+      "name": "SC Freiburg",
+      "color": "#A6192E",
+      "power": 74,
+      "flag": "de"
+    },
+    {
+      "id": "bl13-06",
+      "name": "Eintracht Frankfurt",
+      "color": "#1A1A1A",
+      "power": 75,
+      "flag": "de"
+    },
+    {
+      "id": "bl13-07",
+      "name": "Hamburger SV",
+      "color": "#0A3F86",
+      "power": 75,
+      "flag": "de"
+    },
+    {
+      "id": "bl13-08",
+      "name": "Borussia Mönchengladbach",
+      "color": "#00A94F",
+      "power": 76,
+      "flag": "de"
+    },
+    {
+      "id": "bl13-09",
+      "name": "Hannover 96",
+      "color": "#C8102E",
+      "power": 75,
+      "flag": "de"
+    },
+    {
+      "id": "bl13-10",
+      "name": "Nürnberg",
+      "color": "#AA1124",
+      "power": 72,
+      "flag": "de"
+    },
+    {
+      "id": "bl13-11",
+      "name": "Wolfsburg",
+      "color": "#65B32E",
+      "power": 76,
+      "flag": "de"
+    },
+    {
+      "id": "bl13-12",
+      "name": "Stuttgart",
+      "color": "#E32219",
+      "power": 76,
+      "flag": "de"
+    },
+    {
+      "id": "bl13-13",
+      "name": "Mainz 05",
+      "color": "#C3141E",
+      "power": 73,
+      "flag": "de"
+    },
+    {
+      "id": "bl13-14",
+      "name": "Werder Bremen",
+      "color": "#1D9053",
+      "power": 74,
+      "flag": "de"
+    },
+    {
+      "id": "bl13-15",
+      "name": "FC Augsburg",
+      "color": "#BA3733",
+      "power": 71,
+      "flag": "de"
+    },
+    {
+      "id": "bl13-16",
+      "name": "TSG Hoffenheim",
+      "color": "#1961B5",
+      "power": 73,
+      "flag": "de"
+    },
+    {
+      "id": "bl13-17",
+      "name": "Fortuna Düsseldorf",
+      "color": "#DA251D",
+      "power": 70,
+      "flag": "de"
+    },
+    {
+      "id": "bl13-18",
+      "name": "Greuther Fürth",
+      "color": "#00843D",
+      "power": 68,
+      "flag": "de"
+    }
+  ]
+}

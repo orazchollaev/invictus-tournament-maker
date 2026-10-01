@@ -1,0 +1,93 @@
+{
+  "label": "Scottish Premiership 26/27",
+  "description": "Scottish Premiership 2026/27 — 12 clubs",
+  "order": 14.6,
+  "type": "club",
+  "category": "league",
+  "teams": [
+    {
+      "id": "spl-01",
+      "name": "Celtic",
+      "color": "#018749",
+      "power": 81,
+      "flag": "gb-sct"
+    },
+    {
+      "id": "spl-02",
+      "name": "Rangers",
+      "color": "#1B458F",
+      "power": 79,
+      "flag": "gb-sct"
+    },
+    {
+      "id": "spl-03",
+      "name": "Heart of Midlothian",
+      "color": "#7A263A",
+      "power": 74,
+      "flag": "gb-sct"
+    },
+    {
+      "id": "spl-04",
+      "name": "Hibernian",
+      "color": "#00843D",
+      "power": 72,
+      "flag": "gb-sct"
+    },
+    {
+      "id": "spl-05",
+      "name": "Aberdeen",
+      "color": "#E30613",
+      "power": 72,
+      "flag": "gb-sct"
+    },
+    {
+      "id": "spl-06",
+      "name": "Motherwell",
+      "color": "#FFB300",
+      "power": 70,
+      "flag": "gb-sct"
+    },
+    {
+      "id": "spl-07",
+      "name": "Dundee United",
+      "color": "#F58220",
+      "power": 69,
+      "flag": "gb-sct"
+    },
+    {
+      "id": "spl-08",
+      "name": "Falkirk",
+      "color": "#00205B",
+      "power": 68,
+      "flag": "gb-sct"
+    },
+    {
+      "id": "spl-09",
+      "name": "St Mirren",
+      "color": "#1A1A1A",
+      "power": 68,
+      "flag": "gb-sct"
+    },
+    {
+      "id": "spl-10",
+      "name": "Kilmarnock",
+      "color": "#0052A5",
+      "power": 67,
+      "flag": "gb-sct"
+    },
+    {
+      "id": "spl-11",
+      "name": "Dundee",
+      "color": "#00205B",
+      "power": 67,
+      "flag": "gb-sct"
+    },
+    {
+      "id": "spl-12",
+      "name": "St Johnstone",
+      "color": "#0055A4",
+      "power": 66,
+      "flag": "gb-sct"
+    }
+  ]
+}
