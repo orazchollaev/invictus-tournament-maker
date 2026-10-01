@@ -13,15 +13,36 @@ export interface BannerAdOptions {
   hideUnderOverlays?: boolean
 }
 
+/** Wait before asking again after a no-fill; hammering the ad unit only lowers its fill further. */
+const RETRY_AFTER_FAIL_MS = 45_000
+/** Sub-pixel layout jitter is not worth throwing a loaded banner away for. */
+const MARGIN_TOLERANCE_PX = 2
+
 // The plugin shows one banner at a time, so track which caller currently owns it.
 let owner: symbol | null = null
 let ownerMargin = 0
 let queue: Promise<void> = Promise.resolve()
+const onFailed = new Map<symbol, () => void>()
+let failureListener: Promise<unknown> | null = null
 
 function run(task: () => Promise<void>) {
   queue = queue.then(task).catch(() => {
     // best-effort: silently ignore if unavailable
   })
+}
+
+/**
+ * On a failed load the plugin destroys its native view itself. Without
+ * clearing `owner` here, the next show would `resumeBanner` a view that no
+ * longer exists and the slot would stay empty until the component remounts.
+ */
+function listenForFailures(mod: Awaited<ReturnType<typeof loadAdMob>>) {
+  failureListener ??= mod.AdMob.addListener(mod.BannerAdPluginEvents.FailedToLoad, () => {
+    const failed = owner
+    owner = null
+    if (failed) onFailed.get(failed)?.()
+  })
+  return failureListener
 }
 
 function cssLengthPx(value: string): number {
@@ -62,18 +83,26 @@ export function useBannerAd(adId: string, options: BannerAdOptions) {
 
   const me = Symbol(adId)
   const overlayOpen = options.hideUnderOverlays ? useOverlayOpen() : ref(false)
+  const retry = ref(0)
+  let retryTimer: ReturnType<typeof setTimeout> | undefined
+  onFailed.set(me, () => {
+    clearTimeout(retryTimer)
+    retryTimer = setTimeout(() => retry.value++, RETRY_AFTER_FAIL_MS)
+  })
 
   watch(
-    () => toValue(options.visible) && !overlayOpen.value,
-    (show) => {
+    [() => toValue(options.visible) && !overlayOpen.value, retry],
+    ([show]) => {
       run(async () => {
-        const { AdMob, BannerAdPosition, BannerAdSize } = await loadAdMob()
+        const mod = await loadAdMob()
+        const { AdMob, BannerAdPosition, BannerAdSize } = mod
+        await listenForFailures(mod)
         if (!show) {
           if (owner === me) await AdMob.hideBanner()
           return
         }
         const margin = cssLengthPx(options.offset())
-        if (owner === me && margin === ownerMargin) {
+        if (owner === me && Math.abs(margin - ownerMargin) <= MARGIN_TOLERANCE_PX) {
           await AdMob.resumeBanner()
           return
         }
@@ -94,6 +123,8 @@ export function useBannerAd(adId: string, options: BannerAdOptions) {
   )
 
   onBeforeUnmount(() => {
+    clearTimeout(retryTimer)
+    onFailed.delete(me)
     run(async () => {
       if (owner !== me) return
       owner = null
