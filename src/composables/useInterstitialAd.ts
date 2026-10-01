@@ -3,7 +3,7 @@ import { loadAdMob } from "@/lib/admob"
 
 const INTERSTITIAL_AD_UNIT_ID = "ca-app-pub-5867331300737777/8465973446"
 const CREATION_SCORE_KEY = "invictus_tournament_creation_score"
-const TRIGGER_AT = 5
+const TRIGGER_AT = 4
 /** Smallest weight a creation can add — once within this of TRIGGER_AT, the next one may show the ad. */
 const MIN_WEIGHT = 0.75
 /** A loaded interstitial expires after an hour; reload a little before that. */
