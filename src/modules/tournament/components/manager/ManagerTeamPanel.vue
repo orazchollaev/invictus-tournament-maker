@@ -83,7 +83,11 @@ watch(adSlot, (slot, _, onCleanup) => {
   onCleanup(() => el.removeEventListener("scroll", onScroll))
 })
 
-const { enabled: hasBanner, preview: adPreview } = useBannerAd(MANAGER_MODE_BANNER_ID, {
+const {
+  enabled: hasBanner,
+  preview: adPreview,
+  height: adHeight,
+} = useBannerAd(MANAGER_MODE_BANNER_ID, {
   visible: () => props.active && scrolledToTop.value && !!adSlot.value,
   edge: "top",
   offset: () => `${adSlot.value?.getBoundingClientRect().top ?? 0}px`,
@@ -119,7 +123,8 @@ const statusChips = computed<StatusChip[]>(() => {
         variant: "accent",
       },
     ]
-    if (s.state === "qualified") chips.push({ label: t("manager.status.qualified"), variant: "success" })
+    if (s.state === "qualified")
+      chips.push({ label: t("manager.status.qualified"), variant: "success" })
     if (s.state === "out") chips.push({ label: t("manager.status.eliminated"), variant: "danger" })
     return chips
   }
@@ -452,6 +457,7 @@ function open11() {
       ref="adSlot"
       class="mp-ad-slot"
       :class="{ 'mp-ad-slot--preview': adPreview }"
+      :style="{ height: `${adHeight}px` }"
     />
 
     <AppCard padding="md">
@@ -533,12 +539,10 @@ function open11() {
   padding-bottom: var(--sp-3);
 }
 
+/* Height comes from the banner itself: adaptive banners vary by screen width. */
 .mp-ad-slot {
   flex-shrink: 0;
-  align-self: center;
-  width: 320px;
-  max-width: 100%;
-  height: 50px;
+  align-self: stretch;
 }
 
 .mp-ad-slot--preview {

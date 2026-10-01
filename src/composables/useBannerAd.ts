@@ -23,7 +23,8 @@ let owner: symbol | null = null
 let ownerMargin = 0
 let queue: Promise<void> = Promise.resolve()
 const onFailed = new Map<symbol, () => void>()
-let failureListener: Promise<unknown> | null = null
+const onResized = new Map<symbol, (height: number) => void>()
+let listeners: Promise<unknown> | null = null
 
 function run(task: () => Promise<void>) {
   queue = queue.then(task).catch(() => {
@@ -35,14 +36,31 @@ function run(task: () => Promise<void>) {
  * On a failed load the plugin destroys its native view itself. Without
  * clearing `owner` here, the next show would `resumeBanner` a view that no
  * longer exists and the slot would stay empty until the component remounts.
+ *
+ * Size changes report the adaptive banner's real height, so the owner's slot
+ * can match it. Hide and remove report 0×0, which is not a size to adopt.
  */
-function listenForFailures(mod: Awaited<ReturnType<typeof loadAdMob>>) {
-  failureListener ??= mod.AdMob.addListener(mod.BannerAdPluginEvents.FailedToLoad, () => {
-    const failed = owner
-    owner = null
-    if (failed) onFailed.get(failed)?.()
-  })
-  return failureListener
+function listen({ AdMob, BannerAdPluginEvents }: Awaited<ReturnType<typeof loadAdMob>>) {
+  listeners ??= Promise.all([
+    AdMob.addListener(BannerAdPluginEvents.FailedToLoad, () => {
+      const failed = owner
+      owner = null
+      if (failed) onFailed.get(failed)?.()
+    }),
+    AdMob.addListener(BannerAdPluginEvents.SizeChanged, ({ height }) => {
+      if (owner && height > 0) onResized.get(owner)?.(height)
+    }),
+  ])
+  return listeners
+}
+
+/**
+ * Anchored adaptive banners span the screen width at roughly a 320:50
+ * ratio, kept between 50 and 90dp. A first guess for the slot so the layout
+ * barely moves when the real height arrives.
+ */
+function estimateAdaptiveHeight(): number {
+  return Math.min(90, Math.max(50, Math.round((window.innerWidth * 50) / 320)))
 }
 
 function cssLengthPx(value: string): number {
@@ -70,16 +88,19 @@ function useOverlayOpen() {
 }
 
 /**
- * Native AdMob 320×50 banner tied to the calling component's lifetime. The
- * plugin can only pin it to a screen edge, so callers reserve the space in
- * their layout and point `offset` at it. Off native there is no banner:
+ * Native AdMob anchored adaptive banner tied to the calling component's
+ * lifetime: full screen width, its height reported back as `height` (CSS
+ * px) for the slot. Adaptive fills better and earns more than a fixed 320×50.
+ * The plugin can only pin it to a screen edge, so callers reserve the space
+ * in their layout and point `offset` at it. Off native there is no banner:
  * `preview` is true only in dev, where callers paint the slot so the
  * placement can be checked; production web drops the slot entirely.
  */
 export function useBannerAd(adId: string, options: BannerAdOptions) {
   const enabled = Capacitor.isNativePlatform()
   const preview = !enabled && import.meta.env.DEV
-  if (!enabled) return { enabled, preview }
+  const height = ref(estimateAdaptiveHeight())
+  if (!enabled) return { enabled, preview, height }
 
   const me = Symbol(adId)
   const overlayOpen = options.hideUnderOverlays ? useOverlayOpen() : ref(false)
@@ -89,6 +110,7 @@ export function useBannerAd(adId: string, options: BannerAdOptions) {
     clearTimeout(retryTimer)
     retryTimer = setTimeout(() => retry.value++, RETRY_AFTER_FAIL_MS)
   })
+  onResized.set(me, (h) => (height.value = h))
 
   watch(
     [() => toValue(options.visible) && !overlayOpen.value, retry],
@@ -96,7 +118,7 @@ export function useBannerAd(adId: string, options: BannerAdOptions) {
       run(async () => {
         const mod = await loadAdMob()
         const { AdMob, BannerAdPosition, BannerAdSize } = mod
-        await listenForFailures(mod)
+        await listen(mod)
         if (!show) {
           if (owner === me) await AdMob.hideBanner()
           return
@@ -112,19 +134,20 @@ export function useBannerAd(adId: string, options: BannerAdOptions) {
         ownerMargin = margin
         await AdMob.showBanner({
           adId,
-          adSize: BannerAdSize.BANNER,
+          adSize: BannerAdSize.ADAPTIVE_BANNER,
           position:
             options.edge === "top" ? BannerAdPosition.TOP_CENTER : BannerAdPosition.BOTTOM_CENTER,
           margin,
         })
       })
     },
-    { immediate: true, flush: "post" },
+    { immediate: true, flush: "post" }
   )
 
   onBeforeUnmount(() => {
     clearTimeout(retryTimer)
     onFailed.delete(me)
+    onResized.delete(me)
     run(async () => {
       if (owner !== me) return
       owner = null
@@ -133,5 +156,5 @@ export function useBannerAd(adId: string, options: BannerAdOptions) {
     })
   })
 
-  return { enabled, preview }
+  return { enabled, preview, height }
 }

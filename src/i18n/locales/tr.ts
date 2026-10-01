@@ -594,6 +594,7 @@
     tutorials: "Eğitim Videoları",
     about: "Hakkında",
     aboutBy: "geliştirici",
+    privacyOptions: "Reklam gizlilik tercihleri",
     specialThanks: "Özel teşekkürler",
     disclaimer:
       "Resmi olmayan, hayran yapımı bir simülasyondur. UEFA, AFC, CONMEBOL, FIFA veya uygulama içinde adı geçen herhangi bir kulüp, lig ya da turnuva ile bağlantılı, onaylı veya ilişkili değildir.",

@@ -8,6 +8,9 @@ import i18n, { isRtl, loadLocale } from "./i18n"
 import type { Locale } from "./i18n"
 import { initPush } from "./composables/usePush"
 import { initAnalytics, logScreenView, logError } from "./composables/useAnalytics"
+import { preloadInterstitialIfDue } from "./composables/useInterstitialAd"
+import { preloadRewardedIfDue } from "./composables/useRewardedAd"
+import { initAds } from "./lib/admob"
 import { idbStorage } from "./lib/idbStorage"
 import { useTournamentStore } from "./modules/tournament/store"
 import { useTeamsStore } from "./modules/teams/store"
@@ -137,6 +140,10 @@ async function bootstrap() {
 
   void initPush()
   void initAnalytics()
+  void initAds().then(() => {
+    preloadInterstitialIfDue()
+    preloadRewardedIfDue()
+  })
   router.afterEach((to) => {
     void logScreenView(to.path)
   })

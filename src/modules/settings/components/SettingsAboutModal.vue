@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { APP_VERSION } from "@/constants"
 import { useI18n } from "vue-i18n"
-import { AppModal } from "@/components/ui"
+import { AppButton, AppModal } from "@/components/ui"
+import { privacyOptionsRequired, showPrivacyOptions } from "@/lib/admob"
 
 defineEmits<{ close: [] }>()
 
@@ -33,6 +34,16 @@ const CONTRIBUTORS = ["Rodrigo Hernandez", "Juninho"]
       </div>
 
       <p class="about-disclaimer">{{ t("settings.disclaimer") }}</p>
+
+      <!-- Google requires a way back into the consent form where one was shown. -->
+      <AppButton
+        v-if="privacyOptionsRequired"
+        variant="text"
+        size="sm"
+        @click="showPrivacyOptions().catch(() => {})"
+      >
+        {{ t("settings.privacyOptions") }}
+      </AppButton>
     </div>
   </AppModal>
 </template>

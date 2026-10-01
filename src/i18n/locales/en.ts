@@ -591,6 +591,7 @@
     tutorials: "Tutorials",
     about: "About",
     aboutBy: "by",
+    privacyOptions: "Ad privacy choices",
     specialThanks: "Special thanks",
     disclaimer:
       "Unofficial fan-made simulator. Not affiliated with, endorsed by, or connected to UEFA, AFC, CONMEBOL, FIFA, or any club, league or competition referenced in the app.",

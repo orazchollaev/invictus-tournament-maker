@@ -69,7 +69,11 @@ const adSlot = ref<HTMLElement | null>(null)
 const panelSettled = ref(false)
 onMounted(() => setTimeout(() => (panelSettled.value = true), 1000))
 
-const { enabled: hasBanner, preview: adPreview } = useBannerAd(DRAW_CEREMONY_BANNER_ID, {
+const {
+  enabled: hasBanner,
+  preview: adPreview,
+  height: adHeight,
+} = useBannerAd(DRAW_CEREMONY_BANNER_ID, {
   visible: () => panelSettled.value && !!adSlot.value,
   edge: "bottom",
   offset: () => `${window.innerHeight - (adSlot.value?.getBoundingClientRect().bottom ?? 0)}px`,
@@ -174,6 +178,7 @@ onUnmounted(() => {
         ref="adSlot"
         class="dc-ad-slot"
         :class="{ 'dc-ad-slot--preview': adPreview }"
+        :style="{ height: `${adHeight}px` }"
       />
     </div>
   </div>
@@ -227,12 +232,10 @@ onUnmounted(() => {
   animation: dc-panel-in var(--dur-slow) cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
+/* Height comes from the banner itself: adaptive banners vary by screen width. */
 .dc-ad-slot {
   flex-shrink: 0;
-  align-self: center;
-  width: 320px;
-  max-width: 100%;
-  height: 50px;
+  align-self: stretch;
 }
 
 .dc-ad-slot--preview {
