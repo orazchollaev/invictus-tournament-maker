@@ -4,12 +4,16 @@ import type { Team } from "@/modules/teams/types"
 import { AppModal } from "@/components/ui"
 import TeamSelector from "./TeamSelector.vue"
 
-defineProps<{
-  teams: Team[]
-  selected: string[]
-  showPower?: boolean
-  disabled?: boolean
-}>()
+withDefaults(
+  defineProps<{
+    teams: Team[]
+    selected: string[]
+    showPower?: boolean
+    disabled?: boolean
+  }>(),
+  // Mirror TeamSelector's default; an absent boolean prop would otherwise be cast to false.
+  { showPower: true, disabled: false }
+)
 
 const emit = defineEmits<{ "update:selected": [ids: string[]] }>()
 const open = defineModel<boolean>("open", { required: true })
