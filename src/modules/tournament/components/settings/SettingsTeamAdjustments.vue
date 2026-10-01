@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { ref } from "vue"
-import { ChevronDown, Lock } from "@lucide/vue"
+import { computed, ref } from "vue"
+import { ChevronRight, Lock } from "@lucide/vue"
 import type { Team } from "@/modules/teams/types"
 import { useI18n } from "vue-i18n"
+import { AppModal } from "@/components/ui"
 import { TeamBadge } from "@/modules/teams/components"
 
-defineProps<{
+const props = defineProps<{
   teams: Team[]
   hasAnyResults: boolean
   showPoints?: boolean
@@ -20,27 +21,35 @@ const teamPowerAdjustments = defineModel<Record<string, number>>("teamPowerAdjus
   required: true,
 })
 
-const pointsOpen = ref(false)
-const powerOpen = ref(false)
+type AdjKind = "points" | "power"
 
-function getPointAdj(teamId: string): number {
-  return teamPointAdjustments.value[teamId] ?? 0
-}
-function getPowerAdj(teamId: string): number {
-  return teamPowerAdjustments.value[teamId] ?? 0
+/** Which adjustment list is open in the drawer; null when closed. */
+const openKind = ref<AdjKind | null>(null)
+
+const kinds = computed<AdjKind[]>(() =>
+  props.showPoints !== false ? ["points", "power"] : ["power"]
+)
+
+function titleFor(kind: AdjKind): string {
+  return t(`tournament.settingsPage.teamAdjustments.${kind}Title`)
 }
 
-function setPointAdj(teamId: string, val: number) {
-  const next = { ...teamPointAdjustments.value }
+function modelFor(kind: AdjKind) {
+  return kind === "points" ? teamPointAdjustments : teamPowerAdjustments
+}
+
+function getAdj(teamId: string): number {
+  if (!openKind.value) return 0
+  return modelFor(openKind.value).value[teamId] ?? 0
+}
+
+function setAdj(teamId: string, val: number) {
+  if (!openKind.value) return
+  const model = modelFor(openKind.value)
+  const next = { ...model.value }
   if (val === 0) delete next[teamId]
   else next[teamId] = val
-  teamPointAdjustments.value = next
-}
-function setPowerAdj(teamId: string, val: number) {
-  const next = { ...teamPowerAdjustments.value }
-  if (val === 0) delete next[teamId]
-  else next[teamId] = val
-  teamPowerAdjustments.value = next
+  model.value = next
 }
 
 const MIN = -30
@@ -48,135 +57,70 @@ const MAX = 30
 </script>
 
 <template>
-  <!-- Point Adjustments Accordion -->
-  <div v-if="showPoints !== false" class="form-card tsp-accordion-card">
-    <div class="tsp-accordion-header" @click="pointsOpen = !pointsOpen">
-      <div class="tsp-accordion-title-row">
+  <div v-for="kind in kinds" :key="kind" class="form-card tsp-adj-card">
+    <button type="button" class="tsp-adj-header" @click="openKind = kind">
+      <span class="tsp-adj-title-row">
         <span class="form-section-title form-section-title--inline">
-          {{ t("tournament.settingsPage.teamAdjustments.pointsTitle") }}
+          {{ titleFor(kind) }}
         </span>
         <span v-if="hasAnyResults" class="tsp-lock-tag">
           <Lock :size="10" />
           {{ t("tournament.settingsPage.locked") }}
         </span>
-      </div>
-      <ChevronDown
-        :size="16"
-        class="tsp-accordion-chevron"
-        :class="{ 'tsp-accordion-chevron--open': pointsOpen }"
-      />
-    </div>
-
-    <div v-if="pointsOpen" class="tsp-accordion-body">
-      <div v-if="hasAnyResults" class="tsp-locked-banner">
-        <Lock :size="12" />
-        {{ t("tournament.settingsPage.teamAdjustments.lockedBanner") }}
-      </div>
-      <template v-else>
-        <div class="hint-box hint-box--top">
-          {{ t("tournament.settingsPage.teamAdjustments.pointsHint") }}
-        </div>
-        <div class="tsp-adj-list">
-          <div v-for="team in teams" :key="team.id" class="tsp-adj-row">
-            <TeamBadge :team="team" class="tsp-adj-name" />
-            <div class="tsp-adj-stepper">
-              <button
-                :disabled="getPointAdj(team.id) <= MIN"
-                @click="setPointAdj(team.id, Math.max(MIN, getPointAdj(team.id) - 1))"
-              >
-                −
-              </button>
-              <span
-                class="tsp-adj-val"
-                :class="{
-                  'tsp-adj-val--pos': getPointAdj(team.id) > 0,
-                  'tsp-adj-val--neg': getPointAdj(team.id) < 0,
-                }"
-              >
-                {{ getPointAdj(team.id) > 0 ? "+" : "" }}{{ getPointAdj(team.id) }}
-              </span>
-              <button
-                :disabled="getPointAdj(team.id) >= MAX"
-                @click="setPointAdj(team.id, Math.min(MAX, getPointAdj(team.id) + 1))"
-              >
-                +
-              </button>
-            </div>
-          </div>
-        </div>
-      </template>
-    </div>
+      </span>
+      <ChevronRight :size="16" class="tsp-adj-chevron" />
+    </button>
   </div>
 
-  <!-- Power Adjustments Accordion -->
-  <div class="form-card tsp-accordion-card">
-    <div class="tsp-accordion-header" @click="powerOpen = !powerOpen">
-      <div class="tsp-accordion-title-row">
-        <span class="form-section-title form-section-title--inline">
-          {{ t("tournament.settingsPage.teamAdjustments.powerTitle") }}
-        </span>
-        <span v-if="hasAnyResults" class="tsp-lock-tag">
-          <Lock :size="10" />
-          {{ t("tournament.settingsPage.locked") }}
-        </span>
-      </div>
-      <ChevronDown
-        :size="16"
-        class="tsp-accordion-chevron"
-        :class="{ 'tsp-accordion-chevron--open': powerOpen }"
-      />
+  <AppModal v-if="openKind" :title="titleFor(openKind)" width="420px" @close="openKind = null">
+    <div v-if="hasAnyResults" class="tsp-locked-banner">
+      <Lock :size="12" />
+      {{ t("tournament.settingsPage.teamAdjustments.lockedBanner") }}
     </div>
-
-    <div v-if="powerOpen" class="tsp-accordion-body">
-      <div v-if="hasAnyResults" class="tsp-locked-banner">
-        <Lock :size="12" />
-        {{ t("tournament.settingsPage.teamAdjustments.lockedBanner") }}
+    <template v-else>
+      <div class="hint-box hint-box--top">
+        {{ t(`tournament.settingsPage.teamAdjustments.${openKind}Hint`) }}
       </div>
-      <template v-else>
-        <div class="hint-box hint-box--top">
-          {{ t("tournament.settingsPage.teamAdjustments.powerHint") }}
-        </div>
-        <div class="tsp-adj-list">
-          <div v-for="team in teams" :key="team.id" class="tsp-adj-row">
-            <TeamBadge :team="team" class="tsp-adj-name" />
-            <div class="tsp-adj-stepper">
-              <button
-                :disabled="getPowerAdj(team.id) <= MIN"
-                @click="setPowerAdj(team.id, Math.max(MIN, getPowerAdj(team.id) - 1))"
-              >
-                −
-              </button>
-              <span
-                class="tsp-adj-val"
-                :class="{
-                  'tsp-adj-val--pos': getPowerAdj(team.id) > 0,
-                  'tsp-adj-val--neg': getPowerAdj(team.id) < 0,
-                }"
-              >
-                {{ getPowerAdj(team.id) > 0 ? "+" : "" }}{{ getPowerAdj(team.id) }}
-              </span>
-              <button
-                :disabled="getPowerAdj(team.id) >= MAX"
-                @click="setPowerAdj(team.id, Math.min(MAX, getPowerAdj(team.id) + 1))"
-              >
-                +
-              </button>
-            </div>
+      <div class="tsp-adj-list">
+        <div v-for="team in teams" :key="team.id" class="tsp-adj-row">
+          <TeamBadge :team="team" class="tsp-adj-name" />
+          <div class="tsp-adj-stepper">
+            <button
+              :disabled="getAdj(team.id) <= MIN"
+              @click="setAdj(team.id, Math.max(MIN, getAdj(team.id) - 1))"
+            >
+              −
+            </button>
+            <span
+              class="tsp-adj-val"
+              :class="{
+                'tsp-adj-val--pos': getAdj(team.id) > 0,
+                'tsp-adj-val--neg': getAdj(team.id) < 0,
+              }"
+            >
+              {{ getAdj(team.id) > 0 ? "+" : "" }}{{ getAdj(team.id) }}
+            </span>
+            <button
+              :disabled="getAdj(team.id) >= MAX"
+              @click="setAdj(team.id, Math.min(MAX, getAdj(team.id) + 1))"
+            >
+              +
+            </button>
           </div>
         </div>
-      </template>
-    </div>
-  </div>
+      </div>
+    </template>
+  </AppModal>
 </template>
 
 <style src="./settings.css"></style>
 <style scoped>
-.tsp-accordion-card {
+.tsp-adj-card {
   padding: 0;
   overflow: hidden;
 }
 
-.tsp-accordion-header {
+.tsp-adj-header {
   width: 100%;
   display: flex;
   align-items: center;
@@ -190,11 +134,11 @@ const MAX = 30
   text-align: start;
   transition: background 0.12s;
 }
-.tsp-accordion-header:hover {
+.tsp-adj-header:hover {
   background: var(--bg-hover);
 }
 
-.tsp-accordion-title-row {
+.tsp-adj-title-row {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -205,18 +149,9 @@ const MAX = 30
   margin-bottom: 0;
 }
 
-.tsp-accordion-chevron {
+.tsp-adj-chevron {
   color: var(--text-muted);
   flex-shrink: 0;
-  transition: transform 0.18s ease;
-}
-.tsp-accordion-chevron--open {
-  transform: rotate(180deg);
-}
-
-.tsp-accordion-body {
-  padding: 0 16px 14px;
-  border-top: 1px solid var(--border-light);
 }
 
 .tsp-adj-list {
