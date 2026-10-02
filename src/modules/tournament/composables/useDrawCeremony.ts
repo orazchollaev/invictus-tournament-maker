@@ -44,6 +44,7 @@ export function useDrawCeremony(ctx: CeremonyContext, initialPots?: Pot[], fixed
   const current = ref<DrawStep | null>(null)
 
   const paused = ref(false)
+  const skipped = ref(false)
 
   const localTeamCount = ref(ctx.teams.length)
   const errors = computed(() => (locked ? [] : validatePots(pots.value, localTeamCount.value)))
@@ -161,6 +162,7 @@ export function useDrawCeremony(ctx: CeremonyContext, initialPots?: Pot[], fixed
 
   // Skip: jump straight to the final outcome (same orderedIds).
   function skip() {
+    skipped.value = true
     clearTimer()
     if (phase.value === "pots") {
       if (!canStart.value) return
@@ -179,6 +181,7 @@ export function useDrawCeremony(ctx: CeremonyContext, initialPots?: Pot[], fixed
     phase,
     speed,
     paused,
+    skipped,
     sequence,
     orderedIds,
     revealed,

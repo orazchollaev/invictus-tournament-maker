@@ -15,6 +15,8 @@ const props = defineProps<{
   teams: Team[]
   speed: CeremonySpeed
   kind: CeremonyKind
+  /** Skipped draw: reveal everything at once without per-slot animations. */
+  instant?: boolean
 }>()
 
 const { t } = useI18n()
@@ -75,7 +77,12 @@ function isBye(label: string) {
 <template>
   <div class="ds-wrap">
     <div class="ds-stage">
-      <Transition name="ds-capsule" appear :duration="{ enter: 760, leave: leaveMs }">
+      <Transition
+        name="ds-capsule"
+        appear
+        :css="!instant"
+        :duration="{ enter: 760, leave: leaveMs }"
+      >
         <div
           v-if="current"
           :key="current.teamId"
@@ -107,7 +114,7 @@ function isBye(label: string) {
         </div>
         <div class="ds-slot-rows">
           <div v-for="(oid, i) in slot.opponentIds" :key="i" class="ds-row">
-            <Transition name="ds-pop">
+            <Transition name="ds-pop" :css="!instant">
               <TeamBadge
                 v-if="isRevealed(slot.step)"
                 :team="teamById(oid)"
@@ -127,7 +134,7 @@ function isBye(label: string) {
         <div class="ds-slot-label">{{ engineLabel(slot.label) }}</div>
         <div class="ds-slot-rows">
           <div v-for="(step, i) in slot.steps" :key="i" class="ds-row ds-row--pot">
-            <Transition name="ds-pop">
+            <Transition name="ds-pop" :css="!instant">
               <span v-if="isRevealed(step)" class="ds-pot-team">
                 <span class="ds-pot-dot" :style="{ background: potColor(step.potIdx) }" />
                 <TeamBadge :team="teamById(step.teamId)" :size="12" />
@@ -153,7 +160,7 @@ function isBye(label: string) {
 
         <template v-if="isBye(slot.label)">
           <div class="ds-match-rows ds-match-rows--single">
-            <Transition name="ds-pop">
+            <Transition name="ds-pop" :css="!instant">
               <TeamBadge
                 v-if="isRevealed(slot.steps[0])"
                 :team="teamById(slot.steps[0].teamId)"
@@ -167,7 +174,7 @@ function isBye(label: string) {
         <template v-else>
           <div class="ds-match-rows">
             <div v-for="(step, i) in slot.steps" :key="i" class="ds-match-row">
-              <Transition name="ds-pop">
+              <Transition name="ds-pop" :css="!instant">
                 <TeamBadge
                   v-if="isRevealed(step)"
                   :team="teamById(step.teamId)"

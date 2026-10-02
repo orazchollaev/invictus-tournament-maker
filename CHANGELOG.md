@@ -1,5 +1,21 @@
 # Changelog
 
+## [3.2.0](https://github.com/orazchollaev/invictus-tournament-maker/compare/v3.1.0...v3.2.0) (2026-09-30)
+
+### 🚀 New Features
+
+- **sample-data:** add CAF CL and top-64 club datasets, search and category filter ([a0a9055](https://github.com/orazchollaev/invictus-tournament-maker/commit/a0a905537fa6b7722748945e3cf8dcc3b9ee69a9))
+
+### 🐛 Bug Fixes
+
+- **android:** recover from WebView renderer crashes instead of dying ([49ed70e](https://github.com/orazchollaev/invictus-tournament-maker/commit/49ed70e8ee91f35cd23c40d516abe4f4ca6359bb))
+- **draw:** skip reveals result without per-slot animations ([b99db48](https://github.com/orazchollaev/invictus-tournament-maker/commit/b99db481908f1a731565edda6a433d3faed948a4))
+- **layout:** remove stray scroll on android caused by 100vh ([b6c0d56](https://github.com/orazchollaev/invictus-tournament-maker/commit/b6c0d56a6b16e443e640085821318cfc9e968c15)), references [#app](https://github.com/orazchollaev/invictus-tournament-maker/issues/app)
+
+### 🔧 Maintenance
+
+- **gradle:** bump gradle version ([1409ce9](https://github.com/orazchollaev/invictus-tournament-maker/commit/1409ce911d0ee5e92e5417b52b4fd03da83df081))
+
 ## [3.1.0](https://github.com/orazchollaev/invictus-tournament-maker/compare/v3.0.1...v3.1.0) (2026-09-26)
 
 ### 🚀 New Features

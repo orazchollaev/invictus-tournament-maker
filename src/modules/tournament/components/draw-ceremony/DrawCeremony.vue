@@ -40,6 +40,7 @@ const {
   phase,
   speed,
   paused,
+  skipped,
   sequence,
   revealed,
   current,
@@ -154,6 +155,7 @@ onUnmounted(() => {
             :teams="localTeams"
             :speed="speed"
             :kind="context.kind"
+            :instant="skipped"
           />
         </template>
       </div>
