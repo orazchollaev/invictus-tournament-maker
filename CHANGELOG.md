@@ -1,5 +1,30 @@
 # Changelog
 
+## [3.3.0](https://github.com/orazchollaev/invictus-tournament-maker/compare/v3.2.0...v3.3.0) (2026-10-02)
+
+### 🚀 New Features
+
+- **ads:** preload full-screen ads, adaptive banners and UMP consent ([66a480f](https://github.com/orazchollaev/invictus-tournament-maker/commit/66a480f70c1c7c338ef77063882bfaf965991aa8))
+- **create:** compact two-column format picker on mobile ([06c4929](https://github.com/orazchollaev/invictus-tournament-maker/commit/06c4929a6fcabd735c4c2393e43bd7c7d3d65267))
+- **create:** open team selection from a summary button ([6ae030a](https://github.com/orazchollaev/invictus-tournament-maker/commit/6ae030a9908d4c7471b124e365123da31209b058))
+- **sample-data:** add 21 historical and current datasets ([a3414d6](https://github.com/orazchollaev/invictus-tournament-maker/commit/a3414d6033f9d7afca09be3fb032962598a138b8))
+- **sample-data:** browse categories as horizontal rails ([3155740](https://github.com/orazchollaev/invictus-tournament-maker/commit/3155740a5a84ffe4192a65341e6146036a81990b))
+- **team-adjustments:** open point and power adjustments in a modal ([398fa71](https://github.com/orazchollaev/invictus-tournament-maker/commit/398fa7115801e0116810525930f8ea57e94ea168))
+- **team-selector:** compact minimal redesign with segmented sort ([b851e46](https://github.com/orazchollaev/invictus-tournament-maker/commit/b851e468b41ace72c041fcad71d95374fd5fd28a))
+- **team-selector:** letter sections, power tier pills and done button ([a8fc44d](https://github.com/orazchollaev/invictus-tournament-maker/commit/a8fc44dc54585e2494cc8c44b59d180542af08be))
+- **team-selector:** use summary button in settings and draw ceremony ([79c7903](https://github.com/orazchollaev/invictus-tournament-maker/commit/79c7903bdbed6ae53acece87e510c885286a8f52))
+
+### 🐛 Bug Fixes
+
+- **ads:** recover banners after a failed load ([e632c78](https://github.com/orazchollaev/invictus-tournament-maker/commit/e632c78cc6ad339575c92ca774876ddd09e40d7e))
+- **team-selector:** show sort controls in fullscreen modal ([20cbf0a](https://github.com/orazchollaev/invictus-tournament-maker/commit/20cbf0a957f0302fd1531f4943d51ce5e1d5c348))
+
+### 🔧 Maintenance
+
+- **ads:** show interstitial every 4 tournaments instead of 5 ([cb53c68](https://github.com/orazchollaev/invictus-tournament-maker/commit/cb53c68f7bd860acd000dadc5f9d085244d60bdd))
+- bump gradle ([cba8dc8](https://github.com/orazchollaev/invictus-tournament-maker/commit/cba8dc86f25bd3e9130e779ad7089f169a27933a))
+- merge ([ca6ee73](https://github.com/orazchollaev/invictus-tournament-maker/commit/ca6ee732b0757322ae2a882fe04356263bd44bd7))
+
 ## [3.2.0](https://github.com/orazchollaev/invictus-tournament-maker/compare/v3.1.0...v3.2.0) (2026-09-30)
 
 ### 🚀 New Features
