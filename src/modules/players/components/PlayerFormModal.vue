@@ -5,6 +5,7 @@ import PlayerAvatar from "./PlayerAvatar.vue"
 import TeamSelect from "./TeamSelect.vue"
 import NumberPickerModal from "./NumberPickerModal.vue"
 import TeamImageSourceModal from "@/modules/teams/components/TeamImageSourceModal.vue"
+import PlayerFaceModal from "./PlayerFaceModal.vue"
 import TeamImageUrlModal from "@/modules/teams/components/TeamImageUrlModal.vue"
 import { resizeImageFile } from "@/modules/teams/utils/imageUtils"
 import { showAlert } from "@/composables/useDialog"
@@ -12,6 +13,7 @@ import { usePlayersStore } from "../store"
 import { useTeamsStore } from "@/modules/teams/store"
 import { useModal } from "@/composables/useModal"
 import { randomPlayerName } from "@/composables/useRandomNames"
+import { randomFace, type FaceConfig } from "@/lib/faces"
 import { Pencil, Shuffle, X } from "@lucide/vue"
 import type { Player, PlayerPosition } from "../types"
 import { useI18n } from "vue-i18n"
@@ -34,12 +36,24 @@ const position = ref<PlayerPosition>(props.player?.position ?? "MID")
 const power = ref(props.player?.power ?? 70)
 const shirtNumber = ref<number | null>(props.player?.number ?? null)
 const image = ref<string | undefined>(props.player?.image)
+// A new player starts with a random face; an existing one keeps what he has.
+const face = ref<FaceConfig | undefined>(props.player ? props.player.face : randomFace())
+const showFaceModal = ref(false)
 const showSourceChooser = ref(false)
 const showUrlModal = ref(false)
 const fileInput = ref<HTMLInputElement | null>(null)
 function onChooseUrl() {
   showSourceChooser.value = false
   showUrlModal.value = true
+}
+function onChooseFace() {
+  showSourceChooser.value = false
+  showFaceModal.value = true
+}
+function onFaceSave(f: FaceConfig) {
+  face.value = f
+  // The drawn face shows only without a photo, so choosing it drops the photo.
+  image.value = undefined
 }
 function onUrlSelect(url: string) {
   image.value = url
@@ -80,6 +94,7 @@ function submit() {
       power: power.value,
       number: shirtNumber.value ?? undefined,
       image: image.value,
+      face: face.value,
     })
   } else {
     store.add(
@@ -88,7 +103,8 @@ function submit() {
       position.value,
       power.value,
       shirtNumber.value ?? undefined,
-      image.value
+      image.value,
+      face.value
     )
     void logEvent("player_created", { position: position.value })
   }
@@ -117,6 +133,7 @@ function submit() {
             :color="selectedTeam?.color ?? '#999'"
             :number="shirtNumber"
             :image="image"
+            :face="face"
             :size="52"
           />
           <button
@@ -227,9 +244,17 @@ function submit() {
   <TeamImageSourceModal
     v-if="showSourceChooser"
     hide-flag
+    show-face
     @close="showSourceChooser = false"
     @select-url="onChooseUrl"
     @select-gallery="onGallerySelect"
+    @select-face="onChooseFace"
+  />
+  <PlayerFaceModal
+    v-if="showFaceModal"
+    :face="face"
+    @close="showFaceModal = false"
+    @save="onFaceSave"
   />
   <TeamImageUrlModal
     v-if="showUrlModal"

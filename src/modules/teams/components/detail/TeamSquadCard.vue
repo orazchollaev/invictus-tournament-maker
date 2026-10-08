@@ -49,6 +49,7 @@ const editingPlayer = ref<Player | null>(null)
           :color="teamColor"
           :number="p.number"
           :image="p.image"
+          :face="p.face"
           :size="24"
         />
         <RouterLink :to="`/players/${p.id}`" class="squad-name">{{ p.name }}</RouterLink>

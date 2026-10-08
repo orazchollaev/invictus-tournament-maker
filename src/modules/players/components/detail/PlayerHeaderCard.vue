@@ -35,6 +35,7 @@ const { t } = useI18n()
             :name="player.name"
             :color="team?.color ?? '#999'"
             :image="player.image"
+            :face="player.face"
             :size="48"
           />
           <span v-if="player.number" class="shirt">{{ player.number }}</span>

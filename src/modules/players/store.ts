@@ -3,6 +3,7 @@ import { ref } from "vue"
 import type { Player, PlayerPosition } from "./types"
 import { DEFAULT_FIRST_NAMES, DEFAULT_LAST_NAMES } from "./constants"
 import { uid } from "@/engine"
+import { randomFace, type FaceConfig } from "@/lib/faces"
 
 export const usePlayersStore = defineStore("players", () => {
   const players = ref<Player[]>([])
@@ -63,7 +64,8 @@ export const usePlayersStore = defineStore("players", () => {
     position: PlayerPosition,
     power: number,
     number?: number,
-    image?: string
+    image?: string,
+    face: FaceConfig = randomFace()
   ) {
     const shirt = clampNumber(number)
     players.value.push({
@@ -74,6 +76,7 @@ export const usePlayersStore = defineStore("players", () => {
       power: clampPower(power),
       ...(shirt !== undefined ? { number: shirt } : {}),
       ...(image ? { image } : {}),
+      face,
     })
   }
 
@@ -105,6 +108,7 @@ export const usePlayersStore = defineStore("players", () => {
     Object.assign(p, data)
     if (p.number === undefined) delete p.number
     if (!p.image) delete p.image
+    if (!p.face) delete p.face
   }
 
   function byTeam(teamId: string) {

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 /** Initial-on-colour avatar; shows the photo instead when the player has one. */
 import { computed, ref, watch } from "vue"
+import { faceSvg, type FaceConfig } from "@/lib/faces"
 
 const props = withDefaults(
   defineProps<{
@@ -9,6 +10,7 @@ const props = withDefaults(
     size?: number
     number?: number | null
     image?: string | null
+    face?: FaceConfig | null
   }>(),
   { size: 28 }
 )
@@ -20,6 +22,9 @@ watch(
   }
 )
 const showImage = computed(() => !!props.image && !imgError.value)
+
+// A photo wins; a drawn face fills in when there is none (or it fails to load).
+const svg = computed(() => (!showImage.value && props.face ? faceSvg(props.face) : ""))
 
 const initial = computed(() => props.number ?? (props.name.trim().charAt(0).toUpperCase() || "?"))
 
@@ -57,7 +62,7 @@ const textColor = computed(() => {
 <template>
   <span
     class="player-avatar"
-    :class="{ 'player-avatar--number': number != null && !showImage }"
+    :class="{ 'player-avatar--number': number != null && !showImage && !svg }"
     :style="{
       background: color,
       color: textColor,
@@ -67,6 +72,8 @@ const textColor = computed(() => {
     }"
   >
     <img v-if="showImage" :src="image!" class="player-avatar-img" alt="" @error="imgError = true" />
+    <!-- eslint-disable-next-line vue/no-v-html -- SVG markup built locally by facesjs -->
+    <span v-else-if="svg" class="player-avatar-face" v-html="svg" />
     <template v-else>{{ initial }}</template>
   </span>
 </template>
@@ -90,6 +97,16 @@ const textColor = computed(() => {
   border-radius: inherit;
   object-fit: cover;
   display: block;
+}
+.player-avatar-face {
+  display: block;
+  width: 100%;
+  height: 100%;
+  line-height: 0;
+}
+.player-avatar-face :deep(svg) {
+  width: 100%;
+  height: 100%;
 }
 .player-avatar--number {
   font-family: var(--font-mono);

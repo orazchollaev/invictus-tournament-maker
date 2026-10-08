@@ -92,6 +92,7 @@ function shortName(name: string): string {
             :name="playerAt(index)!.name"
             :number="playerAt(index)!.number ?? null"
             :image="playerAt(index)!.image"
+            :face="playerAt(index)!.face"
             :color="teamColor"
             :size="36"
           />

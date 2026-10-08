@@ -165,6 +165,7 @@ async function handleDeleteAll() {
               :color="teamOf(player)?.color ?? '#999'"
               :number="player.number"
               :image="player.image"
+              :face="player.face"
               :size="28"
               class="player-card-avatar"
             />
