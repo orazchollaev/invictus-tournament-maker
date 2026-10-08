@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from "vue"
+import { computed, onBeforeUnmount, ref, watch } from "vue"
 import { useI18n } from "vue-i18n"
 import { Check } from "@lucide/vue"
 import type { Team } from "@/modules/teams/types"
@@ -26,12 +26,22 @@ const MIN_TEAMS = 2
 const { t } = useI18n()
 
 const searchQuery = ref("")
+// The list can hold hundreds of rows, so filtering waits for a typing pause
+// instead of re-rendering on every keystroke.
+const appliedQuery = ref("")
+let searchTimer: ReturnType<typeof setTimeout> | undefined
+watch(searchQuery, (value) => {
+  clearTimeout(searchTimer)
+  searchTimer = setTimeout(() => (appliedQuery.value = value), 150)
+})
+onBeforeUnmount(() => clearTimeout(searchTimer))
+
 type SortKey = "name" | "power"
 const sortKey = ref<SortKey>("name")
 const sortAsc = ref(true)
 
 const sortedFilteredTeams = computed(() => {
-  const q = searchQuery.value.trim().toLowerCase()
+  const q = appliedQuery.value.trim().toLowerCase()
   const list = q ? props.teams.filter((tm) => tm.name.toLowerCase().includes(q)) : [...props.teams]
 
   return list.sort((a, b) => {
@@ -157,7 +167,7 @@ function toggleAll() {
           <span class="ts-check">
             <Check v-if="selectedSet.has(team.id)" :size="11" :stroke-width="3.5" />
           </span>
-          <TeamBadge class="ts-team" :team-id="team.id" :teams="teams" />
+          <TeamBadge class="ts-team" :team="team" />
           <span v-if="showPower" class="ts-power" :class="`ts-power--${powerTier(team.power)}`">
             {{ team.power }}
           </span>
@@ -222,6 +232,9 @@ function toggleAll() {
   gap: var(--sp-2);
   flex-shrink: 0;
   min-height: 34px;
+  /* Off-screen rows skip layout and paint, which keeps 700+ teams scrollable. */
+  content-visibility: auto;
+  contain-intrinsic-size: auto 34px;
   padding: 0 var(--sp-2);
   border: none;
   border-radius: var(--radius);

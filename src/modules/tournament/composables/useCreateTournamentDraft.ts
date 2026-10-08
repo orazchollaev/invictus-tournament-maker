@@ -86,7 +86,10 @@ export function useCreateTournamentDraft() {
   const teamPowerAdjustments = ref<Record<string, number>>({})
 
   const allTeams = computed(() => teamsStore.teams)
-  const selectedTeams = computed(() => allTeams.value.filter((t) => selected.value.includes(t.id)))
+  const selectedTeams = computed(() => {
+    const ids = new Set(selected.value)
+    return allTeams.value.filter((t) => ids.has(t.id))
+  })
 
   // Swiss is the one format whose settings can describe an impossible fixture,
   // so creation stays blocked until the shape validates.
