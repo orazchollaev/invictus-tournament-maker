@@ -91,6 +91,7 @@ function shortName(name: string): string {
             :class="shirtStaminaClass(index)"
             :name="playerAt(index)!.name"
             :number="playerAt(index)!.number ?? null"
+            :image="playerAt(index)!.image"
             :color="teamColor"
             :size="36"
           />

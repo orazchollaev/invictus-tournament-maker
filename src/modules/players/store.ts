@@ -62,7 +62,8 @@ export const usePlayersStore = defineStore("players", () => {
     name: string,
     position: PlayerPosition,
     power: number,
-    number?: number
+    number?: number,
+    image?: string
   ) {
     const shirt = clampNumber(number)
     players.value.push({
@@ -72,6 +73,7 @@ export const usePlayersStore = defineStore("players", () => {
       position,
       power: clampPower(power),
       ...(shirt !== undefined ? { number: shirt } : {}),
+      ...(image ? { image } : {}),
     })
   }
 
@@ -102,6 +104,7 @@ export const usePlayersStore = defineStore("players", () => {
     if ("number" in data) data = { ...data, number: clampNumber(data.number) }
     Object.assign(p, data)
     if (p.number === undefined) delete p.number
+    if (!p.image) delete p.image
   }
 
   function byTeam(teamId: string) {

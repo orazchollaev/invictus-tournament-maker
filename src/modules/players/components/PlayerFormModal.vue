@@ -1,14 +1,18 @@
 <script setup lang="ts">
-import { ref, computed } from "vue"
+import { ref, computed, nextTick } from "vue"
 import { AppButton, AppField, AppIcon, AppModal, AppSelect } from "@/components/ui"
 import PlayerAvatar from "./PlayerAvatar.vue"
 import TeamSelect from "./TeamSelect.vue"
 import NumberPickerModal from "./NumberPickerModal.vue"
+import TeamImageSourceModal from "@/modules/teams/components/TeamImageSourceModal.vue"
+import TeamImageUrlModal from "@/modules/teams/components/TeamImageUrlModal.vue"
+import { resizeImageFile } from "@/modules/teams/utils/imageUtils"
+import { showAlert } from "@/composables/useDialog"
 import { usePlayersStore } from "../store"
 import { useTeamsStore } from "@/modules/teams/store"
 import { useModal } from "@/composables/useModal"
 import { randomPlayerName } from "@/composables/useRandomNames"
-import { Shuffle } from "@lucide/vue"
+import { Pencil, Shuffle, X } from "@lucide/vue"
 import type { Player, PlayerPosition } from "../types"
 import { useI18n } from "vue-i18n"
 import { logEvent } from "@/composables/useAnalytics"
@@ -29,6 +33,33 @@ const teamId = ref(props.player?.teamId ?? props.teamId ?? teamsStore.teams[0]?.
 const position = ref<PlayerPosition>(props.player?.position ?? "MID")
 const power = ref(props.player?.power ?? 70)
 const shirtNumber = ref<number | null>(props.player?.number ?? null)
+const image = ref<string | undefined>(props.player?.image)
+const showSourceChooser = ref(false)
+const showUrlModal = ref(false)
+const fileInput = ref<HTMLInputElement | null>(null)
+function onChooseUrl() {
+  showSourceChooser.value = false
+  showUrlModal.value = true
+}
+function onUrlSelect(url: string) {
+  image.value = url
+  showUrlModal.value = false
+}
+function onGallerySelect() {
+  showSourceChooser.value = false
+  nextTick(() => fileInput.value?.click())
+}
+async function onFileChange(e: Event) {
+  const input = e.target as HTMLInputElement
+  const file = input.files?.[0]
+  input.value = ""
+  if (!file) return
+  try {
+    image.value = await resizeImageFile(file)
+  } catch {
+    showAlert(t("teams.form.imageInvalid"))
+  }
+}
 
 const positionOptions = computed(() => [
   { value: "GK" as const, label: t("players.positions.GK") },
@@ -48,6 +79,7 @@ function submit() {
       position: position.value,
       power: power.value,
       number: shirtNumber.value ?? undefined,
+      image: image.value,
     })
   } else {
     store.add(
@@ -55,7 +87,8 @@ function submit() {
       name.value.trim(),
       position.value,
       power.value,
-      shirtNumber.value ?? undefined
+      shirtNumber.value ?? undefined,
+      image.value
     )
     void logEvent("player_created", { position: position.value })
   }
@@ -77,11 +110,34 @@ function submit() {
       }"
     >
       <div class="preview">
-        <PlayerAvatar
-          :name="name"
-          :color="selectedTeam?.color ?? '#999'"
-          :number="shirtNumber"
-          :size="52"
+        <!-- Tap the avatar to add a photo from the gallery or a URL. -->
+        <div class="avatar-pick" @click="showSourceChooser = true">
+          <PlayerAvatar
+            :name="name"
+            :color="selectedTeam?.color ?? '#999'"
+            :number="shirtNumber"
+            :image="image"
+            :size="52"
+          />
+          <button
+            v-if="image"
+            type="button"
+            class="avatar-clear"
+            :title="t('teams.form.imageRemove')"
+            @click.stop="image = undefined"
+          >
+            <AppIcon :icon="X" size="xs" />
+          </button>
+          <span class="avatar-edit" aria-hidden="true">
+            <AppIcon :icon="Pencil" size="xs" />
+          </span>
+        </div>
+        <input
+          ref="fileInput"
+          type="file"
+          accept="image/*"
+          class="visually-hidden"
+          @change="onFileChange"
         />
         <div class="preview-text">
           <p class="preview-name" :class="{ 'preview-name--empty': !name.trim() }">
@@ -168,6 +224,18 @@ function submit() {
       <AppButton @click="modal?.close()">{{ t("common.cancel") }}</AppButton>
     </template>
   </AppModal>
+  <TeamImageSourceModal
+    v-if="showSourceChooser"
+    hide-flag
+    @close="showSourceChooser = false"
+    @select-url="onChooseUrl"
+    @select-gallery="onGallerySelect"
+  />
+  <TeamImageUrlModal
+    v-if="showUrlModal"
+    @close="showUrlModal = false"
+    @update:model-value="onUrlSelect"
+  />
 </template>
 
 <style scoped>
@@ -191,6 +259,54 @@ function submit() {
   min-width: 0;
 }
 
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+.avatar-pick {
+  position: relative;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+.avatar-clear,
+.avatar-edit {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  box-shadow: var(--elev-1);
+}
+.avatar-clear {
+  top: -5px;
+  right: -5px;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+.avatar-clear:hover {
+  color: var(--danger);
+  border-color: var(--danger);
+}
+.avatar-edit {
+  right: -5px;
+  bottom: -5px;
+  width: 20px;
+  height: 20px;
+  color: var(--text);
+  pointer-events: none;
+}
 .preview-text {
   min-width: 0;
 }

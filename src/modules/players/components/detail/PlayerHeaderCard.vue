@@ -31,7 +31,12 @@ const { t } = useI18n()
 
       <div class="identity">
         <div class="avatar-wrap">
-          <PlayerAvatar :name="player.name" :color="team?.color ?? '#999'" :size="48" />
+          <PlayerAvatar
+            :name="player.name"
+            :color="team?.color ?? '#999'"
+            :image="player.image"
+            :size="48"
+          />
           <span v-if="player.number" class="shirt">{{ player.number }}</span>
         </div>
 

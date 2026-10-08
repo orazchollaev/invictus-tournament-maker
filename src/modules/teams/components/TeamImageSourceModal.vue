@@ -3,6 +3,8 @@ import { AppModal, AppIcon } from "@/components/ui"
 import { Flag, Link2, ImagePlus } from "@lucide/vue"
 import { useI18n } from "vue-i18n"
 
+defineProps<{ hideFlag?: boolean }>()
+
 const emit = defineEmits<{
   close: []
   "select-flag": []
@@ -16,7 +18,7 @@ const { t } = useI18n()
 <template>
   <AppModal :title="t('teams.form.imageSourceTitle')" :z-index="210" @close="emit('close')">
     <div class="source-list">
-      <button type="button" class="source-btn" @click="emit('select-flag')">
+      <button v-if="!hideFlag" type="button" class="source-btn" @click="emit('select-flag')">
         <AppIcon :icon="Flag" size="md" />
         <span>{{ t("teams.form.imageSourceFlag") }}</span>
       </button>

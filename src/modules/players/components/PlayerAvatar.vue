@@ -1,6 +1,6 @@
 <script setup lang="ts">
-/** Simple initial-on-colour avatar — no photo picker for the basic player model. */
-import { computed } from "vue"
+/** Initial-on-colour avatar; shows the photo instead when the player has one. */
+import { computed, ref, watch } from "vue"
 
 const props = withDefaults(
   defineProps<{
@@ -8,9 +8,18 @@ const props = withDefaults(
     color: string
     size?: number
     number?: number | null
+    image?: string | null
   }>(),
   { size: 28 }
 )
+const imgError = ref(false)
+watch(
+  () => props.image,
+  () => {
+    imgError.value = false
+  }
+)
+const showImage = computed(() => !!props.image && !imgError.value)
 
 const initial = computed(() => props.number ?? (props.name.trim().charAt(0).toUpperCase() || "?"))
 
@@ -48,7 +57,7 @@ const textColor = computed(() => {
 <template>
   <span
     class="player-avatar"
-    :class="{ 'player-avatar--number': number != null }"
+    :class="{ 'player-avatar--number': number != null && !showImage }"
     :style="{
       background: color,
       color: textColor,
@@ -57,7 +66,8 @@ const textColor = computed(() => {
       fontSize: size * fontScale + 'px',
     }"
   >
-    {{ initial }}
+    <img v-if="showImage" :src="image!" class="player-avatar-img" alt="" @error="imgError = true" />
+    <template v-else>{{ initial }}</template>
   </span>
 </template>
 
@@ -68,11 +78,19 @@ const textColor = computed(() => {
   justify-content: center;
   flex-shrink: 0;
   border-radius: var(--radius-pill);
+  overflow: hidden;
   font-weight: 700;
   font-family: var(--font-ui);
   box-shadow: 0 0 0 1.5px rgba(0, 0, 0, 0.15);
 }
 
+.player-avatar-img {
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  object-fit: cover;
+  display: block;
+}
 .player-avatar--number {
   font-family: var(--font-mono);
 }
