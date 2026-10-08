@@ -53,8 +53,7 @@ const items = [
     gap: var(--sp-1);
     border: 1px solid var(--border-light);
     border-radius: var(--radius-lg);
-    background: color-mix(in srgb, var(--surface) 88%, transparent);
-    backdrop-filter: blur(20px);
+    background: color-mix(in srgb, var(--surface) 96%, transparent);
     box-shadow: var(--elev-3);
   }
 
@@ -123,8 +122,7 @@ const items = [
     gap: 0;
     border: 0.5px solid color-mix(in srgb, var(--text) 10%, transparent);
     border-radius: var(--radius-pill);
-    background: color-mix(in srgb, var(--surface) 45%, transparent);
-    backdrop-filter: saturate(180%) blur(34px);
+    background: color-mix(in srgb, var(--surface) 94%, transparent);
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.14);
   }
 
@@ -172,7 +170,6 @@ const items = [
     border: none;
     border-radius: 0;
     background: var(--surface-2);
-    backdrop-filter: none;
     box-shadow: none;
   }
 

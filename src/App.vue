@@ -8,6 +8,7 @@ import { MusicController } from "@/modules/music/components"
 import { useSettingsStore } from "@/modules/settings/store"
 import { useStatusBar } from "@/composables/useStatusBar"
 import { logEvent } from "@/composables/useAnalytics"
+import { flushPendingSaves } from "@/modules/tournament/services/persistence"
 
 const settings = useSettingsStore()
 const { setTheme } = useStatusBar()
@@ -57,6 +58,9 @@ onMounted(async () => {
       sessionStartedAt = Date.now()
       return
     }
+    // Debounced tournament saves may still be waiting; Android can kill the
+    // process once it is backgrounded, so write them now.
+    flushPendingSaves()
     const minutes = Math.round(((Date.now() - sessionStartedAt) / 60000) * 10) / 10
     void logEvent("session_end", { minutes })
   })

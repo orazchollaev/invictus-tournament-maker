@@ -132,8 +132,7 @@ onUnmounted(() => {
 [data-design="ios"] .sd-popover {
   border-color: transparent;
   border-radius: 14px;
-  background: color-mix(in srgb, var(--surface) 86%, transparent);
-  backdrop-filter: saturate(180%) blur(24px);
+  background: color-mix(in srgb, var(--surface) 96%, transparent);
   box-shadow: var(--elev-3);
 }
 

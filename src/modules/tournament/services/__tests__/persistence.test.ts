@@ -66,7 +66,11 @@ const {
   clearAllTournaments,
   replaceAllTournaments,
   loadPersistedMeta,
+  flushPendingSaves,
+  SAVE_DEBOUNCE_MS,
+  SAVE_MAX_WAIT_MS,
 } = await import("../persistence")
+const idb = await import("idb-keyval")
 
 const ITEM = "tournament:item:"
 const INDEX = "tournament:index"
@@ -282,6 +286,105 @@ describe("writing", () => {
     const first = saveTournament(t)
     expect(saveTournament(t)).toBe(first)
     await first
+  })
+
+  describe("debounce", () => {
+    beforeEach(() => {
+      vi.useFakeTimers()
+    })
+    afterEach(async () => {
+      flushPendingSaves()
+      vi.useRealTimers()
+    })
+
+    const writes = () => vi.mocked(idb.set).mock.calls.filter(([k]) => String(k).startsWith(ITEM))
+
+    it("does not write until the quiet period has passed", async () => {
+      void saveTournament(tournament("a"))
+      await vi.advanceTimersByTimeAsync(SAVE_DEBOUNCE_MS - 1)
+      expect(writes()).toHaveLength(0)
+      await vi.advanceTimersByTimeAsync(10)
+      expect(writes()).toHaveLength(1)
+    })
+
+    it("collapses a burst into one write of the latest state", async () => {
+      const t = tournament("a", "first")
+      void saveTournament(t)
+      for (let i = 0; i < 10; i++) {
+        await vi.advanceTimersByTimeAsync(SAVE_DEBOUNCE_MS / 2)
+        t.name = `edit-${i}`
+        void saveTournament(t)
+      }
+      await vi.advanceTimersByTimeAsync(SAVE_DEBOUNCE_MS + 10)
+      expect(writes()).toHaveLength(1)
+      expect(JSON.parse(db.get(ITEM + "a") as string).name).toBe("edit-9")
+    })
+
+    it("still writes during a long continuous burst (max wait)", async () => {
+      const t = tournament("a")
+      void saveTournament(t)
+      // Mutations arrive faster than the debounce for far longer than the max wait.
+      const step = SAVE_DEBOUNCE_MS / 2
+      for (let elapsed = 0; elapsed < SAVE_MAX_WAIT_MS * 2; elapsed += step) {
+        await vi.advanceTimersByTimeAsync(step)
+        void saveTournament(t)
+      }
+      expect(writes().length).toBeGreaterThanOrEqual(1)
+    })
+
+    it("debounces each tournament independently", async () => {
+      void saveTournament(tournament("a"))
+      void saveTournament(tournament("b"))
+      await vi.advanceTimersByTimeAsync(SAVE_DEBOUNCE_MS + 10)
+      expect(db.has(ITEM + "a")).toBe(true)
+      expect(db.has(ITEM + "b")).toBe(true)
+    })
+
+    it("flushPendingSaves writes immediately and resolves the promise", async () => {
+      const p = saveTournament(tournament("a"))
+      expect(writes()).toHaveLength(0)
+      flushPendingSaves()
+      expect(db.has(ITEM + "a")).toBe(true)
+      await expect(p).resolves.toBeUndefined()
+      // Nothing left queued: the timer must not write a second time.
+      await vi.advanceTimersByTimeAsync(SAVE_DEBOUNCE_MS * 2)
+      expect(writes()).toHaveLength(1)
+    })
+
+    it("flushPendingSaves with nothing queued is a no-op", () => {
+      expect(() => flushPendingSaves()).not.toThrow()
+      expect(writes()).toHaveLength(0)
+    })
+
+    it("a delete cancels a queued save so the record is not resurrected", async () => {
+      const p = saveTournament(tournament("a"))
+      deleteTournamentRecord("a")
+      await vi.advanceTimersByTimeAsync(SAVE_DEBOUNCE_MS * 2)
+      await expect(p).resolves.toBeUndefined()
+      expect(db.has(ITEM + "a")).toBe(false)
+    })
+
+    it("clearing everything cancels queued saves", async () => {
+      void saveTournament(tournament("a"))
+      await clearAllTournaments()
+      await vi.advanceTimersByTimeAsync(SAVE_DEBOUNCE_MS * 2)
+      expect(db.has(ITEM + "a")).toBe(false)
+    })
+
+    it("a save after a write starts a fresh debounce", async () => {
+      void saveTournament(tournament("a", "one"))
+      await vi.advanceTimersByTimeAsync(SAVE_DEBOUNCE_MS + 10)
+      void saveTournament(tournament("a", "two"))
+      await vi.advanceTimersByTimeAsync(SAVE_DEBOUNCE_MS + 10)
+      expect(writes()).toHaveLength(2)
+      expect(JSON.parse(db.get(ITEM + "a") as string).name).toBe("two")
+    })
+
+    it("a refused write during a flush does not throw", () => {
+      fail.set = "*"
+      void saveTournament(tournament("a"))
+      expect(() => flushPendingSaves()).not.toThrow()
+    })
   })
 
   it("swallows a failing index write", async () => {

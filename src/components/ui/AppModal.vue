@@ -240,8 +240,7 @@ defineExpose({ close })
   border-left: none;
 }
 [data-design="ios"] .drawer-header {
-  background: color-mix(in srgb, var(--surface) 86%, transparent);
-  backdrop-filter: saturate(180%) blur(24px);
+  background: color-mix(in srgb, var(--surface) 96%, transparent);
   border-bottom: 0.5px solid var(--border);
   padding: var(--sp-3) var(--sp-4);
 }

@@ -77,8 +77,7 @@ onUnmounted(() => {
 
 <style scoped>
 .site-header {
-  background: color-mix(in srgb, var(--surface) 88%, transparent);
-  backdrop-filter: blur(20px);
+  background: color-mix(in srgb, var(--surface) 96%, transparent);
   border-bottom: 1px solid var(--border-light);
   position: sticky;
   top: 0;
@@ -119,26 +118,13 @@ onUnmounted(() => {
   font-weight: 800;
   font-family: var(--font);
   background: linear-gradient(-135deg, var(--text) 20%, var(--accent) 50%, var(--text) 80%);
-  background-size: 200% auto;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   letter-spacing: 0.02em;
-  filter: drop-shadow(0px 2px 4px var(--accent-subtle));
-  transition:
-    transform 0.3s ease,
-    filter 0.3s ease;
-  animation: shine 5s linear infinite;
-}
-
-.brand:hover .brand-name {
-  filter: drop-shadow(0px 4px 8px color-mix(in srgb, var(--accent) 30%, transparent));
-}
-
-@keyframes shine {
-  to {
-    background-position: 200% center;
-  }
+  /* Static on purpose: this header is sticky, so an infinite background-position
+     animation (plus a drop-shadow filter over clipped text) repainted it on the
+     main thread every frame for the whole session. */
 }
 
 /* Main nav */

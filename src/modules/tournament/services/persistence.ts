@@ -13,54 +13,127 @@ function itemKey(id: string): string {
   return `${ITEM_PREFIX}${id}`
 }
 
-/** Idle-deferred, coalesced per tournament id — same trick as the store-wide version this replaces, just scoped to one record instead of the whole history. */
-const scheduled = new Map<string, Promise<void>>()
+/**
+ * How long a tournament must sit untouched before it is written. A simulation
+ * run or a score edit fires dozens of mutations in a burst; without this each
+ * burst still cost a full `JSON.stringify` of the tournament per idle slot.
+ */
+export const SAVE_DEBOUNCE_MS = 400
+/** A tournament that keeps mutating still gets written at least this often. */
+export const SAVE_MAX_WAIT_MS = 3000
 
-function idle(run: () => void): Promise<void> {
-  return new Promise((resolve) => {
-    const fire = () => {
-      run()
-      resolve()
-    }
-    if (typeof requestIdleCallback === "function") requestIdleCallback(fire, { timeout: 500 })
-    else setTimeout(fire, 0)
-  })
+interface PendingSave {
+  tournament: Tournament
+  promise: Promise<void>
+  resolve: () => void
+  timer: ReturnType<typeof setTimeout> | undefined
+  startedAt: number
 }
 
-/** Write one tournament's record. Coalesces bursts (a save fires several mutations) into the latest value only. */
-export function saveTournament(t: Tournament): Promise<void> {
-  const pending = scheduled.get(t.id)
-  if (pending) return pending
+/** Debounced (trailing, with a max wait) and coalesced per tournament id. */
+const scheduled = new Map<string, PendingSave>()
 
-  const promise = idle(() => {
-    scheduled.delete(t.id)
-    // `t` is read at idle time, not now, so a mutation that lands while this
-    // is queued is the one that actually gets written — see idleSerialize
-    // in main.ts for the same reasoning.
-    //
-    // Both halves can fail for reasons that are not this tournament's fault:
-    // a storage quota that has just run out, a private-mode database that
-    // refuses writes, a structure too deep to stringify. An unhandled
-    // rejection here surfaced as a console error and nothing else, and on the
-    // next launch as a record that was half a save behind. Swallowing it keeps
-    // the app running on the state it already has in memory; the next save
-    // attempt is one mutation away.
-    try {
-      // t is a Pinia-reactive proxy; JSON.stringify walks every property of
-      // every nested match/group/team through the Proxy's get trap, which
-      // gets very slow on a large tournament (hundreds of teams, thousands
-      // of matches). toRaw hands stringify the plain underlying object
-      // instead, so the walk is a normal property read the whole way down.
-      const json = JSON.stringify(toRaw(t))
-      void Promise.resolve(set(itemKey(t.id), json)).catch(() => {})
-    } catch {}
+function idle(run: () => void): void {
+  if (typeof requestIdleCallback === "function") requestIdleCallback(run, { timeout: 500 })
+  else setTimeout(run, 0)
+}
+
+/**
+ * Serialise and store one tournament. Both halves can fail for reasons that
+ * are not this tournament's fault: a storage quota that has just run out, a
+ * private-mode database that refuses writes, a structure too deep to
+ * stringify. An unhandled rejection here surfaced as a console error and
+ * nothing else, and on the next launch as a record that was half a save
+ * behind. Swallowing it keeps the app running on the state it already has in
+ * memory; the next save attempt is one mutation away.
+ */
+function writeTournament(t: Tournament): void {
+  try {
+    // t is a Pinia-reactive proxy; JSON.stringify walks every property of
+    // every nested match/group/team through the Proxy's get trap, which
+    // gets very slow on a large tournament (hundreds of teams, thousands
+    // of matches). toRaw hands stringify the plain underlying object
+    // instead, so the walk is a normal property read the whole way down.
+    const json = JSON.stringify(toRaw(t))
+    void Promise.resolve(set(itemKey(t.id), json)).catch(() => {})
+  } catch {}
+}
+
+/**
+ * Start the write for a pending save. `immediate` skips the idle wait — used
+ * when the app is going to the background and there may be no later slot.
+ */
+function firePending(id: string, immediate: boolean): void {
+  const pending = scheduled.get(id)
+  if (!pending) return
+  clearTimeout(pending.timer)
+  scheduled.delete(id)
+  const finish = () => {
+    // The tournament is read now, not when the save was requested, so a
+    // mutation that landed while this was queued is the one actually written.
+    writeTournament(pending.tournament)
+    pending.resolve()
+  }
+  if (immediate) finish()
+  else idle(finish)
+}
+
+/** Write one tournament's record, after a short quiet period. Bursts collapse into the latest value only. */
+export function saveTournament(t: Tournament): Promise<void> {
+  const existing = scheduled.get(t.id)
+  if (existing) {
+    existing.tournament = t
+    // Push the write back while mutations keep arriving, but never past the
+    // max wait: a long continuous run must not leave the disk arbitrarily stale.
+    if (Date.now() - existing.startedAt < SAVE_MAX_WAIT_MS) {
+      clearTimeout(existing.timer)
+      existing.timer = setTimeout(() => firePending(t.id, false), SAVE_DEBOUNCE_MS)
+    }
+    return existing.promise
+  }
+
+  let resolve!: () => void
+  const promise = new Promise<void>((r) => {
+    resolve = r
   })
-  scheduled.set(t.id, promise)
+  scheduled.set(t.id, {
+    tournament: t,
+    promise,
+    resolve,
+    startedAt: Date.now(),
+    timer: setTimeout(() => firePending(t.id, false), SAVE_DEBOUNCE_MS),
+  })
   return promise
 }
 
+/** Write everything still waiting out its debounce, right now. Call when the app is hidden. */
+export function flushPendingSaves(): void {
+  for (const id of [...scheduled.keys()]) firePending(id, true)
+}
+
+/** Drop queued writes without performing them (their promises still resolve). */
+function cancelPendingSaves(ids?: string[]): void {
+  for (const id of ids ?? [...scheduled.keys()]) {
+    const pending = scheduled.get(id)
+    if (!pending) continue
+    clearTimeout(pending.timer)
+    scheduled.delete(id)
+    pending.resolve()
+  }
+}
+
+// A debounce means the newest edits can exist only in memory for a moment.
+// Android may kill a backgrounded WebView without any later idle slot, so the
+// queue is flushed the instant the page is hidden.
+if (typeof document !== "undefined") {
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "hidden") flushPendingSaves()
+  })
+  window.addEventListener("pagehide", flushPendingSaves)
+}
+
 export function deleteTournamentRecord(id: string): void {
-  scheduled.delete(id)
+  cancelPendingSaves([id])
   void del(itemKey(id))
 }
 
@@ -267,6 +340,8 @@ async function currentIds(): Promise<string[]> {
  * too, or every tournament comes right back on the next launch.
  */
 export async function clearAllTournaments(): Promise<void> {
+  // A queued save would otherwise land after the clear and resurrect a record.
+  cancelPendingSaves()
   const ids = await currentIds()
   await Promise.all(ids.map((id) => del(itemKey(id))))
   await del(INDEX_KEY)

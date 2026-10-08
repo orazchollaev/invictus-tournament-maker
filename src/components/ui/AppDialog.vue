@@ -79,7 +79,6 @@ watch(
   inset: 0;
   z-index: 9000;
   background: var(--scrim);
-  backdrop-filter: blur(2px);
 }
 
 .dialog-card {
@@ -156,8 +155,7 @@ watch(
   border: none;
   border-radius: 14px;
   text-align: center;
-  background: color-mix(in srgb, var(--surface) 82%, transparent);
-  backdrop-filter: saturate(180%) blur(24px);
+  background: color-mix(in srgb, var(--surface) 96%, transparent);
 }
 [data-design="ios"] .dialog-msg {
   font-size: 13px;
