@@ -1,5 +1,21 @@
 # Changelog
 
+## [3.4.0](https://github.com/orazchollaev/invictus-tournament-maker/compare/v3.3.0...v3.4.0) (2026-10-09)
+
+### 🚀 New Features
+
+- **examples:** add AFC, CAF, CONCACAF, OFC, CONMEBOL top 64 club datasets ([c862ded](https://github.com/orazchollaev/invictus-tournament-maker/commit/c862ded732ec0d88a4658caae9853bf6406e9dd2))
+- **players:** add photo via gallery or URL, show in avatars ([c88890d](https://github.com/orazchollaev/invictus-tournament-maker/commit/c88890dbdd4bd9251ea0084af65fcf9c5f198155))
+- **players:** random facesjs faces with an editor ([5e69abb](https://github.com/orazchollaev/invictus-tournament-maker/commit/5e69abbafa442edb8fcccee4ce9327315889f5ac))
+
+### 🐛 Bug Fixes
+
+- **ads:** hide draw ceremony banner once the draw is done ([4c8132a](https://github.com/orazchollaev/invictus-tournament-maker/commit/4c8132a99815105bf9355f06d4783faa86933883))
+
+### 🔧 Maintenance
+
+- bump gradle version ([9f13eb7](https://github.com/orazchollaev/invictus-tournament-maker/commit/9f13eb7a577842431bdcf004efbc3594ed367756))
+
 ## [3.3.0](https://github.com/orazchollaev/invictus-tournament-maker/compare/v3.2.0...v3.3.0) (2026-10-02)
 
 ### 🚀 New Features
