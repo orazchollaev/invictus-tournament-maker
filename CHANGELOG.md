@@ -1,5 +1,11 @@
 # Changelog
 
+## [3.4.1](https://github.com/orazchollaev/invictus-tournament-maker/compare/v3.4.0...v3.4.1) (2026-10-09)
+
+### 🔧 Maintenance
+
+- bump gradle version ([5cc7751](https://github.com/orazchollaev/invictus-tournament-maker/commit/5cc775110fc50d77e37e1a0c2dad31214f51339b))
+
 ## [3.4.0](https://github.com/orazchollaev/invictus-tournament-maker/compare/v3.3.0...v3.4.0) (2026-10-09)
 
 ### 🚀 New Features
