@@ -1,0 +1,457 @@
+{
+  "label": "OFC Top 64 Clubs",
+  "description": "The 64 strongest clubs in Oceanian football",
+  "order": 8.5,
+  "type": "club",
+  "category": "ranking",
+  "teams": [
+    {
+      "id": "ofc64-01",
+      "name": "Auckland City",
+      "color": "#0072BC",
+      "power": 70,
+      "flag": "nz"
+    },
+    {
+      "id": "ofc64-02",
+      "name": "Team Wellington",
+      "color": "#000000",
+      "power": 62,
+      "flag": "nz"
+    },
+    {
+      "id": "ofc64-03",
+      "name": "Hekari United",
+      "color": "#F7941D",
+      "power": 60,
+      "flag": "pg"
+    },
+    {
+      "id": "ofc64-04",
+      "name": "Ba",
+      "color": "#000000",
+      "power": 60,
+      "flag": "fj"
+    },
+    {
+      "id": "ofc64-05",
+      "name": "Hienghène Sport",
+      "color": "#C8102E",
+      "power": 60,
+      "flag": "nc"
+    },
+    {
+      "id": "ofc64-06",
+      "name": "AS Pirae",
+      "color": "#C8102E",
+      "power": 60,
+      "flag": "pf"
+    },
+    {
+      "id": "ofc64-07",
+      "name": "Lautoka",
+      "color": "#C8102E",
+      "power": 58,
+      "flag": "fj"
+    },
+    {
+      "id": "ofc64-08",
+      "name": "Lae City",
+      "color": "#C8102E",
+      "power": 58,
+      "flag": "pg"
+    },
+    {
+      "id": "ofc64-09",
+      "name": "AS Magenta",
+      "color": "#000000",
+      "power": 58,
+      "flag": "nc"
+    },
+    {
+      "id": "ofc64-10",
+      "name": "AS Tefana",
+      "color": "#C8102E",
+      "power": 58,
+      "flag": "pf"
+    },
+    {
+      "id": "ofc64-11",
+      "name": "Suva",
+      "color": "#0072BC",
+      "power": 56,
+      "flag": "fj"
+    },
+    {
+      "id": "ofc64-12",
+      "name": "Tafea",
+      "color": "#C8102E",
+      "power": 56,
+      "flag": "vu"
+    },
+    {
+      "id": "ofc64-13",
+      "name": "Ifira Black Bird",
+      "color": "#000000",
+      "power": 56,
+      "flag": "vu"
+    },
+    {
+      "id": "ofc64-14",
+      "name": "Solomon Warriors",
+      "color": "#C8102E",
+      "power": 56,
+      "flag": "sb"
+    },
+    {
+      "id": "ofc64-15",
+      "name": "AS Lössi",
+      "color": "#0033A0",
+      "power": 56,
+      "flag": "nc"
+    },
+    {
+      "id": "ofc64-16",
+      "name": "AS Mont-Dore",
+      "color": "#C8102E",
+      "power": 56,
+      "flag": "nc"
+    },
+    {
+      "id": "ofc64-17",
+      "name": "AS Central Sport",
+      "color": "#0033A0",
+      "power": 56,
+      "flag": "pf"
+    },
+    {
+      "id": "ofc64-18",
+      "name": "AS Dragon",
+      "color": "#C8102E",
+      "power": 56,
+      "flag": "pf"
+    },
+    {
+      "id": "ofc64-19",
+      "name": "Waitakere United",
+      "color": "#FFFFFF",
+      "power": 55,
+      "flag": "nz"
+    },
+    {
+      "id": "ofc64-20",
+      "name": "Wellington Olympic",
+      "color": "#0072BC",
+      "power": 55,
+      "flag": "nz"
+    },
+    {
+      "id": "ofc64-21",
+      "name": "Rewa",
+      "color": "#0072BC",
+      "power": 55,
+      "flag": "fj"
+    },
+    {
+      "id": "ofc64-22",
+      "name": "Erakor Golden Star",
+      "color": "#FFD100",
+      "power": 54,
+      "flag": "vu"
+    },
+    {
+      "id": "ofc64-23",
+      "name": "Eastern Suburbs",
+      "color": "#C8102E",
+      "power": 54,
+      "flag": "nz"
+    },
+    {
+      "id": "ofc64-24",
+      "name": "Koloale",
+      "color": "#0072BC",
+      "power": 54,
+      "flag": "sb"
+    },
+    {
+      "id": "ofc64-25",
+      "name": "Nadi",
+      "color": "#C8102E",
+      "power": 54,
+      "flag": "fj"
+    },
+    {
+      "id": "ofc64-26",
+      "name": "Gaïtcha",
+      "color": "#00843D",
+      "power": 54,
+      "flag": "nc"
+    },
+    {
+      "id": "ofc64-27",
+      "name": "AS Vénus",
+      "color": "#0072BC",
+      "power": 54,
+      "flag": "pf"
+    },
+    {
+      "id": "ofc64-28",
+      "name": "Hawke's Bay United",
+      "color": "#C8102E",
+      "power": 52,
+      "flag": "nz"
+    },
+    {
+      "id": "ofc64-29",
+      "name": "Birkenhead United",
+      "color": "#F7941D",
+      "power": 52,
+      "flag": "nz"
+    },
+    {
+      "id": "ofc64-30",
+      "name": "Labasa",
+      "color": "#FFD100",
+      "power": 52,
+      "flag": "fj"
+    },
+    {
+      "id": "ofc64-31",
+      "name": "Henderson Eels",
+      "color": "#0072BC",
+      "power": 52,
+      "flag": "sb"
+    },
+    {
+      "id": "ofc64-32",
+      "name": "Marist FC",
+      "color": "#C8102E",
+      "power": 52,
+      "flag": "sb"
+    },
+    {
+      "id": "ofc64-33",
+      "name": "Tupuji Imere",
+      "color": "#00843D",
+      "power": 52,
+      "flag": "vu"
+    },
+    {
+      "id": "ofc64-34",
+      "name": "Toti City",
+      "color": "#C8102E",
+      "power": 50,
+      "flag": "pg"
+    },
+    {
+      "id": "ofc64-35",
+      "name": "Western Suburbs",
+      "color": "#0072BC",
+      "power": 50,
+      "flag": "nz"
+    },
+    {
+      "id": "ofc64-36",
+      "name": "Navua",
+      "color": "#0072BC",
+      "power": 50,
+      "flag": "fj"
+    },
+    {
+      "id": "ofc64-37",
+      "name": "Galaxy FC",
+      "color": "#5A2D82",
+      "power": 50,
+      "flag": "vu"
+    },
+    {
+      "id": "ofc64-38",
+      "name": "Western United",
+      "color": "#00843D",
+      "power": 50,
+      "flag": "sb"
+    },
+    {
+      "id": "ofc64-39",
+      "name": "KOSSA",
+      "color": "#C8102E",
+      "power": 50,
+      "flag": "sb"
+    },
+    {
+      "id": "ofc64-40",
+      "name": "AS Manu-Ura",
+      "color": "#C8102E",
+      "power": 50,
+      "flag": "pf"
+    },
+    {
+      "id": "ofc64-41",
+      "name": "AS Jeunes Tahitiens",
+      "color": "#0072BC",
+      "power": 50,
+      "flag": "pf"
+    },
+    {
+      "id": "ofc64-42",
+      "name": "Tiare Tahiti",
+      "color": "#00843D",
+      "power": 50,
+      "flag": "pf"
+    },
+    {
+      "id": "ofc64-43",
+      "name": "Napier City Rovers",
+      "color": "#C8102E",
+      "power": 48,
+      "flag": "nz"
+    },
+    {
+      "id": "ofc64-44",
+      "name": "Cashmere Technical",
+      "color": "#0072BC",
+      "power": 48,
+      "flag": "nz"
+    },
+    {
+      "id": "ofc64-45",
+      "name": "Hamilton Wanderers",
+      "color": "#C8102E",
+      "power": 48,
+      "flag": "nz"
+    },
+    {
+      "id": "ofc64-46",
+      "name": "Tailevu Naitasiri",
+      "color": "#0072BC",
+      "power": 48,
+      "flag": "fj"
+    },
+    {
+      "id": "ofc64-47",
+      "name": "Miramar Rangers",
+      "color": "#0072BC",
+      "power": 47,
+      "flag": "nz"
+    },
+    {
+      "id": "ofc64-48",
+      "name": "Christchurch United",
+      "color": "#C8102E",
+      "power": 46,
+      "flag": "nz"
+    },
+    {
+      "id": "ofc64-49",
+      "name": "Ellerslie",
+      "color": "#C8102E",
+      "power": 46,
+      "flag": "nz"
+    },
+    {
+      "id": "ofc64-50",
+      "name": "Tupapa Maraerenga",
+      "color": "#C8102E",
+      "power": 44,
+      "flag": "ck"
+    },
+    {
+      "id": "ofc64-51",
+      "name": "Lupe o le Soaga",
+      "color": "#C8102E",
+      "power": 44,
+      "flag": "ws"
+    },
+    {
+      "id": "ofc64-52",
+      "name": "Tasman United",
+      "color": "#0072BC",
+      "power": 44,
+      "flag": "nz"
+    },
+    {
+      "id": "ofc64-53",
+      "name": "Melville United",
+      "color": "#C8102E",
+      "power": 44,
+      "flag": "nz"
+    },
+    {
+      "id": "ofc64-54",
+      "name": "Papatoetoe",
+      "color": "#0072BC",
+      "power": 44,
+      "flag": "nz"
+    },
+    {
+      "id": "ofc64-55",
+      "name": "Takapuna",
+      "color": "#FFFFFF",
+      "power": 44,
+      "flag": "nz"
+    },
+    {
+      "id": "ofc64-56",
+      "name": "Manurewa",
+      "color": "#C8102E",
+      "power": 44,
+      "flag": "nz"
+    },
+    {
+      "id": "ofc64-57",
+      "name": "Metro FC",
+      "color": "#0072BC",
+      "power": 44,
+      "flag": "nz"
+    },
+    {
+      "id": "ofc64-58",
+      "name": "Wanderers SC",
+      "color": "#C8102E",
+      "power": 44,
+      "flag": "pg"
+    },
+    {
+      "id": "ofc64-59",
+      "name": "Nikao Sokattack",
+      "color": "#0072BC",
+      "power": 42,
+      "flag": "ck"
+    },
+    {
+      "id": "ofc64-60",
+      "name": "Vaivase-tai",
+      "color": "#0072BC",
+      "power": 42,
+      "flag": "ws"
+    },
+    {
+      "id": "ofc64-61",
+      "name": "Lotoha'apai United",
+      "color": "#C8102E",
+      "power": 42,
+      "flag": "to"
+    },
+    {
+      "id": "ofc64-62",
+      "name": "Veitongo",
+      "color": "#0072BC",
+      "power": 42,
+      "flag": "to"
+    },
+    {
+      "id": "ofc64-63",
+      "name": "Kiwi FC",
+      "color": "#00843D",
+      "power": 42,
+      "flag": "ws"
+    },
+    {
+      "id": "ofc64-64",
+      "name": "Pago Youth",
+      "color": "#0072BC",
+      "power": 40,
+      "flag": "as"
+    }
+  ]
+}

@@ -1,0 +1,457 @@
+{
+  "label": "AFC Top 64 Clubs",
+  "description": "The 64 strongest clubs in Asian football",
+  "order": 8.2,
+  "type": "club",
+  "category": "ranking",
+  "teams": [
+    {
+      "id": "afc64-01",
+      "name": "Al-Hilal",
+      "color": "#005430",
+      "power": 93,
+      "flag": "sa"
+    },
+    {
+      "id": "afc64-02",
+      "name": "Al-Nassr",
+      "color": "#FFD700",
+      "power": 91,
+      "flag": "sa"
+    },
+    {
+      "id": "afc64-03",
+      "name": "Al-Ittihad",
+      "color": "#C9A227",
+      "power": 89,
+      "flag": "sa"
+    },
+    {
+      "id": "afc64-04",
+      "name": "Al-Ahli",
+      "color": "#00A651",
+      "power": 86,
+      "flag": "sa"
+    },
+    {
+      "id": "afc64-05",
+      "name": "Al Ain",
+      "color": "#FDB913",
+      "power": 85,
+      "flag": "ae"
+    },
+    {
+      "id": "afc64-06",
+      "name": "Kashima Antlers",
+      "color": "#B4975A",
+      "power": 84,
+      "flag": "jp"
+    },
+    {
+      "id": "afc64-07",
+      "name": "Esteghlal",
+      "color": "#0033A0",
+      "power": 83,
+      "flag": "ir"
+    },
+    {
+      "id": "afc64-08",
+      "name": "Jeonbuk Hyundai Motors",
+      "color": "#00843D",
+      "power": 82,
+      "flag": "kr"
+    },
+    {
+      "id": "afc64-09",
+      "name": "Vissel Kobe",
+      "color": "#8B1D41",
+      "power": 81,
+      "flag": "jp"
+    },
+    {
+      "id": "afc64-10",
+      "name": "Gamba Osaka",
+      "color": "#0033A0",
+      "power": 80,
+      "flag": "jp"
+    },
+    {
+      "id": "afc64-11",
+      "name": "Al Sadd",
+      "color": "#8A1538",
+      "power": 80,
+      "flag": "qa"
+    },
+    {
+      "id": "afc64-12",
+      "name": "Persepolis",
+      "color": "#C8102E",
+      "power": 80,
+      "flag": "ir"
+    },
+    {
+      "id": "afc64-13",
+      "name": "Urawa Red Diamonds",
+      "color": "#E4002B",
+      "power": 80,
+      "flag": "jp"
+    },
+    {
+      "id": "afc64-14",
+      "name": "Yokohama F. Marinos",
+      "color": "#0033A0",
+      "power": 79,
+      "flag": "jp"
+    },
+    {
+      "id": "afc64-15",
+      "name": "Shabab Al Ahli",
+      "color": "#DA291C",
+      "power": 79,
+      "flag": "ae"
+    },
+    {
+      "id": "afc64-16",
+      "name": "Shanghai Port",
+      "color": "#B41E3C",
+      "power": 79,
+      "flag": "cn"
+    },
+    {
+      "id": "afc64-17",
+      "name": "Sepahan",
+      "color": "#FFC20E",
+      "power": 78,
+      "flag": "ir"
+    },
+    {
+      "id": "afc64-18",
+      "name": "Al-Qadsiah",
+      "color": "#004B87",
+      "power": 78,
+      "flag": "sa"
+    },
+    {
+      "id": "afc64-19",
+      "name": "Ulsan HD",
+      "color": "#0072BC",
+      "power": 78,
+      "flag": "kr"
+    },
+    {
+      "id": "afc64-20",
+      "name": "Sanfrecce Hiroshima",
+      "color": "#5A2D82",
+      "power": 78,
+      "flag": "jp"
+    },
+    {
+      "id": "afc64-21",
+      "name": "Beijing Guoan",
+      "color": "#00843D",
+      "power": 77,
+      "flag": "cn"
+    },
+    {
+      "id": "afc64-22",
+      "name": "Tractor",
+      "color": "#CE1126",
+      "power": 77,
+      "flag": "ir"
+    },
+    {
+      "id": "afc64-23",
+      "name": "Buriram United",
+      "color": "#5A2D82",
+      "power": 76,
+      "flag": "th"
+    },
+    {
+      "id": "afc64-24",
+      "name": "Al-Duhail",
+      "color": "#8A1538",
+      "power": 76,
+      "flag": "qa"
+    },
+    {
+      "id": "afc64-25",
+      "name": "Pakhtakor",
+      "color": "#0099B5",
+      "power": 75,
+      "flag": "uz"
+    },
+    {
+      "id": "afc64-26",
+      "name": "FC Seoul",
+      "color": "#E4002B",
+      "power": 75,
+      "flag": "kr"
+    },
+    {
+      "id": "afc64-27",
+      "name": "Al-Shabab",
+      "color": "#FFFFFF",
+      "power": 75,
+      "flag": "sa"
+    },
+    {
+      "id": "afc64-28",
+      "name": "Al-Wahda",
+      "color": "#1A1A1A",
+      "power": 74,
+      "flag": "ae"
+    },
+    {
+      "id": "afc64-29",
+      "name": "Al-Ettifaq",
+      "color": "#00843D",
+      "power": 74,
+      "flag": "sa"
+    },
+    {
+      "id": "afc64-30",
+      "name": "Johor Darul Ta'zim",
+      "color": "#00205B",
+      "power": 74,
+      "flag": "my"
+    },
+    {
+      "id": "afc64-31",
+      "name": "Machida Zelvia",
+      "color": "#004098",
+      "power": 74,
+      "flag": "jp"
+    },
+    {
+      "id": "afc64-32",
+      "name": "Al-Gharafa",
+      "color": "#DA291C",
+      "power": 74,
+      "flag": "qa"
+    },
+    {
+      "id": "afc64-33",
+      "name": "Al Jazira",
+      "color": "#FDB913",
+      "power": 73,
+      "flag": "ae"
+    },
+    {
+      "id": "afc64-34",
+      "name": "Pohang Steelers",
+      "color": "#CE1126",
+      "power": 73,
+      "flag": "kr"
+    },
+    {
+      "id": "afc64-35",
+      "name": "Daejeon Hana Citizen",
+      "color": "#5A2D82",
+      "power": 72,
+      "flag": "kr"
+    },
+    {
+      "id": "afc64-36",
+      "name": "Shanghai Shenhua",
+      "color": "#00529B",
+      "power": 72,
+      "flag": "cn"
+    },
+    {
+      "id": "afc64-37",
+      "name": "Al-Rayyan",
+      "color": "#DA291C",
+      "power": 71,
+      "flag": "qa"
+    },
+    {
+      "id": "afc64-38",
+      "name": "Al Wasl",
+      "color": "#CE1126",
+      "power": 71,
+      "flag": "ae"
+    },
+    {
+      "id": "afc64-39",
+      "name": "Kashiwa Reysol",
+      "color": "#FFD700",
+      "power": 71,
+      "flag": "jp"
+    },
+    {
+      "id": "afc64-40",
+      "name": "Nasaf",
+      "color": "#F7B500",
+      "power": 70,
+      "flag": "uz"
+    },
+    {
+      "id": "afc64-41",
+      "name": "Al-Quwa Al-Jawiya",
+      "color": "#00843D",
+      "power": 70,
+      "flag": "iq"
+    },
+    {
+      "id": "afc64-42",
+      "name": "Kyoto Sanga",
+      "color": "#8B1D41",
+      "power": 70,
+      "flag": "jp"
+    },
+    {
+      "id": "afc64-43",
+      "name": "Melbourne Victory",
+      "color": "#1B3B6F",
+      "power": 70,
+      "flag": "au"
+    },
+    {
+      "id": "afc64-44",
+      "name": "Al Taawoun",
+      "color": "#FFD100",
+      "power": 69,
+      "flag": "sa"
+    },
+    {
+      "id": "afc64-45",
+      "name": "Port",
+      "color": "#0033A0",
+      "power": 69,
+      "flag": "th"
+    },
+    {
+      "id": "afc64-46",
+      "name": "Sydney FC",
+      "color": "#5AB4E5",
+      "power": 69,
+      "flag": "au"
+    },
+    {
+      "id": "afc64-47",
+      "name": "Melbourne City",
+      "color": "#6CABDD",
+      "power": 68,
+      "flag": "au"
+    },
+    {
+      "id": "afc64-48",
+      "name": "Al-Shorta",
+      "color": "#00A651",
+      "power": 68,
+      "flag": "iq"
+    },
+    {
+      "id": "afc64-49",
+      "name": "Persib",
+      "color": "#0033A0",
+      "power": 68,
+      "flag": "id"
+    },
+    {
+      "id": "afc64-50",
+      "name": "Gangwon FC",
+      "color": "#F7941D",
+      "power": 68,
+      "flag": "kr"
+    },
+    {
+      "id": "afc64-51",
+      "name": "Neftchi",
+      "color": "#00843D",
+      "power": 68,
+      "flag": "uz"
+    },
+    {
+      "id": "afc64-52",
+      "name": "Adelaide United",
+      "color": "#E4002B",
+      "power": 66,
+      "flag": "au"
+    },
+    {
+      "id": "afc64-53",
+      "name": "Central Coast Mariners",
+      "color": "#FFD100",
+      "power": 66,
+      "flag": "au"
+    },
+    {
+      "id": "afc64-54",
+      "name": "Ratchaburi",
+      "color": "#8A1538",
+      "power": 65,
+      "flag": "th"
+    },
+    {
+      "id": "afc64-55",
+      "name": "Gol Gohar",
+      "color": "#C8102E",
+      "power": 65,
+      "flag": "ir"
+    },
+    {
+      "id": "afc64-56",
+      "name": "BG Pathum United",
+      "color": "#4B2E83",
+      "power": 64,
+      "flag": "th"
+    },
+    {
+      "id": "afc64-57",
+      "name": "Al-Muharraq",
+      "color": "#E4002B",
+      "power": 63,
+      "flag": "bh"
+    },
+    {
+      "id": "afc64-58",
+      "name": "Lion City Sailors",
+      "color": "#002D72",
+      "power": 63,
+      "flag": "sg"
+    },
+    {
+      "id": "afc64-59",
+      "name": "Công An Hà Nội",
+      "color": "#DA251D",
+      "power": 63,
+      "flag": "vn"
+    },
+    {
+      "id": "afc64-60",
+      "name": "Al-Zawraa",
+      "color": "#FFFFFF",
+      "power": 63,
+      "flag": "iq"
+    },
+    {
+      "id": "afc64-61",
+      "name": "Al-Faisaly",
+      "color": "#0072BC",
+      "power": 62,
+      "flag": "jo"
+    },
+    {
+      "id": "afc64-62",
+      "name": "Newcastle Jets",
+      "color": "#00539F",
+      "power": 62,
+      "flag": "au"
+    },
+    {
+      "id": "afc64-63",
+      "name": "Thể Công–Viettel",
+      "color": "#DA251D",
+      "power": 62,
+      "flag": "vn"
+    },
+    {
+      "id": "afc64-64",
+      "name": "Bunyodkor",
+      "color": "#0072BC",
+      "power": 62,
+      "flag": "uz"
+    }
+  ]
+}

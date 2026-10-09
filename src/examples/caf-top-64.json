@@ -1,0 +1,457 @@
+{
+  "label": "CAF Top 64 Clubs",
+  "description": "The 64 strongest clubs in African football",
+  "order": 8.3,
+  "type": "club",
+  "category": "ranking",
+  "teams": [
+    {
+      "id": "caf64-01",
+      "name": "Al Ahly",
+      "color": "#C8102E",
+      "power": 87,
+      "flag": "eg"
+    },
+    {
+      "id": "caf64-02",
+      "name": "Mamelodi Sundowns",
+      "color": "#FFD100",
+      "power": 86,
+      "flag": "za"
+    },
+    {
+      "id": "caf64-03",
+      "name": "Pyramids FC",
+      "color": "#0A2A5E",
+      "power": 84,
+      "flag": "eg"
+    },
+    {
+      "id": "caf64-04",
+      "name": "Espérance de Tunis",
+      "color": "#C8102E",
+      "power": 83,
+      "flag": "tn"
+    },
+    {
+      "id": "caf64-05",
+      "name": "RS Berkane",
+      "color": "#F58220",
+      "power": 82,
+      "flag": "ma"
+    },
+    {
+      "id": "caf64-06",
+      "name": "Wydad Casablanca",
+      "color": "#D71920",
+      "power": 82,
+      "flag": "ma"
+    },
+    {
+      "id": "caf64-07",
+      "name": "Raja Casablanca",
+      "color": "#00843D",
+      "power": 81,
+      "flag": "ma"
+    },
+    {
+      "id": "caf64-08",
+      "name": "Zamalek",
+      "color": "#FFFFFF",
+      "power": 81,
+      "flag": "eg"
+    },
+    {
+      "id": "caf64-09",
+      "name": "AS FAR",
+      "color": "#C8102E",
+      "power": 80,
+      "flag": "ma"
+    },
+    {
+      "id": "caf64-10",
+      "name": "Orlando Pirates",
+      "color": "#000000",
+      "power": 80,
+      "flag": "za"
+    },
+    {
+      "id": "caf64-11",
+      "name": "Simba SC",
+      "color": "#E30613",
+      "power": 79,
+      "flag": "tz"
+    },
+    {
+      "id": "caf64-12",
+      "name": "Young Africans",
+      "color": "#FFD100",
+      "power": 79,
+      "flag": "tz"
+    },
+    {
+      "id": "caf64-13",
+      "name": "Al Hilal Omdurman",
+      "color": "#0055A4",
+      "power": 78,
+      "flag": "sd"
+    },
+    {
+      "id": "caf64-14",
+      "name": "TP Mazembe",
+      "color": "#000000",
+      "power": 78,
+      "flag": "cd"
+    },
+    {
+      "id": "caf64-15",
+      "name": "MC Alger",
+      "color": "#00843D",
+      "power": 78,
+      "flag": "dz"
+    },
+    {
+      "id": "caf64-16",
+      "name": "Petro de Luanda",
+      "color": "#003DA5",
+      "power": 77,
+      "flag": "ao"
+    },
+    {
+      "id": "caf64-17",
+      "name": "CR Belouizdad",
+      "color": "#C8102E",
+      "power": 77,
+      "flag": "dz"
+    },
+    {
+      "id": "caf64-18",
+      "name": "Kaizer Chiefs",
+      "color": "#FFD100",
+      "power": 76,
+      "flag": "za"
+    },
+    {
+      "id": "caf64-19",
+      "name": "JS Kabylie",
+      "color": "#FFD100",
+      "power": 75,
+      "flag": "dz"
+    },
+    {
+      "id": "caf64-20",
+      "name": "Étoile du Sahel",
+      "color": "#C8102E",
+      "power": 75,
+      "flag": "tn"
+    },
+    {
+      "id": "caf64-21",
+      "name": "ASEC Mimosas",
+      "color": "#F58220",
+      "power": 75,
+      "flag": "ci"
+    },
+    {
+      "id": "caf64-22",
+      "name": "US Monastir",
+      "color": "#0055A4",
+      "power": 74,
+      "flag": "tn"
+    },
+    {
+      "id": "caf64-23",
+      "name": "USM Alger",
+      "color": "#C8102E",
+      "power": 74,
+      "flag": "dz"
+    },
+    {
+      "id": "caf64-24",
+      "name": "Stellenbosch",
+      "color": "#8A1538",
+      "power": 73,
+      "flag": "za"
+    },
+    {
+      "id": "caf64-25",
+      "name": "Stade Malien",
+      "color": "#FFFFFF",
+      "power": 72,
+      "flag": "ml"
+    },
+    {
+      "id": "caf64-26",
+      "name": "CS Sfaxien",
+      "color": "#000000",
+      "power": 72,
+      "flag": "tn"
+    },
+    {
+      "id": "caf64-27",
+      "name": "Al Masry",
+      "color": "#00843D",
+      "power": 72,
+      "flag": "eg"
+    },
+    {
+      "id": "caf64-28",
+      "name": "SuperSport United",
+      "color": "#0072BC",
+      "power": 72,
+      "flag": "za"
+    },
+    {
+      "id": "caf64-29",
+      "name": "Horoya AC",
+      "color": "#C8102E",
+      "power": 71,
+      "flag": "gn"
+    },
+    {
+      "id": "caf64-30",
+      "name": "AS Vita Club",
+      "color": "#00843D",
+      "power": 71,
+      "flag": "cd"
+    },
+    {
+      "id": "caf64-31",
+      "name": "Djoliba AC",
+      "color": "#C8102E",
+      "power": 70,
+      "flag": "ml"
+    },
+    {
+      "id": "caf64-32",
+      "name": "Al Ittihad Tripoli",
+      "color": "#00843D",
+      "power": 70,
+      "flag": "ly"
+    },
+    {
+      "id": "caf64-33",
+      "name": "Enyimba",
+      "color": "#003DA5",
+      "power": 70,
+      "flag": "ng"
+    },
+    {
+      "id": "caf64-34",
+      "name": "Asante Kotoko",
+      "color": "#C8102E",
+      "power": 70,
+      "flag": "gh"
+    },
+    {
+      "id": "caf64-35",
+      "name": "Al Ittihad Alexandria",
+      "color": "#00843D",
+      "power": 70,
+      "flag": "eg"
+    },
+    {
+      "id": "caf64-36",
+      "name": "CS Constantine",
+      "color": "#00843D",
+      "power": 70,
+      "flag": "dz"
+    },
+    {
+      "id": "caf64-37",
+      "name": "ES Sétif",
+      "color": "#000000",
+      "power": 70,
+      "flag": "dz"
+    },
+    {
+      "id": "caf64-38",
+      "name": "Primeiro de Agosto",
+      "color": "#C8102E",
+      "power": 70,
+      "flag": "ao"
+    },
+    {
+      "id": "caf64-39",
+      "name": "Rivers United",
+      "color": "#0055A4",
+      "power": 69,
+      "flag": "ng"
+    },
+    {
+      "id": "caf64-40",
+      "name": "Sagrada Esperança",
+      "color": "#00843D",
+      "power": 69,
+      "flag": "ao"
+    },
+    {
+      "id": "caf64-41",
+      "name": "Hearts of Oak",
+      "color": "#C8102E",
+      "power": 68,
+      "flag": "gh"
+    },
+    {
+      "id": "caf64-42",
+      "name": "Power Dynamos",
+      "color": "#F58220",
+      "power": 68,
+      "flag": "zm"
+    },
+    {
+      "id": "caf64-43",
+      "name": "Al Merrikh",
+      "color": "#C8102E",
+      "power": 68,
+      "flag": "sd"
+    },
+    {
+      "id": "caf64-44",
+      "name": "Future FC",
+      "color": "#00843D",
+      "power": 68,
+      "flag": "eg"
+    },
+    {
+      "id": "caf64-45",
+      "name": "Medeama",
+      "color": "#FFD100",
+      "power": 67,
+      "flag": "gh"
+    },
+    {
+      "id": "caf64-46",
+      "name": "Teungueth FC",
+      "color": "#003DA5",
+      "power": 66,
+      "flag": "sn"
+    },
+    {
+      "id": "caf64-47",
+      "name": "ZESCO United",
+      "color": "#00843D",
+      "power": 66,
+      "flag": "zm"
+    },
+    {
+      "id": "caf64-48",
+      "name": "Azam FC",
+      "color": "#0072BC",
+      "power": 66,
+      "flag": "tz"
+    },
+    {
+      "id": "caf64-49",
+      "name": "Smouha",
+      "color": "#0072BC",
+      "power": 66,
+      "flag": "eg"
+    },
+    {
+      "id": "caf64-50",
+      "name": "Paradou AC",
+      "color": "#C8102E",
+      "power": 66,
+      "flag": "dz"
+    },
+    {
+      "id": "caf64-51",
+      "name": "Cape Town City",
+      "color": "#0072BC",
+      "power": 66,
+      "flag": "za"
+    },
+    {
+      "id": "caf64-52",
+      "name": "FUS Rabat",
+      "color": "#000000",
+      "power": 66,
+      "flag": "ma"
+    },
+    {
+      "id": "caf64-53",
+      "name": "Maghreb de Fès",
+      "color": "#FFD100",
+      "power": 66,
+      "flag": "ma"
+    },
+    {
+      "id": "caf64-54",
+      "name": "Remo Stars",
+      "color": "#0072BC",
+      "power": 65,
+      "flag": "ng"
+    },
+    {
+      "id": "caf64-55",
+      "name": "Coton Sport",
+      "color": "#00843D",
+      "power": 64,
+      "flag": "cm"
+    },
+    {
+      "id": "caf64-56",
+      "name": "Nkana",
+      "color": "#C8102E",
+      "power": 64,
+      "flag": "zm"
+    },
+    {
+      "id": "caf64-57",
+      "name": "Plateau United",
+      "color": "#00843D",
+      "power": 63,
+      "flag": "ng"
+    },
+    {
+      "id": "caf64-58",
+      "name": "Al Hilal Benghazi",
+      "color": "#0055A4",
+      "power": 62,
+      "flag": "ly"
+    },
+    {
+      "id": "caf64-59",
+      "name": "Gor Mahia",
+      "color": "#00843D",
+      "power": 62,
+      "flag": "ke"
+    },
+    {
+      "id": "caf64-60",
+      "name": "Africa Sports",
+      "color": "#00843D",
+      "power": 62,
+      "flag": "ci"
+    },
+    {
+      "id": "caf64-61",
+      "name": "ASC Jaraaf",
+      "color": "#000000",
+      "power": 62,
+      "flag": "sn"
+    },
+    {
+      "id": "caf64-62",
+      "name": "DC Motema Pembe",
+      "color": "#00843D",
+      "power": 62,
+      "flag": "cd"
+    },
+    {
+      "id": "caf64-63",
+      "name": "Olympic Safi",
+      "color": "#000000",
+      "power": 62,
+      "flag": "ma"
+    },
+    {
+      "id": "caf64-64",
+      "name": "Dreams FC",
+      "color": "#C8102E",
+      "power": 62,
+      "flag": "gh"
+    }
+  ]
+}

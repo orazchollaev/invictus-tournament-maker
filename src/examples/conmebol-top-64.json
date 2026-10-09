@@ -1,0 +1,457 @@
+{
+  "label": "CONMEBOL Top 64 Clubs",
+  "description": "The 64 strongest clubs in South American football",
+  "order": 8.1,
+  "type": "club",
+  "category": "ranking",
+  "teams": [
+    {
+      "id": "cnm64-01",
+      "name": "Flamengo",
+      "color": "#E30613",
+      "power": 91,
+      "flag": "br"
+    },
+    {
+      "id": "cnm64-02",
+      "name": "Palmeiras",
+      "color": "#006437",
+      "power": 90,
+      "flag": "br"
+    },
+    {
+      "id": "cnm64-03",
+      "name": "River Plate",
+      "color": "#E30613",
+      "power": 88,
+      "flag": "ar"
+    },
+    {
+      "id": "cnm64-04",
+      "name": "Botafogo",
+      "color": "#000000",
+      "power": 87,
+      "flag": "br"
+    },
+    {
+      "id": "cnm64-05",
+      "name": "Boca Juniors",
+      "color": "#003B7A",
+      "power": 87,
+      "flag": "ar"
+    },
+    {
+      "id": "cnm64-06",
+      "name": "Fluminense",
+      "color": "#8A1538",
+      "power": 86,
+      "flag": "br"
+    },
+    {
+      "id": "cnm64-07",
+      "name": "Atlético Mineiro",
+      "color": "#000000",
+      "power": 85,
+      "flag": "br"
+    },
+    {
+      "id": "cnm64-08",
+      "name": "São Paulo",
+      "color": "#E30613",
+      "power": 85,
+      "flag": "br"
+    },
+    {
+      "id": "cnm64-09",
+      "name": "Internacional",
+      "color": "#E30613",
+      "power": 84,
+      "flag": "br"
+    },
+    {
+      "id": "cnm64-10",
+      "name": "Corinthians",
+      "color": "#000000",
+      "power": 84,
+      "flag": "br"
+    },
+    {
+      "id": "cnm64-11",
+      "name": "Cruzeiro",
+      "color": "#0033A0",
+      "power": 84,
+      "flag": "br"
+    },
+    {
+      "id": "cnm64-12",
+      "name": "Racing Club",
+      "color": "#6CABDD",
+      "power": 83,
+      "flag": "ar"
+    },
+    {
+      "id": "cnm64-13",
+      "name": "Peñarol",
+      "color": "#FFD100",
+      "power": 82,
+      "flag": "uy"
+    },
+    {
+      "id": "cnm64-14",
+      "name": "Liga de Quito",
+      "color": "#FFFFFF",
+      "power": 82,
+      "flag": "ec"
+    },
+    {
+      "id": "cnm64-15",
+      "name": "Independiente del Valle",
+      "color": "#000000",
+      "power": 82,
+      "flag": "ec"
+    },
+    {
+      "id": "cnm64-16",
+      "name": "Grêmio",
+      "color": "#0D80BF",
+      "power": 81,
+      "flag": "br"
+    },
+    {
+      "id": "cnm64-17",
+      "name": "Estudiantes de La Plata",
+      "color": "#E30613",
+      "power": 81,
+      "flag": "ar"
+    },
+    {
+      "id": "cnm64-18",
+      "name": "Vasco da Gama",
+      "color": "#000000",
+      "power": 80,
+      "flag": "br"
+    },
+    {
+      "id": "cnm64-19",
+      "name": "Bahia",
+      "color": "#0033A0",
+      "power": 80,
+      "flag": "br"
+    },
+    {
+      "id": "cnm64-20",
+      "name": "Vélez Sarsfield",
+      "color": "#0033A0",
+      "power": 80,
+      "flag": "ar"
+    },
+    {
+      "id": "cnm64-21",
+      "name": "Nacional",
+      "color": "#FFFFFF",
+      "power": 80,
+      "flag": "uy"
+    },
+    {
+      "id": "cnm64-22",
+      "name": "Athletico Paranaense",
+      "color": "#C8102E",
+      "power": 79,
+      "flag": "br"
+    },
+    {
+      "id": "cnm64-23",
+      "name": "Cerro Porteño",
+      "color": "#0033A0",
+      "power": 79,
+      "flag": "py"
+    },
+    {
+      "id": "cnm64-24",
+      "name": "Santos",
+      "color": "#000000",
+      "power": 78,
+      "flag": "br"
+    },
+    {
+      "id": "cnm64-25",
+      "name": "Fortaleza",
+      "color": "#0033A0",
+      "power": 78,
+      "flag": "br"
+    },
+    {
+      "id": "cnm64-26",
+      "name": "San Lorenzo",
+      "color": "#0033A0",
+      "power": 78,
+      "flag": "ar"
+    },
+    {
+      "id": "cnm64-27",
+      "name": "Independiente",
+      "color": "#E30613",
+      "power": 78,
+      "flag": "ar"
+    },
+    {
+      "id": "cnm64-28",
+      "name": "Talleres",
+      "color": "#0033A0",
+      "power": 78,
+      "flag": "ar"
+    },
+    {
+      "id": "cnm64-29",
+      "name": "Lanús",
+      "color": "#8A1538",
+      "power": 78,
+      "flag": "ar"
+    },
+    {
+      "id": "cnm64-30",
+      "name": "Olimpia",
+      "color": "#FFFFFF",
+      "power": 78,
+      "flag": "py"
+    },
+    {
+      "id": "cnm64-31",
+      "name": "Libertad",
+      "color": "#000000",
+      "power": 78,
+      "flag": "py"
+    },
+    {
+      "id": "cnm64-32",
+      "name": "Atlético Nacional",
+      "color": "#00843D",
+      "power": 78,
+      "flag": "co"
+    },
+    {
+      "id": "cnm64-33",
+      "name": "RB Bragantino",
+      "color": "#E30613",
+      "power": 77,
+      "flag": "br"
+    },
+    {
+      "id": "cnm64-34",
+      "name": "Rosario Central",
+      "color": "#FFD100",
+      "power": 77,
+      "flag": "ar"
+    },
+    {
+      "id": "cnm64-35",
+      "name": "Junior",
+      "color": "#E30613",
+      "power": 77,
+      "flag": "co"
+    },
+    {
+      "id": "cnm64-36",
+      "name": "Colo-Colo",
+      "color": "#FFFFFF",
+      "power": 77,
+      "flag": "cl"
+    },
+    {
+      "id": "cnm64-37",
+      "name": "Argentinos Juniors",
+      "color": "#E30613",
+      "power": 76,
+      "flag": "ar"
+    },
+    {
+      "id": "cnm64-38",
+      "name": "Barcelona SC",
+      "color": "#FFD100",
+      "power": 76,
+      "flag": "ec"
+    },
+    {
+      "id": "cnm64-39",
+      "name": "Millonarios",
+      "color": "#0033A0",
+      "power": 76,
+      "flag": "co"
+    },
+    {
+      "id": "cnm64-40",
+      "name": "Universidad de Chile",
+      "color": "#0033A0",
+      "power": 76,
+      "flag": "cl"
+    },
+    {
+      "id": "cnm64-41",
+      "name": "Universitario",
+      "color": "#F5E6B0",
+      "power": 76,
+      "flag": "pe"
+    },
+    {
+      "id": "cnm64-42",
+      "name": "Alianza Lima",
+      "color": "#0033A0",
+      "power": 75,
+      "flag": "pe"
+    },
+    {
+      "id": "cnm64-43",
+      "name": "Sporting Cristal",
+      "color": "#6CABDD",
+      "power": 75,
+      "flag": "pe"
+    },
+    {
+      "id": "cnm64-44",
+      "name": "Newell's Old Boys",
+      "color": "#E30613",
+      "power": 74,
+      "flag": "ar"
+    },
+    {
+      "id": "cnm64-45",
+      "name": "Huracán",
+      "color": "#FFFFFF",
+      "power": 74,
+      "flag": "ar"
+    },
+    {
+      "id": "cnm64-46",
+      "name": "Deportes Tolima",
+      "color": "#8A1538",
+      "power": 74,
+      "flag": "co"
+    },
+    {
+      "id": "cnm64-47",
+      "name": "Universidad Católica",
+      "color": "#0033A0",
+      "power": 74,
+      "flag": "cl"
+    },
+    {
+      "id": "cnm64-48",
+      "name": "Bolívar",
+      "color": "#6CABDD",
+      "power": 73,
+      "flag": "bo"
+    },
+    {
+      "id": "cnm64-49",
+      "name": "Vitória",
+      "color": "#C8102E",
+      "power": 72,
+      "flag": "br"
+    },
+    {
+      "id": "cnm64-50",
+      "name": "Defensa y Justicia",
+      "color": "#FFD100",
+      "power": 72,
+      "flag": "ar"
+    },
+    {
+      "id": "cnm64-51",
+      "name": "Belgrano",
+      "color": "#6CABDD",
+      "power": 72,
+      "flag": "ar"
+    },
+    {
+      "id": "cnm64-52",
+      "name": "Emelec",
+      "color": "#0033A0",
+      "power": 72,
+      "flag": "ec"
+    },
+    {
+      "id": "cnm64-53",
+      "name": "América de Cali",
+      "color": "#E30613",
+      "power": 72,
+      "flag": "co"
+    },
+    {
+      "id": "cnm64-54",
+      "name": "Independiente Santa Fe",
+      "color": "#E30613",
+      "power": 72,
+      "flag": "co"
+    },
+    {
+      "id": "cnm64-55",
+      "name": "The Strongest",
+      "color": "#FFD100",
+      "power": 72,
+      "flag": "bo"
+    },
+    {
+      "id": "cnm64-56",
+      "name": "Ceará",
+      "color": "#000000",
+      "power": 70,
+      "flag": "br"
+    },
+    {
+      "id": "cnm64-57",
+      "name": "Sport Recife",
+      "color": "#C8102E",
+      "power": 70,
+      "flag": "br"
+    },
+    {
+      "id": "cnm64-58",
+      "name": "Mirassol",
+      "color": "#FFD100",
+      "power": 70,
+      "flag": "br"
+    },
+    {
+      "id": "cnm64-59",
+      "name": "Coritiba",
+      "color": "#00843D",
+      "power": 70,
+      "flag": "br"
+    },
+    {
+      "id": "cnm64-60",
+      "name": "Banfield",
+      "color": "#00843D",
+      "power": 70,
+      "flag": "ar"
+    },
+    {
+      "id": "cnm64-61",
+      "name": "Godoy Cruz",
+      "color": "#0033A0",
+      "power": 70,
+      "flag": "ar"
+    },
+    {
+      "id": "cnm64-62",
+      "name": "Juventude",
+      "color": "#00843D",
+      "power": 68,
+      "flag": "br"
+    },
+    {
+      "id": "cnm64-63",
+      "name": "Tigre",
+      "color": "#0033A0",
+      "power": 68,
+      "flag": "ar"
+    },
+    {
+      "id": "cnm64-64",
+      "name": "Guaraní",
+      "color": "#FFD100",
+      "power": 68,
+      "flag": "py"
+    }
+  ]
+}

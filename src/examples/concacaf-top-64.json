@@ -1,0 +1,457 @@
+{
+  "label": "CONCACAF Top 64 Clubs",
+  "description": "The 64 strongest clubs in North and Central American and Caribbean football",
+  "order": 8.4,
+  "type": "club",
+  "category": "ranking",
+  "teams": [
+    {
+      "id": "cnc64-01",
+      "name": "Toluca",
+      "color": "#C8102E",
+      "power": 88,
+      "flag": "mx"
+    },
+    {
+      "id": "cnc64-02",
+      "name": "América",
+      "color": "#F7C600",
+      "power": 87,
+      "flag": "mx"
+    },
+    {
+      "id": "cnc64-03",
+      "name": "Cruz Azul",
+      "color": "#0057B8",
+      "power": 86,
+      "flag": "mx"
+    },
+    {
+      "id": "cnc64-04",
+      "name": "Inter Miami",
+      "color": "#F7B5CD",
+      "power": 85,
+      "flag": "us"
+    },
+    {
+      "id": "cnc64-05",
+      "name": "Monterrey",
+      "color": "#1F4788",
+      "power": 84,
+      "flag": "mx"
+    },
+    {
+      "id": "cnc64-06",
+      "name": "Tigres UANL",
+      "color": "#F5C400",
+      "power": 82,
+      "flag": "mx"
+    },
+    {
+      "id": "cnc64-07",
+      "name": "Seattle Sounders",
+      "color": "#5D9741",
+      "power": 82,
+      "flag": "us"
+    },
+    {
+      "id": "cnc64-08",
+      "name": "Los Angeles FC",
+      "color": "#C39E6D",
+      "power": 81,
+      "flag": "us"
+    },
+    {
+      "id": "cnc64-09",
+      "name": "Pachuca",
+      "color": "#0033A0",
+      "power": 80,
+      "flag": "mx"
+    },
+    {
+      "id": "cnc64-10",
+      "name": "Guadalajara",
+      "color": "#C8102E",
+      "power": 80,
+      "flag": "mx"
+    },
+    {
+      "id": "cnc64-11",
+      "name": "Columbus Crew",
+      "color": "#FFF200",
+      "power": 80,
+      "flag": "us"
+    },
+    {
+      "id": "cnc64-12",
+      "name": "FC Cincinnati",
+      "color": "#F36F21",
+      "power": 80,
+      "flag": "us"
+    },
+    {
+      "id": "cnc64-13",
+      "name": "LA Galaxy",
+      "color": "#FFD200",
+      "power": 79,
+      "flag": "us"
+    },
+    {
+      "id": "cnc64-14",
+      "name": "Vancouver Whitecaps",
+      "color": "#1E4D2B",
+      "power": 79,
+      "flag": "ca"
+    },
+    {
+      "id": "cnc64-15",
+      "name": "Pumas UNAM",
+      "color": "#002D62",
+      "power": 78,
+      "flag": "mx"
+    },
+    {
+      "id": "cnc64-16",
+      "name": "León",
+      "color": "#00843D",
+      "power": 78,
+      "flag": "mx"
+    },
+    {
+      "id": "cnc64-17",
+      "name": "Philadelphia Union",
+      "color": "#002B5C",
+      "power": 78,
+      "flag": "us"
+    },
+    {
+      "id": "cnc64-18",
+      "name": "Orlando City",
+      "color": "#612B9B",
+      "power": 77,
+      "flag": "us"
+    },
+    {
+      "id": "cnc64-19",
+      "name": "Alajuelense",
+      "color": "#C8102E",
+      "power": 76,
+      "flag": "cr"
+    },
+    {
+      "id": "cnc64-20",
+      "name": "New York Red Bulls",
+      "color": "#ED1E36",
+      "power": 76,
+      "flag": "us"
+    },
+    {
+      "id": "cnc64-21",
+      "name": "New York City FC",
+      "color": "#6CACE4",
+      "power": 76,
+      "flag": "us"
+    },
+    {
+      "id": "cnc64-22",
+      "name": "Santos Laguna",
+      "color": "#00843D",
+      "power": 75,
+      "flag": "mx"
+    },
+    {
+      "id": "cnc64-23",
+      "name": "San Diego FC",
+      "color": "#FF6B35",
+      "power": 75,
+      "flag": "us"
+    },
+    {
+      "id": "cnc64-24",
+      "name": "Saprissa",
+      "color": "#5A2D82",
+      "power": 74,
+      "flag": "cr"
+    },
+    {
+      "id": "cnc64-25",
+      "name": "Olimpia",
+      "color": "#FFFFFF",
+      "power": 74,
+      "flag": "hn"
+    },
+    {
+      "id": "cnc64-26",
+      "name": "Toronto FC",
+      "color": "#B81137",
+      "power": 74,
+      "flag": "ca"
+    },
+    {
+      "id": "cnc64-27",
+      "name": "Atlanta United",
+      "color": "#80000A",
+      "power": 74,
+      "flag": "us"
+    },
+    {
+      "id": "cnc64-28",
+      "name": "Nashville SC",
+      "color": "#ECE83A",
+      "power": 73,
+      "flag": "us"
+    },
+    {
+      "id": "cnc64-29",
+      "name": "CF Montréal",
+      "color": "#0033A1",
+      "power": 73,
+      "flag": "ca"
+    },
+    {
+      "id": "cnc64-30",
+      "name": "Tijuana",
+      "color": "#E4002B",
+      "power": 73,
+      "flag": "mx"
+    },
+    {
+      "id": "cnc64-31",
+      "name": "Herediano",
+      "color": "#FFD100",
+      "power": 72,
+      "flag": "cr"
+    },
+    {
+      "id": "cnc64-32",
+      "name": "Real Salt Lake",
+      "color": "#B30838",
+      "power": 72,
+      "flag": "us"
+    },
+    {
+      "id": "cnc64-33",
+      "name": "Portland Timbers",
+      "color": "#004812",
+      "power": 72,
+      "flag": "us"
+    },
+    {
+      "id": "cnc64-34",
+      "name": "Atlas",
+      "color": "#C8102E",
+      "power": 72,
+      "flag": "mx"
+    },
+    {
+      "id": "cnc64-35",
+      "name": "Motagua",
+      "color": "#0057B8",
+      "power": 70,
+      "flag": "hn"
+    },
+    {
+      "id": "cnc64-36",
+      "name": "Necaxa",
+      "color": "#C8102E",
+      "power": 70,
+      "flag": "mx"
+    },
+    {
+      "id": "cnc64-37",
+      "name": "Austin FC",
+      "color": "#00B140",
+      "power": 70,
+      "flag": "us"
+    },
+    {
+      "id": "cnc64-38",
+      "name": "Minnesota United",
+      "color": "#8CD2F4",
+      "power": 70,
+      "flag": "us"
+    },
+    {
+      "id": "cnc64-39",
+      "name": "Municipal",
+      "color": "#C8102E",
+      "power": 69,
+      "flag": "gt"
+    },
+    {
+      "id": "cnc64-40",
+      "name": "Real España",
+      "color": "#F5C400",
+      "power": 68,
+      "flag": "hn"
+    },
+    {
+      "id": "cnc64-41",
+      "name": "Comunicaciones",
+      "color": "#FFFFFF",
+      "power": 68,
+      "flag": "gt"
+    },
+    {
+      "id": "cnc64-42",
+      "name": "Querétaro",
+      "color": "#0057B8",
+      "power": 68,
+      "flag": "mx"
+    },
+    {
+      "id": "cnc64-43",
+      "name": "Puebla",
+      "color": "#0033A0",
+      "power": 68,
+      "flag": "mx"
+    },
+    {
+      "id": "cnc64-44",
+      "name": "Houston Dynamo",
+      "color": "#FF6B00",
+      "power": 68,
+      "flag": "us"
+    },
+    {
+      "id": "cnc64-45",
+      "name": "New England Revolution",
+      "color": "#0A2240",
+      "power": 68,
+      "flag": "us"
+    },
+    {
+      "id": "cnc64-46",
+      "name": "FC Dallas",
+      "color": "#BF0D3E",
+      "power": 68,
+      "flag": "us"
+    },
+    {
+      "id": "cnc64-47",
+      "name": "Sporting Kansas City",
+      "color": "#93B1D7",
+      "power": 68,
+      "flag": "us"
+    },
+    {
+      "id": "cnc64-48",
+      "name": "Xelajú",
+      "color": "#C8102E",
+      "power": 67,
+      "flag": "gt"
+    },
+    {
+      "id": "cnc64-49",
+      "name": "Cartaginés",
+      "color": "#0057B8",
+      "power": 66,
+      "flag": "cr"
+    },
+    {
+      "id": "cnc64-50",
+      "name": "San Luis",
+      "color": "#0057B8",
+      "power": 66,
+      "flag": "mx"
+    },
+    {
+      "id": "cnc64-51",
+      "name": "Charlotte FC",
+      "color": "#1A85C8",
+      "power": 66,
+      "flag": "us"
+    },
+    {
+      "id": "cnc64-52",
+      "name": "Chicago Fire",
+      "color": "#7CCDEF",
+      "power": 66,
+      "flag": "us"
+    },
+    {
+      "id": "cnc64-53",
+      "name": "St. Louis City SC",
+      "color": "#DD0031",
+      "power": 66,
+      "flag": "us"
+    },
+    {
+      "id": "cnc64-54",
+      "name": "Colorado Rapids",
+      "color": "#862633",
+      "power": 66,
+      "flag": "us"
+    },
+    {
+      "id": "cnc64-55",
+      "name": "Mazatlán",
+      "color": "#5A2D82",
+      "power": 64,
+      "flag": "mx"
+    },
+    {
+      "id": "cnc64-56",
+      "name": "FC Juárez",
+      "color": "#00843D",
+      "power": 64,
+      "flag": "mx"
+    },
+    {
+      "id": "cnc64-57",
+      "name": "D.C. United",
+      "color": "#EF3E42",
+      "power": 64,
+      "flag": "us"
+    },
+    {
+      "id": "cnc64-58",
+      "name": "Forge FC",
+      "color": "#F7941D",
+      "power": 63,
+      "flag": "ca"
+    },
+    {
+      "id": "cnc64-59",
+      "name": "Mount Pleasant",
+      "color": "#F7D117",
+      "power": 62,
+      "flag": "jm"
+    },
+    {
+      "id": "cnc64-60",
+      "name": "Sporting San Miguelito",
+      "color": "#0057B8",
+      "power": 62,
+      "flag": "pa"
+    },
+    {
+      "id": "cnc64-61",
+      "name": "Tauro FC",
+      "color": "#000000",
+      "power": 62,
+      "flag": "pa"
+    },
+    {
+      "id": "cnc64-62",
+      "name": "Alianza FC",
+      "color": "#FFFFFF",
+      "power": 62,
+      "flag": "sv"
+    },
+    {
+      "id": "cnc64-63",
+      "name": "Marathón",
+      "color": "#00843D",
+      "power": 62,
+      "flag": "hn"
+    },
+    {
+      "id": "cnc64-64",
+      "name": "Atlético Ottawa",
+      "color": "#E21B2D",
+      "power": 61,
+      "flag": "ca"
+    }
+  ]
+}
