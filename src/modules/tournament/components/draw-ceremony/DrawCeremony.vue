@@ -75,7 +75,7 @@ const {
   preview: adPreview,
   height: adHeight,
 } = useBannerAd(DRAW_CEREMONY_BANNER_ID, {
-  visible: () => panelSettled.value && !!adSlot.value,
+  visible: () => panelSettled.value && !!adSlot.value && phase.value !== "done",
   edge: "bottom",
   offset: () => `${window.innerHeight - (adSlot.value?.getBoundingClientRect().bottom ?? 0)}px`,
 })
