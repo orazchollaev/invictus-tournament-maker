@@ -1,5 +1,15 @@
 # Changelog
 
+## [3.4.3](https://github.com/orazchollaev/invictus-tournament-maker/compare/v3.4.2...v3.4.3) (2026-10-10)
+
+### 🐛 Bug Fixes
+
+- **ads:** load ads on demand to stop WebView memory starvation on Android ([3fc0ecb](https://github.com/orazchollaev/invictus-tournament-maker/commit/3fc0ecbb1963680fc5b5300f696562516e574119))
+
+### 🔧 Maintenance
+
+- bump gradle ([ae75fe3](https://github.com/orazchollaev/invictus-tournament-maker/commit/ae75fe3c884ac59b13c754fd25218fbb33c1b757))
+
 ## [3.4.2](https://github.com/orazchollaev/invictus-tournament-maker/compare/v3.4.1...v3.4.2) (2026-10-10)
 
 ### 🚀 New Features
