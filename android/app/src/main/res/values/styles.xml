@@ -13,6 +13,10 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:background">@null</item>
+        <!-- Anything the WebView has not painted yet (GPU tile drops next to the
+             ad WebView, layer re-creation) shows through to this. Without it the
+             DayNight default is pure white. -->
+        <item name="android:windowBackground">#16181a</item>
     </style>
 
 

@@ -47,6 +47,8 @@ const settled = ref<T>(props.modelValue)
 const target = ref<T | null>(null)
 /** Which settled pane currently has its neighbours mounted. */
 const neighboursFor = ref<T | null>(null)
+/** True from touch start until the pane settles; only then do resting neighbours paint. */
+const armed = ref(false)
 
 const settledIdx = computed(() => props.tabs.indexOf(settled.value))
 
@@ -78,6 +80,10 @@ function paneStyle(tab: T) {
   const slot = slotOf(tab)
   if (slot === null) return { visibility: "hidden" as const }
   if (slot === 0) return undefined
+  // A resting neighbour with a 3D transform is a permanent full-screen GPU
+  // layer. Next to the ad's own WebView that exhausts tile memory and the
+  // page turns white on Android, so neighbours only paint once a touch starts.
+  if (target.value === null && !armed.value) return { visibility: "hidden" as const }
   return { transform: `translate3d(calc(${slot} * (100% + ${props.gap}px)), 0, 0)` }
 }
 
@@ -136,6 +142,7 @@ function onTransitionEnd(e: TransitionEvent) {
 function land() {
   if (target.value !== null) settled.value = target.value
   target.value = null
+  armed.value = false
   setTrack("")
   scheduleNeighbours()
 }
@@ -230,6 +237,7 @@ function onTouchStart(e: TouchEvent) {
   if (node?.closest(".no-swipe")) return
   snapToTarget()
   mountNeighboursNow()
+  armed.value = true
   const t = e.touches[0]
   gesture = {
     startX: t.clientX,
@@ -253,6 +261,7 @@ function onTouchMove(e: TouchEvent) {
     if (Math.abs(dx) < LOCK_PX && Math.abs(dy) < LOCK_PX) return
     if (Math.abs(dy) >= Math.abs(dx) || innerScrollerTakes(g.origin, dx)) {
       gesture = null
+      armed.value = false
       return
     }
     g.locked = "x"
@@ -279,7 +288,10 @@ function onTouchEnd(e: TouchEvent) {
   gesture = null
   cancelAnimationFrame(dragFrame)
   dragFrame = 0
-  if (!g || g.locked !== "x") return
+  if (!g || g.locked !== "x") {
+    armed.value = false
+    return
+  }
 
   const first = g.samples[0]
   const last = g.samples[g.samples.length - 1]
@@ -298,7 +310,10 @@ function onTouchEnd(e: TouchEvent) {
 
   if (step === 0 || next === undefined) {
     const ms = scaledDuration(Math.abs(g.dx) / width)
-    animateTrack("translate3d(0, 0, 0)", ms, () => setTrack(""))
+    animateTrack("translate3d(0, 0, 0)", ms, () => {
+      armed.value = false
+      setTrack("")
+    })
     return
   }
 
@@ -311,6 +326,7 @@ function onTouchEnd(e: TouchEvent) {
 function cancelDrag() {
   if (!gesture) return
   gesture = null
+  armed.value = false
   cancelAnimationFrame(dragFrame)
   dragFrame = 0
   setTrack("")

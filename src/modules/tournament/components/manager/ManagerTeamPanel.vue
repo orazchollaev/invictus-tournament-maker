@@ -54,45 +54,15 @@ import {
   playedMatches,
 } from "@/engine"
 import { useHaptic } from "@/composables/useHaptic"
-import { useBannerAd } from "@/composables/useBannerAd"
 import type { Formation, PlayStyle } from "@/modules/teams/types"
 import type { PlayerPosition } from "@/modules/players/types"
 import type { MatchEntry } from "@/engine"
 
-const props = defineProps<{ tournamentId: string; active: boolean }>()
+const props = defineProps<{ tournamentId: string }>()
 
 const { t } = useI18n()
 const { engineLabel } = useEngineLabels()
 
-const MANAGER_MODE_BANNER_ID = "ca-app-pub-5867331300737777/1358968605"
-const adSlot = ref<HTMLElement | null>(null)
-const scrolledToTop = ref(true)
-
-// The native banner can't scroll with the page, so it is pinned over the
-// slot only while the panel sits at the top, and hidden once it scrolls.
-watch(adSlot, (slot, _, onCleanup) => {
-  let scroller = slot?.parentElement ?? null
-  while (scroller && !/(auto|scroll)/.test(getComputedStyle(scroller).overflowY)) {
-    scroller = scroller.parentElement
-  }
-  if (!scroller) return
-  const el = scroller
-  const onScroll = () => (scrolledToTop.value = el.scrollTop <= 1)
-  onScroll()
-  el.addEventListener("scroll", onScroll, { passive: true })
-  onCleanup(() => el.removeEventListener("scroll", onScroll))
-})
-
-const {
-  enabled: hasBanner,
-  preview: adPreview,
-  height: adHeight,
-} = useBannerAd(MANAGER_MODE_BANNER_ID, {
-  visible: () => props.active && scrolledToTop.value && !!adSlot.value,
-  edge: "top",
-  offset: () => `${adSlot.value?.getBoundingClientRect().top ?? 0}px`,
-  hideUnderOverlays: true,
-})
 const store = useTournamentStore()
 const teamsStore = useTeamsStore()
 const playersStore = usePlayersStore()
@@ -451,15 +421,6 @@ function open11() {
       </div>
     </section>
 
-    <!-- Space the native banner is pinned over; a red preview in dev. -->
-    <div
-      v-if="hasBanner || adPreview"
-      ref="adSlot"
-      class="mp-ad-slot"
-      :class="{ 'mp-ad-slot--preview': adPreview }"
-      :style="{ height: `${adHeight}px` }"
-    />
-
     <AppCard padding="md">
       <template #title>{{ t("manager.panel.tactics") }}</template>
       <div class="mp-tactics">
@@ -537,16 +498,6 @@ function open11() {
   flex-direction: column;
   gap: var(--sp-3);
   padding-bottom: var(--sp-3);
-}
-
-/* Height comes from the banner itself: adaptive banners vary by screen width. */
-.mp-ad-slot {
-  flex-shrink: 0;
-  align-self: stretch;
-}
-
-.mp-ad-slot--preview {
-  background: var(--danger);
 }
 
 /* ── Hero: who you are, where you stand, what's next ── */

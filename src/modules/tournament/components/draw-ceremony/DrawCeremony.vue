@@ -9,7 +9,6 @@ import type { CeremonyContext, Pot, DrawPlan } from "@/engine"
 import { useSettingsStore } from "@/modules/settings/store"
 import { useDrawCeremony } from "@/modules/tournament/composables/useDrawCeremony"
 import { useHaptic } from "@/composables/useHaptic"
-import { useBannerAd } from "@/composables/useBannerAd"
 import PotEditor from "./PotEditor.vue"
 import DrawStage from "./DrawStage.vue"
 import DrawTeamPanel from "./DrawTeamPanel.vue"
@@ -64,22 +63,6 @@ function togglePause() {
 const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
 const { tap: hapticTap, success: hapticSuccess } = useHaptic()
 
-const DRAW_CEREMONY_BANNER_ID = "ca-app-pub-5867331300737777/5298213617"
-const adSlot = ref<HTMLElement | null>(null)
-// The panel animates in, so the slot is only measured once it has settled.
-const panelSettled = ref(false)
-onMounted(() => setTimeout(() => (panelSettled.value = true), 1000))
-
-const {
-  enabled: hasBanner,
-  preview: adPreview,
-  height: adHeight,
-} = useBannerAd(DRAW_CEREMONY_BANNER_ID, {
-  visible: () => panelSettled.value && !!adSlot.value && phase.value !== "done",
-  edge: "bottom",
-  offset: () => `${window.innerHeight - (adSlot.value?.getBoundingClientRect().bottom ?? 0)}px`,
-})
-
 // ── Team management ──────────────────────────────────────────
 const localTeamIds = ref(props.context.teams.map((tm) => tm.id))
 
@@ -120,7 +103,7 @@ onUnmounted(() => {
 
 <template>
   <div class="dc-backdrop">
-    <div class="dc-panel" role="dialog" aria-modal="true" @animationend.self="panelSettled = true">
+    <div class="dc-panel" role="dialog" aria-modal="true">
       <header class="dc-header">
         <span class="dc-title">{{ title }}</span>
         <button class="dc-close" :aria-label="t('common.cancel')" @click="emit('cancel')">
@@ -173,15 +156,6 @@ onUnmounted(() => {
         @toggle-pause="togglePause"
         @complete="emit('complete', [...orderedIds])"
       />
-
-      <!-- Space the native banner is pinned over; a red preview in dev. -->
-      <div
-        v-if="hasBanner || adPreview"
-        ref="adSlot"
-        class="dc-ad-slot"
-        :class="{ 'dc-ad-slot--preview': adPreview }"
-        :style="{ height: `${adHeight}px` }"
-      />
     </div>
   </div>
 </template>
@@ -231,16 +205,6 @@ onUnmounted(() => {
   overflow: hidden;
   padding-top: var(--safe-top);
   animation: dc-panel-in var(--dur-slow) cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
-/* Height comes from the banner itself: adaptive banners vary by screen width. */
-.dc-ad-slot {
-  flex-shrink: 0;
-  align-self: stretch;
-}
-
-.dc-ad-slot--preview {
-  background: var(--danger);
 }
 
 .dc-header {
@@ -305,13 +269,8 @@ onUnmounted(() => {
   .dc-backdrop {
     padding: 0;
   }
-  /* The banner slot is now the bottom edge, so it clears the system bar
-     instead of the footer. */
   .dc-panel :deep(.dc-footer) {
-    padding-bottom: var(--sp-3);
-  }
-  .dc-ad-slot {
-    margin-bottom: var(--safe-bottom);
+    padding-bottom: calc(var(--sp-3) + var(--safe-bottom));
   }
   .dc-panel {
     width: 100%;

@@ -229,7 +229,7 @@ const showStartPlayoffButton = computed(
         <AppSwipeView v-model="activeTab" :tabs="visibleTabs">
           <template #default="{ tab }">
             <div v-if="tab === 'manager'" class="tab-panel">
-              <ManagerTeamPanel :tournament-id="tournament.id" :active="activeTab === 'manager'" />
+              <ManagerTeamPanel :tournament-id="tournament.id" />
             </div>
             <!-- Custom format: one slide per phase. The panel resolves the
                    phase itself, so this page asks for it once instead of a
