@@ -2,15 +2,27 @@
 import { computed, onMounted, onUnmounted, ref, watch } from "vue"
 import { useRouter } from "vue-router"
 import { App } from "@capacitor/app"
-import { AppHeader, AppMobileBottomNav, ErrorBoundary } from "@/components/layout"
+import { AppHeader, AppMobileBottomNav, AppOnboarding, ErrorBoundary } from "@/components/layout"
 import { AppDialog } from "@/components/ui"
 import { MusicController } from "@/modules/music/components"
 import { useSettingsStore } from "@/modules/settings/store"
+import { useTeamsStore } from "@/modules/teams/store"
+import { useTournamentStore } from "@/modules/tournament/store"
 import { useStatusBar } from "@/composables/useStatusBar"
 import { logEvent } from "@/composables/useAnalytics"
 import { flushPendingSaves } from "@/modules/tournament/services/persistence"
 
 const settings = useSettingsStore()
+
+// The flag is new, so everyone who updated has it unset. Anyone with data is
+// not a first-time user: stores are hydrated before the app mounts.
+if (
+  !settings.onboardingSeen &&
+  (useTournamentStore().tournaments.length > 0 || useTeamsStore().teams.length > 0)
+) {
+  settings.onboardingSeen = true
+}
+
 const { setTheme } = useStatusBar()
 watch(() => settings.theme, setTheme, { immediate: true })
 
@@ -86,6 +98,7 @@ onUnmounted(() => {
       </ErrorBoundary>
     </main>
     <AppDialog />
+    <AppOnboarding v-if="!settings.onboardingSeen" />
     <MusicController />
     <Transition name="mobile-nav">
       <AppMobileBottomNav v-if="!hideBottomNav" />

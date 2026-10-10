@@ -67,6 +67,10 @@ async function showIfDue() {
 export function initAppOpenAd() {
   if (!Capacitor.isNativePlatform() || started) return
   started = true
+  // First launch: start the interval clock now, so a new user's first app-open
+  // ad is a full interval away and never lands during or right after onboarding.
+  if (!localStorage.getItem(LAST_SHOWN_KEY))
+    localStorage.setItem(LAST_SHOWN_KEY, String(Date.now()))
   void preload().catch(() => {})
   void App.addListener("appStateChange", ({ isActive }) => {
     if (!isActive) {

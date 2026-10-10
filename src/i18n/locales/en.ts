@@ -50,6 +50,24 @@
     history: "History",
     settings: "Settings",
   },
+  onboarding: {
+    label: "Welcome",
+    skip: "Skip",
+    next: "Next",
+    start: "Get started",
+    build: {
+      title: "Build any tournament",
+      desc: "Leagues, groups, knockouts, Swiss or your own custom format. Set it up in a minute.",
+    },
+    squad: {
+      title: "Bring your teams",
+      desc: "Add teams and players yourself, or load a ready-made set from Settings.",
+    },
+    play: {
+      title: "Play it out",
+      desc: "Simulate matches, watch the table move and keep every season in your history.",
+    },
+  },
   guide: {
     title: "How to Use",
     intro: "New here? Follow these steps to build and simulate your first tournament.",

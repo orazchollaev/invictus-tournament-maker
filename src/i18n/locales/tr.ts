@@ -50,6 +50,24 @@
     history: "Geçmiş",
     settings: "Ayarlar",
   },
+  onboarding: {
+    label: "Hoş geldin",
+    skip: "Geç",
+    next: "İleri",
+    start: "Başla",
+    build: {
+      title: "İstediğin turnuvayı kur",
+      desc: "Lig, gruplar, eleme, İsviçre veya kendi özel formatın. Bir dakikada hazır.",
+    },
+    squad: {
+      title: "Takımlarını ekle",
+      desc: "Takım ve oyuncuları kendin ekle ya da Ayarlar'dan hazır bir liste yükle.",
+    },
+    play: {
+      title: "Oyna",
+      desc: "Maçları simüle et, tablonun değişimini izle, her sezon geçmişinde kalsın.",
+    },
+  },
   guide: {
     title: "Nasıl Kullanılır",
     intro:

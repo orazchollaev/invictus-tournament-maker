@@ -43,6 +43,8 @@ export const useSettingsStore = defineStore("settings", () => {
    * with an explanation until they say they have read it.
    */
   const phasesGuideSeen = ref(false)
+  /** First-launch walkthrough finished or skipped. Not part of resetAll: a reset must not replay it. */
+  const onboardingSeen = ref(false)
   const newSeasonDrawType = ref<DrawType>("random")
   const newSeasonGroupDrawType = ref<DrawType>("random")
   const newSeasonPlayoffSeedMode = ref<PlayoffSeedMode>("cross")
@@ -258,6 +260,7 @@ export const useSettingsStore = defineStore("settings", () => {
     historySortAsc,
     liveEventFilter,
     phasesGuideSeen,
+    onboardingSeen,
     resetAll,
   }
 })
