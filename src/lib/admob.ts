@@ -1,5 +1,4 @@
 import { ref } from "vue"
-import { Capacitor } from "@capacitor/core"
 
 type AdMobModule = typeof import("@capacitor-community/admob")
 
@@ -28,7 +27,13 @@ async function gatherConsent({ AdMob, AdmobConsentStatus }: AdMobModule) {
   }
 }
 
-/** Lazy-loads the AdMob plugin and initializes it once. Callers check the native platform first. */
+/**
+ * Lazy-loads the AdMob plugin and initializes it once, on the first ad that is
+ * actually due. Nothing starts at launch: the SDK and every loaded ad hold
+ * their own WebView, and keeping them alive next to the app's WebView exhausted
+ * GPU/tile memory on Android (white boxes, white screen, renderer crashes).
+ * Callers check the native platform first.
+ */
 export function loadAdMob() {
   loaded ??= import("@capacitor-community/admob").then(async (mod) => {
     await mod.AdMob.initialize()
@@ -36,19 +41,6 @@ export function loadAdMob() {
     return mod
   })
   return loaded
-}
-
-/**
- * Starts AdMob at launch rather than at the first ad, so a due consent form
- * shows on the home screen instead of over a draw or a match, and the first
- * ad request is not also paying for SDK start-up.
- */
-export function initAds() {
-  if (!Capacitor.isNativePlatform()) return Promise.resolve()
-  return loadAdMob().then(
-    () => undefined,
-    () => undefined
-  )
 }
 
 /** Reopens the consent form so the user can change their choice. */

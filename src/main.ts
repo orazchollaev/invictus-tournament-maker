@@ -8,10 +8,7 @@ import i18n, { isRtl, loadLocale } from "./i18n"
 import type { Locale } from "./i18n"
 import { initPush } from "./composables/usePush"
 import { initAnalytics, logScreenView, logError } from "./composables/useAnalytics"
-import { preloadInterstitialIfDue } from "./composables/useInterstitialAd"
-import { preloadRewardedIfDue } from "./composables/useRewardedAd"
 import { initAppOpenAd } from "./composables/useAppOpenAd"
-import { initAds } from "./lib/admob"
 import { idbStorage } from "./lib/idbStorage"
 import { useTournamentStore } from "./modules/tournament/store"
 import { useTeamsStore } from "./modules/teams/store"
@@ -141,11 +138,9 @@ async function bootstrap() {
 
   void initPush()
   void initAnalytics()
-  void initAds().then(() => {
-    preloadInterstitialIfDue()
-    preloadRewardedIfDue()
-    initAppOpenAd()
-  })
+  // Only the foreground listener starts here. AdMob itself, and every ad, is
+  // loaded when it is due — see lib/admob.ts for why nothing is held at launch.
+  initAppOpenAd()
   router.afterEach((to) => {
     void logScreenView(to.path)
   })

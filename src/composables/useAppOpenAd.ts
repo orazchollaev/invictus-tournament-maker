@@ -11,50 +11,33 @@ const MIN_INTERVAL_MS = 4 * 60 * 60_000
  * a consent form or another full-screen ad, or a quick app switch.
  */
 const MIN_BACKGROUND_MS = 60_000
-/** A loaded app-open ad expires after four hours; reload well before that. */
-const PRELOAD_TTL_MS = 3 * 60 * 60_000
 
-let preloaded: Promise<void> | null = null
-let preloadedAt = 0
 let backgroundedAt = 0
 let started = false
+let showing = false
 
 function readLastShown(): number {
   return parseInt(localStorage.getItem(LAST_SHOWN_KEY) ?? "0", 10) || 0
 }
 
-function preload() {
-  if (preloaded && Date.now() - preloadedAt < PRELOAD_TTL_MS) return preloaded
-  preloadedAt = Date.now()
-  const loading = loadAdMob().then(({ AdMob }) =>
-    AdMob.loadAppOpen({ adId: APP_OPEN_AD_UNIT_ID }).then(() => undefined)
-  )
-  preloaded = loading
-  loading.catch(() => {
-    if (preloaded === loading) preloaded = null
-  })
-  return loading
-}
-
 async function showIfDue() {
   const now = Date.now()
+  if (showing) return
   if (now - backgroundedAt < MIN_BACKGROUND_MS) return
   if (now - readLastShown() < MIN_INTERVAL_MS) return
+  showing = true
   try {
-    // Not loaded yet (or expired): start loading for the next return, no ad now.
-    if (!preloaded || now - preloadedAt >= PRELOAD_TTL_MS) {
-      void preload().catch(() => {})
-      return
-    }
-    await preloaded
-    preloaded = null
-    localStorage.setItem(LAST_SHOWN_KEY, String(now))
+    // Loaded only now and never kept: a loaded ad holds its own WebView, and
+    // preloading one for the whole session was part of what starved the app's
+    // WebView of GPU memory on Android.
     const { AdMob } = await loadAdMob()
+    await AdMob.loadAppOpen({ adId: APP_OPEN_AD_UNIT_ID })
+    localStorage.setItem(LAST_SHOWN_KEY, String(Date.now()))
     await AdMob.showAppOpen()
   } catch {
     // best-effort: silently ignore if unavailable
   } finally {
-    void preload().catch(() => {})
+    showing = false
   }
 }
 
@@ -71,7 +54,6 @@ export function initAppOpenAd() {
   // ad is a full interval away and never lands during or right after onboarding.
   if (!localStorage.getItem(LAST_SHOWN_KEY))
     localStorage.setItem(LAST_SHOWN_KEY, String(Date.now()))
-  void preload().catch(() => {})
   void App.addListener("appStateChange", ({ isActive }) => {
     if (!isActive) {
       backgroundedAt = Date.now()
