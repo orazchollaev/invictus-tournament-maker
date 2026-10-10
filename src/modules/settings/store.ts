@@ -3,7 +3,7 @@ import { ref, watch } from "vue"
 import type { LegMode, MatchEventType, PlayoffSeedMode } from "@/modules/tournament/types"
 import { setSimConfig, setTableConfig, setPowerResolver } from "@/engine"
 import type { Tiebreaker } from "@/modules/tournament/types"
-import { i18n, isRtl, loadLocale } from "@/i18n"
+import { detectLocale, i18n, isRtl, loadLocale } from "@/i18n"
 import type { Locale } from "@/i18n"
 import { usePlayersStore } from "@/modules/players/store"
 
@@ -26,7 +26,8 @@ const ALL_EVENT_TYPES: MatchEventType[] = ["goal", "penGoal", "ownGoal", "penMis
 export const useSettingsStore = defineStore("settings", () => {
   const theme = ref<Theme>("dark")
   const designLanguage = ref<DesignLanguage>("ios")
-  const locale = ref<Locale>("en")
+  // Phone language on first launch; a saved choice replaces it when settings hydrate.
+  const locale = ref<Locale>(detectLocale())
   const primaryColor = ref<string | null>(null)
   const groupLegMode = ref<LegMode>("single")
   const knockoutLegMode = ref<LegMode>("single")
@@ -165,7 +166,7 @@ export const useSettingsStore = defineStore("settings", () => {
   function resetAll() {
     theme.value = "dark"
     designLanguage.value = "ios"
-    locale.value = "en"
+    locale.value = detectLocale()
     primaryColor.value = null
     groupLegMode.value = "single"
     knockoutLegMode.value = "single"
