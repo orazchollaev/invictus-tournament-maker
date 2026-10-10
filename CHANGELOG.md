@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.4.2](https://github.com/orazchollaev/invictus-tournament-maker/compare/v3.4.1...v3.4.2) (2026-10-10)
+
+### 🚀 New Features
+
+- **ads:** show an app-open ad when returning after a long absence ([2e4cfce](https://github.com/orazchollaev/invictus-tournament-maker/commit/2e4cfce0c40b5d99087de74b7ccab916bc5c4520))
+- **i18n:** default to device language on first launch ([efb47c1](https://github.com/orazchollaev/invictus-tournament-maker/commit/efb47c14f7c7a765180cb1d7ed0bb213dc2c408c))
+- **onboarding:** add swipeable first-launch walkthrough ([297510d](https://github.com/orazchollaev/invictus-tournament-maker/commit/297510dfcb6e9baa7578d2c288177b6135bb331c))
+
+### 🐛 Bug Fixes
+
+- **ads:** remove banner ads, show interstitial every 3 tournaments ([609fa49](https://github.com/orazchollaev/invictus-tournament-maker/commit/609fa49ef115998fe21bf23d3c637fef17245306))
+
 ## [3.4.1](https://github.com/orazchollaev/invictus-tournament-maker/compare/v3.4.0...v3.4.1) (2026-10-09)
 
 ### 🔧 Maintenance
