@@ -11,7 +11,7 @@
 // over the match list and nothing more.
 import type { Player } from "@/modules/players/types"
 import type { Team } from "@/modules/teams/types"
-import type { Tournament, MatchStats, RedCard } from "@/modules/tournament/types"
+import type { Tournament, RedCard } from "@/modules/tournament/types"
 import { forEachMatch, playedMatches, isBye, type MatchEntry } from "../matchIterator"
 import { resolvePower } from "../power"
 import { teamFormation } from "../tactics"
@@ -22,6 +22,7 @@ import { isFatigueFactorEnabled, isInjuryFatigueImpactEnabled } from "../simulat
 import { buildLineup } from "./lineup"
 import { generateMatchStats } from "./generate"
 import { claimWatchedMatch, pendingKey } from "./pending"
+import { packStats, type PackedStats } from "./packStats"
 
 function squadsByTeam(players: Player[]): Map<string, Player[]> {
   const map = new Map<string, Player[]>()
@@ -67,7 +68,8 @@ export interface PendingStatsJob {
 export interface StatsJobResult {
   matchId: string
   leg: 1 | 2
-  stats: MatchStats
+  /** Packed here, in whichever thread rolled it, so a worker's reply is small too. */
+  stats: PackedStats
   /**
    * The score this report was generated for. A worker batch (see
    * `statsWorkerClient.ts`) can take long enough for the same match to be
@@ -151,7 +153,7 @@ export function claimWatchedStats(t: Tournament): boolean {
     const leg = "leg" in entry.source ? entry.source.leg : 1
     const watched = claimWatchedMatch(pendingKey(entry.match.id, leg), result)
     if (watched) {
-      result.stats = watched
+      result.stats = packStats(watched)
       changed = true
     }
   })
@@ -164,6 +166,17 @@ export function claimWatchedStats(t: Tournament): boolean {
  * to hand the list to a worker instead of generating on the main thread.
  */
 export function pendingStatsJobs(t: Tournament): PendingStatsJob[] {
+  // Every store action sweeps its tournament, and most find nothing to do. The
+  // injury and fatigue snapshots below read every played match's report, which
+  // means decoding them all — so look for work with a cheap pass first.
+  let anyPending = false
+  forEachMatch(t, (entry) => {
+    if (!anyPending && entry.result && entry.result.stats === undefined && !isBye(entry)) {
+      anyPending = true
+    }
+  })
+  if (!anyPending) return []
+
   // One pass over the whole tournament's history, snapshotted before any of
   // these jobs run — the same "computed once per sweep" approximation
   // fixtureAdjustments already makes for form and discipline. See
@@ -240,7 +253,7 @@ export function computeStatsForJob(
   return {
     matchId: job.matchId,
     leg: job.leg,
-    stats,
+    stats: packStats(stats),
     home: job.homeGoals,
     away: job.awayGoals,
     ...(job.penHome !== undefined && job.penAway !== undefined

@@ -17,6 +17,7 @@
 import type { Substitution, Tournament } from "../modules/tournament/types"
 import { forEachMatch, isBye } from "./matchIterator"
 import { isInjuriesEnabled } from "./simulation"
+import { statsOf } from "./events/packStats"
 
 /** Chance a side loses a player to injury in any given match. */
 export const INJURY_CHANCE = 0.06
@@ -127,12 +128,13 @@ export function tournamentInjuryMatches(t: Tournament): InjuryMatch[] {
     const result = entry.result
     if (!result || isBye(entry)) return
     const leg = "leg" in entry.source ? entry.source.leg : 1
+    const subs = statsOf(result)?.substitutions
     matches.push({
       matchId: entry.match.id,
       leg,
       homeId: entry.homeId,
       awayId: entry.awayId,
-      ...(result.stats?.substitutions ? { substitutions: result.stats.substitutions } : {}),
+      ...(subs ? { substitutions: subs } : {}),
     })
   })
   return matches

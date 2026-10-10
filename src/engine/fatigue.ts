@@ -15,6 +15,7 @@
 import type { PlayerPosition } from "../modules/players/types"
 import type { MatchResult } from "../modules/tournament/types"
 import { REGULATION_MINUTES } from "./periods"
+import { statsOf } from "./events/packStats"
 
 /** Fraction of a player's fatigue that survives one match to the next. */
 export const FATIGUE_DECAY_PER_MATCH = 0.5
@@ -92,7 +93,7 @@ export function computeFatigueByPlayer(
 
   for (const m of relevant) {
     const side = m.homeId === teamId ? "home" : "away"
-    const lines = m.result?.stats?.lines ?? []
+    const lines = statsOf(m.result)?.lines ?? []
     const loadByPlayer = new Map<string, number>()
     for (const line of lines) {
       if (!line.playerId || line.side !== side) continue
@@ -200,7 +201,7 @@ export function computeFatigueTeamAdjustments(
 
     const last = relevant[relevant.length - 1]
     const side = last?.homeId === id ? "home" : "away"
-    const lastXI = (last?.result?.stats?.lines ?? [])
+    const lastXI = (statsOf(last?.result)?.lines ?? [])
       .filter((l) => l.side === side && l.playerId)
       .map((l) => l.playerId as string)
 

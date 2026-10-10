@@ -125,13 +125,18 @@ const cache = new Map<string, string>()
 export function faceSvg(face: FaceConfig, crop: FaceCrop = "round"): string {
   const id = `${crop}|${JSON.stringify(face)}`
   let svg = cache.get(id)
-  if (!svg) {
-    svg = render(face)
-    if (crop === "round")
-      svg = svg.replace(/viewBox="[^"]*" preserveAspectRatio="[^"]*"/, ROUND_CROP)
-    if (cache.size > 500) cache.clear()
+  if (svg) {
+    // Move to the end so the least recently used face is the one dropped.
+    cache.delete(id)
     cache.set(id, svg)
+    return svg
   }
+  svg = render(face)
+  if (crop === "round") svg = svg.replace(/viewBox="[^"]*" preserveAspectRatio="[^"]*"/, ROUND_CROP)
+  cache.set(id, svg)
+  // Evict one at a time: with 1 000+ players (a 60-team tournament) clearing
+  // the whole cache at the cap made every visible avatar re-render at once.
+  if (cache.size > 500) cache.delete(cache.keys().next().value as string)
   return svg
 }
 

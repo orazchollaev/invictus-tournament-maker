@@ -14,6 +14,7 @@ import { useI18n } from "vue-i18n"
 import { ChartColumn, Goal, ListOrdered, Users } from "@lucide/vue"
 import { AppModal, AppSubTabBar } from "@/components/ui"
 import { useModal } from "@/composables/useModal"
+import { statsOf } from "@/engine"
 import { TeamBadge } from "@/modules/teams/components"
 import type { Team } from "@/modules/teams/types"
 import type { MatchResult } from "@/modules/tournament/types"
@@ -35,7 +36,7 @@ const { t } = useI18n()
 const modal = ref<InstanceType<typeof AppModal> | null>(null)
 useModal(() => modal.value?.close())
 
-const stats = computed(() => props.result.stats ?? null)
+const stats = computed(() => statsOf(props.result))
 
 const hasShootout = computed(
   () => props.result.penHome !== undefined && props.result.penAway !== undefined

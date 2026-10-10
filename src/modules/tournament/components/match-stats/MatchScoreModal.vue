@@ -27,6 +27,7 @@ import {
   resolvePower,
   simulateMatch,
   stashWatchedMatch,
+  statsOf,
   teamFormation,
   unavailablePlayersByMatch,
   DEFAULT_FORMATION,
@@ -341,7 +342,7 @@ function watchLive() {
 
 /** A match already on record plays back from its own events — nothing is rolled. */
 function replay() {
-  const stats = props.result?.stats
+  const stats = statsOf(props.result)
   if (!stats) return
   liveWatched.value = null
   liveHasExtraTime.value = !!props.result?.ft

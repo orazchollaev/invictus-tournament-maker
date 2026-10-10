@@ -3,7 +3,7 @@
 // simply contribute nothing — the totals describe what the app has actually
 // simulated, never an estimate.
 import { computed, type ComputedRef } from "vue"
-import { playedMatches } from "@/engine"
+import { playedMatches, statsOf } from "@/engine"
 import { useTournamentStore } from "@/modules/tournament/store"
 import type { Tournament } from "@/modules/tournament/types"
 
@@ -70,7 +70,7 @@ export function usePlayerCareer(getPlayerId: () => string | undefined) {
       let appeared = false
 
       for (const entry of playedMatches(tournament)) {
-        const stats = entry.result?.stats
+        const stats = statsOf(entry.result)
         if (!stats) continue
         for (const line of stats.lines) {
           if (line.playerId !== playerId) continue
@@ -95,7 +95,7 @@ export function usePlayerCareer(getPlayerId: () => string | undefined) {
 
     for (const tournament of tournamentStore.tournaments) {
       for (const entry of playedMatches(tournament)) {
-        const stats = entry.result?.stats
+        const stats = statsOf(entry.result)
         if (!stats) continue
         for (const line of stats.lines) {
           if (line.playerId !== playerId) continue
@@ -143,7 +143,7 @@ export function usePlayerCareer(getPlayerId: () => string | undefined) {
       if (goals > 0) {
         const tally = new Map<string, number>()
         for (const entry of playedMatches(tournament)) {
-          const stats = entry.result?.stats
+          const stats = statsOf(entry.result)
           if (!stats) continue
           for (const line of stats.lines) {
             if (!line.playerId || line.goals === 0) continue

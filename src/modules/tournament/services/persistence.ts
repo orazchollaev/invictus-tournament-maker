@@ -2,7 +2,7 @@ import { toRaw } from "vue"
 import { get, set, del, keys } from "idb-keyval"
 import { idbStorage } from "@/lib/idbStorage"
 import type { Tournament } from "../types"
-import { parseStoredTournament } from "./tournamentSchema"
+import { parseStoredTournament, repackedResultCount } from "./tournamentSchema"
 
 const ITEM_PREFIX = "tournament:item:"
 const INDEX_KEY = "tournament:index"
@@ -211,7 +211,12 @@ async function loadFromItems(): Promise<Tournament[] | null> {
         // Parsed *and* checked: valid JSON is not the same as a usable
         // tournament, and it was the second gap that emptied the screen.
         // See services/tournamentSchema.ts.
-        return parseStoredTournament(raw)
+        const before = repackedResultCount()
+        const parsed = parseStoredTournament(raw)
+        // The record on disk still holds unpacked reports (~6 KB a match).
+        // Rewrite it once, packed, so it is small on disk from now on too.
+        if (parsed && repackedResultCount() !== before) writeTournament(parsed)
+        return parsed
       } catch {
         // One corrupted record (bad JSON, a storage read error) used to be
         // fatal for every tournament, not just this one — Promise.all

@@ -23,3 +23,5 @@ export {
   clearPendingStats,
 } from "./pending"
 export type { WatchedMatch } from "./pending"
+export { packStats, unpackStats, statsOf, packedStatsFor, clearStatsCache } from "./packStats"
+export type { PackedStats } from "./packStats"

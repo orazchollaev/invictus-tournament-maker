@@ -2,7 +2,7 @@
 // series. Seasons played before v2.2.0 carry no events, so an archive can
 // legitimately be empty here — the tab says so rather than showing zeroes.
 import { computed, type ComputedRef } from "vue"
-import { playedMatches } from "@/engine"
+import { playedMatches, statsOf } from "@/engine"
 import { usePlayersStore } from "@/modules/players/store"
 import type { Tournament } from "@/modules/tournament/types"
 import type { PlayerPosition } from "@/modules/players/types"
@@ -30,7 +30,7 @@ export function useHistoryPlayerStats(seasons: ComputedRef<Tournament[]>) {
 
     for (const tournament of seasons.value) {
       for (const entry of playedMatches(tournament)) {
-        const stats = entry.result?.stats
+        const stats = statsOf(entry.result)
         if (!stats) continue
 
         for (const line of stats.lines) {

@@ -8,7 +8,7 @@
 // which is all "next" has to mean here: the first fixture of the managed
 // team's that has not been played yet.
 import type { Match, Tournament } from "../types"
-import { allMatches, isBye, unavailablePlayersByMatch, type MatchEntry } from "@/engine"
+import { allMatches, isBye, statsOf, unavailablePlayersByMatch, type MatchEntry } from "@/engine"
 
 /** The leg a match entry belongs to — 1 for anything that is not a second leg. */
 export function legOf(entry: MatchEntry): 1 | 2 {
@@ -126,7 +126,7 @@ export function managedUnavailability(t: Tournament): {
   const last = played[played.length - 1]
   if (last) {
     const side = last.homeId === teamId ? "home" : "away"
-    for (const event of last.result?.stats?.events ?? []) {
+    for (const event of statsOf(last.result)?.events ?? []) {
       if (event.type === "red" && event.side === side && event.playerId) {
         suspended.add(event.playerId)
       }

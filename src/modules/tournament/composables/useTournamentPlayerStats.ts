@@ -5,7 +5,7 @@
 // record, so a player moved to another squad after the fact still counts
 // for the team he actually played for.
 import { computed, type ComputedRef } from "vue"
-import { playedMatches } from "@/engine"
+import { playedMatches, statsOf } from "@/engine"
 import { usePlayersStore } from "@/modules/players/store"
 import type { Tournament } from "../types"
 import type { PlayerPosition } from "@/modules/players/types"
@@ -40,7 +40,7 @@ export function useTournamentPlayerStats(getTournament: () => Tournament | undef
     const totals = new Map<string, PlayerStatRow & { ratingSum: number }>()
 
     for (const entry of playedMatches(t)) {
-      const stats = entry.result?.stats
+      const stats = statsOf(entry.result)
       if (!stats) continue
 
       for (const line of stats.lines) {

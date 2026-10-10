@@ -11,6 +11,7 @@ import { generateTeamStats } from "../events/teamStats"
 import { setSimConfig } from "../simulation"
 import { computeRating, MIN_RATING, MAX_RATING } from "../events/rating"
 import { ensureMatchStats, markLegacyMatchStats } from "../events/ensure"
+import { statsOf } from "../events/packStats"
 import { clearPendingStats, pendingKey, stashWatchedMatch } from "../events/pending"
 import { FULL_TIME_MINUTES, MAX_STOPPAGE, REGULATION_MINUTES } from "../periods"
 import { rollShootout } from "../shootout"
@@ -1088,7 +1089,7 @@ describe("ensureMatchStats", () => {
     })
     ensureMatchStats(t, makeTeams(4), [])
 
-    expect(match.result!.stats).toBe(watched)
+    expect(statsOf(match.result)).toEqual(watched)
     clearPendingStats()
   })
 
@@ -1128,7 +1129,7 @@ describe("ensureMatchStats", () => {
 
     expect(match.result!.ft).toEqual({ home: 1, away: 1 })
     // And the generated events place the extra-time goal past ninety.
-    const late = match.result!.stats!.events.filter((e) => e.minute > REGULATION_MINUTES)
+    const late = statsOf(match.result)!.events.filter((e) => e.minute > REGULATION_MINUTES)
     expect(late.length).toBeGreaterThanOrEqual(1)
     clearPendingStats()
   })
@@ -1175,7 +1176,7 @@ describe("ensureMatchStats", () => {
     ensureMatchStats(t, teams, squad)
 
     for (const m of t1Matches.slice(1)) {
-      const stats = m.result!.stats
+      const stats = statsOf(m.result)
       expect(stats).toBeTruthy()
       const ids = [
         ...stats!.lines.map((l) => l.playerId),
@@ -1226,7 +1227,7 @@ describe("ensureMatchStats", () => {
     ensureMatchStats(t, teams, squad)
 
     // One match missed (t1Matches[1]), fit again from t1Matches[2] onward.
-    const backId = t1Matches[2]!.result!.stats!.lines.map((l) => l.playerId)
+    const backId = statsOf(t1Matches[2]!.result)!.lines.map((l) => l.playerId)
     expect(backId).toContain(injuredId)
   })
 })

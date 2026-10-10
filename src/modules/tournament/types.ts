@@ -126,8 +126,13 @@ export interface MatchResult {
   /**
    * undefined — not generated yet; `ensureMatchStats` will fill it.
    * null      — played before v2.2.0; deliberately never generated.
+   * string    — the report, packed (see engine/events/packStats.ts). A full
+   *             report is ~6 KB as an object; across a 60-team league that
+   *             alone was ~19 MB. Read it with `statsOf(result)`, never
+   *             directly.
+   * object    — an unpacked report from an older build, repacked on load.
    */
-  stats?: MatchStats | null
+  stats?: string | MatchStats | null
 }
 
 export interface Match {

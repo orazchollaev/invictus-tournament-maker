@@ -19,6 +19,7 @@
 //                and the reshuffled side that follows a dismissal
 import type { MatchResult, RedCard } from "../modules/tournament/types"
 import { REGULATION_MINUTES } from "./periods"
+import { statsOf } from "./events/packStats"
 
 /** Chance of a side finishing a match with ten men. Matches the pre-v2.7.0 event rate. */
 export const RED_CHANCE = 0.06
@@ -92,7 +93,7 @@ export function extraTimeRedPenalty(reds: RedCard[] | undefined): { home: number
 export function redsOf(result: MatchResult | null | undefined): RedCard[] {
   if (!result) return []
   if (result.reds) return result.reds
-  const events = result.stats?.events
+  const events = statsOf(result)?.events
   if (!events) return []
   return events
     .filter((e) => e.type === "red")

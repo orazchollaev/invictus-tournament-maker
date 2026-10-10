@@ -39,6 +39,7 @@ import type { Formation, PlayStyle } from "@/modules/teams/types"
 import type { PlayerPosition } from "@/modules/players/types"
 import { PLAYER_POSITIONS } from "@/modules/players/types"
 import { DEFAULT_FORMATION, DEFAULT_STYLE, FORMATION_LIST, PLAY_STYLES } from "@/engine"
+import { packStats } from "@/engine/events/packStats"
 import { reconcileLineupSlots } from "../utils/managerLineup"
 
 const FORMATS: TournamentFormat[] = ["bracket", "group+bracket", "league", "swiss", "custom"]
@@ -92,7 +93,30 @@ function normalizeResult(value: unknown): MatchResult | null {
   if (!Number.isFinite(value.home) || !Number.isFinite(value.away)) return null
   // Passed through as-is beyond the score: stats, events and penalties are read
   // defensively everywhere and re-derivable, so a partial one is not fatal.
-  return value as unknown as MatchResult
+  const result = value as unknown as MatchResult
+  // A report saved as an object by an older build is repacked as it comes in,
+  // so it never sits in memory (or goes back to disk) at ~6 KB per match.
+  // One that cannot be packed (hand-edited, from a build with other fields)
+  // is left as it was: readers accept both forms.
+  if (result.stats !== null && typeof result.stats === "object") {
+    try {
+      result.stats = packStats(result.stats)
+      repackedResults++
+    } catch {
+      // keep the unpacked report
+    }
+  }
+  return result
+}
+
+/**
+ * Count of reports repacked so far. A caller that parses a record reads it
+ * before and after: a difference means the record on disk is still the old,
+ * large form and is worth rewriting once.
+ */
+let repackedResults = 0
+export function repackedResultCount(): number {
+  return repackedResults
 }
 
 function normalizeGroupMatch(value: unknown): GroupMatch | null {
@@ -213,7 +237,9 @@ function normalizeTier(value: unknown, idx: number): LeagueTier | null {
     name: str(value.name) ?? `Division ${idx + 1}`,
     teamIds: stringArray(value.teamIds),
     league,
-    playoff: isObject(value.playoff) ? (value.playoff as unknown as LeagueTier["playoff"]) : undefined,
+    playoff: isObject(value.playoff)
+      ? (value.playoff as unknown as LeagueTier["playoff"])
+      : undefined,
   }
 }
 
