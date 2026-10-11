@@ -37,6 +37,8 @@ export function useBracketViewport(options: BracketViewportOptions = {}) {
   const pan = reactive({ x: 0, y: 0 })
   const isDragging = ref(false)
   const isZooming = ref(false)
+  /** Two fingers down: the layer is promoted, but without the wheel's transition. */
+  const isPinching = ref(false)
 
   const dragStart = { x: 0, y: 0, px: 0, py: 0 }
   let zoomSettleTimer = 0
@@ -65,7 +67,10 @@ export function useBracketViewport(options: BracketViewportOptions = {}) {
   const transform = computed(() => `translate3d(${pan.x}px, ${pan.y}px, 0) scale(${zoom.value})`)
 
   const layerStyle = computed(() => ({
-    willChange: isDragging.value || isZooming.value || forceWillChange?.() ? "transform" : "auto",
+    willChange:
+      isDragging.value || isZooming.value || isPinching.value || forceWillChange?.()
+        ? "transform"
+        : "auto",
   }))
 
   // ── Mouse drag ──────────────────────────────────────────────
@@ -109,6 +114,8 @@ export function useBracketViewport(options: BracketViewportOptions = {}) {
         e.touches[0].clientY - e.touches[1].clientY
       )
       pinchZoom0 = zoom.value
+      isPinching.value = true
+      isDragging.value = false
     } else if (e.touches.length === 1) {
       const t = e.touches[0]
       const now = performance.now()
@@ -162,8 +169,9 @@ export function useBracketViewport(options: BracketViewportOptions = {}) {
     }
   }
 
-  function onTouchEnd() {
+  function onTouchEnd(e?: TouchEvent) {
     isDragging.value = false
+    if (!e || e.touches.length < 2) isPinching.value = false
   }
 
   // ── Wheel zoom, anchored at the cursor ──────────────────────
