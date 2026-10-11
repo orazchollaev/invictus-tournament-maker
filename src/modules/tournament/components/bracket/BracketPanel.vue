@@ -57,11 +57,33 @@ function refit() {
   nextTick(fitScreen)
 }
 
-onMounted(() => {
+/**
+ * The bracket itself mounts a card, badges and connectors per match — for a big
+ * tournament that is enough work to drop frames if it lands while the tab is
+ * still sliding in. The panel shows a light placeholder for the slide, then mounts
+ * the bracket in an idle slot and fits it.
+ */
+const SLIDE_MS = 320
+const ready = ref(false)
+let mountTimer = 0
+let mountIdle = 0
+
+function mountBracket() {
+  ready.value = true
   nextTick(fitScreen)
+}
+
+onMounted(() => {
+  mountTimer = window.setTimeout(() => {
+    if (typeof requestIdleCallback === "function")
+      mountIdle = requestIdleCallback(mountBracket, { timeout: 400 })
+    else mountBracket()
+  }, SLIDE_MS)
   window.addEventListener("resize", refit)
 })
 onUnmounted(() => {
+  clearTimeout(mountTimer)
+  if (mountIdle && typeof cancelIdleCallback === "function") cancelIdleCallback(mountIdle)
   window.removeEventListener("resize", refit)
 })
 
@@ -143,11 +165,13 @@ const { isExporting, exportPng } = useBracketExport({
         >
           <component
             :is="activeBracket"
+            v-if="ready"
             :tournament="tournament"
             :teams="teams"
             :is-exporting="isExporting"
             v-bind="bracketActions"
           />
+          <div v-else class="bracket-placeholder" aria-hidden="true" />
         </div>
 
         <BracketZoomHint :show="zoomHint.show.value" @dismiss="zoomHint.dismiss" />
@@ -207,6 +231,15 @@ const { isExporting, exportPng } = useBracketExport({
 .bracket-wrapper {
   flex: 1;
   min-height: 0;
+}
+
+/* Stands in for the bracket while the tab slides in; a few cheap boxes, not 100 cards. */
+.bracket-placeholder {
+  width: 220px;
+  height: 120px;
+  border-radius: var(--radius-lg);
+  background: var(--fill-1);
+  opacity: 0.6;
 }
 
 @media (max-width: 600px) {
