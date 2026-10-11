@@ -1,5 +1,15 @@
 # Changelog
 
+## [3.4.6](https://github.com/orazchollaev/invictus-tournament-maker/compare/v3.4.5...v3.4.6) (2026-10-11)
+
+### 🐛 Bug Fixes
+
+- **android:** remove title bar shown on launch ([dbaec93](https://github.com/orazchollaev/invictus-tournament-maker/commit/dbaec93d8658b602a7635b61375716335b3e4af6))
+
+### 🔧 Maintenance
+
+- bump gradle version ([cba2869](https://github.com/orazchollaev/invictus-tournament-maker/commit/cba2869e30d553ac2a29b1433f9218e751ae9d12))
+
 ## [3.4.5](https://github.com/orazchollaev/invictus-tournament-maker/compare/v3.4.4...v3.4.5) (2026-10-11)
 
 ### 🚀 New Features
