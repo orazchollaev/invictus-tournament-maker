@@ -11,9 +11,11 @@ import {
   type ConnInfo,
   buildConnInfo,
   connectorSegments,
+  reuseDisplayRounds,
   teamColor,
 } from "./bracketUtils"
 import { useSettingsStore } from "@/modules/settings/store"
+import { LARGE_BRACKET } from "./bracketUtils"
 import { useI18n } from "vue-i18n"
 import { useEngineLabels } from "@/composables/useEngineLabels"
 
@@ -48,14 +50,16 @@ const settings = useSettingsStore()
 const { t } = useI18n()
 const { engineLabel } = useEngineLabels()
 const hoveredTeamId = ref<string | null>(null)
+/** Entrance animations on a hundred cards at once are felt on a phone; skip them. */
+const isLarge = computed(() => (props.tournament.rounds[0]?.matches.length ?? 0) > LARGE_BRACKET)
 const thirdPlaceMatch = computed(() => props.tournament.thirdPlaceMatch ?? null)
 
 // ── Bracket data ──────────────────────────────────────────────
 const allRounds = computed(() => props.tournament.rounds)
-const displayRounds = computed((): DisplayMatch[][] =>
-  allRounds.value.map((r, ri) =>
-    r.matches.map((m, mi) => ({ ...m, _origRound: ri, _origMatch: mi }))
-  )
+let lastDisplayRounds: DisplayMatch[][] | undefined
+const displayRounds = computed(
+  (): DisplayMatch[][] =>
+    (lastDisplayRounds = reuseDisplayRounds(allRounds.value, lastDisplayRounds))
 )
 
 const numRounds = computed(() => displayRounds.value.length)
@@ -243,6 +247,7 @@ function finalLineOpacity(side: "home" | "away"): number {
           :is-final="false"
           :is-exporting="isExporting"
           :dimmed="isMatchDimmed(n - 1, mi)"
+          :class="{ 'mc--static': isLarge }"
           :style="{
             position: 'absolute',
             top: HEADER_H + matchCenterY(n - 1, mi) - CARD_H / 2 + 'px',
@@ -393,6 +398,7 @@ function finalLineOpacity(side: "home" | "away"): number {
           :is-final="false"
           :is-exporting="isExporting"
           :dimmed="isMatchDimmed(n - 1, rStart(n - 1) + mi)"
+          :class="{ 'mc--static': isLarge }"
           :style="{
             position: 'absolute',
             top: HEADER_H + matchCenterY(n - 1, mi) - CARD_H / 2 + 'px',

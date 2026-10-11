@@ -255,13 +255,10 @@ const wentToExtraTime = computed(() =>
       </div>
     </div>
 
-    <Teleport to="body">
-      <div
-        v-if="pickingLeg"
-        class="leg-pick-backdrop"
-        :class="{ closing: closingPicker }"
-        @pointerdown="closePicker"
-      >
+    <!-- v-if on the Teleport itself: a bracket holds a card per match, and an idle
+         Teleport still costs a pair of anchor nodes in <body> each. -->
+    <Teleport v-if="pickingLeg" to="body">
+      <div class="leg-pick-backdrop" :class="{ closing: closingPicker }" @pointerdown="closePicker">
         <div class="leg-pick" :class="{ closing: closingPicker }" @pointerdown.stop>
           <span class="leg-pick-title">{{ t("bracket.legPick") }}</span>
           <div class="leg-pick-btns">
@@ -323,7 +320,8 @@ const wentToExtraTime = computed(() =>
 .bracket-pan-layer.dragging .mc.champion {
   animation-play-state: paused;
 }
-.mc.mc--low-q {
+.mc.mc--low-q,
+.mc.mc--static:not(.champion) {
   animation: none;
 }
 .mc.mc--low-q.champion {

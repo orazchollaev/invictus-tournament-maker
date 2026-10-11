@@ -3,8 +3,9 @@ import { computed, ref } from "vue"
 import type { Tournament } from "@/modules/tournament/types"
 import type { Team } from "@/modules/teams/types"
 import BracketMatchCard from "./BracketMatchCard.vue"
-import { type DisplayMatch, type ConnInfo, buildConnInfo } from "./bracketUtils"
+import { type DisplayMatch, type ConnInfo, buildConnInfo, reuseDisplayRounds } from "./bracketUtils"
 import { useSettingsStore } from "@/modules/settings/store"
+import { LARGE_BRACKET } from "./bracketUtils"
 import { useEngineLabels } from "@/composables/useEngineLabels"
 
 const props = defineProps<{ tournament: Tournament; teams: Team[]; isExporting?: boolean }>()
@@ -37,14 +38,16 @@ const emit = defineEmits<{
 const settings = useSettingsStore()
 const { engineLabel } = useEngineLabels()
 const hoveredTeamId = ref<string | null>(null)
+/** Entrance animations on a hundred cards at once are felt on a phone; skip them. */
+const isLarge = computed(() => (props.tournament.rounds[0]?.matches.length ?? 0) > LARGE_BRACKET)
 const thirdPlaceMatch = computed(() => props.tournament.thirdPlaceMatch ?? null)
 
 // ── Bracket data ──────────────────────────────────────────────
 const allRounds = computed(() => props.tournament.rounds)
-const displayRounds = computed((): DisplayMatch[][] =>
-  allRounds.value.map((r, ri) =>
-    r.matches.map((m, mi) => ({ ...m, _origRound: ri, _origMatch: mi }))
-  )
+let lastDisplayRounds: DisplayMatch[][] | undefined
+const displayRounds = computed(
+  (): DisplayMatch[][] =>
+    (lastDisplayRounds = reuseDisplayRounds(allRounds.value, lastDisplayRounds))
 )
 
 // ── Layout constants ──────────────────────────────────────────
@@ -183,6 +186,7 @@ function svgSegments(p: ConnInfo, w: number) {
               :is-final="ri === displayRounds.length - 1"
               :is-exporting="isExporting"
               :dimmed="isMatchDimmed(ri, mi)"
+              :class="{ 'mc--static': isLarge }"
               :style="{
                 position: 'absolute',
                 top: cardTop(ri, mi) + 'px',

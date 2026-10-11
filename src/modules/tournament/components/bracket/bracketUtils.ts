@@ -2,7 +2,37 @@ import type { Match } from "@/modules/tournament/types"
 import type { Team } from "@/modules/teams/types"
 import { getWinnerId } from "@/engine"
 
+/** First-round match count above which a bracket drops its entrance animation. */
+export const LARGE_BRACKET = 16
+
 export type DisplayMatch = Match & { _origRound: number; _origMatch: number }
+
+function sameMatch(old: DisplayMatch, m: Match): boolean {
+  const keys = Object.keys(m) as (keyof Match)[]
+  // The wrapper carries the two index fields on top of the match's own.
+  if (Object.keys(old).length !== keys.length + 2) return false
+  return keys.every((k) => old[k] === m[k])
+}
+
+/**
+ * The rounds as `DisplayMatch`es, reusing last time's wrapper for every match that did
+ * not change. Wrapping with a fresh spread each time handed every card a new `match`
+ * prop on any edit, so one result re-rendered the whole bracket; with the old
+ * wrapper kept, only the cards whose match actually changed update. (A match
+ * edited in place keeps its nested objects, which the card tracks on its own.)
+ */
+export function reuseDisplayRounds(
+  rounds: { matches: Match[] }[],
+  prev: DisplayMatch[][] | undefined
+): DisplayMatch[][] {
+  return rounds.map((r, ri) =>
+    r.matches.map((m, mi) => {
+      const old = prev?.[ri]?.[mi]
+      if (old && sameMatch(old, m)) return old
+      return { ...m, _origRound: ri, _origMatch: mi }
+    })
+  )
+}
 
 export function teamColor(teamId: string | null | undefined, teams: Team[]): string | null {
   if (!teamId) return null
