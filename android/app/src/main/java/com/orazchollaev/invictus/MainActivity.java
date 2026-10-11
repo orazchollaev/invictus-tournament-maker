@@ -6,9 +6,9 @@ import android.view.View;
 import android.webkit.RenderProcessGoneDetail;
 import android.webkit.WebView;
 
+import androidx.activity.EdgeToEdge;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.getcapacitor.BridgeActivity;
@@ -49,6 +49,10 @@ public class MainActivity extends BridgeActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        // Opts in to edge to edge on every API level (from API 35 it is forced
+        // anyway). Must run before super.onCreate; it also replaces the older
+        // setDecorFitsSystemWindows call and leaves the bars transparent.
+        EdgeToEdge.enable(this);
         super.onCreate(savedInstanceState);
         // No bridge means the device has no usable WebView and Capacitor has
         // already shown its fallback screen.
@@ -70,9 +74,6 @@ public class MainActivity extends BridgeActivity {
                 return true;
             }
         });
-
-        // Explicit for API < 35, where edge to edge is not yet the default.
-        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
 
         View root = getWindow().getDecorView();
         ViewCompat.setOnApplyWindowInsetsListener(root, (view, windowInsets) -> {

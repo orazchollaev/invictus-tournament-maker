@@ -16,7 +16,6 @@ dependencies {
     implementation project(':capacitor-filesystem')
     implementation project(':capacitor-push-notifications')
     implementation project(':capacitor-share')
-    implementation project(':capacitor-status-bar')
 
 }
 
