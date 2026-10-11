@@ -260,7 +260,10 @@ watch([labels, datasets, mode], () => {
   background: transparent;
   color: var(--text-muted);
   cursor: pointer;
-  transition: all 0.15s;
+  transition:
+    color 0.15s,
+    background-color 0.15s,
+    border-color 0.15s;
 }
 
 .mode-toggle button.active {

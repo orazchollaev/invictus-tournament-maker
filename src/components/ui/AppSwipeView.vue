@@ -76,14 +76,24 @@ function slotOf(tab: T): number | null {
   return props.tabs.indexOf(tab) - settledIdx.value
 }
 
+/**
+ * A hidden pane stays parked off to the side. `visibility` alone is not enough: it
+ * is inherited, so any descendant with `transition: all` (or `visibility`) keeps
+ * painting for the length of its transition after the pane is hidden — and a pane
+ * hidden at slot 0 sits right on top of the settled one, so its buttons flashed in
+ * the middle of the screen on every tap.
+ */
+const PARKED = { visibility: "hidden" as const, transform: "translateX(-200%)" }
+
 function paneStyle(tab: T) {
   const slot = slotOf(tab)
-  if (slot === null) return { visibility: "hidden" as const }
+  if (slot === null) return PARKED
   if (slot === 0) return undefined
   // A resting neighbour with a 3D transform is a permanent full-screen GPU
   // layer. Next to the ad's own WebView that exhausts tile memory and the
   // page turns white on Android, so neighbours only paint once a touch starts.
-  if (target.value === null && !armed.value) return { visibility: "hidden" as const }
+  // (The parked transform is 2D, which does not promote a layer.)
+  if (target.value === null && !armed.value) return PARKED
   return { transform: `translate3d(calc(${slot} * (100% + ${props.gap}px)), 0, 0)` }
 }
 
