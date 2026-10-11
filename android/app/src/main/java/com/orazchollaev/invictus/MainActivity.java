@@ -49,6 +49,12 @@ public class MainActivity extends BridgeActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        // The manifest gives the activity its launch theme, which has a title bar
+        // (label text over the splash image). EdgeToEdge.enable installs the window
+        // decor, and a window's title bar is fixed once the decor exists — so the
+        // switch to the real theme that BridgeActivity makes in super.onCreate comes
+        // too late and the bar stays on screen. Switch before touching the window.
+        setTheme(R.style.AppTheme_NoActionBar);
         // Opts in to edge to edge on every API level (from API 35 it is forced
         // anyway). Must run before super.onCreate; it also replaces the older
         // setDecorFitsSystemWindows call and leaves the bars transparent.

@@ -20,6 +20,10 @@
 
 
     <style name="AppTheme.NoActionBarLaunch" parent="Theme.SplashScreen">
+        <!-- No title bar even if a window is built with this theme before
+             MainActivity switches to AppTheme.NoActionBar. -->
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
         <item name="android:background">@drawable/splash</item>
     </style>
 </resources>
