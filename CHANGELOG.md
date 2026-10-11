@@ -1,5 +1,16 @@
 # Changelog
 
+## [3.4.5](https://github.com/orazchollaev/invictus-tournament-maker/compare/v3.4.4...v3.4.5) (2026-10-11)
+
+### 🚀 New Features
+
+- **tournament:** save by hand with unsaved-changes prompt ([05dd5e9](https://github.com/orazchollaev/invictus-tournament-maker/commit/05dd5e96eb961292be77c4eabc5f909208fef2e8))
+
+### 🐛 Bug Fixes
+
+- **android:** enable edge-to-edge and drop deprecated status bar APIs ([3b0bbac](https://github.com/orazchollaev/invictus-tournament-maker/commit/3b0bbacd5eaac269fab062e5c957d07a82539409))
+- **ui:** stop stats chart buttons flashing on tab tap ([6aee3b2](https://github.com/orazchollaev/invictus-tournament-maker/commit/6aee3b28747feca19e5cff5cdc0e0c5412f0b4ae))
+
 ## [3.4.4](https://github.com/orazchollaev/invictus-tournament-maker/compare/v3.4.3...v3.4.4) (2026-10-10)
 
 ### 🔧 Maintenance
