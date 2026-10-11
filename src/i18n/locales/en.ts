@@ -656,6 +656,11 @@
     simulateGroup: "Sim {group}",
     advanceToKnockout: "Advance to Knockout",
     settings: "Settings",
+    save: "Save",
+    saved: "Saved",
+    saveFailed: "Could not save. Free up some storage and try again.",
+    unsavedChanges: "You have unsaved changes. If you leave now they will be lost.",
+    leaveWithoutSaving: "Leave",
     previousSeason: "Previous season",
     nextSeason: "Next season",
     fixtures: {

@@ -75,6 +75,24 @@ const router = createRouter({
   ],
 })
 
+// Edits to a tournament are saved by hand (the Save button on its page), so leaving
+// the tournament — its detail, settings and simulation pages count as one — with
+// unsaved changes asks first. This also covers the Android back button.
+const TOURNAMENT_PATH = /^\/tournaments\/([^/]+)/
+router.beforeEach(async (to, from) => {
+  const id = TOURNAMENT_PATH.exec(from.path)?.[1]
+  if (!id || TOURNAMENT_PATH.exec(to.path)?.[1] === id) return true
+  const { useTournamentStore } = await import("../modules/tournament/store")
+  if (!useTournamentStore().hasUnsaved(id)) return true
+  const { showConfirm } = await import("../composables/useDialog")
+  const { i18n } = await import("../i18n")
+  const t = i18n.global.t
+  return showConfirm(t("tournament.unsavedChanges"), {
+    confirmLabel: t("tournament.leaveWithoutSaving"),
+    dangerous: true,
+  })
+})
+
 router.onError((error, to) => {
   if (!isMissingChunk(error)) return
   try {

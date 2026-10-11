@@ -28,6 +28,7 @@ import { useTournamentTabs } from "../composables/useTournamentTabs"
 import { useTournamentCeremonies } from "../composables/useTournamentCeremonies"
 import { useFillViewportHeight } from "@/composables/useFillViewportHeight"
 import { provideManagedTeam } from "@/composables/useManagedTeam"
+import { showAlert } from "@/composables/useDialog"
 
 const { t: trns } = useI18n()
 const router = useRouter()
@@ -45,6 +46,19 @@ const {
 
 // Every badge and card under this page picks the managed side out on its own.
 provideManagedTeam(() => tournament.value?.manager?.teamId)
+
+const saving = ref(false)
+const unsaved = computed(() => !!tournament.value && store.hasUnsaved(tournament.value.id))
+
+async function onSave() {
+  if (!tournament.value || saving.value) return
+  saving.value = true
+  try {
+    if (!(await store.saveNow(tournament.value.id))) await showAlert(trns("tournament.saveFailed"))
+  } finally {
+    saving.value = false
+  }
+}
 
 const isFinished = computed(
   () => !!tournament.value && store.isTournamentFinished(tournament.value.id)
@@ -204,6 +218,9 @@ const showStartPlayoffButton = computed(
         :current-season-id="tournament.id"
         :manager-blocked="managerBlocked"
         :can-become-manager="canBecomeManager"
+        :unsaved="unsaved"
+        :saving="saving"
+        @save="onSave"
         @back="router.push('/tournaments')"
         @open-new-season="openNewSeason"
         @open-manager-picker="showManagerPicker = true"

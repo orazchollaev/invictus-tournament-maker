@@ -106,6 +106,23 @@ export function saveTournament(t: Tournament): Promise<void> {
   return promise
 }
 
+/**
+ * Write one tournament right now and say whether it landed. This is what the Save
+ * button calls: edits to a tournament are not written on their own (see the store),
+ * so the user needs to know the write really happened. Cancels a queued write for the
+ * same id, which this one supersedes.
+ */
+export async function saveTournamentNow(t: Tournament): Promise<boolean> {
+  cancelPendingSaves([t.id])
+  try {
+    // Stringified before the first await: what is written is what was on screen.
+    await set(itemKey(t.id), JSON.stringify(toRaw(t)))
+    return true
+  } catch {
+    return false
+  }
+}
+
 /** Write everything still waiting out its debounce, right now. Call when the app is hidden. */
 export function flushPendingSaves(): void {
   for (const id of [...scheduled.keys()]) firePending(id, true)

@@ -6,6 +6,7 @@ import {
   ChevronLeft,
   ChevronRight,
   RefreshCw,
+  Save,
   Settings,
   UserCog,
   Zap,
@@ -35,6 +36,9 @@ const props = defineProps<{
   /** No manager yet, and the season hasn't played a match — the only window
    *  in which taking charge of a side is still on offer. */
   canBecomeManager?: boolean
+  /** Changes since the last save; the Save button is only live while there are some. */
+  unsaved?: boolean
+  saving?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -45,6 +49,7 @@ const emit = defineEmits<{
   advance: []
   startPlayoff: []
   openManagerPicker: []
+  save: []
   switchSeason: [id: string]
 }>()
 
@@ -103,6 +108,17 @@ function onLevelUp() {
         </button>
       </div>
       <div class="t-header-actions">
+        <AppButton
+          icon-only
+          class="header-icon-btn"
+          :variant="unsaved ? 'filled' : 'outlined'"
+          :disabled="!unsaved || saving"
+          :title="unsaved ? t('tournament.save') : t('tournament.saved')"
+          :aria-label="unsaved ? t('tournament.save') : t('tournament.saved')"
+          @click="emit('save')"
+        >
+          <AppIcon :icon="unsaved ? Save : Check" size="md" />
+        </AppButton>
         <AppButton v-if="isFinished" variant="filled" icon-only @click="emit('openNewSeason')">
           <AppIcon :icon="RefreshCw" size="sm" />
         </AppButton>

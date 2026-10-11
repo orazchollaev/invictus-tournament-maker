@@ -5,11 +5,12 @@
 // third responsibility -- if an action needs more than dispatching across
 // slices, it belongs in a slice.
 import { defineStore } from "pinia"
-import { ref, watch, nextTick } from "vue"
+import { reactive, ref, watch, nextTick } from "vue"
 import type { Tournament, Tiebreaker, LegMode } from "../types"
 import {
   loadTournaments,
   saveTournament,
+  saveTournamentNow,
   deleteTournamentRecord,
   saveIndex,
   loadPersistedMeta,
@@ -72,6 +73,15 @@ export const useTournamentStore = defineStore(
      */
     const stopWatchers = new Map<string, () => void>()
 
+    /**
+     * Tournaments with changes that are not on disk. Edits are no longer written as
+     * they happen: a big tournament costs a full serialise per write, and on a weak
+     * Android WebView that is what runs it out of memory. The user saves from the
+     * tournament page (`saveNow`) and is asked before leaving with unsaved changes.
+     * A tournament being created or removed is still written at once.
+     */
+    const dirtyIds = reactive(new Set<string>())
+
     function watchTournament(t: Tournament) {
       if (stopWatchers.has(t.id)) return
       stopWatchers.set(
@@ -79,7 +89,7 @@ export const useTournamentStore = defineStore(
         watch(
           () => t,
           () => {
-            if (hydrated.value) void saveTournament(t)
+            if (hydrated.value) dirtyIds.add(t.id)
           },
           { deep: true, flush: "post" }
         )
@@ -103,6 +113,7 @@ export const useTournamentStore = defineStore(
           if (!liveIds.has(id)) {
             stop()
             stopWatchers.delete(id)
+            dirtyIds.delete(id)
             if (hydrated.value) deleteTournamentRecord(id)
           }
         }
@@ -116,6 +127,21 @@ export const useTournamentStore = defineStore(
       },
       { immediate: true }
     )
+
+    /** Write one tournament to disk now. False if the write failed (it stays unsaved). */
+    async function saveNow(id: string): Promise<boolean> {
+      const t = tournaments.value.find((x) => x.id === id)
+      if (!t) return false
+      // Cleared first: an edit landing while the write is in flight marks it again.
+      dirtyIds.delete(id)
+      const ok = await saveTournamentNow(t)
+      if (!ok) dirtyIds.add(id)
+      return ok
+    }
+
+    function hasUnsaved(id: string): boolean {
+      return dirtyIds.has(id)
+    }
 
     /**
      * Loads every tournament from its own record. Runs once, before mount
@@ -383,7 +409,8 @@ export const useTournamentStore = defineStore(
         if (!phase) return
         if (src.kind === "group") {
           const idx = phase.groups?.[src.groupIdx]?.matches.findIndex((m) => m.id === id) ?? -1
-          if (idx >= 0) phases.setPhaseGroupResult(tournamentId, phaseId, src.groupIdx, idx, home, away)
+          if (idx >= 0)
+            phases.setPhaseGroupResult(tournamentId, phaseId, src.groupIdx, idx, home, away)
         } else if (src.kind === "league") {
           const idx =
             phase.league?.matchdays[src.matchdayIdx]?.matches.findIndex((m) => m.id === id) ?? -1
@@ -667,6 +694,8 @@ export const useTournamentStore = defineStore(
       active,
       statsMigrated,
       hydrate,
+      saveNow,
+      hasUnsaved,
       ...withStats(crud),
       ...withStats(withManagerGuard(bracket)),
       ...withStats(withManagerGuard(thirdPlace)),

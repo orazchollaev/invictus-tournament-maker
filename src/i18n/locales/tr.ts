@@ -659,6 +659,11 @@
     simulateGroup: "{group} Simüle Et",
     advanceToKnockout: "Eleme Aşamasına Geç",
     settings: "Ayarlar",
+    save: "Kaydet",
+    saved: "Kaydedildi",
+    saveFailed: "Kaydedilemedi. Depolama alanı açıp tekrar dene.",
+    unsavedChanges: "Kaydedilmemiş değişiklikler var. Şimdi çıkarsan kaybolacaklar.",
+    leaveWithoutSaving: "Çık",
     previousSeason: "Önceki sezon",
     nextSeason: "Sonraki sezon",
     fixtures: {
