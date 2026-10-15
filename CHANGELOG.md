@@ -1,5 +1,15 @@
 # Changelog
 
+## [3.5.0](https://github.com/orazchollaev/invictus-tournament-maker/compare/v3.4.6...v3.5.0) (2026-10-15)
+
+### 🚀 New Features
+
+- **teams:** add crest builder with position and size options ([5767ae9](https://github.com/orazchollaev/invictus-tournament-maker/commit/5767ae979ac8aa93c5e1bff5b80f70ed3f5f0fb6))
+
+### 🔧 Maintenance
+
+- bump gradle version ([6a4567f](https://github.com/orazchollaev/invictus-tournament-maker/commit/6a4567f5b567d139d64c120693bec1aea5e9b7b0))
+
 ## [3.4.6](https://github.com/orazchollaev/invictus-tournament-maker/compare/v3.4.5...v3.4.6) (2026-10-11)
 
 ### 🐛 Bug Fixes
