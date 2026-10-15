@@ -1,3 +1,5 @@
+import type { CrestSpec } from "@/engine/crest/types"
+
 export interface Team {
   id: string
   name: string
@@ -5,6 +7,8 @@ export interface Team {
   color: string
   flag?: string // ISO 3166-1 alpha-2 country code, optional
   image?: string // custom crest: remote URL or data-URL, mutually exclusive with flag
+  /** How `image` was drawn, when it came from the crest builder — lets it be reopened. */
+  crest?: CrestSpec
   power: number // 1-100
   /**
    * The manager on the touchline. Optional forever: a team without one plays

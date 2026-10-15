@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch, nextTick } from "vue"
+import { ref, computed, watch, nextTick, onMounted } from "vue"
 import {
   AppButton,
   AppField,
@@ -12,15 +12,18 @@ import FlagPicker from "./FlagPicker.vue"
 import FlagCircle from "./FlagCircle.vue"
 import TeamImageSourceModal from "./TeamImageSourceModal.vue"
 import TeamImageUrlModal from "./TeamImageUrlModal.vue"
+import { CrestBuilderModal } from "./crest"
 import { flagPrimaryColor } from "../utils/flags"
-import { resizeImageFile } from "../utils/imageUtils"
+import { isDrawnCrest, resizeImageFile } from "../utils/imageUtils"
+import { loadCrestEngine, useCrestEngine } from "../composables/useCrestEngine"
 import { useTeamsStore } from "../store"
 import { useModal } from "@/composables/useModal"
 import { autoAbbr } from "@/composables/useTeamLookup"
 import { randomTeamName } from "@/composables/useRandomNames"
 import { showAlert } from "@/composables/useDialog"
-import { Pencil, Shuffle, X } from "@lucide/vue"
+import { Dices, Pencil, Shuffle, X } from "@lucide/vue"
 import type { Team } from "../types"
+import type { CrestSpec } from "@/engine/crest"
 import { useI18n } from "vue-i18n"
 import { logEvent } from "@/composables/useAnalytics"
 
@@ -41,6 +44,9 @@ const color = ref(props.team?.color ?? "#3366cc")
 const flag = ref<string | undefined>(props.team?.flag)
 const image = ref<string | undefined>(props.team?.image)
 const power = ref(props.team?.power ?? 70)
+const crest = ref<CrestSpec | undefined>(props.team?.crest)
+const crestEngine = useCrestEngine()
+const showCrestBuilder = ref(false)
 const showFlagPicker = ref(false)
 const showSourceChooser = ref(false)
 const showUrlModal = ref(false)
@@ -55,9 +61,53 @@ watch(name, (v) => {
   abbrPlaceholder.value = autoAbbr(v)
 })
 
+const crestText = computed(() => ({
+  name: name.value.trim(),
+  abbr: abbr.value.trim() || abbrPlaceholder.value,
+}))
+
+// A builder crest is redrawn from its spec as the name and abbreviation are
+// typed, so the preview always shows what will be saved.
+const shownImage = computed(() =>
+  crest.value && crestEngine.value
+    ? crestEngine.value.renderCrestDataUrl(crest.value, crestText.value)
+    : image.value
+)
+
+function setCrest(spec: CrestSpec) {
+  crest.value = spec
+  flag.value = undefined
+  image.value = undefined
+  imgError.value = false
+  color.value = spec.colors.field
+}
+
+async function rollCrest() {
+  const engine = await loadCrestEngine()
+  setCrest(engine.randomCrest())
+}
+
+// A new team opens with a crest already drawn: something to keep, reroll or tweak.
+onMounted(() => {
+  if (!isEdit) void rollCrest()
+})
+
+async function onChooseCrest() {
+  showSourceChooser.value = false
+  await loadCrestEngine()
+  crest.value ??= crestEngine.value!.randomCrest(Math.random, color.value)
+  showCrestBuilder.value = true
+}
+
+function onCrestApply(spec: CrestSpec) {
+  setCrest(spec)
+  showCrestBuilder.value = false
+}
+
 async function onFlagSelect(code: string | undefined) {
   flag.value = code
   image.value = undefined
+  crest.value = undefined
   flagModal.value?.close()
   if (code) {
     const primary = await flagPrimaryColor(code)
@@ -68,6 +118,7 @@ async function onFlagSelect(code: string | undefined) {
 function onUrlSelect(url: string) {
   image.value = url
   flag.value = undefined
+  crest.value = undefined
   imgError.value = false
   showUrlModal.value = false
 }
@@ -97,6 +148,7 @@ async function onFileChange(e: Event) {
     const dataUrl = await resizeImageFile(file)
     image.value = dataUrl
     flag.value = undefined
+    crest.value = undefined
     imgError.value = false
   } catch {
     showAlert(t("teams.form.imageInvalid"))
@@ -106,17 +158,22 @@ async function onFileChange(e: Event) {
 function clearImage() {
   flag.value = undefined
   image.value = undefined
+  crest.value = undefined
 }
 
 function submit() {
   if (!name.value.trim()) return
+  // Without the engine loaded there is nothing new to draw; keep what was there.
+  const finalImage = crest.value && crestEngine.value ? shownImage.value : image.value
+  const finalCrest = crest.value && crestEngine.value ? crest.value : undefined
   if (isEdit && props.team) {
     store.update(props.team.id, {
       name: name.value.trim(),
       abbr: abbr.value.trim().slice(0, 7) || undefined,
       color: color.value,
       flag: flag.value,
-      image: image.value,
+      image: finalImage,
+      crest: finalCrest ?? (finalImage === props.team.image ? props.team.crest : undefined),
       power: power.value,
     })
   } else {
@@ -126,7 +183,8 @@ function submit() {
       power.value,
       abbr.value.trim() || undefined,
       flag.value,
-      image.value
+      finalImage,
+      finalCrest
     )
     void logEvent("team_created")
   }
@@ -145,19 +203,19 @@ function submit() {
       <div class="preview">
         <div
           class="crest"
-          :class="{ 'crest--filled': flag || image }"
+          :class="{ 'crest--filled': flag || shownImage, 'crest--drawn': isDrawnCrest(shownImage) }"
           @click="showSourceChooser = true"
         >
           <img
-            v-if="image && !imgError"
-            :src="image"
+            v-if="shownImage && !imgError"
+            :src="shownImage"
             class="crest-img"
             alt=""
             @error="imgError = true"
           />
           <FlagCircle v-else-if="flag" :code="flag" :size="52" class="crest-img" />
           <button
-            v-if="flag || image"
+            v-if="flag || shownImage"
             type="button"
             class="crest-clear"
             :title="t('teams.form.imageRemove')"
@@ -187,6 +245,17 @@ function submit() {
             <AppStarRating :value="powerStars" :size="12" class="preview-stars" />
           </p>
         </div>
+        <AppButton
+          variant="text"
+          size="sm"
+          icon-only
+          class="crest-roll"
+          :title="t('teams.crest.random')"
+          :aria-label="t('teams.crest.random')"
+          @click="rollCrest"
+        >
+          <AppIcon :icon="Dices" />
+        </AppButton>
       </div>
 
       <div class="section">
@@ -271,10 +340,20 @@ function submit() {
 
   <TeamImageSourceModal
     v-if="showSourceChooser"
+    show-crest
+    @select-crest="onChooseCrest"
     @close="showSourceChooser = false"
     @select-flag="onChooseFlag"
     @select-url="onChooseUrl"
     @select-gallery="onGallerySelect"
+  />
+
+  <CrestBuilderModal
+    v-if="showCrestBuilder && crest"
+    :spec="crest"
+    :text="crestText"
+    @close="showCrestBuilder = false"
+    @apply="onCrestApply"
   />
 
   <TeamImageUrlModal
@@ -319,6 +398,15 @@ function submit() {
 }
 .crest--filled {
   background: transparent;
+}
+
+.crest--drawn .crest-img {
+  border-radius: 0;
+}
+
+.crest-roll {
+  margin-inline-start: auto;
+  flex-shrink: 0;
 }
 
 .crest-img {

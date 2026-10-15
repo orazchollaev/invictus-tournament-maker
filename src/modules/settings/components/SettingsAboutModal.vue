@@ -9,6 +9,24 @@ defineEmits<{ close: [] }>()
 const { t } = useI18n()
 
 const CONTRIBUTORS = ["Rodrigo Hernandez", "Juninho"]
+
+/** Third-party work the app ships, with the credit its licence asks for. */
+const CREDITS = [
+  {
+    name: "facesjs",
+    author: "Jeremy Scheff",
+    license: "Apache-2.0",
+    use: "creditFaces",
+    url: "https://github.com/zengm-games/facesjs",
+  },
+  {
+    name: "Armoria",
+    author: "Azgaar",
+    license: "MIT · CC0",
+    use: "creditCrests",
+    url: "https://github.com/Azgaar/Armoria",
+  },
+] as const
 </script>
 
 <template>
@@ -30,6 +48,20 @@ const CONTRIBUTORS = ["Rodrigo Hernandez", "Juninho"]
         <span class="about-thanks-title">{{ t("settings.specialThanks") }}</span>
         <ul class="about-thanks-list">
           <li v-for="name in CONTRIBUTORS" :key="name">{{ name }}</li>
+        </ul>
+      </div>
+
+      <div class="about-thanks">
+        <span class="about-thanks-title">{{ t("settings.openSource") }}</span>
+        <ul class="about-credits">
+          <li v-for="c in CREDITS" :key="c.name">
+            <a :href="c.url" target="_blank" rel="noopener" class="about-credit-name">
+              {{ c.name }}
+            </a>
+            <span class="about-credit-meta">
+              {{ t(`settings.${c.use}`) }} · {{ c.author }} · {{ c.license }}
+            </span>
+          </li>
         </ul>
       </div>
 
@@ -121,6 +153,26 @@ const CONTRIBUTORS = ["Rodrigo Hernandez", "Juninho"]
 }
 .about-thanks-list li {
   font-size: var(--fs-base);
+  color: var(--text-muted);
+}
+
+.about-credits {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+.about-credit-name {
+  font-size: var(--fs-base);
+  font-weight: 600;
+  color: var(--accent);
+  text-decoration: none;
+}
+.about-credit-meta {
+  display: block;
+  font-size: var(--fs-xs);
   color: var(--text-muted);
 }
 

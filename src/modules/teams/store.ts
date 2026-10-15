@@ -1,6 +1,7 @@
 import { defineStore } from "pinia"
 import { ref } from "vue"
 import type { Coach, Team } from "./types"
+import type { CrestSpec } from "@/engine/crest/types"
 import { useTournamentStore } from "@/modules/tournament/store"
 import { usePlayersStore } from "@/modules/players/store"
 import { showAlert } from "@/composables/useDialog"
@@ -36,7 +37,8 @@ export const useTeamsStore = defineStore("teams", () => {
     power: number,
     abbr?: string,
     flag?: string,
-    image?: string
+    image?: string,
+    crest?: CrestSpec
   ) {
     const entry: import("./types").Team = {
       id: uid(),
@@ -47,6 +49,7 @@ export const useTeamsStore = defineStore("teams", () => {
     if (abbr?.trim()) entry.abbr = abbr.trim().slice(0, 7)
     if (flag) entry.flag = flag
     if (image) entry.image = image
+    if (image && crest) entry.crest = crest
     teams.value.push(entry)
   }
 

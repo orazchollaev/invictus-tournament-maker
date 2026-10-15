@@ -5,6 +5,7 @@ import { useI18n } from "vue-i18n"
 import { AppButton, AppCard, AppIcon, AppStarRating } from "@/components/ui"
 import { FlagCircle } from "@/modules/teams/components"
 import type { Team } from "@/modules/teams/types"
+import { isDrawnCrest } from "@/modules/teams/utils/imageUtils"
 
 const props = defineProps<{ team: Team }>()
 defineEmits<{ back: [] }>()
@@ -34,6 +35,7 @@ const powerStars = computed(() => Math.round((props.team.power / 99) * 10) / 2)
         v-if="team.image && !imgError"
         :src="team.image"
         class="team-image"
+        :class="{ 'team-image--drawn': isDrawnCrest(team.image) }"
         alt=""
         @error="imgError = true"
       />
@@ -92,6 +94,9 @@ const powerStars = computed(() => Math.round((props.team.power / 99) * 10) / 2)
   border-radius: 50%;
   object-fit: contain;
   display: block;
+}
+.team-image--drawn {
+  border-radius: 0;
 }
 
 .team-title {

@@ -6,6 +6,15 @@
  * multi-megabyte photo per team would bloat that store fast.
  */
 
+/**
+ * Crests from the builder are SVG data-URLs with their own silhouette, so
+ * they must not be cropped to a circle like photos are. Gallery picks are
+ * re-encoded as PNG/JPEG and URLs are remote, so SVG data means the builder.
+ */
+export function isDrawnCrest(src: string | undefined): boolean {
+  return !!src?.startsWith("data:image/svg+xml")
+}
+
 /** Decode `file`, centre-crop it to a square, and re-encode as a small data-URL. */
 export function resizeImageFile(file: File, size = 128, quality = 0.85): Promise<string> {
   return new Promise((resolve, reject) => {

@@ -4,6 +4,7 @@ import type { Team, TeamLike } from "../types"
 import TeamNameAuto from "./TeamNameAuto.vue"
 import FlagCircle from "./FlagCircle.vue"
 import { useManagedTeamId } from "@/composables/useManagedTeam"
+import { isDrawnCrest } from "../utils/imageUtils"
 
 const props = withDefaults(
   defineProps<{
@@ -39,6 +40,7 @@ watch(
       v-if="team?.image && !imgError"
       :src="team.image"
       class="crest-img"
+      :class="{ 'crest-img--drawn': isDrawnCrest(team.image) }"
       :style="{ width: size + 4 + 'px', height: size + 4 + 'px' }"
       alt=""
       @error="imgError = true"
@@ -86,6 +88,9 @@ watch(
   object-fit: contain;
   display: block;
   flex-shrink: 0;
+}
+.crest-img--drawn {
+  border-radius: 0;
 }
 .name {
   font-size: 12px;
