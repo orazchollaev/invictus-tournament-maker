@@ -588,7 +588,6 @@
       "Simulator tidak resmi buatan penggemar. Tidak berafiliasi, didukung, atau terhubung dengan UEFA, AFC, CONMEBOL, FIFA, atau klub, liga, maupun kompetisi apa pun yang disebutkan dalam aplikasi.",
   },
   tournament: {
-    exportExcel: "Ekspor ke Excel",
     noFixtures: "Belum ada pertandingan.",
     groupStageNotStarted: "Babak grup belum dimulai.",
     matchdayProgress: "{played}/{total} pekan",

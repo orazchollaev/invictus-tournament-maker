@@ -6,19 +6,12 @@ import { useTeamsStore } from "@/modules/teams/store"
 import { useTournamentStore } from "@/modules/tournament/store"
 import { ManualDraw } from "@/modules/tournament/components/draw"
 import { GroupDraw } from "@/modules/tournament/components/group"
-import { TeamSelectorButton, TeamSelectorFullscreenModal } from "@/modules/tournament/components/shared"
-import { AppButton, AppCard, AppChip, AppConfigButton, AppIcon, AppModal } from "@/components/ui"
 import {
-  ArrowLeft,
-  LayoutGrid,
-  List,
-  Lock,
-  Save,
-  Settings,
-  Sheet,
-  Shuffle,
-  Trophy,
-} from "@lucide/vue"
+  TeamSelectorButton,
+  TeamSelectorFullscreenModal,
+} from "@/modules/tournament/components/shared"
+import { AppButton, AppCard, AppChip, AppConfigButton, AppIcon, AppModal } from "@/components/ui"
+import { ArrowLeft, LayoutGrid, List, Lock, Save, Settings, Shuffle, Trophy } from "@lucide/vue"
 import {
   SettingsDangerZone,
   SettingsKnockoutConfigModal,
@@ -39,7 +32,6 @@ const PhaseConfigSheet = defineAsyncComponent(
   () => import("../components/phases/PhaseConfigSheet.vue")
 )
 import { useTournamentSettingsDraft } from "../composables/useTournamentSettingsDraft"
-import { useTournamentExcelExport } from "../composables/useTournamentExcelExport"
 import { useUnsavedChangesGuard } from "@/composables/useUnsavedChangesGuard"
 import { MAX_TIER_COUNT } from "@/constants"
 
@@ -55,7 +47,6 @@ const allTeams = computed(() => teamsStore.teams)
 const hasAnyResults = computed(() => store.hasAnyResults(tournamentId.value))
 
 const draft = useTournamentSettingsDraft(tournamentId, tournament)
-const { isExporting, exportExcel } = useTournamentExcelExport(() => tournament.value)
 
 const seasonCount = computed(
   () => store.tournaments.filter((tn) => tn.name === tournament.value?.name).length
@@ -233,19 +224,6 @@ function handleSave() {
 
       <div v-else class="stack">
         <AppCard :title="t('tournament.settingsPage.tournamentName.title')" padding="md">
-          <template #actions>
-            <AppButton
-              icon-only
-              variant="outlined"
-              size="xs"
-              :disabled="isExporting"
-              :title="t('tournament.exportExcel')"
-              @click="exportExcel"
-            >
-              <AppIcon :icon="Sheet" size="sm" />
-            </AppButton>
-          </template>
-
           <input
             v-model="draft.name.value"
             class="name-input"
@@ -307,7 +285,7 @@ function handleSave() {
               :phases="tournament.phases ?? []"
               :edges="tournament.phaseEdges ?? []"
               :errors="[]"
-              :intake-of="(id) => (tournament?.phases?.find((p) => p.id === id)?.teamIds.length ?? 0)"
+              :intake-of="(id) => tournament?.phases?.find((p) => p.id === id)?.teamIds.length ?? 0"
               readonly
               @configure="configuringPhaseId = $event"
             />

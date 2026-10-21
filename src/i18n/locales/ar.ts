@@ -583,7 +583,6 @@
       "محاكاة غير رسمية من صنع المعجبين. غير مرتبطة أو معتمدة من قبل UEFA أو AFC أو CONMEBOL أو FIFA أو أي نادٍ أو دوري أو بطولة مذكورة في التطبيق.",
   },
   tournament: {
-    exportExcel: "تصدير إلى Excel",
     noFixtures: "لا توجد مباريات بعد.",
     groupStageNotStarted: "لم يبدأ دور المجموعات بعد.",
     matchdayProgress: "{played}/{total} جولة",

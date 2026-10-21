@@ -603,7 +603,6 @@
       "Norasmiy, muxlislar tomonidan yaratilgan simulyator. UEFA, AFC, CONMEBOL, FIFA yoki ilovada nomi zikr etilgan hech qanday klub, liga yoki musobaqa bilan bog'liq yoki tasdiqlangan emas.",
   },
   tournament: {
-    exportExcel: "Excel'ga eksport",
     noFixtures: "Hali o'yinlar yo'q.",
     groupStageNotStarted: "Guruh bosqichi hali boshlanmagan.",
     matchdayProgress: "{played}/{total} tur",

@@ -585,7 +585,6 @@
       "Nieoficjalny symulator stworzony przez fanów. Nie jest powiązany ani wspierany przez UEFA, AFC, CONMEBOL, FIFA ani żaden klub, ligę czy rozgrywki wymienione w aplikacji.",
   },
   tournament: {
-    exportExcel: "Eksportuj do Excela",
     noFixtures: "Brak meczów.",
     groupStageNotStarted: "Faza grupowa jeszcze się nie rozpoczęła.",
     matchdayProgress: "{played}/{total} kolejek",

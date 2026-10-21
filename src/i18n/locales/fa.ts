@@ -599,7 +599,6 @@
       "این یک شبیه‌ساز غیررسمی و ساخته‌شده توسط هواداران است. هیچ ارتباطی با UEFA، AFC، CONMEBOL، FIFA یا هر باشگاه، لیگ یا مسابقه‌ای که در برنامه ذکر شده ندارد.",
   },
   tournament: {
-    exportExcel: "خروجی Excel",
     noFixtures: "هنوز بازی‌ای وجود ندارد.",
     groupStageNotStarted: "مرحله گروهی هنوز شروع نشده است.",
     matchdayProgress: "{played}/{total} هفته",

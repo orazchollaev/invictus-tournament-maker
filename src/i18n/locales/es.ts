@@ -601,7 +601,6 @@
       "Simulador no oficial hecho por aficionados. No está afiliado, respaldado ni conectado con la UEFA, la AFC, la CONMEBOL, la FIFA ni ningún club, liga o competición mencionados en la app.",
   },
   tournament: {
-    exportExcel: "Exportar a Excel",
     noFixtures: "Todavía no hay partidos.",
     groupStageNotStarted: "La fase de grupos aún no ha comenzado.",
     matchdayProgress: "{played}/{total} jornadas",

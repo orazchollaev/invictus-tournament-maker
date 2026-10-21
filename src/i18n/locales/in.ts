@@ -585,7 +585,6 @@
       "यह एक अनौपचारिक, प्रशंसकों द्वारा बनाया गया सिम्युलेटर है। यह UEFA, AFC, CONMEBOL, FIFA या ऐप में बताए गए किसी भी क्लब, लीग या प्रतियोगिता से संबद्ध, अनुमोदित या जुड़ा हुआ नहीं है।",
   },
   tournament: {
-    exportExcel: "Excel में निर्यात करें",
     noFixtures: "अभी तक कोई मैच नहीं।",
     groupStageNotStarted: "ग्रुप स्टेज अभी शुरू नहीं हुआ है।",
     matchdayProgress: "{played}/{total} मैचडे",

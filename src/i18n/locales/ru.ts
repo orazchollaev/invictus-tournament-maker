@@ -628,7 +628,6 @@
       "Неофициальный симулятор, созданный фанатами. Не связан и не одобрен UEFA, AFC, CONMEBOL, FIFA, а также любым клубом, лигой или турниром, упомянутыми в приложении.",
   },
   tournament: {
-    exportExcel: "Экспорт в Excel",
     noFixtures: "Матчей пока нет.",
     groupStageNotStarted: "Групповой этап ещё не начался.",
     matchdayProgress: "{played}/{total} туров",

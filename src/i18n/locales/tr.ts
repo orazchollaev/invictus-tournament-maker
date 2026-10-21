@@ -711,7 +711,6 @@
       "Resmi olmayan, hayran yapımı bir simülasyondur. UEFA, AFC, CONMEBOL, FIFA veya uygulama içinde adı geçen herhangi bir kulüp, lig ya da turnuva ile bağlantılı, onaylı veya ilişkili değildir.",
   },
   tournament: {
-    exportExcel: "Excel'e aktar",
     noFixtures: "Henüz maç yok.",
     groupStageNotStarted: "Grup aşaması henüz başlamadı.",
     matchdayProgress: "{played}/{total} hafta",
