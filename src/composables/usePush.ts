@@ -2,7 +2,26 @@ import { Capacitor } from "@capacitor/core"
 
 // Broadcast announcements only. No backend: notifications are sent manually
 // from the Firebase Console (Messaging → target "All users"). This composable
-// just registers the device with FCM and wires up tap handling.
+// registers the device with FCM and wires up tap handling.
+//
+// Custom data key "link" (Firebase Console → Additional options → Custom data)
+// opens that URL when the notification is tapped, e.g. the Play Store page for
+// an update announcement.
+
+// Only web and Play Store links are followed; a broadcast payload must not be
+// able to launch arbitrary intent schemes.
+function safeLink(value: unknown): string | null {
+  if (typeof value !== "string") return null
+  const url = value.trim()
+  return /^(https?:\/\/|market:\/\/)/i.test(url) ? url : null
+}
+
+function openLink(url: string): void {
+  // Capacitor's WebView hands URLs outside the app to the system (browser /
+  // Play Store) and leaves the app page in place.
+  window.location.assign(url)
+}
+
 export async function initPush(): Promise<void> {
   if (!Capacitor.isNativePlatform()) return
 
@@ -31,8 +50,8 @@ export async function initPush(): Promise<void> {
     })
 
     PushNotifications.addListener("pushNotificationActionPerformed", (action) => {
-      // Fired when the user taps a notification. Hook navigation here later.
-      if (import.meta.env.DEV) console.log("push tapped:", action.notification.data)
+      const link = safeLink(action.notification.data?.link)
+      if (link) openLink(link)
     })
   } catch {
     // best-effort: silently ignore if unavailable
