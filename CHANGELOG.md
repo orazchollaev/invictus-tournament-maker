@@ -1,5 +1,11 @@
 # Changelog
 
+## [3.6.0](https://github.com/orazchollaev/invictus-tournament-maker/compare/v3.5.0...v3.6.0) (2026-10-21)
+
+### 🚀 New Features
+
+- **teams:** add optional key/value categories with filtering ([d5e6654](https://github.com/orazchollaev/invictus-tournament-maker/commit/d5e665479b9487401c7f84b925ddf37fd8fdc3e3))
+
 ## [3.5.0](https://github.com/orazchollaev/invictus-tournament-maker/compare/v3.4.6...v3.5.0) (2026-10-15)
 
 ### 🚀 New Features
