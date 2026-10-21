@@ -4,7 +4,7 @@ import { useI18n } from "vue-i18n"
 import { Check } from "@lucide/vue"
 import type { Team } from "@/modules/teams/types"
 import { TeamBadge } from "@/modules/teams/components"
-import { AppButton, AppButtonGroup, AppChip, AppSearchInput } from "@/components/ui"
+import { AppButton, AppButtonGroup, AppChip, AppSearchInput, AppSelect } from "@/components/ui"
 
 const props = withDefaults(
   defineProps<{
@@ -40,9 +40,62 @@ type SortKey = "name" | "power"
 const sortKey = ref<SortKey>("name")
 const sortAsc = ref(true)
 
+/** Sentinel for "no category filter" — AppSelect cannot hold an empty value. */
+const ALL = "all"
+const categoryKey = ref(ALL)
+const categoryValue = ref(ALL)
+
+const categoryKeys = computed(() => {
+  const keys = new Set<string>()
+  for (const tm of props.teams) for (const k of Object.keys(tm.categories ?? {})) keys.add(k)
+  return [...keys].sort((a, b) => a.localeCompare(b))
+})
+
+const keyOptions = computed(() => [
+  { value: ALL, label: t("teams.filter.all") },
+  ...categoryKeys.value.map((k) => ({ value: k, label: k })),
+])
+
+const valueOptions = computed(() => {
+  const values = new Set<string>()
+  for (const tm of props.teams) {
+    const v = tm.categories?.[categoryKey.value]
+    if (v) values.add(v)
+  }
+  return [
+    { value: ALL, label: t("teams.filter.all") },
+    ...[...values].sort((a, b) => a.localeCompare(b)).map((v) => ({ value: v, label: v })),
+  ]
+})
+
+// The team pool can change underneath an active filter (e.g. a dataset swap).
+watch(categoryKeys, (keys) => {
+  if (categoryKey.value !== ALL && !keys.includes(categoryKey.value)) {
+    categoryKey.value = ALL
+    categoryValue.value = ALL
+  }
+})
+
+function setCategoryKey(key: string) {
+  categoryKey.value = key
+  categoryValue.value = ALL
+}
+
+/** Teams passing the category filter; search and sorting narrow it further. */
+const categoryTeams = computed(() => {
+  if (categoryKey.value === ALL) return props.teams
+  const key = categoryKey.value
+  return props.teams.filter((tm) => {
+    const v = tm.categories?.[key]
+    return categoryValue.value === ALL ? v !== undefined : v === categoryValue.value
+  })
+})
+
 const sortedFilteredTeams = computed(() => {
   const q = appliedQuery.value.trim().toLowerCase()
-  const list = q ? props.teams.filter((tm) => tm.name.toLowerCase().includes(q)) : [...props.teams]
+  const list = q
+    ? categoryTeams.value.filter((tm) => tm.name.toLowerCase().includes(q))
+    : [...categoryTeams.value]
 
   return list.sort((a, b) => {
     if (sortKey.value === "power") return sortAsc.value ? a.power - b.power : b.power - a.power
@@ -72,7 +125,9 @@ function powerTier(power: number) {
 
 const selectedSet = computed(() => new Set(props.selected))
 const allSelected = computed(
-  () => props.teams.length > 0 && props.teams.every((tm) => selectedSet.value.has(tm.id))
+  () =>
+    categoryTeams.value.length > 0 &&
+    categoryTeams.value.every((tm) => selectedSet.value.has(tm.id))
 )
 
 /** Warn while a selection exists but is too small to draw. */
@@ -113,7 +168,15 @@ function toggleTeam(teamId: string) {
 
 function toggleAll() {
   if (props.disabled) return
-  emit("update:selected", allSelected.value ? [] : props.teams.map((tm) => tm.id))
+  const ids = categoryTeams.value.map((tm) => tm.id)
+  if (categoryKey.value === ALL) {
+    emit("update:selected", allSelected.value ? [] : ids)
+    return
+  }
+  // With a category filter on, only that slice is toggled; the rest stays as picked.
+  const slice = new Set(ids)
+  const rest = props.selected.filter((id) => !slice.has(id))
+  emit("update:selected", allSelected.value ? rest : [...rest, ...ids])
 }
 </script>
 
@@ -148,6 +211,22 @@ function toggleAll() {
       >
         {{ allSelected ? t("teamSelector.deselectAll") : t("teamSelector.selectAll") }}
       </AppButton>
+    </div>
+
+    <div v-if="categoryKeys.length" class="ts-categories">
+      <AppSelect
+        size="sm"
+        :model-value="categoryKey"
+        :options="keyOptions"
+        @update:model-value="setCategoryKey"
+      />
+      <AppSelect
+        v-if="categoryKey !== ALL"
+        v-model="categoryValue"
+        size="sm"
+        searchable
+        :options="valueOptions"
+      />
     </div>
 
     <!-- Fixed height so filtering does not shift the surrounding form; grows in fullscreen. -->
@@ -205,6 +284,12 @@ function toggleAll() {
 .ts-toolbar {
   display: flex;
   align-items: center;
+  gap: var(--sp-2);
+}
+
+.ts-categories {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
   gap: var(--sp-2);
 }
 

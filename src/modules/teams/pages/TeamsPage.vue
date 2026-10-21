@@ -40,9 +40,33 @@ const viewOptions = computed(() => [
   { value: "grid", label: t("tournaments.viewGrid"), icon: Grid3x3 },
 ])
 
+const categoryKey = ref("all")
+const categoryValue = ref("all")
+
+// Editing the last team of a category can retire its key from under the filter.
+watch(
+  () => [store.categoryKeys, store.categoryValues(categoryKey.value)] as const,
+  ([keys, values]) => {
+    if (categoryKey.value !== "all" && !keys.includes(categoryKey.value)) {
+      categoryKey.value = "all"
+      categoryValue.value = "all"
+    } else if (categoryValue.value !== "all" && !values.includes(categoryValue.value)) {
+      categoryValue.value = "all"
+    }
+  }
+)
+
 const filtered = computed(() => {
   const q = query.value.trim().toLowerCase()
-  const list = q ? store.teams.filter((t) => t.name.toLowerCase().includes(q)) : [...store.teams]
+  let list = q ? store.teams.filter((t) => t.name.toLowerCase().includes(q)) : [...store.teams]
+
+  if (categoryKey.value !== "all") {
+    const key = categoryKey.value
+    list = list.filter((t) => {
+      const v = t.categories?.[key]
+      return categoryValue.value === "all" ? v !== undefined : v === categoryValue.value
+    })
+  }
 
   if (settings.teamsSortKey === "name") {
     list.sort((a, b) =>
@@ -100,6 +124,8 @@ const pagedTeams = computed(() => {
       <TeamsFilterMenu
         v-model:sort-key="settings.teamsSortKey"
         v-model:sort-asc="settings.teamsSortAsc"
+        v-model:category-key="categoryKey"
+        v-model:category-value="categoryValue"
       />
     </div>
 

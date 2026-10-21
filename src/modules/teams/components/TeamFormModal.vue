@@ -10,11 +10,13 @@ import {
 } from "@/components/ui"
 import FlagPicker from "./FlagPicker.vue"
 import FlagCircle from "./FlagCircle.vue"
+import TeamCategoryEditor from "./TeamCategoryEditor.vue"
 import TeamImageSourceModal from "./TeamImageSourceModal.vue"
 import TeamImageUrlModal from "./TeamImageUrlModal.vue"
 import { CrestBuilderModal } from "./crest"
 import { flagPrimaryColor } from "../utils/flags"
 import { isDrawnCrest, resizeImageFile } from "../utils/imageUtils"
+import { categoriesToRows, categoryRowsValid, rowsToCategories } from "../utils/categories"
 import { loadCrestEngine, useCrestEngine } from "../composables/useCrestEngine"
 import { useTeamsStore } from "../store"
 import { useModal } from "@/composables/useModal"
@@ -45,6 +47,8 @@ const flag = ref<string | undefined>(props.team?.flag)
 const image = ref<string | undefined>(props.team?.image)
 const power = ref(props.team?.power ?? 70)
 const crest = ref<CrestSpec | undefined>(props.team?.crest)
+const categoryRows = ref(categoriesToRows(props.team?.categories))
+const canSubmit = computed(() => !!name.value.trim() && categoryRowsValid(categoryRows.value))
 const crestEngine = useCrestEngine()
 const showCrestBuilder = ref(false)
 const showFlagPicker = ref(false)
@@ -162,7 +166,8 @@ function clearImage() {
 }
 
 function submit() {
-  if (!name.value.trim()) return
+  if (!canSubmit.value) return
+  const categories = rowsToCategories(categoryRows.value)
   // Without the engine loaded there is nothing new to draw; keep what was there.
   const finalImage = crest.value && crestEngine.value ? shownImage.value : image.value
   const finalCrest = crest.value && crestEngine.value ? crest.value : undefined
@@ -175,6 +180,7 @@ function submit() {
       image: finalImage,
       crest: finalCrest ?? (finalImage === props.team.image ? props.team.crest : undefined),
       power: power.value,
+      categories,
     })
   } else {
     store.add(
@@ -184,7 +190,8 @@ function submit() {
       abbr.value.trim() || undefined,
       flag.value,
       finalImage,
-      finalCrest
+      finalCrest,
+      categories
     )
     void logEvent("team_created")
   }
@@ -318,10 +325,16 @@ function submit() {
           <AppColorPicker v-model="color" />
         </AppField>
       </div>
+
+      <div class="section">
+        <AppField layout="stack" :label="t('teams.categories.label')">
+          <TeamCategoryEditor v-model="categoryRows" />
+        </AppField>
+      </div>
     </div>
 
     <template #footer>
-      <AppButton variant="filled" :disabled="!name.trim()" @click="submit">
+      <AppButton variant="filled" :disabled="!canSubmit" @click="submit">
         {{ isEdit ? t("common.save") : t("teams.form.addTitle") }}
       </AppButton>
       <AppButton @click="modal?.close()">{{ t("common.cancel") }}</AppButton>

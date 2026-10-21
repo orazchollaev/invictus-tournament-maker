@@ -195,6 +195,22 @@
     sortDefault: "Default",
     sortAsc: "Ascending",
     sortDesc: "Descending",
+    categories: {
+      label: "Categories",
+      keyPlaceholder: "Select category…",
+      newKey: "New category",
+      newKeyPlaceholder: "Category name",
+      confirmKey: "Use this category",
+      valuePlaceholder: "Value (required)",
+      addRow: "Add category",
+      removeRow: "Remove category",
+    },
+    filter: {
+      categoryLabel: "Category",
+      valueLabel: "Value",
+      all: "All",
+      sortLabel: "Sort",
+    },
     form: {
       addTitle: "Add Team",
       editTitle: "Edit Team",

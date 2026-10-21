@@ -16,6 +16,11 @@ export interface Team {
    * every helper returns a neutral profile for an absent coach.
    */
   coach?: Coach
+  /**
+   * Free-form grouping for filtering the roster, e.g. `{ Confederation: "UEFA" }`.
+   * Optional; a key present always has a non-empty value.
+   */
+  categories?: Record<string, string>
 }
 
 // ─── Coach ───────────────────────────────────────────────────────

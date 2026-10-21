@@ -197,6 +197,22 @@
     sortDefault: "Varsayılan",
     sortAsc: "Artan",
     sortDesc: "Azalan",
+    categories: {
+      label: "Kategoriler",
+      keyPlaceholder: "Kategori seç…",
+      newKey: "Yeni kategori",
+      newKeyPlaceholder: "Kategori adı",
+      confirmKey: "Bu kategoriyi kullan",
+      valuePlaceholder: "Değer (zorunlu)",
+      addRow: "Kategori ekle",
+      removeRow: "Kategoriyi kaldır",
+    },
+    filter: {
+      categoryLabel: "Kategori",
+      valueLabel: "Değer",
+      all: "Tümü",
+      sortLabel: "Sırala",
+    },
     form: {
       addTitle: "Takım Ekle",
       editTitle: "Takım Düzenle",

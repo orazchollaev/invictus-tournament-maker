@@ -1,5 +1,5 @@
 import { defineStore } from "pinia"
-import { ref } from "vue"
+import { computed, ref } from "vue"
 import type { Coach, Team } from "./types"
 import type { CrestSpec } from "@/engine/crest/types"
 import { useTournamentStore } from "@/modules/tournament/store"
@@ -26,6 +26,8 @@ export const useTeamsStore = defineStore("teams", () => {
   const playersStore = usePlayersStore()
 
   const teams = ref<Team[]>([])
+  /** Keys created in the form but not yet carried by any team — kept so they stay pickable. */
+  const savedCategoryKeys = ref<string[]>([])
 
   function clampPower(power: number) {
     return Math.min(99, Math.max(1, Math.round(power)))
@@ -38,7 +40,8 @@ export const useTeamsStore = defineStore("teams", () => {
     abbr?: string,
     flag?: string,
     image?: string,
-    crest?: CrestSpec
+    crest?: CrestSpec,
+    categories?: Record<string, string>
   ) {
     const entry: import("./types").Team = {
       id: uid(),
@@ -50,6 +53,7 @@ export const useTeamsStore = defineStore("teams", () => {
     if (flag) entry.flag = flag
     if (image) entry.image = image
     if (image && crest) entry.crest = crest
+    if (categories && Object.keys(categories).length) entry.categories = { ...categories }
     teams.value.push(entry)
   }
 
@@ -68,6 +72,7 @@ export const useTeamsStore = defineStore("teams", () => {
     if (!t) return
     if (data.power !== undefined) data = { ...data, power: clampPower(data.power) }
     Object.assign(t, data)
+    if (t.categories && !Object.keys(t.categories).length) delete t.categories
   }
 
   /** Appoint or sack one manager. `undefined` leaves the club without one. */
@@ -87,5 +92,43 @@ export const useTeamsStore = defineStore("teams", () => {
     return tournaments.some((t) => t.teamIds.find((tmId) => tmId == id))
   }
 
-  return { teams, add, remove, update, setCoach, setCoaches, COLORS }
+  /** Every category key in use, in first-seen order. */
+  const categoryKeys = computed(() => {
+    const keys = new Set<string>()
+    for (const t of teams.value) for (const k of Object.keys(t.categories ?? {})) keys.add(k)
+    return [...keys]
+  })
+
+  /** Keys offered by the team form: those in use plus ones created but not yet used. */
+  const knownCategoryKeys = computed(() => [
+    ...new Set([...categoryKeys.value, ...savedCategoryKeys.value]),
+  ])
+
+  function addCategoryKey(key: string) {
+    if (!savedCategoryKeys.value.includes(key)) savedCategoryKeys.value.push(key)
+  }
+
+  function categoryValues(key: string) {
+    const values = new Set<string>()
+    for (const t of teams.value) {
+      const v = t.categories?.[key]
+      if (v) values.add(v)
+    }
+    return [...values].sort((a, b) => a.localeCompare(b))
+  }
+
+  return {
+    teams,
+    savedCategoryKeys,
+    add,
+    remove,
+    update,
+    setCoach,
+    setCoaches,
+    categoryKeys,
+    knownCategoryKeys,
+    addCategoryKey,
+    categoryValues,
+    COLORS,
+  }
 })
