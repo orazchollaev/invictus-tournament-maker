@@ -1,5 +1,21 @@
 # Changelog
 
+## [3.6.1](https://github.com/orazchollaev/invictus-tournament-maker/compare/v3.6.0...v3.6.1) (2026-10-22)
+
+### 🚀 New Features
+
+- **branding:** replace ShiftFn logo with new design ([ecdabee](https://github.com/orazchollaev/invictus-tournament-maker/commit/ecdabeee2797a88fbfdb561a56bdb1d2dd2abeb8))
+- **branding:** use square ShiftFn logo ([007d720](https://github.com/orazchollaev/invictus-tournament-maker/commit/007d720c274309f4f20dd958529d6091c8f5885a))
+- open notification link on tap ([c1e8b67](https://github.com/orazchollaev/invictus-tournament-maker/commit/c1e8b674b601616f88449e0e9589de1a1eb9e4d7))
+
+### ♻️ Refactoring
+
+- remove excel export and exceljs dependency ([677727d](https://github.com/orazchollaev/invictus-tournament-maker/commit/677727d49113db2accaffa9fc730c36a5d0a10e9))
+
+### 🔧 Maintenance
+
+- **deps:** update minor dependencies ([e184016](https://github.com/orazchollaev/invictus-tournament-maker/commit/e184016cd2a2f5b0ab8d3ee997cd101e702677d4))
+
 ## [3.6.0](https://github.com/orazchollaev/invictus-tournament-maker/compare/v3.5.0...v3.6.0) (2026-10-21)
 
 ### 🚀 New Features
