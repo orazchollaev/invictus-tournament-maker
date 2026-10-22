@@ -126,16 +126,25 @@ function jobFor(
  * before a sweep — the same "computed once, ahead of the batch" approximation
  * `unavailablePlayersByMatch` already makes for injuries.
  */
-function fatigueByTeamSnapshot(t: Tournament): Map<string, Map<string, number>> {
-  const history = playedMatches(t).map((e) => ({
-    homeId: e.homeId,
-    awayId: e.awayId,
-    result: e.result,
-  }))
+function fatigueByTeamSnapshot(
+  t: Tournament,
+  teamIds: Iterable<string>
+): Map<string, Map<string, number>> {
+  // One pass over the history, bucketed by the teams that need a reading —
+  // filtering the whole list once per team is quadratic in a big league.
+  const historyByTeam = new Map<string, FatigueHistory[]>()
+  for (const id of teamIds) historyByTeam.set(id, [])
+  for (const e of playedMatches(t)) {
+    const match = { homeId: e.homeId, awayId: e.awayId, result: e.result }
+    if (e.homeId) historyByTeam.get(e.homeId)?.push(match)
+    if (e.awayId) historyByTeam.get(e.awayId)?.push(match)
+  }
   const map = new Map<string, Map<string, number>>()
-  for (const id of t.teamIds) map.set(id, computeFatigueByPlayer(id, history))
+  for (const [id, history] of historyByTeam) map.set(id, computeFatigueByPlayer(id, history))
   return map
 }
+
+type FatigueHistory = Parameters<typeof computeFatigueByPlayer>[1][number]
 
 /**
  * Claim stats for anything that was watched live — the report was already
@@ -165,17 +174,23 @@ export function claimWatchedStats(t: Tournament): boolean {
  * the ones actually worth generating. Plain data only, so the caller is free
  * to hand the list to a worker instead of generating on the main thread.
  */
-export function pendingStatsJobs(t: Tournament): PendingStatsJob[] {
+export function pendingStatsJobs(
+  t: Tournament,
+  /** `${matchId}:${leg}` keys already handed to a worker and not yet back. */
+  inFlight?: ReadonlySet<string>
+): PendingStatsJob[] {
   // Every store action sweeps its tournament, and most find nothing to do. The
   // injury and fatigue snapshots below read every played match's report, which
   // means decoding them all — so look for work with a cheap pass first.
-  let anyPending = false
+  const pendingTeams = new Set<string>()
   forEachMatch(t, (entry) => {
-    if (!anyPending && entry.result && entry.result.stats === undefined && !isBye(entry)) {
-      anyPending = true
-    }
+    if (!entry.result || entry.result.stats !== undefined || isBye(entry)) return
+    const leg = "leg" in entry.source ? entry.source.leg : 1
+    if (inFlight?.has(`${entry.match.id}:${leg}`)) return
+    if (entry.homeId) pendingTeams.add(entry.homeId)
+    if (entry.awayId) pendingTeams.add(entry.awayId)
   })
-  if (!anyPending) return []
+  if (!pendingTeams.size) return []
 
   // One pass over the whole tournament's history, snapshotted before any of
   // these jobs run — the same "computed once per sweep" approximation
@@ -184,13 +199,14 @@ export function pendingStatsJobs(t: Tournament): PendingStatsJob[] {
   const availabilityByKey = unavailablePlayersByMatch(t)
   const fatigueByTeam =
     isFatigueFactorEnabled() || isInjuryFatigueImpactEnabled()
-      ? fatigueByTeamSnapshot(t)
+      ? fatigueByTeamSnapshot(t, pendingTeams)
       : undefined
 
   const jobs: PendingStatsJob[] = []
   forEachMatch(t, (entry) => {
     if (entry.result?.stats !== undefined) return
     const leg = "leg" in entry.source ? entry.source.leg : 1
+    if (inFlight?.has(`${entry.match.id}:${leg}`)) return
     const job = jobFor(entry, availabilityByKey.get(`${entry.match.id}:${leg}`), fatigueByTeam)
     if (job) jobs.push(job)
   })

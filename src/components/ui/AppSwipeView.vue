@@ -26,6 +26,11 @@ const props = withDefaults(
     /** Gap between panes while sliding, in px. */
     gap?: number
     duration?: number
+    /**
+     * Tabs too heavy to sit mounted beside the settled pane. They mount only
+     * once a touch starts or they are the slide target.
+     */
+    deferred?: readonly T[]
   }>(),
   { gap: 10, duration: 280 }
 )
@@ -63,8 +68,12 @@ const rendered = computed(() => {
   if (target.value !== null) keys.add(target.value)
   if (neighboursFor.value === settled.value) {
     const i = settledIdx.value
-    if (i > 0) keys.add(props.tabs[i - 1])
-    if (i < props.tabs.length - 1) keys.add(props.tabs[i + 1])
+    const neighbours = [props.tabs[i - 1], props.tabs[i + 1]]
+    for (const tab of neighbours) {
+      if (tab === undefined) continue
+      if (!armed.value && props.deferred?.includes(tab)) continue
+      keys.add(tab)
+    }
   }
   return props.tabs.filter((tab) => keys.has(tab))
 })

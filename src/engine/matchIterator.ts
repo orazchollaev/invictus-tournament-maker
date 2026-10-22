@@ -191,6 +191,15 @@ export function playedMatches(t: Tournament): MatchEntry[] {
   return allMatches(t).filter((e) => e.result != null && !isBye(e))
 }
 
+/** Whether any fixture has been played — `playedMatches(t).length > 0` without building the list. */
+export function hasPlayedMatch(t: Tournament): boolean {
+  let found = false
+  forEachMatch(t, (e) => {
+    if (!found && e.result != null && !isBye(e)) found = true
+  })
+  return found
+}
+
 /** Every played match involving `teamId`. */
 export function matchesForTeam(t: Tournament, teamId: string): MatchEntry[] {
   return playedMatches(t).filter((e) => e.homeId === teamId || e.awayId === teamId)

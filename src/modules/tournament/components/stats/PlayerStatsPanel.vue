@@ -48,7 +48,9 @@ const lists: Record<ListKey, () => PlayerStatRow[]> = {
   keepers: () => keepers.value,
 }
 
-const rows = computed(() => lists[active.value]())
+/** A big tournament has over a thousand players; nobody reads past the top of a ranking. */
+const MAX_ROWS = 100
+const rows = computed(() => lists[active.value]().slice(0, MAX_ROWS))
 
 /** The lead column: what this particular ranking is ranked by. */
 const leadColumn = computed(() => {

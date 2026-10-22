@@ -17,6 +17,7 @@ import {
   DetailPhaseTabs,
   DetailMultiTierModal,
   phaseIdOf,
+  type MainTab,
 } from "../components/detail"
 import { advancablePhases } from "@/engine"
 import { phaseTournamentView } from "../utils/phaseView"
@@ -112,6 +113,9 @@ const {
   changeTab,
   visibleTabs,
 } = useTournamentTabs(tournament)
+
+/** Heavy on a big tournament (stats walks every report), so never mounted just for being next door. */
+const DEFERRED_TABS: MainTab[] = ["stats"]
 
 const {
   showSeasonModal,
@@ -243,7 +247,7 @@ const showStartPlayoffButton = computed(
       />
 
       <div ref="tabSurface" class="tab-surface" :style="{ height: tabSurfaceHeight }">
-        <AppSwipeView v-model="activeTab" :tabs="visibleTabs">
+        <AppSwipeView v-model="activeTab" :tabs="visibleTabs" :deferred="DEFERRED_TABS">
           <template #default="{ tab }">
             <div v-if="tab === 'manager'" class="tab-panel">
               <ManagerTeamPanel :tournament-id="tournament.id" />

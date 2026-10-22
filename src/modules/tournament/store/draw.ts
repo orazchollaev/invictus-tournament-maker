@@ -13,7 +13,7 @@ import {
   randomSeed,
   buildEmptyBracketRounds,
   applyLegModes,
-  playedMatches,
+  hasPlayedMatch,
 } from "@/engine"
 
 export function useDrawActions(tournaments: Ref<Tournament[]>, getTeams: () => Team[]) {
@@ -28,7 +28,7 @@ export function useDrawActions(tournaments: Ref<Tournament[]>, getTeams: () => T
    */
   function hasAnyResults(tournamentId: string): boolean {
     const t = tournaments.value.find((t) => t.id === tournamentId)
-    return !!t && playedMatches(t).length > 0
+    return !!t && hasPlayedMatch(t)
   }
 
   function rebuildDraw(

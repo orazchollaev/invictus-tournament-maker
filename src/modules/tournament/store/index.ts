@@ -213,11 +213,18 @@ export const useTournamentStore = defineStore(
      */
     const WORKER_WORTHWHILE_JOBS = 8
 
+    /**
+     * `${matchId}:${leg}` keys a worker is still rolling. A match stays without
+     * stats until the reply lands, so without this every action in between
+     * (any of them sweeps) re-sent the same hundreds of jobs.
+     */
+    const statsInFlight = new Set<string>()
+
     function ensureStatsFor(tournamentId: string) {
       const t = tournaments.value.find((x) => x.id === tournamentId)
       if (!t) return
       claimWatchedStats(t)
-      const jobs = pendingStatsJobs(t)
+      const jobs = pendingStatsJobs(t, statsInFlight)
       if (!jobs.length) return
 
       const teams = getTeams()
@@ -231,7 +238,10 @@ export const useTournamentStore = defineStore(
         return
       }
 
+      const keys = jobs.map((job) => `${job.matchId}:${job.leg}`)
+      for (const key of keys) statsInFlight.add(key)
       generateStatsInWorker(jobs, teams, players).then((results) => {
+        for (const key of keys) statsInFlight.delete(key)
         const target = tournaments.value.find((x) => x.id === tournamentId)
         if (target) applyStatsResults(target, results)
       })

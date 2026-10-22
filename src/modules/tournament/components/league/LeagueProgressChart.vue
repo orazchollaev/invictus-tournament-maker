@@ -128,7 +128,7 @@ function buildChartOptions(): ChartOptions<"line"> {
   return {
     responsive: true,
     maintainAspectRatio: false,
-    animation: { duration: 200 },
+    animation: teamCount.value > 16 ? false : { duration: 200 },
     layout: {
       padding: { top: 8, bottom: 8, left: 4, right: 8 },
     },
@@ -197,7 +197,7 @@ function updateChart() {
   chart.data.labels = newData.labels
   chart.data.datasets = newData.datasets
   chart.options = buildChartOptions()
-  chart.update()
+  chart.update("none")
 }
 
 onMounted(() => createChart())

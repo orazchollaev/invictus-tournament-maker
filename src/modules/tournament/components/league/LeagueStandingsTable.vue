@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed } from "vue"
 import type { GroupStanding } from "@/modules/tournament/types"
 import type { Team } from "@/modules/teams/types"
 import { TeamBadge } from "@/modules/teams/components"
@@ -58,9 +59,14 @@ function isBandEnd(rank: number): boolean {
   return !!band && rank + 1 === band.toRank
 }
 
+const teamsById = computed(() => new Map(props.teams.map((t) => [t.id, t])))
+
 function teamById(id: string) {
-  return props.teams.find((t) => t.id === id)
+  return teamsById.value.get(id)
 }
+
+/** Sliding dozens of rows on every simulated match costs more than the motion is worth. */
+const ANIMATE_ROWS_MAX = 24
 
 const playoffCount = () => props.playoffQualifierCount ?? 0
 const promoCount = () => props.promotionCount ?? 0
@@ -102,7 +108,7 @@ function isLastPlayoffQualifier(rank: number) {
           </th>
         </tr>
       </thead>
-      <TransitionGroup tag="tbody" name="standing-row">
+      <TransitionGroup tag="tbody" name="standing-row" :css="standings.length <= ANIMATE_ROWS_MAX">
         <tr
           v-for="(row, rank) in standings"
           :key="row.teamId"
@@ -152,11 +158,7 @@ function isLastPlayoffQualifier(rank: number) {
       <li v-for="band in bands" :key="band.label + band.fromRank" class="lv-key-item">
         <span class="lv-key-dot" :class="`lv-band--${band.colorIdx % BAND_COLORS}`" />
         <span class="lv-key-range">
-          {{
-            band.fromRank === band.toRank
-              ? band.fromRank
-              : `${band.fromRank}-${band.toRank}`
-          }}
+          {{ band.fromRank === band.toRank ? band.fromRank : `${band.fromRank}-${band.toRank}` }}
         </span>
         <span class="lv-key-label">{{ band.label }}</span>
       </li>

@@ -225,7 +225,14 @@ export {
   seedLeaguePlayoffBracket,
   computeLeaguePlayoffPlan,
 } from "./leaguePlayoff"
-export { forEachMatch, allMatches, playedMatches, matchesForTeam, isBye } from "./matchIterator"
+export {
+  forEachMatch,
+  allMatches,
+  playedMatches,
+  hasPlayedMatch,
+  matchesForTeam,
+  isBye,
+} from "./matchIterator"
 export type { MatchEntry, MatchSource, PhaseRef } from "./matchIterator"
 export {
   PHASE_MIN_TEAMS,
