@@ -1,5 +1,15 @@
 # Changelog
 
+## [3.6.3](https://github.com/orazchollaev/invictus-tournament-maker/compare/v3.6.2...v3.6.3) (2026-10-23)
+
+### 🚀 New Features
+
+- **settings:** log support analytics events ([1b6fefb](https://github.com/orazchollaev/invictus-tournament-maker/commit/1b6fefb65212e09ed61789396f758ef78abc2385))
+
+### 🔧 Maintenance
+
+- bump gradle version ([94ed15c](https://github.com/orazchollaev/invictus-tournament-maker/commit/94ed15c575d8f6687fc32ef554edd3b132b02f2f))
+
 ## [3.6.2](https://github.com/orazchollaev/invictus-tournament-maker/compare/v3.6.1...v3.6.2) (2026-10-23)
 
 ### 🚀 New Features
