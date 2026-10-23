@@ -308,6 +308,16 @@ export {
   UNKNOWN_POWER,
   MIN_RATING,
   MAX_RATING,
+  blankStats,
+  draftFromStats,
+  isGoalEvent,
+  maxMinute,
+  rebuildStats,
+  redsOfDraft,
+  scoreOfEvents,
+  shootoutTally,
+  MAX_EXTRA_TIME_MINUTE,
+  MAX_REGULATION_MINUTE,
 } from "./events"
 export type {
   Lineup,
@@ -316,6 +326,9 @@ export type {
   MatchOutcome,
   RatingInput,
   WatchedMatch,
+  DraftEvent,
+  DraftScore,
+  MatchDraft,
   PendingStatsJob,
   StatsJobResult,
 } from "./events"

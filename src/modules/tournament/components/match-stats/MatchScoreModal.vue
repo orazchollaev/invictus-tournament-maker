@@ -2,9 +2,10 @@
 import { computed, nextTick, ref, watch } from "vue"
 
 import { useI18n } from "vue-i18n"
-import { ChartColumn, ClipboardList, PlayCircle, Shuffle, Trash2 } from "@lucide/vue"
+import { ChartColumn, ClipboardList, PencilLine, PlayCircle, Shuffle, Trash2 } from "@lucide/vue"
 import { AppNumberInput, AppSheet } from "@/components/ui"
 import { TeamBadge } from "@/modules/teams/components"
+import MatchEventEditor from "./MatchEventEditor.vue"
 import MatchStatsModal from "./MatchStatsModal.vue"
 import LiveMatchModal from "./LiveMatchModal.vue"
 // Imported directly rather than through the manager barrel: ManagerTeamPanel
@@ -15,9 +16,11 @@ import type { MatchResult, MatchStats } from "@/modules/tournament/types"
 import { MAX_GOALS } from "@/constants"
 import {
   allMatches,
+  blankStats,
   buildLineup,
   computeFatigueByPlayer,
   decideKnockoutResult,
+  extraTimeGoalsOf,
   generateMatchStats,
   dropWatchedMatch,
   isFatigueFactorEnabled,
@@ -355,6 +358,45 @@ function closeLive() {
   liveWatched.value = null
 }
 
+// ─── Editing it minute by minute ─────────────────────────────────
+/** The report the editor opens on; null while the editor is closed. */
+const editorBase = ref<MatchStats | null>(null)
+const editorExtraTime = ref(false)
+
+/** Needs the fixture id for the same reason Live does: the edited report rides the stash. */
+const canEdit = computed(
+  () => props.canSimulate && !!props.matchId && !!props.homeTeam && !!props.awayTeam
+)
+
+/**
+ * Start from the saved report if there is one. Otherwise from a generated one
+ * that fits the score as it stands — or, with nothing entered yet, from just
+ * the starting elevens, so an empty match is built up from the first goal.
+ */
+function openEditor() {
+  if (!props.homeTeam || !props.awayTeam) return
+  editorExtraTime.value = !!props.result?.ft
+  const stored = statsOf(props.result)
+  if (stored) {
+    editorBase.value = stored
+    return
+  }
+  const current: MatchResult = props.result ?? {
+    home: home.value,
+    away: away.value,
+    ...(showPens.value ? { penHome: penHome.value, penAway: penAway.value } : {}),
+  }
+  const extraTimeGoals = extraTimeGoalsOf(current)
+  const generated = statsFor({ result: current, ...(extraTimeGoals ? { extraTimeGoals } : {}) })
+  editorBase.value =
+    props.result || current.home || current.away ? generated : blankStats(generated)
+}
+
+function onEditorApply(watched: WatchedMatch) {
+  editorBase.value = null
+  applyRoll(watched)
+}
+
 // ─── Managing it yourself ────────────────────────────────────────
 /**
  * When the user is in charge of one of these two sides, the match is his to
@@ -569,6 +611,15 @@ const canShowStats = computed(() => !!props.result?.stats)
         <span>{{ canReplay ? t("liveMatch.replay") : t("liveMatch.watch") }}</span>
       </button>
       <button
+        v-if="canEdit && !canManage"
+        class="ms-ghost"
+        :title="t('matchEditor.open')"
+        @click="openEditor"
+      >
+        <PencilLine :size="14" />
+        <span>{{ t("matchEditor.open") }}</span>
+      </button>
+      <button
         v-if="canSimulate && !canManage"
         class="ms-ghost"
         :title="t('matchScore.simulate')"
@@ -605,6 +656,19 @@ const canShowStats = computed(() => !!props.result?.stats)
     :replay="liveIsReplay"
     @finish="onLiveFinish"
     @cancel="closeLive"
+  />
+
+  <MatchEventEditor
+    v-if="editorBase"
+    :home-team="homeTeam"
+    :away-team="awayTeam"
+    :base="editorBase"
+    :extra-time="editorExtraTime"
+    :requires-winner="requiresWinner"
+    :aggregate-offset="aggregateOffset"
+    :subtitle="subtitle"
+    @apply="onEditorApply"
+    @close="editorBase = null"
   />
 
   <ManagerMatchDrawer

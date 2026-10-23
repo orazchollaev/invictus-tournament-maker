@@ -1,0 +1,72 @@
+/* Rows shared by the three tabs of the match event editor. */
+.me-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+.me-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: var(--sp-3);
+  row-gap: var(--sp-1);
+  padding: var(--sp-1) var(--sp-2);
+  border: 1px solid var(--border-light);
+  border-inline-start: 3px solid var(--ev-color, var(--border));
+  border-radius: var(--radius);
+  background: var(--bg);
+}
+.me-line {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+}
+.me-line > * {
+  min-width: 0;
+}
+.me-grow {
+  flex: 1 1 140px;
+}
+.me-clock {
+  min-width: 3.2ch;
+  font-size: var(--fs-xs);
+  font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
+}
+.me-spacer {
+  flex: 1;
+}
+.me-root {
+  display: flex;
+  flex-direction: column;
+}
+/* Add buttons ride above the list and stay put, so a long list never has to be scrolled to its end to grow. */
+.me-add {
+  order: -1;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  padding: var(--sp-2) 0;
+  margin-bottom: var(--sp-2);
+  background: var(--surface, var(--bg));
+}
+.me-empty {
+  margin: 0;
+  padding: var(--sp-4) 0;
+  text-align: center;
+  font-size: var(--fs-sm);
+  color: var(--text-muted);
+}
+.me-hint {
+  margin: 0 0 var(--sp-2);
+  font-size: var(--fs-sm);
+  color: var(--text-muted);
+}

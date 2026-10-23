@@ -1,4 +1,5 @@
 export { default as LiveMatchModal } from "./LiveMatchModal.vue"
+export { default as MatchEventEditor } from "./MatchEventEditor.vue"
 export { default as MatchPlayerTable } from "./MatchPlayerTable.vue"
 export { default as MatchScoreModal } from "./MatchScoreModal.vue"
 export { default as MatchShootout } from "./MatchShootout.vue"

@@ -25,3 +25,16 @@ export {
 export type { WatchedMatch } from "./pending"
 export { packStats, unpackStats, statsOf, packedStatsFor, clearStatsCache } from "./packStats"
 export type { PackedStats } from "./packStats"
+export {
+  blankStats,
+  draftFromStats,
+  isGoalEvent,
+  maxMinute,
+  rebuildStats,
+  redsOfDraft,
+  scoreOfEvents,
+  shootoutTally,
+  MAX_EXTRA_TIME_MINUTE,
+  MAX_REGULATION_MINUTE,
+} from "./editor"
+export type { DraftEvent, DraftScore, MatchDraft } from "./editor"
