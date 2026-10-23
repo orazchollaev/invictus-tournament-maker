@@ -199,6 +199,19 @@
       namePlaceholder: "टीम का नाम",
       randomName: "रैंडम नाम",
     },
+    compare: {
+      title: "टीमों की तुलना",
+      button: "तुलना करें",
+      pickTeam: "टीम चुनें",
+      noTeams: "कोई टीम नहीं मिली",
+      swap: "टीमें बदलें",
+      vs: "बनाम",
+      pickBoth: "तुलना के लिए दो टीमें चुनें।",
+      needTwoTeams: "तुलना के लिए कम से कम दो टीमें बनाएँ।",
+      neverMet: "ये टीमें पहले कभी आमने-सामने नहीं आईं।",
+      goals: "गोल {a}–{b}",
+      overall: "कुल मिलाकर",
+    },
     detail: {
       tabs: {
         overview: "अवलोकन",

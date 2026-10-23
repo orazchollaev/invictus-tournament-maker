@@ -201,6 +201,19 @@
       namePlaceholder: "Nama tim",
       randomName: "Nama acak",
     },
+    compare: {
+      title: "Bandingkan tim",
+      button: "Bandingkan",
+      pickTeam: "Pilih tim",
+      noTeams: "Tim tidak ditemukan",
+      swap: "Tukar tim",
+      vs: "vs",
+      pickBoth: "Pilih dua tim untuk dibandingkan.",
+      needTwoTeams: "Buat minimal dua tim untuk dibandingkan.",
+      neverMet: "Kedua tim ini belum pernah bertemu.",
+      goals: "Gol {a}–{b}",
+      overall: "Keseluruhan",
+    },
     detail: {
       tabs: {
         overview: "Ikhtisar",

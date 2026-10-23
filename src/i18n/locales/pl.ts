@@ -199,6 +199,19 @@
       namePlaceholder: "Nazwa drużyny",
       randomName: "Losowa nazwa",
     },
+    compare: {
+      title: "Porównaj drużyny",
+      button: "Porównaj",
+      pickTeam: "Wybierz drużynę",
+      noTeams: "Nie znaleziono drużyn",
+      swap: "Zamień drużyny",
+      vs: "vs",
+      pickBoth: "Wybierz dwie drużyny do porównania.",
+      needTwoTeams: "Utwórz co najmniej dwie drużyny, aby je porównać.",
+      neverMet: "Te drużyny jeszcze nigdy się nie spotkały.",
+      goals: "Bramki {a}–{b}",
+      overall: "Ogółem",
+    },
     detail: {
       tabs: {
         overview: "Przegląd",

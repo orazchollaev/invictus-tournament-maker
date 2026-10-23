@@ -204,6 +204,19 @@
       namePlaceholder: "Teamname",
       randomName: "Zufälliger Name",
     },
+    compare: {
+      title: "Teams vergleichen",
+      button: "Vergleichen",
+      pickTeam: "Team wählen",
+      noTeams: "Keine Teams gefunden",
+      swap: "Teams tauschen",
+      vs: "vs",
+      pickBoth: "Wähle zwei Teams zum Vergleichen.",
+      needTwoTeams: "Erstelle mindestens zwei Teams zum Vergleichen.",
+      neverMet: "Diese Teams sind noch nie aufeinandergetroffen.",
+      goals: "Tore {a}–{b}",
+      overall: "Gesamt",
+    },
     detail: {
       tabs: {
         overview: "Übersicht",

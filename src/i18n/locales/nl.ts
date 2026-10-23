@@ -202,6 +202,19 @@
       namePlaceholder: "Teamnaam",
       randomName: "Willekeurige naam",
     },
+    compare: {
+      title: "Teams vergelijken",
+      button: "Vergelijk",
+      pickTeam: "Kies een team",
+      noTeams: "Geen teams gevonden",
+      swap: "Teams omwisselen",
+      vs: "vs",
+      pickBoth: "Kies twee teams om te vergelijken.",
+      needTwoTeams: "Maak minstens twee teams aan om te vergelijken.",
+      neverMet: "Deze teams hebben nog nooit tegen elkaar gespeeld.",
+      goals: "Doelpunten {a}–{b}",
+      overall: "Algemeen",
+    },
     detail: {
       tabs: {
         overview: "Overzicht",

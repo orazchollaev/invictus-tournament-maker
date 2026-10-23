@@ -199,6 +199,19 @@
       namePlaceholder: "ชื่อทีม",
       randomName: "ชื่อสุ่ม",
     },
+    compare: {
+      title: "เปรียบเทียบทีม",
+      button: "เปรียบเทียบ",
+      pickTeam: "เลือกทีม",
+      noTeams: "ไม่พบทีม",
+      swap: "สลับทีม",
+      vs: "พบ",
+      pickBoth: "เลือกสองทีมเพื่อเปรียบเทียบ",
+      needTwoTeams: "สร้างอย่างน้อยสองทีมเพื่อเปรียบเทียบ",
+      neverMet: "สองทีมนี้ยังไม่เคยเจอกัน",
+      goals: "ประตู {a}–{b}",
+      overall: "ภาพรวม",
+    },
     detail: {
       tabs: {
         overview: "ภาพรวม",

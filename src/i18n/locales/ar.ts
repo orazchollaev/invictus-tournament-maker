@@ -199,6 +199,19 @@
       namePlaceholder: "اسم الفريق",
       randomName: "اسم عشوائي",
     },
+    compare: {
+      title: "مقارنة الفرق",
+      button: "قارن",
+      pickTeam: "اختر فريقًا",
+      noTeams: "لم يتم العثور على فرق",
+      swap: "تبديل الفريقين",
+      vs: "ضد",
+      pickBoth: "اختر فريقين للمقارنة.",
+      needTwoTeams: "أنشئ فريقين على الأقل للمقارنة.",
+      neverMet: "لم يلتقِ هذان الفريقان من قبل.",
+      goals: "الأهداف {a}–{b}",
+      overall: "عام",
+    },
     detail: {
       tabs: {
         overview: "نظرة عامة",

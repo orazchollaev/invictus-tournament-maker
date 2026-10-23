@@ -200,6 +200,19 @@
       namePlaceholder: "チーム名",
       randomName: "ランダムな名前",
     },
+    compare: {
+      title: "チーム比較",
+      button: "比較",
+      pickTeam: "チームを選択",
+      noTeams: "チームが見つかりません",
+      swap: "チームを入れ替え",
+      vs: "vs",
+      pickBoth: "比較する2チームを選んでください。",
+      needTwoTeams: "比較するには2チーム以上を作成してください。",
+      neverMet: "この2チームはまだ対戦していません。",
+      goals: "得点 {a}–{b}",
+      overall: "総合",
+    },
     detail: {
       tabs: {
         overview: "概要",

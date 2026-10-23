@@ -203,6 +203,19 @@
       namePlaceholder: "Nome squadra",
       randomName: "Nome casuale",
     },
+    compare: {
+      title: "Confronta squadre",
+      button: "Confronta",
+      pickTeam: "Scegli una squadra",
+      noTeams: "Nessuna squadra trovata",
+      swap: "Scambia le squadre",
+      vs: "vs",
+      pickBoth: "Scegli due squadre da confrontare.",
+      needTwoTeams: "Crea almeno due squadre per confrontarle.",
+      neverMet: "Queste squadre non si sono mai incontrate.",
+      goals: "Gol {a}–{b}",
+      overall: "Generale",
+    },
     detail: {
       tabs: {
         overview: "Panoramica",

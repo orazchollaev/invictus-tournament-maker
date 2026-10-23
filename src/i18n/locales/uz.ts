@@ -202,6 +202,19 @@
       namePlaceholder: "Jamoa nomi",
       randomName: "Tasodifiy nom",
     },
+    compare: {
+      title: "Jamoalarni solishtirish",
+      button: "Solishtirish",
+      pickTeam: "Jamoani tanlang",
+      noTeams: "Jamoa topilmadi",
+      swap: "Jamoalarni almashtirish",
+      vs: "vs",
+      pickBoth: "Solishtirish uchun ikkita jamoani tanlang.",
+      needTwoTeams: "Solishtirish uchun kamida ikkita jamoa yarating.",
+      neverMet: "Bu jamoalar hali uchrashmagan.",
+      goals: "Gollar {a}–{b}",
+      overall: "Umumiy",
+    },
     detail: {
       tabs: {
         overview: "Umumiy",

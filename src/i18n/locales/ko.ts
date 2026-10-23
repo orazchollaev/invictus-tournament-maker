@@ -199,6 +199,19 @@
       namePlaceholder: "팀 이름",
       randomName: "무작위 이름",
     },
+    compare: {
+      title: "팀 비교",
+      button: "비교",
+      pickTeam: "팀 선택",
+      noTeams: "팀을 찾을 수 없습니다",
+      swap: "팀 바꾸기",
+      vs: "vs",
+      pickBoth: "비교할 두 팀을 선택하세요.",
+      needTwoTeams: "비교하려면 팀을 두 개 이상 만드세요.",
+      neverMet: "이 두 팀은 아직 만난 적이 없습니다.",
+      goals: "득점 {a}–{b}",
+      overall: "전체",
+    },
     detail: {
       tabs: {
         overview: "개요",

@@ -201,6 +201,19 @@
       namePlaceholder: "Nome do time",
       randomName: "Nome aleatório",
     },
+    compare: {
+      title: "Comparar equipas",
+      button: "Comparar",
+      pickTeam: "Escolher equipa",
+      noTeams: "Nenhuma equipa encontrada",
+      swap: "Trocar equipas",
+      vs: "vs",
+      pickBoth: "Escolha duas equipas para comparar.",
+      needTwoTeams: "Crie pelo menos duas equipas para comparar.",
+      neverMet: "Estas equipas nunca se defrontaram.",
+      goals: "Golos {a}–{b}",
+      overall: "Geral",
+    },
     detail: {
       tabs: {
         overview: "Visão Geral",

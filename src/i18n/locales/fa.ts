@@ -201,6 +201,19 @@
       namePlaceholder: "نام تیم",
       randomName: "نام تصادفی",
     },
+    compare: {
+      title: "مقایسه تیم‌ها",
+      button: "مقایسه",
+      pickTeam: "یک تیم انتخاب کنید",
+      noTeams: "تیمی پیدا نشد",
+      swap: "جابه‌جایی تیم‌ها",
+      vs: "در برابر",
+      pickBoth: "دو تیم را برای مقایسه انتخاب کنید.",
+      needTwoTeams: "برای مقایسه دست‌کم دو تیم بسازید.",
+      neverMet: "این دو تیم هنوز به هم برنخورده‌اند.",
+      goals: "گل‌ها {a}–{b}",
+      overall: "کلی",
+    },
     detail: {
       tabs: {
         overview: "نمای کلی",

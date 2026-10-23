@@ -200,6 +200,19 @@
       namePlaceholder: "Tên đội",
       randomName: "Tên ngẫu nhiên",
     },
+    compare: {
+      title: "So sánh đội",
+      button: "So sánh",
+      pickTeam: "Chọn đội",
+      noTeams: "Không tìm thấy đội nào",
+      swap: "Đổi chỗ hai đội",
+      vs: "vs",
+      pickBoth: "Chọn hai đội để so sánh.",
+      needTwoTeams: "Tạo ít nhất hai đội để so sánh.",
+      neverMet: "Hai đội này chưa từng gặp nhau.",
+      goals: "Bàn thắng {a}–{b}",
+      overall: "Tổng quan",
+    },
     detail: {
       tabs: {
         overview: "Tổng quan",
