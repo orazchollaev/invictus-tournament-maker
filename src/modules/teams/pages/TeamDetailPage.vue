@@ -86,7 +86,11 @@ const tabValue = computed({
     </AppCard>
 
     <div v-else class="stack" :style="{ '--rail-color': team.color, gap: 0 }">
-      <TeamHeaderCard :team="team" @back="router.back()" />
+      <TeamHeaderCard
+        :team="team"
+        @back="router.back()"
+        @compare="router.push({ path: '/teams/compare', query: { a: team.id } })"
+      />
 
       <AppTabs v-model="tabValue" style="margin-top: var(--sp-4)">
         <AppTab value="overview">

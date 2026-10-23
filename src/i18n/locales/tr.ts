@@ -287,6 +287,19 @@
         lg: "L",
       },
     },
+    compare: {
+      title: "Takımları karşılaştır",
+      button: "Karşılaştır",
+      pickTeam: "Takım seç",
+      noTeams: "Takım bulunamadı",
+      swap: "Takımları değiştir",
+      vs: "vs",
+      pickBoth: "Karşılaştırmak için iki takım seçin.",
+      needTwoTeams: "Karşılaştırmak için en az iki takım oluşturun.",
+      neverMet: "Bu takımlar daha önce karşılaşmadı.",
+      goals: "Goller {a}–{b}",
+      overall: "Genel",
+    },
     detail: {
       tabs: {
         overview: "Genel Bakış",

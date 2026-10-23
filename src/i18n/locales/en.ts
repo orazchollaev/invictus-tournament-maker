@@ -285,6 +285,19 @@
         lg: "L",
       },
     },
+    compare: {
+      title: "Compare teams",
+      button: "Compare",
+      pickTeam: "Pick a team",
+      noTeams: "No teams found",
+      swap: "Swap teams",
+      vs: "vs",
+      pickBoth: "Pick two teams to compare them.",
+      needTwoTeams: "Create at least two teams to compare them.",
+      neverMet: "These teams have never met.",
+      goals: "Goals {a}–{b}",
+      overall: "Overall",
+    },
     detail: {
       tabs: {
         overview: "Overview",

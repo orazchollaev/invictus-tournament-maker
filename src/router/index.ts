@@ -32,6 +32,10 @@ const router = createRouter({
     { path: "/", redirect: "/tournaments" },
 
     { path: "/teams", component: () => import("../modules/teams/pages/TeamsPage.vue") },
+    {
+      path: "/teams/compare",
+      component: () => import("../modules/teams/pages/TeamComparePage.vue"),
+    },
     { path: "/teams/:id", component: () => import("../modules/teams/pages/TeamDetailPage.vue") },
 
     { path: "/players", component: () => import("../modules/players/pages/PlayersPage.vue") },

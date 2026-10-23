@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue"
-import { ArrowLeft } from "@lucide/vue"
+import { ArrowLeft, Swords } from "@lucide/vue"
 import { useI18n } from "vue-i18n"
 import { AppButton, AppCard, AppIcon, AppStarRating } from "@/components/ui"
 import { FlagCircle } from "@/modules/teams/components"
@@ -8,7 +8,7 @@ import type { Team } from "@/modules/teams/types"
 import { isDrawnCrest } from "@/modules/teams/utils/imageUtils"
 
 const props = defineProps<{ team: Team }>()
-defineEmits<{ back: [] }>()
+defineEmits<{ back: []; compare: [] }>()
 
 const { t } = useI18n()
 
@@ -49,7 +49,7 @@ const powerStars = computed(() => Math.round((props.team.power / 99) * 10) / 2)
         }"
       />
 
-      <div>
+      <div class="team-info">
         <h1 class="team-title">{{ team.name }}</h1>
         <span class="team-meta">
           {{ t("teams.detail.powerRating") }}:
@@ -57,6 +57,17 @@ const powerStars = computed(() => Math.round((props.team.power / 99) * 10) / 2)
           <AppStarRating :value="powerStars" :size="13" class="team-stars" />
         </span>
       </div>
+
+      <AppButton
+        icon-only
+        size="sm"
+        class="team-compare"
+        :title="t('teams.compare.button')"
+        :aria-label="t('teams.compare.button')"
+        @click="$emit('compare')"
+      >
+        <AppIcon :icon="Swords" size="sm" />
+      </AppButton>
     </div>
   </AppCard>
 </template>
@@ -97,6 +108,11 @@ const powerStars = computed(() => Math.round((props.team.power / 99) * 10) / 2)
 }
 .team-image--drawn {
   border-radius: 0;
+}
+
+.team-info {
+  flex: 1;
+  min-width: 0;
 }
 
 .team-title {

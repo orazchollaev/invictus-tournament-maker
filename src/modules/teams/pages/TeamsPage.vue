@@ -20,7 +20,7 @@ import {
   AppSearchInput,
   AppButtonGroup,
 } from "@/components/ui"
-import { X, Pencil, Plus, Users, List, Grid3x3, ClipboardList, Database } from "@lucide/vue"
+import { X, Pencil, Plus, Users, List, Grid3x3, ClipboardList, Database, Swords } from "@lucide/vue"
 import { useI18n } from "vue-i18n"
 
 const { t } = useI18n()
@@ -102,6 +102,14 @@ const pagedTeams = computed(() => {
         <span class="count">{{ store.teams.length }}</span>
       </h2>
       <div class="page-top-actions">
+        <AppButton
+          v-if="store.teams.length > 1"
+          icon-only
+          :title="t('teams.compare.title')"
+          @click="router.push('/teams/compare')"
+        >
+          <AppIcon :icon="Swords" size="xs" />
+        </AppButton>
         <AppButton
           v-if="store.teams.length"
           icon-only
