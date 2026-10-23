@@ -601,6 +601,39 @@
     specialThanks: "Speciale dank",
     disclaimer:
       "Niet-officiële, door fans gemaakte simulator. Niet verbonden met, goedgekeurd door of gelieerd aan UEFA, AFC, CONMEBOL, FIFA of enige club, competitie of toernooi dat in de app wordt genoemd.",
+    support: {
+      button: "Steunen",
+      title: "Steun de ontwikkelaar",
+      prompt:
+        "Vind je Invictus leuk? Het is gratis en wordt door één persoon gemaakt. Wil je het steunen?",
+      bannerText:
+        "Invictus is gratis en wordt door één persoon gemaakt. Vind je het leuk, steun het dan.",
+      intro:
+        "Invictus is gratis. Vind je het leuk, dan kun je een kleine donatie doen. Je ontgrendelt er niets mee.",
+      payTitle: "Binance Pay",
+      payHint: "Het makkelijkst met Binance: geen kosten, geen netwerk kiezen.",
+      copyId: "Pay-ID kopiëren",
+      cryptoTitle: "Crypto-wallet",
+      qrAlt: "QR-code van het donatieadres",
+      network: "Netwerk",
+      copy: "Adres kopiëren",
+      copied: "Gekopieerd!",
+      warning:
+        "Stuur alleen USDT via het BNB Smart Chain-netwerk (BEP20). Geld dat via een ander netwerk wordt verstuurd, gaat verloren.",
+      howTitle: "Zo verstuur je vanuit Binance",
+      step1: "Open Binance, tik op Pay en dan op Versturen.",
+      step2: "Plak de Pay-ID hierboven en voer een bedrag in USDT in.",
+      step3: "Bevestig. Bedankt!",
+      walletTitle: "Verstuur met je wallet",
+      walletHint:
+        "Verbind een willekeurige wallet (Bybit, Trust, MetaMask, Binance Web3 en meer) en verstuur USDT met één tik.",
+      connect: "Wallet verbinden",
+      sendNow: "{amount} USDT versturen",
+      sending: "Wachten op wallet…",
+      sent: "Verzonden. Heel erg bedankt!",
+      failed:
+        "Versturen mislukt. Zorg dat je USDT en wat BNB voor de kosten op BNB Smart Chain hebt.",
+    },
   },
   tournament: {
     noFixtures: "Nog geen wedstrijden.",

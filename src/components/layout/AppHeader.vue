@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from "vue"
-import { Settings, Trophy, History, Users, UserRound, BookOpen } from "@lucide/vue"
+import { Settings, Trophy, History, Users, UserRound, BookOpen, Heart } from "@lucide/vue"
 import { useNavActive } from "@/composables/useNavActive"
+import { openSupport } from "@/composables/useSupport"
 import { useI18n } from "vue-i18n"
 
 const { t } = useI18n()
@@ -54,6 +55,15 @@ onUnmounted(() => {
       </nav>
 
       <div class="header-end">
+        <button
+          type="button"
+          class="settings-btn support-btn"
+          :title="t('settings.support.button')"
+          :aria-label="t('settings.support.button')"
+          @click="openSupport"
+        >
+          <Heart :size="16" />
+        </button>
         <RouterLink
           to="/guide"
           class="settings-btn guide-btn"
@@ -274,6 +284,12 @@ onUnmounted(() => {
     background 0.12s,
     color 0.12s;
   padding: 0;
+}
+.support-btn {
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: var(--accent);
 }
 .settings-btn:hover {
   background: var(--bg);

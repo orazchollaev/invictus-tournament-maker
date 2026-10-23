@@ -9,6 +9,8 @@ import { useSettingsStore } from "@/modules/settings/store"
 import { useTeamsStore } from "@/modules/teams/store"
 import { useTournamentStore } from "@/modules/tournament/store"
 import { useStatusBar } from "@/composables/useStatusBar"
+import { scheduleSupportPrompt, supportOpen } from "@/composables/useSupport"
+import { SettingsSupportModal } from "@/modules/settings/components"
 import { logEvent } from "@/composables/useAnalytics"
 import { flushPendingSaves } from "@/modules/tournament/services/persistence"
 
@@ -54,6 +56,7 @@ let sessionStartedAt = Date.now()
 
 onMounted(async () => {
   void logEvent("app_open")
+  scheduleSupportPrompt()
 
   const backHandle = await App.addListener("backButton", () => {
     const currentPath = router.currentRoute.value.path
@@ -99,6 +102,7 @@ onUnmounted(() => {
     </main>
     <AppDialog />
     <AppOnboarding v-if="!settings.onboardingSeen" />
+    <SettingsSupportModal v-if="supportOpen" @close="supportOpen = false" />
     <MusicController />
     <Transition name="mobile-nav">
       <AppMobileBottomNav v-if="!hideBottomNav" />

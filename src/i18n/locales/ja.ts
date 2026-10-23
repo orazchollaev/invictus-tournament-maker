@@ -582,6 +582,37 @@
     specialThanks: "スペシャルサンクス",
     disclaimer:
       "非公式のファン制作シミュレーターです。UEFA、AFC、CONMEBOL、FIFA、またはアプリ内で言及されているクラブ・リーグ・大会とは提携・承認・関係がありません。",
+    support: {
+      button: "応援する",
+      title: "開発者を応援",
+      prompt: "Invictusを気に入っていただけましたか?無料で、1人で開発しています。応援しませんか?",
+      bannerText: "Invictusは無料で、1人で開発しています。気に入ったら応援してください。",
+      intro:
+        "Invictusは無料です。気に入っていただけたら、少額の寄付を送れます。見返りに解放される機能はありません。",
+      payTitle: "Binance Pay",
+      payHint: "Binanceをお使いなら最も簡単です。手数料なし、ネットワーク選択も不要です。",
+      copyId: "Pay IDをコピー",
+      cryptoTitle: "暗号資産ウォレット",
+      qrAlt: "寄付アドレスのQRコード",
+      network: "ネットワーク",
+      copy: "アドレスをコピー",
+      copied: "コピーしました!",
+      warning:
+        "BNB Smart Chain(BEP20)ネットワークのUSDTのみ送金してください。他のネットワークで送った資金は失われます。",
+      howTitle: "Binanceからの送り方",
+      step1: "Binanceを開き、Pay、送金の順にタップします。",
+      step2: "上のPay IDを貼り付け、USDTの金額を入力します。",
+      step3: "確定します。ありがとうございます!",
+      walletTitle: "ウォレットで送る",
+      walletHint:
+        "お好きなウォレット(Bybit、Trust、MetaMask、Binance Web3など)を接続して、ワンタップでUSDTを送れます。",
+      connect: "ウォレットを接続",
+      sendNow: "{amount} USDTを送る",
+      sending: "ウォレットの応答を待っています…",
+      sent: "送信しました。本当にありがとうございます!",
+      failed:
+        "送信できませんでした。USDTと、BNB Smart Chainの手数料用に少量のBNBがあるか確認してください。",
+    },
   },
   tournament: {
     noFixtures: "まだ試合がありません。",

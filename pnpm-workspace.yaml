@@ -1,5 +1,6 @@
 allowBuilds:
   '@firebase/util': true
+  '@reown/appkit': false
   core-js: true
   protobufjs: true
   sharp: true

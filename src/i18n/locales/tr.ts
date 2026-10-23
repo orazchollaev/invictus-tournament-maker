@@ -709,6 +709,38 @@
     creditCrests: "Arma kalkanları ve sembolleri",
     disclaimer:
       "Resmi olmayan, hayran yapımı bir simülasyondur. UEFA, AFC, CONMEBOL, FIFA veya uygulama içinde adı geçen herhangi bir kulüp, lig ya da turnuva ile bağlantılı, onaylı veya ilişkili değildir.",
+    support: {
+      bannerText: "Invictus ücretsiz ve tek kişi geliştiriyor. Beğendiysen destek ol.",
+      walletTitle: "Cüzdanınla gönder",
+      walletHint:
+        "Herhangi bir cüzdanı bağla (Bybit, Trust, MetaMask, Binance Web3 vb.) ve tek dokunuşla USDT gönder.",
+      connect: "Cüzdan bağla",
+      sendNow: "{amount} USDT gönder",
+      sending: "Cüzdan bekleniyor…",
+      sent: "Gönderildi. Çok teşekkürler!",
+      failed:
+        "Gönderilemedi. BNB Smart Chain'de USDT ve işlem ücreti için biraz BNB olduğundan emin ol.",
+      button: "Destek ol",
+      title: "Geliştiriciye destek ol",
+      prompt:
+        "Invictus'u beğendin mi? Ücretsiz ve tek kişi geliştiriyor. Destek olmak ister misin?",
+      intro:
+        "Invictus ücretsizdir. Beğendiysen küçük bir bağış yapabilirsin. Karşılığında hiçbir şey açılmaz.",
+      payTitle: "Binance Pay",
+      payHint: "Binance kullanıyorsan en kolayı: komisyon yok, ağ seçmek yok.",
+      copyId: "Pay ID'yi kopyala",
+      cryptoTitle: "Kripto cüzdan",
+      qrAlt: "Bağış adresi QR kodu",
+      network: "Ağ",
+      copy: "Adresi kopyala",
+      copied: "Kopyalandı!",
+      warning:
+        "Yalnızca BNB Smart Chain (BEP20) ağında USDT gönder. Başka bir ağdan gönderilen para kaybolur.",
+      howTitle: "Binance'ten nasıl gönderirim",
+      step1: "Binance'i aç, Pay'e gir ve Gönder'e dokun.",
+      step2: "Yukarıdaki Pay ID'yi yapıştır ve istediğin USDT tutarını yaz.",
+      step3: "Onayla. Teşekkürler!",
+    },
   },
   tournament: {
     noFixtures: "Henüz maç yok.",

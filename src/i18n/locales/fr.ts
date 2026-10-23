@@ -601,6 +601,39 @@
     specialThanks: "Remerciements particuliers",
     disclaimer:
       "Simulateur non officiel créé par des fans. Non affilié, approuvé ou lié à l'UEFA, l'AFC, la CONMEBOL, la FIFA ou tout club, ligue ou compétition mentionné dans l'application.",
+    support: {
+      button: "Soutenir",
+      title: "Soutenir le développeur",
+      prompt:
+        "Vous aimez Invictus ? C'est gratuit et développé par une seule personne. Voulez-vous le soutenir ?",
+      bannerText:
+        "Invictus est gratuit et développé par une seule personne. Si vous l'appréciez, soutenez-le.",
+      intro:
+        "Invictus est gratuit. Si vous l'appréciez, vous pouvez faire un petit don. Rien n'est débloqué en échange.",
+      payTitle: "Binance Pay",
+      payHint: "Le plus simple avec Binance : sans frais, sans réseau à choisir.",
+      copyId: "Copier l'ID Pay",
+      cryptoTitle: "Portefeuille crypto",
+      qrAlt: "Code QR de l'adresse de don",
+      network: "Réseau",
+      copy: "Copier l'adresse",
+      copied: "Copié !",
+      warning:
+        "Envoyez uniquement des USDT sur le réseau BNB Smart Chain (BEP20). Les fonds envoyés sur un autre réseau seront perdus.",
+      howTitle: "Comment envoyer depuis Binance",
+      step1: "Ouvrez Binance, touchez Pay puis Envoyer.",
+      step2: "Collez l'ID Pay ci-dessus et saisissez un montant en USDT.",
+      step3: "Confirmez. Merci !",
+      walletTitle: "Envoyer avec votre portefeuille",
+      walletHint:
+        "Connectez n'importe quel portefeuille (Bybit, Trust, MetaMask, Binance Web3, etc.) et envoyez des USDT en un geste.",
+      connect: "Connecter le portefeuille",
+      sendNow: "Envoyer {amount} USDT",
+      sending: "En attente du portefeuille…",
+      sent: "Envoyé. Merci beaucoup !",
+      failed:
+        "Envoi impossible. Vérifiez que vous avez des USDT et un peu de BNB pour les frais sur BNB Smart Chain.",
+    },
   },
   tournament: {
     noFixtures: "Aucun match pour le moment.",

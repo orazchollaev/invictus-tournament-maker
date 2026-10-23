@@ -12,3 +12,4 @@ export { default as SettingsSectionNewTournament } from "./SettingsSectionNewTou
 export { default as SettingsSectionSampleData } from "./SettingsSectionSampleData.vue"
 export { default as SettingsSectionSimulation } from "./SettingsSectionSimulation.vue"
 export { default as SettingsSectionTableRules } from "./SettingsSectionTableRules.vue"
+export { default as SettingsSupportModal } from "./SettingsSupportModal.vue"

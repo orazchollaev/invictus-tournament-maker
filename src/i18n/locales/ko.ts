@@ -582,6 +582,37 @@
     specialThanks: "특별 감사",
     disclaimer:
       "비공식 팬 제작 시뮬레이터입니다. UEFA, AFC, CONMEBOL, FIFA 또는 앱에서 언급된 어떤 클럽, 리그, 대회와도 제휴, 후원, 연관되어 있지 않습니다.",
+    support: {
+      button: "후원하기",
+      title: "개발자 후원",
+      prompt: "Invictus가 마음에 드시나요? 무료이며 한 사람이 만들고 있습니다. 후원해 주시겠어요?",
+      bannerText: "Invictus는 무료이며 한 사람이 개발합니다. 마음에 드신다면 후원해 주세요.",
+      intro:
+        "Invictus는 무료입니다. 마음에 드신다면 소액을 후원할 수 있습니다. 대가로 열리는 기능은 없습니다.",
+      payTitle: "Binance Pay",
+      payHint:
+        "Binance를 쓴다면 가장 쉬운 방법입니다. 수수료도 없고 네트워크를 고를 필요도 없습니다.",
+      copyId: "Pay ID 복사",
+      cryptoTitle: "암호화폐 지갑",
+      qrAlt: "후원 주소 QR 코드",
+      network: "네트워크",
+      copy: "주소 복사",
+      copied: "복사됨!",
+      warning:
+        "BNB Smart Chain(BEP20) 네트워크의 USDT만 보내세요. 다른 네트워크로 보낸 자금은 사라집니다.",
+      howTitle: "Binance에서 보내는 방법",
+      step1: "Binance를 열고 Pay를 누른 뒤 보내기를 누르세요.",
+      step2: "위의 Pay ID를 붙여넣고 USDT 금액을 입력하세요.",
+      step3: "확인하세요. 감사합니다!",
+      walletTitle: "지갑으로 보내기",
+      walletHint:
+        "원하는 지갑(Bybit, Trust, MetaMask, Binance Web3 등)을 연결하고 한 번에 USDT를 보내세요.",
+      connect: "지갑 연결",
+      sendNow: "{amount} USDT 보내기",
+      sending: "지갑 응답 대기 중…",
+      sent: "전송했습니다. 정말 감사합니다!",
+      failed: "전송하지 못했습니다. USDT와 BNB Smart Chain 수수료용 BNB가 조금 있는지 확인하세요.",
+    },
   },
   tournament: {
     noFixtures: "아직 경기가 없습니다.",

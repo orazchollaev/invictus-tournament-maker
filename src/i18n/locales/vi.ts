@@ -584,6 +584,37 @@
     specialThanks: "Đặc biệt cảm ơn",
     disclaimer:
       "Trình mô phỏng không chính thức do người hâm mộ tạo ra. Không liên kết, không được xác nhận và không có quan hệ với UEFA, AFC, CONMEBOL, FIFA hay bất kỳ câu lạc bộ, giải đấu nào được nhắc đến trong ứng dụng.",
+    support: {
+      button: "Ủng hộ",
+      title: "Ủng hộ nhà phát triển",
+      prompt:
+        "Bạn thích Invictus? Ứng dụng miễn phí và do một người làm. Bạn có muốn ủng hộ không?",
+      bannerText: "Invictus miễn phí và do một người phát triển. Nếu bạn thích, hãy ủng hộ.",
+      intro:
+        "Invictus miễn phí. Nếu bạn thích, bạn có thể gửi một khoản ủng hộ nhỏ. Không có gì được mở khóa để đổi lại.",
+      payTitle: "Binance Pay",
+      payHint: "Dễ nhất nếu bạn dùng Binance: không phí, không cần chọn mạng.",
+      copyId: "Sao chép Pay ID",
+      cryptoTitle: "Ví tiền mã hóa",
+      qrAlt: "Mã QR địa chỉ ủng hộ",
+      network: "Mạng",
+      copy: "Sao chép địa chỉ",
+      copied: "Đã sao chép!",
+      warning: "Chỉ gửi USDT qua mạng BNB Smart Chain (BEP20). Tiền gửi qua mạng khác sẽ bị mất.",
+      howTitle: "Cách gửi từ Binance",
+      step1: "Mở Binance, chạm Pay rồi chạm Gửi.",
+      step2: "Dán Pay ID ở trên và nhập số USDT bất kỳ.",
+      step3: "Xác nhận. Cảm ơn bạn!",
+      walletTitle: "Gửi bằng ví của bạn",
+      walletHint:
+        "Kết nối ví bất kỳ (Bybit, Trust, MetaMask, Binance Web3,…) và gửi USDT chỉ với một chạm.",
+      connect: "Kết nối ví",
+      sendNow: "Gửi {amount} USDT",
+      sending: "Đang chờ ví…",
+      sent: "Đã gửi. Cảm ơn bạn rất nhiều!",
+      failed:
+        "Không gửi được. Hãy đảm bảo bạn có USDT và một ít BNB để trả phí trên BNB Smart Chain.",
+    },
   },
   tournament: {
     noFixtures: "Chưa có trận đấu nào.",

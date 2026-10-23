@@ -4,6 +4,8 @@ import { useRoute } from "vue-router"
 import { APP_VERSION } from "@/constants"
 import { useSettingsStore } from "@/modules/settings/store"
 import { logEvent } from "@/composables/useAnalytics"
+import { openSupport } from "@/composables/useSupport"
+import { AppButton } from "@/components/ui"
 import {
   Palette,
   LayoutGrid,
@@ -14,6 +16,7 @@ import {
   Music,
   Menu,
   ChevronDown,
+  Heart,
 } from "@lucide/vue"
 import type { Component } from "vue"
 import { useI18n } from "vue-i18n"
@@ -203,6 +206,17 @@ function selectCategory(id: Category) {
       </nav>
 
       <div class="settings-panel">
+        <div class="support-card">
+          <Heart :size="22" class="support-card-icon" />
+          <div class="support-card-text">
+            <strong>{{ t("settings.support.title") }}</strong>
+            <span>{{ t("settings.support.bannerText") }}</span>
+          </div>
+          <AppButton variant="filled" size="md" @click="openSupport">
+            {{ t("settings.support.button") }}
+          </AppButton>
+        </div>
+
         <Transition :name="transitionName" mode="out-in">
           <div :key="activeCategory" class="category-group">
             <component :is="section" v-for="(section, i) in GROUPS[activeCategory]" :key="i" />
@@ -315,6 +329,46 @@ function selectCategory(id: Category) {
 .side-link:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
+}
+
+/* ── Support card ── */
+.support-card {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-4);
+  padding: var(--sp-3) var(--sp-4);
+  border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
+  border-radius: var(--radius);
+  background: var(--accent-subtle);
+}
+.support-card-icon {
+  flex-shrink: 0;
+  color: var(--accent);
+}
+.support-card-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: var(--fs-sm);
+  color: var(--text-muted);
+}
+.support-card-text strong {
+  font-size: var(--fs-base);
+  color: var(--text);
+}
+@media (max-width: 600px) {
+  .support-card {
+    flex-wrap: wrap;
+  }
+  .support-card-text {
+    flex-basis: calc(100% - 40px);
+  }
+  .support-card :deep(.btn) {
+    width: 100%;
+  }
 }
 
 /* ── Panel content ── */

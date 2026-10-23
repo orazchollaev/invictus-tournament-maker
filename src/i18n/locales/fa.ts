@@ -597,6 +597,36 @@
     specialThanks: "سپاس ویژه",
     disclaimer:
       "این یک شبیه‌ساز غیررسمی و ساخته‌شده توسط هواداران است. هیچ ارتباطی با UEFA، AFC، CONMEBOL، FIFA یا هر باشگاه، لیگ یا مسابقه‌ای که در برنامه ذکر شده ندارد.",
+    support: {
+      button: "حمایت",
+      title: "از توسعه‌دهنده حمایت کن",
+      prompt: "Invictus را دوست داری؟ رایگان است و یک نفر آن را می‌سازد. می‌خواهی حمایتش کنی؟",
+      bannerText: "Invictus رایگان است و یک نفر آن را می‌سازد. اگر دوستش داری، حمایتش کن.",
+      intro:
+        "Invictus رایگان است. اگر دوستش داری می‌توانی کمک مالی کوچکی بفرستی. در ازای آن چیزی باز نمی‌شود.",
+      payTitle: "Binance Pay",
+      payHint: "اگر از Binance استفاده می‌کنی ساده‌ترین راه است: بدون کارمزد و بدون انتخاب شبکه.",
+      copyId: "کپی Pay ID",
+      cryptoTitle: "کیف پول رمزارز",
+      qrAlt: "کد QR آدرس حمایت",
+      network: "شبکه",
+      copy: "کپی آدرس",
+      copied: "کپی شد!",
+      warning:
+        "فقط USDT را از شبکه BNB Smart Chain (BEP20) بفرست. پولی که از شبکه دیگر فرستاده شود از بین می‌رود.",
+      howTitle: "نحوه ارسال از Binance",
+      step1: "Binance را باز کن، روی Pay و سپس ارسال بزن.",
+      step2: "Pay ID بالا را بچسبان و مقدار دلخواه USDT را وارد کن.",
+      step3: "تأیید کن. ممنون!",
+      walletTitle: "ارسال با کیف پول",
+      walletHint:
+        "هر کیف پولی (Bybit، Trust، MetaMask، Binance Web3 و غیره) را وصل کن و با یک ضربه USDT بفرست.",
+      connect: "اتصال کیف پول",
+      sendNow: "ارسال {amount} USDT",
+      sending: "در انتظار کیف پول…",
+      sent: "ارسال شد. خیلی ممنون!",
+      failed: "ارسال نشد. مطمئن شو USDT و کمی BNB برای کارمزد در BNB Smart Chain داری.",
+    },
   },
   tournament: {
     noFixtures: "هنوز بازی‌ای وجود ندارد.",

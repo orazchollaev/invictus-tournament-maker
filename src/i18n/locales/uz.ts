@@ -601,6 +601,37 @@
     specialThanks: "Alohida minnatdorchilik",
     disclaimer:
       "Norasmiy, muxlislar tomonidan yaratilgan simulyator. UEFA, AFC, CONMEBOL, FIFA yoki ilovada nomi zikr etilgan hech qanday klub, liga yoki musobaqa bilan bog'liq yoki tasdiqlangan emas.",
+    support: {
+      button: "Qo‘llab-quvvatlash",
+      title: "Dasturchini qo‘llab-quvvatlang",
+      prompt: "Invictus yoqdimi? U bepul va uni bir kishi yaratadi. Qo‘llab-quvvatlamoqchimisiz?",
+      bannerText: "Invictus bepul va uni bir kishi yaratadi. Yoqsa, qo‘llab-quvvatlang.",
+      intro:
+        "Invictus bepul. Yoqsa, kichik xayriya yuborishingiz mumkin. Evaziga hech narsa ochilmaydi.",
+      payTitle: "Binance Pay",
+      payHint: "Binance ishlatsangiz eng oson yo‘l: komissiyasiz, tarmoq tanlash shart emas.",
+      copyId: "Pay ID nusxalash",
+      cryptoTitle: "Kripto hamyon",
+      qrAlt: "Xayriya manzili QR kodi",
+      network: "Tarmoq",
+      copy: "Manzilni nusxalash",
+      copied: "Nusxalandi!",
+      warning:
+        "Faqat BNB Smart Chain (BEP20) tarmog‘ida USDT yuboring. Boshqa tarmoqda yuborilgan mablag‘ yo‘qoladi.",
+      howTitle: "Binance’dan qanday yuboriladi",
+      step1: "Binance’ni oching, Pay’ni bosing, so‘ng Yuborish’ni tanlang.",
+      step2: "Yuqoridagi Pay ID’ni qo‘ying va USDT miqdorini kiriting.",
+      step3: "Tasdiqlang. Rahmat!",
+      walletTitle: "Hamyoningiz bilan yuborish",
+      walletHint:
+        "Istalgan hamyonni (Bybit, Trust, MetaMask, Binance Web3 va boshqalar) ulang va bir bosishda USDT yuboring.",
+      connect: "Hamyonni ulash",
+      sendNow: "{amount} USDT yuborish",
+      sending: "Hamyon kutilmoqda…",
+      sent: "Yuborildi. Katta rahmat!",
+      failed:
+        "Yuborib bo‘lmadi. USDT va BNB Smart Chain’da komissiya uchun ozgina BNB borligiga ishonch hosil qiling.",
+    },
   },
   tournament: {
     noFixtures: "Hali o'yinlar yo'q.",

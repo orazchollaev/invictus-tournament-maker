@@ -586,6 +586,37 @@
     specialThanks: "Terima kasih khusus",
     disclaimer:
       "Simulator tidak resmi buatan penggemar. Tidak berafiliasi, didukung, atau terhubung dengan UEFA, AFC, CONMEBOL, FIFA, atau klub, liga, maupun kompetisi apa pun yang disebutkan dalam aplikasi.",
+    support: {
+      button: "Dukung",
+      title: "Dukung pengembang",
+      prompt: "Suka Invictus? Gratis dan dibuat oleh satu orang. Mau mendukungnya?",
+      bannerText: "Invictus gratis dan dibuat oleh satu orang. Kalau suka, dukung ya.",
+      intro:
+        "Invictus gratis. Jika kamu suka, kamu bisa mengirim donasi kecil. Tidak ada yang terbuka sebagai imbalan.",
+      payTitle: "Binance Pay",
+      payHint: "Paling mudah jika kamu memakai Binance: tanpa biaya, tanpa memilih jaringan.",
+      copyId: "Salin Pay ID",
+      cryptoTitle: "Dompet kripto",
+      qrAlt: "Kode QR alamat donasi",
+      network: "Jaringan",
+      copy: "Salin alamat",
+      copied: "Tersalin!",
+      warning:
+        "Kirim hanya USDT lewat jaringan BNB Smart Chain (BEP20). Dana yang dikirim lewat jaringan lain akan hilang.",
+      howTitle: "Cara mengirim dari Binance",
+      step1: "Buka Binance, ketuk Pay, lalu Kirim.",
+      step2: "Tempel Pay ID di atas dan masukkan jumlah USDT.",
+      step3: "Konfirmasi. Terima kasih!",
+      walletTitle: "Kirim dengan dompetmu",
+      walletHint:
+        "Hubungkan dompet apa pun (Bybit, Trust, MetaMask, Binance Web3, dan lainnya) lalu kirim USDT dengan sekali ketuk.",
+      connect: "Hubungkan dompet",
+      sendNow: "Kirim {amount} USDT",
+      sending: "Menunggu dompet…",
+      sent: "Terkirim. Terima kasih banyak!",
+      failed:
+        "Gagal mengirim. Pastikan kamu punya USDT dan sedikit BNB untuk biaya di BNB Smart Chain.",
+    },
   },
   tournament: {
     noFixtures: "Belum ada pertandingan.",
