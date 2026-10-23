@@ -1,0 +1,121 @@
+{
+  "label": "Russian Premier League 25/26",
+  "description": "Russian Premier League — 16 clubs",
+  "order": 14.8,
+  "type": "club",
+  "category": "league",
+  "teams": [
+    {
+      "id": "rpl-01",
+      "name": "Zenit",
+      "color": "#009FE3",
+      "power": 90,
+      "flag": "ru"
+    },
+    {
+      "id": "rpl-02",
+      "name": "Krasnodar",
+      "color": "#1F5E2E",
+      "power": 86,
+      "flag": "ru"
+    },
+    {
+      "id": "rpl-03",
+      "name": "Spartak Moscow",
+      "color": "#C8102E",
+      "power": 83,
+      "flag": "ru"
+    },
+    {
+      "id": "rpl-04",
+      "name": "CSKA Moscow",
+      "color": "#D4202D",
+      "power": 82,
+      "flag": "ru"
+    },
+    {
+      "id": "rpl-05",
+      "name": "Lokomotiv Moscow",
+      "color": "#00693E",
+      "power": 80,
+      "flag": "ru"
+    },
+    {
+      "id": "rpl-06",
+      "name": "Dynamo Moscow",
+      "color": "#0057B8",
+      "power": 79,
+      "flag": "ru"
+    },
+    {
+      "id": "rpl-07",
+      "name": "Rubin Kazan",
+      "color": "#8B1D2C",
+      "power": 72,
+      "flag": "ru"
+    },
+    {
+      "id": "rpl-08",
+      "name": "Akhmat Grozny",
+      "color": "#006B3F",
+      "power": 71,
+      "flag": "ru"
+    },
+    {
+      "id": "rpl-09",
+      "name": "Rostov",
+      "color": "#F5C400",
+      "power": 70,
+      "flag": "ru"
+    },
+    {
+      "id": "rpl-10",
+      "name": "Baltika Kaliningrad",
+      "color": "#1E5AA8",
+      "power": 69,
+      "flag": "ru"
+    },
+    {
+      "id": "rpl-11",
+      "name": "Dynamo Makhachkala",
+      "color": "#2B6CB0",
+      "power": 67,
+      "flag": "ru"
+    },
+    {
+      "id": "rpl-12",
+      "name": "Krylia Sovetov",
+      "color": "#E2231A",
+      "power": 66,
+      "flag": "ru"
+    },
+    {
+      "id": "rpl-13",
+      "name": "Orenburg",
+      "color": "#1A1A1A",
+      "power": 65,
+      "flag": "ru"
+    },
+    {
+      "id": "rpl-14",
+      "name": "Sochi",
+      "color": "#0A84D0",
+      "power": 64,
+      "flag": "ru"
+    },
+    {
+      "id": "rpl-15",
+      "name": "Akron Tolyatti",
+      "color": "#E30613",
+      "power": 62,
+      "flag": "ru"
+    },
+    {
+      "id": "rpl-16",
+      "name": "Pari Nizhny Novgorod",
+      "color": "#00A650",
+      "power": 61,
+      "flag": "ru"
+    }
+  ]
+}
