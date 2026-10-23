@@ -1,5 +1,6 @@
 import { ref } from "vue"
 import { showConfirm } from "@/composables/useDialog"
+import { logEvent } from "@/composables/useAnalytics"
 import { i18n } from "@/i18n"
 
 const LAUNCHES_KEY = "invictus_support_launches"
@@ -10,7 +11,10 @@ const PROMPT_DELAY_MS = 20_000
 /** Shared so the settings button and the periodic prompt open the same modal. */
 export const supportOpen = ref(false)
 
-export function openSupport() {
+export type SupportSource = "settings" | "header" | "prompt"
+
+export function openSupport(source: SupportSource) {
+  void logEvent("support_open", { source })
   supportOpen.value = true
 }
 
@@ -39,9 +43,11 @@ export function scheduleSupportPrompt() {
 
   setTimeout(async () => {
     const t = i18n.global.t
+    void logEvent("support_prompt_shown", { launch: launches })
     const yes = await showConfirm(t("settings.support.prompt"), {
       confirmLabel: t("settings.support.button"),
     })
-    if (yes) openSupport()
+    void logEvent("support_prompt_answer", { accepted: yes })
+    if (yes) openSupport("prompt")
   }, PROMPT_DELAY_MS)
 }

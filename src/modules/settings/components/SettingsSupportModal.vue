@@ -2,6 +2,7 @@
 import { onMounted, onUnmounted, ref } from "vue"
 import { useI18n } from "vue-i18n"
 import QRCode from "qrcode"
+import { logEvent } from "@/composables/useAnalytics"
 import { AppButton, AppModal } from "@/components/ui"
 import { SUPPORT_ADDRESS, SUPPORT_NETWORK, SUPPORT_PAY_ID } from "@/modules/settings/constants"
 import {
@@ -25,6 +26,7 @@ const status = ref<"idle" | "sending" | "sent" | "failed">("idle")
 let stopWatching: (() => void) | undefined
 
 async function connectWallet() {
+  void logEvent("support_wallet_connect_tap")
   try {
     await openWalletPicker()
   } catch {
@@ -34,12 +36,15 @@ async function connectWallet() {
 
 async function sendFromWallet() {
   status.value = "sending"
+  void logEvent("support_wallet_send_tap", { amount: Number(amount.value) })
   try {
     await sendSupport(amount.value)
     status.value = "sent"
+    void logEvent("support_wallet_send_result", { result: "sent", amount: Number(amount.value) })
   } catch {
     // Rejected in the wallet, wrong network, or not enough USDT/BNB for gas.
     status.value = "failed"
+    void logEvent("support_wallet_send_result", { result: "failed" })
   }
 }
 
@@ -47,7 +52,10 @@ onUnmounted(() => stopWatching?.())
 
 onMounted(async () => {
   if (walletSendEnabled) {
-    watchWallet((address) => (walletAddress.value = address))
+    watchWallet((address) => {
+      if (address && !walletAddress.value) void logEvent("support_wallet_connected")
+      walletAddress.value = address
+    })
       .then((stop) => (stopWatching = stop))
       .catch(() => {})
   }
@@ -67,6 +75,7 @@ async function copy(key: "payId" | "address", text: string) {
   try {
     await navigator.clipboard.writeText(text)
     copiedKey.value = key
+    void logEvent("support_copy", { kind: key })
     setTimeout(() => (copiedKey.value = null), 2000)
   } catch {
     // Clipboard blocked: the value is selectable text, so the user can copy by hand.

@@ -60,7 +60,7 @@ onUnmounted(() => {
           class="settings-btn support-btn"
           :title="t('settings.support.button')"
           :aria-label="t('settings.support.button')"
-          @click="openSupport"
+          @click="openSupport('header')"
         >
           <Heart :size="16" />
         </button>

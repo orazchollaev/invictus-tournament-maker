@@ -212,7 +212,7 @@ function selectCategory(id: Category) {
             <strong>{{ t("settings.support.title") }}</strong>
             <span>{{ t("settings.support.bannerText") }}</span>
           </div>
-          <AppButton variant="filled" size="md" @click="openSupport">
+          <AppButton variant="filled" size="md" @click="openSupport('settings')">
             {{ t("settings.support.button") }}
           </AppButton>
         </div>
