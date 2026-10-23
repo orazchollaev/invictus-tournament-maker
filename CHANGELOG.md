@@ -1,5 +1,15 @@
 # Changelog
 
+## [3.6.2](https://github.com/orazchollaev/invictus-tournament-maker/compare/v3.6.1...v3.6.2) (2026-10-23)
+
+### 🚀 New Features
+
+- **settings:** add support dialog with wallet, QR and address donations ([52be259](https://github.com/orazchollaev/invictus-tournament-maker/commit/52be259c36de55114db90395a4592365e663e81f))
+
+### 🔧 Maintenance
+
+- bump gradle version ([d35914d](https://github.com/orazchollaev/invictus-tournament-maker/commit/d35914da9f11034045c3411d5b5e832d17b57708))
+
 ## [3.6.1](https://github.com/orazchollaev/invictus-tournament-maker/compare/v3.6.0...v3.6.1) (2026-10-22)
 
 ### 🚀 New Features
