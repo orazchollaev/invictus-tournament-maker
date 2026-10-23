@@ -1,0 +1,182 @@
+{
+  "label": "CONIFA Nations",
+  "description": "non-FIFA teams of the CONIFA federation",
+  "order": 5.5,
+  "type": "country",
+  "teams": [
+    {
+      "id": "conifa-01",
+      "name": "Kárpátalja",
+      "color": "#1A4F9C",
+      "power": 66
+    },
+    {
+      "id": "conifa-02",
+      "name": "Abkhazia",
+      "color": "#C8102E",
+      "power": 65,
+      "flag": "ge-ab"
+    },
+    {
+      "id": "conifa-03",
+      "name": "Northern Cyprus",
+      "color": "#E4002B",
+      "power": 64,
+      "flag": "northern_cyprus"
+    },
+    { "id": "conifa-04", "name": "Panjab", "color": "#F28C00", "power": 64 },
+    {
+      "id": "conifa-05",
+      "name": "Székely Land",
+      "color": "#0057B8",
+      "power": 63
+    },
+    { "id": "conifa-06", "name": "Padania", "color": "#2E8B3C", "power": 62 },
+    {
+      "id": "conifa-07",
+      "name": "Western Armenia",
+      "color": "#D90012",
+      "power": 60
+    },
+    {
+      "id": "conifa-08",
+      "name": "Tamil Eelam",
+      "color": "#8B0000",
+      "power": 60
+    },
+    {
+      "id": "conifa-09",
+      "name": "Iraqi Kurdistan",
+      "color": "#278E43",
+      "power": 59,
+      "flag": "iq-kr"
+    },
+    {
+      "id": "conifa-10",
+      "name": "Ellan Vannin",
+      "color": "#D40000",
+      "power": 58,
+      "flag": "im"
+    },
+    {
+      "id": "conifa-11",
+      "name": "Kernow",
+      "color": "#111111",
+      "power": 58,
+      "flag": "gb-con"
+    },
+    { "id": "conifa-12", "name": "Felvidék", "color": "#C8102E", "power": 57 },
+    {
+      "id": "conifa-13",
+      "name": "Sápmi",
+      "color": "#EF3340",
+      "power": 57,
+      "flag": "sami"
+    },
+    { "id": "conifa-14", "name": "Yorkshire", "color": "#FFFFFF", "power": 56 },
+    {
+      "id": "conifa-15",
+      "name": "Occitania",
+      "color": "#F5C400",
+      "power": 56,
+      "flag": "occitania"
+    },
+    {
+      "id": "conifa-16",
+      "name": "Arameans Suryoye",
+      "color": "#D4A017",
+      "power": 55
+    },
+    {
+      "id": "conifa-17",
+      "name": "South Ossetia",
+      "color": "#E4002B",
+      "power": 55,
+      "flag": "south_ossetia"
+    },
+    {
+      "id": "conifa-18",
+      "name": "Somaliland",
+      "color": "#1B8A3D",
+      "power": 54,
+      "flag": "somaliland"
+    },
+    { "id": "conifa-19", "name": "Kabylia", "color": "#1E8449", "power": 54 },
+    {
+      "id": "conifa-20",
+      "name": "Zanzibar",
+      "color": "#0A84D0",
+      "power": 53,
+      "flag": "tz-zanzibar"
+    },
+    {
+      "id": "conifa-21",
+      "name": "Åland",
+      "color": "#0053A5",
+      "power": 53,
+      "flag": "ax"
+    },
+    {
+      "id": "conifa-22",
+      "name": "Artsakh",
+      "color": "#D90012",
+      "power": 52,
+      "flag": "artsakh"
+    },
+    { "id": "conifa-23", "name": "Raetia", "color": "#C8102E", "power": 51 },
+    {
+      "id": "conifa-24",
+      "name": "County of Nice",
+      "color": "#C8102E",
+      "power": 51
+    },
+    {
+      "id": "conifa-25",
+      "name": "United Koreans in Japan",
+      "color": "#0047A0",
+      "power": 50
+    },
+    {
+      "id": "conifa-26",
+      "name": "Western Sahara",
+      "color": "#007A3D",
+      "power": 49,
+      "flag": "eh"
+    },
+    {
+      "id": "conifa-27",
+      "name": "Tibet",
+      "color": "#E4002B",
+      "power": 48,
+      "flag": "cn-xz"
+    },
+    {
+      "id": "conifa-28",
+      "name": "Matabeleland",
+      "color": "#111111",
+      "power": 47
+    },
+    { "id": "conifa-29", "name": "Darfur", "color": "#007A3D", "power": 46 },
+    {
+      "id": "conifa-30",
+      "name": "Hmong",
+      "color": "#1F4E9C",
+      "power": 45,
+      "flag": "hmong"
+    },
+    {
+      "id": "conifa-31",
+      "name": "Easter Island",
+      "color": "#C8102E",
+      "power": 44,
+      "flag": "easter_island"
+    },
+    {
+      "id": "conifa-32",
+      "name": "Chagos Islands",
+      "color": "#0055A4",
+      "power": 42,
+      "flag": "io"
+    }
+  ]
+}
