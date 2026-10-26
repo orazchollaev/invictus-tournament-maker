@@ -97,7 +97,7 @@ function pct(n: number, s: SeasonStat) {
 
 /* Columns */
 .col-label {
-  font-size: 11px;
+  font-size: var(--fs-xs);
   color: var(--text-muted);
   white-space: nowrap;
   overflow: hidden;
@@ -112,7 +112,7 @@ function pct(n: number, s: SeasonStat) {
   text-transform: none;
   letter-spacing: 0;
   color: var(--text);
-  font-size: 12px;
+  font-size: var(--fs-sm);
 }
 
 .col-bar {
@@ -155,7 +155,7 @@ function pct(n: number, s: SeasonStat) {
 .wdl-w,
 .wdl-d,
 .wdl-l {
-  font-size: 11px;
+  font-size: var(--fs-xs);
   font-weight: 700;
   min-width: 24px;
   text-align: center;
@@ -178,7 +178,7 @@ function pct(n: number, s: SeasonStat) {
 }
 
 .wdl-val {
-  font-size: 12px;
+  font-size: var(--fs-sm);
   min-width: 24px;
   text-align: center;
   font-weight: 600;
@@ -187,7 +187,7 @@ function pct(n: number, s: SeasonStat) {
 
 /* Win% */
 .col-pct {
-  font-size: 11px;
+  font-size: var(--fs-xs);
   color: var(--text-muted);
   text-align: end;
   font-weight: 600;
@@ -196,7 +196,7 @@ function pct(n: number, s: SeasonStat) {
 }
 
 .pct-val {
-  font-size: 12px;
+  font-size: var(--fs-sm);
   font-family: var(--font-ui);
   color: var(--text-muted);
   text-transform: none;

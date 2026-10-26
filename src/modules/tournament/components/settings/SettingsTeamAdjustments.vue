@@ -199,7 +199,7 @@ const MAX = 30
   padding: 0;
   border: none;
   border-radius: 0;
-  font-size: 15px;
+  font-size: var(--fs-md);
   line-height: 1;
   display: flex;
   align-items: center;
@@ -239,7 +239,7 @@ const MAX = 30
 
 @media (max-width: 600px) {
   .tsp-adj-name {
-    font-size: 12px;
+    font-size: var(--fs-sm);
   }
 }
 </style>

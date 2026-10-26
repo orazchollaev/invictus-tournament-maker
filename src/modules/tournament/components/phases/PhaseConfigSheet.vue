@@ -159,7 +159,8 @@ const showWildcards = computed(() => qualifiersPerGroup.value < maxQualifiers.va
 
 /** How many teams leave this phase — the number the next one is sized from. */
 const groupAdvancing = computed(
-  () => groupCount.value * qualifiersPerGroup.value + (showWildcards.value ? wildcardCount.value : 0)
+  () =>
+    groupCount.value * qualifiersPerGroup.value + (showWildcards.value ? wildcardCount.value : 0)
 )
 
 // The intake moves as the graph is edited, so a draft that was valid a moment
@@ -194,9 +195,7 @@ function build(): PhaseConfig {
       group: {
         groupCount: Math.max(2, Math.min(groupCount.value, maxGroups.value)),
         qualifiersPerGroup: Math.max(1, Math.min(qualifiersPerGroup.value, maxQualifiers.value)),
-        wildcardCount: showWildcards.value
-          ? Math.min(wildcardCount.value, groupCount.value)
-          : 0,
+        wildcardCount: showWildcards.value ? Math.min(wildcardCount.value, groupCount.value) : 0,
         legMode: legMode.value,
         seedMode: groupSeedMode.value,
         tiebreaker: tiebreaker.value,
@@ -389,7 +388,9 @@ function handleSave() {
         </div>
 
         <div class="form-card">
-          <div class="form-section-title">{{ t("tournament.settingsPage.legsPerMatch.title") }}</div>
+          <div class="form-section-title">
+            {{ t("tournament.settingsPage.legsPerMatch.title") }}
+          </div>
           <div class="form-rows">
             <div v-for="stage in visibleKnockoutStages" :key="stage" class="form-row">
               <span class="form-label">{{ t(STAGE_LABEL_KEYS[stage]) }}</span>

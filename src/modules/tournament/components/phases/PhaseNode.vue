@@ -51,7 +51,10 @@ function onNameInput(event: Event) {
 </script>
 
 <template>
-  <div class="phase-node" :class="{ 'phase-node--error': hasError, 'phase-node--final': phase.isFinal }">
+  <div
+    class="phase-node"
+    :class="{ 'phase-node--error': hasError, 'phase-node--final': phase.isFinal }"
+  >
     <Handle type="target" :position="Position.Left" class="phase-handle" />
 
     <div class="phase-node-head">
@@ -83,15 +86,13 @@ function onNameInput(event: Event) {
 
     <div class="phase-node-meta">
       <span class="phase-node-kind">{{ t(`tournament.phases.kinds.${phase.kind}`) }}</span>
-      <span class="phase-node-intake">{{ t("tournament.phases.node.teams", { count: data.intake }) }}</span>
+      <span class="phase-node-intake">
+        {{ t("tournament.phases.node.teams", { count: data.intake }) }}
+      </span>
     </div>
 
     <div class="phase-node-foot">
-      <button
-        type="button"
-        class="phase-node-action"
-        @click.stop="emit('configure')"
-      >
+      <button type="button" class="phase-node-action" @click.stop="emit('configure')">
         <Settings2 :size="13" />
         <span>{{ t("tournament.phases.node.config") }}</span>
       </button>

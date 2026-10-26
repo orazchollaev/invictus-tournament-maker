@@ -71,7 +71,9 @@ const modal = ref<InstanceType<typeof AppModal> | null>(null)
       </div>
     </div>
     <template #footer>
-      <button class="primary" @click="emit('confirm')">{{ t("tournament.newSeason") }} →</button>
+      <button class="primary" @click="modal?.close(() => emit('confirm'))">
+        {{ t("tournament.newSeason") }} →
+      </button>
       <button @click="modal?.close()">{{ t("common.cancel") }}</button>
     </template>
   </AppModal>

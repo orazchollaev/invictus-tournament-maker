@@ -120,7 +120,7 @@ defineEmits<{ click: [] }>()
 }
 
 .config-btn-summary {
-  font-size: 11px;
+  font-size: var(--fs-xs);
   color: var(--text-muted);
   overflow: hidden;
   text-overflow: ellipsis;

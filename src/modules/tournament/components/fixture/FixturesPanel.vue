@@ -187,7 +187,14 @@ function setLeagueRowResult(mi: number, home: number, away: number) {
     return
   }
   if (props.phaseId) {
-    store.setPhaseLeagueResult(props.tournament.id, props.phaseId, stage.matchdayIdx, mi, home, away)
+    store.setPhaseLeagueResult(
+      props.tournament.id,
+      props.phaseId,
+      stage.matchdayIdx,
+      mi,
+      home,
+      away
+    )
   } else if (stage.tierIdx === null) {
     store.setLeagueResult(props.tournament.id, stage.matchdayIdx, mi, home, away)
   } else {
@@ -239,7 +246,8 @@ function setGroupRowResult(gi: number, mi: number, home: number, away: number) {
     )
     return
   }
-  if (props.phaseId) store.setPhaseGroupResult(props.tournament.id, props.phaseId, gi, mi, home, away)
+  if (props.phaseId)
+    store.setPhaseGroupResult(props.tournament.id, props.phaseId, gi, mi, home, away)
   else store.setGroupResult(props.tournament.id, gi, mi, home, away)
 }
 function clearGroupRowResult(gi: number, mi: number) {

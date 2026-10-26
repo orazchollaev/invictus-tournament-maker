@@ -77,7 +77,7 @@ watch(
 .dialog-backdrop {
   position: fixed;
   inset: 0;
-  z-index: 9000;
+  z-index: var(--z-toast);
   background: var(--scrim);
 }
 
@@ -86,7 +86,7 @@ watch(
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  z-index: 9000;
+  z-index: var(--z-toast);
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
@@ -94,13 +94,11 @@ watch(
   min-width: 280px;
   max-width: 420px;
   width: calc(100% - 40px);
-  box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.28),
-    0 2px 8px rgba(0, 0, 0, 0.12);
+  box-shadow: var(--elev-3);
 }
 
 .dialog-msg {
-  font-size: 14px;
+  font-size: var(--fs-base);
   color: var(--text);
   line-height: 1.6;
   margin-bottom: 20px;

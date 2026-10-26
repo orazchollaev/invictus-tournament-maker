@@ -523,7 +523,7 @@ const wentToExtraTime = computed(() =>
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(32, 33, 34, 0.4);
+  background: var(--scrim);
   animation: leg-pick-backdrop-in 0.16s ease both;
 }
 .leg-pick-backdrop.closing {

@@ -15,7 +15,10 @@ import { AppModal, AppButton } from "@/components/ui"
 import { useSettingsStore } from "@/modules/settings/store"
 import type { PhaseConfig, PhaseKind } from "@/modules/tournament/types"
 import { edgeIntake, phaseOutputCount } from "@/engine"
-import { useCustomPhaseGraph, type PhaseGraphDraft } from "@/modules/tournament/composables/useCustomPhaseGraph"
+import {
+  useCustomPhaseGraph,
+  type PhaseGraphDraft,
+} from "@/modules/tournament/composables/useCustomPhaseGraph"
 import PhaseGraphCanvas from "./PhaseGraphCanvas.vue"
 import PhaseGuide from "./PhaseGuide.vue"
 import PhaseConfigSheet from "./PhaseConfigSheet.vue"
@@ -140,12 +143,7 @@ function handleSave() {
   >
     <div class="phase-editor">
       <div class="phase-palette">
-        <AppButton
-          v-for="item in PALETTE"
-          :key="item.kind"
-          size="xs"
-          @click="addPhase(item.kind)"
-        >
+        <AppButton v-for="item in PALETTE" :key="item.kind" size="xs" @click="addPhase(item.kind)">
           <component :is="item.icon" :size="14" />
           {{ t(`tournament.phases.kinds.${item.kind}`) }}
         </AppButton>

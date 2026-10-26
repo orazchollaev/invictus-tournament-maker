@@ -104,7 +104,7 @@ const tooFew = computed(() => selectedTeams.value.length < 2)
   text-overflow: ellipsis;
 }
 .tsb-summary {
-  font-size: 11px;
+  font-size: var(--fs-xs);
   color: var(--text-muted);
   white-space: nowrap;
   overflow: hidden;

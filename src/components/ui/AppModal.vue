@@ -48,11 +48,18 @@ const closing = ref(false)
  */
 let closeTimer: ReturnType<typeof setTimeout> | null = null
 
-function close() {
+/**
+ * `then` runs once the exit animation is over, just before `close` is emitted.
+ * A button that confirms something and dismisses the modal passes its action
+ * here instead of flipping the parent's `v-if` itself, which would unmount the
+ * modal on the spot and skip the animation.
+ */
+function close(then?: () => void) {
   if (closing.value) return
   closing.value = true
   closeTimer = setTimeout(() => {
     closeTimer = null
+    then?.()
     emit("close")
   }, 220)
 }
@@ -144,7 +151,7 @@ defineExpose({ close })
 .drawer-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(32, 33, 34, 0.5);
+  background: var(--scrim);
   animation: backdrop-in 0.18s ease both;
 }
 
@@ -185,7 +192,7 @@ defineExpose({ close })
 
 .drawer-title {
   font-family: var(--font);
-  font-size: 15px;
+  font-size: var(--fs-md);
   font-weight: 600;
 }
 

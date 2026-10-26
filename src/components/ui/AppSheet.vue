@@ -62,11 +62,12 @@ const panelStyle = computed(() => ({
  */
 let closeTimer: ReturnType<typeof setTimeout> | null = null
 
-function close() {
+function close(then?: () => void) {
   if (closing.value) return
   closing.value = true
   closeTimer = setTimeout(() => {
     closeTimer = null
+    then?.()
     emit("close")
   }, 180)
 }
@@ -91,7 +92,7 @@ defineExpose({ close })
         :aria-describedby="undefined"
         v-bind="$attrs"
         :style="panelStyle"
-        @escape-key-down="close"
+        @escape-key-down="close()"
         @pointer-down-outside="(e: Event) => (dismissOnOutsideClick ? close() : e.preventDefault())"
       >
         <div class="sheet-header">
@@ -103,7 +104,7 @@ defineExpose({ close })
               </span>
             </slot>
           </DialogTitle>
-          <button class="sheet-close" :aria-label="t('common.close')" @click="close">
+          <button class="sheet-close" :aria-label="t('common.close')" @click="close()">
             <X :size="14" />
           </button>
         </div>

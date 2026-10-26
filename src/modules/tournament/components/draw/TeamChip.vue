@@ -47,7 +47,7 @@ defineEmits<{ remove: []; click: [] }>()
   box-shadow: 0 0 0 1px var(--accent);
 }
 .dc-name {
-  font-size: 12px;
+  font-size: var(--fs-sm);
   min-width: 0;
 }
 .dc-sub {

@@ -114,6 +114,10 @@ const {
   visibleTabs,
 } = useTournamentTabs(tournament)
 
+const playoffDrawModal = ref<InstanceType<typeof AppModal> | null>(null)
+const leaguePlayoffDrawModal = ref<InstanceType<typeof AppModal> | null>(null)
+const seasonModal = ref<InstanceType<typeof AppModal> | null>(null)
+
 /** Heavy on a big tournament (stats walks every report), so never mounted just for being next door. */
 const DEFERRED_TABS: MainTab[] = ["stats"]
 
@@ -405,6 +409,7 @@ const showStartPlayoffButton = computed(
 
     <AppModal
       v-if="showPlayoffManualDraw && tournament"
+      ref="playoffDrawModal"
       :title="trns('leaguePlayoff.playoffDrawTitle')"
       :width="'min(680px, calc(100vw - 32px))'"
       @close="showPlayoffManualDraw = false"
@@ -412,13 +417,14 @@ const showStartPlayoffButton = computed(
       <PlayoffManualDraw
         :qualifiers="groupPlayoffQualifiers"
         :teams="allTeams"
-        @confirm="handlePlayoffManualConfirm"
-        @cancel="showPlayoffManualDraw = false"
+        @confirm="(ids: string[]) => playoffDrawModal?.close(() => handlePlayoffManualConfirm(ids))"
+        @cancel="playoffDrawModal?.close()"
       />
     </AppModal>
 
     <AppModal
       v-if="showLeaguePlayoffManualDraw && tournament"
+      ref="leaguePlayoffDrawModal"
       :title="trns('leaguePlayoff.playoffDrawTitle')"
       :width="'min(680px, calc(100vw - 32px))'"
       @close="showLeaguePlayoffManualDraw = false"
@@ -426,13 +432,17 @@ const showStartPlayoffButton = computed(
       <PlayoffManualDraw
         :qualifiers="leaguePlayoffQualifiers"
         :teams="allTeams"
-        @confirm="handleLeaguePlayoffManualConfirm"
-        @cancel="showLeaguePlayoffManualDraw = false"
+        @confirm="
+          (ids: string[]) =>
+            leaguePlayoffDrawModal?.close(() => handleLeaguePlayoffManualConfirm(ids))
+        "
+        @cancel="leaguePlayoffDrawModal?.close()"
       />
     </AppModal>
 
     <AppModal
       v-if="showSeasonModal"
+      ref="seasonModal"
       :title="`${trns('tournament.newSeason')} — ${tournament?.name}`"
       :width="showManualSeason && isGroupFormat ? 'min(680px, calc(100vw - 32px))' : undefined"
       @close="closeSeasonModal"
@@ -441,16 +451,16 @@ const showStartPlayoffButton = computed(
         <GroupDraw
           :teams="manualSeasonTeams"
           :group-count="tournament?.groups?.length ?? 2"
-          @confirm="handleManualSeasonConfirm"
-          @cancel="closeSeasonModal"
+          @confirm="(ids: string[]) => seasonModal?.close(() => handleManualSeasonConfirm(ids))"
+          @cancel="seasonModal?.close()"
           @quick-draw="handleQuickGroupDraw"
         />
       </template>
       <template v-else-if="showManualSeason">
         <ManualDraw
           :teams="manualSeasonTeams"
-          @confirm="handleManualSeasonConfirm"
-          @cancel="closeSeasonModal"
+          @confirm="(ids: string[]) => seasonModal?.close(() => handleManualSeasonConfirm(ids))"
+          @cancel="seasonModal?.close()"
         />
       </template>
     </AppModal>

@@ -29,12 +29,12 @@ const STEPS = [
 
 <template>
   <div class="page">
-    <div class="page-header">
+    <div class="page-top page-top--lead">
       <AppButton variant="text" @click="router.back()">
         <AppIcon :icon="ArrowLeft" />
         {{ t("common.back") }}
       </AppButton>
-      <h2>{{ t("guide.title") }}</h2>
+      <h2 class="page-title">{{ t("guide.title") }}</h2>
     </div>
 
     <p class="intro">{{ t("guide.intro") }}</p>
@@ -57,19 +57,9 @@ const STEPS = [
 </template>
 
 <style scoped>
-.page-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 12px;
-}
-.page-header h2 {
-  margin: 0;
-}
-
 .intro {
   color: var(--text-muted);
-  font-size: 14px;
+  font-size: var(--fs-base);
   margin: 0 0 20px;
 }
 
@@ -109,7 +99,7 @@ const STEPS = [
   display: flex;
   align-items: center;
   gap: 7px;
-  font-size: 15px;
+  font-size: var(--fs-md);
   font-weight: 600;
   color: var(--text);
   margin-bottom: 4px;

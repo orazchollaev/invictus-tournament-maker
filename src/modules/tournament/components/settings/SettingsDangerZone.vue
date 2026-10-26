@@ -91,7 +91,7 @@ async function handleDelete() {
   color: var(--danger);
 }
 .danger-desc {
-  font-size: 12px;
+  font-size: var(--fs-sm);
   color: var(--text-muted);
   margin-top: 2px;
 }

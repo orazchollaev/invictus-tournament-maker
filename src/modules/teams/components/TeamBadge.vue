@@ -93,7 +93,7 @@ watch(
   border-radius: 0;
 }
 .name {
-  font-size: 12px;
+  font-size: var(--fs-sm);
   flex: 1;
   min-width: 0;
 }

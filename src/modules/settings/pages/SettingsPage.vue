@@ -162,8 +162,8 @@ function selectCategory(id: Category) {
 
 <template>
   <div class="page">
-    <div class="page-header">
-      <h2>{{ t("settings.title") }}</h2>
+    <div class="page-top">
+      <h2 class="page-title">{{ t("settings.title") }}</h2>
     </div>
 
     <div class="mobile-nav">
@@ -262,16 +262,6 @@ function selectCategory(id: Category) {
 </template>
 
 <style scoped>
-.page-header {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-3);
-  margin-bottom: var(--sp-4);
-}
-.page-header h2 {
-  margin: 0;
-}
-
 /* ── Layout ── */
 .settings-layout {
   display: flex;

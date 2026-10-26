@@ -240,7 +240,7 @@ watch([labels, datasets, mode], () => {
 }
 
 .chart-title {
-  font-size: 11px;
+  font-size: var(--fs-xs);
   font-weight: 700;
   letter-spacing: 0.07em;
   text-transform: uppercase;

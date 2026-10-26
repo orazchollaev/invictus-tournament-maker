@@ -96,7 +96,7 @@ const { saveJSON: handleSaveJSON, saveCSV: handleSaveCSV } = useSimResultExport(
           {{ t("tournament.settings") }}
         </RouterLink>
         <div class="srp-title-row">
-          <h2 class="srp-title">
+          <h2 class="srp-title page-title">
             <BarChart2 :size="18" class="srp-title-icon" />
             {{ t("tournament.simulationResults.title") }}
           </h2>
@@ -278,18 +278,15 @@ const { saveJSON: handleSaveJSON, saveCSV: handleSaveCSV } = useSimResultExport(
   margin-top: 4px;
 }
 .srp-title {
-  font-size: 22px;
-  font-weight: 700;
-  margin: 0;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--sp-2);
 }
 .srp-title-icon {
   color: var(--text-muted);
 }
 .srp-badge {
-  font-size: 12px;
+  font-size: var(--fs-sm);
   font-weight: 600;
   color: var(--accent);
   background: color-mix(in srgb, var(--accent) 12%, var(--surface));
@@ -316,7 +313,7 @@ const { saveJSON: handleSaveJSON, saveCSV: handleSaveCSV } = useSimResultExport(
   background: var(--surface);
   border: 1px solid var(--border-light);
   border-radius: var(--radius);
-  font-size: 12px;
+  font-size: var(--fs-sm);
 }
 .srp-chip-label {
   color: var(--text-muted);
@@ -337,7 +334,7 @@ const { saveJSON: handleSaveJSON, saveCSV: handleSaveCSV } = useSimResultExport(
   display: flex;
   align-items: center;
   gap: 7px;
-  font-size: 11px;
+  font-size: var(--fs-xs);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.07em;
@@ -358,7 +355,7 @@ const { saveJSON: handleSaveJSON, saveCSV: handleSaveCSV } = useSimResultExport(
 .srp-table th {
   text-align: start;
   padding: 7px 10px;
-  font-size: 11px;
+  font-size: var(--fs-xs);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -388,7 +385,7 @@ const { saveJSON: handleSaveJSON, saveCSV: handleSaveCSV } = useSimResultExport(
   width: 32px;
   text-align: center;
   color: var(--text-muted);
-  font-size: 12px;
+  font-size: var(--fs-sm);
 }
 .col-team {
   min-width: 130px;
@@ -401,7 +398,7 @@ const { saveJSON: handleSaveJSON, saveCSV: handleSaveCSV } = useSimResultExport(
   text-align: center;
   font-weight: 600;
   color: var(--text-muted);
-  font-size: 12px;
+  font-size: var(--fs-sm);
 }
 .col-stat {
   width: 72px;

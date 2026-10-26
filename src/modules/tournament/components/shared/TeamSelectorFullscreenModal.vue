@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref } from "vue"
 import { useI18n } from "vue-i18n"
 import type { Team } from "@/modules/teams/types"
 import { Check } from "@lucide/vue"
@@ -19,10 +20,18 @@ withDefaults(
 const emit = defineEmits<{ "update:selected": [ids: string[]] }>()
 const open = defineModel<boolean>("open", { required: true })
 const { t } = useI18n()
+const modal = ref<InstanceType<typeof AppModal> | null>(null)
 </script>
 
 <template>
-  <AppModal v-if="open" :title="t('teamSelector.title')" width="500px" flush @close="open = false">
+  <AppModal
+    v-if="open"
+    ref="modal"
+    :title="t('teamSelector.title')"
+    width="500px"
+    flush
+    @close="open = false"
+  >
     <TeamSelector
       class="tsfm-selector"
       :teams="teams"
@@ -34,7 +43,7 @@ const { t } = useI18n()
     />
 
     <template #footer>
-      <AppButton variant="filled" block @click="open = false">
+      <AppButton variant="filled" block @click="modal?.close()">
         <Check :size="16" />
         {{ t("common.teams", { n: selected.length }) }}
       </AppButton>

@@ -5,15 +5,7 @@ import { ManualDraw } from "../components/draw"
 import { GroupDraw } from "../components/group"
 import { TeamSelectorButton, TeamSelectorFullscreenModal } from "../components/shared"
 import { DrawCeremony } from "../components/draw-ceremony"
-import {
-  Shuffle,
-  ArrowLeft,
-  ChevronDown,
-  LayoutGrid,
-  Trophy,
-  List,
-  Workflow,
-} from "@lucide/vue"
+import { Shuffle, ArrowLeft, ChevronDown, LayoutGrid, Trophy, List, Workflow } from "@lucide/vue"
 import { randomTournamentName } from "@/composables/useRandomNames"
 import type { CeremonyContext, DrawMode } from "@/engine"
 import {
@@ -209,11 +201,11 @@ function onCeremonyComplete(orderedIds: string[]) {
 <template>
   <div class="page">
     <!-- Page header -->
-    <div class="ctp-header">
+    <div class="page-top page-top--lead">
       <AppButton icon-only :aria-label="$t('common.back')" @click="router.push('/tournaments')">
         <AppIcon :icon="ArrowLeft" size="sm" />
       </AppButton>
-      <h2 class="ctp-title">{{ $t("tournaments.newBtn") }}</h2>
+      <h2 class="page-title">{{ $t("tournaments.newBtn") }}</h2>
     </div>
 
     <!-- Manual draw overlay -->
@@ -459,21 +451,6 @@ function onCeremonyComplete(orderedIds: string[]) {
   color: var(--danger);
 }
 
-.ctp-header {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-bottom: 20px;
-  justify-content: space-between;
-}
-
-.ctp-title {
-  font-size: 22px;
-  font-weight: 700;
-  margin: 0;
-  line-height: 1.2;
-}
-
 .ctp-name-wrap {
   position: relative;
   display: flex;
@@ -483,7 +460,7 @@ function onCeremonyComplete(orderedIds: string[]) {
 .ctp-name-input {
   width: 100%;
   box-sizing: border-box;
-  font-size: 15px;
+  font-size: var(--fs-md);
   padding: 8px 36px 8px 10px;
 }
 
@@ -524,7 +501,7 @@ function onCeremonyComplete(orderedIds: string[]) {
 }
 
 .ctp-step {
-  font-size: 12px;
+  font-size: var(--fs-sm);
   font-weight: 600;
   font-family: var(--font-ui);
   color: var(--text-muted);
@@ -559,7 +536,7 @@ function onCeremonyComplete(orderedIds: string[]) {
   border: 1px solid var(--border-light);
   border-radius: var(--radius);
   cursor: pointer;
-  font-size: 12px;
+  font-size: var(--fs-sm);
   font-weight: 700;
   font-family: var(--font-ui);
   text-transform: uppercase;
@@ -598,7 +575,7 @@ function onCeremonyComplete(orderedIds: string[]) {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font-size: 14px;
+  font-size: var(--fs-base);
   padding: 8px 20px;
 }
 
@@ -607,7 +584,7 @@ function onCeremonyComplete(orderedIds: string[]) {
   background: rgba(255, 255, 255, 0.25);
   border-radius: var(--radius);
   padding: 0 8px;
-  font-size: 12px;
+  font-size: var(--fs-sm);
 }
 
 .ctp-cancel-link {

@@ -7,6 +7,7 @@ import { Play, BarChart2 } from "@lucide/vue"
 import { useMonteCarlo } from "@/modules/tournament/composables/useMonteCarlo"
 import { cacheSimResult } from "@/modules/tournament/utils/simulationCache"
 import { useI18n } from "vue-i18n"
+import { AppButton, AppSheet } from "@/components/ui"
 
 const props = defineProps<{
   tournamentId: string
@@ -64,40 +65,44 @@ function goToSimResults() {
     </div>
   </div>
 
-  <Teleport to="body">
-    <div v-if="showSimModal" class="sim-overlay" @click.self="!simRunning && handleCancelSim()">
-      <div class="sim-modal">
-        <div class="sim-modal-header">
-          <BarChart2 :size="18" class="sim-modal-icon" />
-          <span class="sim-modal-title">{{ t("tournament.settingsPage.simulation.title") }}</span>
+  <AppSheet
+    v-if="showSimModal"
+    :title="t('tournament.settingsPage.simulation.title')"
+    :dismiss-on-outside-click="!simRunning"
+    width="380px"
+    @close="handleCancelSim"
+  >
+    <div class="sim-body">
+      <template v-if="!simDone">
+        <p class="sim-modal-sub">
+          {{ t("tournament.settingsPage.simulation.simulating", { name: tournament.name }) }}
+        </p>
+        <div class="sim-progress-track">
+          <div class="sim-progress-fill" :style="{ width: simProgress + '%' }" />
         </div>
+        <div class="sim-progress-label">{{ simProgress }}%</div>
+      </template>
 
+      <p v-else class="sim-modal-sub sim-done-msg">
+        {{ t("tournament.settingsPage.simulation.done") }}
+      </p>
+    </div>
+
+    <template #footer>
+      <div class="sim-footer">
         <template v-if="!simDone">
-          <p class="sim-modal-sub">
-            {{ t("tournament.settingsPage.simulation.simulating", { name: tournament.name }) }}
-          </p>
-          <div class="sim-progress-track">
-            <div class="sim-progress-fill" :style="{ width: simProgress + '%' }" />
-          </div>
-          <div class="sim-progress-label">{{ simProgress }}%</div>
-          <button class="sim-cancel-btn" @click="handleCancelSim">{{ t("common.cancel") }}</button>
+          <AppButton @click="handleCancelSim">{{ t("common.cancel") }}</AppButton>
         </template>
-
         <template v-else>
-          <p class="sim-modal-sub sim-done-msg">
-            {{ t("tournament.settingsPage.simulation.done") }}
-          </p>
-          <div class="sim-done-actions">
-            <button class="primary" @click="goToSimResults">
-              <BarChart2 :size="14" />
-              {{ t("tournament.settingsPage.simulation.viewResults") }}
-            </button>
-            <button @click="handleCancelSim">{{ t("common.close") }}</button>
-          </div>
+          <AppButton variant="filled" @click="goToSimResults">
+            <BarChart2 :size="14" />
+            {{ t("tournament.settingsPage.simulation.viewResults") }}
+          </AppButton>
+          <AppButton @click="handleCancelSim">{{ t("common.close") }}</AppButton>
         </template>
       </div>
-    </div>
-  </Teleport>
+    </template>
+  </AppSheet>
 </template>
 
 <style src="./settings.css"></style>
@@ -117,7 +122,7 @@ function goToSimResults() {
 }
 .tsp-sim-desc {
   flex: 1;
-  font-size: 12px;
+  font-size: var(--fs-sm);
   color: var(--text-muted);
   min-width: 160px;
 }
@@ -131,35 +136,15 @@ function goToSimResults() {
   flex-shrink: 0;
 }
 
-.sim-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.55);
+.sim-body {
+  padding: var(--sp-4);
+}
+.sim-footer {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-}
-.sim-modal {
-  background: var(--surface);
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius);
-  padding: 28px 28px 24px;
-  width: min(380px, calc(100vw - 32px));
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-}
-.sim-modal-header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-.sim-modal-icon {
-  color: var(--accent);
-}
-.sim-modal-title {
-  font-size: 16px;
-  font-weight: 700;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  padding: var(--sp-3) var(--sp-4) var(--sp-4);
 }
 .sim-modal-sub {
   font-size: 13px;
@@ -188,26 +173,9 @@ function goToSimResults() {
   margin-bottom: 16px;
   font-variant-numeric: tabular-nums;
 }
-.sim-cancel-btn {
-  font-size: 13px;
-  color: var(--text-muted);
-  padding: 6px 14px;
-}
 .sim-done-msg {
-  font-size: 14px;
+  font-size: var(--fs-base);
   color: var(--text);
   font-weight: 500;
-}
-.sim-done-actions {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-.sim-done-actions button {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 16px;
-  font-size: 13px;
 }
 </style>

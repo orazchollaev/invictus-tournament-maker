@@ -11,6 +11,11 @@
   margin-bottom: var(--sp-5);
 }
 
+.page-top--lead {
+  justify-content: flex-start;
+  gap: var(--sp-3);
+}
+
 .page-title {
   margin: 0;
   font-size: var(--fs-xl);

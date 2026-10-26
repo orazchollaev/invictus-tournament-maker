@@ -165,7 +165,7 @@ function confirm() {
 }
 
 .gd-hint {
-  font-size: 12px;
+  font-size: var(--fs-sm);
   color: var(--text-muted);
   margin: 0;
 }
@@ -179,7 +179,7 @@ function confirm() {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 12px;
+  font-size: var(--fs-sm);
   font-weight: 600;
   font-family: var(--font);
   padding: 5px 8px;
@@ -219,7 +219,7 @@ function confirm() {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 12px;
+  font-size: var(--fs-sm);
   font-weight: 600;
   font-family: var(--font);
   padding: 5px 8px;
@@ -242,7 +242,7 @@ function confirm() {
 }
 
 .gd-progress {
-  font-size: 11px;
+  font-size: var(--fs-xs);
   color: var(--text-muted);
   margin-inline-end: auto;
   font-variant-numeric: tabular-nums;
@@ -257,7 +257,7 @@ function confirm() {
   margin-top: 4px;
 }
 .quick-draw-label {
-  font-size: 12px;
+  font-size: var(--fs-sm);
   color: var(--text-muted);
   margin-inline-end: 2px;
 }

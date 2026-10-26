@@ -275,7 +275,7 @@ function isBye(label: string) {
   max-width: 380px;
 }
 .ds-opponent {
-  font-size: 11px;
+  font-size: var(--fs-xs);
   color: var(--text-muted);
 }
 
@@ -287,7 +287,7 @@ function isBye(label: string) {
 }
 
 .ds-target {
-  font-size: 11px;
+  font-size: var(--fs-xs);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.06em;

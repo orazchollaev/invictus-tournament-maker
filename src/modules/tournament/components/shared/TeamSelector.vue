@@ -355,7 +355,7 @@ function toggleAll() {
   z-index: 1;
   flex-shrink: 0;
   padding: var(--sp-2) var(--sp-2) 2px;
-  font-size: 11px;
+  font-size: var(--fs-xs);
   font-weight: 800;
   letter-spacing: 0.06em;
   color: var(--accent);
@@ -368,7 +368,7 @@ function toggleAll() {
   min-width: 30px;
   padding: 2px 6px;
   border-radius: var(--radius-pill);
-  font-size: 11px;
+  font-size: var(--fs-xs);
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   text-align: center;

@@ -91,7 +91,7 @@ onUnmounted(() => {
   border-bottom: 1px solid var(--border-light);
   position: sticky;
   top: 0;
-  z-index: 10;
+  z-index: var(--z-header);
   padding-top: var(--safe-top);
   padding-inline-start: var(--safe-left);
   padding-inline-end: var(--safe-right);
@@ -197,7 +197,7 @@ onUnmounted(() => {
   border: 1px solid color-mix(in srgb, var(--accent) 50%, transparent);
   background: color-mix(in srgb, var(--accent) 10%, transparent);
   color: var(--accent);
-  font-size: 12px;
+  font-size: var(--fs-sm);
   font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
@@ -219,7 +219,7 @@ onUnmounted(() => {
   border: 1px solid color-mix(in srgb, var(--danger) 50%, transparent);
   background: color-mix(in srgb, var(--danger) 10%, transparent);
   color: var(--danger);
-  font-size: 12px;
+  font-size: var(--fs-sm);
   font-weight: 600;
   white-space: nowrap;
   pointer-events: none;
@@ -247,7 +247,7 @@ onUnmounted(() => {
   background: var(--surface);
   color: var(--text-muted);
   text-decoration: none;
-  font-size: 12px;
+  font-size: var(--fs-sm);
   font-weight: 500;
   transition:
     background 0.12s,

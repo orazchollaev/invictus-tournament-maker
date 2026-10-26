@@ -52,7 +52,7 @@ function retry() {
 }
 .error-msg {
   color: var(--text-muted);
-  font-size: 14px;
+  font-size: var(--fs-base);
   max-width: 260px;
 }
 </style>

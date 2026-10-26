@@ -77,10 +77,26 @@ const configuringPhase = computed(() =>
   tournament.value?.phases?.find((p) => p.id === configuringPhaseId.value)
 )
 
+const leaveModal = ref<InstanceType<typeof AppModal> | null>(null)
+let leaveChoice: "leave" | "save-leave" | "stay" = "stay"
+
+// Every way out of the prompt plays the exit animation first; the choice is
+// handed to the guard once the modal has gone (see @close).
+function dismissLeave(choice: typeof leaveChoice) {
+  leaveChoice = choice
+  leaveModal.value?.close()
+}
+
 const { open: showLeaveModal, choose: chooseLeave } = useUnsavedChangesGuard({
   hasChanges: draft.hasChanges,
   onSave: draft.save,
 })
+
+function onLeaveClosed() {
+  const choice = leaveChoice
+  leaveChoice = "stay"
+  chooseLeave(choice)
+}
 
 const groupConfigSummary = computed(() => {
   const base = t("tournament.create.config.groupsAndAdvance", {
@@ -444,19 +460,20 @@ function handleSave() {
 
     <AppModal
       v-if="showLeaveModal"
+      ref="leaveModal"
       :title="t('tournament.settingsPage.unsavedChanges.title')"
       width="360px"
-      @close="chooseLeave('stay')"
+      @close="onLeaveClosed"
     >
       <p class="leave-msg">{{ t("tournament.settingsPage.unsavedChanges.message") }}</p>
       <div class="modal-actions">
-        <AppButton @click="chooseLeave('leave')">
+        <AppButton @click="dismissLeave('leave')">
           {{ t("tournament.settingsPage.unsavedChanges.leave") }}
         </AppButton>
-        <AppButton variant="filled" @click="chooseLeave('save-leave')">
+        <AppButton variant="filled" @click="dismissLeave('save-leave')">
           {{ t("tournament.settingsPage.unsavedChanges.saveAndLeave") }}
         </AppButton>
-        <AppButton @click="chooseLeave('stay')">
+        <AppButton @click="dismissLeave('stay')">
           {{ t("tournament.settingsPage.unsavedChanges.close") }}
         </AppButton>
       </div>

@@ -75,12 +75,12 @@ const { teamById } = useTeamLookup(() => props.teams)
   gap: 8px;
 }
 .pe-hint {
-  font-size: 12px;
+  font-size: var(--fs-sm);
   color: var(--text-muted);
   margin: 0;
 }
 .pe-reset {
-  font-size: 11px;
+  font-size: var(--fs-xs);
   padding: 3px 9px;
   flex-shrink: 0;
 }
@@ -88,7 +88,7 @@ const { teamById } = useTeamLookup(() => props.teams)
   display: flex;
   flex-direction: column;
   gap: 2px;
-  font-size: 11px;
+  font-size: var(--fs-xs);
   color: var(--danger);
 }
 .pe-pots {
@@ -112,7 +112,7 @@ const { teamById } = useTeamLookup(() => props.teams)
   border-bottom: 1px solid var(--border-light);
 }
 .pe-pot-label {
-  font-size: 12px;
+  font-size: var(--fs-sm);
   font-weight: 600;
   letter-spacing: 0.03em;
 }
@@ -152,7 +152,7 @@ const { teamById } = useTeamLookup(() => props.teams)
   border-color: var(--accent);
 }
 .pe-name {
-  font-size: 12px;
+  font-size: var(--fs-sm);
 }
 
 @media (max-width: 500px) {
