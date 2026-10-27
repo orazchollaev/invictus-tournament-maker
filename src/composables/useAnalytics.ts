@@ -45,7 +45,10 @@ export async function logError(where: string, error: unknown): Promise<void> {
 }
 
 export async function logEvent(name: string, params?: Record<string, unknown>): Promise<void> {
-  if (!Capacitor.isNativePlatform()) return
+  if (!Capacitor.isNativePlatform()) {
+    console.log(`[analytics] ${name}`, params ?? {})
+    return
+  }
 
   try {
     const { FirebaseAnalytics } = await import("@capacitor-firebase/analytics")
