@@ -1,5 +1,24 @@
 # Changelog
 
+## [3.7.0](https://github.com/orazchollaev/invictus-tournament-maker/compare/v3.6.3...v3.7.0) (2026-10-27)
+
+### 🚀 New Features
+
+- add minute-by-minute match event editor ([9e5327c](https://github.com/orazchollaev/invictus-tournament-maker/commit/9e5327c7df891135b026e00dc02ac967c4a00e89))
+- **examples:** add CONIFA nations dataset ([6227601](https://github.com/orazchollaev/invictus-tournament-maker/commit/6227601b23f2357e492efd4f97091055e0710e78))
+- **examples:** add Russian Premier League dataset ([a6901ea](https://github.com/orazchollaev/invictus-tournament-maker/commit/a6901ea7ba81db9c9f6e34d42bc9fd5bc152ad31))
+- **i18n:** translate team comparison into all locales ([5b94860](https://github.com/orazchollaev/invictus-tournament-maker/commit/5b94860ff00f09bed4c9f5ceb277fd3666a61236))
+- **onboarding:** add animated slide visuals and background glow ([c296a07](https://github.com/orazchollaev/invictus-tournament-maker/commit/c296a07c66aa2a065f8953c3d2e14f8ad991c283))
+- **teams:** add head-to-head team comparison ([768839f](https://github.com/orazchollaev/invictus-tournament-maker/commit/768839fe371d2eb69e1d7a565f1e966d1bd8fcdb))
+
+### 🔧 Maintenance
+
+- bump gradle version ([e2a660f](https://github.com/orazchollaev/invictus-tournament-maker/commit/e2a660fc06d69916e5b1fe199e288a6d7573d190))
+
+### 🎨 Styles
+
+- fix small design issues ([479ff22](https://github.com/orazchollaev/invictus-tournament-maker/commit/479ff225ba9a22482d7753a55032d7424e22dc63))
+
 ## [3.6.3](https://github.com/orazchollaev/invictus-tournament-maker/compare/v3.6.2...v3.6.3) (2026-10-23)
 
 ### 🚀 New Features
