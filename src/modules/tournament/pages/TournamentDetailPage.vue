@@ -30,6 +30,7 @@ import { useTournamentCeremonies } from "../composables/useTournamentCeremonies"
 import { useFillViewportHeight } from "@/composables/useFillViewportHeight"
 import { provideManagedTeam } from "@/composables/useManagedTeam"
 import { showAlert } from "@/composables/useDialog"
+import { promptSupportAfterTournament } from "@/composables/useSupport"
 
 const { t: trns } = useI18n()
 const router = useRouter()
@@ -64,6 +65,11 @@ async function onSave() {
 const isFinished = computed(
   () => !!tournament.value && store.isTournamentFinished(tournament.value.id)
 )
+
+// Only the moment it flips to finished, not opening one that was already done.
+watch(isFinished, (done, wasDone) => {
+  if (done && !wasDone) promptSupportAfterTournament()
+})
 
 /**
  * Managing a side means managing all of its matches, so "simulate everything"

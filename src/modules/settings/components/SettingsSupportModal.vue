@@ -6,9 +6,12 @@ import { logEvent } from "@/composables/useAnalytics"
 import { AppButton, AppModal } from "@/components/ui"
 import { SUPPORT_ADDRESS, SUPPORT_NETWORK, SUPPORT_PAY_ID } from "@/modules/settings/constants"
 import {
+  classifySendError,
   openWalletPicker,
+  readWalletAddress,
   sendSupport,
   walletSendEnabled,
+  watchPicker,
   watchWallet,
 } from "@/modules/settings/services/supportWallet"
 
@@ -19,18 +22,26 @@ const { t } = useI18n()
 const qr = ref("")
 const copiedKey = ref<"payId" | "address" | null>(null)
 
-const AMOUNTS = ["1", "5", "10"] as const
+const AMOUNTS = ["1", "3", "5"] as const
 const walletAddress = ref<string>()
-const amount = ref<string>("5")
+const amount = ref<string>("3")
 const status = ref<"idle" | "sending" | "sent" | "failed">("idle")
 let stopWatching: (() => void) | undefined
+let stopPicker: (() => void) | undefined
+
+function setWalletAddress(address: string | undefined) {
+  if (address && !walletAddress.value) void logEvent("support_wallet_connected")
+  walletAddress.value = address
+}
 
 async function connectWallet() {
   void logEvent("support_wallet_connect_tap")
   try {
     await openWalletPicker()
   } catch {
+    // The picker never opened (library failed to load, WebView issue): not the same as a user walking away.
     status.value = "failed"
+    void logEvent("support_wallet_connect_error")
   }
 }
 
@@ -41,22 +52,35 @@ async function sendFromWallet() {
     await sendSupport(amount.value)
     status.value = "sent"
     void logEvent("support_wallet_send_result", { result: "sent", amount: Number(amount.value) })
-  } catch {
+  } catch (error) {
     // Rejected in the wallet, wrong network, or not enough USDT/BNB for gas.
     status.value = "failed"
-    void logEvent("support_wallet_send_result", { result: "failed" })
+    void logEvent("support_wallet_send_result", {
+      result: "failed",
+      reason: classifySendError(error),
+      amount: Number(amount.value),
+    })
   }
 }
 
-onUnmounted(() => stopWatching?.())
+onUnmounted(() => {
+  stopWatching?.()
+  stopPicker?.()
+})
 
 onMounted(async () => {
   if (walletSendEnabled) {
-    watchWallet((address) => {
-      if (address && !walletAddress.value) void logEvent("support_wallet_connected")
-      walletAddress.value = address
-    })
+    watchWallet(setWalletAddress)
       .then((stop) => (stopWatching = stop))
+      .catch(() => {})
+    watchPicker(async () => {
+      // The account callback can land just after the picker closes, so give it a beat,
+      // then read the address directly in case the subscription missed the connect.
+      await new Promise((resolve) => setTimeout(resolve, 500))
+      setWalletAddress(await readWalletAddress().catch(() => undefined))
+      if (!walletAddress.value) void logEvent("support_wallet_picker_closed")
+    })
+      .then((stop) => (stopPicker = stop))
       .catch(() => {})
   }
   try {
@@ -84,7 +108,13 @@ async function copy(key: "payId" | "address", text: string) {
 </script>
 
 <template>
-  <AppModal :title="t('settings.support.title')" width="425px" @close="$emit('close')">
+  <!-- The wallet picker and the wallet's own window live outside this modal; touching them must not dismiss it. -->
+  <AppModal
+    :title="t('settings.support.title')"
+    width="425px"
+    :dismiss-on-outside-click="false"
+    @close="$emit('close')"
+  >
     <div class="support">
       <p class="support-intro">{{ t("settings.support.intro") }}</p>
 

@@ -18,7 +18,9 @@ const props = withDefaults(
     width?: string
     zIndex?: number
     flush?: boolean
-    /** Set false when a stray tap outside must not throw away work in progress. */
+    /** Set false when a stray tap outside must not throw away work in progress.
+     *  Also ignores focus moving outside, which is how a popup or extension window
+     *  that hands focus back would otherwise dismiss it. */
     dismissOnOutsideClick?: boolean
     /** Set false to hide the close button and ignore Escape — for a panel
      *  whose in-progress state must not be walked away from (a live match
@@ -84,6 +86,7 @@ defineExpose({ close })
         @pointer-down-outside="
           (e: Event) => (props.dismissOnOutsideClick ? close() : e.preventDefault())
         "
+        @interact-outside="(e: Event) => !props.dismissOnOutsideClick && e.preventDefault()"
       >
         <div class="drawer-header">
           <slot name="title">

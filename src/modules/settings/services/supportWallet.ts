@@ -44,10 +44,40 @@ export async function openWalletPicker() {
   await (await getModal()).open()
 }
 
-/** Calls `onChange` with the connected address, or undefined once disconnected. */
+/**
+ * Calls `onChange` with the connected address, or undefined once disconnected.
+ * Pinned to eip155: without a namespace AppKit listens to the top-level chain state,
+ * which misses the account change of a fresh connect (the UI only caught up on reload).
+ */
 export async function watchWallet(onChange: (address: string | undefined) => void) {
   const modal = await getModal()
-  return modal.subscribeAccount((account) => onChange(account.address))
+  return modal.subscribeAccount((account) => onChange(account.address), "eip155")
+}
+
+/** The connected address right now, read directly instead of waiting for a subscription tick. */
+export async function readWalletAddress(): Promise<string | undefined> {
+  return (await getModal()).getAccount("eip155")?.address
+}
+
+/** Calls `onClose` each time the wallet picker goes from open to closed. */
+export async function watchPicker(onClose: () => void) {
+  const modal = await getModal()
+  let wasOpen = false
+  return modal.subscribeState((state) => {
+    if (wasOpen && !state.open) onClose()
+    wasOpen = state.open
+  })
+}
+
+export type SendFailure = "rejected" | "no-wallet" | "other"
+
+/** Buckets a failed send for analytics: the user said no, nothing is connected, or anything else. */
+export function classifySendError(error: unknown): SendFailure {
+  if (error instanceof Error && error.message === "no-wallet") return "no-wallet"
+  const e = error as { code?: unknown; info?: { error?: { code?: unknown } } } | null
+  const code = e?.code ?? e?.info?.error?.code
+  if (code === "ACTION_REJECTED" || code === 4001) return "rejected"
+  return "other"
 }
 
 /** Sends `amount` USDT (decimal string) from the connected wallet to SUPPORT_ADDRESS. */
