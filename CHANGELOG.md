@@ -1,5 +1,15 @@
 # Changelog
 
+## [3.7.1](https://github.com/orazchollaev/invictus-tournament-maker/compare/v3.7.0...v3.7.1) (2026-10-27)
+
+### 🐛 Bug Fixes
+
+- **support:** wallet connect not reflected in UI, modal closing, add funnel events ([f120369](https://github.com/orazchollaev/invictus-tournament-maker/commit/f12036950ca81ab4e673125d424afcb39c1a2b10))
+
+### 🔧 Maintenance
+
+- bump gradle version ([a448d6d](https://github.com/orazchollaev/invictus-tournament-maker/commit/a448d6dfd126f1ae90f7ac9b164901981a776df7))
+
 ## [3.7.0](https://github.com/orazchollaev/invictus-tournament-maker/compare/v3.6.3...v3.7.0) (2026-10-27)
 
 ### 🚀 New Features
