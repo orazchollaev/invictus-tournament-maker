@@ -115,7 +115,7 @@
     double: "ダブル",
     triple: "3回",
     quadruple: "4回",
-    half: "0.5×",
+    sextuple: "6回",
     random: "ランダム",
     seeded: "シード",
     manual: "手動",

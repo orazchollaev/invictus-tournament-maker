@@ -116,7 +116,7 @@
     double: "Ikkita",
     triple: "3×",
     quadruple: "4×",
-    half: "0,5×",
+    sextuple: "6×",
     random: "Tasodifiy",
     seeded: "Reyting bo'yicha",
     manual: "Qo'lda",

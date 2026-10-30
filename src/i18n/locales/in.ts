@@ -114,7 +114,7 @@
     double: "डबल",
     triple: "3×",
     quadruple: "4×",
-    half: "0.5×",
+    sextuple: "6×",
     random: "रैंडम",
     seeded: "सीडेड",
     manual: "मैनुअल",

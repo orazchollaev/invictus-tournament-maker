@@ -28,7 +28,6 @@ import type {
 import { uid, shuffle } from "./utils"
 import { buildGroupFixture, recalcStandings, selectWildcards } from "./groups"
 import {
-  buildHalfLeagueMatchdays,
   buildLeagueMatchdays,
   recalcLeagueStandings,
   allLeagueDone,
@@ -474,10 +473,7 @@ function buildGroupPhase(
 function buildLeaguePhase(phase: TournamentPhase, ids: string[]) {
   if (phase.config.kind !== "league") return
   const cfg = phase.config.league
-  const matchdays =
-    cfg.legMode === "half"
-      ? buildHalfLeagueMatchdays(ids)
-      : buildLeagueMatchdays(ids, legModeToCount(cfg.legMode))
+  const matchdays = buildLeagueMatchdays(ids, legModeToCount(cfg.legMode))
   const league: League = { matchdays, standings: zeroStandings(ids), legMode: cfg.legMode }
   phase.league = league
   phase.groups = undefined

@@ -3,7 +3,6 @@ import type { Team } from "../modules/teams/types"
 import type {
   Group,
   GroupStanding,
-  League,
   LeagueTier,
   Tournament,
   PlayoffSeedMode,
@@ -24,14 +23,7 @@ import {
   applyLegModes,
 } from "./bracket"
 import { buildGroupFixture, recalcStandings, selectWildcards, rankTeamsByStanding } from "./groups"
-import { buildLeagueMatchdays, buildHalfLeagueMatchdays } from "./league"
-
-/** League schedule for a leg mode — "half" isn't a whole number of legs, so
- *  it takes its own builder instead of going through `legModeToCount`. */
-function buildLeagueSchedule(teamIds: string[], legMode: LegMode): League["matchdays"] {
-  if (legMode === "half") return buildHalfLeagueMatchdays(teamIds)
-  return buildLeagueMatchdays(teamIds, legModeToCount(legMode))
-}
+import { buildLeagueMatchdays } from "./league"
 
 export function createTournament(
   name: string,
@@ -433,7 +425,7 @@ export function createMultiTierLeague(
 ): Tournament {
   const tiers: LeagueTier[] = tierDefs.map(({ name: tierName, teams }) => {
     const teamIds = teams.map((t) => t.id)
-    const matchdays = buildLeagueSchedule(teamIds, legMode)
+    const matchdays = buildLeagueMatchdays(teamIds, legModeToCount(legMode))
     const standings: GroupStanding[] = teamIds.map((teamId) => ({
       teamId,
       played: 0,
@@ -469,7 +461,7 @@ export function createLeague(
   legMode: LegMode = "single"
 ): Tournament {
   const teamIds = teams.map((t) => t.id)
-  const matchdays = buildLeagueSchedule(teamIds, legMode)
+  const matchdays = buildLeagueMatchdays(teamIds, legModeToCount(legMode))
   const standings: GroupStanding[] = teamIds.map((teamId) => ({
     teamId,
     played: 0,

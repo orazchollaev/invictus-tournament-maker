@@ -157,7 +157,7 @@
     double: "Çift",
     triple: "3×",
     quadruple: "4×",
-    half: "0.5×",
+    sextuple: "6×",
     random: "Rastgele",
     seeded: "Sıralı",
     manual: "Manuel",

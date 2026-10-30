@@ -9,5 +9,6 @@ export function legModeToCount(mode: LegMode): number {
   if (mode === "double") return 2
   if (mode === "triple") return 3
   if (mode === "quadruple") return 4
+  if (mode === "sextuple") return 6
   return 1
 }

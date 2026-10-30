@@ -115,7 +115,7 @@
     double: "دوتایی",
     triple: "۳×",
     quadruple: "۴×",
-    half: "۰٫۵×",
+    sextuple: "۶×",
     random: "تصادفی",
     seeded: "سیدبندی",
     manual: "دستی",

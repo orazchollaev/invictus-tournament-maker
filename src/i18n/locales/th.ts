@@ -114,7 +114,7 @@
     double: "สองนัด",
     triple: "3 นัด",
     quadruple: "4 นัด",
-    half: "0.5×",
+    sextuple: "6 นัด",
     random: "สุ่ม",
     seeded: "จัดอันดับ",
     manual: "กำหนดเอง",

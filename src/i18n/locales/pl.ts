@@ -114,7 +114,7 @@
     double: "Podwójny",
     triple: "3×",
     quadruple: "4×",
-    half: "0.5×",
+    sextuple: "6×",
     random: "Losowo",
     seeded: "Z rozstawieniem",
     manual: "Ręcznie",

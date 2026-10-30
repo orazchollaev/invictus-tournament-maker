@@ -2,7 +2,7 @@
 import type { PlayerPosition } from "@/modules/players/types"
 import type { Formation, PlayStyle } from "@/modules/teams/types"
 
-export type LegMode = "single" | "double" | "triple" | "quadruple" | "half"
+export type LegMode = "single" | "double" | "triple" | "quadruple" | "sextuple"
 export type Tiebreaker = "head-to-head" | "goal-diff"
 
 // Named knockout stages, keyed by distance from the final (1 = semifinal, … 5+ = r64).

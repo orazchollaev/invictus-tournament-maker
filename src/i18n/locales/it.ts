@@ -117,7 +117,7 @@
     double: "Doppia",
     triple: "3×",
     quadruple: "4×",
-    half: "0.5×",
+    sextuple: "6×",
     random: "Casuale",
     seeded: "Con teste di serie",
     manual: "Manuale",

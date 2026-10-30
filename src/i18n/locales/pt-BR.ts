@@ -117,7 +117,7 @@
     double: "Duplo",
     triple: "3×",
     quadruple: "4×",
-    half: "0.5×",
+    sextuple: "6×",
     random: "Aleatório",
     seeded: "Com cabeças de chave",
     manual: "Manual",

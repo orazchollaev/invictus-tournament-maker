@@ -114,7 +114,7 @@
     double: "2회",
     triple: "3회",
     quadruple: "4회",
-    half: "0.5×",
+    sextuple: "6회",
     random: "무작위",
     seeded: "시드 배정",
     manual: "수동",

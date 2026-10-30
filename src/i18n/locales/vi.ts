@@ -115,7 +115,7 @@
     double: "Hai lượt",
     triple: "3×",
     quadruple: "4×",
-    half: "0.5×",
+    sextuple: "6×",
     random: "Ngẫu nhiên",
     seeded: "Theo hạt giống",
     manual: "Thủ công",

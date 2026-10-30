@@ -116,7 +116,7 @@
     double: "Ganda",
     triple: "3×",
     quadruple: "4×",
-    half: "0.5×",
+    sextuple: "6×",
     random: "Acak",
     seeded: "Unggulan",
     manual: "Manual",

@@ -116,7 +116,7 @@
     double: "Dubbel",
     triple: "3×",
     quadruple: "4×",
-    half: "0,5×",
+    sextuple: "6×",
     random: "Willekeurig",
     seeded: "Geplaatst",
     manual: "Handmatig",

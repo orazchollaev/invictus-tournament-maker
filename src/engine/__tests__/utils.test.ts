@@ -63,5 +63,6 @@ describe("legModeToCount", () => {
     expect(legModeToCount("double")).toBe(2)
     expect(legModeToCount("triple")).toBe(3)
     expect(legModeToCount("quadruple")).toBe(4)
+    expect(legModeToCount("sextuple")).toBe(6)
   })
 })
