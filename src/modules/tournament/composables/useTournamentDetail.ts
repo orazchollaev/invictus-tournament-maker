@@ -3,7 +3,6 @@ import { useRoute, useRouter } from "vue-router"
 import { useTeamsStore } from "@/modules/teams/store"
 import { useTournamentStore } from "@/modules/tournament/store"
 import type { PlayoffSeedMode } from "@/modules/tournament/types"
-import confetti from "canvas-confetti"
 import { useSettingsStore } from "@/modules/settings/store"
 import { useInAppReview } from "@/composables/useInAppReview"
 import { useHaptic } from "@/composables/useHaptic"
@@ -78,8 +77,10 @@ export function useTournamentDetail() {
 
   const hasAnyResults = computed(() => store.hasAnyResults(tournamentId.value))
 
-  function fireTeamConfetti(color: string) {
+  async function fireTeamConfetti(color: string) {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return
+    // Loaded on the first win, not at launch: most sessions never fire it.
+    const { default: confetti } = await import("canvas-confetti")
     const end = Date.now() + 2500
 
     const frame = () => {
@@ -120,7 +121,7 @@ export function useTournamentDetail() {
       if (newId !== oldId) return
       if (newWinnerId === oldWinnerId) return
       const team = allTeams.value.find((t) => t.id === newWinnerId)
-      if (team && settings.confettiOnWin) fireTeamConfetti(team.color)
+      if (team && settings.confettiOnWin) void fireTeamConfetti(team.color)
       if (team && settings.soundOnWin) playWinnerSound()
       hapticSuccess()
       onTournamentCompleted()

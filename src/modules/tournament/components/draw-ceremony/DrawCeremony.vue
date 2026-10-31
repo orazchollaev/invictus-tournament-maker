@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, onUnmounted } from "vue"
 import { useI18n } from "vue-i18n"
-import confetti from "canvas-confetti"
 import { X } from "@lucide/vue"
 import { AppIcon } from "@/components/ui"
 import type { Team } from "@/modules/teams/types"
@@ -80,7 +79,9 @@ watch(phase, (p) => {
   if (p === "done") {
     hapticSuccess()
     if (settings.confettiOnWin && !prefersReducedMotion) {
-      confetti({ particleCount: 90, spread: 75, origin: { y: 0.6 }, zIndex: 9999 })
+      void import("canvas-confetti").then(({ default: confetti }) =>
+        confetti({ particleCount: 90, spread: 75, origin: { y: 0.6 }, zIndex: 9999 })
+      )
     }
   } else if (p === "drawing") {
     hapticTap()
