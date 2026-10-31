@@ -35,12 +35,8 @@ const items = [
 </template>
 
 <style scoped>
-/* Desktop uses the site header instead. */
-.mobile-nav {
-  display: none;
-}
-
-@media (max-width: 600px) {
+/* Mobile first: the bottom bar is the navigation on every screen size. */
+@media all {
   .mobile-nav {
     display: flex;
     position: fixed;

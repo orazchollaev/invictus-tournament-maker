@@ -1,28 +1,11 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from "vue"
-import { Settings, Trophy, History, Users, UserRound, BookOpen, Heart } from "@lucide/vue"
+import { BookOpen, Heart } from "@lucide/vue"
 import { useNavActive } from "@/composables/useNavActive"
 import { openSupport } from "@/composables/useSupport"
 import { useI18n } from "vue-i18n"
 
 const { t } = useI18n()
 const { isNavActive } = useNavActive()
-
-const isOnline = ref(navigator.onLine)
-function handleOnline() {
-  isOnline.value = true
-}
-function handleOffline() {
-  isOnline.value = false
-}
-onMounted(() => {
-  window.addEventListener("online", handleOnline)
-  window.addEventListener("offline", handleOffline)
-})
-onUnmounted(() => {
-  window.removeEventListener("online", handleOnline)
-  window.removeEventListener("offline", handleOffline)
-})
 </script>
 
 <template>
@@ -32,53 +15,24 @@ onUnmounted(() => {
         <span class="brand-name">Invictus</span>
       </RouterLink>
 
-      <nav class="main-nav">
-        <RouterLink
-          to="/tournaments"
-          :class="{ 'router-link-active': isNavActive('/tournaments') }"
-        >
-          <Trophy :size="16" />
-          {{ t("nav.tournaments") }}
-        </RouterLink>
-        <RouterLink to="/teams" :class="{ 'router-link-active': isNavActive('/teams') }">
-          <Users :size="16" />
-          {{ t("nav.teams") }}
-        </RouterLink>
-        <RouterLink to="/players" :class="{ 'router-link-active': isNavActive('/players') }">
-          <UserRound :size="16" />
-          {{ t("nav.players") }}
-        </RouterLink>
-        <RouterLink to="/history" :class="{ 'router-link-active': isNavActive('/history') }">
-          <History :size="16" class="nav-icon" />
-          {{ t("nav.history") }}
-        </RouterLink>
-      </nav>
-
       <div class="header-end">
         <button
           type="button"
-          class="settings-btn support-btn"
+          class="header-btn support-btn"
           :title="t('settings.support.button')"
           :aria-label="t('settings.support.button')"
           @click="openSupport('header')"
         >
-          <Heart :size="16" />
+          <Heart :size="20" />
         </button>
         <RouterLink
           to="/guide"
-          class="settings-btn guide-btn"
+          class="header-btn"
           :class="{ 'router-link-active': isNavActive('/guide') }"
           :title="t('guide.title')"
+          :aria-label="t('guide.title')"
         >
-          <BookOpen :size="16" />
-        </RouterLink>
-        <RouterLink
-          to="/settings"
-          class="settings-btn"
-          :class="{ 'router-link-active': isNavActive('/settings') }"
-          :title="t('nav.settings')"
-        >
-          <Settings :size="16" />
+          <BookOpen :size="20" />
         </RouterLink>
       </div>
     </div>
@@ -87,257 +41,96 @@ onUnmounted(() => {
 
 <style scoped>
 .site-header {
-  background: color-mix(in srgb, var(--surface) 96%, transparent);
+  background: var(--surface);
   border-bottom: 1px solid var(--border-light);
   position: sticky;
   top: 0;
   z-index: var(--z-header);
   padding-top: var(--safe-top);
-  padding-inline-start: var(--safe-left);
-  padding-inline-end: var(--safe-right);
+  padding-inline: var(--safe-left) var(--safe-right);
 }
 
 .header-inner {
-  max-width: 1280px;
+  max-width: 760px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 var(--sp-4);
   display: flex;
   align-items: center;
-  gap: 8px;
-  height: 52px;
-  justify-content: center;
-  position: relative;
+  justify-content: space-between;
+  gap: var(--sp-2);
+  height: var(--header-height);
 }
 
-/* Brand */
 .brand {
   display: flex;
   align-items: center;
-  text-decoration: none;
-  position: absolute;
-  left: 20px;
-}
-.brand-logo {
-  height: 50px;
-  width: 50px;
-  flex-shrink: 0;
-  color: var(--accent);
-}
-.brand-name {
-  font-size: 22px;
-  font-weight: 800;
-  font-family: var(--font);
-  background: linear-gradient(-135deg, var(--text) 20%, var(--accent) 50%, var(--text) 80%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  letter-spacing: 0.02em;
-  /* Static on purpose: this header is sticky, so an infinite background-position
-     animation (plus a drop-shadow filter over clipped text) repainted it on the
-     main thread every frame for the whole session. */
-}
-
-/* Main nav */
-.main-nav {
-  display: flex;
-  align-items: center;
-  gap: 2px;
-  margin-inline-start: 120px;
-  margin-inline-end: 120px;
-}
-.main-nav a {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--text-muted);
-  text-decoration: none;
-  padding: 5px 12px;
-  border-radius: var(--radius);
-  transition:
-    background 0.12s,
-    color 0.12s;
-}
-.nav-icon {
-  flex-shrink: 0;
-}
-.main-nav a:hover {
-  background: var(--bg);
+  min-width: 0;
   color: var(--text);
   text-decoration: none;
 }
-.main-nav a.router-link-active {
-  background: color-mix(in srgb, var(--accent) 12%, transparent);
-  color: var(--accent);
+
+.brand-name {
+  font-size: var(--fs-lg);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-.main-nav a:focus-visible,
-.update-btn:focus-visible,
-.github-star-btn:focus-visible,
-.settings-btn:focus-visible {
+
+.header-end {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-1);
+  flex-shrink: 0;
+}
+
+.header-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--tap-min);
+  height: var(--tap-min);
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-pill);
+  background: none;
+  color: var(--text-muted);
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background var(--dur-fast) var(--ease),
+    color var(--dur-fast) var(--ease);
+}
+
+.header-btn:hover {
+  background: var(--bg-hover);
+  color: var(--text);
+  text-decoration: none;
+}
+
+.header-btn:focus-visible {
   outline: none;
   box-shadow: var(--focus-ring);
 }
 
-/* Right side */
-.header-end {
-  position: absolute;
-  right: 20px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.update-btn {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  padding: 5px 10px;
-  border-radius: var(--radius);
-  border: 1px solid color-mix(in srgb, var(--accent) 50%, transparent);
-  background: color-mix(in srgb, var(--accent) 10%, transparent);
-  color: var(--accent);
-  font-size: var(--fs-sm);
-  font-weight: 600;
-  cursor: pointer;
-  white-space: nowrap;
-  transition:
-    background 0.12s,
-    border-color 0.12s;
-}
-.update-btn:hover {
-  background: color-mix(in srgb, var(--accent) 18%, transparent);
-  border-color: var(--accent);
-}
-
-.offline-chip {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  padding: 5px 10px;
-  border-radius: var(--radius);
-  border: 1px solid color-mix(in srgb, var(--danger) 50%, transparent);
-  background: color-mix(in srgb, var(--danger) 10%, transparent);
-  color: var(--danger);
-  font-size: var(--fs-sm);
-  font-weight: 600;
-  white-space: nowrap;
-  pointer-events: none;
-}
-
-.update-btn-enter-active,
-.update-btn-leave-active {
-  transition:
-    opacity 0.2s,
-    transform 0.2s;
-}
-.update-btn-enter-from,
-.update-btn-leave-to {
-  opacity: 0;
-  transform: translateY(-4px);
-}
-
-.github-star-btn {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  padding: 8px 10px;
-  border-radius: var(--radius);
-  border: 1px solid var(--border-light);
-  background: var(--surface);
-  color: var(--text-muted);
-  text-decoration: none;
-  font-size: var(--fs-sm);
-  font-weight: 500;
-  transition:
-    background 0.12s,
-    color 0.12s,
-    border-color 0.12s;
-  white-space: nowrap;
-}
-.github-star-btn:hover {
-  background: var(--bg);
-  color: var(--text);
-  border-color: var(--border);
-  text-decoration: none;
-}
-.github-star-btn:hover .github-star-icon {
-  color: var(--warning);
-}
-.github-star-label {
-  line-height: 1;
-}
-.github-star-icon {
-  transition: color 0.12s;
-}
-
-.settings-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: var(--radius);
-  color: var(--text-muted);
-  text-decoration: none;
-  transition:
-    background 0.12s,
-    color 0.12s;
-  padding: 0;
-}
-.support-btn {
-  border: none;
-  background: none;
-  cursor: pointer;
-  color: var(--accent);
-}
-.settings-btn:hover {
-  background: var(--bg);
-  color: var(--text);
-  text-decoration: none;
-}
-.settings-btn.router-link-active {
-  background: color-mix(in srgb, var(--accent) 12%, transparent);
-  color: var(--accent);
-}
-
-/* ── Design languages ────────────────────────────────────────────
-   iOS: press dims, nothing lifts. Android: a tonal state layer. */
-[data-design="ios"] .main-nav a:active,
-[data-design="ios"] .update-btn:active,
-[data-design="ios"] .github-star-btn:active,
-[data-design="ios"] .settings-btn:active {
+.header-btn:active {
   opacity: 0.55;
 }
-[data-design="android"] .main-nav a:active:not(.router-link-active) {
-  background: var(--bg-hover);
-}
-[data-design="android"] .update-btn:active {
-  background: color-mix(in srgb, var(--accent) 26%, transparent);
-}
-[data-design="android"] .github-star-btn:active {
-  background: var(--bg-hover);
-}
-[data-design="android"] .settings-btn:active:not(.router-link-active) {
-  background: var(--bg-hover);
+
+.support-btn {
+  color: var(--accent);
 }
 
+/* Phones navigate with the bottom bar alone. */
 @media (max-width: 600px) {
   .site-header {
     display: none;
   }
 }
 
-/* 32px icon in a 52px header; the hit area covers the header height. */
-.settings-btn {
-  position: relative;
-}
-.settings-btn::after {
-  content: "";
-  position: absolute;
-  inset: 50% auto auto 50%;
-  width: max(100%, var(--tap-min));
-  height: max(100%, var(--tap-min));
-  transform: translate(-50%, -50%);
+.header-btn.router-link-active {
+  background: var(--accent-subtle);
+  color: var(--accent);
 }
 </style>

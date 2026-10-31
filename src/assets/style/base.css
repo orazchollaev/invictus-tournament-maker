@@ -17,6 +17,11 @@ html {
   padding-inline-end: var(--safe-right);
 }
 
+/* The sticky header carries the status-bar inset itself. */
+html.header-pads {
+  padding-top: 0;
+}
+
 body {
   height: 100%;
   font-family: var(--font-ui);

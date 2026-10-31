@@ -55,6 +55,12 @@ let appStateListener: (() => void) | null = null
 let sessionStartedAt = Date.now()
 
 onMounted(async () => {
+  // Where the header shows (wider than a phone) it pads the status bar itself.
+  const wide = window.matchMedia("(min-width: 601px)")
+  const syncHeaderPads = () =>
+    document.documentElement.classList.toggle("header-pads", wide.matches)
+  syncHeaderPads()
+  wide.addEventListener("change", syncHeaderPads)
   void logEvent("app_open")
   scheduleSupportPrompt()
 
@@ -122,17 +128,11 @@ onUnmounted(() => {
 .app-main::after {
   content: "";
   display: block;
-  height: var(--safe-bottom);
+  height: calc(var(--mobile-nav-offset) + var(--sp-4));
 }
 
-@media (max-width: 600px) {
-  .app-main::after {
-    height: calc(var(--mobile-nav-offset) + var(--sp-4));
-  }
-
-  .app-main--no-nav::after {
-    height: var(--safe-bottom);
-  }
+.app-main--no-nav::after {
+  height: var(--safe-bottom);
 }
 
 .mobile-nav-enter-active,

@@ -9,6 +9,8 @@
    not stand on its own: <html> always carries a data-design value
    (index.html sets the default, the settings store keeps it current). */
 :root {
+  /* One height for every field-like control (input, select, segmented group). */
+  --control-h: 40px;
   --accent: #0b7264;
   --accent-hover: #095c51;
   --accent-subtle: color-mix(in srgb, var(--accent) 10%, transparent);
