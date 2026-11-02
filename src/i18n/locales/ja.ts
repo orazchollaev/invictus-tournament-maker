@@ -628,6 +628,13 @@
     },
   },
   tournament: {
+    bracket: {
+      doubleElim: {
+        winners: "勝者側ブラケット",
+        losers: "敗者側ブラケット",
+        finals: "グランドファイナル",
+      },
+    },
     noFixtures: "まだ試合がありません。",
     groupStageNotStarted: "グループステージはまだ始まっていません。",
     matchdayProgress: "{played}/{total} 節",
@@ -696,6 +703,8 @@
       formats: {
         bracket: "ノックアウト (トーナメント)",
         bracketDesc: "一度負けたら敗退",
+        doubleElim: "ダブルエリミネーション",
+        doubleElimDesc: "2回負けたら敗退",
         groupsKo: "グループ + ノックアウト",
         groupsKoDesc: "グループステージの後、上位チームが進出",
         league: "リーグ",
@@ -784,6 +793,9 @@
       options: "オプション",
       thirdPlace: "3位決定戦",
       thirdPlaceHint: "準決勝の敗者同士が3位を懸けて対戦します",
+      doubleElim: "ダブルエリミネーション",
+      doubleElimHint:
+        "敗者側ブラケットで全員に2度目のチャンス。グランドファイナルはリセットされる場合があります",
       tiebreaker: "順位決定方法",
       createBtn: "大会を作成",
     },
@@ -1258,6 +1270,12 @@
     eliminated: "敗退 · {round}",
   },
   rounds: {
+    winnersRound: "勝者側 {n}回戦",
+    winnersFinal: "勝者側決勝",
+    losersRound: "敗者側 {n}回戦",
+    losersFinal: "敗者側決勝",
+    grandFinal: "グランドファイナル",
+    grandFinalReset: "グランドファイナル リセット",
     matchday: "第{n}節",
     final: "決勝",
     semiFinals: "準決勝",

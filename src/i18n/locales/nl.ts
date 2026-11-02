@@ -649,6 +649,13 @@
     },
   },
   tournament: {
+    bracket: {
+      doubleElim: {
+        winners: "Winnaarsbracket",
+        losers: "Verliezersbracket",
+        finals: "Grote finale",
+      },
+    },
     noFixtures: "Nog geen wedstrijden.",
     groupStageNotStarted: "Groepsfase nog niet begonnen.",
     matchdayProgress: "{played}/{total} speelrondes",
@@ -817,6 +824,8 @@
       formats: {
         bracket: "Knock-outschema",
         bracketDesc: "Eén keer verliezen en je ligt eruit",
+        doubleElim: "Dubbele eliminatie",
+        doubleElimDesc: "Twee keer verliezen en je bent eruit",
         groupsKo: "Groepen + knock-out",
         groupsKoDesc: "Groepsfase, daarna gaan de beste teams door",
         league: "Competitie",
@@ -908,6 +917,9 @@
       options: "Opties",
       thirdPlace: "Wedstrijd om de 3e plaats",
       thirdPlaceHint: "De verliezers van de halve finales spelen om brons",
+      doubleElim: "Dubbele eliminatie",
+      doubleElimHint:
+        "Een verliezersbracket geeft iedereen een tweede kans; de grote finale kan worden gereset",
       tiebreaker: "Tiebreaker",
       createBtn: "Toernooi maken",
     },
@@ -1405,6 +1417,12 @@
     eliminated: "Uitgeschakeld · {round}",
   },
   rounds: {
+    winnersRound: "Winnaarsronde {n}",
+    winnersFinal: "Winnaarsfinale",
+    losersRound: "Verliezersronde {n}",
+    losersFinal: "Verliezersfinale",
+    grandFinal: "Grote finale",
+    grandFinalReset: "Grote finale (reset)",
     matchday: "Speelronde {n}",
     final: "Finale",
     thirdPlace: "Wedstrijd om de 3e plaats",

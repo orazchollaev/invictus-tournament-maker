@@ -472,6 +472,7 @@ export function normalizeTournament(raw: unknown): Tournament | null {
     "finalLegMode",
     "roundLegModes",
     "thirdPlaceLegMode",
+    "doubleElim",
     "tiebreaker",
     "leaguePlayoff",
     "swiss",

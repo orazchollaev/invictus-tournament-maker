@@ -5,6 +5,7 @@ import type { Tournament } from "@/modules/tournament/types"
 import type { Team } from "@/modules/teams/types"
 import BracketDoubleSide from "./BracketDoubleSide.vue"
 import BracketClassic from "./BracketClassic.vue"
+import BracketDoubleElim from "./BracketDoubleElim.vue"
 import BracketFullscreenModal from "./BracketFullscreenModal.vue"
 import BracketZoomControls from "./BracketZoomControls.vue"
 import BracketZoomHint from "./BracketZoomHint.vue"
@@ -39,6 +40,8 @@ const bracketActions = useBracketActions(
 const isMobileViewport = typeof window !== "undefined" && window.innerWidth <= 640
 
 const activeBracket = computed(() => {
+  // The losers bracket has no mirror image, so the double-sided layout is out.
+  if (props.tournament.doubleElim) return BracketDoubleElim
   const style = settings.bracketStyle
   if (style === "double-sided") return BracketDoubleSide
   if (style === "classic") return BracketClassic

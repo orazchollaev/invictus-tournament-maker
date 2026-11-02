@@ -647,6 +647,13 @@
     },
   },
   tournament: {
+    bracket: {
+      doubleElim: {
+        winners: "G'oliblar setkasi",
+        losers: "Yutqazganlar setkasi",
+        finals: "Katta final",
+      },
+    },
     noFixtures: "Hali o'yinlar yo'q.",
     groupStageNotStarted: "Guruh bosqichi hali boshlanmagan.",
     matchdayProgress: "{played}/{total} tur",
@@ -817,6 +824,8 @@
       formats: {
         bracket: "Olimpiya tizimi",
         bracketDesc: "Bir marta yutqazsangiz — chiqib ketasiz",
+        doubleElim: "Ikki karra yutqazish",
+        doubleElimDesc: "Ikki marta yutqazsang, chiqib ketasan",
         groupsKo: "Guruhlar + pley-off",
         groupsKoDesc: "Guruh bosqichi, so'ng eng yaxshi jamoalar o'tadi",
         league: "Liga",
@@ -909,6 +918,9 @@
       options: "Variantlar",
       thirdPlace: "3-o'rin uchun o'yin",
       thirdPlaceHint: "Yarim finalda yutqazganlar bronza medal uchun o'ynaydi",
+      doubleElim: "Ikki karra yutqazish",
+      doubleElimHint:
+        "Yutqazganlar setkasi hammaga ikkinchi imkon beradi; katta final qayta o'ynalishi mumkin",
       tiebreaker: "Teng holatda",
       createBtn: "Turnir yaratish",
     },
@@ -1397,6 +1409,12 @@
     eliminated: "Chiqib ketdi · {round}",
   },
   rounds: {
+    winnersRound: "G'oliblar {n}-raundi",
+    winnersFinal: "G'oliblar finali",
+    losersRound: "Yutqazganlar {n}-raundi",
+    losersFinal: "Yutqazganlar finali",
+    grandFinal: "Katta final",
+    grandFinalReset: "Katta final (qayta)",
     matchday: "{n}-tur",
     final: "Final",
     thirdPlace: "3-o'rin uchun o'yin",

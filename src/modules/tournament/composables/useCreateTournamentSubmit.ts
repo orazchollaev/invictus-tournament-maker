@@ -35,6 +35,7 @@ export function useCreateTournamentSubmit(draft: ReturnType<typeof useCreateTour
     wildcardCount,
     groupLegMode,
     hasThirdPlace,
+    doubleElim,
     playoffSeedMode,
     roundLegModes,
     thirdPlaceLegMode,
@@ -81,7 +82,8 @@ export function useCreateTournamentSubmit(draft: ReturnType<typeof useCreateTour
       id,
       settingsStore.knockoutLegMode,
       finalLegMode.value,
-      roundLegModes.value
+      roundLegModes.value,
+      doubleElim.value
     )
   }
 
@@ -206,11 +208,12 @@ export function useCreateTournamentSubmit(draft: ReturnType<typeof useCreateTour
       isGroup ? drawPoints.value : undefined,
       isGroup ? lossPoints.value : undefined,
       roundLegModes.value,
-      thirdPlaceLegMode.value
+      thirdPlaceLegMode.value,
+      doubleElim.value
     )
     store.setDrawType(id, drawType.value)
     if (isGroup) store.setPlayoffSeedMode(id, playoffSeedMode.value)
-    if (hasThirdPlace.value) store.toggleThirdPlace(id)
+    if (hasThirdPlace.value && !doubleElim.value) store.toggleThirdPlace(id)
     applyAdjustments(id)
     void logEvent("create_tournament", {
       format: format.value,

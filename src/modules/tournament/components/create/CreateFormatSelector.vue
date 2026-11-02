@@ -1,11 +1,21 @@
 <script setup lang="ts">
-import { Trophy, LayoutGrid, List, Swords, Shuffle, Workflow, type LucideIcon } from "@lucide/vue"
+import {
+  Trophy,
+  LayoutGrid,
+  List,
+  Swords,
+  Shuffle,
+  Workflow,
+  GitFork,
+  type LucideIcon,
+} from "@lucide/vue"
 import type { TournamentFormat } from "@/modules/tournament/types"
-import { SWISS_MIN_TEAMS } from "@/engine"
+import { DOUBLE_ELIM_MIN_TEAMS, SWISS_MIN_TEAMS } from "@/engine"
 
 const props = defineProps<{ selectedCount: number }>()
 
 const format = defineModel<TournamentFormat>("format", { required: true })
+const doubleElim = defineModel<boolean>("doubleElim", { required: true })
 const playoffEnabled = defineModel<boolean>("playoffEnabled", { required: true })
 const groupCount = defineModel<number>("groupCount", { required: true })
 const qualifiersPerGroup = defineModel<number>("qualifiersPerGroup", { required: true })
@@ -23,8 +33,18 @@ const options: FormatOption[] = [
     key: "bracket",
     icon: Trophy,
     minTeams: 0,
-    isOn: () => format.value === "bracket",
+    isOn: () => format.value === "bracket" && !doubleElim.value,
     select: () => setFormat("bracket"),
+  },
+  {
+    key: "doubleElim",
+    icon: GitFork,
+    minTeams: DOUBLE_ELIM_MIN_TEAMS,
+    isOn: () => format.value === "bracket" && doubleElim.value,
+    select: () => {
+      setFormat("bracket")
+      doubleElim.value = true
+    },
   },
   {
     key: "groupsKo",
@@ -65,6 +85,8 @@ const options: FormatOption[] = [
 
 function setFormat(f: TournamentFormat) {
   format.value = f
+  // Each format starts single; the knockout config (or the double card) turns it on.
+  doubleElim.value = false
   // A Swiss phase always ends in a knockout stage, or it would have no winner.
   if (f === "swiss") playoffEnabled.value = true
   else if (f !== "league") playoffEnabled.value = false
@@ -78,6 +100,7 @@ function setFormat(f: TournamentFormat) {
 
 function setLeague(withPlayoff: boolean) {
   format.value = "league"
+  doubleElim.value = false
   playoffEnabled.value = withPlayoff
 }
 </script>

@@ -44,6 +44,7 @@ const {
   wildcardCount,
   groupLegMode,
   hasThirdPlace,
+  doubleElim,
   playoffSeedMode,
   roundLegModes,
   thirdPlaceLegMode,
@@ -266,6 +267,7 @@ function onCeremonyComplete(orderedIds: string[]) {
 
       <CreateFormatSelector
         v-model:format="format"
+        v-model:double-elim="doubleElim"
         v-model:playoff-enabled="playoffEnabled"
         v-model:group-count="groupCount"
         v-model:qualifiers-per-group="qualifiersPerGroup"
@@ -351,6 +353,7 @@ function onCeremonyComplete(orderedIds: string[]) {
         :variant="format === 'league' || format === 'swiss' ? 'leaguePlayoff' : 'bracket'"
         :is-group-format="format === 'group+bracket'"
         :draw-type="drawType"
+        :double-elim="doubleElim"
         :has-third-place="hasThirdPlace"
         :round-leg-modes="roundLegModes"
         :final-leg-mode="finalLegMode"

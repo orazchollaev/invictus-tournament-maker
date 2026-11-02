@@ -647,6 +647,13 @@
     },
   },
   tournament: {
+    bracket: {
+      doubleElim: {
+        winners: "Chave dos vencedores",
+        losers: "Chave dos perdedores",
+        finals: "Grande final",
+      },
+    },
     noFixtures: "Nenhuma partida ainda.",
     groupStageNotStarted: "Fase de grupos ainda não começou.",
     matchdayProgress: "{played}/{total} rodadas",
@@ -715,6 +722,8 @@
       formats: {
         bracket: "Mata-Mata",
         bracketDesc: "Perdeu uma vez e está fora",
+        doubleElim: "Dupla eliminação",
+        doubleElimDesc: "Perdeu duas vezes, está fora",
         groupsKo: "Grupos + Mata-Mata",
         groupsKoDesc: "Fase de grupos, depois os melhores times avançam",
         league: "Pontos Corridos",
@@ -806,6 +815,9 @@
       options: "Opções",
       thirdPlace: "Disputa de 3º Lugar",
       thirdPlaceHint: "Os perdedores das semifinais disputam a medalha de bronze",
+      doubleElim: "Dupla eliminação",
+      doubleElimHint:
+        "Uma chave dos perdedores dá a todos uma segunda chance; a grande final pode ser repetida",
       tiebreaker: "Critério de Desempate",
       createBtn: "Criar Torneio",
     },
@@ -1402,6 +1414,12 @@
     eliminated: "Eliminado · {round}",
   },
   rounds: {
+    winnersRound: "Rodada dos vencedores {n}",
+    winnersFinal: "Final dos vencedores",
+    losersRound: "Rodada dos perdedores {n}",
+    losersFinal: "Final dos perdedores",
+    grandFinal: "Grande final",
+    grandFinalReset: "Grande final (reset)",
     matchday: "Rodada {n}",
     final: "Final",
     thirdPlace: "Disputa de 3º Lugar",

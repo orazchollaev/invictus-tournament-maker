@@ -645,6 +645,13 @@
     },
   },
   tournament: {
+    bracket: {
+      doubleElim: {
+        winners: "Cuadro de ganadores",
+        losers: "Cuadro de perdedores",
+        finals: "Gran final",
+      },
+    },
     noFixtures: "Todavía no hay partidos.",
     groupStageNotStarted: "La fase de grupos aún no ha comenzado.",
     matchdayProgress: "{played}/{total} jornadas",
@@ -713,6 +720,8 @@
       formats: {
         bracket: "Cuadro eliminatorio",
         bracketDesc: "Pierdes una vez y estás fuera",
+        doubleElim: "Doble eliminación",
+        doubleElimDesc: "Pierde dos veces y estás fuera",
         groupsKo: "Grupos + Eliminatorias",
         groupsKoDesc: "Fase de grupos, luego los mejores equipos avanzan",
         league: "Liga",
@@ -805,6 +814,9 @@
       options: "Opciones",
       thirdPlace: "Partido por el 3.er puesto",
       thirdPlaceHint: "Los perdedores de semifinales juegan por la medalla de bronce",
+      doubleElim: "Doble eliminación",
+      doubleElimHint:
+        "Un cuadro de perdedores da a todos una segunda oportunidad; la gran final puede repetirse",
       tiebreaker: "Desempate",
       createBtn: "Crear torneo",
     },
@@ -1395,6 +1407,12 @@
     eliminated: "Eliminado · {round}",
   },
   rounds: {
+    winnersRound: "Ronda de ganadores {n}",
+    winnersFinal: "Final de ganadores",
+    losersRound: "Ronda de perdedores {n}",
+    losersFinal: "Final de perdedores",
+    grandFinal: "Gran final",
+    grandFinalReset: "Gran final (reinicio)",
     matchday: "Jornada {n}",
     final: "Final",
     semiFinals: "Semifinales",

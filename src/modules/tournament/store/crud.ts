@@ -70,7 +70,8 @@ export function useCrudActions(
     drawPoints?: number,
     lossPoints?: number,
     roundLegModes?: Partial<Record<KnockoutStage, LegMode>>,
-    thirdPlaceLegMode?: LegMode
+    thirdPlaceLegMode?: LegMode,
+    doubleElim = false
   ): string {
     const allTeams = getTeams()
     const selected = allTeams.filter((t) => teamIds.includes(t.id))
@@ -93,7 +94,8 @@ export function useCrudActions(
       groupLegMode,
       knockoutLegMode,
       finalLegMode,
-      roundLegModes
+      roundLegModes,
+      doubleElim
     )
     t.drawType = deriveDrawType(seeded, orderedIds)
     if (thirdPlaceLegMode) t.thirdPlaceLegMode = thirdPlaceLegMode
@@ -291,13 +293,14 @@ export function useCrudActions(
       t.groupLegMode ?? "single",
       t.knockoutLegMode ?? "single",
       t.finalLegMode ?? "single",
-      t.roundLegModes
+      t.roundLegModes,
+      !!t.doubleElim
     )
     newT.drawType = t.drawType ?? deriveDrawType(seeded, orderedIds)
     if (playoffSeedMode) newT.playoffSeedMode = playoffSeedMode
     else if (t.playoffSeedMode) newT.playoffSeedMode = t.playoffSeedMode
     if (t.thirdPlaceLegMode) newT.thirdPlaceLegMode = t.thirdPlaceLegMode
-    if (withThirdPlace && newT.rounds.length >= 2) {
+    if (withThirdPlace && !newT.doubleElim && newT.rounds.length >= 2) {
       newT.hasThirdPlace = true
       newT.thirdPlaceMatch = { id: uid(), homeId: null, awayId: null, result: null }
       applyThirdPlaceLegMode(newT.thirdPlaceMatch, newT)

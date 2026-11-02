@@ -5,6 +5,12 @@ type Translate = (key: string, params?: Record<string, unknown>) => string
 
 const RULES: Array<[RegExp, string, (m: RegExpMatchArray) => Record<string, unknown>]> = [
   [/^Final$/, "rounds.final", () => ({})],
+  [/^Winners Round (d+)$/, "rounds.winnersRound", (m) => ({ n: Number(m[1]) })],
+  [/^Winners Final$/, "rounds.winnersFinal", () => ({})],
+  [/^Losers Round (d+)$/, "rounds.losersRound", (m) => ({ n: Number(m[1]) })],
+  [/^Losers Final$/, "rounds.losersFinal", () => ({})],
+  [/^Grand Final$/, "rounds.grandFinal", () => ({})],
+  [/^Grand Final Reset$/, "rounds.grandFinalReset", () => ({})],
   [/^Semi-Finals$/, "rounds.semiFinals", () => ({})],
   [/^Quarter-Finals$/, "rounds.quarterFinals", () => ({})],
   [/^Round of (\d+)$/, "rounds.roundOf", (m) => ({ n: Number(m[1]), k: Number(m[1]) / 2 })],

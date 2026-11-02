@@ -48,6 +48,7 @@ export function useCreateTournamentDraft() {
   const groupLegMode = ref<LegMode>(settingsStore.groupLegMode)
 
   const hasThirdPlace = ref(false)
+  const doubleElim = ref(false)
   const playoffSeedMode = ref<PlayoffSeedMode>(settingsStore.newSeasonPlayoffSeedMode)
   const roundLegModes = ref<Record<KnockoutStage, LegMode>>(
     Object.fromEntries(KNOCKOUT_STAGES.map((s) => [s, settingsStore.knockoutLegMode])) as Record<
@@ -189,9 +190,11 @@ export function useCreateTournamentDraft() {
       format.value === "group+bracket"
         ? seedLabels[playoffSeedMode.value]
         : t(`common.${drawType.value}`)
-    const thirdPlace = hasThirdPlace.value
-      ? t("tournament.create.config.thirdPlaceOn")
-      : t("tournament.create.config.noThirdPlace")
+    const thirdPlace = doubleElim.value
+      ? t("tournament.create.doubleElim")
+      : hasThirdPlace.value
+        ? t("tournament.create.config.thirdPlaceOn")
+        : t("tournament.create.config.noThirdPlace")
     return `${drawLabel} · ${thirdPlace}`
   })
 
@@ -229,7 +232,8 @@ export function useCreateTournamentDraft() {
 
   function applyKnockoutConfig(payload: KnockoutConfigPayload) {
     if (format.value !== "group+bracket") drawType.value = payload.drawType
-    hasThirdPlace.value = payload.hasThirdPlace
+    doubleElim.value = payload.doubleElim
+    hasThirdPlace.value = payload.hasThirdPlace && !payload.doubleElim
     roundLegModes.value = payload.roundLegModes
     thirdPlaceLegMode.value = payload.thirdPlaceLegMode
     finalLegMode.value = payload.finalLegMode
@@ -328,6 +332,7 @@ export function useCreateTournamentDraft() {
     wildcardCount,
     groupLegMode,
     hasThirdPlace,
+    doubleElim,
     playoffSeedMode,
     roundLegModes,
     thirdPlaceLegMode,

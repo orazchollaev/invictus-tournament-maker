@@ -2,6 +2,7 @@ import type { Team } from "@/modules/teams/types"
 import type { Tournament } from "@/modules/tournament/types"
 import {
   finalPhase,
+  doubleElimDecidingMatch,
   getLeaguePlayoffData,
   getLoserId,
   getWinnerId,
@@ -33,7 +34,9 @@ export interface FinishContext {
 
 export function buildFinishContext(t: Tournament): FinishContext {
   const tpMatch = t.thirdPlaceMatch
-  const finalMatch = t.rounds[t.rounds.length - 1]?.matches[0]
+  const finalMatch = t.doubleElim
+    ? doubleElimDecidingMatch(t.rounds)
+    : t.rounds[t.rounds.length - 1]?.matches[0]
 
   return {
     tournament: t,
@@ -46,7 +49,10 @@ export function buildFinishContext(t: Tournament): FinishContext {
 
 /** The round in which `teamId` lost, searching from the earliest round. */
 function eliminationRound(t: Tournament, teamId: string): { name: string; idx: number } | null {
-  for (let ri = 0; ri < t.rounds.length; ri++) {
+  // A double bracket's first loss is not the end, so the round that eliminated a
+  // team is the last one it lost in — hence walking back from the final.
+  const order = t.rounds.map((_, ri) => (t.doubleElim ? t.rounds.length - 1 - ri : ri))
+  for (const ri of order) {
     const round = t.rounds[ri]
     for (const match of round.matches) {
       if ((match.homeId !== teamId && match.awayId !== teamId) || !match.result) continue

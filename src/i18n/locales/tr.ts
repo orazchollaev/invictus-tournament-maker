@@ -779,6 +779,13 @@
     },
   },
   tournament: {
+    bracket: {
+      doubleElim: {
+        winners: "Kazananlar tablosu",
+        losers: "Kaybedenler tablosu",
+        finals: "Büyük final",
+      },
+    },
     noFixtures: "Henüz maç yok.",
     groupStageNotStarted: "Grup aşaması henüz başlamadı.",
     matchdayProgress: "{played}/{total} hafta",
@@ -952,6 +959,8 @@
       formats: {
         bracket: "Eleme Bracketi",
         bracketDesc: "Bir kez kaybet ve elenirsin",
+        doubleElim: "Çift Eleme",
+        doubleElimDesc: "İki kez kaybeden elenir",
         groupsKo: "Gruplar + Eleme",
         groupsKoDesc: "Grup aşaması, ardından en iyi takımlar ilerler",
         league: "Lig",
@@ -1043,6 +1052,8 @@
       options: "Seçenekler",
       thirdPlace: "3. lük Maçı",
       thirdPlaceHint: "Yarı final kaybedenler bronz madalya için oynar",
+      doubleElim: "Çift eleme",
+      doubleElimHint: "Kaybedenler tablosu herkese ikinci şans verir; büyük final sıfırlanabilir",
       tiebreaker: "Eşitlik Bozucu",
       createBtn: "Turnuva Oluştur",
     },
@@ -1530,6 +1541,12 @@
     eliminated: "Elendi · {round}",
   },
   rounds: {
+    winnersRound: "Kazananlar Turu {n}",
+    winnersFinal: "Kazananlar Finali",
+    losersRound: "Kaybedenler Turu {n}",
+    losersFinal: "Kaybedenler Finali",
+    grandFinal: "Büyük Final",
+    grandFinalReset: "Büyük Final Rövanşı",
     matchday: "{n}. Hafta",
     final: "Final",
     thirdPlace: "3.lük Maçı",

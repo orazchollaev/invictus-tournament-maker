@@ -15,6 +15,7 @@ import type { KnockoutHost } from "./hosts"
 import { getLoserId, getWinnerId, propagateWinners } from "./bracket"
 import { decideKnockoutResult } from "./knockout"
 import { simulateMatch } from "./simulation"
+import { doubleElimWinnerId, reconcileDoubleElim } from "./doubleElim"
 
 /** Points the third-place tie at whoever just lost the semifinals. */
 export function updateThirdPlaceSlotsIn(host: KnockoutHost) {
@@ -28,6 +29,7 @@ export function updateThirdPlaceSlotsIn(host: KnockoutHost) {
 
 /** Whoever won the final, or null while it is still open. */
 export function knockoutWinnerId(host: KnockoutHost): string | null {
+  if (host.doubleElim) return doubleElimWinnerId(host.rounds)
   const final = host.rounds[host.rounds.length - 1]?.matches[0]
   return final ? getWinnerId(final) : null
 }
@@ -45,6 +47,8 @@ export function clearThirdPlaceTie(host: KnockoutHost) {
 }
 
 export function clearDownstreamFrom(host: KnockoutHost, fromRound: number, fromMatch: number) {
+  // A double bracket drops exactly the ties whose teams changed, in reconcile.
+  if (host.doubleElim) return
   let matchIdx = fromMatch
   for (let r = fromRound + 1; r < host.rounds.length; r++) {
     matchIdx = Math.floor(matchIdx / 2)
@@ -57,9 +61,15 @@ export function clearDownstreamFrom(host: KnockoutHost, fromRound: number, fromM
   }
 }
 
+/** Pushes results forward: winners up a single bracket, or the double layout's wiring. */
+function propagateHost(host: KnockoutHost, teams: Team[]) {
+  if (host.doubleElim) reconcileDoubleElim(host.rounds)
+  else propagateWinners(host.rounds, teams)
+}
+
 /** Re-propagate, re-point the third-place tie, and report the winner. */
 export function settleKnockout(host: KnockoutHost, teams: Team[]): string | null {
-  propagateWinners(host.rounds, teams)
+  propagateHost(host, teams)
   updateThirdPlaceSlotsIn(host)
   return knockoutWinnerId(host)
 }
@@ -67,7 +77,7 @@ export function settleKnockout(host: KnockoutHost, teams: Team[]): string | null
 /** Everything a result in round `ri` invalidates, before re-settling. */
 function invalidateFrom(host: KnockoutHost, ri: number, mi: number) {
   clearDownstreamFrom(host, ri, mi)
-  if (ri === host.rounds.length - 2) clearThirdPlaceTie(host)
+  if (!host.doubleElim && ri === host.rounds.length - 2) clearThirdPlaceTie(host)
 }
 
 /**
@@ -233,7 +243,7 @@ export function simulateKnockoutRound(
 ): string | null {
   const round = host.rounds[ri]
   if (!round) return knockoutWinnerId(host)
-  propagateWinners(host.rounds, teams)
+  propagateHost(host, teams)
   round.matches.forEach((match, mi) => {
     if (!match.homeId || !match.awayId) return
     if (!match.result) {
@@ -269,17 +279,17 @@ export function simulateKnockoutAll(
 ): string | null {
   for (let r = 0; r < host.rounds.length; r++) {
     const adjustments = opts.adjustments?.()
-    propagateWinners(host.rounds, teams)
+    propagateHost(host, teams)
     host.rounds[r].matches.forEach((match, mi) => {
       if (!match.homeId || !match.awayId) return
       if (match.leg2Result !== undefined) playDoubleLeg(host, r, mi, teams, adjustments)
       else if (!match.result)
         match.result = decideKnockoutResult(match, teams, { adjustments }).result
     })
-    propagateWinners(host.rounds, teams)
+    propagateHost(host, teams)
     if (opts.stopAfterRound?.(r + 1)) return knockoutWinnerId(host)
   }
-  propagateWinners(host.rounds, teams)
+  propagateHost(host, teams)
   updateThirdPlaceSlotsIn(host)
   opts.onFinished?.()
   return knockoutWinnerId(host)

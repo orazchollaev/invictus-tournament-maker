@@ -652,6 +652,13 @@
     },
   },
   tournament: {
+    bracket: {
+      doubleElim: {
+        winners: "Gewinner-Turnierbaum",
+        losers: "Verlierer-Turnierbaum",
+        finals: "Großes Finale",
+      },
+    },
     noFixtures: "Noch keine Spiele.",
     groupStageNotStarted: "Die Gruppenphase hat noch nicht begonnen.",
     matchdayProgress: "{played}/{total} Spieltage",
@@ -720,6 +727,8 @@
       formats: {
         bracket: "K.-o.-Turnierbaum",
         bracketDesc: "Eine Niederlage und du bist raus",
+        doubleElim: "Doppeltes K.o.",
+        doubleElimDesc: "Zweimal verlieren und raus",
         groupsKo: "Gruppen + K.-o.",
         groupsKoDesc: "Gruppenphase, dann ziehen die Besten weiter",
         league: "Liga",
@@ -812,6 +821,9 @@
       options: "Optionen",
       thirdPlace: "Spiel um Platz 3",
       thirdPlaceHint: "Die Halbfinal-Verlierer spielen um die Bronzemedaille",
+      doubleElim: "Doppeltes K.o.-System",
+      doubleElimHint:
+        "Ein Verlierer-Turnierbaum gibt allen eine zweite Chance; das große Finale kann zurückgesetzt werden",
       tiebreaker: "Tie-Break-Regel",
       createBtn: "Turnier erstellen",
     },
@@ -1406,6 +1418,12 @@
     eliminated: "Ausgeschieden · {round}",
   },
   rounds: {
+    winnersRound: "Gewinner-Runde {n}",
+    winnersFinal: "Gewinner-Finale",
+    losersRound: "Verlierer-Runde {n}",
+    losersFinal: "Verlierer-Finale",
+    grandFinal: "Großes Finale",
+    grandFinalReset: "Großes Finale (Rückspiel)",
     matchday: "{n}. Spieltag",
     final: "Finale",
     semiFinals: "Halbfinale",

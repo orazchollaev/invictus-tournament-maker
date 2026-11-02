@@ -8,6 +8,7 @@ import type {
   LeaguePlayoffSeedMode,
   PlayoffSeedMode,
 } from "@/modules/tournament/types"
+import { DOUBLE_ELIM_MIN_TEAMS } from "@/engine"
 import { useLegOptions } from "@/modules/tournament/composables/useLegOptions"
 import {
   knockoutStagesForRoundCount,
@@ -44,6 +45,7 @@ const STAGE_LABEL_KEYS: Record<KnockoutStage, string> = {
 
 export interface KnockoutConfigPayload {
   drawType: DrawType
+  doubleElim: boolean
   hasThirdPlace: boolean
   roundLegModes: Record<KnockoutStage, LegMode>
   finalLegMode: LegMode
@@ -58,7 +60,8 @@ const { legOptions } = useLegOptions()
 
 const modalRef = ref<InstanceType<typeof AppModal>>()
 const drawType = ref(props.drawType)
-const hasThirdPlace = ref(props.hasThirdPlace)
+const hasThirdPlace = ref(props.hasThirdPlace && !props.doubleElim)
+const doubleElim = ref(props.doubleElim)
 const roundLegModes = ref<Record<KnockoutStage, LegMode>>({ ...props.roundLegModes })
 const finalLegMode = ref(props.finalLegMode)
 const thirdPlaceLegMode = ref(props.thirdPlaceLegMode)
@@ -94,7 +97,8 @@ const groupPlayoffSeedOptions = computed(() => [
 function handleSave() {
   emit("save", {
     drawType: drawType.value,
-    hasThirdPlace: hasThirdPlace.value,
+    doubleElim: doubleElim.value,
+    hasThirdPlace: hasThirdPlace.value && !doubleElim.value,
     roundLegModes: roundLegModes.value,
     finalLegMode: finalLegMode.value,
     thirdPlaceLegMode: thirdPlaceLegMode.value,
@@ -144,9 +148,22 @@ function handleSave() {
         </div>
       </div>
 
-      <div v-if="props.selectedCount >= 4" class="form-card">
+      <div class="form-card">
         <div class="form-section-title">{{ t("tournament.create.options") }}</div>
-        <div class="toggle-row" @click="hasThirdPlace = !hasThirdPlace">
+        <div
+          v-if="props.selectedCount >= DOUBLE_ELIM_MIN_TEAMS"
+          class="toggle-row"
+          @click="doubleElim = !doubleElim"
+        >
+          <AppToggle v-model="doubleElim" @click.stop />
+          <span class="toggle-label">{{ t("tournament.create.doubleElim") }}</span>
+          <span class="toggle-hint">{{ t("tournament.create.doubleElimHint") }}</span>
+        </div>
+        <div
+          v-if="props.selectedCount >= 4 && !doubleElim"
+          class="toggle-row"
+          @click="hasThirdPlace = !hasThirdPlace"
+        >
           <AppToggle v-model="hasThirdPlace" @click.stop />
           <span class="toggle-label">{{ t("tournament.create.thirdPlace") }}</span>
           <span class="toggle-hint">{{ t("tournament.create.thirdPlaceHint") }}</span>
@@ -189,6 +206,14 @@ function handleSave() {
       <div class="form-card">
         <div class="form-section-title">{{ t("tournament.create.playoff.seedMode") }}</div>
         <AppButtonGroup v-model="leaguePlayoffSeedMode" :options="leaguePlayoffSeedOptions" />
+      </div>
+
+      <div v-if="playoffQualifierCount >= DOUBLE_ELIM_MIN_TEAMS" class="form-card">
+        <div class="toggle-row" @click="doubleElim = !doubleElim">
+          <AppToggle v-model="doubleElim" @click.stop />
+          <span class="toggle-label">{{ t("tournament.create.doubleElim") }}</span>
+          <span class="toggle-hint">{{ t("tournament.create.doubleElimHint") }}</span>
+        </div>
       </div>
 
       <div class="form-card">

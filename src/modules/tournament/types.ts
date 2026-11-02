@@ -312,6 +312,8 @@ export interface PhaseSwissConfig {
 }
 
 export interface PhaseKnockoutConfig {
+  /** Double elimination: a losers bracket and a grand final with a reset. */
+  doubleElim?: boolean
   seedMode: PhaseSeedMode
   hasThirdPlace: boolean
   knockoutLegMode: LegMode
@@ -405,6 +407,12 @@ export interface Tournament {
 
   hasThirdPlace?: boolean
   thirdPlaceMatch?: Match
+
+  /**
+   * Knockout is double elimination: `rounds` holds winners, losers, grand
+   * final and reset flat (see engine/doubleElim.ts). Never with a third-place tie.
+   */
+  doubleElim?: boolean
 
   groupLegMode?: LegMode
   knockoutLegMode?: LegMode // fallback default for any stage not overridden in roundLegModes

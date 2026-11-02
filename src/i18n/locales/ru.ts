@@ -672,6 +672,13 @@
     },
   },
   tournament: {
+    bracket: {
+      doubleElim: {
+        winners: "Сетка победителей",
+        losers: "Сетка проигравших",
+        finals: "Суперфинал",
+      },
+    },
     noFixtures: "Матчей пока нет.",
     groupStageNotStarted: "Групповой этап ещё не начался.",
     matchdayProgress: "{played}/{total} туров",
@@ -740,6 +747,8 @@
       formats: {
         bracket: "Сетка плей-офф",
         bracketDesc: "Проиграл — выбыл",
+        doubleElim: "Двойное выбывание",
+        doubleElimDesc: "Проиграл дважды — вылетел",
         groupsKo: "Группы + Плей-офф",
         groupsKoDesc: "Групповой этап, затем лучшие команды идут дальше",
         league: "Лига",
@@ -829,6 +838,8 @@
       options: "Параметры",
       thirdPlace: "Матч за 3-е место",
       thirdPlaceHint: "Проигравшие в полуфинале играют за бронзовую медаль",
+      doubleElim: "Двойное выбывание",
+      doubleElimHint: "Сетка проигравших даёт всем второй шанс; суперфинал может быть переигран",
       tiebreaker: "Дополнительные показатели",
       createBtn: "Создать турнир",
     },
@@ -1300,6 +1311,12 @@
     eliminated: "Выбыл · {round}",
   },
   rounds: {
+    winnersRound: "Раунд победителей {n}",
+    winnersFinal: "Финал победителей",
+    losersRound: "Раунд проигравших {n}",
+    losersFinal: "Финал проигравших",
+    grandFinal: "Суперфинал",
+    grandFinalReset: "Переигровка суперфинала",
     matchday: "Тур {n}",
     final: "Финал",
     semiFinals: "Полуфинал",

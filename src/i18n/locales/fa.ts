@@ -642,6 +642,13 @@
     },
   },
   tournament: {
+    bracket: {
+      doubleElim: {
+        winners: "جدول برنده‌ها",
+        losers: "جدول بازنده‌ها",
+        finals: "فینال بزرگ",
+      },
+    },
     noFixtures: "هنوز بازی‌ای وجود ندارد.",
     groupStageNotStarted: "مرحله گروهی هنوز شروع نشده است.",
     matchdayProgress: "{played}/{total} هفته",
@@ -810,6 +817,8 @@
       formats: {
         bracket: "جدول حذفی",
         bracketDesc: "یک باخت و حذف می‌شوید",
+        doubleElim: "حذفی دوگانه",
+        doubleElimDesc: "دو بار ببازی، حذف می‌شوی",
         groupsKo: "گروهی + حذفی",
         groupsKoDesc: "مرحله گروهی، سپس تیم‌های برتر صعود می‌کنند",
         league: "لیگ",
@@ -900,6 +909,8 @@
       options: "گزینه‌ها",
       thirdPlace: "بازی رده‌بندی",
       thirdPlaceHint: "بازندگان نیمه‌نهایی برای مدال برنز بازی می‌کنند",
+      doubleElim: "حذفی دوگانه",
+      doubleElimHint: "جدول بازنده‌ها به همه فرصت دوم می‌دهد؛ فینال بزرگ می‌تواند بازنشانی شود",
       tiebreaker: "معیار برتری",
       createBtn: "ساخت تورنمنت",
     },
@@ -1387,6 +1398,12 @@
     eliminated: "حذف · {round}",
   },
   rounds: {
+    winnersRound: "دور برنده‌ها {n}",
+    winnersFinal: "فینال برنده‌ها",
+    losersRound: "دور بازنده‌ها {n}",
+    losersFinal: "فینال بازنده‌ها",
+    grandFinal: "فینال بزرگ",
+    grandFinalReset: "بازنشانی فینال بزرگ",
     matchday: "هفته {n}",
     final: "فینال",
     thirdPlace: "بازی رده‌بندی",

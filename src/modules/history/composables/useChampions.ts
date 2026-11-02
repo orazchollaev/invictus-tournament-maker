@@ -3,7 +3,13 @@ import type { Match, Tournament } from "@/modules/tournament/types"
 import type { ChampEntry, FinalEntry } from "../types"
 import { buildScore } from "../utils/matchFormat"
 import { useTeamRef } from "./useTeamRef"
-import { finalPhase, isCustomFormat, isLeagueLike, phaseStandingIds } from "@/engine"
+import {
+  doubleElimDecidingMatch,
+  finalPhase,
+  isCustomFormat,
+  isLeagueLike,
+  phaseStandingIds,
+} from "@/engine"
 
 /**
  * The tie that decided the title, when one was played.
@@ -17,9 +23,13 @@ function decidingMatch(t: Tournament): Match | undefined {
   if (isCustomFormat(t)) {
     const phase = finalPhase(t)
     if (phase?.kind !== "knockout" || !phase.rounds?.length) return undefined
-    return phase.rounds[phase.rounds.length - 1].matches[0]
+    return phase.config.kind === "knockout" && phase.config.knockout.doubleElim
+      ? doubleElimDecidingMatch(phase.rounds)
+      : phase.rounds[phase.rounds.length - 1].matches[0]
   }
-  return t.rounds[t.rounds.length - 1]?.matches[0]
+  return t.doubleElim
+    ? doubleElimDecidingMatch(t.rounds)
+    : t.rounds[t.rounds.length - 1]?.matches[0]
 }
 
 /** Whether the title was settled by a table rather than by a final. */

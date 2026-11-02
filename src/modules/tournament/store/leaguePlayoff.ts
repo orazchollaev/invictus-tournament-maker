@@ -44,7 +44,8 @@ export function useLeaguePlayoffActions(tournaments: Ref<Tournament[]>, getTeams
     tournamentId: string,
     knockoutLegMode: LegMode,
     finalLegMode: LegMode,
-    roundLegModes?: Partial<Record<KnockoutStage, LegMode>>
+    roundLegModes?: Partial<Record<KnockoutStage, LegMode>>,
+    doubleElim?: boolean
   ) {
     const t = getT(tournamentId)
     if (!t) return
@@ -53,6 +54,7 @@ export function useLeaguePlayoffActions(tournaments: Ref<Tournament[]>, getTeams
     t.knockoutLegMode = knockoutLegMode
     t.finalLegMode = finalLegMode
     t.roundLegModes = roundLegModes
+    if (doubleElim !== undefined) t.doubleElim = doubleElim || undefined
   }
 
   function startLeaguePlayoffBracket(

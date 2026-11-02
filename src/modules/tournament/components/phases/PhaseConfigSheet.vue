@@ -114,6 +114,7 @@ const balanceHomeAway = ref(cfg.kind === "swiss" ? cfg.swiss.balanceHomeAway : t
 const knockoutSeedMode = ref<PhaseSeedMode>(
   cfg.kind === "knockout" ? cfg.knockout.seedMode : "seeded"
 )
+const doubleElim = ref(cfg.kind === "knockout" ? !!cfg.knockout.doubleElim : false)
 const hasThirdPlace = ref(cfg.kind === "knockout" ? cfg.knockout.hasThirdPlace : false)
 const knockoutLegMode = ref<LegMode>(
   cfg.kind === "knockout" ? cfg.knockout.knockoutLegMode : "single"
@@ -239,8 +240,9 @@ function build(): PhaseConfig {
   return {
     kind: "knockout",
     knockout: {
+      ...(doubleElim.value ? { doubleElim: true } : {}),
       seedMode: knockoutSeedMode.value,
-      hasThirdPlace: hasThirdPlace.value,
+      hasThirdPlace: hasThirdPlace.value && !doubleElim.value,
       knockoutLegMode: knockoutLegMode.value,
       roundLegModes: { ...roundLegModes.value },
       finalLegMode: finalLegMode.value,
@@ -380,6 +382,12 @@ function handleSave() {
             </div>
             <div class="form-row">
               <span class="form-label form-label--md">
+                {{ t("tournament.create.doubleElim") }}
+              </span>
+              <AppToggle v-model="doubleElim" />
+            </div>
+            <div v-if="!doubleElim" class="form-row">
+              <span class="form-label form-label--md">
                 {{ t("tournament.phases.config.thirdPlace") }}
               </span>
               <AppToggle v-model="hasThirdPlace" />
@@ -400,7 +408,7 @@ function handleSave() {
               <span class="form-label">{{ t("tournament.settingsPage.legsPerMatch.final") }}</span>
               <AppButtonGroup v-model="finalLegMode" :options="multiLegOptions" />
             </div>
-            <div v-if="hasThirdPlace" class="form-row">
+            <div v-if="hasThirdPlace && !doubleElim" class="form-row">
               <span class="form-label">
                 {{ t("tournament.settingsPage.legsPerMatch.thirdPlace") }}
               </span>

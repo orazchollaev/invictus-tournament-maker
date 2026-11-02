@@ -27,23 +27,18 @@ import type {
 } from "../modules/tournament/types"
 import { uid, shuffle } from "./utils"
 import { buildGroupFixture, recalcStandings, selectWildcards } from "./groups"
-import {
-  buildLeagueMatchdays,
-  recalcLeagueStandings,
-  allLeagueDone,
-} from "./league"
+import { buildLeagueMatchdays, recalcLeagueStandings, allLeagueDone } from "./league"
 import { buildSwissLeague, SWISS_MIN_TEAMS } from "./swiss"
 import {
-  applyLegModes,
   applyThirdPlaceLegMode,
   buildBracketRounds,
   getLoserId,
   getWinnerId,
   packDirectSlots,
-  propagateWinners,
   seedPairOrder,
 } from "./bracket"
 import { knockoutComplete, updateThirdPlaceSlotsIn } from "./knockoutOps"
+import { DOUBLE_ELIM_MIN_TEAMS, doubleElimPlacements, finalizeBracket } from "./doubleElim"
 import { resolvePower } from "./power"
 import { legModeToCount } from "./legs"
 import type { GroupHost, KnockoutHost, LeagueHost, ScoringHost } from "./hosts"
@@ -99,10 +94,7 @@ export function findPhase(t: Tournament, phaseId: string): TournamentPhase | und
  * algorithm, keeping the author's own phase order among the ready set so the
  * result is stable and reads the way the canvas was built.
  */
-export function topoOrder(
-  phases: TournamentPhase[],
-  edges: PhaseEdge[]
-): TournamentPhase[] | null {
+export function topoOrder(phases: TournamentPhase[], edges: PhaseEdge[]): TournamentPhase[] | null {
   const known = new Set(phases.map((p) => p.id))
   const live = edges.filter((e) => known.has(e.fromPhaseId) && known.has(e.toPhaseId))
   const pending = new Map(phases.map((p) => [p.id, incomingEdges(live, p.id).length]))
@@ -324,7 +316,10 @@ export function validatePhaseGraph(
           phaseId: phase.id,
           params: { intake, groupCount },
         })
-      } else if (cfg.qualifiersPerGroup < 1 || cfg.qualifiersPerGroup > Math.floor(intake / groupCount)) {
+      } else if (
+        cfg.qualifiersPerGroup < 1 ||
+        cfg.qualifiersPerGroup > Math.floor(intake / groupCount)
+      ) {
         errors.push({
           code: "groupQualifiers",
           phaseId: phase.id,
@@ -402,6 +397,7 @@ export function knockoutHostOf(phase: TournamentPhase): KnockoutHost {
     // An unbuilt phase has no rounds yet; the empty array keeps every read
     // safe without quietly giving the phase a container it has not earned.
     rounds: phase.rounds ?? [],
+    doubleElim: phase.config.kind === "knockout" ? !!phase.config.knockout.doubleElim : false,
     hasThirdPlace: phase.config.kind === "knockout" ? phase.config.knockout.hasThirdPlace : false,
     thirdPlaceMatch: phase.thirdPlaceMatch,
   }
@@ -530,17 +526,21 @@ function buildKnockoutPhase(
       : [...seedBase.slice(0, byeCount), ...seedPairOrder(seedBase.slice(byeCount))]
 
   const rounds = buildBracketRounds(packDirectSlots(idsForSlots, byeCount, matchSlotCount, teams))
-  applyLegModes(rounds, {
-    knockoutLegMode: cfg.knockoutLegMode,
-    roundLegModes: cfg.roundLegModes,
-    finalLegMode: cfg.finalLegMode,
-  })
-  propagateWinners(rounds, teams)
-  phase.rounds = rounds
+  const doubleElim = !!cfg.doubleElim && ids.length >= DOUBLE_ELIM_MIN_TEAMS
+  phase.rounds = finalizeBracket(
+    rounds,
+    {
+      knockoutLegMode: cfg.knockoutLegMode,
+      roundLegModes: cfg.roundLegModes,
+      finalLegMode: cfg.finalLegMode,
+      doubleElim,
+    },
+    teams
+  )
   phase.groups = undefined
   phase.league = undefined
 
-  if (cfg.hasThirdPlace && rounds.length >= 2) {
+  if (cfg.hasThirdPlace && !doubleElim && rounds.length >= 2) {
     const match: Match = { id: uid(), homeId: null, awayId: null, result: null }
     applyThirdPlaceLegMode(match, { thirdPlaceLegMode: cfg.thirdPlaceLegMode })
     phase.thirdPlaceMatch = match
@@ -718,7 +718,11 @@ function knockoutPhaseOrder(rounds: Round[]): string[] {
 export function phaseStandingIds(phase: TournamentPhase): string[] {
   if (phase.groups) return groupPhaseOrder(phase.groups)
   if (phase.league) return phase.league.standings.map((s) => s.teamId)
-  if (phase.rounds) return knockoutPhaseOrder(phase.rounds)
+  if (phase.rounds) {
+    return phase.config.kind === "knockout" && phase.config.knockout.doubleElim
+      ? doubleElimPlacements(phase.rounds)
+      : knockoutPhaseOrder(phase.rounds)
+  }
   return []
 }
 

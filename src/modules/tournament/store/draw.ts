@@ -12,7 +12,7 @@ import {
   legModeToCount,
   randomSeed,
   buildEmptyBracketRounds,
-  applyLegModes,
+  finalizeBracket,
   hasPlayedMatch,
 } from "@/engine"
 
@@ -104,7 +104,8 @@ export function useDrawActions(tournaments: Ref<Tournament[]>, getTeams: () => T
       t.groupLegMode ?? "single",
       t.knockoutLegMode ?? "single",
       t.finalLegMode ?? "single",
-      t.roundLegModes
+      t.roundLegModes,
+      !!t.doubleElim
     )
     t.rounds = fresh.rounds
     t.winnerId = null
@@ -132,10 +133,7 @@ export function useDrawActions(tournaments: Ref<Tournament[]>, getTeams: () => T
 
     const qualifierCount = groupCount * clampedQpg + clampedWildcards
     const bracketSize = Math.pow(2, Math.ceil(Math.log2(Math.max(qualifierCount, 2))))
-    const emptyRounds = buildEmptyBracketRounds(bracketSize)
-    applyLegModes(emptyRounds, t)
-
-    t.rounds = emptyRounds
+    t.rounds = finalizeBracket(buildEmptyBracketRounds(bracketSize), t, [])
   }
 
   function changeWildcardCount(tournamentId: string, count: number) {

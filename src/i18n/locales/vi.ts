@@ -630,6 +630,13 @@
     },
   },
   tournament: {
+    bracket: {
+      doubleElim: {
+        winners: "Nhánh thắng",
+        losers: "Nhánh thua",
+        finals: "Chung kết tổng",
+      },
+    },
     noFixtures: "Chưa có trận đấu nào.",
     groupStageNotStarted: "Vòng bảng chưa bắt đầu.",
     matchdayProgress: "{played}/{total} vòng",
@@ -698,6 +705,8 @@
       formats: {
         bracket: "Nhánh loại trực tiếp",
         bracketDesc: "Thua một lần là bị loại",
+        doubleElim: "Loại trực tiếp kép",
+        doubleElimDesc: "Thua hai lần là bị loại",
         groupsKo: "Vòng bảng + Loại trực tiếp",
         groupsKoDesc: "Vòng bảng, sau đó các đội đứng đầu đi tiếp",
         league: "League",
@@ -787,6 +796,8 @@
       options: "Tùy chọn",
       thirdPlace: "Trận hạng 3",
       thirdPlaceHint: "Các đội thua bán kết thi đấu tranh huy chương đồng",
+      doubleElim: "Loại trực tiếp kép",
+      doubleElimHint: "Nhánh thua cho mọi đội cơ hội thứ hai; chung kết tổng có thể được đá lại",
       tiebreaker: "Tiêu chí phụ",
       createBtn: "Tạo giải đấu",
     },
@@ -1259,6 +1270,12 @@
     eliminated: "Bị loại · {round}",
   },
   rounds: {
+    winnersRound: "Vòng nhánh thắng {n}",
+    winnersFinal: "Chung kết nhánh thắng",
+    losersRound: "Vòng nhánh thua {n}",
+    losersFinal: "Chung kết nhánh thua",
+    grandFinal: "Chung kết tổng",
+    grandFinalReset: "Chung kết tổng đá lại",
     matchday: "Vòng {n}",
     final: "Chung kết",
     semiFinals: "Bán kết",

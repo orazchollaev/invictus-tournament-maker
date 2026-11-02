@@ -154,6 +154,17 @@ export {
   applyThirdPlaceLegMode,
 } from "./bracket"
 export {
+  DOUBLE_ELIM_MIN_TEAMS,
+  doubleElimLayout,
+  sectionOfRound,
+  finalizeBracket,
+  doubleElimWinnerId,
+  doubleElimPlacements,
+  doubleElimDecidingMatch,
+  isDoubleElim,
+} from "./doubleElim"
+export type { BracketSection } from "./doubleElim"
+export {
   updateThirdPlaceSlotsIn,
   knockoutWinnerId,
   knockoutComplete,

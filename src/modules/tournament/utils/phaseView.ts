@@ -49,6 +49,7 @@ export function phaseTournamentView(t: Tournament, phase: TournamentPhase): Tour
     groups: phase.groups,
     league: phase.league,
     rounds: phase.rounds ?? [],
+    doubleElim: phase.config.kind === "knockout" && !!phase.config.knockout.doubleElim,
     thirdPlaceMatch: phase.thirdPlaceMatch,
     hasThirdPlace: !!phase.thirdPlaceMatch,
     teamIds: phase.teamIds,

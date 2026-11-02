@@ -648,6 +648,13 @@
     },
   },
   tournament: {
+    bracket: {
+      doubleElim: {
+        winners: "Tabellone dei vincenti",
+        losers: "Tabellone dei perdenti",
+        finals: "Finalissima",
+      },
+    },
     noFixtures: "Ancora nessuna partita.",
     groupStageNotStarted: "Fase a gironi non ancora iniziata.",
     matchdayProgress: "{played}/{total} giornate",
@@ -716,6 +723,8 @@
       formats: {
         bracket: "Tabellone a Eliminazione",
         bracketDesc: "Perdi una volta e sei fuori",
+        doubleElim: "Doppia eliminazione",
+        doubleElimDesc: "Perdi due volte e sei fuori",
         groupsKo: "Gironi + Eliminazione",
         groupsKoDesc: "Fase a gironi, poi le migliori squadre avanzano",
         league: "Campionato",
@@ -808,6 +817,9 @@
       options: "Opzioni",
       thirdPlace: "Finale 3° Posto",
       thirdPlaceHint: "Le sconfitte in semifinale giocano per la medaglia di bronzo",
+      doubleElim: "Doppia eliminazione",
+      doubleElimHint:
+        "Un tabellone dei perdenti dà a tutti una seconda possibilità; la finalissima può essere ripetuta",
       tiebreaker: "Criterio di Spareggio",
       createBtn: "Crea Torneo",
     },
@@ -1400,6 +1412,12 @@
     eliminated: "Eliminata · {round}",
   },
   rounds: {
+    winnersRound: "Turno dei vincenti {n}",
+    winnersFinal: "Finale dei vincenti",
+    losersRound: "Turno dei perdenti {n}",
+    losersFinal: "Finale dei perdenti",
+    grandFinal: "Finalissima",
+    grandFinalReset: "Finalissima (reset)",
     matchday: "Giornata {n}",
     final: "Finale",
     thirdPlace: "Finale 3° Posto",

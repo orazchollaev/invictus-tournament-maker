@@ -625,6 +625,13 @@
     },
   },
   tournament: {
+    bracket: {
+      doubleElim: {
+        winners: "جدول الفائزين",
+        losers: "جدول الخاسرين",
+        finals: "النهائي الكبير",
+      },
+    },
     noFixtures: "لا توجد مباريات بعد.",
     groupStageNotStarted: "لم يبدأ دور المجموعات بعد.",
     matchdayProgress: "{played}/{total} جولة",
@@ -693,6 +700,8 @@
       formats: {
         bracket: "بطولة إقصائية",
         bracketDesc: "خسارة واحدة تعني الخروج",
+        doubleElim: "إقصاء مزدوج",
+        doubleElimDesc: "اخسر مرتين وتخرج",
         groupsKo: "مجموعات + إقصاء",
         groupsKoDesc: "مرحلة مجموعات، ثم يتأهل أفضل الفرق",
         league: "دوري",
@@ -781,6 +790,8 @@
       options: "خيارات",
       thirdPlace: "مباراة تحديد المركز الثالث",
       thirdPlaceHint: "يتنافس خاسرا نصف النهائي على الميدالية البرونزية",
+      doubleElim: "إقصاء مزدوج",
+      doubleElimHint: "جدول الخاسرين يمنح الجميع فرصة ثانية؛ ويمكن إعادة النهائي الكبير",
       tiebreaker: "كسر التعادل",
       createBtn: "إنشاء البطولة",
     },
@@ -1251,6 +1262,12 @@
     eliminated: "خرج · {round}",
   },
   rounds: {
+    winnersRound: "جولة الفائزين {n}",
+    winnersFinal: "نهائي الفائزين",
+    losersRound: "جولة الخاسرين {n}",
+    losersFinal: "نهائي الخاسرين",
+    grandFinal: "النهائي الكبير",
+    grandFinalReset: "إعادة النهائي الكبير",
     matchday: "الجولة {n}",
     final: "النهائي",
     semiFinals: "نصف النهائي",

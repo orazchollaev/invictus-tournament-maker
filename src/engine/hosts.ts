@@ -36,6 +36,8 @@ export type LeagueHost = ScoringHost & { teamIds: string[]; league?: League }
  */
 export type KnockoutHost = {
   rounds: Round[]
+  /** `rounds` is a double-elimination layout, see engine/doubleElim.ts. */
+  doubleElim?: boolean
   hasThirdPlace?: boolean
   thirdPlaceMatch?: Match
 }

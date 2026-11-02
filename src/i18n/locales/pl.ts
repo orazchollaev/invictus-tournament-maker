@@ -630,6 +630,13 @@
     },
   },
   tournament: {
+    bracket: {
+      doubleElim: {
+        winners: "Drabinka zwycięzców",
+        losers: "Drabinka przegranych",
+        finals: "Wielki finał",
+      },
+    },
     noFixtures: "Brak meczów.",
     groupStageNotStarted: "Faza grupowa jeszcze się nie rozpoczęła.",
     matchdayProgress: "{played}/{total} kolejek",
@@ -698,6 +705,8 @@
       formats: {
         bracket: "Drabinka pucharowa",
         bracketDesc: "Przegraj raz i odpadasz",
+        doubleElim: "Podwójna eliminacja",
+        doubleElimDesc: "Przegraj dwa razy i odpadasz",
         groupsKo: "Grupy + faza pucharowa",
         groupsKoDesc: "Faza grupowa, potem awansują najlepsze drużyny",
         league: "Liga",
@@ -788,6 +797,9 @@
       options: "Opcje",
       thirdPlace: "Mecz o 3. miejsce",
       thirdPlaceHint: "Przegrani półfinalistów grają o brązowy medal",
+      doubleElim: "Podwójna eliminacja",
+      doubleElimHint:
+        "Drabinka przegranych daje każdemu drugą szansę; wielki finał może zostać powtórzony",
       tiebreaker: "Kryterium remisowe",
       createBtn: "Utwórz turniej",
     },
@@ -1260,6 +1272,12 @@
     eliminated: "Odpadł · {round}",
   },
   rounds: {
+    winnersRound: "Runda zwycięzców {n}",
+    winnersFinal: "Finał zwycięzców",
+    losersRound: "Runda przegranych {n}",
+    losersFinal: "Finał przegranych",
+    grandFinal: "Wielki finał",
+    grandFinalReset: "Wielki finał (reset)",
     matchday: "Kolejka {n}",
     final: "Finał",
     semiFinals: "Półfinały",

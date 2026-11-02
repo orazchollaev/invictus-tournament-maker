@@ -631,6 +631,13 @@
     },
   },
   tournament: {
+    bracket: {
+      doubleElim: {
+        winners: "विजेता ब्रैकेट",
+        losers: "हारने वालों का ब्रैकेट",
+        finals: "ग्रैंड फ़ाइनल",
+      },
+    },
     noFixtures: "अभी तक कोई मैच नहीं।",
     groupStageNotStarted: "ग्रुप स्टेज अभी शुरू नहीं हुआ है।",
     matchdayProgress: "{played}/{total} मैचडे",
@@ -699,6 +706,8 @@
       formats: {
         bracket: "नॉकआउट ब्रैकेट",
         bracketDesc: "एक बार हारते ही बाहर",
+        doubleElim: "Double Elimination",
+        doubleElimDesc: "दो बार हारे तो बाहर",
         groupsKo: "ग्रुप + नॉकआउट",
         groupsKoDesc: "ग्रुप चरण के बाद शीर्ष टीमें आगे बढ़ती हैं",
         league: "लीग",
@@ -788,6 +797,9 @@
       options: "विकल्प",
       thirdPlace: "तीसरे स्थान का मैच",
       thirdPlaceHint: "सेमीफ़ाइनल हारने वाली टीमें कांस्य पदक के लिए खेलती हैं",
+      doubleElim: "डबल एलिमिनेशन",
+      doubleElimHint:
+        "हारने वालों का ब्रैकेट सबको दूसरा मौका देता है; ग्रैंड फ़ाइनल रीसेट हो सकता है",
       tiebreaker: "टाईब्रेकर",
       createBtn: "टूर्नामेंट बनाएँ",
     },
@@ -1260,6 +1272,12 @@
     eliminated: "बाहर · {round}",
   },
   rounds: {
+    winnersRound: "विजेता राउंड {n}",
+    winnersFinal: "विजेता फ़ाइनल",
+    losersRound: "हारने वालों का राउंड {n}",
+    losersFinal: "हारने वालों का फ़ाइनल",
+    grandFinal: "ग्रैंड फ़ाइनल",
+    grandFinalReset: "ग्रैंड फ़ाइनल रीसेट",
     matchday: "मैचडे {n}",
     final: "फाइनल",
     semiFinals: "सेमीफाइनल",

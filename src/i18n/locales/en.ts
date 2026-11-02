@@ -775,6 +775,13 @@
     },
   },
   tournament: {
+    bracket: {
+      doubleElim: {
+        winners: "Winners bracket",
+        losers: "Losers bracket",
+        finals: "Grand final",
+      },
+    },
     noFixtures: "No matches yet.",
     groupStageNotStarted: "Group stage not started yet.",
     matchdayProgress: "{played}/{total} matchdays",
@@ -948,6 +955,8 @@
       formats: {
         bracket: "Knockout Bracket",
         bracketDesc: "Lose once and you're out",
+        doubleElim: "Double Elimination",
+        doubleElimDesc: "Lose twice and you're out",
         groupsKo: "Groups + Knockout",
         groupsKoDesc: "Group stage, then top teams advance",
         league: "League",
@@ -1038,6 +1047,9 @@
       options: "Options",
       thirdPlace: "3rd Place Match",
       thirdPlaceHint: "Semi-final losers play for bronze medal",
+      doubleElim: "Double elimination",
+      doubleElimHint:
+        "A losers bracket gives everyone a second chance; the grand final can be reset",
       tiebreaker: "Tiebreaker",
       createBtn: "Create Tournament",
     },
@@ -1524,6 +1536,12 @@
     eliminated: "Eliminated · {round}",
   },
   rounds: {
+    winnersRound: "Winners Round {n}",
+    winnersFinal: "Winners Final",
+    losersRound: "Losers Round {n}",
+    losersFinal: "Losers Final",
+    grandFinal: "Grand Final",
+    grandFinalReset: "Grand Final Reset",
     matchday: "Matchday {n}",
     final: "Final",
     thirdPlace: "3rd Place Match",

@@ -628,6 +628,13 @@
     },
   },
   tournament: {
+    bracket: {
+      doubleElim: {
+        winners: "승자조 브래킷",
+        losers: "패자조 브래킷",
+        finals: "그랜드 파이널",
+      },
+    },
     noFixtures: "아직 경기가 없습니다.",
     groupStageNotStarted: "조별 리그가 아직 시작되지 않았습니다.",
     matchdayProgress: "{played}/{total} 라운드",
@@ -696,6 +703,8 @@
       formats: {
         bracket: "토너먼트 대진표",
         bracketDesc: "한 번 지면 탈락",
+        doubleElim: "더블 일리미네이션",
+        doubleElimDesc: "두 번 지면 탈락",
         groupsKo: "조별리그 + 토너먼트",
         groupsKoDesc: "조별리그 후 상위팀 진출",
         league: "리그",
@@ -783,6 +792,9 @@
       options: "옵션",
       thirdPlace: "3위전",
       thirdPlaceHint: "준결승 패자가 동메달을 놓고 경기합니다",
+      doubleElim: "더블 일리미네이션",
+      doubleElimHint:
+        "패자 브래킷이 모두에게 두 번째 기회를 줍니다. 그랜드 파이널은 리셋될 수 있습니다",
       tiebreaker: "동률 기준",
       createBtn: "토너먼트 만들기",
     },
@@ -1253,6 +1265,12 @@
     eliminated: "탈락 · {round}",
   },
   rounds: {
+    winnersRound: "승자조 {n}라운드",
+    winnersFinal: "승자조 결승",
+    losersRound: "패자조 {n}라운드",
+    losersFinal: "패자조 결승",
+    grandFinal: "그랜드 파이널",
+    grandFinalReset: "그랜드 파이널 리셋",
     matchday: "{n}라운드",
     final: "결승",
     semiFinals: "준결승",

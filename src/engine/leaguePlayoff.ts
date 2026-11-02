@@ -9,12 +9,11 @@ import type {
 import { shuffle } from "./utils"
 import {
   buildBracketRounds,
-  propagateWinners,
   packDirectSlots,
   spreadByeSlots,
   seedPairOrder,
-  applyLegModes,
 } from "./bracket"
+import { finalizeBracket } from "./doubleElim"
 import { allLeagueDone, isTierDone } from "./league"
 import type { DrawPlan, DrawStep } from "./drawCeremony"
 
@@ -79,12 +78,7 @@ export function seedLeaguePlayoffBracket(
         : [...qualifierIds.slice(0, byeCount), ...seedPairOrder(qualifierIds.slice(byeCount))]
   const slots = packDirectSlots(idsForSlots, byeCount, matchSlotCount, teams)
 
-  const rounds = buildBracketRounds(slots)
-
-  applyLegModes(rounds, tournament)
-
-  propagateWinners(rounds, teams)
-  tournament.rounds = rounds
+  tournament.rounds = finalizeBracket(buildBracketRounds(slots), tournament, teams)
   data.started = true
 }
 

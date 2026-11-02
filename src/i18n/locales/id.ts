@@ -632,6 +632,13 @@
     },
   },
   tournament: {
+    bracket: {
+      doubleElim: {
+        winners: "Bagan pemenang",
+        losers: "Bagan pecundang",
+        finals: "Final besar",
+      },
+    },
     noFixtures: "Belum ada pertandingan.",
     groupStageNotStarted: "Babak grup belum dimulai.",
     matchdayProgress: "{played}/{total} pekan",
@@ -700,6 +707,8 @@
       formats: {
         bracket: "Braket Sistem Gugur",
         bracketDesc: "Kalah sekali dan Anda tersingkir",
+        doubleElim: "Eliminasi Ganda",
+        doubleElimDesc: "Kalah dua kali, tersingkir",
         groupsKo: "Grup + Sistem Gugur",
         groupsKoDesc: "Fase grup, lalu tim teratas maju",
         league: "Liga",
@@ -789,6 +798,9 @@
       options: "Opsi",
       thirdPlace: "Pertandingan Perebutan Tempat ke-3",
       thirdPlaceHint: "Tim yang kalah di semi-final bermain untuk medali perunggu",
+      doubleElim: "Eliminasi ganda",
+      doubleElimHint:
+        "Bagan pecundang memberi semua tim kesempatan kedua; final besar bisa diulang",
       tiebreaker: "Penentu Seri (Tiebreaker)",
       createBtn: "Buat Turnamen",
     },
@@ -1261,6 +1273,12 @@
     eliminated: "Tersingkir · {round}",
   },
   rounds: {
+    winnersRound: "Babak Pemenang {n}",
+    winnersFinal: "Final Pemenang",
+    losersRound: "Babak Pecundang {n}",
+    losersFinal: "Final Pecundang",
+    grandFinal: "Final Besar",
+    grandFinalReset: "Reset Final Besar",
     matchday: "Pekan {n}",
     final: "Final",
     semiFinals: "Semifinal",

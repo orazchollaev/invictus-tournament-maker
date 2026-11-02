@@ -4,6 +4,7 @@ import type { Tournament } from "../modules/tournament/types"
 import { simulateMatch } from "./simulation"
 import { decideKnockoutResult } from "./knockout"
 import { getWinnerId, propagateWinners } from "./bracket"
+import { doubleElimPlacements, doubleElimWinnerId, reconcileDoubleElim } from "./doubleElim"
 import { simulateAllGroups } from "./groups"
 import { seedBracketFromGroups } from "./tournament"
 import { recalcLeagueStandings } from "./league"
@@ -64,8 +65,10 @@ function simBracketInPlace(
   adjustments: Adjustments
 ): { winnerId: string | null; runnerUpId: string | null; top4Ids: string[] } {
   const rounds = t.rounds
+  const propagate = () =>
+    t.doubleElim ? reconcileDoubleElim(rounds) : propagateWinners(rounds, teams)
   for (let r = 0; r < rounds.length; r++) {
-    propagateWinners(rounds, teams)
+    propagate()
     rounds[r].matches.forEach((match) => {
       if (!match.homeId || !match.awayId) return
       if (match.leg2Result !== undefined) {
@@ -75,7 +78,16 @@ function simBracketInPlace(
       }
     })
   }
-  propagateWinners(rounds, teams)
+  propagate()
+
+  if (t.doubleElim) {
+    const placed = doubleElimPlacements(rounds)
+    return {
+      winnerId: doubleElimWinnerId(rounds),
+      runnerUpId: placed[1] ?? null,
+      top4Ids: placed.slice(0, 4),
+    }
+  }
 
   const final = rounds[rounds.length - 1]?.matches[0]
   const winnerId = final ? getWinnerId(final) : null

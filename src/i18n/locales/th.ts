@@ -628,6 +628,13 @@
     },
   },
   tournament: {
+    bracket: {
+      doubleElim: {
+        winners: "สายผู้ชนะ",
+        losers: "สายผู้แพ้",
+        finals: "รอบชิงชนะเลิศใหญ่",
+      },
+    },
     noFixtures: "ยังไม่มีการแข่งขัน",
     groupStageNotStarted: "รอบแบ่งกลุ่มยังไม่เริ่ม",
     matchdayProgress: "{played}/{total} นัด",
@@ -696,6 +703,8 @@
       formats: {
         bracket: "สายน็อกเอาต์",
         bracketDesc: "แพ้ครั้งเดียวคือตกรอบ",
+        doubleElim: "แพ้สองครั้งตกรอบ",
+        doubleElimDesc: "แพ้สองครั้งก็ตกรอบ",
         groupsKo: "กลุ่ม + น็อกเอาต์",
         groupsKoDesc: "รอบแบ่งกลุ่ม จากนั้นทีมอันดับต้นผ่านเข้ารอบ",
         league: "ลีก",
@@ -784,6 +793,8 @@
       options: "ตัวเลือก",
       thirdPlace: "นัดชิงอันดับ 3",
       thirdPlaceHint: "ผู้แพ้รอบรองชนะเลิศเล่นเพื่อชิงเหรียญทองแดง",
+      doubleElim: "แพ้สองครั้งตกรอบ",
+      doubleElimHint: "สายผู้แพ้ให้ทุกทีมมีโอกาสที่สอง และรอบชิงชนะเลิศใหญ่อาจถูกรีเซ็ต",
       tiebreaker: "เกณฑ์ตัดสินคะแนนเท่ากัน",
       createBtn: "สร้างทัวร์นาเมนต์",
     },
@@ -1254,6 +1265,12 @@
     eliminated: "ตกรอบ · {round}",
   },
   rounds: {
+    winnersRound: "รอบสายผู้ชนะ {n}",
+    winnersFinal: "รอบชิงสายผู้ชนะ",
+    losersRound: "รอบสายผู้แพ้ {n}",
+    losersFinal: "รอบชิงสายผู้แพ้",
+    grandFinal: "รอบชิงชนะเลิศใหญ่",
+    grandFinalReset: "รีเซ็ตรอบชิงชนะเลิศใหญ่",
     matchday: "นัดที่ {n}",
     final: "รอบชิงชนะเลิศ",
     semiFinals: "รอบรองชนะเลิศ",

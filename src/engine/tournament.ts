@@ -17,13 +17,12 @@ import {
   buildBracketRounds,
   buildEmptyBracketRounds,
   buildPureBracket,
-  propagateWinners,
   spreadByeSlots,
   packDirectSlots,
-  applyLegModes,
 } from "./bracket"
 import { buildGroupFixture, recalcStandings, selectWildcards, rankTeamsByStanding } from "./groups"
 import { buildLeagueMatchdays } from "./league"
+import { DOUBLE_ELIM_MIN_TEAMS, finalizeBracket } from "./doubleElim"
 
 export function createTournament(
   name: string,
@@ -37,8 +36,10 @@ export function createTournament(
   groupLegMode: LegMode = "single",
   knockoutLegMode: LegMode = "single",
   finalLegMode: LegMode = "single",
-  roundLegModes?: Partial<Record<KnockoutStage, LegMode>>
+  roundLegModes?: Partial<Record<KnockoutStage, LegMode>>,
+  doubleElim = false
 ): Tournament {
+  doubleElim = doubleElim && teams.length >= DOUBLE_ELIM_MIN_TEAMS
   const format = groupCount && groupCount >= 2 ? "group+bracket" : "bracket"
 
   if (format === "group+bracket") {
@@ -54,13 +55,17 @@ export function createTournament(
       groupLegMode,
       knockoutLegMode,
       finalLegMode,
-      roundLegModes
+      roundLegModes,
+      doubleElim
     )
   }
 
   // ── Pure bracket ──────────────────────────────────────────────
-  const rounds = buildPureBracket(teams, seeded, orderedTeams)
-  applyLegModes(rounds, { knockoutLegMode, roundLegModes, finalLegMode })
+  const rounds = finalizeBracket(
+    buildPureBracket(teams, seeded, orderedTeams),
+    { knockoutLegMode, roundLegModes, finalLegMode, doubleElim },
+    teams
+  )
 
   return {
     id: uid(),
@@ -70,6 +75,7 @@ export function createTournament(
     teamIds: teams.map((t) => t.id),
     rounds,
     winnerId: null,
+    ...(doubleElim ? { doubleElim } : {}),
     groupLegMode,
     knockoutLegMode,
     finalLegMode,
@@ -90,7 +96,8 @@ function createGroupBracketTournament(
   groupLegMode: LegMode = "single",
   knockoutLegMode: LegMode = "single",
   finalLegMode: LegMode = "single",
-  roundLegModes?: Partial<Record<KnockoutStage, LegMode>>
+  roundLegModes?: Partial<Record<KnockoutStage, LegMode>>,
+  doubleElim = false
 ): Tournament {
   let teamsToPlace: Team[]
   if (orderedTeams) {
@@ -143,12 +150,14 @@ function createGroupBracketTournament(
   const clampedWildcards = Math.min(wildcardCount, groupCount)
   const qualifierCount = groupCount * clampedQpg + clampedWildcards
   const bracketSize = Math.pow(2, Math.ceil(Math.log2(Math.max(qualifierCount, 2))))
-  const emptyRounds = buildEmptyBracketRounds(bracketSize)
+  const emptyRounds = finalizeBracket(
+    buildEmptyBracketRounds(bracketSize),
+    { knockoutLegMode, roundLegModes, finalLegMode, doubleElim },
+    teams
+  )
 
-  // Mark knockout rounds as double-leg. Empty-round matches have no home/away
-  // yet, so the applyLegModes bye check is a no-op here — that's fine, byes
-  // get re-marked once seedBracketFromGroups runs applyLegModes again.
-  applyLegModes(emptyRounds, { knockoutLegMode, roundLegModes, finalLegMode })
+  // Empty-round matches have no home/away yet, so the leg-mode bye check is a
+  // no-op here — byes get re-marked once seedBracketFromGroups runs again.
 
   return {
     id: uid(),
@@ -162,6 +171,7 @@ function createGroupBracketTournament(
     wildcardCount: clampedWildcards > 0 ? clampedWildcards : undefined,
     rounds: emptyRounds,
     winnerId: null,
+    ...(doubleElim ? { doubleElim } : {}),
     groupLegMode,
     knockoutLegMode,
     finalLegMode,
@@ -400,18 +410,14 @@ export function seedBracketFromGroups(
     distributeWildcards(firstHalf, secondHalf)
   }
 
-  const rounds = buildBracketRounds(
+  const winnersRounds = buildBracketRounds(
     directSlots ?? [
       ...buildHalfSlots(prioritizeByesByStanding(firstHalf), half),
       ...buildHalfSlots(prioritizeByesByStanding(secondHalf), half),
     ]
   )
 
-  applyLegModes(rounds, tournament)
-
-  propagateWinners(rounds, teams)
-
-  tournament.rounds = rounds
+  tournament.rounds = finalizeBracket(winnersRounds, tournament, teams)
   tournament.groupsDone = true
 }
 
