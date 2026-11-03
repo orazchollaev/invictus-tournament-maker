@@ -2,7 +2,7 @@
 
 <img src="./public/favicon.svg" width="60" />
 
-# Invictus — Tournament Maker
+# Invictus: Tournament Maker
 
 A football tournament simulator for the browser and Android. Create your own competitions, enter results by hand or let the app simulate them, and track stats across multiple seasons.
 
