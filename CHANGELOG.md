@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.8.0](https://github.com/orazchollaev/invictus-tournament-maker/compare/v3.7.1...v3.8.0) (2026-11-03)
+
+### 🚀 New Features
+
+- add double elimination knockout format ([6e4d6ba](https://github.com/orazchollaev/invictus-tournament-maker/commit/6e4d6ba2404359de04b21e35bb0a943ea77bac0c))
+- **league:** replace 0.5x mode with 6x ([2e3762f](https://github.com/orazchollaev/invictus-tournament-maker/commit/2e3762f6f92e2749172a58889e4961a791607ff9))
+- modernize mobile-first UI shell ([5c5acff](https://github.com/orazchollaev/invictus-tournament-maker/commit/5c5acff6206525c58b895fb551c5fde2a9ead619))
+
+### 🔧 Maintenance
+
+- bump gradle version ([07acd1f](https://github.com/orazchollaev/invictus-tournament-maker/commit/07acd1f97be131446d528f81a6cc25a9710f1c79))
+
 ## [3.7.1](https://github.com/orazchollaev/invictus-tournament-maker/compare/v3.7.0...v3.7.1) (2026-10-27)
 
 ### 🐛 Bug Fixes
