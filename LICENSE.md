@@ -1,4 +1,4 @@
-# Invictus - Tournament Maker License
+# Invictus: Tournament Maker License
 
 Copyright (c) 2026 Oraz Chollayev
 
@@ -63,7 +63,7 @@ Creating a modified or derivative version does not grant any commercial rights.
 
 ## 5. Trademark and Branding
 
-This license does not grant permission to use the name, logo, trademarks, branding, product identity, or other identifying materials of **Invictus - Tournament Maker** or **Oraz Chollayev** for commercial or promotional purposes.
+This license does not grant permission to use the name, logo, trademarks, branding, product identity, or other identifying materials of **Invictus: Tournament Maker** or **Oraz Chollayev** for commercial or promotional purposes.
 
 ## 6. No Warranty
 

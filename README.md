@@ -96,7 +96,7 @@ English, Turkish, German, French, Arabic, Spanish, Portuguese, Russian, Japanese
 
 ## License
 
-Invictus - Tournament Maker is **source-available** and released under a custom **Non-Commercial License**.
+Invictus: Tournament Maker is **source-available** and released under a custom **Non-Commercial License**.
 
 You are free to:
 
@@ -118,7 +118,7 @@ This includes, but is not limited to:
 - Sponsorships
 - Other forms of direct or indirect commercial revenue
 
-**All commercial rights to Invictus - Tournament Maker are reserved exclusively by Oraz Chollayev.**
+**All commercial rights to Invictus: Tournament Maker are reserved exclusively by Oraz Chollayev.**
 
 For commercial licensing or permission, please contact the copyright holder.
 
