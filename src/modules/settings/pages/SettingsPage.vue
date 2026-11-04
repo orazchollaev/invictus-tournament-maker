@@ -5,6 +5,7 @@ import { APP_VERSION } from "@/constants"
 import { useSettingsStore } from "@/modules/settings/store"
 import { logEvent } from "@/composables/useAnalytics"
 import { openSupport } from "@/composables/useSupport"
+import { isMarketAvailable } from "@/modules/market/services/authService"
 import { AppButton } from "@/components/ui"
 import {
   Palette,
@@ -13,6 +14,7 @@ import {
   Dices,
   Database,
   FlaskConical,
+  Store,
   Music,
   Menu,
   ChevronDown,
@@ -33,6 +35,7 @@ import {
   SettingsSectionMusic,
   SettingsSectionSimulation,
   SettingsSectionSampleData,
+  SettingsSectionMarket,
   SettingsSectionDataManagement,
 } from "@/modules/settings/components"
 
@@ -112,6 +115,7 @@ const CATEGORIES = [
   "simulation",
   "music",
   "sampleData",
+  "market",
   "data",
 ] as const
 type Category = (typeof CATEGORIES)[number]
@@ -123,6 +127,7 @@ const CATEGORY_ICONS: Record<Category, Component> = {
   simulation: Dices,
   music: Music,
   sampleData: FlaskConical,
+  market: Store,
   data: Database,
 }
 
@@ -137,8 +142,12 @@ const GROUPS: Record<Category, Component[]> = {
   simulation: [SettingsSectionSimulation],
   music: [SettingsSectionMusic],
   sampleData: [SettingsSectionSampleData],
+  market: [SettingsSectionMarket],
   data: [SettingsSectionDataManagement],
 }
+
+// The market tab only exists where the market does (Android app, dev browser).
+const visibleCategories = CATEGORIES.filter((c) => c !== "market" || isMarketAvailable)
 
 const transitionName = ""
 
@@ -176,7 +185,7 @@ function selectCategory(id: Category) {
       <Transition name="menu">
         <div v-if="menuOpen" class="mobile-nav-menu">
           <button
-            v-for="cat in CATEGORIES"
+            v-for="cat in visibleCategories"
             :key="cat"
             class="side-link"
             :class="{ 'side-link--active': activeCategory === cat }"
@@ -193,7 +202,7 @@ function selectCategory(id: Category) {
     <div class="settings-layout">
       <nav class="settings-sidebar">
         <button
-          v-for="cat in CATEGORIES"
+          v-for="cat in visibleCategories"
           :key="cat"
           class="side-link"
           :class="{ 'side-link--active': activeCategory === cat }"
