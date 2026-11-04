@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { MarketFab } from "@/modules/market/components"
 import { ref, computed, watch } from "vue"
 import { useRouter } from "vue-router"
 import { useTeamsStore } from "@/modules/teams/store"
@@ -17,7 +16,7 @@ import {
   AppSearchInput,
   AppButtonGroup,
 } from "@/components/ui"
-import { Trophy, X, Plus, List, Grid3x3, Database } from "@lucide/vue"
+import { Trophy, X, Plus, List, Grid3x3, Store } from "@lucide/vue"
 import { showConfirm } from "@/composables/useDialog"
 import { useI18n } from "vue-i18n"
 
@@ -180,8 +179,8 @@ async function deleteTournament(id: string) {
           <AppButton variant="filled" @click="router.push('/tournaments/new')">
             {{ t("tournaments.newBtn") }}
           </AppButton>
-          <AppButton variant="outlined" @click="router.push('/settings?category=sampleData')">
-            <AppIcon :icon="Database" size="xs" />
+          <AppButton variant="outlined" @click="router.push('/market?tab=offline')">
+            <AppIcon :icon="Store" size="xs" />
             {{ t("tournaments.selectDatasetBtn") }}
           </AppButton>
         </div>
@@ -190,14 +189,12 @@ async function deleteTournament(id: string) {
 
     <AppEmptyState v-else-if="!store.tournaments.length" :icon="Trophy">
       <template #action>
-        <AppButton variant="outlined" @click="router.push('/settings?category=sampleData')">
-          <AppIcon :icon="Database" size="xs" />
+        <AppButton variant="outlined" @click="router.push('/market?tab=offline')">
+          <AppIcon :icon="Store" size="xs" />
           {{ t("tournaments.selectDatasetBtn") }}
         </AppButton>
       </template>
     </AppEmptyState>
-
-    <MarketFab />
   </div>
 </template>
 

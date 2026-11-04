@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { MarketFab } from "@/modules/market/components"
 import { ref, computed } from "vue"
 import { useRouter } from "vue-router"
 import { useTournamentStore } from "@/modules/tournament/store"
@@ -114,8 +113,6 @@ function formatLabel(format: string) {
         </AppCard>
       </div>
     </template>
-
-    <MarketFab />
   </div>
 </template>
 

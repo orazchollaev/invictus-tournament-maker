@@ -5,6 +5,8 @@ import { App } from "@capacitor/app"
 import { AppHeader, AppMobileBottomNav, AppOnboarding, ErrorBoundary } from "@/components/layout"
 import { AppDialog } from "@/components/ui"
 import { MusicController } from "@/modules/music/components"
+import { MarketFab } from "@/modules/market/components"
+import { usePlayersStore } from "@/modules/players/store"
 import { useSettingsStore } from "@/modules/settings/store"
 import { useTeamsStore } from "@/modules/teams/store"
 import { useTournamentStore } from "@/modules/tournament/store"
@@ -45,6 +47,17 @@ const DETAIL_PAGE_PATTERNS = [
 ]
 const hideBottomNav = computed(() =>
   DETAIL_PAGE_PATTERNS.some((pattern) => pattern.test(router.currentRoute.value.path))
+)
+
+// One market button for every list page, mounted here rather than on each
+// page: a copy per page left with the page and came back with the next one,
+// so it blinked on every tab switch.
+const MARKET_FAB_PATHS = ["/tournaments", "/teams", "/players", "/history"]
+const showMarketFab = computed(() => MARKET_FAB_PATHS.includes(router.currentRoute.value.path))
+const playersStore = usePlayersStore()
+// The players page has its own round "delete all" button in that corner.
+const marketFabStacked = computed(
+  () => router.currentRoute.value.path === "/players" && playersStore.players.length > 0
 )
 
 const transitionName = ref("page")
@@ -115,6 +128,9 @@ onUnmounted(() => {
     <AppOnboarding v-if="!settings.onboardingSeen" />
     <SettingsSupportModal v-if="supportOpen" @close="supportOpen = false" />
     <MusicController />
+    <Transition name="market-fab">
+      <MarketFab v-if="showMarketFab" :stacked="marketFabStacked" />
+    </Transition>
     <Transition name="mobile-nav">
       <AppMobileBottomNav v-if="!hideBottomNav" />
     </Transition>
@@ -150,6 +166,20 @@ onUnmounted(() => {
 .mobile-nav-enter-from,
 .mobile-nav-leave-to {
   transform: translateY(120%);
+  opacity: 0;
+}
+
+/* Only when leaving the list pages for a detail page, or coming back. */
+.market-fab-enter-active,
+.market-fab-leave-active {
+  transition:
+    transform var(--dur) var(--ease),
+    opacity var(--dur) var(--ease);
+}
+
+.market-fab-enter-from,
+.market-fab-leave-to {
+  transform: translateY(12px);
   opacity: 0;
 }
 </style>
