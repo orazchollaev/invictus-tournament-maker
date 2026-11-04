@@ -302,7 +302,50 @@ export function packedStatsFor(
   return packStats(stats)
 }
 
-/** Drop the decode cache. For tests. */
+/**
+ * Small facts read out of reports, by kind and then by packed string.
+ *
+ * Every simulated match reads a little out of the history before it — the
+ * last match's red cards, recent injuries, recent minutes played. Through
+ * `statsOf` that meant decoding report after report on every single match,
+ * and in a big league the history is far larger than the decode cache, so
+ * nothing ever hit: one result in a 60-team league decoded thousands of
+ * reports. What these passes keep is tiny next to a whole report, so it can
+ * be kept for far more matches. A packed string never changes, so an entry
+ * never goes stale.
+ */
+const DERIVED_LIMIT = 20000
+const derived = new Map<string, Map<string, unknown>>()
+
+export function deriveFromStats<T>(
+  kind: string,
+  result: Pick<MatchResult, "stats"> | null | undefined,
+  derive: (stats: MatchStats) => T
+): T | null {
+  const stored = result?.stats
+  if (stored === undefined || stored === null) return null
+  // An old unpacked report: nothing to decode, so nothing worth keeping.
+  if (typeof stored !== "string") return derive(stored)
+
+  let byPacked = derived.get(kind)
+  if (!byPacked) derived.set(kind, (byPacked = new Map()))
+  if (byPacked.has(stored)) return byPacked.get(stored) as T | null
+
+  let value: T | null
+  try {
+    // Not through decodeCached: a bulk pass would flush everything a screen
+    // is actually holding on to out of that much smaller cache.
+    value = derive(cache.get(stored) ?? unpackStats(stored))
+  } catch {
+    value = null
+  }
+  if (byPacked.size >= DERIVED_LIMIT) byPacked.clear()
+  byPacked.set(stored, value)
+  return value
+}
+
+/** Drop the decode caches. For tests. */
 export function clearStatsCache(): void {
   cache.clear()
+  derived.clear()
 }

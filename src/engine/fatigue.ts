@@ -13,9 +13,31 @@
 // persisted "usual XI"), and the injury roll (a tired man goes down more
 // often).
 import type { PlayerPosition } from "../modules/players/types"
-import type { MatchResult } from "../modules/tournament/types"
+import type { MatchResult, MatchStats } from "../modules/tournament/types"
 import { REGULATION_MINUTES } from "./periods"
-import { statsOf } from "./events/packStats"
+import { deriveFromStats } from "./events/packStats"
+import { playedByTeam } from "./teamHistory"
+
+/** What fatigue reads from one report: who played, for which side, and the load it cost them. */
+interface PlayerLoad {
+  playerId: string
+  side: "home" | "away"
+  load: number
+}
+
+function loadsOfStats(stats: MatchStats): PlayerLoad[] {
+  const out: PlayerLoad[] = []
+  for (const line of stats.lines) {
+    if (!line.playerId) continue
+    const minutes = line.minutesPlayed ?? REGULATION_MINUTES
+    out.push({ playerId: line.playerId, side: line.side, load: matchLoad(minutes, line.position) })
+  }
+  return out
+}
+
+function loadsOf(result: MatchResult | null | undefined): PlayerLoad[] {
+  return deriveFromStats("fatigueLoads", result, loadsOfStats) ?? []
+}
 
 /** Fraction of a player's fatigue that survives one match to the next. */
 export const FATIGUE_DECAY_PER_MATCH = 0.5
@@ -93,13 +115,10 @@ export function computeFatigueByPlayer(
 
   for (const m of relevant) {
     const side = m.homeId === teamId ? "home" : "away"
-    const lines = statsOf(m.result)?.lines ?? []
     const loadByPlayer = new Map<string, number>()
-    for (const line of lines) {
-      if (!line.playerId || line.side !== side) continue
-      const minutes = line.minutesPlayed ?? REGULATION_MINUTES
-      const load = matchLoad(minutes, line.position)
-      loadByPlayer.set(line.playerId, (loadByPlayer.get(line.playerId) ?? 0) + load)
+    for (const line of loadsOf(m.result)) {
+      if (line.side !== side) continue
+      loadByPlayer.set(line.playerId, (loadByPlayer.get(line.playerId) ?? 0) + line.load)
     }
 
     const ids = new Set([...fatigue.keys(), ...loadByPlayer.keys()])
@@ -194,16 +213,18 @@ export function computeFatigueTeamAdjustments(
   matches: FatigueHistoryMatch[]
 ): Map<string, number> {
   const map = new Map<string, number>()
+  const byTeam = playedByTeam(teamIds, matches)
 
   for (const id of teamIds) {
-    const relevant = matches.filter((m) => m.result != null && (m.homeId === id || m.awayId === id))
+    // Only the window is ever read, so only the window is handed over.
+    const relevant = (byTeam.get(id) ?? []).slice(-FATIGUE_HISTORY_WINDOW)
     const fatigueByPlayer = computeFatigueByPlayer(id, relevant)
 
     const last = relevant[relevant.length - 1]
     const side = last?.homeId === id ? "home" : "away"
-    const lastXI = (statsOf(last?.result)?.lines ?? [])
-      .filter((l) => l.side === side && l.playerId)
-      .map((l) => l.playerId as string)
+    const lastXI = loadsOf(last?.result)
+      .filter((l) => l.side === side)
+      .map((l) => l.playerId)
 
     map.set(id, fatigueTeamPowerMalus(fatigueByPlayer, lastXI))
   }

@@ -213,14 +213,43 @@ export function pendingStatsJobs(
   return jobs
 }
 
+/** Teams and squads by id, built once for a whole batch of jobs. */
+interface JobLookups {
+  teamLookup: Map<string, Team>
+  squads: Map<string, Player[]>
+}
+
+function jobLookups(teams: Team[], players: Player[]): JobLookups {
+  return {
+    teamLookup: new Map(teams.map((team) => [team.id, team])),
+    squads: squadsByTeam(players),
+  }
+}
+
+/**
+ * Roll the reports for a batch of jobs. Same as mapping `computeStatsForJob`,
+ * but the roster is indexed once rather than once per job — a "Simulate All"
+ * of a big league is thousands of jobs over thousands of players.
+ */
+export function computeStatsForJobs(
+  jobs: PendingStatsJob[],
+  teams: Team[],
+  players: Player[]
+): StatsJobResult[] {
+  const lookups = jobLookups(teams, players)
+  return jobs.map((job) => statsForJob(job, lookups))
+}
+
 /** Roll the report for one pending job. Pure — safe to run on a worker thread. */
 export function computeStatsForJob(
   job: PendingStatsJob,
   teams: Team[],
   players: Player[]
 ): StatsJobResult {
-  const teamLookup = new Map(teams.map((team) => [team.id, team]))
-  const squads = squadsByTeam(players)
+  return statsForJob(job, jobLookups(teams, players))
+}
+
+function statsForJob(job: PendingStatsJob, { teamLookup, squads }: JobLookups): StatsJobResult {
   const homeTeam = teamLookup.get(job.homeId)
   const awayTeam = teamLookup.get(job.awayId)
 
@@ -313,10 +342,7 @@ export function ensureMatchStats(t: Tournament, teams: Team[], players: Player[]
   const watchedChanged = claimWatchedStats(t)
   const jobs = pendingStatsJobs(t)
   if (!jobs.length) return watchedChanged
-  applyStatsResults(
-    t,
-    jobs.map((job) => computeStatsForJob(job, teams, players))
-  )
+  applyStatsResults(t, computeStatsForJobs(jobs, teams, players))
   return true
 }
 

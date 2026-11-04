@@ -304,6 +304,7 @@ export {
   claimWatchedStats,
   pendingStatsJobs,
   computeStatsForJob,
+  computeStatsForJobs,
   applyStatsResults,
   packStats,
   unpackStats,

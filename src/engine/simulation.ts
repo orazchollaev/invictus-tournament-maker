@@ -3,6 +3,7 @@ import type { Team } from "../modules/teams/types"
 import type { Match, GroupMatch, RedCard } from "../modules/tournament/types"
 import { MAX_GOALS } from "@/constants/limits"
 import { resolvePower } from "./power"
+import { playedByTeam } from "./teamHistory"
 import { lambdaMultipliers, teamProfile, type TacticProfile } from "./tactics"
 import { rollShootout, type ShootoutOutcome } from "./shootout"
 import { REGULATION_MINUTES, EXTRA_TIME_MINUTES } from "./periods"
@@ -125,11 +126,9 @@ export function computeFormAdjustments(
   playedMatches: PlayedMatch[]
 ): Map<string, number> {
   const map = new Map<string, number>()
+  const byTeam = playedByTeam(teamIds, playedMatches)
   for (const id of teamIds) {
-    const relevant = playedMatches.filter(
-      (m) => m.result != null && (m.homeId === id || m.awayId === id)
-    )
-    const last5 = relevant.slice(-5)
+    const last5 = (byTeam.get(id) ?? []).slice(-5)
     if (last5.length === 0) {
       map.set(id, 0)
       continue

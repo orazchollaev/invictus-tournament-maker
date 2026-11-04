@@ -17,9 +17,9 @@
 //   in-match  — the side plays the rest of the match a man down
 //   next match — a small residual penalty, standing in for the suspension
 //                and the reshuffled side that follows a dismissal
-import type { MatchResult, RedCard } from "../modules/tournament/types"
+import type { MatchResult, MatchStats, RedCard } from "../modules/tournament/types"
 import { REGULATION_MINUTES } from "./periods"
-import { statsOf } from "./events/packStats"
+import { deriveFromStats } from "./events/packStats"
 
 /** Chance of a side finishing a match with ten men. Matches the pre-v2.7.0 event rate. */
 export const RED_CHANCE = 0.06
@@ -93,9 +93,11 @@ export function extraTimeRedPenalty(reds: RedCard[] | undefined): { home: number
 export function redsOf(result: MatchResult | null | undefined): RedCard[] {
   if (!result) return []
   if (result.reds) return result.reds
-  const events = statsOf(result)?.events
-  if (!events) return []
-  return events
+  return deriveFromStats("reds", result, redsOfEvents) ?? []
+}
+
+function redsOfEvents(stats: MatchStats): RedCard[] {
+  return stats.events
     .filter((e) => e.type === "red")
     .map((e) => ({ side: e.side, minute: e.minute }) satisfies RedCard)
 }
@@ -119,13 +121,17 @@ export function computeDisciplineAdjustments(
 ): Map<string, number> {
   const lastReds = new Map<string, number>()
 
-  for (const match of matches) {
+  // Walked from the end: only each team's latest match counts, so a team is
+  // settled the first time it turns up and the rest of its history is never read.
+  for (let i = matches.length - 1; i >= 0; i--) {
+    const match = matches[i]
     if (!match.result) continue
+    const ids = [match.homeId, match.awayId].filter((id) => id && !lastReds.has(id))
+    if (!ids.length) continue
     const reds = redsOf(match.result)
-    for (const id of [match.homeId, match.awayId]) {
-      if (!id) continue
+    for (const id of ids) {
       const side = id === match.homeId ? "home" : "away"
-      lastReds.set(id, reds.filter((r) => r.side === side).length)
+      lastReds.set(id!, reds.filter((r) => r.side === side).length)
     }
   }
 

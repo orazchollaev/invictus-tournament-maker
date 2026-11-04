@@ -12,6 +12,7 @@
 // it rides the same `{homeId, awayId, result}` channel every simulator
 // already passes through form.ts.
 import type { MatchResult } from "../modules/tournament/types"
+import { playedByTeam } from "./teamHistory"
 
 /** Power swing per match in the current streak. */
 export const MORALE_STEP = 4
@@ -49,11 +50,10 @@ export function computeMoraleAdjustments(
   matches: MoraleMatch[]
 ): Map<string, number> {
   const map = new Map<string, number>()
+  const byTeam = playedByTeam(teamIds, matches)
 
   for (const id of teamIds) {
-    const relevant = matches
-      .filter((m) => m.result != null && (m.homeId === id || m.awayId === id))
-      .slice(-MORALE_STREAK_WINDOW)
+    const relevant = (byTeam.get(id) ?? []).slice(-MORALE_STREAK_WINDOW)
 
     let streak = 0
     for (let i = relevant.length - 1; i >= 0; i--) {

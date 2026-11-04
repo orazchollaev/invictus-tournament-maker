@@ -14,10 +14,10 @@
 // `RedCard`. Nothing here is stored as mutable state on the player: a
 // player's current availability, like his career totals, is read back out
 // of the match history it was written into, fresh every time.
-import type { Substitution, Tournament } from "../modules/tournament/types"
+import type { MatchStats, Substitution, Tournament } from "../modules/tournament/types"
 import { forEachMatch, isBye } from "./matchIterator"
 import { isInjuriesEnabled } from "./simulation"
-import { statsOf } from "./events/packStats"
+import { deriveFromStats } from "./events/packStats"
 
 /** Chance a side loses a player to injury in any given match. */
 export const INJURY_CHANCE = 0.06
@@ -74,17 +74,23 @@ export interface InjuryAvailability {
  */
 export function computeInjuryAvailability(matches: InjuryMatch[]): InjuryAvailability[] {
   const teamMatchCount = new Map<string, number>()
-  const injured = new Map<string, { teamId: string; startCount: number; duration: number }>()
+  // Per team, and only while still out: a team's match count never goes back,
+  // so a player who has served his time is dropped rather than re-checked on
+  // every later match. A season's worth of old injuries scanned for every
+  // fixture was most of what this cost in a big league.
+  const injuredByTeam = new Map<string, Map<string, { startCount: number; duration: number }>>()
   const out: InjuryAvailability[] = []
 
   const unavailableFor = (teamId: string | null): string[] => {
     if (!teamId) return []
+    const injured = injuredByTeam.get(teamId)
+    if (!injured?.size) return []
     const played = teamMatchCount.get(teamId) ?? 0
     const ids: string[] = []
     for (const [playerId, info] of injured) {
-      if (info.teamId !== teamId) continue
       const missedSoFar = played - info.startCount - 1
       if (missedSoFar < info.duration) ids.push(playerId)
+      else injured.delete(playerId)
     }
     return ids
   }
@@ -101,8 +107,14 @@ export function computeInjuryAvailability(matches: InjuryMatch[]): InjuryAvailab
       if (sub.reason !== "injury" || !sub.outPlayerId || !sub.injuryMatches) continue
       const teamId = sub.side === "home" ? m.homeId : m.awayId
       if (!teamId) continue
+      let injured = injuredByTeam.get(teamId)
+      if (!injured) injuredByTeam.set(teamId, (injured = new Map()))
+      // A player is only ever out for one team; one transferred mid-history
+      // is moved, as the single shared map used to do by overwriting.
+      for (const [otherTeam, other] of injuredByTeam) {
+        if (otherTeam !== teamId) other.delete(sub.outPlayerId)
+      }
       injured.set(sub.outPlayerId, {
-        teamId,
         startCount: teamMatchCount.get(teamId) ?? 0,
         duration: sub.injuryMatches,
       })
@@ -128,7 +140,7 @@ export function tournamentInjuryMatches(t: Tournament): InjuryMatch[] {
     const result = entry.result
     if (!result || isBye(entry)) return
     const leg = "leg" in entry.source ? entry.source.leg : 1
-    const subs = statsOf(result)?.substitutions
+    const subs = deriveFromStats("injurySubs", result, injurySubsOf) ?? undefined
     matches.push({
       matchId: entry.match.id,
       leg,
@@ -138,6 +150,18 @@ export function tournamentInjuryMatches(t: Tournament): InjuryMatch[] {
     })
   })
   return matches
+}
+
+const NO_SUBS: Substitution[] = []
+
+/**
+ * The only substitutions availability reads. Kept per report (see
+ * `deriveFromStats`), so the common case is one shared empty list rather than
+ * a decoded report per match.
+ */
+function injurySubsOf(stats: MatchStats): Substitution[] {
+  const subs = (stats.substitutions ?? []).filter((s) => s.reason === "injury")
+  return subs.length ? subs : NO_SUBS
 }
 
 /**

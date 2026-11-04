@@ -12,6 +12,7 @@ export {
   claimWatchedStats,
   pendingStatsJobs,
   computeStatsForJob,
+  computeStatsForJobs,
   applyStatsResults,
 } from "./ensure"
 export type { PendingStatsJob, StatsJobResult } from "./ensure"
