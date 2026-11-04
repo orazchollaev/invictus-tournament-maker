@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { MarketFab } from "@/modules/market/components"
 import { ref, computed, watch } from "vue"
 import { useRouter } from "vue-router"
 import { useTeamsStore } from "@/modules/teams/store"
@@ -195,6 +196,8 @@ async function deleteTournament(id: string) {
         </AppButton>
       </template>
     </AppEmptyState>
+
+    <MarketFab />
   </div>
 </template>
 

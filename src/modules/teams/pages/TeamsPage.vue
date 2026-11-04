@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { MarketBanner } from "@/modules/market/components"
+import { MarketFab } from "@/modules/market/components"
 import { ref, computed, watch } from "vue"
 import { useRouter } from "vue-router"
 import { useTeamsStore } from "../store"
@@ -126,8 +126,6 @@ const pagedTeams = computed(() => {
       </div>
     </div>
 
-    <MarketBanner />
-
     <div v-if="store.teams.length" class="search-row">
       <AppSearchInput v-model="query" :placeholder="t('teams.searchPlaceholder')" />
       <AppButtonGroup v-model="settings.teamsListView" :options="viewOptions" size="md" />
@@ -206,6 +204,8 @@ const pagedTeams = computed(() => {
     >
       <AppIcon :icon="Database" size="lg" />
     </button>
+
+    <MarketFab :stacked="store.teams.length > 0" />
   </div>
 </template>
 

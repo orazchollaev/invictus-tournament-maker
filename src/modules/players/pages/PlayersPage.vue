@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { MarketFab } from "@/modules/market/components"
 import { ref, computed, watch } from "vue"
 import { usePlayersStore } from "../store"
 import { useTeamsStore } from "@/modules/teams/store"
@@ -244,6 +245,8 @@ async function handleDeleteAll() {
     >
       <AppIcon :icon="Trash2" size="lg" />
     </button>
+
+    <MarketFab :stacked="store.players.length > 0" />
   </div>
 </template>
 
