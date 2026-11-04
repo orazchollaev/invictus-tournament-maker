@@ -1,5 +1,59 @@
 # Changelog
 
+## [4.0.0](https://github.com/orazchollaev/invictus-tournament-maker/compare/v3.8.0...v4.0.0) (2026-11-04)
+
+### 🚀 New Features
+
+- **i18n:** fill in every missing translation ([9a82077](https://github.com/orazchollaev/invictus-tournament-maker/commit/9a8207714b8d09f90443c7d720733ae9617ca63b))
+- **market:** add community dataset market ([33d7955](https://github.com/orazchollaev/invictus-tournament-maker/commit/33d7955e2544149a3226ad21f87faaca6b15096d))
+- **market:** add market shortcut bubble to list pages ([ca1ff01](https://github.com/orazchollaev/invictus-tournament-maker/commit/ca1ff01b3cbedc47de735168cadf57a89d69fd29))
+- **market:** enable the market on the web ([a3b8a1b](https://github.com/orazchollaev/invictus-tournament-maker/commit/a3b8a1b814e95d773cd0ff81a91f66b7c73986c6))
+- **market:** move the built-in datasets into the market ([5efdcbc](https://github.com/orazchollaev/invictus-tournament-maker/commit/5efdcbc3cb0c18de08c91630b3489b33fff85a46))
+- **market:** one market button for every list page ([fdf1a15](https://github.com/orazchollaev/invictus-tournament-maker/commit/fdf1a159d6cf46211a2bf2d84b68c684eea5dfdd))
+- **market:** share builder crests ([0944d1e](https://github.com/orazchollaev/invictus-tournament-maker/commit/0944d1e496f4098840c14a43de1346acb54f6a5f))
+- **market:** show sign-in errors and progress ([06d774d](https://github.com/orazchollaev/invictus-tournament-maker/commit/06d774da13f40919cc47c4deb27db4111de63661))
+- **settings:** add market tab ([75f486d](https://github.com/orazchollaev/invictus-tournament-maker/commit/75f486d39636f6637d45b7eba0a52d90e7db94e1))
+- **settings:** drop the Android design language option ([45c0939](https://github.com/orazchollaev/invictus-tournament-maker/commit/45c0939013c1b87a8ff81d803c4ef88770e47edd))
+- **settings:** turn gradual reveal off by default ([31fe075](https://github.com/orazchollaev/invictus-tournament-maker/commit/31fe07555e24cf6e0b270abec0a0d030176c8b63))
+- **tournament:** compact detail page header ([dd019ff](https://github.com/orazchollaev/invictus-tournament-maker/commit/dd019fff646d00aa48d38d5f40ebdb30c4ddf51f))
+- **ui:** add AppMenu overflow menu ([92b1c7a](https://github.com/orazchollaev/invictus-tournament-maker/commit/92b1c7aa398b08ce582389cccaee8ec229f836c6))
+
+### 🐛 Bug Fixes
+
+- **android:** ignore missing Facebook classes in R8 ([b0a1fed](https://github.com/orazchollaev/invictus-tournament-maker/commit/b0a1fedac06a7bb982fee7f50025beb7ac746d49))
+- **i18n:** shorten the Turkish clear-all label ([4a8f5aa](https://github.com/orazchollaev/invictus-tournament-maker/commit/4a8f5aa43b81ebf10baf66e57433a7bb6ff168b6))
+- keep fixed buttons in place during page transition and shorten it ([1af6849](https://github.com/orazchollaev/invictus-tournament-maker/commit/1af684904f9cd977b1f01e2fbdb8acb9c4d5021f))
+- **market:** keep web sign-in after reload ([f7746c8](https://github.com/orazchollaev/invictus-tournament-maker/commit/f7746c853e90ced3cd6f53a2c7b62e259b14d096))
+- **market:** show account check instead of signed-out state ([16243db](https://github.com/orazchollaev/invictus-tournament-maker/commit/16243db9dec1a5a9b1a44ecb0364cd6d37bb7a96))
+- **market:** stop returning capacitor plugins from async helpers ([33513d8](https://github.com/orazchollaev/invictus-tournament-maker/commit/33513d8ba409655317880c13c43b1b2f73637d41))
+- **ui:** keep sheets within the viewport ([c54424c](https://github.com/orazchollaev/invictus-tournament-maker/commit/c54424c1bc7f965c09f0c5477af2e05817524a93))
+
+### ♻️ Refactoring
+
+- **market:** simplify market page and cards ([39b3be9](https://github.com/orazchollaev/invictus-tournament-maker/commit/39b3be9e2feab6ed66678c195b28ff3cd45edfdd))
+- **settings:** simplify sample data list ([713bea1](https://github.com/orazchollaev/invictus-tournament-maker/commit/713bea1907a703f747782db460405099017d7917))
+- share gzip helpers and dataset id remapping ([16d04b2](https://github.com/orazchollaev/invictus-tournament-maker/commit/16d04b28f66fa76ee188c35ffef47957c7b86e98))
+- **style:** fold the design-language layer into base rules ([33f4bd9](https://github.com/orazchollaev/invictus-tournament-maker/commit/33f4bd992f6083ad2206806214d349f8339b8970))
+
+### 🔧 Maintenance
+
+- **android:** bump version to 3.9.0 (60) for closed testing ([951999a](https://github.com/orazchollaev/invictus-tournament-maker/commit/951999a00403913d3ae4f2b70100aa1e7fb3201d))
+- bump gradle version ([4592803](https://github.com/orazchollaev/invictus-tournament-maker/commit/459280388b65ac8b4ee29c58103aa38ea8d80e69))
+- **deps:** update dependencies ([c15b4a8](https://github.com/orazchollaev/invictus-tournament-maker/commit/c15b4a8e54c7b73322bb9bfa96681ac48900257f))
+- update app branding name ([87f28ae](https://github.com/orazchollaev/invictus-tournament-maker/commit/87f28ae3a65bc6b07b0bc420e8180c3e2e93c4bc))
+- update tsbuildinfo ([02d45ac](https://github.com/orazchollaev/invictus-tournament-maker/commit/02d45ac75f6e5fc9f507bab1f4fc762a41a86956))
+- update tsbuildinfo ([38b2548](https://github.com/orazchollaev/invictus-tournament-maker/commit/38b254863e24d27410b82e043203a4ce52c13120))
+
+### 📚 Documentation
+
+- update brending name in README.md ([7e68618](https://github.com/orazchollaev/invictus-tournament-maker/commit/7e68618e125b0ea5fcff26b74b0d4d2a111bd374))
+- update privacy policy for sign-in and community market ([8fa2ed3](https://github.com/orazchollaev/invictus-tournament-maker/commit/8fa2ed33251f7b8e82667fbaeb722794ccca3b01))
+
+### 🎨 Styles
+
+- **layout:** tighten the detail page header ([e43fd5a](https://github.com/orazchollaev/invictus-tournament-maker/commit/e43fd5a2b1c5dec558bdbee04f8e1ad386789c4b))
+- **settings:** simplify support card ([eff1d37](https://github.com/orazchollaev/invictus-tournament-maker/commit/eff1d3780dde94ba00249f558a4834576a6b4be1))
+
 ## [3.8.0](https://github.com/orazchollaev/invictus-tournament-maker/compare/v3.7.1...v3.8.0) (2026-11-03)
 
 ### 🚀 New Features
