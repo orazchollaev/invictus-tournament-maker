@@ -1,5 +1,6 @@
 import { computed, watch } from "vue"
 import { useRoute, useRouter } from "vue-router"
+import { useI18n } from "vue-i18n"
 import { useTeamsStore } from "@/modules/teams/store"
 import { useTournamentStore } from "@/modules/tournament/store"
 import type { PlayoffSeedMode } from "@/modules/tournament/types"
@@ -8,6 +9,7 @@ import { useInAppReview } from "@/composables/useInAppReview"
 import { useHaptic } from "@/composables/useHaptic"
 
 export function useTournamentDetail() {
+  const { t } = useI18n()
   const route = useRoute()
   const router = useRouter()
   const teamsStore = useTeamsStore()
@@ -29,7 +31,7 @@ export function useTournamentDetail() {
       .filter((tour) => tour.name === name)
       .slice()
       .sort((a, b) => a.season - b.season)
-      .map((tour) => ({ value: tour.id, label: `S${tour.season}` }))
+      .map((tour) => ({ value: tour.id, label: t("tournament.header.season", { n: tour.season }) }))
   })
 
   function switchSeason(id: string) {

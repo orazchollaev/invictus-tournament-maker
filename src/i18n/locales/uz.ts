@@ -689,6 +689,8 @@
       swissPhase: "Liga bosqichi",
     },
     header: {
+      more: "Boshqa amallar",
+      season: "{n}-mavsum",
       teams: "{n} ta jamoa",
       created: "Yaratilgan: {date}",
     },

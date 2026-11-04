@@ -883,6 +883,8 @@
       swissPhase: "Lig Aşaması",
     },
     header: {
+      more: "Diğer işlemler",
+      season: "Sezon {n}",
       teams: "{n} takım",
       created: "{date} tarihinde oluşturuldu",
     },

@@ -670,6 +670,8 @@
       swissPhase: "リーグフェーズ",
     },
     header: {
+      more: "その他の操作",
+      season: "シーズン {n}",
       teams: "{n} チーム",
       created: "作成日: {date}",
     },

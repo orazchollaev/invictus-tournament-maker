@@ -691,6 +691,8 @@
       swissPhase: "Competitiefase",
     },
     header: {
+      more: "Meer acties",
+      season: "Seizoen {n}",
       teams: "{n} teams",
       created: "Gemaakt op {date}",
     },

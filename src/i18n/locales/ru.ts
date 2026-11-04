@@ -714,6 +714,8 @@
       swissPhase: "Лиговый этап",
     },
     header: {
+      more: "Другие действия",
+      season: "Сезон {n}",
       teams: "{n} команд",
       created: "Создан {date}",
     },

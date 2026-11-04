@@ -1,98 +1,72 @@
-/* ── Header ─────────────────────────────────────────────────── */
-.t-format-tag {
-  font-size: var(--fs-xs);
-  color: var(--text-muted);
-  background: color-mix(in srgb, var(--accent) 12%, var(--surface));
-  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
-  border-radius: var(--radius-pill);
-  padding: 2px 9px;
-  font-family: var(--font-ui);
-}
-.t-meta {
-  font-size: var(--fs-sm);
-  color: var(--text-muted);
-  margin: 0;
-}
-/* Three-column grid instead of the shared rule's flex + space-between —
-   space-between centers the middle child only when both sides are equally
-   wide, and the actions column here almost never matches the back button's
-   width. A grid with matching outer columns keeps the season switcher
-   centered no matter how many action buttons the right side has. */
-.t-header .t-header-top {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  align-items: center;
-}
-.back-btn {
-  grid-column: 1;
-  flex-shrink: 0;
-  justify-self: start;
-}
-
-/* Fixed to column 2 rather than left to auto-placement, so the actions
-   column still lands in column 3 (not 2) when there is only one season and
-   this element doesn't render at all. */
-.t-season-switcher {
-  grid-column: 2;
+/* ── Header ──────────────────────────────────────────────────────
+   One compact row: back · name over its season · Save (only when there
+   is something to save), the step the tournament waits on, the ⋯ menu. */
+.dh {
   display: flex;
   align-items: center;
-  justify-self: center;
-  gap: 2px;
-  flex-shrink: 0;
-}
-.t-season-select {
-  width: 52px;
-}
-.t-season-nav {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 22px;
-  height: 22px;
-  padding: 0;
-  border: none;
-  background: transparent;
-  color: var(--text-muted);
-  border-radius: var(--radius);
-  cursor: pointer;
-}
-.t-season-nav:hover:not(:disabled) {
-  color: var(--text);
-  background: var(--bg-hover);
-}
-.t-season-nav:disabled {
-  opacity: 0.35;
-  cursor: default;
-}
-
-.t-header-actions {
-  grid-column: 3;
-  display: flex;
-  align-items: center;
-  justify-self: end;
   gap: var(--sp-2);
+  margin-bottom: var(--sp-3);
 }
-.header-icon-btn {
-  width: 30px;
-  height: 30px;
+
+.dh-identity {
+  flex: 1;
+  min-width: 0;
 }
-.t-winner {
-  display: inline-flex;
+
+.dh-title {
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--fs-md);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+}
+
+.dh-season {
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+}
+
+/* AppSelect stripped down to text: no fill, no border, no padding. The
+   extra .dh qualifier outranks the select's own scoped rules. */
+.dh .dh-season-select .asel-trigger,
+.dh .dh-season-select .asel-trigger:focus-visible {
+  width: auto;
+  /* Also the width of the option list, which opens at the trigger's width. */
+  min-width: 96px;
+  padding: 0;
+  gap: 2px;
+  border-color: transparent;
+  background: transparent;
+  box-shadow: none;
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+}
+.dh .dh-season-select .asel-trigger:focus-visible {
+  color: var(--text);
+}
+.dh .dh-season-select .asel-value {
+  flex: none;
+}
+
+.dh-actions {
+  display: flex;
   align-items: center;
-  gap: 5px;
-  margin-top: 6px;
-  font-size: var(--fs-sm);
-}
-.t-winner-icon {
-  color: var(--accent-2);
+  gap: var(--sp-1);
   flex-shrink: 0;
 }
-.t-winner-name {
-  font-weight: 600;
+
+/* Same height as the ⋯ button beside it. A long label ("Advance to
+   Knockout") gives way before the name does. */
+.dh-next {
+  height: 32px;
+  max-width: 48vw;
 }
-.t-winner-label {
-  color: var(--text-muted);
-  font-size: var(--fs-xs);
+.dh-next-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* ── Multi-tier modal ────────────────────────────────────────── */
@@ -171,22 +145,4 @@
 .mt-badge--down {
   color: var(--danger);
   background: color-mix(in srgb, var(--danger) 12%, transparent);
-}
-
-/* ── Responsive ──────────────────────────────────────────────── */
-@media (max-width: 600px) {
-  .t-header .t-header-top {
-    gap: 6px;
-  }
-  .t-header-actions {
-    gap: 4px;
-  }
-  /* Labels drop out so the header stays on one line; buttons go icon-sized. */
-  .t-header-actions .btn-label {
-    display: none;
-  }
-  .t-header-actions .btn {
-    min-width: 32px;
-    justify-content: center;
-  }
 }

@@ -224,6 +224,8 @@ const showStartPlayoffButton = computed(
     </div>
     <template v-else>
       <DetailHeader
+        :name="tournament.name"
+        :season="tournament.season"
         :is-finished="isFinished"
         :show-advance="showAdvanceButton"
         :advance-label="advanceLabel"

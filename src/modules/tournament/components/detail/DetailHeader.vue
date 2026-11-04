@@ -1,20 +1,22 @@
 <script setup lang="ts">
+/**
+ * Top of the tournament page, kept to one compact row: back, the name with
+ * its season switcher, and the actions.
+ *
+ * Every action used to be an unlabelled icon in this row, with the same check
+ * mark meaning both "saved" and "advance to the knockout". Now only a step the
+ * tournament is waiting on (advance, start the playoff, a new season) gets a
+ * labelled button; Save shows only while there is something to save; and the
+ * rest — simulate all, manager mode, settings — sit behind the ⋯ menu.
+ */
 import { computed } from "vue"
-import {
-  ArrowLeft,
-  Check,
-  ChevronLeft,
-  ChevronRight,
-  RefreshCw,
-  Save,
-  Settings,
-  UserCog,
-  Zap,
-} from "@lucide/vue"
-import { AppButton, AppIcon, AppSelect } from "@/components/ui"
+import { ArrowLeft, ArrowRight, RefreshCw, Save, Settings, UserCog, Zap } from "@lucide/vue"
+import { AppButton, AppIcon, AppMenu, AppSelect, type AppMenuItem } from "@/components/ui"
 import { useI18n } from "vue-i18n"
 
 const props = defineProps<{
+  name: string
+  season: number
   isFinished: boolean
   /** Every group is done and the bracket hasn't been seeded yet. */
   showAdvance: boolean
@@ -36,7 +38,7 @@ const props = defineProps<{
   /** No manager yet, and the season hasn't played a match — the only window
    *  in which taking charge of a side is still on offer. */
   canBecomeManager?: boolean
-  /** Changes since the last save; the Save button is only live while there are some. */
+  /** Changes since the last save; the Save button shows only while there are some. */
   unsaved?: boolean
   saving?: boolean
 }>()
@@ -60,112 +62,96 @@ const seasonModel = computed({
   set: (id: string) => emit("switchSeason", id),
 })
 
-// `seasons` is oldest-first, so the index also doubles as the step direction.
-const seasonIndex = computed(() =>
-  props.seasons.findIndex((s) => s.value === props.currentSeasonId)
-)
-const prevSeasonId = computed(() => props.seasons[seasonIndex.value - 1]?.value)
-const nextSeasonId = computed(() => props.seasons[seasonIndex.value + 1]?.value)
+/** A step the tournament is waiting on, if any. */
+const nextStep = computed(() => {
+  if (props.showAdvance) {
+    return {
+      label: props.advanceLabel ?? t("tournament.advanceToKnockout"),
+      icon: ArrowRight,
+      run: () => emit("advance"),
+    }
+  }
+  if (props.showStartPlayoff) {
+    return {
+      label: t("leaguePlayoff.startPlayoff"),
+      icon: ArrowRight,
+      run: () => emit("startPlayoff"),
+    }
+  }
+  if (props.isFinished) {
+    return { label: t("tournament.newSeason"), icon: RefreshCw, run: () => emit("openNewSeason") }
+  }
+  return null
+})
 
-function goToSeason(id: string | undefined) {
-  if (id) emit("switchSeason", id)
-}
+type MenuKey = "simulateAll" | "manager" | "settings"
 
-function onLevelUp() {
-  if (props.showAdvance) emit("advance")
-  else emit("startPlayoff")
+const menuItems = computed(() => {
+  const items: AppMenuItem<MenuKey>[] = []
+  if (!props.isFinished) {
+    items.push({
+      key: "simulateAll",
+      label: props.managerBlocked ? t("manager.settings.blocked") : t("tournament.simulateAll"),
+      icon: Zap,
+      disabled: props.managerBlocked,
+    })
+  }
+  if (props.canBecomeManager) {
+    items.push({ key: "manager", label: t("manager.settings.title"), icon: UserCog })
+  }
+  items.push({ key: "settings", label: t("tournament.settings"), icon: Settings })
+  return items
+})
+
+function onMenu(key: MenuKey) {
+  if (key === "simulateAll") emit("simulateAll")
+  else if (key === "manager") emit("openManagerPicker")
+  else emit("openSettings")
 }
 </script>
 
 <template>
-  <div class="t-header">
-    <div class="t-header-top">
-      <AppButton
-        icon-only
-        class="header-icon-btn back-btn"
-        :aria-label="t('common.back')"
-        @click="emit('back')"
-      >
-        <AppIcon :icon="ArrowLeft" size="md" />
-      </AppButton>
-      <div v-if="seasons.length > 1" class="t-season-switcher">
-        <button
-          class="t-season-nav"
-          :disabled="!prevSeasonId"
-          :aria-label="t('tournament.previousSeason')"
-          @click="goToSeason(prevSeasonId)"
-        >
-          <ChevronLeft :size="14" />
-        </button>
-        <AppSelect v-model="seasonModel" size="sm" :options="seasons" class="t-season-select" />
-        <button
-          class="t-season-nav"
-          :disabled="!nextSeasonId"
-          :aria-label="t('tournament.nextSeason')"
-          @click="goToSeason(nextSeasonId)"
-        >
-          <ChevronRight :size="14" />
-        </button>
-      </div>
-      <div class="t-header-actions">
-        <AppButton
-          icon-only
-          class="header-icon-btn"
-          :variant="unsaved ? 'filled' : 'outlined'"
-          :disabled="!unsaved || saving"
-          :title="unsaved ? t('tournament.save') : t('tournament.saved')"
-          :aria-label="unsaved ? t('tournament.save') : t('tournament.saved')"
-          @click="emit('save')"
-        >
-          <AppIcon :icon="unsaved ? Save : Check" size="md" />
-        </AppButton>
-        <AppButton v-if="isFinished" variant="filled" icon-only @click="emit('openNewSeason')">
-          <AppIcon :icon="RefreshCw" size="sm" />
-        </AppButton>
-        <AppButton
-          v-if="showAdvance || showStartPlayoff"
-          icon-only
-          class="header-icon-btn"
-          variant="filled"
-          :title="
-            showAdvance
-              ? (advanceLabel ?? t('tournament.advanceToKnockout'))
-              : t('leaguePlayoff.startPlayoff')
-          "
-          @click="onLevelUp"
-        >
-          <AppIcon :icon="Check" size="md" />
-        </AppButton>
-        <AppButton
-          v-if="!isFinished"
-          icon-only
-          class="header-icon-btn"
-          :disabled="managerBlocked"
-          :title="managerBlocked ? t('manager.settings.blocked') : t('tournament.simulateAll')"
-          @click="emit('simulateAll')"
-        >
-          <AppIcon :icon="Zap" size="md" />
-        </AppButton>
-        <AppButton
-          v-if="canBecomeManager"
-          icon-only
-          class="header-icon-btn"
-          :title="t('manager.settings.title')"
-          @click="emit('openManagerPicker')"
-        >
-          <AppIcon :icon="UserCog" size="md" />
-        </AppButton>
-        <AppButton
-          icon-only
-          class="header-icon-btn"
-          :title="t('tournament.settings')"
-          @click="emit('openSettings')"
-        >
-          <AppIcon :icon="Settings" size="md" />
-        </AppButton>
-      </div>
+  <header class="dh">
+    <AppButton icon-only :aria-label="t('common.back')" @click="emit('back')">
+      <AppIcon :icon="ArrowLeft" size="md" />
+    </AppButton>
+
+    <div class="dh-identity">
+      <h1 class="dh-title">{{ name }}</h1>
+      <!-- A plain text dropdown under the name; AppSelect's field look is
+           stripped in detail.css. -->
+      <span v-if="seasons.length > 1" class="dh-season-select">
+        <AppSelect v-model="seasonModel" size="sm" :options="seasons" />
+      </span>
+      <span v-else class="dh-season">{{ t("tournament.header.season", { n: season }) }}</span>
     </div>
-  </div>
+
+    <div class="dh-actions">
+      <AppButton
+        v-if="unsaved"
+        icon-only
+        variant="tonal"
+        :disabled="saving"
+        :title="t('tournament.save')"
+        :aria-label="t('tournament.save')"
+        @click="emit('save')"
+      >
+        <AppIcon :icon="Save" size="md" />
+      </AppButton>
+      <AppButton
+        v-if="nextStep"
+        size="sm"
+        variant="filled"
+        class="dh-next"
+        :title="nextStep.label"
+        @click="nextStep.run"
+      >
+        <AppIcon :icon="nextStep.icon" size="sm" />
+        <span class="dh-next-label">{{ nextStep.label }}</span>
+      </AppButton>
+      <AppMenu :items="menuItems" :label="t('tournament.header.more')" @select="onMenu" />
+    </div>
+  </header>
 </template>
 
 <style src="./detail.css"></style>

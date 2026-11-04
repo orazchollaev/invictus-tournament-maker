@@ -667,6 +667,8 @@
       swissPhase: "مرحلة الدوري",
     },
     header: {
+      more: "إجراءات أخرى",
+      season: "الموسم {n}",
       teams: "{n} فرق",
       created: "أُنشئت في {date}",
     },

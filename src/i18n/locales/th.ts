@@ -670,6 +670,8 @@
       swissPhase: "รอบลีก",
     },
     header: {
+      more: "การทำงานอื่น",
+      season: "ฤดูกาล {n}",
       teams: "{n} ทีม",
       created: "สร้างเมื่อ {date}",
     },

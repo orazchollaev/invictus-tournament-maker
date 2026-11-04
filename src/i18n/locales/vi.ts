@@ -672,6 +672,8 @@
       swissPhase: "Giai đoạn League",
     },
     header: {
+      more: "Thao tác khác",
+      season: "Mùa {n}",
       teams: "{n} đội",
       created: "Tạo {date}",
     },

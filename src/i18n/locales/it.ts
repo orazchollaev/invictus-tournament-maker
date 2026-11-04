@@ -690,6 +690,8 @@
       swissPhase: "Fase a Campionato",
     },
     header: {
+      more: "Altre azioni",
+      season: "Stagione {n}",
       teams: "{n} squadre",
       created: "Creato il {date}",
     },

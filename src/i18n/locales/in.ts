@@ -673,6 +673,8 @@
       swissPhase: "लीग चरण",
     },
     header: {
+      more: "और विकल्प",
+      season: "सीज़न {n}",
       teams: "{n} टीमें",
       created: "बनाया गया {date}",
     },

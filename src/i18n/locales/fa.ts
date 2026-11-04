@@ -684,6 +684,8 @@
       swissPhase: "مرحله لیگ",
     },
     header: {
+      more: "گزینه‌های بیشتر",
+      season: "فصل {n}",
       teams: "{n} تیم",
       created: "ایجاد شده در {date}",
     },

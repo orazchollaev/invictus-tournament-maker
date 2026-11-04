@@ -672,6 +672,8 @@
       swissPhase: "Faza ligowa",
     },
     header: {
+      more: "Więcej opcji",
+      season: "Sezon {n}",
       teams: "{n} drużyn",
       created: "Utworzono {date}",
     },

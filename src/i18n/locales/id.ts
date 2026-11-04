@@ -674,6 +674,8 @@
       swissPhase: "Fase Liga",
     },
     header: {
+      more: "Tindakan lain",
+      season: "Musim {n}",
       teams: "{n} tim",
       created: "Dibuat {date}",
     },

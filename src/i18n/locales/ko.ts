@@ -670,6 +670,8 @@
       swissPhase: "리그 단계",
     },
     header: {
+      more: "추가 작업",
+      season: "시즌 {n}",
       teams: "팀 {n}개",
       created: "{date} 생성",
     },

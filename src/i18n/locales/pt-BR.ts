@@ -689,6 +689,8 @@
       swissPhase: "Fase de Pontos Corridos",
     },
     header: {
+      more: "Mais ações",
+      season: "Temporada {n}",
       teams: "{n} times",
       created: "Criado em {date}",
     },
