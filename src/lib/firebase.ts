@@ -16,3 +16,16 @@ export function ensureFirebase(): Promise<void> {
   })
   return ready
 }
+
+/**
+ * Resolves once the web SDK has finished restoring a saved sign-in. Firebase
+ * reads it back from IndexedDB asynchronously and `currentUser` is null until
+ * then, so reading it any earlier looks like "signed out" after every page load.
+ * Native SDKs restore synchronously at startup, so this is a no-op there.
+ */
+export async function webAuthReady(): Promise<void> {
+  if (Capacitor.isNativePlatform()) return
+  await ensureFirebase()
+  const { getAuth } = await import("firebase/auth")
+  await getAuth().authStateReady()
+}

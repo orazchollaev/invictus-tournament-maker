@@ -19,16 +19,24 @@ export const useMarketStore = defineStore(
     const cursor = ref<string | null>(null)
     const loading = ref(false)
     const failed = ref(false)
-    let unsubscribe: (() => void) | null = null
+    let initializing: Promise<void> | null = null
 
-    async function init() {
-      if (!available || unsubscribe) return
-      try {
-        user.value = await authService.getCurrentUser()
-        unsubscribe = await authService.onAuthChange((u) => (user.value = u))
-      } catch {
-        // Auth unavailable: the market stays browsable, publishing is just disabled.
-      }
+    /**
+     * Subscribes before reading, so a sign-in restored in between is not missed,
+     * and runs once however many screens ask for it at the same time.
+     */
+    function init() {
+      if (!available) return Promise.resolve()
+      initializing ??= (async () => {
+        try {
+          await authService.onAuthChange((u) => (user.value = u))
+          user.value = await authService.getCurrentUser()
+        } catch {
+          // Auth unavailable: the market stays browsable, publishing is just disabled.
+          initializing = null
+        }
+      })()
+      return initializing
     }
 
     async function signIn() {

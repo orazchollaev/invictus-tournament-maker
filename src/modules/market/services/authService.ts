@@ -1,6 +1,6 @@
 import { Capacitor } from "@capacitor/core"
 import { FirebaseAuthentication } from "@capacitor-firebase/authentication"
-import { ensureFirebase } from "@/lib/firebase"
+import { ensureFirebase, webAuthReady } from "@/lib/firebase"
 import type { MarketUser } from "../types"
 
 /** Android (native SDKs) and the web build (JS SDK). iOS has no Firebase config. */
@@ -28,7 +28,7 @@ function toMarketUser(user: FirebaseUser | null): MarketUser | null {
 
 export async function getCurrentUser(): Promise<MarketUser | null> {
   if (!isMarketAvailable || USE_DEV_MOCK) return null
-  await ensureFirebase()
+  await webAuthReady()
   const { user } = await FirebaseAuthentication.getCurrentUser()
   return toMarketUser(user)
 }
