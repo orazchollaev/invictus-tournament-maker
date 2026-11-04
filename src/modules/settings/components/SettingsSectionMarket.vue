@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import { onMounted } from "vue"
+import { onMounted, ref } from "vue"
 import { useRouter } from "vue-router"
 import { useI18n } from "vue-i18n"
 import { Store } from "@lucide/vue"
 import { AppButton, AppCard, AppField, AppIcon } from "@/components/ui"
-import { showAlert } from "@/composables/useDialog"
 import { useMarketStore } from "@/modules/market/store"
 import { useMarketActions } from "@/modules/market/composables/useMarketActions"
 import SettingDesc from "./SettingDesc.vue"
@@ -14,11 +13,17 @@ const router = useRouter()
 const market = useMarketStore()
 const actions = useMarketActions()
 
+// Shown while the Google account picker is up, so a sign-in that never comes
+// back is visible as such instead of looking like a dead button.
+const signingIn = ref(false)
+
 async function signIn() {
+  if (signingIn.value) return
+  signingIn.value = true
   try {
-    await market.signIn()
-  } catch {
-    await showAlert(t("market.signInFailed"))
+    await actions.ensureSignedIn()
+  } finally {
+    signingIn.value = false
   }
 }
 
@@ -55,7 +60,9 @@ onMounted(() => market.init())
           {{ t("market.deleteAccount") }}
         </AppButton>
       </template>
-      <AppButton v-else @click="signIn">{{ t("market.signIn") }}</AppButton>
+      <AppButton v-else :disabled="signingIn" @click="signIn">
+        {{ signingIn ? t("market.signingIn") : t("market.signIn") }}
+      </AppButton>
     </AppField>
   </AppCard>
 </template>

@@ -1,7 +1,7 @@
 import { useI18n } from "vue-i18n"
 import { uid } from "@/engine"
 import { showAlert, showConfirm } from "@/composables/useDialog"
-import { logEvent } from "@/composables/useAnalytics"
+import { logError, logEvent } from "@/composables/useAnalytics"
 import { useTeamsStore } from "@/modules/teams/store"
 import { usePlayersStore } from "@/modules/players/store"
 import { remapDatasetIds } from "@/modules/teams/utils/remapDataset"
@@ -11,6 +11,16 @@ import * as api from "../services/marketApi"
 import * as authService from "../services/authService"
 import { buildDataset, type PublishDraft } from "../utils/buildDataset"
 import type { MarketListing, ReportReason } from "../types"
+
+/** Plugin errors carry a `code` next to the message; both help when a tester reports back. */
+function describeError(e: unknown): string {
+  const err = e as { code?: unknown; message?: unknown } | null
+  const parts = [err?.code, err?.message].filter((p) => typeof p === "string" && p)
+  return (parts.length ? parts.join(": ") : String(e)).slice(0, 200)
+}
+
+/** The user closed the account picker — not an error worth an alert. */
+const wasCancelled = (e: unknown) => /cancel/i.test(describeError(e))
 
 /** Firebase's own wording differs by platform; match on the code it always carries. */
 const needsRecentLogin = (e: unknown) => /requires-recent-login/i.test(String(e))
@@ -26,9 +36,14 @@ export function useMarketActions() {
   async function ensureSignedIn(): Promise<boolean> {
     if (market.user) return true
     try {
-      return !!(await market.signIn())
-    } catch {
-      await showAlert(t("market.signInFailed"))
+      if (await market.signIn()) return true
+      // Resolved without a user: should not happen, so say so instead of doing nothing.
+      await showAlert(t("market.signInFailed", { detail: "no user" }))
+      return false
+    } catch (e) {
+      if (wasCancelled(e)) return false
+      void logError("market_sign_in", e)
+      await showAlert(t("market.signInFailed", { detail: describeError(e) }))
       return false
     }
   }
