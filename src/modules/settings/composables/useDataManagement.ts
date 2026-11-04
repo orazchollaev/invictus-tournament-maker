@@ -5,6 +5,7 @@ import { showAlert, showConfirm } from "@/composables/useDialog"
 import { useI18n } from "vue-i18n"
 import { Capacitor } from "@capacitor/core"
 import { idbStorage } from "@/lib/idbStorage"
+import { bytesToBase64, gzipCompress, gzipDecompress, isGzip } from "@/lib/gzip"
 import {
   clearAllTournaments,
   replaceAllTournaments,
@@ -13,6 +14,7 @@ import { normalizeTournament } from "@/modules/tournament/services/tournamentSch
 import type { Tournament } from "@/modules/tournament/types"
 import { APP_VERSION } from "@/constants"
 import { uid } from "@/engine"
+import { remapDatasetIds } from "@/modules/teams/utils/remapDataset"
 import { useRewardedAd } from "@/composables/useRewardedAd"
 import { logEvent } from "@/composables/useAnalytics"
 
@@ -64,36 +66,6 @@ const IMPORT_KEY_MAP: Record<string, (typeof DATA_KEYS)[number]> = {
   players: "players",
 }
 
-// gzip magic bytes — used to tell a compressed backup apart from plain JSON
-// on import, no explicit version flag needed.
-const GZIP_MAGIC = [0x1f, 0x8b]
-
-function isGzip(bytes: Uint8Array): boolean {
-  return bytes[0] === GZIP_MAGIC[0] && bytes[1] === GZIP_MAGIC[1]
-}
-
-async function gzipCompress(text: string): Promise<ArrayBuffer> {
-  const stream = new Blob([text]).stream().pipeThrough(new CompressionStream("gzip"))
-  return new Response(stream).arrayBuffer()
-}
-
-async function gzipDecompress(bytes: Uint8Array): Promise<string> {
-  const stream = new Blob([bytes.slice().buffer])
-    .stream()
-    .pipeThrough(new DecompressionStream("gzip"))
-  return new Response(stream).text()
-}
-
-/** btoa() chokes on large arrays passed via spread — chunk it. */
-function bytesToBase64(bytes: Uint8Array): string {
-  let binary = ""
-  const chunkSize = 0x8000
-  for (let i = 0; i < bytes.length; i += chunkSize) {
-    binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize))
-  }
-  return btoa(binary)
-}
-
 /**
  * Rewrite every quoted occurrence of an old team id to its new one, inside a
  * dataset's own tournaments. Team ids show up all over a Tournament — group
@@ -137,14 +109,12 @@ export function useDataManagement() {
     // picked twice. Any id that does collide gets a fresh one so the new
     // teams, squads and tournaments never overwrite or get merged into the
     // existing ones.
-    const idMap = new Map<string, string>()
     const existingIds = new Set(teamsStore.teams.map((t) => t.id))
-    const newTeams = dataset.teams.map((team) => {
-      if (!existingIds.has(team.id)) return team
-      const newId = uid()
-      idMap.set(team.id, newId)
-      return { ...team, id: newId }
-    })
+    const {
+      teams: newTeams,
+      players: newPlayers,
+      idMap,
+    } = remapDatasetIds(dataset.teams, dataset.players ?? [], existingIds, uid)
     // Pushed straight into the live stores rather than written to idbStorage
     // and reloaded: teams/players persist themselves on mutation (the pinia
     // plugin in main.ts), and the tournament store has its own per-item
@@ -152,10 +122,6 @@ export function useDataManagement() {
     // and saved immediately, no reload needed.
     teamsStore.teams.push(...newTeams)
 
-    const newPlayers = (dataset.players ?? []).map((p) => ({
-      ...p,
-      teamId: idMap.get(p.teamId) ?? p.teamId,
-    }))
     playersStore.players.push(...newPlayers)
 
     // Normalized like an import: a sample file is checked into the repo and
