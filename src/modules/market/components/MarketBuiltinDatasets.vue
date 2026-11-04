@@ -1,14 +1,26 @@
 <script setup lang="ts">
+/**
+ * The datasets bundled with the app: the market's offline half. They ship
+ * inside the build, so this works with no network and on every platform,
+ * including those where the online market is not available.
+ */
 import { computed, nextTick, ref } from "vue"
 import { useI18n } from "vue-i18n"
-import { FlaskConical, ChevronRight } from "@lucide/vue"
-import { AppCard, AppEmptyState, AppIcon, AppSearchInput } from "@/components/ui"
-import { SAMPLE_DATASETS, useDataManagement } from "../composables/useDataManagement"
-import { useRewardedAd } from "@/composables/useRewardedAd"
+import { ChevronRight, Download } from "@lucide/vue"
+import { AppEmptyState, AppIcon, AppSearchInput } from "@/components/ui"
+import {
+  SAMPLE_DATASETS,
+  useDataManagement,
+} from "@/modules/settings/composables/useDataManagement"
+import { FlagCircle } from "@/modules/teams/components"
 
 const { t } = useI18n()
 const { loadDataset } = useDataManagement()
-const { nextSelectionShowsAd } = useRewardedAd()
+
+type Dataset = (typeof SAMPLE_DATASETS)[number]
+
+/** Crests on a row, so a set reads at a glance before its name does. */
+const PREVIEW_CRESTS = 3
 
 /** Rows a category shows on the "All" view before "See all" takes over. */
 const PREVIEW_ROWS = 4
@@ -83,26 +95,18 @@ const visibleGroups = computed(() => {
     .filter((g) => g.items.length)
 })
 
-function rowsOf(group: { items: (typeof SAMPLE_DATASETS)[number][] }) {
+function rowsOf(group: { items: Dataset[] }) {
   return browsing.value ? group.items.slice(0, PREVIEW_ROWS) : group.items
 }
 
-function metaOf(ds: (typeof SAMPLE_DATASETS)[number]) {
+function metaOf(ds: Dataset) {
   const teams = t("common.teams", { n: ds.teams.length })
   return ds.players?.length ? `${teams} · ${t("settings.sampleData.withSquads")}` : teams
 }
 </script>
 
 <template>
-  <AppCard padding="md">
-    <template #title>
-      <AppIcon :icon="FlaskConical" size="md" />
-      {{ t("settings.sampleData.title") }}
-    </template>
-
-    <p class="section-intro">{{ t("settings.sampleData.intro") }}</p>
-    <p v-if="nextSelectionShowsAd" class="ad-notice">{{ t("settings.sampleData.adNotice") }}</p>
-
+  <div class="builtin">
     <div ref="toolbar" class="dataset-toolbar">
       <AppSearchInput v-model="query" :placeholder="t('settings.sampleData.searchPlaceholder')" />
       <div class="dataset-filters" role="tablist">
@@ -132,11 +136,21 @@ function metaOf(ds: (typeof SAMPLE_DATASETS)[number]) {
       <ul class="dataset-list">
         <li v-for="ds in rowsOf(group)" :key="ds.label">
           <button type="button" class="dataset-row" @click="loadDataset(ds)">
+            <span class="dataset-crests" aria-hidden="true">
+              <span
+                v-for="team in ds.teams.slice(0, PREVIEW_CRESTS)"
+                :key="team.id"
+                class="dataset-crest"
+              >
+                <FlagCircle v-if="team.flag" :code="team.flag" :size="24" />
+                <span v-else class="dataset-crest-dot" :style="{ background: team.color }" />
+              </span>
+            </span>
             <span class="dataset-main">
               <span class="dataset-name">{{ ds.label }}</span>
-              <span class="dataset-desc">{{ ds.description }}</span>
+              <span class="dataset-meta">{{ metaOf(ds) }}</span>
             </span>
-            <span class="dataset-meta">{{ metaOf(ds) }}</span>
+            <AppIcon :icon="Download" size="sm" class="dataset-action" />
           </button>
         </li>
         <li v-if="browsing && group.items.length > PREVIEW_ROWS">
@@ -147,36 +161,23 @@ function metaOf(ds: (typeof SAMPLE_DATASETS)[number]) {
         </li>
       </ul>
     </section>
-  </AppCard>
+  </div>
 </template>
 
 <style scoped>
-.section-intro {
-  color: var(--text-muted);
-  font-size: var(--fs-sm);
-  margin: 0 0 var(--sp-3);
-}
-
-/* Plain line, not a highlighted box — it is information, not an alert. */
-.ad-notice {
-  margin: 0 0 var(--sp-3);
-  color: var(--text-muted);
-  font-size: var(--fs-xs);
-}
-
 /* ── Search + category filter ── */
 .dataset-toolbar {
   display: flex;
   flex-direction: column;
   gap: var(--sp-2);
   margin-bottom: var(--sp-4);
-  /* Clears the sticky header and settings nav when scrolled into view. */
-  scroll-margin-top: calc(var(--sticky-top) + 72px);
+  /* Clears the sticky header when scrolled into view. */
+  scroll-margin-top: calc(var(--sticky-top) + var(--sp-4));
 }
 
 .dataset-filters {
   display: flex;
-  gap: var(--sp-2);
+  gap: var(--sp-1);
   overflow-x: auto;
   scrollbar-width: none;
 }
@@ -184,27 +185,34 @@ function metaOf(ds: (typeof SAMPLE_DATASETS)[number]) {
   display: none;
 }
 
+/* Filled chips, like every other control: grey until picked, accent once picked. */
 .dataset-filter {
   flex-shrink: 0;
-  padding: var(--sp-1) var(--sp-3);
-  border: 1px solid var(--border);
+  padding: 6px var(--sp-3);
+  border: none;
   border-radius: var(--radius-pill);
-  background: var(--surface);
-  color: var(--text-muted);
+  background: var(--fill-1);
+  color: var(--text);
   font-family: var(--font-ui);
   font-size: var(--fs-sm);
-  font-weight: 600;
+  font-weight: 500;
   white-space: nowrap;
   cursor: pointer;
   transition:
     background var(--dur-fast) var(--ease),
-    border-color var(--dur-fast) var(--ease),
     color var(--dur-fast) var(--ease);
 }
-.dataset-filter.active {
-  background: var(--accent-subtle);
-  border-color: color-mix(in srgb, var(--accent) 45%, transparent);
-  color: var(--accent);
+.dataset-filter:hover {
+  background: var(--fill-2);
+  border-color: transparent;
+  color: var(--text);
+  box-shadow: none;
+}
+.dataset-filter.active,
+.dataset-filter.active:hover {
+  background: var(--accent);
+  color: var(--on-accent);
+  font-weight: 600;
 }
 
 /* ── Category title ── */
@@ -216,31 +224,39 @@ function metaOf(ds: (typeof SAMPLE_DATASETS)[number]) {
   display: flex;
   align-items: baseline;
   gap: var(--sp-2);
-  margin: 0 0 var(--sp-2);
+  margin: 0 0 var(--sp-2) var(--sp-1);
   color: var(--text-muted);
   font-size: var(--fs-xs);
-  font-weight: 700;
-  letter-spacing: 0.06em;
+  font-weight: 600;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 
 .dataset-group-count {
-  font-weight: 600;
   opacity: 0.7;
 }
 
-/* ── One quiet list per category ── */
+/* ── One grouped list per category, like a card ── */
 .dataset-list {
   margin: 0;
   padding: 0;
   list-style: none;
-  border: 1px solid var(--border-light);
   border-radius: var(--radius-lg);
+  background: var(--surface);
   overflow: hidden;
 }
 
+/* Hairlines start at the text, not the edge, as a grouped list does. */
 .dataset-list > li + li {
-  border-top: 1px solid var(--border-light);
+  position: relative;
+}
+.dataset-list > li + li::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  inset-inline-start: calc(var(--sp-3) + 64px);
+  inset-inline-end: 0;
+  border-top: 0.5px solid var(--border);
 }
 
 .dataset-row,
@@ -249,57 +265,93 @@ function metaOf(ds: (typeof SAMPLE_DATASETS)[number]) {
   align-items: center;
   gap: var(--sp-3);
   width: 100%;
-  min-height: var(--tap-min);
+  min-height: 60px;
   padding: var(--sp-2) var(--sp-3);
   border: none;
+  border-radius: 0;
   background: none;
   color: var(--text);
   font-family: var(--font-ui);
   text-align: start;
   cursor: pointer;
-  transition: background var(--dur-fast) var(--ease);
 }
 
 .dataset-row:hover,
 .dataset-more:hover {
-  background: var(--border-light);
+  background: none;
+  border-color: transparent;
+  color: var(--text);
+  box-shadow: none;
+}
+
+.dataset-row:active,
+.dataset-more:active {
+  background: var(--bg-hover);
+  transform: none;
+}
+
+/* ── Crest preview ── */
+.dataset-crests {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  width: 64px;
+}
+.dataset-crest {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  box-shadow: 0 0 0 2px var(--surface);
+  overflow: hidden;
+}
+.dataset-crest + .dataset-crest {
+  margin-inline-start: -10px;
+}
+.dataset-crest-dot {
+  width: 22px;
+  height: 22px;
+  border-radius: var(--radius-pill);
 }
 
 .dataset-main {
   display: flex;
   flex-direction: column;
+  gap: 1px;
   flex: 1;
   min-width: 0;
 }
 
 .dataset-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   font-size: var(--fs-base);
   font-weight: 600;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.dataset-desc {
-  font-size: var(--fs-xs);
-  color: var(--text-muted);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .dataset-meta {
-  flex-shrink: 0;
   font-size: var(--fs-xs);
   color: var(--text-muted);
+}
+
+.dataset-action {
+  flex-shrink: 0;
+  color: var(--accent);
 }
 
 .dataset-more {
   justify-content: center;
+  min-height: 44px;
   gap: 2px;
   color: var(--accent);
   font-size: var(--fs-sm);
   font-weight: 600;
+}
+.dataset-more:hover {
+  color: var(--accent);
 }
 
 [dir="rtl"] .dataset-more :deep(svg) {

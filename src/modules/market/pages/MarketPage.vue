@@ -1,16 +1,49 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue"
+/**
+ * Two halves: "Built-in" is the datasets shipped with the app (offline, every
+ * platform) and "Community" is the online market. Every "pick a dataset" link
+ * in the app lands on the built-in tab via `?tab=offline`.
+ */
+import { computed, ref, watch } from "vue"
+import { useRoute, useRouter } from "vue-router"
 import { useI18n } from "vue-i18n"
 import { Plus, Store } from "@lucide/vue"
 import { AppButton, AppButtonGroup, AppEmptyState, AppIcon, AppSearchInput } from "@/components/ui"
 import { useMarketStore } from "../store"
 import { useMarketActions } from "../composables/useMarketActions"
-import { MarketDetailSheet, MarketListingCard, MarketPublishSheet } from "../components"
+import {
+  MarketBuiltinDatasets,
+  MarketDetailSheet,
+  MarketListingCard,
+  MarketPublishSheet,
+} from "../components"
 import type { MarketListing, MarketSort } from "../types"
 
 const { t } = useI18n()
+const route = useRoute()
+const router = useRouter()
 const market = useMarketStore()
 const actions = useMarketActions()
+
+type Tab = "offline" | "online"
+
+const tabs = computed(() => [
+  { value: "offline", label: t("market.tabBuiltin") },
+  { value: "online", label: t("market.tabCommunity") },
+])
+
+function initialTab(): Tab {
+  if (!market.available) return "offline"
+  return route.query.tab === "offline" ? "offline" : "online"
+}
+
+const tab = ref<Tab>(initialTab())
+
+// Kept in the URL so going back to the market returns to the same half.
+function selectTab(value: string) {
+  tab.value = value === "offline" ? "offline" : "online"
+  void router.replace({ query: { ...route.query, tab: tab.value } })
+}
 
 const query = ref("")
 const selected = ref<MarketListing | null>(null)
@@ -37,10 +70,18 @@ async function openPublish() {
   if (await actions.ensureSignedIn()) publishing.value = true
 }
 
-onMounted(async () => {
-  await market.init()
-  if (!market.listings.length) await market.load(true)
-})
+// The network is touched only once the community tab is actually opened.
+let started = false
+watch(
+  tab,
+  async (value) => {
+    if (value !== "online" || started) return
+    started = true
+    await market.init()
+    if (!market.listings.length) await market.load(true)
+  },
+  { immediate: true }
+)
 </script>
 
 <template>
@@ -48,7 +89,7 @@ onMounted(async () => {
     <div class="page-top">
       <h2 class="page-title">{{ t("market.title") }}</h2>
       <AppButton
-        v-if="market.available"
+        v-if="market.available && tab === 'online'"
         variant="filled"
         icon-only
         :title="t('market.publish')"
@@ -59,7 +100,16 @@ onMounted(async () => {
       </AppButton>
     </div>
 
-    <AppEmptyState v-if="!market.available" :icon="Store" :description="t('market.androidOnly')" />
+    <AppButtonGroup
+      v-if="market.available"
+      :model-value="tab"
+      :options="tabs"
+      block
+      class="market-tabs"
+      @update:model-value="selectTab"
+    />
+
+    <MarketBuiltinDatasets v-if="tab === 'offline'" />
 
     <template v-else>
       <div class="search-row">
@@ -106,6 +156,10 @@ onMounted(async () => {
 </template>
 
 <style scoped>
+.market-tabs {
+  margin-bottom: var(--sp-3);
+}
+
 .market-list {
   display: flex;
   flex-direction: column;

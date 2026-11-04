@@ -57,7 +57,7 @@
     steps: {
       teams: {
         title: "Voeg je teams toe",
-        desc: "Open het tabblad Teams en tik op “+ Team toevoegen” om een naam, afkorting, sterkte en kleur in te stellen. Haast? Ga naar Instellingen → Voorbeeldgegevens om een kant-en-klare teamlijst te laden.",
+        desc: "Open het tabblad Teams en tik op “+ Team toevoegen” om naam, afkorting, sterkte en kleur in te stellen. Haast? Open de Market om een kant-en-klare teamlijst te laden.",
       },
       players: {
         title: "Voeg spelers toe (optioneel)",
@@ -171,7 +171,6 @@
     title: "Teams",
     notFound: "Team niet gevonden.",
     addBtn: "Team toevoegen",
-    loadDatasetTitle: "Dataset laden",
     searchPlaceholder: "Teams zoeken…",
     empty: "Nog geen teams. Klik op {action} om te beginnen.",
     noMatch: 'Geen teams voor "{query}".',
@@ -549,19 +548,15 @@
     },
     sampleData: {
       withSquads: "Selecties",
-      title: "Voorbeeldgegevens",
       countries: "Landen",
       clubs: "Clubs",
       uefa: "Europese competities",
       leagues: "Competities",
       classics: "Klassiekers",
-      intro:
-        "Laad een vooraf ingestelde teamlijst. Deze wordt toegevoegd aan je huidige teams en toernooien — er wordt niets verwijderd.",
       loadConfirm:
         'Dataset "{name}" laden? Deze wordt toegevoegd aan je huidige teams en toernooien.',
       loadConfirmAd:
         'Dataset "{name}" laden? Deze wordt toegevoegd aan je huidige teams en toernooien. Elke 2e dataset die je laadt, verschijnt er een korte beloningsadvertentie — dit is er een van.',
-      adNotice: "Bij het laden van je volgende dataset verschijnt een korte beloningsadvertentie.",
       adBadge: "Advertentie bekijken",
       all: "Alle",
       topClubs: "Topclubs",
@@ -599,7 +594,6 @@
       tournament: "Toernooiregels",
       simulation: "Simulatie",
       music: "Muziek",
-      sampleData: "Voorbeeldgegevens",
       data: "Gegevens",
     },
     tutorials: "Handleidingen",

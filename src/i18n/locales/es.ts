@@ -56,7 +56,7 @@
     steps: {
       teams: {
         title: "Añade tus equipos",
-        desc: "Abre la pestaña Equipos y toca “+ Añadir equipo” para configurar un nombre, abreviatura, nivel de fuerza y color. ¿Tienes prisa? Ve a Configuración → Datos de muestra para cargar una lista de equipos predefinida.",
+        desc: "Abre la pestaña Equipos y toca “+ Añadir equipo” para definir nombre, abreviatura, poder y color. ¿Con prisa? Abre el Market para cargar una lista de equipos ya preparada.",
       },
       players: {
         title: "Añade jugadores (opcional)",
@@ -170,7 +170,6 @@
     title: "Equipos",
     notFound: "Equipo no encontrado.",
     addBtn: "Añadir equipo",
-    loadDatasetTitle: "Cargar conjunto de datos",
     searchPlaceholder: "Buscar equipos…",
     empty: "Aún no hay equipos. Haz clic en {action} para empezar.",
     noMatch: 'No hay equipos que coincidan con "{query}".',
@@ -548,20 +547,15 @@
     },
     sampleData: {
       withSquads: "Plantillas",
-      title: "Datos de muestra",
       countries: "Selecciones",
       clubs: "Clubes",
       uefa: "Competiciones europeas",
       leagues: "Ligas",
       classics: "Clásicos",
-      intro:
-        "Carga una lista de equipos preestablecida. Se añadirá junto a tus equipos y torneos actuales — nada existente se elimina.",
       loadConfirm:
         '¿Cargar el conjunto de datos "{name}"? Se añadirá a tus equipos y torneos actuales.',
       loadConfirmAd:
         '¿Cargar el conjunto de datos "{name}"? Se añadirá a tus equipos y torneos actuales. Cada 2 conjuntos de datos que cargues se muestra un breve anuncio con recompensa — este es uno de ellos.',
-      adNotice:
-        "La próxima vez que cargues un conjunto de datos se mostrará un breve anuncio con recompensa.",
       adBadge: "Ver anuncio",
       all: "Todos",
       topClubs: "Mejores clubes",
@@ -597,7 +591,6 @@
       tournament: "Reglas del torneo",
       simulation: "Simulación",
       music: "Música",
-      sampleData: "Datos de muestra",
       data: "Datos",
     },
     tutorials: "Tutoriales",

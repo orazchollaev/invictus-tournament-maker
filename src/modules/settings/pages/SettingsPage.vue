@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, nextTick, onMounted, onUnmounted } from "vue"
-import { useRoute } from "vue-router"
+import { useRoute, useRouter } from "vue-router"
 import { APP_VERSION } from "@/constants"
 import { useSettingsStore } from "@/modules/settings/store"
 import { logEvent } from "@/composables/useAnalytics"
@@ -13,7 +13,6 @@ import {
   Trophy,
   Dices,
   Database,
-  FlaskConical,
   Store,
   Music,
   Menu,
@@ -34,13 +33,17 @@ import {
   SettingsSectionEffects,
   SettingsSectionMusic,
   SettingsSectionSimulation,
-  SettingsSectionSampleData,
   SettingsSectionMarket,
   SettingsSectionDataManagement,
 } from "@/modules/settings/components"
 
 const { t } = useI18n()
 const route = useRoute()
+const router = useRouter()
+
+// The sample datasets moved to the market's offline tab; an old link to their
+// settings tab goes there instead.
+if (route.query.category === "sampleData") void router.replace("/market?tab=offline")
 const settings = useSettingsStore()
 
 /* Locale and design language get their own precise from/to events at the
@@ -105,16 +108,14 @@ onUnmounted(() => {
 // kept apart from app-wide appearance.
 // "tournament": rules & defaults that shape how tournaments play out.
 // "music": background music playback and track management.
-// "sampleData" and "data" are split apart: one is about loading ready-made
-// team lists, the other is backup/export/import/clear — different enough
-// intents that they don't belong in the same tab.
+// "data": backup/export/import/clear. Ready-made team lists live in the
+// market's offline tab, not here.
 const CATEGORIES = [
   "appearance",
   "bracket",
   "tournament",
   "simulation",
   "music",
-  "sampleData",
   "market",
   "data",
 ] as const
@@ -126,7 +127,6 @@ const CATEGORY_ICONS: Record<Category, Component> = {
   tournament: Trophy,
   simulation: Dices,
   music: Music,
-  sampleData: FlaskConical,
   market: Store,
   data: Database,
 }
@@ -141,7 +141,6 @@ const GROUPS: Record<Category, Component[]> = {
   ],
   simulation: [SettingsSectionSimulation],
   music: [SettingsSectionMusic],
-  sampleData: [SettingsSectionSampleData],
   market: [SettingsSectionMarket],
   data: [SettingsSectionDataManagement],
 }

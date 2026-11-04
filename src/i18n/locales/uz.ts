@@ -57,7 +57,7 @@
     steps: {
       teams: {
         title: "Jamoalaringizni qo'shing",
-        desc: "Jamoalar bo'limini oching va nom, qisqartma, kuch va rangni belgilash uchun “+ Jamoa qo'shish” tugmasini bosing. Shoshyapsizmi? Sozlamalar → Namuna ma'lumotlar bo'limiga o'tib, tayyor jamoalar ro'yxatini yuklang.",
+        desc: "Jamoalar bo'limini oching va nom, qisqartma, kuch va rangni belgilash uchun “+ Jamoa qo'shish” tugmasini bosing. Shoshyapsizmi? Tayyor jamoalar ro'yxatini yuklash uchun Marketni oching.",
       },
       players: {
         title: "O'yinchilarni qo'shing (ixtiyoriy)",
@@ -171,7 +171,6 @@
     title: "Jamoalar",
     notFound: "Jamoa topilmadi.",
     addBtn: "Jamoa qo'shish",
-    loadDatasetTitle: "Ma'lumotlar to'plamini yuklash",
     searchPlaceholder: "Jamoalarni qidirish…",
     empty: "Hali jamoalar yo'q. Boshlash uchun {action} tugmasini bosing.",
     noMatch: '"{query}" bo\'yicha jamoa topilmadi.',
@@ -549,19 +548,15 @@
     },
     sampleData: {
       withSquads: "Tarkiblar",
-      title: "Namuna ma'lumotlar",
       countries: "Mamlakatlar",
       clubs: "Klublar",
       uefa: "Yevropa turnirlari",
       leagues: "Ligalar",
       classics: "Klassika",
-      intro:
-        "Tayyor jamoalar ro'yxatini yuklang. Bu joriy jamoalaringiz va turnirlaringizga qo'shiladi — hech narsa o'chirilmaydi.",
       loadConfirm:
         "\"{name}\" to'plami yuklansinmi? Bu joriy jamoalaringiz va turnirlaringizga qo'shiladi.",
       loadConfirmAd:
         "\"{name}\" to'plami yuklansinmi? Bu joriy jamoalaringiz va turnirlaringizga qo'shiladi. Har 2-marta to'plam yuklaganingizda qisqa mukofotli reklama ko'rsatiladi — bu ham ulardan biri.",
-      adNotice: "Keyingi to'plamni yuklaganingizda qisqa mukofotli reklama ko'rsatiladi.",
       adBadge: "Reklamani ko'rish",
       all: "Hammasi",
       topClubs: "Eng yaxshi klublar",
@@ -599,7 +594,6 @@
       tournament: "Turnir qoidalari",
       simulation: "Simulyatsiya",
       music: "Musiqa",
-      sampleData: "Namuna ma'lumotlar",
       data: "Ma'lumotlar",
     },
     tutorials: "Qo'llanmalar",

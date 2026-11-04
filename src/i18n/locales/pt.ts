@@ -56,7 +56,7 @@
     steps: {
       teams: {
         title: "Adicione as suas equipas",
-        desc: "Abra o separador Equipas e toque em “+ Adicionar Equipa” para definir um nome, abreviatura, nível de força e cor. Com pressa? Vá a Definições → Dados de Exemplo para carregar uma lista de equipas já pronta.",
+        desc: "Abra o separador Equipas e toque em “+ Adicionar equipa” para definir nome, abreviatura, força e cor. Com pressa? Abra o Market para carregar uma lista de equipas pronta.",
       },
       players: {
         title: "Adicione jogadores (opcional)",
@@ -170,7 +170,6 @@
     title: "Times",
     notFound: "Time não encontrado.",
     addBtn: "Adicionar time",
-    loadDatasetTitle: "Carregar conjunto de dados",
     searchPlaceholder: "Buscar times…",
     empty: "Nenhum time ainda. Clique em {action} para começar.",
     noMatch: 'Nenhum time corresponde a "{query}".',
@@ -548,20 +547,15 @@
     },
     sampleData: {
       withSquads: "Elencos",
-      title: "Dados de exemplo",
       countries: "Seleções",
       clubs: "Clubes",
       uefa: "Competições europeias",
       leagues: "Ligas",
       classics: "Clássicos",
-      intro:
-        "Carregue uma lista de times predefinida. Ela é adicionada aos seus times e torneios atuais — nada existente é apagado.",
       loadConfirm:
         'Carregar o conjunto de dados "{name}"? Será adicionado aos seus times e torneios atuais.',
       loadConfirmAd:
         'Carregar o conjunto de dados "{name}"? Será adicionado aos seus times e torneios atuais. A cada 2 conjuntos de dados carregados é exibido um breve anúncio com recompensa — este é um deles.',
-      adNotice:
-        "A próxima vez que carregar um conjunto de dados será exibido um breve anúncio com recompensa.",
       adBadge: "Ver anúncio",
       all: "Todos",
       topClubs: "Melhores clubes",
@@ -597,7 +591,6 @@
       tournament: "Regras do Torneio",
       simulation: "Simulação",
       music: "Música",
-      sampleData: "Dados de exemplo",
       data: "Dados",
     },
     tutorials: "Tutoriais",

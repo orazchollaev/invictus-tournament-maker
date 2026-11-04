@@ -58,7 +58,7 @@
     steps: {
       teams: {
         title: "Aggiungi le tue squadre",
-        desc: "Apri la scheda Squadre e tocca “+ Aggiungi Squadra” per impostare nome, sigla, potenza e colore. Hai fretta? Vai su Impostazioni → Dati di Esempio per caricare invece un elenco squadre già pronto.",
+        desc: "Apri la scheda Squadre e tocca “+ Aggiungi squadra” per impostare nome, sigla, forza e colore. Di fretta? Apri il Market per caricare un elenco di squadre già pronto.",
       },
       players: {
         title: "Aggiungi giocatori (opzionale)",
@@ -172,7 +172,6 @@
     title: "Squadre",
     notFound: "Squadra non trovata.",
     addBtn: "Aggiungi Squadra",
-    loadDatasetTitle: "Carica Dataset",
     searchPlaceholder: "Cerca squadre…",
     empty: "Ancora nessuna squadra. Clicca {action} per iniziare.",
     noMatch: 'Nessuna squadra corrisponde a "{query}".',
@@ -550,19 +549,15 @@
     },
     sampleData: {
       withSquads: "Rose",
-      title: "Dati di Esempio",
       countries: "Nazioni",
       clubs: "Club",
       uefa: "Competizioni europee",
       leagues: "Campionati",
       classics: "Classici",
-      intro:
-        "Carica un elenco squadre predefinito. Verrà aggiunto alle tue squadre e ai tuoi tornei attuali — nulla viene eliminato.",
       loadConfirm:
         'Caricare il set di dati "{name}"? Verrà aggiunto alle tue squadre e ai tuoi tornei attuali.',
       loadConfirmAd:
         'Caricare il set di dati "{name}"? Verrà aggiunto alle tue squadre e ai tuoi tornei attuali. Ogni 2 set di dati caricati viene mostrato un breve annuncio con premio — questo è uno di quelli.',
-      adNotice: "Il prossimo caricamento di un set di dati mostrerà un breve annuncio con premio.",
       adBadge: "Guarda l'annuncio",
       all: "Tutti",
       topClubs: "Migliori club",
@@ -600,7 +595,6 @@
       tournament: "Regole Torneo",
       simulation: "Simulazione",
       music: "Musica",
-      sampleData: "Dati di Esempio",
       data: "Dati",
     },
     tutorials: "Tutorial",

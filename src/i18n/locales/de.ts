@@ -60,7 +60,7 @@
     steps: {
       teams: {
         title: "Teams hinzufügen",
-        desc: "Öffne den Tab „Teams“ und tippe auf „+ Team hinzufügen“, um Name, Kürzel, Stärke und Farbe festzulegen. Es muss schnell gehen? Lade unter Einstellungen → Beispieldaten stattdessen eine fertige Teamliste.",
+        desc: "Öffne den Tab Teams und tippe auf „+ Team hinzufügen“, um Name, Kürzel, Stärke und Farbe festzulegen. Keine Zeit? Öffne den Market und lade stattdessen eine fertige Teamliste.",
       },
       players: {
         title: "Spieler hinzufügen (optional)",
@@ -173,7 +173,6 @@
     title: "Teams",
     notFound: "Team nicht gefunden.",
     addBtn: "Team hinzufügen",
-    loadDatasetTitle: "Datensatz laden",
     searchPlaceholder: "Teams durchsuchen…",
     empty: "Noch keine Teams. Klicke auf {action}, um loszulegen.",
     noMatch: "Keine Teams für „{query}“.",
@@ -551,21 +550,16 @@
     },
     sampleData: {
       withSquads: "Kader",
-      title: "Beispieldaten",
       countries: "Länder",
       clubs: "Vereine",
       uefa: "Europapokal-Wettbewerbe",
       leagues: "Ligen",
       classics: "Klassiker",
-      intro:
-        "Lade eine vorgefertigte Teamliste. Sie wird zu deinen aktuellen Teams und Turnieren hinzugefügt — nichts Vorhandenes wird gelöscht.",
       loadConfirm:
         "Datensatz „{name}“ laden? Er wird zu deinen aktuellen Teams und Turnieren hinzugefügt.",
       loadConfirmAd:
         "Datensatz „{name}“ laden? Er wird zu deinen aktuellen Teams und Turnieren hinzugefügt. Bei jedem 2. geladenen Datensatz wird eine kurze Werbevideo-Belohnung gezeigt — das hier ist einer davon.",
       loadLabel: "Laden",
-      adNotice:
-        "Beim nächsten Laden eines Datensatzes wird eine kurze Werbevideo-Belohnung angezeigt.",
       adBadge: "Werbung ansehen",
       all: "Alle",
       topClubs: "Top-Vereine",
@@ -602,7 +596,6 @@
       tournament: "Turnierregeln",
       simulation: "Simulation",
       music: "Musik",
-      sampleData: "Beispieldaten",
       data: "Daten",
     },
     tutorials: "Anleitungen",

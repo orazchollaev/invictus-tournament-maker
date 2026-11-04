@@ -84,7 +84,7 @@
     },
     squad: {
       title: "Takımlarını ekle",
-      desc: "Takım ve oyuncuları kendin ekle ya da Ayarlar'dan hazır bir liste yükle.",
+      desc: "Takım ve oyuncuları kendin ekle ya da Market'ten hazır bir set yükle.",
     },
     play: {
       title: "Oyna",
@@ -98,7 +98,7 @@
     steps: {
       teams: {
         title: "Takımlarınızı ekleyin",
-        desc: "Takımlar sekmesini açın ve isim, kısaltma, güç reytingi ve renk belirlemek için “+ Takım Ekle” seçeneğine dokunun. Aceleniz mi var? Hazır bir takım listesi yüklemek için Ayarlar → Örnek Veri bölümüne gidin.",
+        desc: "Takımlar sekmesini açın ve isim, kısaltma, güç reytingi ve renk belirlemek için “+ Takım Ekle” seçeneğine dokunun. Aceleniz mi var? Hazır bir takım listesi yüklemek için Market'i açın.",
       },
       players: {
         title: "Oyuncu ekleyin (opsiyonel)",
@@ -212,7 +212,6 @@
     title: "Takımlar",
     notFound: "Takım bulunamadı.",
     addBtn: "Takım Ekle",
-    loadDatasetTitle: "Veri Seti Yükle",
     searchPlaceholder: "Takım ara…",
     empty: "Henüz takım yok. Başlamak için {action} tıklayın.",
     noMatch: '"{query}" ile eşleşen takım yok.',
@@ -495,6 +494,9 @@
     },
   },
   market: {
+    tabBuiltin: "Hazır setler",
+    tabCommunity: "Topluluk",
+    fabLabel: "Market",
     settingsOpenLabel: "Veri setlerine göz at",
     settingsIntro: "Topluluğun hazırladığı takım listelerini indir ya da kendininkini paylaş.",
     open: "Aç",
@@ -735,19 +737,15 @@
     },
     sampleData: {
       withSquads: "Kadrolu",
-      title: "Örnek Veriler",
       countries: "Ülkeler",
       clubs: "Kulüpler",
       uefa: "Avrupa Kupaları",
       leagues: "Ligler",
       classics: "Klasikler",
-      intro:
-        "Hazır takım listesi yükleyin. Bu, mevcut takım ve turnuvalarınızın yanına eklenir — hiçbir şey silinmez.",
       loadConfirm: '"{name}" veri seti yüklensin mi? Mevcut takım ve turnuvalarınıza eklenecek.',
       loadConfirmAd:
         '"{name}" veri seti yüklensin mi? Mevcut takım ve turnuvalarınıza eklenecek. Her 2 veri setinde bir kısa bir ödüllü reklam gösterilir — bu seçim de onlardan biri.',
       loadLabel: "Yükle",
-      adNotice: "Bir sonraki veri seti yüklemenizde kısa bir ödüllü reklam gösterilecek.",
       adBadge: "Reklam izle",
       all: "Tümü",
       topClubs: "En İyi Kulüpler",
@@ -782,7 +780,6 @@
       tournament: "Turnuva Kuralları",
       simulation: "Simülasyon",
       music: "Müzik",
-      sampleData: "Örnek Veriler",
       market: "Market",
       data: "Veriler",
     },

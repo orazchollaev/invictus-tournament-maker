@@ -58,7 +58,7 @@
     steps: {
       teams: {
         title: "Tambahkan tim Anda",
-        desc: "Buka tab Tim dan ketuk “+ Tambah Tim” untuk mengatur nama, singkatan, peringkat kekuatan, dan warna. Sedang terburu-buru? Buka Pengaturan → Data Sampel untuk memuat daftar tim yang sudah jadi.",
+        desc: "Buka tab Tim dan ketuk “+ Tambah Tim” untuk mengatur nama, singkatan, kekuatan, dan warna. Buru-buru? Buka Market untuk memuat daftar tim siap pakai.",
       },
       players: {
         title: "Tambahkan pemain (opsional)",
@@ -170,7 +170,6 @@
     title: "Tim",
     notFound: "Tim tidak ditemukan.",
     addBtn: "Tambah Tim",
-    loadDatasetTitle: "Muat Dataset",
     searchPlaceholder: "Cari tim…",
     empty: "Belum ada tim. Klik {action} untuk memulai.",
     noMatch: 'Tidak ada tim untuk "{query}".',
@@ -536,20 +535,15 @@
     },
     sampleData: {
       withSquads: "Skuad",
-      title: "Data Sampel",
       countries: "Negara",
       clubs: "Klub",
       uefa: "Kompetisi Eropa",
       leagues: "Liga",
       classics: "Klasik",
-      intro:
-        "Muat daftar tim prasetel. Ini akan ditambahkan ke tim dan turnamen Anda saat ini — tidak ada yang dihapus.",
       loadConfirm:
         'Muat himpunan data "{name}"? Ini akan ditambahkan ke tim dan turnamen Anda saat ini.',
       loadConfirmAd:
         'Muat himpunan data "{name}"? Ini akan ditambahkan ke tim dan turnamen Anda saat ini. Setiap 2 himpunan data yang Anda muat akan menampilkan iklan berhadiah singkat — ini salah satunya.',
-      adNotice:
-        "Saat Anda memuat himpunan data berikutnya, iklan berhadiah singkat akan ditampilkan.",
       adBadge: "Tonton iklan",
       all: "Semua",
       topClubs: "Klub Teratas",
@@ -584,7 +578,6 @@
       tournament: "Aturan Turnamen",
       simulation: "Simulasi",
       music: "Musik",
-      sampleData: "Data Sampel",
       data: "Data",
     },
     tutorials: "Tutorial",

@@ -58,7 +58,7 @@
     steps: {
       teams: {
         title: "Adicione seus times",
-        desc: "Abra a aba Times e toque em “+ Adicionar Time” para definir nome, sigla, força e cor. Com pressa? Vá em Configurações → Dados de Exemplo para carregar uma lista de times pronta.",
+        desc: "Abra a aba Times e toque em “+ Adicionar time” para definir nome, abreviação, força e cor. Com pressa? Abra o Market para carregar uma lista de times pronta.",
       },
       players: {
         title: "Adicione jogadores (opcional)",
@@ -172,7 +172,6 @@
     title: "Times",
     notFound: "Time não encontrado.",
     addBtn: "Adicionar Time",
-    loadDatasetTitle: "Carregar conjunto de dados",
     searchPlaceholder: "Buscar times…",
     empty: "Nenhum time ainda. Clique em {action} para começar.",
     noMatch: 'Nenhum time corresponde a "{query}".',
@@ -550,20 +549,15 @@
     },
     sampleData: {
       withSquads: "Elencos",
-      title: "Dados de Exemplo",
       countries: "Países",
       clubs: "Clubes",
       uefa: "Competições europeias",
       leagues: "Ligas",
       classics: "Clássicos",
-      intro:
-        "Carrega uma lista de times pronta. Ela é adicionada aos seus times e torneios atuais — nada existente é apagado.",
       loadConfirm:
         'Carregar o conjunto de dados "{name}"? Será adicionado aos seus times e torneios atuais.',
       loadConfirmAd:
         'Carregar o conjunto de dados "{name}"? Será adicionado aos seus times e torneios atuais. A cada 2 conjuntos de dados carregados, um anúncio recompensado rápido é exibido — este é um deles.',
-      adNotice:
-        "Na próxima vez que você carregar um conjunto de dados, um anúncio recompensado rápido será exibido.",
       adBadge: "Assistir anúncio",
       all: "Todos",
       topClubs: "Melhores clubes",
@@ -599,7 +593,6 @@
       tournament: "Regras do Torneio",
       simulation: "Simulação",
       music: "Música",
-      sampleData: "Dados de Exemplo",
       data: "Dados",
     },
     tutorials: "Tutoriais",

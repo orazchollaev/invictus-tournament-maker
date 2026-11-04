@@ -56,7 +56,7 @@
     steps: {
       teams: {
         title: "Thêm các đội của bạn",
-        desc: "Mở tab Đội và nhấn “+ Thêm đội” để đặt tên, viết tắt, chỉ số sức mạnh và màu sắc. Nếu cần nhanh, vào Cài đặt → Dữ liệu mẫu để tải danh sách đội có sẵn.",
+        desc: "Mở tab Đội và chạm “+ Thêm đội” để đặt tên, viết tắt, sức mạnh và màu sắc. Đang vội? Mở Market để tải danh sách đội có sẵn.",
       },
       players: {
         title: "Thêm cầu thủ (tùy chọn)",
@@ -169,7 +169,6 @@
     title: "Đội",
     notFound: "Không tìm thấy đội.",
     addBtn: "Thêm đội",
-    loadDatasetTitle: "Tải bộ dữ liệu",
     searchPlaceholder: "Tìm kiếm đội…",
     empty: "Chưa có đội. Nhấn {action} để bắt đầu.",
     noMatch: 'Không có đội phù hợp với "{query}".',
@@ -535,19 +534,15 @@
     },
     sampleData: {
       withSquads: "Đội hình",
-      title: "Dữ liệu mẫu",
       countries: "Quốc gia",
       clubs: "Câu lạc bộ",
       uefa: "Các giải đấu châu Âu",
       leagues: "Giải VĐQG",
       classics: "Kinh điển",
-      intro:
-        "Tải danh sách đội có sẵn. Dữ liệu này sẽ được thêm vào các đội và giải đấu hiện tại của bạn — không có gì bị xóa.",
       loadConfirm:
         'Tải bộ dữ liệu "{name}"? Dữ liệu này sẽ được thêm vào các đội và giải đấu hiện tại của bạn.',
       loadConfirmAd:
         'Tải bộ dữ liệu "{name}"? Dữ liệu này sẽ được thêm vào các đội và giải đấu hiện tại của bạn. Cứ mỗi 2 bộ dữ liệu bạn tải, một quảng cáo có thưởng ngắn sẽ hiện ra — đây là một trong số đó.',
-      adNotice: "Lần tải bộ dữ liệu tiếp theo sẽ hiển thị một quảng cáo có thưởng ngắn.",
       adBadge: "Xem quảng cáo",
       all: "Tất cả",
       topClubs: "CLB hàng đầu",
@@ -582,7 +577,6 @@
       tournament: "Luật giải đấu",
       simulation: "Mô phỏng",
       music: "Âm nhạc",
-      sampleData: "Dữ liệu mẫu",
       data: "Dữ liệu",
     },
     tutorials: "Hướng dẫn",

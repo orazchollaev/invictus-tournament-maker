@@ -56,7 +56,7 @@
     steps: {
       teams: {
         title: "팀 추가하기",
-        desc: "팀 탭을 열고 “+ 팀 추가”를 눌러 이름, 약어, 전력 지수, 색상을 설정하세요. 급하다면 설정 → 샘플 데이터에서 미리 만들어진 팀 목록을 불러오세요.",
+        desc: "팀 탭을 열고 “+ 팀 추가”를 눌러 이름, 약어, 전력, 색상을 설정하세요. 급하다면 마켓을 열어 준비된 팀 목록을 불러오세요.",
       },
       players: {
         title: "선수 추가하기 (선택)",
@@ -168,7 +168,6 @@
     title: "팀",
     notFound: "팀을 찾을 수 없습니다.",
     addBtn: "팀 추가",
-    loadDatasetTitle: "데이터셋 불러오기",
     searchPlaceholder: "팀 검색…",
     empty: "아직 팀이 없습니다. {action}을(를) 눌러 시작하세요.",
     noMatch: '"{query}"와(과) 일치하는 팀이 없습니다.',
@@ -534,18 +533,14 @@
     },
     sampleData: {
       withSquads: "선수단",
-      title: "샘플 데이터",
       countries: "국가",
       clubs: "클럽",
       uefa: "유럽 대항전",
       leagues: "리그",
       classics: "클래식",
-      intro:
-        "미리 만들어진 팀 목록을 불러옵니다. 현재 팀과 토너먼트에 추가되며, 기존 데이터는 삭제되지 않습니다.",
       loadConfirm: '"{name}" 데이터셋을 불러오시겠습니까? 현재 팀과 토너먼트에 추가됩니다.',
       loadConfirmAd:
         '"{name}" 데이터셋을 불러오시겠습니까? 현재 팀과 토너먼트에 추가됩니다. 데이터셋을 2번 불러올 때마다 짧은 보상형 광고가 표시됩니다 — 이번이 그중 하나입니다.',
-      adNotice: "다음 데이터셋을 불러올 때 짧은 보상형 광고가 표시됩니다.",
       adBadge: "광고 보기",
       all: "전체",
       topClubs: "최고의 클럽",
@@ -580,7 +575,6 @@
       tournament: "토너먼트 규칙",
       simulation: "시뮬레이션",
       music: "음악",
-      sampleData: "샘플 데이터",
       data: "데이터",
     },
     tutorials: "튜토리얼",

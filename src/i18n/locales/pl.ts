@@ -56,7 +56,7 @@
     steps: {
       teams: {
         title: "Dodaj swoje drużyny",
-        desc: "Otwórz zakładkę Drużyny i dotknij „+ Dodaj drużynę”, aby ustawić nazwę, skrót, siłę i kolor. Spieszy Ci się? Przejdź do Ustawienia → Dane przykładowe, aby wczytać gotową listę drużyn.",
+        desc: "Otwórz kartę Drużyny i stuknij „+ Dodaj drużynę”, aby ustawić nazwę, skrót, siłę i kolor. Spieszysz się? Otwórz Market i wczytaj gotową listę drużyn.",
       },
       players: {
         title: "Dodaj zawodników (opcjonalnie)",
@@ -168,7 +168,6 @@
     title: "Drużyny",
     notFound: "Nie znaleziono drużyny.",
     addBtn: "Dodaj drużynę",
-    loadDatasetTitle: "Wczytaj zestaw danych",
     searchPlaceholder: "Szukaj drużyn…",
     empty: "Brak drużyn. Kliknij {action}, aby zacząć.",
     noMatch: 'Brak drużyn pasujących do "{query}".',
@@ -534,19 +533,15 @@
     },
     sampleData: {
       withSquads: "Składy",
-      title: "Dane przykładowe",
       countries: "Kraje",
       clubs: "Kluby",
       uefa: "Rozgrywki europejskie",
       leagues: "Ligi",
       classics: "Klasyki",
-      intro:
-        "Wczytaj gotową listę drużyn. Zostanie dodana do Twoich obecnych drużyn i turniejów — nic istniejącego nie zostanie usunięte.",
       loadConfirm:
         'Wczytać zestaw danych "{name}"? Zostanie dodany do Twoich obecnych drużyn i turniejów.',
       loadConfirmAd:
         'Wczytać zestaw danych "{name}"? Zostanie dodany do Twoich obecnych drużyn i turniejów. Co 2. wczytany zestaw danych pokazuje krótką reklamę z nagrodą — to jest jedna z nich.',
-      adNotice: "Przy następnym wczytaniu zestawu danych pojawi się krótka reklama z nagrodą.",
       adBadge: "Obejrzyj reklamę",
       all: "Wszystkie",
       topClubs: "Najlepsze kluby",
@@ -581,7 +576,6 @@
       tournament: "Zasady turnieju",
       simulation: "Symulacja",
       music: "Muzyka",
-      sampleData: "Dane przykładowe",
       data: "Dane",
     },
     tutorials: "Samouczki",

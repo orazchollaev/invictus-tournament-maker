@@ -84,7 +84,7 @@
     },
     squad: {
       title: "Bring your teams",
-      desc: "Add teams and players yourself, or load a ready-made set from Settings.",
+      desc: "Add teams and players yourself, or load a ready-made set from the Market.",
     },
     play: {
       title: "Play it out",
@@ -97,7 +97,7 @@
     steps: {
       teams: {
         title: "Add your teams",
-        desc: "Open the Teams tab and tap “+ Add Team” to set a name, abbreviation, power rating and color. In a hurry? Go to Settings → Sample Data to load a ready-made team list instead.",
+        desc: "Open the Teams tab and tap “+ Add Team” to set a name, abbreviation, power rating and color. In a hurry? Open the Market to load a ready-made team list instead.",
       },
       players: {
         title: "Add players (optional)",
@@ -210,7 +210,6 @@
     title: "Teams",
     notFound: "Team not found.",
     addBtn: "Add Team",
-    loadDatasetTitle: "Load Dataset",
     searchPlaceholder: "Search teams…",
     empty: "No teams yet. Click {action} to get started.",
     noMatch: 'No teams match "{query}".',
@@ -493,6 +492,9 @@
     },
   },
   market: {
+    tabBuiltin: "Built-in",
+    tabCommunity: "Community",
+    fabLabel: "Market",
     settingsOpenLabel: "Browse datasets",
     settingsIntro: "Download team lists made by the community, or share your own.",
     open: "Open",
@@ -732,19 +734,15 @@
     },
     sampleData: {
       withSquads: "Squads",
-      title: "Sample Data",
       countries: "Countries",
       clubs: "Clubs",
       uefa: "European Competitions",
       leagues: "Leagues",
       classics: "Classics",
-      intro:
-        "Load a preset team list. This is added alongside your current teams and tournaments — nothing existing gets deleted.",
       loadConfirm: 'Load "{name}" dataset? It will be added to your current teams and tournaments.',
       loadConfirmAd:
         'Load "{name}" dataset? It will be added to your current teams and tournaments. A short rewarded ad plays every 2nd dataset you load — this is one of them.',
       loadLabel: "Load",
-      adNotice: "Your next dataset load will show a short rewarded ad.",
       adBadge: "Watch ad",
       all: "All",
       topClubs: "Top Clubs",
@@ -779,7 +777,6 @@
       tournament: "Tournament Rules",
       simulation: "Simulation",
       music: "Music",
-      sampleData: "Sample Data",
       market: "Market",
       data: "Data",
     },

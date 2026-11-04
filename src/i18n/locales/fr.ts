@@ -57,7 +57,7 @@
     steps: {
       teams: {
         title: "Ajoutez vos équipes",
-        desc: "Ouvrez l'onglet « Équipes » et appuyez sur « + Ajouter une équipe » pour définir un nom, une abréviation, une puissance et une couleur. Pressé ? Chargez plutôt une liste d'équipes prête à l'emploi depuis Paramètres → Données d'exemple.",
+        desc: "Ouvrez l'onglet Équipes et touchez « + Ajouter une équipe » pour définir le nom, l'abréviation, la puissance et la couleur. Pressé ? Ouvrez le Market pour charger une liste d'équipes toute prête.",
       },
       players: {
         title: "Ajoutez des joueurs (facultatif)",
@@ -171,7 +171,6 @@
     title: "Équipes",
     notFound: "Équipe introuvable.",
     addBtn: "Ajouter une équipe",
-    loadDatasetTitle: "Charger un jeu de données",
     searchPlaceholder: "Rechercher des équipes…",
     empty: "Aucune équipe pour l'instant. Cliquez sur {action} pour commencer.",
     noMatch: "Aucune équipe pour « {query} ».",
@@ -549,20 +548,15 @@
     },
     sampleData: {
       withSquads: "Effectifs",
-      title: "Données d’exemple",
       countries: "Pays",
       clubs: "Clubs",
       uefa: "Compétitions européennes",
       leagues: "Championnats",
       classics: "Classiques",
-      intro:
-        "Chargez une liste d'équipes prédéfinie. Elle s'ajoute à vos équipes et tournois actuels — rien n'est supprimé.",
       loadConfirm:
         "Charger le jeu de données « {name} » ? Il sera ajouté à vos équipes et tournois actuels.",
       loadConfirmAd:
         "Charger le jeu de données « {name} » ? Il sera ajouté à vos équipes et tournois actuels. Une courte publicité récompensée s'affiche tous les 2 jeux de données chargés — celui-ci en fait partie.",
-      adNotice:
-        "Le prochain chargement d'un jeu de données affichera une courte publicité récompensée.",
       adBadge: "Voir la pub",
       all: "Tous",
       topClubs: "Meilleurs clubs",
@@ -599,7 +593,6 @@
       tournament: "Règles du tournoi",
       simulation: "Simulation",
       music: "Musique",
-      sampleData: "Données d’exemple",
       data: "Données",
     },
     tutorials: "Tutoriels",
