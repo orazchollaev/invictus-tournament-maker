@@ -1,9 +1,9 @@
 import { defineStore } from "pinia"
-import { ref } from "vue"
+import { computed, ref } from "vue"
 import type { Player, PlayerPosition } from "./types"
 import { DEFAULT_FIRST_NAMES, DEFAULT_LAST_NAMES } from "./constants"
 import { uid } from "@/engine"
-import { randomFace, type FaceConfig } from "@/lib/faces"
+import type { FaceConfig } from "@/lib/faces"
 
 export const usePlayersStore = defineStore("players", () => {
   const players = ref<Player[]>([])
@@ -58,6 +58,26 @@ export const usePlayersStore = defineStore("players", () => {
     return n >= 1 && n <= 99 ? n : undefined
   }
 
+  /**
+   * Players added without a face get a random one as soon as facesjs has
+   * loaded. It is a large library and this store is needed at launch, so it
+   * is not imported until a face is actually wanted; one load serves a whole
+   * batch, so "Generate Players" pays for it once.
+   */
+  const faceless = new Set<string>()
+  let faceFill: Promise<void> | null = null
+
+  function queueRandomFace(id: string) {
+    faceless.add(id)
+    faceFill ??= import("@/lib/faces").then(({ randomFace }) => {
+      faceFill = null
+      for (const p of players.value) {
+        if (faceless.has(p.id) && !p.face) p.face = randomFace()
+      }
+      faceless.clear()
+    })
+  }
+
   function add(
     teamId: string,
     name: string,
@@ -65,19 +85,21 @@ export const usePlayersStore = defineStore("players", () => {
     power: number,
     number?: number,
     image?: string,
-    face: FaceConfig = randomFace()
+    face?: FaceConfig
   ) {
     const shirt = clampNumber(number)
+    const id = uid()
     players.value.push({
-      id: uid(),
+      id,
       teamId,
       name,
       position,
       power: clampPower(power),
       ...(shirt !== undefined ? { number: shirt } : {}),
       ...(image ? { image } : {}),
-      face,
+      ...(face ? { face } : {}),
     })
+    if (!face) queueRandomFace(id)
   }
 
   /** Bulk-add for "Generate Players" — reuses `add` so ids/power-clamping stay identical. */
@@ -111,13 +133,31 @@ export const usePlayersStore = defineStore("players", () => {
     if (!p.face) delete p.face
   }
 
+  /**
+   * Built once per change to the roster. `byId` is called per line of every
+   * match report a stats table walks, so a linear search there made a
+   * 60-team league's player rankings scan the whole roster thousands of times.
+   */
+  const index = computed(() => {
+    const ids = new Map<string, Player>()
+    const teams = new Map<string, Player[]>()
+    for (const p of players.value) {
+      if (!ids.has(p.id)) ids.set(p.id, p) // first wins, as `find` did
+      const squad = teams.get(p.teamId)
+      if (squad) squad.push(p)
+      else teams.set(p.teamId, [p])
+    }
+    return { ids, teams }
+  })
+
   function byTeam(teamId: string) {
-    return players.value.filter((p) => p.teamId === teamId)
+    // A copy: callers sort and filter what they get back.
+    return index.value.teams.get(teamId)?.slice() ?? []
   }
 
   function byId(id: string | null | undefined) {
     if (!id) return undefined
-    return players.value.find((p) => p.id === id)
+    return index.value.ids.get(id)
   }
 
   return {
