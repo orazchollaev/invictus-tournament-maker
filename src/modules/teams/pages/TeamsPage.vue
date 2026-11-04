@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { MarketBanner } from "@/modules/market/components"
 import { ref, computed, watch } from "vue"
 import { useRouter } from "vue-router"
 import { useTeamsStore } from "../store"
@@ -124,6 +125,8 @@ const pagedTeams = computed(() => {
         </AppButton>
       </div>
     </div>
+
+    <MarketBanner />
 
     <div v-if="store.teams.length" class="search-row">
       <AppSearchInput v-model="query" :placeholder="t('teams.searchPlaceholder')" />

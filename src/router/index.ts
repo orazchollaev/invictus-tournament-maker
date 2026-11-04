@@ -72,6 +72,7 @@ const router = createRouter({
     },
 
     { path: "/settings", component: () => import("../modules/settings/pages/SettingsPage.vue") },
+    { path: "/market", component: () => import("../modules/market/pages/MarketPage.vue") },
 
     { path: "/guide", component: () => import("../modules/core/pages/GuidePage.vue") },
 

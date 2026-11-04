@@ -12,7 +12,9 @@ import {
   History,
   Medal,
   ChevronRight,
+  Store,
 } from "@lucide/vue"
+import { isMarketAvailable } from "@/modules/market/services/authService"
 import { AppCard, AppEmptyState, AppIcon, AppSearchInput } from "@/components/ui"
 import { FlagCircle } from "@/modules/teams/components"
 import { SAMPLE_DATASETS, useDataManagement } from "../composables/useDataManagement"
@@ -120,6 +122,11 @@ function flagPreview(ds: (typeof SAMPLE_DATASETS)[number]) {
     </template>
 
     <p class="section-intro">{{ t("settings.sampleData.intro") }}</p>
+    <RouterLink v-if="isMarketAvailable" to="/market" class="market-link">
+      <AppIcon :icon="Store" size="sm" />
+      {{ t("market.settingsLink") }}
+      <AppIcon :icon="ChevronRight" size="sm" />
+    </RouterLink>
     <p v-if="nextSelectionShowsAd" class="ad-notice">
       <AppIcon :icon="CirclePlay" size="sm" />
       {{ t("settings.sampleData.adNotice") }}
@@ -479,5 +486,22 @@ function flagPreview(ds: (typeof SAMPLE_DATASETS)[number]) {
   background: var(--accent-subtle);
   border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
   color: var(--accent);
+}
+
+.market-link {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-3);
+  padding: var(--sp-2) var(--sp-3);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  color: var(--accent);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.market-link :deep(svg:last-child) {
+  margin-inline-start: auto;
 }
 </style>

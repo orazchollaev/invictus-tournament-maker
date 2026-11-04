@@ -1,0 +1,81 @@
+rules_version = '2';
+
+// Dataset market. Paste into Firebase console → Firestore → Rules → Publish.
+// Keep the limits in sync with src/modules/market/constants.ts.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function text(v, max) {
+      return v is string && v.size() > 0 && v.size() <= max;
+    }
+
+    // Public listing entry: a few hundred bytes, read by everyone.
+    match /datasets/{id} {
+      allow read: if true;
+
+      allow create: if signedIn()
+        && request.resource.data.keys().hasAll([
+          'label', 'description', 'type', 'teamCount', 'playerCount',
+          'authorUid', 'authorName', 'downloads', 'createdAt'
+        ])
+        && request.resource.data.keys().hasOnly([
+          'label', 'description', 'type', 'category', 'teamCount', 'playerCount',
+          'authorUid', 'authorName', 'downloads', 'createdAt'
+        ])
+        && request.resource.data.authorUid == request.auth.uid
+        && text(request.resource.data.label, 40)
+        && text(request.resource.data.description, 200)
+        && text(request.resource.data.authorName, 60)
+        && request.resource.data.type in ['country', 'club']
+        && (!('category' in request.resource.data)
+            || request.resource.data.category in ['league', 'classic', 'ranking'])
+        && request.resource.data.teamCount is int
+        && request.resource.data.teamCount >= 1
+        && request.resource.data.teamCount <= 128
+        && request.resource.data.playerCount is int
+        && request.resource.data.playerCount >= 0
+        && request.resource.data.playerCount <= 4000
+        && request.resource.data.downloads == 0
+        && request.resource.data.createdAt == request.time;
+
+      // The only change anyone may make: bump the download counter by one.
+      allow update: if signedIn()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['downloads'])
+        && request.resource.data.downloads == resource.data.downloads + 1;
+
+      allow delete: if signedIn() && resource.data.authorUid == request.auth.uid;
+    }
+
+    // The gzip + base64 dataset itself. Only read when someone taps Download.
+    match /payloads/{id} {
+      allow read: if true;
+
+      // Must be written in the same batch as its listing entry, by the same user.
+      allow create: if signedIn()
+        && request.resource.data.keys().hasOnly(['authorUid', 'data'])
+        && request.resource.data.authorUid == request.auth.uid
+        && request.resource.data.data is string
+        && request.resource.data.data.size() > 0
+        && request.resource.data.data.size() <= 900000
+        && getAfter(/databases/$(database)/documents/datasets/$(id)).data.authorUid == request.auth.uid;
+
+      allow delete: if signedIn() && resource.data.authorUid == request.auth.uid;
+    }
+
+    // Write-only for clients; read them in the console. One report per user per dataset.
+    match /reports/{id} {
+      allow read: if false;
+      allow create: if signedIn()
+        && request.resource.data.keys().hasOnly(['datasetId', 'reporterUid', 'reason', 'createdAt'])
+        && request.resource.data.reporterUid == request.auth.uid
+        && request.resource.data.datasetId is string
+        && id == request.resource.data.datasetId + '_' + request.auth.uid
+        && request.resource.data.reason in ['spam', 'copyright', 'offensive', 'other']
+        && request.resource.data.createdAt == request.time;
+    }
+  }
+}
