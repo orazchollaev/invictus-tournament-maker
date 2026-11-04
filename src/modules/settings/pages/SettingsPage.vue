@@ -216,12 +216,12 @@ function selectCategory(id: Category) {
 
       <div class="settings-panel">
         <div class="support-card">
-          <Heart :size="22" class="support-card-icon" />
+          <Heart :size="18" class="support-card-icon" />
           <div class="support-card-text">
             <strong>{{ t("settings.support.title") }}</strong>
             <span>{{ t("settings.support.bannerText") }}</span>
           </div>
-          <AppButton variant="filled" size="md" @click="openSupport('settings')">
+          <AppButton variant="tonal" size="sm" @click="openSupport('settings')">
             {{ t("settings.support.button") }}
           </AppButton>
         </div>
@@ -330,16 +330,18 @@ function selectCategory(id: Category) {
   outline-offset: 2px;
 }
 
-/* ── Support card ── */
+/* ── Support card ──
+   A quiet strip, not a banner: neutral surface, one line of text, small button
+   that stays beside the text on phones instead of stretching across a new row. */
 .support-card {
   display: flex;
   align-items: center;
   gap: var(--sp-3);
   margin-bottom: var(--sp-4);
-  padding: var(--sp-3) var(--sp-4);
-  border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
-  border-radius: var(--radius);
-  background: var(--accent-subtle);
+  padding: var(--sp-2) var(--sp-3);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
 }
 .support-card-icon {
   flex-shrink: 0;
@@ -350,24 +352,23 @@ function selectCategory(id: Category) {
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  font-size: var(--fs-sm);
+  font-size: var(--fs-xs);
+  line-height: 1.35;
   color: var(--text-muted);
 }
 .support-card-text strong {
-  font-size: var(--fs-base);
+  font-size: var(--fs-sm);
   color: var(--text);
 }
-@media (max-width: 600px) {
-  .support-card {
-    flex-wrap: wrap;
-  }
-  .support-card-text {
-    flex-basis: calc(100% - 40px);
-  }
-  .support-card :deep(.btn) {
-    width: 100%;
-  }
+.support-card-text span {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.support-card :deep(.btn) {
+  flex-shrink: 0;
 }
 
 /* ── Panel content ── */
