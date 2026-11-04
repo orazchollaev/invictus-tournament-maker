@@ -62,7 +62,7 @@ export const useSettingsStore = defineStore("settings", () => {
   const winPoints = ref(3)
   const drawPoints = ref(1)
   const lossPoints = ref(0)
-  const gradualReveal = ref(true)
+  const gradualReveal = ref(false)
   const autoAdvanceFixtureStage = ref(true)
   const liveMatchSpeed = ref<LiveMatchSpeed>(2)
   const tournamentListView = ref<TournamentListView>("list")
@@ -184,7 +184,7 @@ export const useSettingsStore = defineStore("settings", () => {
     winPoints.value = 3
     drawPoints.value = 1
     lossPoints.value = 0
-    gradualReveal.value = true
+    gradualReveal.value = false
     autoAdvanceFixtureStage.value = true
     liveMatchSpeed.value = 2
     tournamentListView.value = "list"
