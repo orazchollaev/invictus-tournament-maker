@@ -5,7 +5,8 @@
 // third responsibility -- if an action needs more than dispatching across
 // slices, it belongs in a slice.
 import { defineStore } from "pinia"
-import { reactive, ref, watch, nextTick } from "vue"
+import { reactive, ref, watch, nextTick, toRaw } from "vue"
+import type { Ref } from "vue"
 import type { Tournament, Tiebreaker, LegMode } from "../types"
 import {
   loadTournaments,
@@ -26,7 +27,7 @@ import {
   markLegacyMatchStats,
   claimWatchedStats,
   pendingStatsJobs,
-  computeStatsForJob,
+  computeStatsForJobs,
   applyStatsResults,
 } from "@/engine"
 import type { MatchEntry } from "@/engine"
@@ -34,6 +35,7 @@ import { generateStatsInWorker } from "@/engine/events/statsWorkerClient"
 import { useTeamsStore } from "@/modules/teams/store"
 import { usePlayersStore } from "@/modules/players/store"
 import { makeWithTournament, assertNoSliceCollisions } from "./helpers"
+import { clonePlain, patchInto } from "./draft"
 import { useCrudActions } from "./crud"
 import { useBracketActions } from "./bracket"
 import { useThirdPlaceActions } from "./third-place"
@@ -64,14 +66,18 @@ export const useTournamentStore = defineStore(
 
     /**
      * `tournaments` no longer goes through pinia-plugin-persistedstate-2 —
-     * see persistence.ts for why. This is its replacement: one deep watcher
-     * per tournament, each writing only that tournament's own record, plus
-     * a shallow watcher on the list itself for tournaments being added or
-     * removed. A save or a draw only ever touches one tournament, so this is
-     * the whole fix — the cost of persisting it no longer depends on how
-     * many other tournaments (or how much match history) already exist.
+     * see persistence.ts for why. A shallow watcher on the list writes
+     * tournaments being added or removed; edits to one mark it unsaved from
+     * `mutate`, which every action runs through and which already knows
+     * whether its patch changed anything.
+     *
+     * That used to be one deep watcher per tournament. A deep watcher re-walks
+     * its whole object through the reactive proxies every time anything in it
+     * changes — measured at ~75 ms per result in a 60-team league on a
+     * desktop, after every single action — and the first walk turned every
+     * stored match of every tournament into a proxy at launch.
      */
-    const stopWatchers = new Map<string, () => void>()
+    const knownIds = new Set<string>()
 
     /**
      * Tournaments with changes that are not on disk. Edits are no longer written as
@@ -82,18 +88,17 @@ export const useTournamentStore = defineStore(
      */
     const dirtyIds = reactive(new Set<string>())
 
-    function watchTournament(t: Tournament) {
-      if (stopWatchers.has(t.id)) return
-      stopWatchers.set(
-        t.id,
-        watch(
-          () => t,
-          () => {
-            if (hydrated.value) dirtyIds.add(t.id)
-          },
-          { deep: true, flush: "post" }
-        )
-      )
+    /**
+     * Bumped each time an action changes a tournament. A view that aggregates a
+     * whole tournament (player rankings, the participants table) reads this one
+     * number to know when to recompute, and then reads the tournament raw --
+     * through the proxies, the walk itself cost more than the arithmetic and
+     * subscribed the view to every field of every match.
+     */
+    const revisions = reactive(new Map<string, number>())
+
+    function revision(id: string): number {
+      return revisions.get(id) ?? 0
     }
 
     // Watching `tournaments` (a ref) directly only fires when `.value` is
@@ -102,24 +107,23 @@ export const useTournamentStore = defineStore(
     // added or removed silently missed this watcher entirely. Watching a
     // getter that reads each id instead ties the trigger to the one thing
     // that actually needs to be caught: the *set* of tournaments changing.
-    // It also stays cheap and leaves content mutations to the per-item
-    // watchers below, which is what `deep: true` here would have muddled.
+    // It also stays cheap and leaves content changes to `mutate`, which is
+    // what `deep: true` here would have muddled.
     watch(
       () => tournaments.value.map((t) => t.id),
       () => {
         const list = tournaments.value
         const liveIds = new Set(list.map((t) => t.id))
-        for (const [id, stop] of stopWatchers) {
+        for (const id of knownIds) {
           if (!liveIds.has(id)) {
-            stop()
-            stopWatchers.delete(id)
+            knownIds.delete(id)
             dirtyIds.delete(id)
             if (hydrated.value) deleteTournamentRecord(id)
           }
         }
         for (const t of list) {
-          if (!stopWatchers.has(t.id)) {
-            watchTournament(t)
+          if (!knownIds.has(t.id)) {
+            knownIds.add(t.id)
             if (hydrated.value) void saveTournament(t)
           }
         }
@@ -183,15 +187,79 @@ export const useTournamentStore = defineStore(
       if (hydrated.value) saveMeta(a, s)
     })
 
+    // Raw, not the reactive store arrays: the engine only reads teams and
+    // players, and it reads them for every match it plays, so a proxy per read
+    // was a large share of a big simulation's cost. See ./draft.ts.
     function getTeams() {
-      return useTeamsStore().teams
+      return toRaw(useTeamsStore().teams)
     }
 
     function getPlayers() {
-      return usePlayersStore().players
+      return toRaw(usePlayersStore().players)
     }
 
-    const withTournament = makeWithTournament(tournaments)
+    /**
+     * The list every action reads. Outside an action it is `tournaments`
+     * itself. Inside one it is a copy of the list in which the tournament being
+     * changed is replaced by its draft -- a plain deep copy the engine can
+     * mutate at full speed. When the outermost action returns, the draft's
+     * differences are written back through the reactive object in one pass
+     * (see `mutate` and ./draft.ts).
+     */
+    let workingList: Tournament[] | null = null
+    const working = {
+      get value(): Tournament[] {
+        return workingList ?? tournaments.value
+      },
+      set value(list: Tournament[]) {
+        if (workingList) workingList = list
+        else tournaments.value = list
+      },
+    } as Ref<Tournament[]>
+
+    /**
+     * Run `fn` against a draft of tournament `id`, then commit the draft.
+     * Nested calls (an action dispatching to another) share the outer draft.
+     * A throw discards the draft, so a half-finished action leaves nothing
+     * behind.
+     */
+    function mutate<T>(id: unknown, fn: () => T): T {
+      if (workingList || typeof id !== "string") return fn()
+      const list = tournaments.value
+      const idx = list.findIndex((x) => x.id === id)
+      if (idx < 0) return fn()
+
+      const live = list[idx]
+      const base = toRaw(live)
+      const draft = clonePlain(base)
+      const draftList = [...list]
+      draftList[idx] = draft
+      workingList = draftList
+
+      let result: T
+      let finalList: Tournament[]
+      try {
+        result = fn()
+      } finally {
+        // Read before clearing: an action may have replaced the list itself.
+        finalList = workingList
+        workingList = null
+      }
+
+      if (patchInto(live, base, draft)) {
+        revisions.set(id, revision(id) + 1)
+        if (hydrated.value) dirtyIds.add(id)
+      }
+
+      // An action that added or removed a tournament changed the list too.
+      const nextList = finalList.map((x) => (x === draft ? live : x))
+      if (nextList.length !== list.length || nextList.some((x, i) => toRaw(x) !== toRaw(list[i]))) {
+        tournaments.value = nextList
+      }
+      return result
+    }
+
+    const withTournament = makeWithTournament(working)
 
     /**
      * Fill in match events for anything just played. Results are committed
@@ -221,20 +289,21 @@ export const useTournamentStore = defineStore(
     const statsInFlight = new Set<string>()
 
     function ensureStatsFor(tournamentId: string) {
-      const t = tournaments.value.find((x) => x.id === tournamentId)
+      mutate(tournamentId, () => sweepStats(tournamentId))
+    }
+
+    function sweepStats(tournamentId: string) {
+      const t = working.value.find((x) => x.id === tournamentId)
       if (!t) return
       claimWatchedStats(t)
       const jobs = pendingStatsJobs(t, statsInFlight)
       if (!jobs.length) return
 
       const teams = getTeams()
-      const players = usePlayersStore().players
+      const players = getPlayers()
 
       if (jobs.length < WORKER_WORTHWHILE_JOBS) {
-        applyStatsResults(
-          t,
-          jobs.map((job) => computeStatsForJob(job, teams, players))
-        )
+        applyStatsResults(t, computeStatsForJobs(jobs, teams, players))
         return
       }
 
@@ -242,12 +311,23 @@ export const useTournamentStore = defineStore(
       for (const key of keys) statsInFlight.add(key)
       generateStatsInWorker(jobs, teams, players).then((results) => {
         for (const key of keys) statsInFlight.delete(key)
-        const target = tournaments.value.find((x) => x.id === tournamentId)
-        if (target) applyStatsResults(target, results)
+        mutate(tournamentId, () => {
+          const target = working.value.find((x) => x.id === tournamentId)
+          if (target) applyStatsResults(target, results)
+        })
       })
     }
 
     type ActionSlice = Record<string, (...args: never[]) => unknown>
+
+    /** Slice functions that only read. */
+    const QUERIES = new Set([
+      "getById",
+      "isTournamentFinished",
+      "hasAnyResults",
+      "isGroupsDone",
+      "canStartPlayoff",
+    ])
 
     /**
      * Every slice action takes the tournament id first, so the wrapper knows
@@ -258,11 +338,19 @@ export const useTournamentStore = defineStore(
     function withStats<T extends ActionSlice>(slice: T): T {
       const wrapped: ActionSlice = {}
       for (const [name, action] of Object.entries(slice)) {
-        wrapped[name] = (...args: never[]) => {
-          const out = action(...args)
-          if (typeof args[0] === "string") ensureStatsFor(args[0])
-          return out
+        // Queries are called from computeds on every render: they must read
+        // the reactive object (so they are tracked) and must not sweep, which
+        // walks every match and may write.
+        if (QUERIES.has(name)) {
+          wrapped[name] = action
+          continue
         }
+        wrapped[name] = (...args: never[]) =>
+          mutate(args[0], () => {
+            const out = action(...args)
+            if (typeof args[0] === "string") sweepStats(args[0])
+            return out
+          })
       }
       return wrapped as T
     }
@@ -317,7 +405,7 @@ export const useTournamentStore = defineStore(
 
     function isManagerBlocked(tournamentId: unknown): boolean {
       if (typeof tournamentId !== "string") return false
-      const t = tournaments.value.find((x) => x.id === tournamentId)
+      const t = working.value.find((x) => x.id === tournamentId)
       return !!t?.manager && hasPendingManagedFixture(t)
     }
 
@@ -331,16 +419,16 @@ export const useTournamentStore = defineStore(
       return wrapped as T
     }
 
-    const thirdPlace = useThirdPlaceActions(tournaments, getTeams)
-    const crud = useCrudActions(tournaments, active, getTeams)
-    const bracket = useBracketActions(tournaments, getTeams, thirdPlace.simulateThirdPlace)
-    const groups = useGroupActions(tournaments, getTeams)
-    const draw = useDrawActions(tournaments, getTeams)
-    const leagueActions = useLeagueActions(tournaments, getTeams)
-    const leaguePlayoff = useLeaguePlayoffActions(tournaments, getTeams)
-    const scoring = useScoringActions(tournaments)
-    const manager = useManagerActions(tournaments, getTeams, getPlayers)
-    const phases = usePhasesActions(tournaments, getTeams)
+    const thirdPlace = useThirdPlaceActions(working, getTeams)
+    const crud = useCrudActions(working, active, getTeams)
+    const bracket = useBracketActions(working, getTeams, thirdPlace.simulateThirdPlace)
+    const groups = useGroupActions(working, getTeams)
+    const draw = useDrawActions(working, getTeams)
+    const leagueActions = useLeagueActions(working, getTeams)
+    const leaguePlayoff = useLeaguePlayoffActions(working, getTeams)
+    const scoring = useScoringActions(working)
+    const manager = useManagerActions(working, getTeams, getPlayers)
+    const phases = usePhasesActions(working, getTeams)
 
     if (import.meta.env.DEV) {
       assertNoSliceCollisions({
@@ -367,7 +455,7 @@ export const useTournamentStore = defineStore(
       drawPoints?: number,
       lossPoints?: number
     ): string {
-      const allTeams = useTeamsStore().teams
+      const allTeams = getTeams()
       const season =
         tournaments.value
           .filter((t) => t.name === name)
@@ -404,7 +492,7 @@ export const useTournamentStore = defineStore(
       penHome?: number,
       penAway?: number
     ) {
-      const t = tournaments.value.find((x) => x.id === tournamentId)
+      const t = working.value.find((x) => x.id === tournamentId)
       if (!t) return
       const src = entry.source
       const id = entry.match.id
@@ -691,9 +779,13 @@ export const useTournamentStore = defineStore(
       // data from an old build, a partial write) must not stop the rest of
       // the archive from being stamped, or the app from mounting at all —
       // see the try/catch around this call in main.ts.
-      for (const t of tournaments.value) {
+      for (const { id } of tournaments.value) {
         try {
-          markLegacyMatchStats(t)
+          // Through `mutate`, so a tournament that got stamped is marked unsaved.
+          mutate(id, () => {
+            const t = working.value.find((x) => x.id === id)
+            if (t) markLegacyMatchStats(t)
+          })
         } catch {}
       }
       statsMigrated.value = true
@@ -706,6 +798,7 @@ export const useTournamentStore = defineStore(
       hydrate,
       saveNow,
       hasUnsaved,
+      revision,
       ...withStats(crud),
       ...withStats(withManagerGuard(bracket)),
       ...withStats(withManagerGuard(thirdPlace)),
@@ -717,8 +810,10 @@ export const useTournamentStore = defineStore(
       ...withStats(manager),
       ...withStats(withManagerGuard(withManagerBracketSettle(phases))),
       createMultiTierLeagueTournament,
-      setFixtureResult,
-      simulateTournament,
+      setFixtureResult: (...args: Parameters<typeof setFixtureResult>) =>
+        mutate(args[0], () => setFixtureResult(...args)),
+      simulateTournament: (tournamentId: string) =>
+        mutate(tournamentId, () => simulateTournament(tournamentId)),
       migrateLegacyMatchStats,
     }
   },
