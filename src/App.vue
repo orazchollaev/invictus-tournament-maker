@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref, watch } from "vue"
+import { computed, defineAsyncComponent, onMounted, onUnmounted, ref, watch } from "vue"
 import { useRouter } from "vue-router"
 import { App } from "@capacitor/app"
 import { AppHeader, AppMobileBottomNav, AppOnboarding, ErrorBoundary } from "@/components/layout"
@@ -10,9 +10,14 @@ import { useTeamsStore } from "@/modules/teams/store"
 import { useTournamentStore } from "@/modules/tournament/store"
 import { useStatusBar } from "@/composables/useStatusBar"
 import { scheduleSupportPrompt, supportOpen } from "@/composables/useSupport"
-import { SettingsSupportModal } from "@/modules/settings/components"
 import { logEvent } from "@/composables/useAnalytics"
 import { flushPendingSaves } from "@/modules/tournament/services/persistence"
+
+// Loaded when first opened: through the settings barrel, a static import pulled
+// every settings component (and the QR code library) into the launch bundle.
+const SettingsSupportModal = defineAsyncComponent(
+  () => import("@/modules/settings/components/SettingsSupportModal.vue")
+)
 
 const settings = useSettingsStore()
 
