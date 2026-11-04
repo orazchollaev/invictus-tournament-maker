@@ -1,27 +1,29 @@
 <script setup lang="ts">
+import { computed } from "vue"
 import { useI18n } from "vue-i18n"
-import { Download } from "@lucide/vue"
-import { AppCard, AppChip, AppIcon } from "@/components/ui"
+import { AppCard } from "@/components/ui"
 import type { MarketListing } from "../types"
 
-defineProps<{ listing: MarketListing }>()
+const props = defineProps<{ listing: MarketListing }>()
 
 const { t } = useI18n()
+
+// One quiet line instead of a row of badges.
+const meta = computed(() =>
+  [
+    t("common.teams", { n: props.listing.teamCount }),
+    t(`market.type.${props.listing.type}`),
+    `↓ ${props.listing.downloads}`,
+    props.listing.authorName,
+  ].join(" · ")
+)
 </script>
 
 <template>
-  <AppCard rail interactive padding="sm" class="market-card">
+  <AppCard variant="outlined" interactive padding="sm" class="market-card">
     <span class="market-card-title">{{ listing.label }}</span>
     <p class="market-card-desc">{{ listing.description }}</p>
-    <div class="market-card-meta">
-      <AppChip variant="accent">{{ t(`market.type.${listing.type}`) }}</AppChip>
-      <AppChip>{{ t("common.teams", { n: listing.teamCount }) }}</AppChip>
-      <span class="market-card-downloads">
-        <AppIcon :icon="Download" size="xs" />
-        {{ listing.downloads }}
-      </span>
-      <span class="market-card-author">{{ listing.authorName }}</span>
-    </div>
+    <p class="market-card-meta">{{ meta }}</p>
   </AppCard>
 </template>
 
@@ -33,7 +35,7 @@ const { t } = useI18n()
 .market-card :deep(.card-body) {
   display: flex;
   flex-direction: column;
-  gap: var(--sp-1);
+  gap: 2px;
   min-width: 0;
 }
 
@@ -45,38 +47,18 @@ const { t } = useI18n()
   white-space: nowrap;
 }
 
-.market-card-desc {
-  margin: 0;
-  font-size: var(--fs-sm);
-  color: var(--text-muted);
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
+.market-card-desc,
 .market-card-meta {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: var(--sp-2);
-}
-
-.market-card-downloads,
-.market-card-author {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--sp-1);
-  font-size: var(--fs-xs);
-  color: var(--text-muted);
-}
-
-.market-card-author {
-  margin-inline-start: auto;
-  max-width: 40%;
+  margin: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  font-size: var(--fs-sm);
+  color: var(--text-muted);
+}
+
+.market-card-meta {
+  font-size: var(--fs-xs);
+  opacity: 0.8;
 }
 </style>

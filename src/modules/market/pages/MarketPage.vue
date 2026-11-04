@@ -2,15 +2,7 @@
 import { computed, onMounted, ref } from "vue"
 import { useI18n } from "vue-i18n"
 import { Plus, Store } from "@lucide/vue"
-import {
-  AppButton,
-  AppButtonGroup,
-  AppCard,
-  AppEmptyState,
-  AppIcon,
-  AppSearchInput,
-} from "@/components/ui"
-import { showAlert } from "@/composables/useDialog"
+import { AppButton, AppButtonGroup, AppEmptyState, AppIcon, AppSearchInput } from "@/components/ui"
 import { useMarketStore } from "../store"
 import { useMarketActions } from "../composables/useMarketActions"
 import { MarketDetailSheet, MarketListingCard, MarketPublishSheet } from "../components"
@@ -39,16 +31,10 @@ const visible = computed(() => {
   )
 })
 
+// Signing in is asked for only here, at the moment it is needed. Account
+// management (sign out, delete) lives in Settings → Market.
 async function openPublish() {
   if (await actions.ensureSignedIn()) publishing.value = true
-}
-
-async function signIn() {
-  try {
-    await market.signIn()
-  } catch {
-    await showAlert(t("market.signInFailed"))
-  }
 }
 
 onMounted(async () => {
@@ -61,39 +47,30 @@ onMounted(async () => {
   <div class="page market">
     <div class="page-top">
       <h2 class="page-title">{{ t("market.title") }}</h2>
-      <AppButton v-if="market.available" variant="filled" @click="openPublish">
+      <AppButton
+        v-if="market.available"
+        variant="filled"
+        icon-only
+        :title="t('market.publish')"
+        :aria-label="t('market.publish')"
+        @click="openPublish"
+      >
         <AppIcon :icon="Plus" size="xs" />
-        {{ t("market.publish") }}
       </AppButton>
     </div>
 
     <AppEmptyState v-if="!market.available" :icon="Store" :description="t('market.androidOnly')" />
 
     <template v-else>
-      <AppCard variant="outlined" padding="sm" class="market-account">
-        <template v-if="market.user">
-          <span class="market-user">{{ t("market.signedInAs", { name: market.user.name }) }}</span>
-          <AppButton size="xs" variant="text" @click="market.signOut()">
-            {{ t("market.signOut") }}
-          </AppButton>
-          <AppButton size="xs" variant="text" @click="actions.deleteAccount()">
-            {{ t("market.deleteAccount") }}
-          </AppButton>
-        </template>
-        <template v-else>
-          <span class="market-user">{{ t("market.signInHint") }}</span>
-          <AppButton size="xs" variant="tonal" @click="signIn">{{ t("market.signIn") }}</AppButton>
-        </template>
-      </AppCard>
-
-      <AppButtonGroup
-        :model-value="market.sort"
-        :options="sorts"
-        block
-        @update:model-value="market.setSort($event as MarketSort)"
-      />
-
-      <AppSearchInput v-model="query" :placeholder="t('market.search')" />
+      <div class="search-row">
+        <AppSearchInput v-model="query" :placeholder="t('market.search')" />
+        <AppButtonGroup
+          :model-value="market.sort"
+          :options="sorts"
+          size="md"
+          @update:model-value="market.setSort($event as MarketSort)"
+        />
+      </div>
 
       <p v-if="market.failed" class="market-note">
         {{ t("market.networkError") }}
@@ -113,7 +90,12 @@ onMounted(async () => {
       </div>
 
       <p v-if="market.loading" class="market-note">{{ t("market.loading") }}</p>
-      <AppButton v-else-if="market.cursor && !market.failed" block @click="market.load()">
+      <AppButton
+        v-else-if="market.cursor && !market.failed"
+        variant="text"
+        block
+        @click="market.load()"
+      >
         {{ t("market.loadMore") }}
       </AppButton>
     </template>
@@ -124,36 +106,10 @@ onMounted(async () => {
 </template>
 
 <style scoped>
-/* `.page` only pads; the vertical rhythm between blocks is this page's own. */
-.market {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sp-3);
-}
-
-.market .page-top {
-  margin-bottom: var(--sp-1);
-}
-
-.market-account :deep(.card-body) {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: var(--sp-2);
-  font-size: var(--fs-sm);
-}
-
-.market-user {
-  margin-inline-end: auto;
-  color: var(--text-muted);
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
 .market-list {
   display: flex;
   flex-direction: column;
-  gap: var(--sp-3);
+  gap: var(--sp-2);
 }
 
 .market-note {
@@ -161,7 +117,7 @@ onMounted(async () => {
   align-items: center;
   justify-content: center;
   gap: var(--sp-2);
-  margin: 0;
+  margin: var(--sp-3) 0;
   font-size: var(--fs-sm);
   color: var(--text-muted);
 }
