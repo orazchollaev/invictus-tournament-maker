@@ -20,7 +20,7 @@ function describeError(e: unknown): string {
 }
 
 /** The user closed the account picker — not an error worth an alert. */
-const wasCancelled = (e: unknown) => /cancel/i.test(describeError(e))
+const wasCancelled = (e: unknown) => /cancel|popup-closed/i.test(describeError(e))
 
 /** Firebase's own wording differs by platform; match on the code it always carries. */
 const needsRecentLogin = (e: unknown) => /requires-recent-login/i.test(String(e))

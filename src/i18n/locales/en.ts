@@ -499,7 +499,7 @@
     account: "Account",
     title: "Dataset Market",
     signInHint: "Sign in to publish or report datasets.",
-    androidOnly: "The dataset market is available in the Android app.",
+    androidOnly: "The dataset market is not available on this device.",
     publish: "Publish",
     publishTitle: "Publish a dataset",
     fieldName: "Name",

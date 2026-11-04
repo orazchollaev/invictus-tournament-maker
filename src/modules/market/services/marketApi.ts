@@ -2,6 +2,7 @@ import { FirebaseFirestore, type QueryNonFilterConstraint } from "@capacitor-fir
 import { PAGE_SIZE } from "../constants"
 import type { MarketDataset, MarketListing, MarketSort, MarketUser, ReportReason } from "../types"
 import { decodeDataset, encodeDataset } from "../utils/codec"
+import { ensureFirebase } from "@/lib/firebase"
 import { USE_DEV_MOCK } from "./authService"
 
 // Desktop `pnpm dev` has no native Firebase; see devMock.ts.
@@ -62,6 +63,7 @@ export interface ListPage {
  */
 export async function listDatasets(sort: MarketSort, cursor?: string | null): Promise<ListPage> {
   if (USE_DEV_MOCK) return (await mock()).listDatasets(sort, cursor)
+  await ensureFirebase()
   const constraints: QueryNonFilterConstraint[] = [
     {
       type: "orderBy",
@@ -86,6 +88,7 @@ export async function listDatasets(sort: MarketSort, cursor?: string | null): Pr
 /** Every dataset the signed-in user has published. */
 export async function listMyDatasets(uid: string): Promise<MarketListing[]> {
   if (USE_DEV_MOCK) return (await mock()).listMyDatasets(uid)
+  await ensureFirebase()
   const { snapshots } = await FirebaseFirestore.getCollection<ListingData>({
     reference: DATASETS,
     compositeFilter: {
@@ -109,6 +112,7 @@ export async function downloadDataset(
   countDownload: boolean
 ): Promise<MarketDataset | null> {
   if (USE_DEV_MOCK) return (await mock()).downloadDataset(id)
+  await ensureFirebase()
   const firestore = FirebaseFirestore
   const { snapshot } = await firestore.getDocument<{ data: string }>({
     reference: `${PAYLOADS}/${id}`,
@@ -132,6 +136,7 @@ export async function downloadDataset(
  */
 export async function publishDataset(dataset: MarketDataset, author: MarketUser): Promise<string> {
   if (USE_DEV_MOCK) return (await mock()).publishDataset(dataset, author)
+  await ensureFirebase()
   const payload = await encodeDataset(dataset)
   const id = crypto.randomUUID()
   const listing: Record<string, unknown> = {
@@ -163,6 +168,7 @@ export async function publishDataset(dataset: MarketDataset, author: MarketUser)
 /** Deletes one of the user's datasets (listing + payload). */
 export async function deleteDataset(id: string): Promise<void> {
   if (USE_DEV_MOCK) return (await mock()).deleteDataset(id)
+  await ensureFirebase()
   await FirebaseFirestore.writeBatch({
     operations: [
       { type: "delete", reference: `${DATASETS}/${id}` },
@@ -178,6 +184,7 @@ export async function reportDataset(
   reason: ReportReason
 ): Promise<void> {
   if (USE_DEV_MOCK) return
+  await ensureFirebase()
   await FirebaseFirestore.setDocument({
     reference: `${REPORTS}/${datasetId}_${reporterUid}`,
     data: { datasetId, reporterUid, reason, createdAt: SERVER_TIMESTAMP },
@@ -187,6 +194,7 @@ export async function reportDataset(
 /** Removes everything the user published. Run before deleting the account. */
 export async function deleteMyData(uid: string): Promise<number> {
   if (USE_DEV_MOCK) return (await mock()).deleteMyData(uid)
+  await ensureFirebase()
   const mine = await listMyDatasets(uid)
   const firestore = FirebaseFirestore
   // Batches are capped at 500 writes; two per dataset.

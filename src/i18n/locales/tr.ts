@@ -501,7 +501,7 @@
     account: "Hesap",
     title: "Veri Seti Marketi",
     signInHint: "Veri seti yayınlamak veya bildirmek için giriş yapın.",
-    androidOnly: "Veri seti marketi Android uygulamasında kullanılabilir.",
+    androidOnly: "Veri seti marketi bu cihazda kullanılamıyor.",
     publish: "Yayınla",
     publishTitle: "Veri seti yayınla",
     fieldName: "Ad",

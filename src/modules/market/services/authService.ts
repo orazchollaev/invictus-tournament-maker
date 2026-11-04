@@ -1,12 +1,18 @@
 import { Capacitor } from "@capacitor/core"
 import { FirebaseAuthentication } from "@capacitor-firebase/authentication"
+import { ensureFirebase } from "@/lib/firebase"
 import type { MarketUser } from "../types"
 
-/** The market runs on the native Firebase SDKs, so it only exists in the Android app. */
-export const isMarketAvailable = Capacitor.isNativePlatform() || import.meta.env.DEV
+/** Android (native SDKs) and the web build (JS SDK). iOS has no Firebase config. */
+export const isMarketAvailable = Capacitor.getPlatform() !== "ios"
 
-/** Desktop `pnpm dev` only: no native Firebase there, so a fake one (devMock.ts) stands in. */
-export const USE_DEV_MOCK = import.meta.env.DEV && !Capacitor.isNativePlatform()
+/**
+ * Desktop `pnpm dev` uses an in-memory fake (devMock.ts) so development never
+ * writes to the live market. `pnpm build && pnpm preview`, or VITE_MARKET_LIVE=1,
+ * talks to the real Firebase instead.
+ */
+export const USE_DEV_MOCK =
+  import.meta.env.DEV && !Capacitor.isNativePlatform() && !import.meta.env.VITE_MARKET_LIVE
 
 type FirebaseUser = { uid: string; displayName: string | null; email: string | null }
 
@@ -22,6 +28,7 @@ function toMarketUser(user: FirebaseUser | null): MarketUser | null {
 
 export async function getCurrentUser(): Promise<MarketUser | null> {
   if (!isMarketAvailable || USE_DEV_MOCK) return null
+  await ensureFirebase()
   const { user } = await FirebaseAuthentication.getCurrentUser()
   return toMarketUser(user)
 }
@@ -29,12 +36,14 @@ export async function getCurrentUser(): Promise<MarketUser | null> {
 /** Resolves to null when the user dismisses the account picker. */
 export async function signInWithGoogle(): Promise<MarketUser | null> {
   if (USE_DEV_MOCK) return (await import("./devMock")).DEV_USER
+  await ensureFirebase()
   const { user } = await FirebaseAuthentication.signInWithGoogle()
   return toMarketUser(user)
 }
 
 export async function signOut(): Promise<void> {
   if (USE_DEV_MOCK) return
+  await ensureFirebase()
   await FirebaseAuthentication.signOut()
 }
 
@@ -44,12 +53,14 @@ export async function signOut(): Promise<void> {
  */
 export async function deleteAccount(): Promise<void> {
   if (USE_DEV_MOCK) return
+  await ensureFirebase()
   await FirebaseAuthentication.deleteUser()
 }
 
 /** Subscribes to sign-in changes; returns the unsubscribe function. */
 export async function onAuthChange(cb: (user: MarketUser | null) => void): Promise<() => void> {
   if (USE_DEV_MOCK) return () => {}
+  await ensureFirebase()
   const handle = await FirebaseAuthentication.addListener("authStateChange", (event) => {
     cb(toMarketUser(event.user))
   })
