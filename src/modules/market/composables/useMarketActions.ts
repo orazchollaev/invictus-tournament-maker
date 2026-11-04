@@ -10,6 +10,7 @@ import { useMarketAd } from "./useMarketAd"
 import * as api from "../services/marketApi"
 import * as authService from "../services/authService"
 import { buildDataset, type PublishDraft } from "../utils/buildDataset"
+import { toLocalTeam } from "../utils/toLocalTeam"
 import type { MarketListing, ReportReason } from "../types"
 
 /** Plugin errors carry a `code` next to the message; both help when a tester reports back. */
@@ -60,8 +61,13 @@ export function useMarketActions() {
         return false
       }
       // Added on top of what is loaded, exactly like the bundled sample sets.
+      // The crest engine is loaded only when a team actually has a crest to draw.
+      const renderCrest = dataset.teams.some((x) => x.crest)
+        ? (await import("@/engine/crest")).renderCrestDataUrl
+        : undefined
+      const local = dataset.teams.map((x) => toLocalTeam(x, renderCrest))
       const existing = new Set(teams.teams.map((x) => x.id))
-      const out = remapDatasetIds(dataset.teams, dataset.players ?? [], existing, uid)
+      const out = remapDatasetIds(local, dataset.players ?? [], existing, uid)
       teams.teams.push(...out.teams)
       players.players.push(...out.players)
       void logEvent("market_download", { type: dataset.type })

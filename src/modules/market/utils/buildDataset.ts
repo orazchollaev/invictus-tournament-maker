@@ -1,6 +1,7 @@
 import type { Team } from "@/modules/teams/types"
 import { MARKET_LIMITS } from "../constants"
 import type { MarketDataset, MarketTeam } from "../types"
+import { parseCrest } from "./parseCrest"
 
 const HEX6 = /^#[0-9a-f]{6}$/i
 const HEX3 = /^#[0-9a-f]{3}$/i
@@ -13,8 +14,9 @@ function normalizeColor(color: string): string {
 }
 
 /**
- * Reduces a team to what the market shares. Crest images and custom photos
- * stay behind on purpose: they are base64 and would blow the size budget.
+ * Reduces a team to what the market shares. A builder crest travels as its
+ * small recipe; rendered images, uploaded photos and image URLs stay behind —
+ * they are large, and arbitrary pictures would need moderating.
  */
 export function toMarketTeam(team: Team): MarketTeam {
   const out: MarketTeam = {
@@ -24,6 +26,11 @@ export function toMarketTeam(team: Team): MarketTeam {
     power: Math.min(100, Math.max(1, Math.round(team.power))),
   }
   if (team.flag && /^[a-z0-9_-]{2,32}$/i.test(team.flag)) out.flag = team.flag
+  const abbr = team.abbr?.trim().slice(0, 7)
+  if (abbr) out.abbr = abbr
+  // Only the builder recipe travels; uploaded photos and URLs never do.
+  const crest = team.crest ? parseCrest(team.crest) : null
+  if (crest) out.crest = crest
   return out
 }
 

@@ -1,3 +1,5 @@
+import type { CrestSpec } from "@/engine/crest/types"
+
 /** A team as shared through the market: display data plus strength, no images. */
 export interface MarketTeam {
   id: string
@@ -5,6 +7,9 @@ export interface MarketTeam {
   color: string // #RRGGBB
   power: number // 1-100
   flag?: string // ISO country code or a known flag slug
+  abbr?: string // up to 7 chars
+  /** Crest-builder recipe; the image is redrawn from it on download, never shipped. */
+  crest?: CrestSpec
 }
 
 export interface MarketPlayer {

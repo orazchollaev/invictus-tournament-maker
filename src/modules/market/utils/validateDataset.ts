@@ -1,6 +1,7 @@
 import { PLAYER_POSITIONS } from "@/modules/players/types"
 import { DATASET_CATEGORIES, DATASET_TYPES, MARKET_LIMITS } from "../constants"
 import type { MarketDataset, MarketPlayer, MarketTeam } from "../types"
+import { parseCrest } from "./parseCrest"
 
 const HEX_COLOR = /^#[0-9a-fA-F]{6}$/
 const FLAG = /^[a-z0-9_-]{2,32}$/i
@@ -26,6 +27,12 @@ function parseTeam(raw: unknown): MarketTeam | null {
     if (typeof raw.flag !== "string" || !FLAG.test(raw.flag)) return null
     team.flag = raw.flag
   }
+  // Optional extras are dropped, not fatal: a crest from a newer app version
+  // should cost that team its crest, not cost the user the whole dataset.
+  const abbr = text(raw.abbr, 7)
+  if (abbr) team.abbr = abbr
+  const crest = raw.crest === undefined ? null : parseCrest(raw.crest)
+  if (crest) team.crest = crest
   return team
 }
 

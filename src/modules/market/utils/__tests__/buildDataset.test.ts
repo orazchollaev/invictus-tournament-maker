@@ -12,11 +12,11 @@ const team = (over: Partial<Team> = {}): Team => ({
 })
 
 describe("toMarketTeam", () => {
-  it("drops images, crests, coach and categories", () => {
+  it("keeps the abbreviation but drops uploaded images and categories", () => {
     const out = toMarketTeam(
       team({ image: "data:image/png;base64,AAAA", abbr: "TM", categories: { a: "b" } })
     )
-    expect(Object.keys(out).sort()).toEqual(["color", "id", "name", "power"])
+    expect(Object.keys(out).sort()).toEqual(["abbr", "color", "id", "name", "power"])
   })
 
   it("expands short hex colours and falls back on anything else", () => {
