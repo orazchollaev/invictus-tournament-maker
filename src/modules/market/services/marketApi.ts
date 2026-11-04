@@ -1,4 +1,4 @@
-import type { QueryNonFilterConstraint } from "@capacitor-firebase/firestore"
+import { FirebaseFirestore, type QueryNonFilterConstraint } from "@capacitor-firebase/firestore"
 import { PAGE_SIZE } from "../constants"
 import type { MarketDataset, MarketListing, MarketSort, MarketUser, ReportReason } from "../types"
 import { decodeDataset, encodeDataset } from "../utils/codec"
@@ -12,10 +12,8 @@ const DATASETS = "datasets"
 const PAYLOADS = "payloads"
 const REPORTS = "reports"
 
-async function db() {
-  const { FirebaseFirestore } = await import("@capacitor-firebase/firestore")
-  return FirebaseFirestore
-}
+// Used directly, never returned from an async helper — see the note in
+// authService.ts: a plugin passed through a promise is taken for a thenable and hangs.
 
 const SERVER_TIMESTAMP = { __type__: "serverTimestamp" } as const
 
@@ -74,9 +72,7 @@ export async function listDatasets(sort: MarketSort, cursor?: string | null): Pr
   if (cursor) constraints.push({ type: "startAfter", reference: `${DATASETS}/${cursor}` })
   constraints.push({ type: "limit", limit: PAGE_SIZE })
 
-  const { snapshots } = await (
-    await db()
-  ).getCollection<ListingData>({
+  const { snapshots } = await FirebaseFirestore.getCollection<ListingData>({
     reference: DATASETS,
     queryConstraints: constraints,
   })
@@ -90,9 +86,7 @@ export async function listDatasets(sort: MarketSort, cursor?: string | null): Pr
 /** Every dataset the signed-in user has published. */
 export async function listMyDatasets(uid: string): Promise<MarketListing[]> {
   if (USE_DEV_MOCK) return (await mock()).listMyDatasets(uid)
-  const { snapshots } = await (
-    await db()
-  ).getCollection<ListingData>({
+  const { snapshots } = await FirebaseFirestore.getCollection<ListingData>({
     reference: DATASETS,
     compositeFilter: {
       type: "and",
@@ -115,7 +109,7 @@ export async function downloadDataset(
   countDownload: boolean
 ): Promise<MarketDataset | null> {
   if (USE_DEV_MOCK) return (await mock()).downloadDataset(id)
-  const firestore = await db()
+  const firestore = FirebaseFirestore
   const { snapshot } = await firestore.getDocument<{ data: string }>({
     reference: `${PAYLOADS}/${id}`,
   })
@@ -153,9 +147,7 @@ export async function publishDataset(dataset: MarketDataset, author: MarketUser)
   }
   if (dataset.category) listing.category = dataset.category
 
-  await (
-    await db()
-  ).writeBatch({
+  await FirebaseFirestore.writeBatch({
     operations: [
       { type: "set", reference: `${DATASETS}/${id}`, data: listing },
       {
@@ -171,9 +163,7 @@ export async function publishDataset(dataset: MarketDataset, author: MarketUser)
 /** Deletes one of the user's datasets (listing + payload). */
 export async function deleteDataset(id: string): Promise<void> {
   if (USE_DEV_MOCK) return (await mock()).deleteDataset(id)
-  await (
-    await db()
-  ).writeBatch({
+  await FirebaseFirestore.writeBatch({
     operations: [
       { type: "delete", reference: `${DATASETS}/${id}` },
       { type: "delete", reference: `${PAYLOADS}/${id}` },
@@ -188,9 +178,7 @@ export async function reportDataset(
   reason: ReportReason
 ): Promise<void> {
   if (USE_DEV_MOCK) return
-  await (
-    await db()
-  ).setDocument({
+  await FirebaseFirestore.setDocument({
     reference: `${REPORTS}/${datasetId}_${reporterUid}`,
     data: { datasetId, reporterUid, reason, createdAt: SERVER_TIMESTAMP },
   })
@@ -200,7 +188,7 @@ export async function reportDataset(
 export async function deleteMyData(uid: string): Promise<number> {
   if (USE_DEV_MOCK) return (await mock()).deleteMyData(uid)
   const mine = await listMyDatasets(uid)
-  const firestore = await db()
+  const firestore = FirebaseFirestore
   // Batches are capped at 500 writes; two per dataset.
   for (let i = 0; i < mine.length; i += 200) {
     const operations = mine.slice(i, i + 200).flatMap((d) => [
