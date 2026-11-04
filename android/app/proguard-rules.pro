@@ -26,6 +26,15 @@
 -dontwarn com.google.android.gms.**
 
 # ==============================================================================
+# FIREBASE AUTHENTICATION PLUGIN
+# ==============================================================================
+# @capacitor-firebase/authentication ships a Facebook sign-in handler, but the
+# Facebook SDK is only linked when rgcfaIncludeFacebook is set (it is not —
+# see variables.gradle). The handler is never reached, so R8 only needs to be
+# told its references are expected to be missing.
+-dontwarn com.facebook.**
+
+# ==============================================================================
 # OKHTTP & COROUTINES (Ağ istekleri için)
 # ==============================================================================
 -dontwarn okhttp3.**
