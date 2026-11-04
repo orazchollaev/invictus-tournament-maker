@@ -13,6 +13,10 @@
  * Size and stacking are props rather than CSS custom properties because the
  * backdrop and the panel are siblings: a property set on one would never
  * reach the other.
+ *
+ * The panel never grows past the screen. When the content is taller, the
+ * panel itself scrolls with the header and footer pinned, so a sheet whose
+ * body has no scroll of its own still fits a short phone.
  */
 import { computed, onUnmounted, ref } from "vue"
 import { DialogRoot, DialogPortal, DialogOverlay, DialogContent, DialogTitle } from "reka-ui"
@@ -111,7 +115,9 @@ defineExpose({ close })
 
         <slot />
 
-        <slot name="footer" />
+        <div v-if="$slots.footer" class="sheet-footer">
+          <slot name="footer" />
+        </div>
       </DialogContent>
     </DialogPortal>
   </DialogRoot>
@@ -186,18 +192,28 @@ defineExpose({ close })
   left: 50%;
   transform: translate(-50%, -50%);
   width: var(--sheet-width, min(400px, calc(100vw - 2 * var(--sp-4))));
-  max-height: var(--sheet-max-height, none);
+  max-height: var(--sheet-max-height, calc(100vh - 2 * var(--sp-4)));
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-lg);
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
   animation: sheet-dialog-in 0.18s var(--ease) both;
 }
 .sheet.closing {
   animation: sheet-dialog-out 0.18s var(--ease) both;
+}
+/* dvh follows the browser toolbars. Behind @supports, not as a second
+   declaration: inside var() an unsupported unit does not fall back to the
+   line above, it voids the property. */
+@supports (height: 100dvh) {
+  .sheet {
+    max-height: var(--sheet-max-height, calc(100dvh - 2 * var(--sp-4)));
+  }
 }
 
 .sheet-header {
@@ -208,6 +224,17 @@ defineExpose({ close })
   background: var(--bg);
   border-bottom: 1px solid var(--border-light);
   flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.sheet-footer {
+  flex-shrink: 0;
+  position: sticky;
+  bottom: 0;
+  z-index: 1;
+  background: var(--surface);
 }
 
 .sheet-title {
@@ -256,7 +283,7 @@ defineExpose({ close })
     transform: none;
     width: 100vw;
     max-width: 100vw;
-    max-height: var(--sheet-max-height-mobile, none);
+    max-height: var(--sheet-max-height-mobile, calc(100vh - var(--safe-top) - var(--sp-4)));
     border: none;
     border-top: 1px solid var(--border);
     border-radius: var(--radius-lg) var(--radius-lg) 0 0;
@@ -264,6 +291,13 @@ defineExpose({ close })
   }
   .sheet.closing {
     animation: sheet-slide-out 0.18s cubic-bezier(0.4, 0, 1, 1) both;
+  }
+}
+@supports (height: 100dvh) {
+  @media (max-width: 600px) {
+    .sheet {
+      max-height: var(--sheet-max-height-mobile, calc(100dvh - var(--safe-top) - var(--sp-4)));
+    }
   }
 }
 
