@@ -54,9 +54,9 @@ const model = defineModel<string>({ required: true })
   padding: var(--sp-2) var(--sp-3) var(--sp-2) var(--sp-6);
   font-size: var(--fs-base);
   font-family: var(--font-ui);
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius);
-  background: var(--surface);
+  /* A capsule; the fill and focus state come from the global field rule. */
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
   color: var(--text);
   box-sizing: border-box;
   transition: border-color var(--dur-fast) var(--ease);
@@ -68,7 +68,6 @@ const model = defineModel<string>({ required: true })
 }
 .search-field-input:focus {
   outline: none;
-  border-color: var(--accent);
 }
 .search-field-input:disabled {
   opacity: 0.5;
@@ -76,28 +75,5 @@ const model = defineModel<string>({ required: true })
 }
 .search-field-input::placeholder {
   color: var(--text-muted);
-}
-
-/* ── Design languages ────────────────────────────────────────────
-   Both platforms use a borderless, filled search field; iOS keeps it a
-   soft grey capsule, M3 a tonal one that follows the accent. */
-[data-design="ios"] .search-field-input {
-  border-color: transparent;
-  border-radius: var(--radius-pill);
-  background: var(--fill-1);
-}
-[data-design="ios"] .search-field-input:focus {
-  border-color: transparent;
-  background: color-mix(in srgb, var(--text) 10%, transparent);
-}
-
-[data-design="android"] .search-field-input {
-  border-color: transparent;
-  border-radius: var(--radius-pill);
-  background: color-mix(in srgb, var(--accent) 10%, var(--surface));
-}
-[data-design="android"] .search-field-input:focus {
-  border-color: transparent;
-  background: color-mix(in srgb, var(--accent) 16%, var(--surface));
 }
 </style>

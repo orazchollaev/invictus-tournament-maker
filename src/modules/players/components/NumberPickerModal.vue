@@ -66,9 +66,11 @@ function clear() {
   width: 100%;
   gap: var(--sp-2);
   padding: var(--sp-2) var(--sp-3);
-  border: 1px solid var(--border);
+  /* Filled like a plain field, so it reads as the same control as the
+     name input above it. */
+  border: 1px solid transparent;
   border-radius: var(--radius);
-  background: var(--surface);
+  background: var(--fill-1);
   font-size: var(--fs-md);
   font-weight: 400;
   font-family: var(--font-ui);
@@ -78,12 +80,10 @@ function clear() {
     border-color var(--dur-fast) var(--ease),
     box-shadow var(--dur-fast) var(--ease);
 }
-.npick-trigger:hover {
-  border-color: var(--accent);
-}
 .npick-trigger:focus-visible {
   outline: none;
   border-color: var(--accent);
+  background: var(--surface);
   box-shadow: var(--focus-ring);
 }
 
@@ -116,10 +116,11 @@ function clear() {
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid var(--border);
+  /* Plain keys: filled grey circles, no outline; a press dims. */
+  border: 1px solid transparent;
   border-radius: var(--radius-pill);
-  background: var(--surface);
-  font-family: var(--font-mono);
+  background: var(--fill-1);
+  font-family: var(--font-ui);
   font-size: var(--fs-sm);
   font-weight: 600;
   color: var(--text);
@@ -130,85 +131,16 @@ function clear() {
     color var(--dur-fast) var(--ease),
     transform var(--dur-fast) var(--ease);
 }
-.npick-cell:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-}
-.npick-cell:active {
-  transform: scale(0.92);
-}
 .npick-cell--active {
   background: var(--accent);
-  border-color: var(--accent);
-  color: #fff;
+  color: var(--on-accent);
 }
-
-/* ── Design languages ────────────────────────────────────────────
-   The trigger copies what design.css does to a plain field, so it reads
-   as the same control as the name input above it. */
-[data-design="ios"] .npick-trigger {
-  border-color: transparent;
-  background: var(--fill-1);
-}
-[data-design="ios"] .npick-trigger:hover {
-  border-color: transparent;
-}
-[data-design="ios"] .npick-trigger:focus-visible {
-  border-color: var(--accent);
-  background: var(--surface);
-}
-
-[data-design="android"] .npick-trigger {
-  border-color: var(--border);
-  background: transparent;
-}
-[data-design="android"] .npick-trigger:focus-visible {
-  box-shadow:
-    inset 0 0 0 1px var(--accent),
-    var(--focus-ring);
-}
-
-/* iOS: the grid reads as plain keys — filled grey circles, no outline,
-   and the pressed key dims instead of shrinking. */
-[data-design="ios"] .npick-cell {
-  border-color: transparent;
-  background: var(--fill-1);
-  font-family: var(--font-ui);
-}
-[data-design="ios"] .npick-cell:hover {
-  border-color: transparent;
+.npick-cell:hover {
   color: var(--text);
   background: var(--fill-2);
 }
-[data-design="ios"] .npick-cell:active {
+.npick-cell:active {
   transform: none;
   opacity: 0.5;
-}
-[data-design="ios"] .npick-cell--active {
-  background: var(--accent);
-  border-color: transparent;
-  color: var(--on-accent);
-}
-
-/* M3: tonal keys with a state layer, the selection in the accent
-   container tone rather than the full accent. */
-[data-design="android"] .npick-cell {
-  border-color: transparent;
-  background: var(--fill-1);
-  font-family: var(--font-ui);
-}
-[data-design="android"] .npick-cell:hover {
-  border-color: transparent;
-  background: var(--fill-2);
-  color: var(--accent);
-}
-[data-design="android"] .npick-cell:active {
-  transform: none;
-  background: var(--fill-3);
-}
-[data-design="android"] .npick-cell--active {
-  background: var(--accent);
-  border-color: transparent;
-  color: var(--on-accent);
 }
 </style>

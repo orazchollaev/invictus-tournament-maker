@@ -153,14 +153,15 @@ function onDirSelect(dir: unknown) {
 
 <!-- Unscoped: PopoverPortal teleports content to <body>, past scoped-attr propagation. -->
 <style>
+/* Same floating, outline-free card as the select menu. */
 .sort-filter-menu {
   z-index: 1000;
   min-width: 168px;
   padding: var(--sp-1);
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  box-shadow: var(--elev-2);
+  background: color-mix(in srgb, var(--surface) 96%, transparent);
+  border: 1px solid transparent;
+  border-radius: 14px;
+  box-shadow: var(--elev-3);
 }
 
 .sort-filter-label {
@@ -185,10 +186,10 @@ function onDirSelect(dir: unknown) {
   width: 100%;
   padding: var(--sp-2) var(--sp-3);
   border: none;
-  border-radius: calc(var(--radius) - 3px);
+  border-radius: 8px;
   background: transparent;
-  font-size: var(--fs-sm);
-  font-weight: 500;
+  font-size: var(--fs-base);
+  font-weight: 400;
   font-family: var(--font-ui);
   color: var(--text);
   cursor: pointer;
@@ -197,13 +198,13 @@ function onDirSelect(dir: unknown) {
   text-align: left;
 }
 
-.sort-filter-item:hover {
+.sort-filter-item:hover,
+.sort-filter-item:active {
   background: var(--bg-hover);
 }
 
 .sort-filter-item[data-state="checked"] {
   color: var(--accent);
-  font-weight: 600;
 }
 
 .sort-filter-item-icon {
@@ -253,44 +254,6 @@ function onDirSelect(dir: unknown) {
     opacity: 0;
     transform: translateY(-4px) scale(0.97);
   }
-}
-
-/* ── Design languages ────────────────────────────────────────────
-   Same treatment as the select menu: iOS floats a blurred, outline-free
-   card; M3 elevates a tonal sheet with full-bleed rows. */
-[data-design="ios"] .sort-filter-menu {
-  border-color: transparent;
-  border-radius: 14px;
-  background: color-mix(in srgb, var(--surface) 96%, transparent);
-  box-shadow: var(--elev-3);
-}
-[data-design="ios"] .sort-filter-item {
-  border-radius: 8px;
-  font-size: var(--fs-base);
-  font-weight: 400;
-}
-[data-design="ios"] .sort-filter-item:active {
-  background: var(--bg-hover);
-}
-
-[data-design="android"] .sort-filter-menu {
-  border-color: transparent;
-  border-radius: var(--radius-sm);
-  background: var(--surface-2);
-  box-shadow: var(--elev-2);
-  padding: var(--sp-1) 0;
-}
-[data-design="android"] .sort-filter-item {
-  border-radius: 0;
-  padding: var(--sp-3) var(--sp-4);
-  font-size: var(--fs-base);
-  font-weight: 400;
-}
-[data-design="android"] .sort-filter-item[data-state="checked"] {
-  background: var(--fill-2);
-}
-[data-design="android"] .sort-filter-sep {
-  margin-inline: 0;
 }
 
 @media (prefers-reduced-motion: reduce) {

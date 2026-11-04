@@ -73,17 +73,12 @@ defineEmits<{ click: [] }>()
   box-shadow: var(--focus-ring);
 }
 
-/* ── Design languages ────────────────────────────────────────────
-   iOS: press dims, nothing lifts. Android: a tonal state layer. */
-[data-design="ios"] .config-btn:active {
+/* A press dims; nothing lifts. */
+.config-btn:active {
   border-color: var(--accent);
   background: color-mix(in srgb, var(--accent) 6%, var(--bg));
   box-shadow: none;
   opacity: 0.6;
-}
-[data-design="android"] .config-btn:active {
-  border-color: var(--accent);
-  box-shadow: inset 0 0 0 999px color-mix(in srgb, var(--accent) 10%, transparent);
 }
 
 .config-btn-icon {

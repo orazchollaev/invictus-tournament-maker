@@ -4,10 +4,8 @@
    layout and stacking.
 
    The neutrals, shape, elevation, motion and the heading sizes are NOT
-   here — they differ per platform look and are defined in design.css
-   under [data-design="ios"] / [data-design="android"]. This file does
-   not stand on its own: <html> always carries a data-design value
-   (index.html sets the default, the settings store keeps it current). */
+   here — they are defined in design.css, which re-points this file and
+   loads after it. */
 :root {
   /* One height for every field-like control (input, select, segmented group). */
   --control-h: 40px;

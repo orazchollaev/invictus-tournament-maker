@@ -347,21 +347,21 @@ const { saveJSON: handleSaveJSON, saveCSV: handleSaveCSV } = useSimResultExport(
   overflow-x: auto;
 }
 
+/* A grouped list: quiet header, hairline rows, aligned figures. */
 .srp-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 13px;
+  font-variant-numeric: tabular-nums;
 }
 .srp-table th {
   text-align: start;
   padding: 7px 10px;
   font-size: var(--fs-xs);
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  font-weight: 400;
   color: var(--text-muted);
-  border-bottom: 1px solid var(--border-light);
-  background: var(--bg);
+  border-bottom: 0.5px solid var(--border);
+  background: transparent;
   white-space: nowrap;
 }
 .srp-table th svg {
@@ -370,7 +370,7 @@ const { saveJSON: handleSaveJSON, saveCSV: handleSaveCSV } = useSimResultExport(
 }
 .srp-table td {
   padding: 9px 10px;
-  border-bottom: 1px solid var(--border-light);
+  border-bottom: 0.5px solid var(--border-light);
   color: var(--text);
   vertical-align: middle;
 }

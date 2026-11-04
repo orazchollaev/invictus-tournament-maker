@@ -70,11 +70,8 @@ const tooFew = computed(() => selectedTeams.value.length < 2)
   outline: none;
   box-shadow: var(--focus-ring);
 }
-[data-design="ios"] .tsb:active {
+.tsb:active {
   opacity: 0.6;
-}
-[data-design="android"] .tsb:active {
-  box-shadow: inset 0 0 0 999px color-mix(in srgb, var(--accent) 10%, transparent);
 }
 
 .tsb-icon {

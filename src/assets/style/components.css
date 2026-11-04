@@ -9,19 +9,21 @@
   margin-bottom: var(--sp-3);
 }
 
-/* ── Tabs ────────────────────────────────────────────────────── */
+/* ── Tabs ──────────────────────────────────────────────────────
+   Segments of a segmented control; the track is AppTabs' .tabs. */
 .phase-tab {
   display: flex;
+  flex: 1;
   align-items: center;
+  justify-content: center;
   gap: var(--sp-2);
-  padding: var(--sp-2) var(--sp-4);
-  font-size: var(--fs-base);
+  padding: 6px var(--sp-3);
+  font-size: var(--fs-sm);
+  font-weight: 600;
   font-family: var(--font-ui);
   background: transparent;
   border: none;
-  border-bottom: 2px solid transparent;
-  border-radius: 0;
-  margin-bottom: -1px;
+  border-radius: var(--radius-pill);
   cursor: pointer;
   color: var(--text-muted);
   transition:
@@ -30,22 +32,15 @@
 }
 
 .phase-tab[data-state="active"] {
-  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
-  color: var(--on-accent);
-  background-color: var(--accent);
+  color: var(--text);
+  background-color: var(--surface);
+  box-shadow: var(--shadow-sm);
 }
 
 .phase-tab.disabled,
 .phase-tab:disabled {
   cursor: not-allowed;
   opacity: 0.5;
-}
-
-/* Compact tab bar: tournament detail page has several tabs sharing one
-   strip, so `size="sm"` on AppTabs trims padding and type size. */
-.tabs--sm .phase-tab {
-  padding: var(--sp-1) var(--sp-3);
-  font-size: var(--fs-sm);
 }
 
 /* ── Data tables ─────────────────────────────────────────────── */
@@ -55,13 +50,13 @@
   font-size: var(--fs-base);
 }
 
+/* A grouped list: a quiet sentence-case header with no fill. */
 .data-table th {
   text-align: start;
   font-size: var(--fs-xs);
   font-weight: 600;
   color: var(--text-muted);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  background: transparent;
   padding: var(--sp-3) var(--sp-4) var(--sp-2);
   border-bottom: 1px solid var(--border-light);
   font-family: var(--font-ui);
@@ -111,15 +106,14 @@
 /* ── Responsive ──────────────────────────────────────────────── */
 @media (max-width: 600px) {
   .phase-tab {
-    padding: var(--sp-2) var(--sp-3);
-    font-size: var(--fs-sm);
     white-space: nowrap;
-    flex-shrink: 0;
   }
 
   .data-table th,
   .data-table td {
     padding: var(--sp-2) var(--sp-3);
+  }
+  .data-table td {
     font-size: var(--fs-sm);
   }
 }

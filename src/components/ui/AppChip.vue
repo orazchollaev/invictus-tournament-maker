@@ -37,6 +37,7 @@ withDefaults(
 </template>
 
 <style scoped>
+/* Borderless tinted capsules. */
 .chip {
   display: inline-flex;
   align-items: center;
@@ -65,39 +66,32 @@ withDefaults(
 
 /* ── Variants ────────────────────────────────────────────────── */
 .chip--neutral {
-  background: var(--bg);
-  border-color: var(--border-light);
+  background: color-mix(in srgb, var(--text) 8%, transparent);
   color: var(--text-muted);
-  font-weight: 500;
 }
 
 .chip--accent {
   background: color-mix(in srgb, var(--accent) 12%, transparent);
-  border-color: color-mix(in srgb, var(--accent) 30%, transparent);
   color: var(--accent);
 }
 
 .chip--success {
   background: color-mix(in srgb, var(--success) 12%, transparent);
-  border-color: color-mix(in srgb, var(--success) 30%, transparent);
   color: var(--success);
 }
 
 .chip--danger {
   background: color-mix(in srgb, var(--danger) 12%, transparent);
-  border-color: color-mix(in srgb, var(--danger) 30%, transparent);
   color: var(--danger);
 }
 
 .chip--warning {
   background: color-mix(in srgb, var(--warning) 14%, transparent);
-  border-color: color-mix(in srgb, var(--warning) 35%, transparent);
   color: color-mix(in srgb, var(--warning) 80%, var(--text));
 }
 
 .chip--live {
   background: color-mix(in srgb, var(--live) 12%, transparent);
-  border-color: color-mix(in srgb, var(--live) 30%, transparent);
   color: var(--live);
   font-size: var(--fs-xs);
   letter-spacing: 0.04em;
@@ -106,35 +100,11 @@ withDefaults(
 
 .chip--gold {
   background: var(--gold-faint);
-  border-color: var(--gold-soft);
   color: var(--gold);
 }
 
 .chip--solid {
   background: var(--accent);
   color: var(--on-accent);
-}
-
-/* ── Design languages ────────────────────────────────────────────
-   iOS badges are borderless tinted capsules. */
-[data-design="ios"] .chip {
-  border-color: transparent;
-  font-weight: 600;
-}
-[data-design="ios"] .chip--neutral {
-  background: color-mix(in srgb, var(--text) 8%, transparent);
-}
-
-/* M3 chips are outlined with an 8px corner, not a capsule. */
-[data-design="android"] .chip {
-  border-radius: 8px;
-  font-weight: 500;
-}
-[data-design="android"] .chip--neutral {
-  background: transparent;
-  border-color: var(--border);
-}
-[data-design="android"] .chip--solid {
-  border-radius: 8px;
 }
 </style>

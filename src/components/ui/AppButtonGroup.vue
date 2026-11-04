@@ -33,13 +33,15 @@ defineEmits<{ "update:modelValue": [value: string] }>()
 </template>
 
 <style scoped>
+/* The system segmented control: grey track, white thumb, dark label.
+   The accent never fills a segment. */
 .btn-group {
   display: inline-flex;
-  gap: 2px;
-  padding: 3px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
+  gap: 0;
+  padding: 2px;
+  background: var(--fill-1);
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
 }
 
 .btn-group--block {
@@ -58,7 +60,7 @@ defineEmits<{ "update:modelValue": [value: string] }>()
   border: none;
   background: none;
   box-shadow: none;
-  border-radius: calc(var(--radius) - 3px);
+  border-radius: var(--radius-pill);
   font-family: var(--font-ui);
   font-weight: 500;
   color: var(--text-muted);
@@ -91,15 +93,12 @@ defineEmits<{ "update:modelValue": [value: string] }>()
   background: var(--bg-hover);
 }
 
-.btn-group button.active {
-  background: var(--accent);
-  color: var(--on-accent);
-  font-weight: 600;
-  box-shadow: var(--elev-1);
-}
-
+.btn-group button.active,
 .btn-group button.active:hover {
-  background: var(--accent-hover);
+  background: var(--surface);
+  color: var(--text);
+  font-weight: 600;
+  box-shadow: var(--shadow-sm);
 }
 
 .btn-group button:disabled {
@@ -128,50 +127,6 @@ defineEmits<{ "update:modelValue": [value: string] }>()
 .btn-group--md button.icon-only {
   width: 26px;
   height: 26px;
-}
-
-/* ── Design languages ────────────────────────────────────────────
-   iOS: the system segmented control — grey track, white thumb, dark
-   label. The accent never fills a segment there. */
-[data-design="ios"] .btn-group {
-  gap: 0;
-  padding: 2px;
-  border-color: transparent;
-  border-radius: var(--radius-pill);
-  background: var(--fill-1);
-}
-[data-design="ios"] .btn-group button {
-  border-radius: var(--radius-pill);
-}
-[data-design="ios"] .btn-group button.active,
-[data-design="ios"] .btn-group button.active:hover {
-  background: var(--surface);
-  color: var(--text);
-  box-shadow: var(--shadow-sm);
-}
-
-/* M3: an outlined segmented button — one shared outline, the selected
-   segment filled with the accent's container tone. */
-[data-design="android"] .btn-group {
-  gap: 0;
-  padding: 0;
-  border-color: var(--border);
-  border-radius: var(--radius-pill);
-  background: transparent;
-  overflow: hidden;
-}
-[data-design="android"] .btn-group button {
-  border-radius: 0;
-  padding-block: var(--sp-2);
-}
-[data-design="android"] .btn-group button + button {
-  border-left: 1px solid var(--border);
-}
-[data-design="android"] .btn-group button.active,
-[data-design="android"] .btn-group button.active:hover {
-  background: var(--fill-3);
-  color: var(--accent);
-  box-shadow: none;
 }
 
 @media (max-width: 600px) {

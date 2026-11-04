@@ -123,28 +123,29 @@ function toggle(teamId: string) {
   height: 100%;
 }
 
+/* A grouped list: quiet header, hairline rows, aligned figures. */
 .ts-table {
   width: 100%;
   border-collapse: collapse;
   font-size: var(--fs-sm);
+  font-variant-numeric: tabular-nums;
 }
 
 .ts-table th {
   font-size: var(--fs-xs);
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  font-weight: 400;
   color: var(--text-muted);
+  background: transparent;
   padding: var(--sp-1) var(--sp-2);
   text-align: end;
-  border-bottom: 1px solid var(--border-light);
+  border-bottom: 0.5px solid var(--border);
   white-space: nowrap;
 }
 
 .ts-table td {
   padding: var(--sp-1) var(--sp-2);
   text-align: end;
-  border-bottom: 1px solid var(--border-light);
+  border-bottom: 0.5px solid var(--border-light);
   color: var(--text);
 }
 
@@ -176,7 +177,6 @@ function toggle(teamId: string) {
 }
 .ts-row--expanded td {
   background: color-mix(in srgb, var(--border-light) 20%, transparent);
-  border-bottom: none;
 }
 
 .title-badge {
@@ -208,19 +208,18 @@ function toggle(teamId: string) {
 
 .ts-sub-table th {
   font-size: var(--fs-xs);
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  font-weight: 400;
   color: var(--text-muted);
+  background: transparent;
   padding: var(--sp-1) var(--sp-2);
   text-align: end;
-  border-bottom: 1px solid var(--border-light);
+  border-bottom: 0.5px solid var(--border);
 }
 
 .ts-sub-table td {
   padding: var(--sp-1) var(--sp-2);
   text-align: end;
-  border-bottom: 1px solid var(--border-light);
+  border-bottom: 0.5px solid var(--border-light);
   color: var(--text);
 }
 

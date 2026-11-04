@@ -57,11 +57,7 @@ watch(
           <button
             :class="[
               'dialog-confirm',
-              dialogState.type === 'alert'
-                ? 'primary'
-                : dialogState.dangerous
-                  ? 'danger-solid'
-                  : 'primary',
+              { 'dialog-confirm--danger': dialogState.type !== 'alert' && dialogState.dangerous },
             ]"
             @click="confirm"
           >
@@ -81,144 +77,59 @@ watch(
   background: var(--scrim);
 }
 
+/* An alert: a narrow blurred card with the buttons welded to the bottom
+   edge, split by hairlines and drawn as plain accent text rather than as
+   filled buttons. */
 .dialog-card {
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: var(--z-toast);
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 24px 24px 20px;
-  min-width: 280px;
-  max-width: 420px;
-  width: calc(100% - 40px);
+  background: color-mix(in srgb, var(--surface) 96%, transparent);
+  border: none;
+  border-radius: 14px;
+  padding: 19px 16px 0;
+  width: 270px;
+  max-width: 270px;
+  text-align: center;
   box-shadow: var(--elev-3);
 }
 
 .dialog-msg {
-  font-size: var(--fs-base);
+  font-size: 13px;
   color: var(--text);
-  line-height: 1.6;
-  margin-bottom: 20px;
+  line-height: 1.4;
+  margin-bottom: 18px;
 }
 
 .dialog-actions {
   display: flex;
   justify-content: flex-end;
-  gap: 8px;
-}
-
-.dialog-cancel {
-  background: var(--surface);
-  border-color: var(--border);
-  color: var(--text-muted);
-}
-.dialog-cancel:hover {
-  border-color: var(--border);
-  color: var(--text);
-  background: var(--border-light);
-}
-
-.dialog-confirm.primary {
-  background: var(--accent);
-  background-image: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.08));
-  color: #fff;
-  border-color: var(--accent-hover);
-}
-.dialog-confirm.primary:hover {
-  background: var(--accent-hover);
-}
-
-.dialog-confirm.danger-solid {
-  background: var(--danger);
-  background-image: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.1));
-  color: #fff;
-  border-color: var(--danger);
-}
-.dialog-confirm.danger-solid:hover {
-  filter: brightness(0.9);
-}
-
-/* ── Design languages ────────────────────────────────────────────
-   iOS renders an alert as a narrow blurred card with the buttons welded
-   to the bottom edge, split by hairlines and drawn as plain accent text
-   rather than as filled buttons. */
-[data-design="ios"] .dialog-card {
-  width: 270px;
-  min-width: 0;
-  max-width: 270px;
-  padding: 19px 16px 0;
-  border: none;
-  border-radius: 14px;
-  text-align: center;
-  background: color-mix(in srgb, var(--surface) 96%, transparent);
-}
-[data-design="ios"] .dialog-msg {
-  font-size: 13px;
-  line-height: 1.4;
-  margin-bottom: 18px;
-}
-[data-design="ios"] .dialog-actions {
-  gap: 0;
   margin: 0 -16px;
   border-top: 0.5px solid var(--border);
 }
-[data-design="ios"] .dialog-actions > button {
+.dialog-actions > button {
   flex: 1;
   padding: 11px var(--sp-2);
   border: none;
   border-radius: 0;
   background: none;
-  background-image: none;
   font-size: 17px;
   font-weight: 400;
   color: var(--accent);
 }
-[data-design="ios"] .dialog-actions > button + button {
+.dialog-actions > button + button {
   border-left: 0.5px solid var(--border);
   font-weight: 600;
 }
-[data-design="ios"] .dialog-confirm.danger-solid {
+/* Qualified by the container so it outranks the plain button rule above. */
+.dialog-actions > .dialog-confirm--danger {
   color: var(--danger);
 }
-[data-design="ios"] .dialog-actions > button:hover {
+.dialog-actions > button:hover {
   background: var(--bg-hover);
-  filter: none;
-}
-
-/* M3 dialogs are large-cornered tonal sheets whose actions are text
-   buttons sitting bottom-right. */
-[data-design="android"] .dialog-card {
-  border: none;
-  border-radius: 28px;
-  padding: 24px;
-  background: var(--surface-2);
-}
-[data-design="android"] .dialog-msg {
-  font-size: var(--fs-base);
-  margin-bottom: 24px;
-}
-[data-design="android"] .dialog-actions {
-  gap: var(--sp-2);
-}
-[data-design="android"] .dialog-actions > button {
-  border: none;
-  border-radius: var(--radius-pill);
-  padding: 10px var(--sp-3);
-  min-width: 72px;
-  background: none;
-  background-image: none;
-  font-weight: 500;
-  color: var(--accent);
-}
-[data-design="android"] .dialog-confirm.danger-solid {
-  color: var(--danger);
-}
-[data-design="android"] .dialog-actions > button:hover {
-  background: var(--bg-hover);
-  filter: none;
+  box-shadow: none;
 }
 
 /* ── Transitions ─────────────────────────────────────────── */

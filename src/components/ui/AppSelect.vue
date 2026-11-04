@@ -125,9 +125,9 @@ function onOpenChange(open: boolean) {
   width: 100%;
   gap: var(--sp-2);
   padding: var(--sp-2) var(--sp-3);
-  border: 1px solid var(--border);
+  border: 1px solid transparent;
   border-radius: var(--radius);
-  background: var(--surface);
+  background: var(--fill-1);
   font-size: var(--fs-md);
   font-weight: 400;
   font-family: var(--font-ui);
@@ -140,6 +140,7 @@ function onOpenChange(open: boolean) {
 .asel-trigger:focus-visible {
   outline: none;
   border-color: var(--accent);
+  background: var(--surface);
   box-shadow: var(--focus-ring);
 }
 
@@ -160,34 +161,13 @@ function onOpenChange(open: boolean) {
 .asel-icon {
   display: flex;
   flex-shrink: 0;
-  color: var(--text-muted);
-}
-
-[data-design="ios"] .asel-trigger {
-  border-color: transparent;
-  background: var(--fill-1);
-}
-[data-design="ios"] .asel-trigger:focus-visible {
-  border-color: var(--accent);
-  background: var(--surface);
-}
-[data-design="ios"] .asel-icon {
   color: color-mix(in srgb, var(--text-muted) 70%, transparent);
-}
-
-[data-design="android"] .asel-trigger {
-  border-color: var(--border);
-  background: transparent;
-}
-[data-design="android"] .asel-trigger:focus-visible {
-  box-shadow:
-    inset 0 0 0 1px var(--accent),
-    var(--focus-ring);
 }
 </style>
 
 <!-- Unscoped: SelectPortal teleports content to <body>, past scoped-attr propagation. -->
 <style>
+/* A floating menu: no outline, heavy blur, tight rows. */
 .asel-content {
   /* Above any sheet/modal layer (AppSheet/AppModal top out around
      var(--z-modal) + a few dozen) — a dropdown always opens on top of
@@ -196,10 +176,10 @@ function onOpenChange(open: boolean) {
   width: var(--reka-select-trigger-width);
   max-height: 280px;
   padding: var(--sp-1);
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  box-shadow: var(--elev-2);
+  background: color-mix(in srgb, var(--surface) 96%, transparent);
+  border: 1px solid transparent;
+  border-radius: 14px;
+  box-shadow: var(--elev-3);
   overflow: hidden;
 }
 
@@ -222,9 +202,9 @@ function onOpenChange(open: boolean) {
   align-items: center;
   gap: var(--sp-2);
   padding: var(--sp-2) var(--sp-3);
-  border-radius: calc(var(--radius) - 3px);
-  font-size: var(--fs-sm);
-  font-weight: 500;
+  border-radius: 8px;
+  font-size: var(--fs-base);
+  font-weight: 400;
   color: var(--text);
   cursor: pointer;
   outline: none;
@@ -237,7 +217,7 @@ function onOpenChange(open: boolean) {
 
 .asel-item[data-state="checked"] {
   color: var(--accent);
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .asel-item-check {
@@ -247,8 +227,7 @@ function onOpenChange(open: boolean) {
   flex-shrink: 0;
 }
 
-/* size="sm" — a tab-strip-style picker, not a form field. Repeated after each
-   design language below so it wins there too, since each one re-widens rows. */
+/* size="sm" — a tab-strip-style picker, not a form field. */
 .asel-content--sm .asel-item {
   padding: var(--sp-1) var(--sp-2);
   font-size: var(--fs-xs);
@@ -280,49 +259,6 @@ function onOpenChange(open: boolean) {
     opacity: 0;
     transform: translateY(-4px) scale(0.97);
   }
-}
-
-/* ── Design languages ────────────────────────────────────────────
-   iOS: a floating menu — no outline, heavy blur, tight rows. */
-[data-design="ios"] .asel-content {
-  border-color: transparent;
-  border-radius: 14px;
-  background: color-mix(in srgb, var(--surface) 96%, transparent);
-  box-shadow: var(--elev-3);
-}
-[data-design="ios"] .asel-item {
-  border-radius: 8px;
-  font-size: var(--fs-base);
-  font-weight: 400;
-}
-[data-design="ios"] .asel-item[data-state="checked"] {
-  font-weight: 500;
-}
-[data-design="ios"] .asel-content--sm .asel-item {
-  padding: var(--sp-1) var(--sp-2);
-  font-size: var(--fs-xs);
-}
-
-/* M3: an elevated tonal menu, square-ish rows, no outline. */
-[data-design="android"] .asel-content {
-  border-color: transparent;
-  border-radius: var(--radius-sm);
-  background: var(--surface-2);
-  box-shadow: var(--elev-2);
-  padding: var(--sp-1) 0;
-}
-[data-design="android"] .asel-item {
-  border-radius: 0;
-  padding: var(--sp-3) var(--sp-4);
-  font-size: var(--fs-base);
-  font-weight: 400;
-}
-[data-design="android"] .asel-item[data-state="checked"] {
-  background: var(--fill-2);
-}
-[data-design="android"] .asel-content--sm .asel-item {
-  padding: var(--sp-1) var(--sp-2);
-  font-size: var(--fs-xs);
 }
 
 @media (prefers-reduced-motion: reduce) {

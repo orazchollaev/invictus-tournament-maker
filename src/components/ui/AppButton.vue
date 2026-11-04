@@ -120,32 +120,26 @@ function onPointerDown() {
   background: var(--surface);
   border-color: var(--border);
 }
+/* Nothing lifts or casts a shadow: presses dim instead (see :active below). */
 .btn--outlined:hover:not(:disabled) {
   background: var(--accent-subtle);
   border-color: var(--accent);
   color: var(--accent);
-  box-shadow: var(--elev-1);
 }
 
 .btn--filled {
   background: var(--accent);
   border-color: var(--accent);
   color: var(--on-accent);
-  box-shadow: var(--elev-1);
 }
 .btn--filled:hover:not(:disabled) {
   background: var(--accent-hover);
   border-color: var(--accent-hover);
-  box-shadow: var(--elev-2);
-  transform: translateY(-1px);
-}
-.btn--filled:active:not(:disabled) {
-  transform: translateY(0) scale(0.97);
 }
 
 .btn--tonal {
-  background: color-mix(in srgb, var(--accent) 12%, transparent);
-  border-color: color-mix(in srgb, var(--accent) 30%, transparent);
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  border-color: transparent;
   color: var(--accent);
 }
 .btn--tonal:hover:not(:disabled) {
@@ -154,7 +148,7 @@ function onPointerDown() {
 }
 
 .btn--text {
-  color: var(--text-muted);
+  color: var(--accent);
 }
 .btn--text:hover:not(:disabled) {
   background: var(--bg-hover);
@@ -168,7 +162,6 @@ function onPointerDown() {
 }
 .btn--danger:hover:not(:disabled) {
   background: color-mix(in srgb, var(--danger) 12%, var(--surface));
-  box-shadow: var(--elev-1);
 }
 .btn--danger.btn--solid {
   background: var(--danger);
@@ -182,7 +175,7 @@ function onPointerDown() {
 
 /* ── Shared states ───────────────────────────────────────────── */
 .btn:active:not(:disabled) {
-  transform: scale(0.96);
+  opacity: 0.55;
 }
 .btn:focus-visible {
   outline: none;
@@ -193,70 +186,9 @@ function onPointerDown() {
   cursor: not-allowed;
 }
 
-/* ── Design languages ────────────────────────────────────────────
-   iOS presses dim; nothing lifts, and filled buttons are capsules. */
-[data-design="ios"] .btn {
-  font-weight: 600;
-}
-[data-design="ios"] .btn--filled,
-[data-design="ios"] .btn--tonal {
-  box-shadow: none;
-}
-[data-design="ios"] .btn--tonal {
-  border-color: transparent;
-  background: color-mix(in srgb, var(--accent) 14%, transparent);
-}
-[data-design="ios"] .btn--text {
-  color: var(--accent);
-}
-[data-design="ios"] .btn--filled:hover:not(:disabled) {
-  box-shadow: none;
-  transform: none;
-}
-[data-design="ios"] .btn--outlined:hover:not(:disabled),
-[data-design="ios"] .btn--danger:hover:not(:disabled) {
-  box-shadow: none;
-}
-[data-design="ios"] .btn:active:not(:disabled),
-[data-design="ios"] .btn--filled:active:not(:disabled) {
-  transform: none;
-  opacity: 0.55;
-}
-
-/* Material 3: every button is a capsule, and pressing paints a state
-   layer instead of squashing the button. */
-[data-design="android"] .btn {
-  border-radius: var(--radius-pill);
-  font-weight: 500;
-}
-[data-design="android"] .btn--md:not(.btn--icon) {
-  padding: 10px var(--sp-5);
-}
-[data-design="android"] .btn--sm:not(.btn--icon) {
-  padding: var(--sp-2) var(--sp-4);
-}
-[data-design="android"] .btn--tonal {
-  border-color: transparent;
-  background: var(--fill-3);
-}
-[data-design="android"] .btn--filled {
-  box-shadow: none;
-}
-[data-design="android"] .btn--filled:hover:not(:disabled) {
-  transform: none;
-}
-[data-design="android"] .btn:active:not(:disabled),
-[data-design="android"] .btn--filled:active:not(:disabled) {
-  transform: none;
-  box-shadow: inset 0 0 0 999px color-mix(in srgb, currentColor 12%, transparent);
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .btn,
-  .btn:active:not(:disabled),
-  .btn--filled:hover:not(:disabled) {
+  .btn {
     transition: none;
-    transform: none;
   }
 }
 </style>

@@ -174,11 +174,14 @@ function onInputFocus(e: FocusEvent) {
 </template>
 
 <style scoped>
+/* The stepper control: one grey capsule, a hairline between the two
+   halves, no outline. */
 .num {
   display: inline-flex;
   align-items: center;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  background: var(--fill-1);
   overflow: hidden;
   flex-shrink: 0;
   /* No double-tap zoom or text selection while hammering the buttons. */
@@ -189,45 +192,6 @@ function onInputFocus(e: FocusEvent) {
 
 .num--disabled {
   opacity: 0.5;
-}
-
-/* ── Design languages ────────────────────────────────────────────
-   iOS: the stepper control — one grey capsule, a hairline between the
-   two halves, no outline. */
-[data-design="ios"] .num {
-  border-color: transparent;
-  border-radius: var(--radius-pill);
-  background: var(--fill-1);
-}
-[data-design="ios"] .num-btn {
-  background: transparent;
-  color: var(--text);
-}
-[data-design="ios"] .num-btn:first-child {
-  border-right-color: color-mix(in srgb, var(--text) 12%, transparent);
-}
-[data-design="ios"] .num-btn:last-child {
-  border-left-color: color-mix(in srgb, var(--text) 12%, transparent);
-}
-[data-design="ios"] .num-value {
-  font-weight: 500;
-}
-
-/* M3: capsule outline, circular tonal buttons at each end. */
-[data-design="android"] .num {
-  border-radius: var(--radius-pill);
-  border-color: var(--border);
-}
-[data-design="android"] .num-btn {
-  background: var(--fill-1);
-  color: var(--accent);
-}
-[data-design="android"] .num-btn:first-child,
-[data-design="android"] .num-btn:last-child {
-  border-color: transparent;
-}
-[data-design="android"] .num-value {
-  font-weight: 500;
 }
 
 .num-btn {
@@ -241,17 +205,17 @@ function onInputFocus(e: FocusEvent) {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--surface);
+  background: transparent;
   color: var(--text);
   cursor: pointer;
   touch-action: manipulation;
 }
 
 .num-btn:first-child {
-  border-right: 1px solid var(--border);
+  border-right: 1px solid color-mix(in srgb, var(--text) 12%, transparent);
 }
 .num-btn:last-child {
-  border-left: 1px solid var(--border);
+  border-left: 1px solid color-mix(in srgb, var(--text) 12%, transparent);
 }
 
 .num-btn:hover:not(:disabled) {
@@ -273,7 +237,7 @@ function onInputFocus(e: FocusEvent) {
   text-align: center;
   font-family: var(--font-ui);
   font-size: var(--fs-md);
-  font-weight: 700;
+  font-weight: 500;
   color: var(--text);
 }
 
@@ -309,10 +273,6 @@ function onInputFocus(e: FocusEvent) {
 /* ── Match-card variant ──
    Same anatomy at score-cell scale: 20px buttons keep the control inside a
    26px row while staying a real tap target. */
-.num--sm {
-  background: var(--surface);
-  border-color: var(--border-light);
-}
 .num--sm .num-btn {
   /* 24px floor — the small variant used to paint a 20x22 target. */
   width: 24px;

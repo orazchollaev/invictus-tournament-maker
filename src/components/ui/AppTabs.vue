@@ -42,35 +42,21 @@ defineEmits<{ "update:modelValue": [value: string] }>()
 </template>
 
 <style scoped>
+/* A segmented-control track; the segments are the global .phase-tab
+   (assets/style/components.css). */
 .tabs {
   display: flex;
-  gap: 0;
+  gap: 2px;
+  padding: 2px;
   margin-bottom: var(--sp-3);
-  border-bottom: 1px solid var(--border-light);
-  background: var(--bg);
+  border-radius: var(--radius-pill);
+  background: var(--fill-1);
 }
 
 .tabs--sticky {
   position: sticky;
   top: var(--sticky-top);
   z-index: var(--z-sticky);
-}
-
-/* ── Design languages ────────────────────────────────────────────
-   The tab items themselves (.phase-tab) are restyled in
-   assets/style/design.css; this is only the strip they sit in.
-   iOS: a segmented-control track. M3: an underline rail. */
-[data-design="ios"] .tabs {
-  gap: 2px;
-  padding: 2px;
-  border-bottom: none;
-  border-radius: var(--radius-pill);
-  background: var(--fill-1);
-}
-
-[data-design="android"] .tabs {
-  background: transparent;
-  border-bottom-color: var(--border-light);
 }
 
 @media (max-width: 600px) {

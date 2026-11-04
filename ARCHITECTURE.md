@@ -185,7 +185,7 @@ Three places a style can live, in order of preference:
    folder it sits in.
 3. **`src/assets/style/`** — tokens, resets, layout primitives and utility classes only.
    Anything global goes through `index.css`'s import chain, and `design.css` stays last
-   because its `[data-design="…"]` blocks re-point tokens set above it.
+   because it re-points tokens set above it.
 
 Do not add a fourth place.
 

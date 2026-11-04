@@ -20,7 +20,7 @@
   margin: 0;
   font-size: var(--fs-xl);
   font-weight: 800;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
 }
 
 /* ── Detail page header ──────────────────────────────────────── */
@@ -44,7 +44,7 @@
   margin: var(--sp-2) 0 var(--sp-1);
   font-size: var(--fs-xl);
   font-weight: 800;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
 }
 
 /* Row holding an AppSearchInput plus whatever sits beside it (view toggle, clear). */
@@ -116,11 +116,6 @@
     flex-wrap: wrap;
     gap: var(--sp-2);
     margin-bottom: var(--sp-2);
-  }
-
-  .page-title,
-  .t-header h1 {
-    font-size: var(--fs-lg);
   }
 
   .t-header {

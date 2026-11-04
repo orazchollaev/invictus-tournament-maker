@@ -17,13 +17,14 @@ defineProps<{
 </template>
 
 <style scoped>
+/* The grouped-list header: small, muted, uppercase, on the card's own fill. */
 .section-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--sp-2);
-  padding: var(--sp-3) var(--sp-4);
-  background: var(--bg);
+  padding: var(--sp-3) var(--sp-4) var(--sp-2);
+  background: transparent;
   border-radius: var(--radius-sm) var(--radius-sm) 0 0;
 }
 
@@ -36,9 +37,9 @@ defineProps<{
   font-family: var(--font-ui);
   font-size: var(--fs-xs);
   font-weight: 700;
-  letter-spacing: 0.07em;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--text-muted);
 }
 
 .section-header-actions {
@@ -46,30 +47,6 @@ defineProps<{
   align-items: center;
   gap: var(--sp-2);
   flex-shrink: 0;
-}
-
-/* ── Design languages ────────────────────────────────────────────
-   iOS: the grouped-list header — small, muted, uppercase, sitting on the
-   card's own fill rather than in a tinted strip. */
-[data-design="ios"] .section-header {
-  background: transparent;
-  padding-bottom: var(--sp-2);
-}
-[data-design="ios"] .section-header-title {
-  color: var(--text-muted);
-  letter-spacing: 0.04em;
-}
-
-/* M3: a title in sentence case, in the text colour, no strip. */
-[data-design="android"] .section-header {
-  background: transparent;
-}
-[data-design="android"] .section-header-title {
-  font-size: var(--fs-base);
-  font-weight: 600;
-  letter-spacing: 0;
-  text-transform: none;
-  color: var(--text);
 }
 
 @media (max-width: 600px) {

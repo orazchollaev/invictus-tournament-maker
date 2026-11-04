@@ -117,30 +117,15 @@ onUnmounted(() => {
   z-index: var(--z-dropdown);
   width: 260px;
   max-width: calc(100vw - var(--sp-5));
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
+  /* The same floating shell the menus use. */
+  background: color-mix(in srgb, var(--surface) 96%, transparent);
+  border: 1px solid transparent;
+  border-radius: 14px;
   padding: var(--sp-2) var(--sp-3);
   font-size: var(--fs-sm);
   color: var(--text-muted);
   line-height: 1.5;
-  box-shadow: var(--elev-2);
-}
-
-/* ── Design languages ────────────────────────────────────────────
-   The same popover shell the menus use. */
-[data-design="ios"] .sd-popover {
-  border-color: transparent;
-  border-radius: 14px;
-  background: color-mix(in srgb, var(--surface) 96%, transparent);
   box-shadow: var(--elev-3);
-}
-
-[data-design="android"] .sd-popover {
-  border-color: transparent;
-  border-radius: var(--radius-sm);
-  background: var(--surface-2);
-  box-shadow: var(--elev-2);
 }
 
 /* The info dot is 20px by design — grow only what the finger hits. */

@@ -167,7 +167,6 @@ defineExpose({ close })
   top: 0;
   inset-inline-end: 0;
   background: var(--surface);
-  border-left: 1px solid var(--border);
   box-shadow: var(--shadow-lg);
   width: 420px;
   max-width: 100vw;
@@ -182,21 +181,26 @@ defineExpose({ close })
   animation: drawer-out 0.22s cubic-bezier(0.4, 0, 1, 1) both;
 }
 
+/* A navigation-bar style header: centred title on the sheet's own fill,
+   hairline rule, tinted close glyph. */
 .drawer-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  padding: 10px 14px;
-  background: var(--bg);
-  border-bottom: 1px solid var(--border-light);
+  padding: var(--sp-3) var(--sp-4);
+  background: color-mix(in srgb, var(--surface) 96%, transparent);
+  border-bottom: 0.5px solid var(--border);
   flex-shrink: 0;
 }
 
 .drawer-title {
+  flex: 1;
+  text-align: center;
   font-family: var(--font);
   font-size: var(--fs-md);
   font-weight: 600;
+  letter-spacing: -0.01em;
 }
 
 .drawer-close {
@@ -208,7 +212,7 @@ defineExpose({ close })
   padding: 0;
   border: none;
   background: transparent;
-  color: var(--text-muted);
+  color: var(--accent);
   border-radius: var(--radius);
   cursor: pointer;
   margin-inline-start: auto;
@@ -220,7 +224,6 @@ defineExpose({ close })
 
 .drawer-close:hover {
   background: color-mix(in srgb, var(--border) 60%, transparent);
-  color: var(--text);
 }
 
 .drawer-body {
@@ -238,53 +241,9 @@ defineExpose({ close })
   align-items: center;
   gap: 8px;
   padding: 10px 14px calc(10px + var(--safe-bottom));
-  border-top: 1px solid var(--border-light);
-  background: var(--bg);
-  flex-shrink: 0;
-}
-
-/* ── Design languages ────────────────────────────────────────────
-   iOS: a navigation-bar style header — centred title on the sheet's own
-   fill, hairline rule, tinted close glyph. */
-[data-design="ios"] .drawer {
-  border-left: none;
-}
-[data-design="ios"] .drawer-header {
-  background: color-mix(in srgb, var(--surface) 96%, transparent);
-  border-bottom: 0.5px solid var(--border);
-  padding: var(--sp-3) var(--sp-4);
-}
-[data-design="ios"] .drawer-title {
-  flex: 1;
-  text-align: center;
-  font-size: var(--fs-md);
-  font-weight: 600;
-  letter-spacing: -0.01em;
-}
-[data-design="ios"] .drawer-close {
-  color: var(--accent);
-}
-[data-design="ios"] .drawer-footer {
-  background: transparent;
   border-top: 0.5px solid var(--border);
-}
-
-/* M3: a tonal top app bar — title on the left, no rule under it. */
-[data-design="android"] .drawer-header {
-  background: var(--surface-2);
-  border-bottom: none;
-  padding: var(--sp-3) var(--sp-4);
-}
-[data-design="android"] .drawer-title {
-  font-size: var(--fs-lg);
-  font-weight: 500;
-}
-[data-design="android"] .drawer-close {
-  border-radius: var(--radius-pill);
-}
-[data-design="android"] .drawer-footer {
   background: transparent;
-  border-top: none;
+  flex-shrink: 0;
 }
 
 @media (max-width: 600px) {
