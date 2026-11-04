@@ -370,12 +370,6 @@
       desc: "Idioma de visualización de la aplicación",
     },
     appearance: {
-      design: {
-        label: "Lenguaje de diseño",
-        desc: "Suave es sereno y vidrioso; Vivo es más audaz, con superficies tintadas y esquinas más grandes. Tu color principal no cambia.",
-        soft: "Suave",
-        vivid: "Vivo",
-      },
       title: "Apariencia",
       theme: {
         label: "Tema",

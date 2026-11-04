@@ -373,12 +373,6 @@
       desc: "Anzeigesprache für die gesamte App",
     },
     appearance: {
-      design: {
-        label: "Designsprache",
-        desc: "Sanft ist ruhig und glasartig; Kräftig ist markanter, mit getönten Flächen und größeren Ecken. Deine Primärfarbe bleibt unverändert.",
-        soft: "Sanft",
-        vivid: "Kräftig",
-      },
       title: "Erscheinungsbild",
       theme: {
         label: "Design",

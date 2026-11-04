@@ -370,12 +370,6 @@
       desc: "Idioma de exibição do aplicativo",
     },
     appearance: {
-      design: {
-        label: "Linguagem de design",
-        desc: "Suave é calmo e vítreo; Vívido é mais ousado, com superfícies tingidas e cantos maiores. A sua cor principal não muda.",
-        soft: "Suave",
-        vivid: "Vívido",
-      },
       title: "Aparência",
       theme: {
         label: "Tema",

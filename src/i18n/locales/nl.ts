@@ -372,12 +372,6 @@
     },
     appearance: {
       title: "Uiterlijk",
-      design: {
-        label: "Ontwerpstijl",
-        desc: "Soft is rustig en glazig; Vivid is krachtiger, met getinte vlakken en grotere hoeken. Je hoofdkleur blijft gelijk.",
-        soft: "Soft",
-        vivid: "Vivid",
-      },
       theme: {
         label: "Thema",
         desc: "Kleurenschema voor de hele app",

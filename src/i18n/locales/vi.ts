@@ -369,12 +369,6 @@
       desc: "Ngôn ngữ hiển thị cho toàn bộ ứng dụng",
     },
     appearance: {
-      design: {
-        label: "Ngôn ngữ thiết kế",
-        desc: "Dịu nhẹ mang cảm giác êm và trong như kính; Rực rỡ mạnh mẽ hơn, với bề mặt ám màu và bo góc lớn hơn. Màu chính của bạn không đổi.",
-        soft: "Dịu nhẹ",
-        vivid: "Rực rỡ",
-      },
       title: "Giao diện",
       theme: {
         label: "Chủ đề",

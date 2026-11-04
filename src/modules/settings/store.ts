@@ -8,8 +8,6 @@ import type { Locale } from "@/i18n"
 import { usePlayersStore } from "@/modules/players/store"
 
 export type Theme = "light" | "dark"
-/** Platform look: shape, elevation, type scale and neutrals — never the accent. */
-export type DesignLanguage = "ios" | "android"
 export type DrawType = "random" | "seeded" | "manual"
 export type BracketStyle = "double-sided" | "classic" | "auto"
 export type BracketQuality = "high" | "low"
@@ -25,7 +23,6 @@ const ALL_EVENT_TYPES: MatchEventType[] = ["goal", "penGoal", "ownGoal", "penMis
 
 export const useSettingsStore = defineStore("settings", () => {
   const theme = ref<Theme>("dark")
-  const designLanguage = ref<DesignLanguage>("ios")
   // Phone language on first launch; a saved choice replaces it when settings hydrate.
   const locale = ref<Locale>(detectLocale())
   const primaryColor = ref<string | null>(null)
@@ -98,14 +95,6 @@ export const useSettingsStore = defineStore("settings", () => {
   )
 
   watch(
-    designLanguage,
-    (val) => {
-      document.documentElement.setAttribute("data-design", val)
-    },
-    { immediate: true }
-  )
-
-  watch(
     locale,
     async (val) => {
       await loadLocale(val)
@@ -165,7 +154,6 @@ export const useSettingsStore = defineStore("settings", () => {
 
   function resetAll() {
     theme.value = "dark"
-    designLanguage.value = "ios"
     locale.value = detectLocale()
     primaryColor.value = null
     groupLegMode.value = "single"
@@ -215,7 +203,6 @@ export const useSettingsStore = defineStore("settings", () => {
 
   return {
     theme,
-    designLanguage,
     locale,
     primaryColor,
     groupLegMode,

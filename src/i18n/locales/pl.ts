@@ -368,12 +368,6 @@
       desc: "Język wyświetlania dla całej aplikacji",
     },
     appearance: {
-      design: {
-        label: "Język projektowania",
-        desc: "Łagodny jest spokojny i szklisty; Wyrazisty jest śmielszy, z barwionymi powierzchniami i większymi zaokrągleniami. Kolor główny pozostaje bez zmian.",
-        soft: "Łagodny",
-        vivid: "Wyrazisty",
-      },
       title: "Wygląd",
       theme: {
         label: "Motyw",

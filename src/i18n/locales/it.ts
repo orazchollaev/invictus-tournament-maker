@@ -373,12 +373,6 @@
     },
     appearance: {
       title: "Aspetto",
-      design: {
-        label: "Stile Grafico",
-        desc: "Soft è calmo e vetroso; Vivid è più deciso, con superfici colorate e angoli più grandi. Il colore primario non ne risente.",
-        soft: "Soft",
-        vivid: "Vivid",
-      },
       theme: {
         label: "Tema",
         desc: "Schema colori per l'intera app",

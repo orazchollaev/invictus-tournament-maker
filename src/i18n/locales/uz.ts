@@ -372,12 +372,6 @@
     },
     appearance: {
       title: "Tashqi ko'rinish",
-      design: {
-        label: "Dizayn uslubi",
-        desc: "Yumshoq — sokin va shishasimon; Yorqin — dadilroq, rangli yuzalar va kattaroq burchaklar bilan. Asosiy rangingiz o'zgarmaydi.",
-        soft: "Yumshoq",
-        vivid: "Yorqin",
-      },
       theme: {
         label: "Mavzu",
         desc: "Butun ilova uchun rang sxemasi",

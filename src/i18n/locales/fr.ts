@@ -371,12 +371,6 @@
       desc: "Langue d'affichage pour toute l'application",
     },
     appearance: {
-      design: {
-        label: "Langage visuel",
-        desc: "Doux est calme et vitré ; Vif est plus affirmé, avec des surfaces teintées et des coins plus arrondis. Votre couleur principale reste inchangée.",
-        soft: "Doux",
-        vivid: "Vif",
-      },
       title: "Apparence",
       theme: {
         label: "Thème",

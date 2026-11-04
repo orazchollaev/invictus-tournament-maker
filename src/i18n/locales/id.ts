@@ -370,12 +370,6 @@
       desc: "Bahasa tampilan untuk seluruh aplikasi",
     },
     appearance: {
-      design: {
-        label: "Bahasa Desain",
-        desc: "Lembut terasa tenang dan seperti kaca; Cerah lebih berani, dengan permukaan berwarna dan sudut lebih besar. Warna utama Anda tidak berubah.",
-        soft: "Lembut",
-        vivid: "Cerah",
-      },
       title: "Tampilan",
       theme: {
         label: "Tema",
