@@ -20,13 +20,22 @@ export const useMarketStore = defineStore(
     const loading = ref(false)
     const failed = ref(false)
     let initializing: Promise<void> | null = null
+    /**
+     * False until the saved sign-in has been looked up. On the web that is a
+     * network round trip, and until it ends "no user" means "don't know yet",
+     * not "signed out".
+     */
+    const authChecked = ref(false)
 
     /**
      * Subscribes before reading, so a sign-in restored in between is not missed,
      * and runs once however many screens ask for it at the same time.
      */
     function init() {
-      if (!available) return Promise.resolve()
+      if (!available) {
+        authChecked.value = true
+        return Promise.resolve()
+      }
       initializing ??= (async () => {
         try {
           await authService.onAuthChange((u) => (user.value = u))
@@ -34,6 +43,8 @@ export const useMarketStore = defineStore(
         } catch {
           // Auth unavailable: the market stays browsable, publishing is just disabled.
           initializing = null
+        } finally {
+          authChecked.value = true
         }
       })()
       return initializing
@@ -79,6 +90,7 @@ export const useMarketStore = defineStore(
     return {
       available,
       user,
+      authChecked,
       listings,
       sort,
       cursor,

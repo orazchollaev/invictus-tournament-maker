@@ -514,7 +514,7 @@
     clearAll: "Temizle",
     noTeams: "Paylaşacak takımınız yok.",
     publishNotice:
-      "Yalnızca takım adı, renk, güç ve bayrak paylaşılır. Herkes adınızla birlikte görebilir ve indirebilir. Başkasının haklarını ihlal eden içerik yüklemeyin.",
+      "Takım adı, renk, güç, bayrak ve armalar paylaşılır. Herkes adınızla birlikte görebilir ve indirebilir. Başkasının haklarını ihlal eden içerik yüklemeyin.",
     type: { club: "Kulüpler", country: "Ülkeler" },
     sortNew: "Yeni",
     sortPopular: "Popüler",
@@ -537,6 +537,7 @@
     signedInAs: "{name} olarak giriş yapıldı",
     signInFailed: "Giriş başarısız: {detail}",
     signingIn: "Giriş yapılıyor…",
+    checkingAccount: "Hesap kontrol ediliyor…",
     delete: "Sil",
     deleteConfirm: '"{name}" marketten silinsin mi?',
     report: "Bildir",

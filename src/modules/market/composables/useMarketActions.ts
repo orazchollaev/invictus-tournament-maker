@@ -35,6 +35,8 @@ export function useMarketActions() {
 
   /** Returns false when the user cancels sign-in or it fails. */
   async function ensureSignedIn(): Promise<boolean> {
+    // A saved sign-in may still be loading; asking now would open a second login.
+    await market.init()
     if (market.user) return true
     try {
       if (await market.signIn()) return true

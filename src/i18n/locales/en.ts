@@ -512,7 +512,7 @@
     clearAll: "Clear",
     noTeams: "You have no teams to share yet.",
     publishNotice:
-      "Only team names, colours, strength and flags are shared. Everyone can see and download it, together with your name. Do not upload content that infringes someone else's rights.",
+      "Team names, colours, strength, flags and crests are shared. Everyone can see and download it, together with your name. Do not upload content that infringes someone else's rights.",
     type: { club: "Clubs", country: "Countries" },
     sortNew: "New",
     sortPopular: "Popular",
@@ -535,6 +535,7 @@
     signedInAs: "Signed in as {name}",
     signInFailed: "Sign-in failed: {detail}",
     signingIn: "Signing in…",
+    checkingAccount: "Checking your account…",
     delete: "Delete",
     deleteConfirm: 'Delete "{name}" from the market?',
     report: "Report",

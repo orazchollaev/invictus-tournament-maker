@@ -50,7 +50,9 @@ onMounted(() => market.init())
           {{
             market.user
               ? t("market.signedInAs", { name: market.user.name })
-              : t("market.signInHint")
+              : market.authChecked
+                ? t("market.signInHint")
+                : t("market.checkingAccount")
           }}
         </SettingDesc>
       </template>
@@ -60,7 +62,7 @@ onMounted(() => market.init())
           {{ t("market.deleteAccount") }}
         </AppButton>
       </template>
-      <AppButton v-else :disabled="signingIn" @click="signIn">
+      <AppButton v-else-if="market.authChecked" :disabled="signingIn" @click="signIn">
         {{ signingIn ? t("market.signingIn") : t("market.signIn") }}
       </AppButton>
     </AppField>
