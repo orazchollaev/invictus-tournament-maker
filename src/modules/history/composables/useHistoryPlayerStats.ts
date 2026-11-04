@@ -6,6 +6,7 @@ import { playedMatches, statsOf } from "@/engine"
 import { usePlayersStore } from "@/modules/players/store"
 import type { Tournament } from "@/modules/tournament/types"
 import type { PlayerPosition } from "@/modules/players/types"
+import { useRawTournament } from "@/modules/tournament/composables/useRawTournament"
 
 export interface AllTimePlayerRow {
   playerId: string
@@ -21,6 +22,7 @@ export interface AllTimePlayerRow {
 
 export function useHistoryPlayerStats(seasons: ComputedRef<Tournament[]>) {
   const playersStore = usePlayersStore()
+  const rawOf = useRawTournament()
 
   const playerRows: ComputedRef<AllTimePlayerRow[]> = computed(() => {
     const totals = new Map<
@@ -29,7 +31,7 @@ export function useHistoryPlayerStats(seasons: ComputedRef<Tournament[]>) {
     >()
 
     for (const tournament of seasons.value) {
-      for (const entry of playedMatches(tournament)) {
+      for (const entry of playedMatches(rawOf(tournament))) {
         const stats = statsOf(entry.result)
         if (!stats) continue
 

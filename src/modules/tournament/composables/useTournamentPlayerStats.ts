@@ -8,6 +8,7 @@ import { computed, type ComputedRef } from "vue"
 import { playedMatches, statsOf } from "@/engine"
 import { usePlayersStore } from "@/modules/players/store"
 import type { Tournament } from "../types"
+import { useRawTournament } from "./useRawTournament"
 import type { PlayerPosition } from "@/modules/players/types"
 
 export interface PlayerStatRow {
@@ -32,9 +33,10 @@ export const MIN_APPS_FOR_RATING = 2
 
 export function useTournamentPlayerStats(getTournament: () => Tournament | undefined) {
   const playersStore = usePlayersStore()
+  const rawOf = useRawTournament()
 
   const rows: ComputedRef<PlayerStatRow[]> = computed(() => {
-    const t = getTournament()
+    const t = rawOf(getTournament())
     if (!t) return []
 
     const totals = new Map<string, PlayerStatRow & { ratingSum: number }>()

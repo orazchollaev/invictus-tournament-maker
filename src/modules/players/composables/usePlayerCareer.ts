@@ -6,6 +6,7 @@ import { computed, type ComputedRef } from "vue"
 import { playedMatches, statsOf } from "@/engine"
 import { useTournamentStore } from "@/modules/tournament/store"
 import type { Tournament } from "@/modules/tournament/types"
+import { useRawTournament } from "@/modules/tournament/composables/useRawTournament"
 
 export interface CareerTotals {
   apps: number
@@ -56,6 +57,7 @@ interface TournamentSpell {
 
 export function usePlayerCareer(getPlayerId: () => string | undefined) {
   const tournamentStore = useTournamentStore()
+  const rawOf = useRawTournament()
 
   /** Per-tournament appearance record, the basis for both totals and honours. */
   const spells: ComputedRef<TournamentSpell[]> = computed(() => {
@@ -69,7 +71,7 @@ export function usePlayerCareer(getPlayerId: () => string | undefined) {
       let goals = 0
       let appeared = false
 
-      for (const entry of playedMatches(tournament)) {
+      for (const entry of playedMatches(rawOf(tournament))) {
         const stats = statsOf(entry.result)
         if (!stats) continue
         for (const line of stats.lines) {
@@ -94,7 +96,7 @@ export function usePlayerCareer(getPlayerId: () => string | undefined) {
     let ratingSum = 0
 
     for (const tournament of tournamentStore.tournaments) {
-      for (const entry of playedMatches(tournament)) {
+      for (const entry of playedMatches(rawOf(tournament))) {
         const stats = statsOf(entry.result)
         if (!stats) continue
         for (const line of stats.lines) {
@@ -142,7 +144,7 @@ export function usePlayerCareer(getPlayerId: () => string | undefined) {
 
       if (goals > 0) {
         const tally = new Map<string, number>()
-        for (const entry of playedMatches(tournament)) {
+        for (const entry of playedMatches(rawOf(tournament))) {
           const stats = statsOf(entry.result)
           if (!stats) continue
           for (const line of stats.lines) {

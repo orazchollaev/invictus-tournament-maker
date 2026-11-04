@@ -2,6 +2,7 @@ import { computed } from "vue"
 import type { Tournament } from "../types"
 import type { Team } from "@/modules/teams/types"
 import { playedMatches } from "@/engine"
+import { useRawTournament } from "./useRawTournament"
 
 export interface TeamStat {
   teamId: string
@@ -26,15 +27,17 @@ export interface TeamStat {
  * ties are already excluded (see engine/matchIterator.ts).
  */
 export function useTournamentStats(tournament: () => Tournament | undefined, teams: () => Team[]) {
+  const rawOf = useRawTournament()
   const stats = computed<TeamStat[]>(() => {
-    const t = tournament()
+    const t = rawOf(tournament())
     if (!t) return []
+    const teamById = new Map(teams().map((tm) => [tm.id, tm]))
 
     const map = new Map<string, TeamStat>()
 
     function getOrCreate(id: string): TeamStat {
       if (!map.has(id)) {
-        const team = teams().find((tm) => tm.id === id)
+        const team = teamById.get(id)
         map.set(id, {
           teamId: id,
           name: team?.name ?? id,

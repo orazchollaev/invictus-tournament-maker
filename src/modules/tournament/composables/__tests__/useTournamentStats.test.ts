@@ -7,7 +7,8 @@
 //
 // Driving it through the match iterator is the fix, and these are the cases that
 // keep it that way.
-import { describe, expect, it } from "vitest"
+import { beforeEach, describe, expect, it } from "vitest"
+import { createPinia, setActivePinia } from "pinia"
 import type { Tournament } from "@/modules/tournament/types"
 import { makeTeams } from "@/engine/__tests__/helpers"
 import {
@@ -20,6 +21,9 @@ import {
 import { useTournamentStats } from "../useTournamentStats"
 
 const TEAMS = makeTeams(8)
+
+// The composable reads the store's revision counter (see useRawTournament).
+beforeEach(() => setActivePinia(createPinia()))
 
 function statsOf(t: Tournament) {
   return useTournamentStats(

@@ -5,11 +5,13 @@ import { playedMatches } from "@/engine"
 import { resultScore } from "../components/participants/formatters"
 import { buildFinishContext, buildRow } from "../components/participants/rowBuilders"
 import { type ParticipantRow, type SortKey, type TeamStats } from "../components/participants/types"
+import { useRawTournament } from "./useRawTournament"
 
 /** Sorts that read better ascending on first click. */
 const ASCENDING_FIRST: SortKey[] = ["name", "group"]
 
 export function useParticipantRows(tournament: Ref<Tournament>, teams: Ref<Team[]>) {
+  const rawOf = useRawTournament()
   const sortKey = ref<SortKey>("result")
   const sortAsc = ref(true)
 
@@ -38,7 +40,7 @@ export function useParticipantRows(tournament: Ref<Tournament>, teams: Ref<Team[
       return s
     }
 
-    for (const entry of playedMatches(tournament.value)) {
+    for (const entry of playedMatches(rawOf(tournament.value))) {
       // The third-place match has never counted towards these tallies.
       if (entry.source.kind === "third-place") continue
       const h = get(entry.homeId!)

@@ -3,12 +3,14 @@ import type { Tournament } from "@/modules/tournament/types"
 import type { HistoryStats } from "../types"
 import { playedMatches } from "@/engine"
 import { useTeamRef } from "./useTeamRef"
+import { useRawTournament } from "@/modules/tournament/composables/useRawTournament"
 
 /** A streak shorter than this is not worth reporting. */
 const MIN_REPORTABLE_STREAK = 2
 
 /** The headline numbers on the Statistics tab: totals, records and title streaks. */
 export function useHistoryOverviewStats(completedSeasons: ComputedRef<Tournament[]>) {
+  const rawOf = useRawTournament()
   const { teamRef } = useTeamRef()
 
   const stats = computed<HistoryStats>(() => {
@@ -60,7 +62,7 @@ export function useHistoryOverviewStats(completedSeasons: ComputedRef<Tournament
      * listed the containers by hand missed those phases entirely.
      */
     for (const t of completedSeasons.value) {
-      for (const e of playedMatches(t)) {
+      for (const e of playedMatches(rawOf(t))) {
         if (!e.homeId || !e.awayId || !e.result) continue
         totalMatches++
         totalGoals += e.result.home + e.result.away

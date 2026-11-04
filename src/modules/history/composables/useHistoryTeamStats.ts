@@ -3,6 +3,7 @@ import type { Tournament } from "@/modules/tournament/types"
 import type { TeamStatEntry } from "../types"
 import { playedMatches } from "@/engine"
 import { useTeamRef } from "./useTeamRef"
+import { useRawTournament } from "@/modules/tournament/composables/useRawTournament"
 
 interface MatchTally {
   played: number
@@ -28,6 +29,7 @@ function emptyTally(): MatchTally {
 
 /** All-time per-team record with a per-season breakdown, for the Team Stats tab. */
 export function useHistoryTeamStats(completedSeasons: ComputedRef<Tournament[]>) {
+  const rawOf = useRawTournament()
   const { teamRef } = useTeamRef()
 
   const teamStats = computed<TeamStatEntry[]>(() => {
@@ -91,7 +93,7 @@ export function useHistoryTeamStats(completedSeasons: ComputedRef<Tournament[]>)
       // One walk over every container the season has, phases included — see the
       // note in useHistoryOverviewStats. Leg 2 already arrives with its venues
       // swapped, so there is nothing to flip here.
-      for (const e of playedMatches(t)) {
+      for (const e of playedMatches(rawOf(t))) {
         if (!e.homeId || !e.awayId || !e.result) continue
         addLeg(e.homeId, e.awayId, t.season, e.result.home, e.result.away)
       }

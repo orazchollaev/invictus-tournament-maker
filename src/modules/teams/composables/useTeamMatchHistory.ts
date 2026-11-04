@@ -1,6 +1,7 @@
 import { computed, type Ref } from "vue"
 import { forEachMatch, getWinnerId, isBye, type MatchEntry } from "@/engine"
 import type { Match, GroupMatch, Tournament } from "@/modules/tournament/types"
+import { useRawTournament } from "@/modules/tournament/composables/useRawTournament"
 
 export type Outcome = "W" | "D" | "L"
 export type RoundPhase = "group" | "knockout" | "league"
@@ -91,12 +92,13 @@ function toRow(entry: MatchEntry, t: Tournament, teamId: string): MatchRow | nul
  * first, plus the aggregates the detail page shows.
  */
 export function useTeamMatchHistory(tournaments: Ref<Tournament[]>, teamId: Ref<string>) {
+  const rawOf = useRawTournament()
   const matches = computed<MatchRow[]>(() => {
     const rows: MatchRow[] = []
 
     for (const t of tournaments.value) {
       if (!t.teamIds.includes(teamId.value)) continue
-      forEachMatch(t, (entry) => {
+      forEachMatch(rawOf(t), (entry) => {
         const row = toRow(entry, t, teamId.value)
         if (row) rows.push(row)
       })
