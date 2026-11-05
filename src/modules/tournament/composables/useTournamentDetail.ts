@@ -5,7 +5,6 @@ import { useTeamsStore } from "@/modules/teams/store"
 import { useTournamentStore } from "@/modules/tournament/store"
 import type { PlayoffSeedMode } from "@/modules/tournament/types"
 import { useSettingsStore } from "@/modules/settings/store"
-import { useInAppReview } from "@/composables/useInAppReview"
 import { useHaptic } from "@/composables/useHaptic"
 
 export function useTournamentDetail() {
@@ -16,7 +15,6 @@ export function useTournamentDetail() {
   const store = useTournamentStore()
   const settings = useSettingsStore()
 
-  const { onTournamentCompleted } = useInAppReview()
   const { success: hapticSuccess } = useHaptic()
 
   const allTeams = computed(() => teamsStore.teams)
@@ -126,7 +124,6 @@ export function useTournamentDetail() {
       if (team && settings.confettiOnWin) void fireTeamConfetti(team.color)
       if (team && settings.soundOnWin) playWinnerSound()
       hapticSuccess()
-      onTournamentCompleted()
     }
   )
 

@@ -8,11 +8,16 @@ import { useMonteCarlo } from "@/modules/tournament/composables/useMonteCarlo"
 import { cacheSimResult } from "@/modules/tournament/utils/simulationCache"
 import { useI18n } from "vue-i18n"
 import { AppButton, AppSheet } from "@/components/ui"
+import { showInterstitialAd } from "@/lib/admob"
+import { adConfig } from "@/lib/remoteConfig"
 
 const props = defineProps<{
   tournamentId: string
   tournament: Tournament
 }>()
+
+// AdMob unit "Simulation End Interstitial".
+const SIMULATION_END_AD_UNIT_ID = "ca-app-pub-5867331300737777/2783871508"
 const { t } = useI18n()
 const router = useRouter()
 const teamsStore = useTeamsStore()
@@ -46,6 +51,8 @@ function handleCancelSim() {
 function goToSimResults() {
   showSimModal.value = false
   router.push(`/tournaments/${props.tournamentId}/simulation`)
+  // A finished 10,000-run simulation is a natural break: best effort, never blocks.
+  if (adConfig.ad_simulation_end) void showInterstitialAd(SIMULATION_END_AD_UNIT_ID)
 }
 </script>
 

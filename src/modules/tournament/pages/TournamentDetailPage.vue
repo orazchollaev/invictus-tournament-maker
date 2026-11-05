@@ -30,7 +30,7 @@ import { useTournamentCeremonies } from "../composables/useTournamentCeremonies"
 import { useFillViewportHeight } from "@/composables/useFillViewportHeight"
 import { provideManagedTeam } from "@/composables/useManagedTeam"
 import { showAlert } from "@/composables/useDialog"
-import { promptSupportAfterTournament } from "@/composables/useSupport"
+import { useTournamentEnd } from "../composables/useTournamentEnd"
 
 const { t: trns } = useI18n()
 const router = useRouter()
@@ -66,9 +66,12 @@ const isFinished = computed(
   () => !!tournament.value && store.isTournamentFinished(tournament.value.id)
 )
 
-// Only the moment it flips to finished, not opening one that was already done.
-watch(isFinished, (done, wasDone) => {
-  if (done && !wasDone) promptSupportAfterTournament()
+const { onTournamentFinished } = useTournamentEnd()
+
+// Only the moment it flips to finished, not opening one that was already done,
+// nor switching to a finished season (the page is reused across ids).
+watch([() => tournament.value?.id, isFinished], ([id, done], [oldId, wasDone]) => {
+  if (id === oldId && done && !wasDone) onTournamentFinished()
 })
 
 /**

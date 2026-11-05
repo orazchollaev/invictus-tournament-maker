@@ -51,10 +51,12 @@ async function askForSupport(trigger: "launch" | "tournament_end", extra: Record
 /**
  * A finished tournament is the happiest moment in the app, so ask then. Shares a
  * cooldown with the launch prompt so nobody is asked twice in a few days.
+ * Returns whether it is going to ask.
  */
-export function promptSupportAfterTournament() {
-  if (!promptCooledDown()) return
+export function promptSupportAfterTournament(): boolean {
+  if (!promptCooledDown()) return false
   setTimeout(() => void askForSupport("tournament_end", {}), END_PROMPT_DELAY_MS)
+  return true
 }
 
 export function openSupport(source: SupportSource) {
