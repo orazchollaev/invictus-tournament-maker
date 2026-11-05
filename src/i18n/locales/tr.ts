@@ -795,7 +795,6 @@
       "Resmi olmayan, hayran yapımı bir simülasyondur. UEFA, AFC, CONMEBOL, FIFA veya uygulama içinde adı geçen herhangi bir kulüp, lig ya da turnuva ile bağlantılı, onaylı veya ilişkili değildir.",
     support: {
       bannerText: "Invictus ücretsiz ve tek kişi geliştiriyor. Beğendiysen destek ol.",
-      walletTitle: "Cüzdanınla gönder",
       walletHint:
         "Herhangi bir cüzdanı bağla (Bybit, Trust, MetaMask, Binance Web3 vb.) ve tek dokunuşla USDT gönder.",
       connect: "Cüzdan bağla",
@@ -810,7 +809,6 @@
         "Invictus'u beğendin mi? Ücretsiz ve tek kişi geliştiriyor. Destek olmak ister misin?",
       intro:
         "Invictus ücretsizdir. Beğendiysen küçük bir bağış yapabilirsin. Karşılığında hiçbir şey açılmaz.",
-      payTitle: "Binance Pay",
       payHint: "Binance kullanıyorsan en kolayı: komisyon yok, ağ seçmek yok.",
       copyId: "Pay ID'yi kopyala",
       cryptoTitle: "Başka bir borsadan veya cüzdandan",
@@ -827,12 +825,15 @@
         "Borsanda (Bybit, OKX, KuCoin…) veya cüzdanında Çek ya da Gönder'i, sonra USDT'yi seç.",
       exStep2: "BNB Smart Chain (BEP20) ağını seç ve yukarıdaki adresi yapıştır.",
       exStep3: "İstediğin tutarı yaz ve onayla. Teşekkürler!",
-      adTitle: "Kripton yok mu? Reklam izle",
       adHint: "Kısa bir video reklam da uygulamaya destek olur ve sana hiçbir maliyeti yok.",
       adButton: "Reklam izle",
       adLoading: "Reklam yükleniyor…",
       adThanks: "Desteğin için teşekkürler!",
       adFailed: "Şu an gösterilecek reklam yok. Lütfen daha sonra tekrar dene.",
+      tabAd: "Reklam",
+      tabPay: "Binance",
+      tabAddress: "Adres",
+      tabWallet: "Cüzdan",
     },
   },
   tournament: {

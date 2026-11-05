@@ -808,7 +808,6 @@ export default {
       "Simulatore non ufficiale creato dai fan. Non affiliato, approvato o collegato a UEFA, AFC, CONMEBOL, FIFA o a qualsiasi club, campionato o competizione menzionati nell'app.",
     support: {
       bannerText: "Invictus è gratis e sviluppato da una sola persona. Se ti piace, supportalo.",
-      walletTitle: "Invia con il tuo wallet",
       walletHint:
         "Collega qualsiasi wallet (Bybit, Trust, MetaMask, Binance Web3 e altri) e invia USDT con un tocco.",
       connect: "Collega wallet",
@@ -822,7 +821,6 @@ export default {
       prompt: "Ti piace Invictus? È gratis e lo sviluppa una sola persona. Vuoi supportarlo?",
       intro:
         "Invictus è gratis. Se ti piace, puoi inviare una piccola donazione. In cambio non si sblocca nulla.",
-      payTitle: "Binance Pay",
       payHint: "Il modo più facile se usi Binance: nessuna commissione, nessuna rete da scegliere.",
       copyId: "Copia Pay ID",
       cryptoTitle: "Da un altro exchange o wallet",
@@ -838,12 +836,15 @@ export default {
       exStep1: "Nel tuo exchange (Bybit, OKX, KuCoin…) o wallet, scegli Preleva o Invia, poi USDT.",
       exStep2: "Scegli la rete BNB Smart Chain (BEP20) e incolla l'indirizzo qui sopra.",
       exStep3: "Inserisci l'importo che vuoi e conferma. Grazie!",
-      adTitle: "Niente crypto? Guarda un annuncio",
       adHint: "Anche un breve video pubblicitario sostiene l'app, e non ti costa nulla.",
       adButton: "Guarda un annuncio",
       adLoading: "Caricamento annuncio…",
       adThanks: "Grazie per il tuo supporto!",
       adFailed: "Nessun annuncio disponibile al momento. Riprova più tardi.",
+      tabAd: "Annuncio",
+      tabPay: "Binance",
+      tabAddress: "Indirizzo",
+      tabWallet: "Wallet",
     },
   },
   tournament: {

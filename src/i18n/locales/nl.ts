@@ -807,7 +807,6 @@ export default {
     support: {
       bannerText:
         "Invictus is gratis en wordt door één persoon gemaakt. Vind je het leuk, steun het dan.",
-      walletTitle: "Verstuur met je wallet",
       walletHint:
         "Verbind een willekeurige wallet (Bybit, Trust, MetaMask, Binance Web3 en meer) en verstuur USDT met één tik.",
       connect: "Wallet verbinden",
@@ -822,7 +821,6 @@ export default {
         "Vind je Invictus leuk? Het is gratis en wordt door één persoon gemaakt. Wil je het steunen?",
       intro:
         "Invictus is gratis. Vind je het leuk, dan kun je een kleine donatie doen. Je ontgrendelt er niets mee.",
-      payTitle: "Binance Pay",
       payHint: "Het makkelijkst met Binance: geen kosten, geen netwerk kiezen.",
       copyId: "Pay-ID kopiëren",
       cryptoTitle: "Vanaf een andere exchange of wallet",
@@ -839,12 +837,15 @@ export default {
         "Kies in je exchange (Bybit, OKX, KuCoin…) of wallet Opnemen of Versturen, en dan USDT.",
       exStep2: "Kies het netwerk BNB Smart Chain (BEP20) en plak het adres hierboven.",
       exStep3: "Vul een bedrag in en bevestig. Bedankt!",
-      adTitle: "Geen crypto? Bekijk een advertentie",
       adHint: "Een korte videoadvertentie steunt de app ook, en het kost je niets.",
       adButton: "Advertentie bekijken",
       adLoading: "Advertentie laden…",
       adThanks: "Bedankt voor je steun!",
       adFailed: "Er is nu geen advertentie beschikbaar. Probeer het later opnieuw.",
+      tabAd: "Reclame",
+      tabPay: "Binance",
+      tabAddress: "Adres",
+      tabWallet: "Wallet",
     },
   },
   tournament: {

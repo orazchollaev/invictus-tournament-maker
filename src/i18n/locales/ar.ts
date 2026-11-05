@@ -800,7 +800,6 @@ export default {
       "محاكاة غير رسمية من صنع المعجبين. غير مرتبطة أو معتمدة من قبل UEFA أو AFC أو CONMEBOL أو FIFA أو أي نادٍ أو دوري أو بطولة مذكورة في التطبيق.",
     support: {
       bannerText: "Invictus مجاني ويطوّره شخص واحد. إذا أعجبك، فادعمه.",
-      walletTitle: "أرسل من محفظتك",
       walletHint:
         "اربط أي محفظة (Bybit وTrust وMetaMask وBinance Web3 وغيرها) وأرسل USDT بنقرة واحدة.",
       connect: "ربط المحفظة",
@@ -812,7 +811,6 @@ export default {
       title: "ادعم المطوّر",
       prompt: "هل أعجبك Invictus؟ إنه مجاني ويطوّره شخص واحد. هل تريد دعمه؟",
       intro: "Invictus مجاني. إذا أعجبك، يمكنك إرسال تبرّع صغير. لا يتم فتح أي شيء مقابل ذلك.",
-      payTitle: "Binance Pay",
       payHint: "الأسهل إن كنت تستخدم Binance: بلا رسوم وبلا اختيار شبكة.",
       copyId: "نسخ Pay ID",
       cryptoTitle: "من منصة تداول أو محفظة أخرى",
@@ -828,12 +826,15 @@ export default {
       exStep1: "في منصتك (Bybit أو OKX أو KuCoin…) أو محفظتك، اختر سحب أو إرسال، ثم USDT.",
       exStep2: "اختر شبكة BNB Smart Chain (BEP20) والصق العنوان أعلاه.",
       exStep3: "أدخل أي مبلغ وأكّد. شكراً لك!",
-      adTitle: "لا تملك عملات رقمية؟ شاهد إعلاناً",
       adHint: "إعلان فيديو قصير يدعم التطبيق أيضاً، ولا يكلّفك شيئاً.",
       adButton: "شاهد إعلاناً",
       adLoading: "جارٍ تحميل الإعلان…",
       adThanks: "شكراً لدعمك!",
       adFailed: "لا يتوفر إعلان الآن. يُرجى المحاولة لاحقاً.",
+      tabAd: "إعلان",
+      tabPay: "Binance",
+      tabAddress: "العنوان",
+      tabWallet: "المحفظة",
     },
   },
   tournament: {

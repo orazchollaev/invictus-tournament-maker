@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from "vue"
+import { computed, onMounted, onUnmounted, ref, watch } from "vue"
 import { useI18n } from "vue-i18n"
 import QRCode from "qrcode"
 import { logEvent } from "@/composables/useAnalytics"
-import { AppButton, AppModal } from "@/components/ui"
+import { AppButton, AppButtonGroup, AppModal } from "@/components/ui"
 import { SUPPORT_ADDRESS, SUPPORT_NETWORK, SUPPORT_PAY_ID } from "@/modules/settings/constants"
 import {
   classifySendError,
@@ -33,6 +33,24 @@ let stopPicker: (() => void) | undefined
 let stopSteps: (() => void) | undefined
 
 const { adAvailable, adStatus, watchAd } = useSupportAd()
+
+type Method = "ad" | "pay" | "address" | "wallet"
+
+/**
+ * One way to give at a time, picked from a segmented control, so the whole
+ * dialog fits a phone screen without scrolling. Ordered by how many people can
+ * use each: anyone can watch an ad; the wallet needs USDT and BNB already in one.
+ */
+const methods = computed(() => {
+  const list: { value: Method; label: string }[] = []
+  if (adAvailable) list.push({ value: "ad", label: t("settings.support.tabAd") })
+  if (SUPPORT_PAY_ID) list.push({ value: "pay", label: t("settings.support.tabPay") })
+  list.push({ value: "address", label: t("settings.support.tabAddress") })
+  if (walletSendEnabled) list.push({ value: "wallet", label: t("settings.support.tabWallet") })
+  return list
+})
+const method = ref<Method>(methods.value[0].value)
+watch(method, (m) => void logEvent("support_method", { method: m }))
 
 function setWalletAddress(address: string | undefined) {
   if (address && !walletAddress.value) void logEvent("support_wallet_connected")
@@ -129,14 +147,14 @@ async function copy(key: "payId" | "address", text: string) {
     <div class="support">
       <p class="support-intro">{{ t("settings.support.intro") }}</p>
 
-      <!-- First: most people who want to help hold no crypto, and this works for all of them. -->
-      <section v-if="adAvailable" class="support-block">
-        <h4 class="support-heading">{{ t("settings.support.adTitle") }}</h4>
+      <AppButtonGroup v-if="methods.length > 1" v-model="method" :options="methods" block />
+
+      <section v-if="method === 'ad'" class="support-panel">
         <p class="support-hint">{{ t("settings.support.adHint") }}</p>
         <p v-if="adStatus === 'thanks'" class="support-ok">{{ t("settings.support.adThanks") }}</p>
         <AppButton
           v-else
-          variant="tonal"
+          variant="filled"
           size="md"
           block
           :disabled="adStatus === 'loading'"
@@ -153,13 +171,16 @@ async function copy(key: "payId" | "address", text: string) {
         </p>
       </section>
 
-      <section v-if="SUPPORT_PAY_ID" class="support-block">
-        <h4 class="support-heading">{{ t("settings.support.payTitle") }}</h4>
+      <section v-else-if="method === 'pay'" class="support-panel">
         <p class="support-hint">{{ t("settings.support.payHint") }}</p>
-        <code class="support-value">{{ SUPPORT_PAY_ID }}</code>
-        <AppButton variant="filled" size="md" block @click="copy('payId', SUPPORT_PAY_ID)">
-          {{ copiedKey === "payId" ? t("settings.support.copied") : t("settings.support.copyId") }}
-        </AppButton>
+        <div class="support-copy">
+          <code class="support-value">{{ SUPPORT_PAY_ID }}</code>
+          <AppButton variant="filled" size="md" @click="copy('payId', SUPPORT_PAY_ID)">
+            {{
+              copiedKey === "payId" ? t("settings.support.copied") : t("settings.support.copyId")
+            }}
+          </AppButton>
+        </div>
         <ol class="support-steps">
           <li>{{ t("settings.support.step1") }}</li>
           <li>{{ t("settings.support.step2") }}</li>
@@ -167,21 +188,22 @@ async function copy(key: "payId" | "address", text: string) {
         </ol>
       </section>
 
-      <section class="support-block">
-        <h4 class="support-heading">{{ t("settings.support.cryptoTitle") }}</h4>
-        <img v-if="qr" :src="qr" :alt="t('settings.support.qrAlt')" class="support-qr" />
-        <div class="support-network">
-          {{ t("settings.support.network") }}: {{ SUPPORT_NETWORK }}
+      <section v-else-if="method === 'address'" class="support-panel">
+        <p class="support-hint">{{ t("settings.support.cryptoTitle") }}</p>
+        <div class="support-address">
+          <img v-if="qr" :src="qr" :alt="t('settings.support.qrAlt')" class="support-qr" />
+          <div class="support-address-info">
+            <span class="support-network">
+              {{ t("settings.support.network") }}: {{ SUPPORT_NETWORK }}
+            </span>
+            <code class="support-value">{{ SUPPORT_ADDRESS }}</code>
+            <AppButton variant="filled" size="sm" block @click="copy('address', SUPPORT_ADDRESS)">
+              {{
+                copiedKey === "address" ? t("settings.support.copied") : t("settings.support.copy")
+              }}
+            </AppButton>
+          </div>
         </div>
-        <code class="support-value">{{ SUPPORT_ADDRESS }}</code>
-        <AppButton
-          :variant="SUPPORT_PAY_ID ? 'outlined' : 'filled'"
-          size="md"
-          block
-          @click="copy('address', SUPPORT_ADDRESS)"
-        >
-          {{ copiedKey === "address" ? t("settings.support.copied") : t("settings.support.copy") }}
-        </AppButton>
         <ol class="support-steps">
           <li>{{ t("settings.support.exStep1") }}</li>
           <li>{{ t("settings.support.exStep2") }}</li>
@@ -190,11 +212,9 @@ async function copy(key: "payId" | "address", text: string) {
         <p class="support-warning">{{ t("settings.support.warning") }}</p>
       </section>
 
-      <!-- Last: it only works for people who already hold USDT and BNB in a wallet app. -->
-      <section v-if="walletSendEnabled" class="support-block">
-        <h4 class="support-heading">{{ t("settings.support.walletTitle") }}</h4>
+      <section v-else class="support-panel">
         <p class="support-hint">{{ t("settings.support.walletHint") }}</p>
-        <AppButton v-if="!walletAddress" variant="outlined" size="md" block @click="connectWallet">
+        <AppButton v-if="!walletAddress" variant="filled" size="md" block @click="connectWallet">
           {{ t("settings.support.connect") }}
         </AppButton>
         <template v-else>
@@ -236,59 +256,90 @@ async function copy(key: "payId" | "address", text: string) {
 .support {
   display: flex;
   flex-direction: column;
-  gap: var(--sp-4);
-  padding: var(--sp-4) var(--sp-3) var(--sp-3);
-  text-align: center;
+  gap: var(--sp-3);
+  padding: var(--sp-3);
 }
 .support-intro {
   margin: 0;
-  font-size: var(--fs-base);
+  font-size: var(--fs-sm);
+  line-height: 1.45;
   color: var(--text-muted);
+  text-align: center;
 }
-.support-block {
+.support-panel {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: var(--sp-2);
-  padding-top: var(--sp-4);
-  border-top: 1px solid var(--border-light);
-}
-.support-heading {
-  margin: 0;
-  font-size: var(--fs-base);
-  font-weight: 600;
+  gap: var(--sp-3);
 }
 .support-hint {
   margin: 0;
   font-size: var(--fs-sm);
-  color: var(--text-muted);
+  line-height: 1.45;
+  text-align: center;
+}
+.support-copy {
+  display: flex;
+  align-items: stretch;
+  gap: var(--sp-2);
+}
+.support-copy .support-value {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--fs-base);
+  font-weight: 600;
+}
+.support-address {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
 }
 .support-qr {
-  width: 180px;
-  height: 180px;
+  flex: none;
+  width: 120px;
+  height: 120px;
   border-radius: var(--radius);
 }
+.support-address-info {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--sp-2);
+  min-width: 0;
+}
 .support-network {
-  font-size: var(--fs-sm);
+  font-size: var(--fs-xs);
   font-weight: 600;
 }
 .support-value {
-  max-width: 100%;
-  padding: var(--sp-2) var(--sp-3);
+  padding: var(--sp-2);
   border: 1px solid var(--border-light);
   border-radius: var(--radius);
   font-size: var(--fs-xs);
+  line-height: 1.35;
   word-break: break-all;
   user-select: all;
+}
+.support-steps {
+  margin: 0;
+  padding: var(--sp-2) var(--sp-3) var(--sp-2) var(--sp-6);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  font-size: var(--fs-sm);
+  line-height: 1.5;
+  color: var(--text-muted);
 }
 .support-warning {
   margin: 0;
   font-size: var(--fs-xs);
   line-height: 1.4;
   color: var(--text-muted);
+  text-align: center;
 }
 .support-amounts {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: var(--sp-2);
 }
 .support-ok {
@@ -296,13 +347,6 @@ async function copy(key: "payId" | "address", text: string) {
   font-size: var(--fs-sm);
   font-weight: 600;
   color: var(--accent);
-}
-.support-steps {
-  margin: 0;
-  padding-inline-start: var(--sp-5);
-  text-align: start;
-  font-size: var(--fs-sm);
-  line-height: 1.5;
-  color: var(--text-muted);
+  text-align: center;
 }
 </style>

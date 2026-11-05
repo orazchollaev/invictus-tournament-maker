@@ -804,7 +804,6 @@ export default {
       "Simulator tidak resmi buatan penggemar. Tidak berafiliasi, didukung, atau terhubung dengan UEFA, AFC, CONMEBOL, FIFA, atau klub, liga, maupun kompetisi apa pun yang disebutkan dalam aplikasi.",
     support: {
       bannerText: "Invictus gratis dan dibuat oleh satu orang. Kalau suka, dukung ya.",
-      walletTitle: "Kirim dengan dompetmu",
       walletHint:
         "Hubungkan dompet apa pun (Bybit, Trust, MetaMask, Binance Web3, dan lainnya) lalu kirim USDT dengan sekali ketuk.",
       connect: "Hubungkan dompet",
@@ -818,7 +817,6 @@ export default {
       prompt: "Suka Invictus? Gratis dan dibuat oleh satu orang. Mau mendukungnya?",
       intro:
         "Invictus gratis. Jika kamu suka, kamu bisa mengirim donasi kecil. Tidak ada yang terbuka sebagai imbalan.",
-      payTitle: "Binance Pay",
       payHint: "Paling mudah jika kamu memakai Binance: tanpa biaya, tanpa memilih jaringan.",
       copyId: "Salin Pay ID",
       cryptoTitle: "Dari exchange atau dompet lain",
@@ -835,12 +833,15 @@ export default {
         "Di exchange (Bybit, OKX, KuCoin…) atau dompetmu, pilih Tarik atau Kirim, lalu USDT.",
       exStep2: "Pilih jaringan BNB Smart Chain (BEP20) dan tempel alamat di atas.",
       exStep3: "Masukkan jumlah berapa pun lalu konfirmasi. Terima kasih!",
-      adTitle: "Tidak punya kripto? Tonton iklan",
       adHint: "Iklan video singkat juga mendukung aplikasi ini, dan tidak membebanimu apa pun.",
       adButton: "Tonton iklan",
       adLoading: "Memuat iklan…",
       adThanks: "Terima kasih atas dukunganmu!",
       adFailed: "Belum ada iklan yang tersedia. Coba lagi nanti.",
+      tabAd: "Iklan",
+      tabPay: "Binance",
+      tabAddress: "Alamat",
+      tabWallet: "Dompet",
     },
   },
   tournament: {

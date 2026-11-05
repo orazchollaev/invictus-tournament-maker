@@ -803,7 +803,6 @@ export default {
       "Trình mô phỏng không chính thức do người hâm mộ tạo ra. Không liên kết, không được xác nhận và không có quan hệ với UEFA, AFC, CONMEBOL, FIFA hay bất kỳ câu lạc bộ, giải đấu nào được nhắc đến trong ứng dụng.",
     support: {
       bannerText: "Invictus miễn phí và do một người phát triển. Nếu bạn thích, hãy ủng hộ.",
-      walletTitle: "Gửi bằng ví của bạn",
       walletHint:
         "Kết nối ví bất kỳ (Bybit, Trust, MetaMask, Binance Web3,…) và gửi USDT chỉ với một chạm.",
       connect: "Kết nối ví",
@@ -818,7 +817,6 @@ export default {
         "Bạn thích Invictus? Ứng dụng miễn phí và do một người làm. Bạn có muốn ủng hộ không?",
       intro:
         "Invictus miễn phí. Nếu bạn thích, bạn có thể gửi một khoản ủng hộ nhỏ. Không có gì được mở khóa để đổi lại.",
-      payTitle: "Binance Pay",
       payHint: "Dễ nhất nếu bạn dùng Binance: không phí, không cần chọn mạng.",
       copyId: "Sao chép Pay ID",
       cryptoTitle: "Từ sàn giao dịch hoặc ví khác",
@@ -833,12 +831,15 @@ export default {
       exStep1: "Trong sàn (Bybit, OKX, KuCoin…) hoặc ví của bạn, chọn Rút hoặc Gửi, rồi chọn USDT.",
       exStep2: "Chọn mạng BNB Smart Chain (BEP20) và dán địa chỉ ở trên.",
       exStep3: "Nhập số tiền bất kỳ và xác nhận. Cảm ơn bạn!",
-      adTitle: "Không có tiền mã hóa? Xem quảng cáo",
       adHint: "Một quảng cáo video ngắn cũng giúp ủng hộ ứng dụng, và bạn không mất gì cả.",
       adButton: "Xem quảng cáo",
       adLoading: "Đang tải quảng cáo…",
       adThanks: "Cảm ơn bạn đã ủng hộ!",
       adFailed: "Hiện chưa có quảng cáo. Vui lòng thử lại sau.",
+      tabAd: "Quảng cáo",
+      tabPay: "Binance",
+      tabAddress: "Địa chỉ",
+      tabWallet: "Ví",
     },
   },
   tournament: {

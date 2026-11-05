@@ -803,7 +803,6 @@ export default {
       "非公式のファン制作シミュレーターです。UEFA、AFC、CONMEBOL、FIFA、またはアプリ内で言及されているクラブ・リーグ・大会とは提携・承認・関係がありません。",
     support: {
       bannerText: "Invictusは無料で、1人で開発しています。気に入ったら応援してください。",
-      walletTitle: "ウォレットで送る",
       walletHint:
         "お好きなウォレット(Bybit、Trust、MetaMask、Binance Web3など)を接続して、ワンタップでUSDTを送れます。",
       connect: "ウォレットを接続",
@@ -817,7 +816,6 @@ export default {
       prompt: "Invictusを気に入っていただけましたか?無料で、1人で開発しています。応援しませんか?",
       intro:
         "Invictusは無料です。気に入っていただけたら、少額の寄付を送れます。見返りに解放される機能はありません。",
-      payTitle: "Binance Pay",
       payHint: "Binanceをお使いなら最も簡単です。手数料なし、ネットワーク選択も不要です。",
       copyId: "Pay IDをコピー",
       cryptoTitle: "他の取引所やウォレットから",
@@ -834,12 +832,15 @@ export default {
         "取引所(Bybit、OKX、KuCoinなど)やウォレットで「出金」または「送金」を選び、USDTを選択します。",
       exStep2: "ネットワークでBNB Smart Chain (BEP20)を選び、上のアドレスを貼り付けます。",
       exStep3: "好きな金額を入力して確定します。ありがとうございます!",
-      adTitle: "暗号資産がない場合は広告を見る",
       adHint: "短い動画広告を見るだけでもアプリの支援になります。費用はかかりません。",
       adButton: "広告を見る",
       adLoading: "広告を読み込み中…",
       adThanks: "ご支援ありがとうございます!",
       adFailed: "現在表示できる広告がありません。後でもう一度お試しください。",
+      tabAd: "広告",
+      tabPay: "Binance",
+      tabAddress: "アドレス",
+      tabWallet: "ウォレット",
     },
   },
   tournament: {

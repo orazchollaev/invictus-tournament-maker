@@ -801,7 +801,6 @@ export default {
       "비공식 팬 제작 시뮬레이터입니다. UEFA, AFC, CONMEBOL, FIFA 또는 앱에서 언급된 어떤 클럽, 리그, 대회와도 제휴, 후원, 연관되어 있지 않습니다.",
     support: {
       bannerText: "Invictus는 무료이며 한 사람이 개발합니다. 마음에 드신다면 후원해 주세요.",
-      walletTitle: "지갑으로 보내기",
       walletHint:
         "원하는 지갑(Bybit, Trust, MetaMask, Binance Web3 등)을 연결하고 한 번에 USDT를 보내세요.",
       connect: "지갑 연결",
@@ -814,7 +813,6 @@ export default {
       prompt: "Invictus가 마음에 드시나요? 무료이며 한 사람이 만들고 있습니다. 후원해 주시겠어요?",
       intro:
         "Invictus는 무료입니다. 마음에 드신다면 소액을 후원할 수 있습니다. 대가로 열리는 기능은 없습니다.",
-      payTitle: "Binance Pay",
       payHint:
         "Binance를 쓴다면 가장 쉬운 방법입니다. 수수료도 없고 네트워크를 고를 필요도 없습니다.",
       copyId: "Pay ID 복사",
@@ -832,12 +830,15 @@ export default {
         "사용하는 거래소(Bybit, OKX, KuCoin…)나 지갑에서 출금 또는 보내기를 누르고 USDT를 선택하세요.",
       exStep2: "BNB Smart Chain (BEP20) 네트워크를 선택하고 위 주소를 붙여넣으세요.",
       exStep3: "원하는 금액을 입력하고 확인하세요. 감사합니다!",
-      adTitle: "암호화폐가 없나요? 광고 보기",
       adHint: "짧은 동영상 광고도 앱을 후원하는 방법이며, 비용은 들지 않습니다.",
       adButton: "광고 보기",
       adLoading: "광고 불러오는 중…",
       adThanks: "후원해 주셔서 감사합니다!",
       adFailed: "지금은 표시할 광고가 없습니다. 나중에 다시 시도해 주세요.",
+      tabAd: "광고",
+      tabPay: "Binance",
+      tabAddress: "주소",
+      tabWallet: "지갑",
     },
   },
   tournament: {

@@ -808,7 +808,6 @@ export default {
       "Norasmiy, muxlislar tomonidan yaratilgan simulyator. UEFA, AFC, CONMEBOL, FIFA yoki ilovada nomi zikr etilgan hech qanday klub, liga yoki musobaqa bilan bog'liq yoki tasdiqlangan emas.",
     support: {
       bannerText: "Invictus bepul va uni bir kishi yaratadi. Yoqsa, qo‘llab-quvvatlang.",
-      walletTitle: "Hamyoningiz bilan yuborish",
       walletHint:
         "Istalgan hamyonni (Bybit, Trust, MetaMask, Binance Web3 va boshqalar) ulang va bir bosishda USDT yuboring.",
       connect: "Hamyonni ulash",
@@ -822,7 +821,6 @@ export default {
       prompt: "Invictus yoqdimi? U bepul va uni bir kishi yaratadi. Qo‘llab-quvvatlamoqchimisiz?",
       intro:
         "Invictus bepul. Yoqsa, kichik xayriya yuborishingiz mumkin. Evaziga hech narsa ochilmaydi.",
-      payTitle: "Binance Pay",
       payHint: "Binance ishlatsangiz eng oson yo‘l: komissiyasiz, tarmoq tanlash shart emas.",
       copyId: "Pay ID nusxalash",
       cryptoTitle: "Boshqa birja yoki hamyondan",
@@ -839,12 +837,15 @@ export default {
         "Birjangiz (Bybit, OKX, KuCoin…) yoki hamyoningizda Yechib olish yoki Yuborishni, so‘ng USDT ni tanlang.",
       exStep2: "BNB Smart Chain (BEP20) tarmog‘ini tanlang va yuqoridagi manzilni joylang.",
       exStep3: "Istalgan miqdorni kiriting va tasdiqlang. Rahmat!",
-      adTitle: "Kriptovalyutangiz yo‘qmi? Reklama ko‘ring",
       adHint: "Qisqa video reklama ham ilovani qo‘llab-quvvatlaydi va sizga hech narsa turmaydi.",
       adButton: "Reklama ko‘rish",
       adLoading: "Reklama yuklanmoqda…",
       adThanks: "Qo‘llab-quvvatlaganingiz uchun rahmat!",
       adFailed: "Hozir reklama mavjud emas. Keyinroq qayta urinib ko‘ring.",
+      tabAd: "Reklama",
+      tabPay: "Binance",
+      tabAddress: "Manzil",
+      tabWallet: "Hamyon",
     },
   },
   tournament: {

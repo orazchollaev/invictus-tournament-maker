@@ -808,7 +808,6 @@ export default {
     support: {
       bannerText:
         "Invictus est gratuit et développé par une seule personne. Si vous l'appréciez, soutenez-le.",
-      walletTitle: "Envoyer avec votre portefeuille",
       walletHint:
         "Connectez n'importe quel portefeuille (Bybit, Trust, MetaMask, Binance Web3, etc.) et envoyez des USDT en un geste.",
       connect: "Connecter le portefeuille",
@@ -823,7 +822,6 @@ export default {
         "Vous aimez Invictus ? C'est gratuit et développé par une seule personne. Voulez-vous le soutenir ?",
       intro:
         "Invictus est gratuit. Si vous l'appréciez, vous pouvez faire un petit don. Rien n'est débloqué en échange.",
-      payTitle: "Binance Pay",
       payHint: "Le plus simple avec Binance : sans frais, sans réseau à choisir.",
       copyId: "Copier l'ID Pay",
       cryptoTitle: "Depuis une autre plateforme ou un portefeuille",
@@ -840,12 +838,15 @@ export default {
         "Dans votre plateforme (Bybit, OKX, KuCoin…) ou portefeuille, choisissez Retirer ou Envoyer, puis USDT.",
       exStep2: "Choisissez le réseau BNB Smart Chain (BEP20) et collez l'adresse ci-dessus.",
       exStep3: "Saisissez le montant de votre choix et confirmez. Merci !",
-      adTitle: "Pas de crypto ? Regardez une publicité",
       adHint: "Une courte vidéo publicitaire soutient aussi l'app, et cela ne vous coûte rien.",
       adButton: "Regarder une publicité",
       adLoading: "Chargement de la publicité…",
       adThanks: "Merci pour votre soutien !",
       adFailed: "Aucune publicité disponible pour le moment. Réessayez plus tard.",
+      tabAd: "Pub",
+      tabPay: "Binance",
+      tabAddress: "Adresse",
+      tabWallet: "Wallet",
     },
   },
   tournament: {
