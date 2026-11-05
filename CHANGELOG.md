@@ -1,5 +1,11 @@
 # Changelog
 
+## [4.0.1](https://github.com/orazchollaev/invictus-tournament-maker/compare/v4.0.0...v4.0.1) (2026-11-05)
+
+### 🐛 Bug Fixes
+
+- **android:** enable the Google sign-in provider ([a0aa11a](https://github.com/orazchollaev/invictus-tournament-maker/commit/a0aa11a669815c08d393243bf2531dd6e3b11f31))
+
 ## [4.0.0](https://github.com/orazchollaev/invictus-tournament-maker/compare/v3.8.0...v4.0.0) (2026-11-04)
 
 ### 🚀 New Features
