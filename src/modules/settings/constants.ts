@@ -3,7 +3,7 @@ export const SUPPORT_NETWORK = "BNB Smart Chain (BEP20)"
 export const SUPPORT_ADDRESS = "0xd438ccb5d6ba6d13c59e0c59e045f0a52be8304f"
 
 /** Binance Pay ID for Binance users (no fee, no network to pick). Empty hides the section. */
-export const SUPPORT_PAY_ID: string = ""
+export const SUPPORT_PAY_ID: string = "1281011803"
 
 /** Binance-Peg USDT on BNB Smart Chain, 18 decimals. */
 export const SUPPORT_TOKEN_CONTRACT = "0x55d398326f99059fF775485246999027B3197955"
