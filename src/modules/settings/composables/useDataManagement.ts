@@ -15,7 +15,7 @@ import type { Tournament } from "@/modules/tournament/types"
 import { APP_VERSION } from "@/constants"
 import { uid } from "@/engine"
 import { remapDatasetIds } from "@/modules/teams/utils/remapDataset"
-import { useRewardedAd } from "@/composables/useRewardedAd"
+import { useSampleDataAd } from "@/composables/useSampleDataAd"
 import { logEvent } from "@/composables/useAnalytics"
 
 interface Dataset {
@@ -89,10 +89,10 @@ export function useDataManagement() {
   const teamsStore = useTeamsStore()
   const tournamentStore = useTournamentStore()
   const playersStore = usePlayersStore()
-  const { nextSelectionShowsAd, onSampleDataSelected } = useRewardedAd()
+  const { nextSelectionShowsAd, onSampleDataSelected } = useSampleDataAd()
 
   async function loadDataset(dataset: Dataset) {
-    const willShowAd = nextSelectionShowsAd.value
+    const willShowAd = nextSelectionShowsAd()
     const confirmMsg = willShowAd
       ? t("settings.sampleData.loadConfirmAd", { name: dataset.label })
       : t("settings.sampleData.loadConfirm", { name: dataset.label })
@@ -133,7 +133,7 @@ export function useDataManagement() {
       .map((t) => remapTeamIds(t, idMap))
     tournamentStore.tournaments.push(...newTournaments)
 
-    // Every 2nd dataset picked shows a rewarded ad — best effort.
+    // Every Nth dataset picked shows an interstitial — best effort.
     void onSampleDataSelected()
   }
 
