@@ -23,6 +23,9 @@ importers:
       '@capacitor-firebase/firestore':
         specifier: ^8.6.0
         version: 8.6.0(@capacitor/core@8.6.0)(firebase@13.1.0)
+      '@capacitor-firebase/remote-config':
+        specifier: 8.6.0
+        version: 8.6.0(@capacitor/core@8.6.0)(firebase@13.1.0)
       '@capacitor/android':
         specifier: ^8.6.0
         version: 8.6.0(@capacitor/core@8.6.0)
@@ -284,6 +287,15 @@ packages:
 
   '@capacitor-firebase/firestore@8.6.0':
     resolution: {integrity: sha512-eftmUqJBgV2ectbJOMAbGgfQAI5IqxiE+YGWjk42Qb7cukifUPPqqnmQkNyNg7VTz7KJXjA4dzUAsRbsej4img==}
+    peerDependencies:
+      '@capacitor/core': '>=8.0.0'
+      firebase: ^12.6.0
+    peerDependenciesMeta:
+      firebase:
+        optional: true
+
+  '@capacitor-firebase/remote-config@8.6.0':
+    resolution: {integrity: sha512-BZNC074Wc2bb9AOSlsRsJt182eWdRzj/tlfYM3On5VWQy7EkjOtu55X9dfy+aOdhRfw0QThztwQ90srn/d2ZSQ==}
     peerDependencies:
       '@capacitor/core': '>=8.0.0'
       firebase: ^12.6.0
@@ -4953,6 +4965,12 @@ snapshots:
       firebase: 13.1.0
 
   '@capacitor-firebase/firestore@8.6.0(@capacitor/core@8.6.0)(firebase@13.1.0)':
+    dependencies:
+      '@capacitor/core': 8.6.0
+    optionalDependencies:
+      firebase: 13.1.0
+
+  '@capacitor-firebase/remote-config@8.6.0(@capacitor/core@8.6.0)(firebase@13.1.0)':
     dependencies:
       '@capacitor/core': 8.6.0
     optionalDependencies:

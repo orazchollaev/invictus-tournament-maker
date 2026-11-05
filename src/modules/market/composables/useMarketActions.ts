@@ -73,7 +73,7 @@ export function useMarketActions() {
       teams.teams.push(...out.teams)
       players.players.push(...out.players)
       void logEvent("market_download", { type: dataset.type })
-      // Every 3rd added dataset shows an interstitial — best effort, never blocks.
+      // Every Nth added dataset shows an interstitial — best effort, never blocks.
       void onCommunityDatasetAdded()
       await showAlert(t("market.downloaded", { name: listing.label }))
       return true

@@ -17,6 +17,9 @@ project(':capacitor-firebase-authentication').projectDir = new File('../node_mod
 include ':capacitor-firebase-firestore'
 project(':capacitor-firebase-firestore').projectDir = new File('../node_modules/.pnpm/@capacitor-firebase+firesto_e88b6a03bed28e37be7a3c21234f38b1/node_modules/@capacitor-firebase/firestore/android')
 
+include ':capacitor-firebase-remote-config'
+project(':capacitor-firebase-remote-config').projectDir = new File('../node_modules/.pnpm/@capacitor-firebase+remote-_e097469ffbf07be6317b66339c5cba62/node_modules/@capacitor-firebase/remote-config/android')
+
 include ':capacitor-app'
 project(':capacitor-app').projectDir = new File('../node_modules/.pnpm/@capacitor+app@8.1.2_@capacitor+core@8.6.0/node_modules/@capacitor/app/android')
 

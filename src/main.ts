@@ -9,6 +9,7 @@ import type { Locale } from "./i18n"
 import { initPush } from "./composables/usePush"
 import { initAnalytics, logScreenView, logError } from "./composables/useAnalytics"
 import { initAppOpenAd } from "./composables/useAppOpenAd"
+import { initAdClock } from "./lib/admob"
 import { idbStorage } from "./lib/idbStorage"
 import { useTournamentStore } from "./modules/tournament/store"
 import { useTeamsStore } from "./modules/teams/store"
@@ -138,8 +139,10 @@ async function bootstrap() {
 
   void initPush()
   void initAnalytics()
-  // Only the foreground listener starts here. AdMob itself, and every ad, is
-  // loaded when it is due — see lib/admob.ts for why nothing is held at launch.
+  // Only the ad clock, Remote Config and the foreground listener start here.
+  // AdMob itself, and every ad, is loaded when it is due — see lib/admob.ts for
+  // why nothing is held at launch.
+  initAdClock()
   initAppOpenAd()
   router.afterEach((to) => {
     void logScreenView(to.path)

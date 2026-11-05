@@ -27,6 +27,7 @@
     "@capacitor-firebase/analytics": "^8.6.0",
     "@capacitor-firebase/authentication": "^8.6.0",
     "@capacitor-firebase/firestore": "^8.6.0",
+    "@capacitor-firebase/remote-config": "8.6.0",
     "@capacitor/android": "^8.6.0",
     "@capacitor/app": "^8.1.2",
     "@capacitor/cli": "^8.6.0",
