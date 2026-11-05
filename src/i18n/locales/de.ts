@@ -755,7 +755,7 @@ export default {
       loadConfirm:
         "Datensatz „{name}“ laden? Er wird zu deinen aktuellen Teams und Turnieren hinzugefügt.",
       loadConfirmAd:
-        "Datensatz „{name}“ laden? Er wird zu deinen aktuellen Teams und Turnieren hinzugefügt. Bei jedem 2. geladenen Datensatz wird eine kurze Werbevideo-Belohnung gezeigt — das hier ist einer davon.",
+        "Datensatz „{name}“ laden? Er wird zu deinen aktuellen Teams und Turnieren hinzugefügt. Nach dem Laden wird eine kurze Werbung gezeigt.",
       loadLabel: "Laden",
       adBadge: "Werbung ansehen",
       all: "Alle",
@@ -827,17 +827,26 @@ export default {
       payTitle: "Binance Pay",
       payHint: "Am einfachsten mit Binance: keine Gebühr, kein Netzwerk wählen.",
       copyId: "Pay-ID kopieren",
-      cryptoTitle: "Krypto-Wallet",
+      cryptoTitle: "Von einer anderen Börse oder Wallet",
       qrAlt: "QR-Code der Spendenadresse",
       network: "Netzwerk",
       copy: "Adresse kopieren",
       copied: "Kopiert!",
       warning:
         "Sende nur USDT über das Netzwerk BNB Smart Chain (BEP20). Über andere Netzwerke gesendete Gelder gehen verloren.",
-      howTitle: "So sendest du von Binance",
       step1: "Öffne Binance, tippe auf Pay und dann auf Senden.",
       step2: "Füge die Pay-ID oben ein und gib einen beliebigen Betrag in USDT ein.",
       step3: "Bestätigen. Vielen Dank!",
+      exStep1:
+        "Wähle in deiner Börse (Bybit, OKX, KuCoin…) oder Wallet Auszahlen bzw. Senden und dann USDT.",
+      exStep2: "Wähle das Netzwerk BNB Smart Chain (BEP20) und füge die Adresse oben ein.",
+      exStep3: "Gib einen beliebigen Betrag ein und bestätige. Danke!",
+      adTitle: "Keine Krypto? Sieh dir eine Werbung an",
+      adHint: "Ein kurzes Werbevideo unterstützt die App auch und kostet dich nichts.",
+      adButton: "Werbung ansehen",
+      adLoading: "Werbung wird geladen…",
+      adThanks: "Danke für deine Unterstützung!",
+      adFailed: "Gerade ist keine Werbung verfügbar. Bitte versuche es später noch einmal.",
     },
   },
   tournament: {

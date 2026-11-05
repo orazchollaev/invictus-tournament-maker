@@ -69,6 +69,33 @@ export async function watchPicker(onClose: () => void) {
   })
 }
 
+/** Picker steps worth seeing in analytics: where people who tap "Connect wallet" stop. */
+const TRACKED_WALLET_EVENTS = new Set([
+  "SELECT_WALLET",
+  "CLICK_ALL_WALLETS",
+  "CLICK_WALLET_HELP",
+  "CLICK_GET_WALLET_HELP",
+  "GET_WALLET",
+  "CONNECT_SUCCESS",
+  "CONNECT_ERROR",
+  "USER_REJECTED",
+])
+
+/** Calls `onStep` for each tracked picker event, with the wallet's name when there is one. */
+export async function watchWalletSteps(onStep: (step: string, wallet?: string) => void) {
+  const modal = await getModal()
+  let lastTimestamp = 0
+  return modal.subscribeEvents((state) => {
+    // The subscription fires on any change to the events state; one event, one call.
+    if (state.timestamp === lastTimestamp) return
+    lastTimestamp = state.timestamp
+    const data = state.data as { event: string; properties?: { name?: unknown } }
+    if (!TRACKED_WALLET_EVENTS.has(data.event)) return
+    const wallet = typeof data.properties?.name === "string" ? data.properties.name : undefined
+    onStep(data.event, wallet)
+  })
+}
+
 export type SendFailure = "rejected" | "no-wallet" | "other"
 
 /** Buckets a failed send for analytics: the user said no, nothing is connected, or anything else. */

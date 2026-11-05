@@ -753,7 +753,7 @@ export default {
       loadConfirm:
         'Muat himpunan data "{name}"? Ini akan ditambahkan ke tim dan turnamen Anda saat ini.',
       loadConfirmAd:
-        'Muat himpunan data "{name}"? Ini akan ditambahkan ke tim dan turnamen Anda saat ini. Setiap 2 himpunan data yang Anda muat akan menampilkan iklan berhadiah singkat — ini salah satunya.',
+        'Muat himpunan data "{name}"? Ini akan ditambahkan ke tim dan turnamen Anda saat ini. Iklan singkat akan ditampilkan setelah dimuat.',
       loadLabel: "Muat",
       adBadge: "Tonton iklan",
       all: "Semua",
@@ -821,17 +821,26 @@ export default {
       payTitle: "Binance Pay",
       payHint: "Paling mudah jika kamu memakai Binance: tanpa biaya, tanpa memilih jaringan.",
       copyId: "Salin Pay ID",
-      cryptoTitle: "Dompet kripto",
+      cryptoTitle: "Dari exchange atau dompet lain",
       qrAlt: "Kode QR alamat donasi",
       network: "Jaringan",
       copy: "Salin alamat",
       copied: "Tersalin!",
       warning:
         "Kirim hanya USDT lewat jaringan BNB Smart Chain (BEP20). Dana yang dikirim lewat jaringan lain akan hilang.",
-      howTitle: "Cara mengirim dari Binance",
       step1: "Buka Binance, ketuk Pay, lalu Kirim.",
       step2: "Tempel Pay ID di atas dan masukkan jumlah USDT.",
       step3: "Konfirmasi. Terima kasih!",
+      exStep1:
+        "Di exchange (Bybit, OKX, KuCoin…) atau dompetmu, pilih Tarik atau Kirim, lalu USDT.",
+      exStep2: "Pilih jaringan BNB Smart Chain (BEP20) dan tempel alamat di atas.",
+      exStep3: "Masukkan jumlah berapa pun lalu konfirmasi. Terima kasih!",
+      adTitle: "Tidak punya kripto? Tonton iklan",
+      adHint: "Iklan video singkat juga mendukung aplikasi ini, dan tidak membebanimu apa pun.",
+      adButton: "Tonton iklan",
+      adLoading: "Memuat iklan…",
+      adThanks: "Terima kasih atas dukunganmu!",
+      adFailed: "Belum ada iklan yang tersedia. Coba lagi nanti.",
     },
   },
   tournament: {

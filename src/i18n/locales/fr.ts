@@ -755,7 +755,7 @@ export default {
       loadConfirm:
         "Charger le jeu de données « {name} » ? Il sera ajouté à vos équipes et tournois actuels.",
       loadConfirmAd:
-        "Charger le jeu de données « {name} » ? Il sera ajouté à vos équipes et tournois actuels. Une courte publicité récompensée s'affiche tous les 2 jeux de données chargés — celui-ci en fait partie.",
+        "Charger le jeu de données « {name} » ? Il sera ajouté à vos équipes et tournois actuels. Une courte publicité s'affichera après le chargement.",
       loadLabel: "Charger",
       adBadge: "Voir la pub",
       all: "Tous",
@@ -826,17 +826,26 @@ export default {
       payTitle: "Binance Pay",
       payHint: "Le plus simple avec Binance : sans frais, sans réseau à choisir.",
       copyId: "Copier l'ID Pay",
-      cryptoTitle: "Portefeuille crypto",
+      cryptoTitle: "Depuis une autre plateforme ou un portefeuille",
       qrAlt: "Code QR de l'adresse de don",
       network: "Réseau",
       copy: "Copier l'adresse",
       copied: "Copié !",
       warning:
         "Envoyez uniquement des USDT sur le réseau BNB Smart Chain (BEP20). Les fonds envoyés sur un autre réseau seront perdus.",
-      howTitle: "Comment envoyer depuis Binance",
       step1: "Ouvrez Binance, touchez Pay puis Envoyer.",
       step2: "Collez l'ID Pay ci-dessus et saisissez un montant en USDT.",
       step3: "Confirmez. Merci !",
+      exStep1:
+        "Dans votre plateforme (Bybit, OKX, KuCoin…) ou portefeuille, choisissez Retirer ou Envoyer, puis USDT.",
+      exStep2: "Choisissez le réseau BNB Smart Chain (BEP20) et collez l'adresse ci-dessus.",
+      exStep3: "Saisissez le montant de votre choix et confirmez. Merci !",
+      adTitle: "Pas de crypto ? Regardez une publicité",
+      adHint: "Une courte vidéo publicitaire soutient aussi l'app, et cela ne vous coûte rien.",
+      adButton: "Regarder une publicité",
+      adLoading: "Chargement de la publicité…",
+      adThanks: "Merci pour votre soutien !",
+      adFailed: "Aucune publicité disponible pour le moment. Réessayez plus tard.",
     },
   },
   tournament: {

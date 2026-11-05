@@ -755,7 +755,7 @@ export default {
       loadConfirm:
         "\"{name}\" to'plami yuklansinmi? Bu joriy jamoalaringiz va turnirlaringizga qo'shiladi.",
       loadConfirmAd:
-        "\"{name}\" to'plami yuklansinmi? Bu joriy jamoalaringiz va turnirlaringizga qo'shiladi. Har 2-marta to'plam yuklaganingizda qisqa mukofotli reklama ko'rsatiladi — bu ham ulardan biri.",
+        "\"{name}\" to'plami yuklansinmi? Bu joriy jamoalaringiz va turnirlaringizga qo'shiladi. Yuklangandan so'ng qisqa reklama ko'rsatiladi.",
       loadLabel: "Yuklash",
       adBadge: "Reklamani ko'rish",
       all: "Hammasi",
@@ -825,17 +825,26 @@ export default {
       payTitle: "Binance Pay",
       payHint: "Binance ishlatsangiz eng oson yo‘l: komissiyasiz, tarmoq tanlash shart emas.",
       copyId: "Pay ID nusxalash",
-      cryptoTitle: "Kripto hamyon",
+      cryptoTitle: "Boshqa birja yoki hamyondan",
       qrAlt: "Xayriya manzili QR kodi",
       network: "Tarmoq",
       copy: "Manzilni nusxalash",
       copied: "Nusxalandi!",
       warning:
         "Faqat BNB Smart Chain (BEP20) tarmog‘ida USDT yuboring. Boshqa tarmoqda yuborilgan mablag‘ yo‘qoladi.",
-      howTitle: "Binance’dan qanday yuboriladi",
       step1: "Binance’ni oching, Pay’ni bosing, so‘ng Yuborish’ni tanlang.",
       step2: "Yuqoridagi Pay ID’ni qo‘ying va USDT miqdorini kiriting.",
       step3: "Tasdiqlang. Rahmat!",
+      exStep1:
+        "Birjangiz (Bybit, OKX, KuCoin…) yoki hamyoningizda Yechib olish yoki Yuborishni, so‘ng USDT ni tanlang.",
+      exStep2: "BNB Smart Chain (BEP20) tarmog‘ini tanlang va yuqoridagi manzilni joylang.",
+      exStep3: "Istalgan miqdorni kiriting va tasdiqlang. Rahmat!",
+      adTitle: "Kriptovalyutangiz yo‘qmi? Reklama ko‘ring",
+      adHint: "Qisqa video reklama ham ilovani qo‘llab-quvvatlaydi va sizga hech narsa turmaydi.",
+      adButton: "Reklama ko‘rish",
+      adLoading: "Reklama yuklanmoqda…",
+      adThanks: "Qo‘llab-quvvatlaganingiz uchun rahmat!",
+      adFailed: "Hozir reklama mavjud emas. Keyinroq qayta urinib ko‘ring.",
     },
   },
   tournament: {

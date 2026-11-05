@@ -751,7 +751,7 @@ export default {
       loadConfirm:
         'Wczytać zestaw danych "{name}"? Zostanie dodany do Twoich obecnych drużyn i turniejów.',
       loadConfirmAd:
-        'Wczytać zestaw danych "{name}"? Zostanie dodany do Twoich obecnych drużyn i turniejów. Co 2. wczytany zestaw danych pokazuje krótką reklamę z nagrodą — to jest jedna z nich.',
+        'Wczytać zestaw danych "{name}"? Zostanie dodany do Twoich obecnych drużyn i turniejów. Po wczytaniu pojawi się krótka reklama.',
       loadLabel: "Wczytaj",
       adBadge: "Obejrzyj reklamę",
       all: "Wszystkie",
@@ -821,17 +821,26 @@ export default {
       payTitle: "Binance Pay",
       payHint: "Najłatwiej, jeśli używasz Binance: bez opłat i bez wyboru sieci.",
       copyId: "Kopiuj Pay ID",
-      cryptoTitle: "Portfel kryptowalutowy",
+      cryptoTitle: "Z innej giełdy lub portfela",
       qrAlt: "Kod QR adresu darowizny",
       network: "Sieć",
       copy: "Kopiuj adres",
       copied: "Skopiowano!",
       warning:
         "Wysyłaj tylko USDT w sieci BNB Smart Chain (BEP20). Środki wysłane inną siecią przepadną.",
-      howTitle: "Jak wysłać z Binance",
       step1: "Otwórz Binance, dotknij Pay, a potem Wyślij.",
       step2: "Wklej powyższe Pay ID i wpisz dowolną kwotę w USDT.",
       step3: "Potwierdź. Dziękujemy!",
+      exStep1:
+        "Na swojej giełdzie (Bybit, OKX, KuCoin…) lub w portfelu wybierz Wypłać lub Wyślij, a potem USDT.",
+      exStep2: "Wybierz sieć BNB Smart Chain (BEP20) i wklej adres powyżej.",
+      exStep3: "Wpisz dowolną kwotę i potwierdź. Dziękujemy!",
+      adTitle: "Nie masz kryptowalut? Obejrzyj reklamę",
+      adHint: "Krótka reklama wideo też wspiera aplikację i nic cię nie kosztuje.",
+      adButton: "Obejrzyj reklamę",
+      adLoading: "Ładowanie reklamy…",
+      adThanks: "Dziękujemy za wsparcie!",
+      adFailed: "Teraz nie ma dostępnej reklamy. Spróbuj ponownie później.",
     },
   },
   tournament: {

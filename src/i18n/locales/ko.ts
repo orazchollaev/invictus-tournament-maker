@@ -750,7 +750,7 @@ export default {
       classics: "클래식",
       loadConfirm: '"{name}" 데이터셋을 불러오시겠습니까? 현재 팀과 토너먼트에 추가됩니다.',
       loadConfirmAd:
-        '"{name}" 데이터셋을 불러오시겠습니까? 현재 팀과 토너먼트에 추가됩니다. 데이터셋을 2번 불러올 때마다 짧은 보상형 광고가 표시됩니다 — 이번이 그중 하나입니다.',
+        '"{name}" 데이터셋을 불러오시겠습니까? 현재 팀과 토너먼트에 추가됩니다. 불러온 뒤 짧은 광고가 표시됩니다.',
       loadLabel: "불러오기",
       adBadge: "광고 보기",
       all: "전체",
@@ -818,17 +818,26 @@ export default {
       payHint:
         "Binance를 쓴다면 가장 쉬운 방법입니다. 수수료도 없고 네트워크를 고를 필요도 없습니다.",
       copyId: "Pay ID 복사",
-      cryptoTitle: "암호화폐 지갑",
+      cryptoTitle: "다른 거래소나 지갑에서",
       qrAlt: "후원 주소 QR 코드",
       network: "네트워크",
       copy: "주소 복사",
       copied: "복사됨!",
       warning:
         "BNB Smart Chain(BEP20) 네트워크의 USDT만 보내세요. 다른 네트워크로 보낸 자금은 사라집니다.",
-      howTitle: "Binance에서 보내는 방법",
       step1: "Binance를 열고 Pay를 누른 뒤 보내기를 누르세요.",
       step2: "위의 Pay ID를 붙여넣고 USDT 금액을 입력하세요.",
       step3: "확인하세요. 감사합니다!",
+      exStep1:
+        "사용하는 거래소(Bybit, OKX, KuCoin…)나 지갑에서 출금 또는 보내기를 누르고 USDT를 선택하세요.",
+      exStep2: "BNB Smart Chain (BEP20) 네트워크를 선택하고 위 주소를 붙여넣으세요.",
+      exStep3: "원하는 금액을 입력하고 확인하세요. 감사합니다!",
+      adTitle: "암호화폐가 없나요? 광고 보기",
+      adHint: "짧은 동영상 광고도 앱을 후원하는 방법이며, 비용은 들지 않습니다.",
+      adButton: "광고 보기",
+      adLoading: "광고 불러오는 중…",
+      adThanks: "후원해 주셔서 감사합니다!",
+      adFailed: "지금은 표시할 광고가 없습니다. 나중에 다시 시도해 주세요.",
     },
   },
   tournament: {

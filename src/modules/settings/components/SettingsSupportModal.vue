@@ -13,7 +13,9 @@ import {
   walletSendEnabled,
   watchPicker,
   watchWallet,
+  watchWalletSteps,
 } from "@/modules/settings/services/supportWallet"
+import { useSupportAd } from "@/modules/settings/composables/useSupportAd"
 
 defineEmits<{ close: [] }>()
 
@@ -28,6 +30,9 @@ const amount = ref<string>("3")
 const status = ref<"idle" | "sending" | "sent" | "failed">("idle")
 let stopWatching: (() => void) | undefined
 let stopPicker: (() => void) | undefined
+let stopSteps: (() => void) | undefined
+
+const { adAvailable, adStatus, watchAd } = useSupportAd()
 
 function setWalletAddress(address: string | undefined) {
   if (address && !walletAddress.value) void logEvent("support_wallet_connected")
@@ -66,10 +71,16 @@ async function sendFromWallet() {
 onUnmounted(() => {
   stopWatching?.()
   stopPicker?.()
+  stopSteps?.()
 })
 
 onMounted(async () => {
   if (walletSendEnabled) {
+    watchWalletSteps((step, wallet) => {
+      void logEvent("support_wallet_step", { step: step.toLowerCase(), wallet: wallet ?? "" })
+    })
+      .then((stop) => (stopSteps = stop))
+      .catch(() => {})
     watchWallet(setWalletAddress)
       .then((stop) => (stopWatching = stop))
       .catch(() => {})
@@ -118,6 +129,30 @@ async function copy(key: "payId" | "address", text: string) {
     <div class="support">
       <p class="support-intro">{{ t("settings.support.intro") }}</p>
 
+      <!-- First: most people who want to help hold no crypto, and this works for all of them. -->
+      <section v-if="adAvailable" class="support-block">
+        <h4 class="support-heading">{{ t("settings.support.adTitle") }}</h4>
+        <p class="support-hint">{{ t("settings.support.adHint") }}</p>
+        <p v-if="adStatus === 'thanks'" class="support-ok">{{ t("settings.support.adThanks") }}</p>
+        <AppButton
+          v-else
+          variant="tonal"
+          size="md"
+          block
+          :disabled="adStatus === 'loading'"
+          @click="watchAd"
+        >
+          {{
+            adStatus === "loading"
+              ? t("settings.support.adLoading")
+              : t("settings.support.adButton")
+          }}
+        </AppButton>
+        <p v-if="adStatus === 'failed'" class="support-warning">
+          {{ t("settings.support.adFailed") }}
+        </p>
+      </section>
+
       <section v-if="SUPPORT_PAY_ID" class="support-block">
         <h4 class="support-heading">{{ t("settings.support.payTitle") }}</h4>
         <p class="support-hint">{{ t("settings.support.payHint") }}</p>
@@ -125,12 +160,41 @@ async function copy(key: "payId" | "address", text: string) {
         <AppButton variant="filled" size="md" block @click="copy('payId', SUPPORT_PAY_ID)">
           {{ copiedKey === "payId" ? t("settings.support.copied") : t("settings.support.copyId") }}
         </AppButton>
+        <ol class="support-steps">
+          <li>{{ t("settings.support.step1") }}</li>
+          <li>{{ t("settings.support.step2") }}</li>
+          <li>{{ t("settings.support.step3") }}</li>
+        </ol>
       </section>
 
+      <section class="support-block">
+        <h4 class="support-heading">{{ t("settings.support.cryptoTitle") }}</h4>
+        <img v-if="qr" :src="qr" :alt="t('settings.support.qrAlt')" class="support-qr" />
+        <div class="support-network">
+          {{ t("settings.support.network") }}: {{ SUPPORT_NETWORK }}
+        </div>
+        <code class="support-value">{{ SUPPORT_ADDRESS }}</code>
+        <AppButton
+          :variant="SUPPORT_PAY_ID ? 'outlined' : 'filled'"
+          size="md"
+          block
+          @click="copy('address', SUPPORT_ADDRESS)"
+        >
+          {{ copiedKey === "address" ? t("settings.support.copied") : t("settings.support.copy") }}
+        </AppButton>
+        <ol class="support-steps">
+          <li>{{ t("settings.support.exStep1") }}</li>
+          <li>{{ t("settings.support.exStep2") }}</li>
+          <li>{{ t("settings.support.exStep3") }}</li>
+        </ol>
+        <p class="support-warning">{{ t("settings.support.warning") }}</p>
+      </section>
+
+      <!-- Last: it only works for people who already hold USDT and BNB in a wallet app. -->
       <section v-if="walletSendEnabled" class="support-block">
         <h4 class="support-heading">{{ t("settings.support.walletTitle") }}</h4>
         <p class="support-hint">{{ t("settings.support.walletHint") }}</p>
-        <AppButton v-if="!walletAddress" variant="filled" size="md" block @click="connectWallet">
+        <AppButton v-if="!walletAddress" variant="outlined" size="md" block @click="connectWallet">
           {{ t("settings.support.connect") }}
         </AppButton>
         <template v-else>
@@ -163,33 +227,6 @@ async function copy(key: "payId" | "address", text: string) {
         <p v-else-if="status === 'failed'" class="support-warning">
           {{ t("settings.support.failed") }}
         </p>
-      </section>
-
-      <section class="support-block">
-        <h4 class="support-heading">{{ t("settings.support.cryptoTitle") }}</h4>
-        <img v-if="qr" :src="qr" :alt="t('settings.support.qrAlt')" class="support-qr" />
-        <div class="support-network">
-          {{ t("settings.support.network") }}: {{ SUPPORT_NETWORK }}
-        </div>
-        <code class="support-value">{{ SUPPORT_ADDRESS }}</code>
-        <AppButton
-          :variant="SUPPORT_PAY_ID ? 'outlined' : 'filled'"
-          size="md"
-          block
-          @click="copy('address', SUPPORT_ADDRESS)"
-        >
-          {{ copiedKey === "address" ? t("settings.support.copied") : t("settings.support.copy") }}
-        </AppButton>
-        <p class="support-warning">{{ t("settings.support.warning") }}</p>
-      </section>
-
-      <section v-if="SUPPORT_PAY_ID" class="support-block">
-        <h4 class="support-heading">{{ t("settings.support.howTitle") }}</h4>
-        <ol class="support-steps">
-          <li>{{ t("settings.support.step1") }}</li>
-          <li>{{ t("settings.support.step2") }}</li>
-          <li>{{ t("settings.support.step3") }}</li>
-        </ol>
       </section>
     </div>
   </AppModal>

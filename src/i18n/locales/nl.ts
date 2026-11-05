@@ -753,7 +753,7 @@ export default {
       loadConfirm:
         'Dataset "{name}" laden? Deze wordt toegevoegd aan je huidige teams en toernooien.',
       loadConfirmAd:
-        'Dataset "{name}" laden? Deze wordt toegevoegd aan je huidige teams en toernooien. Elke 2e dataset die je laadt, verschijnt er een korte beloningsadvertentie — dit is er een van.',
+        'Dataset "{name}" laden? Deze wordt toegevoegd aan je huidige teams en toernooien. Na het laden verschijnt een korte advertentie.',
       loadLabel: "Laden",
       adBadge: "Advertentie bekijken",
       all: "Alle",
@@ -825,17 +825,26 @@ export default {
       payTitle: "Binance Pay",
       payHint: "Het makkelijkst met Binance: geen kosten, geen netwerk kiezen.",
       copyId: "Pay-ID kopiëren",
-      cryptoTitle: "Crypto-wallet",
+      cryptoTitle: "Vanaf een andere exchange of wallet",
       qrAlt: "QR-code van het donatieadres",
       network: "Netwerk",
       copy: "Adres kopiëren",
       copied: "Gekopieerd!",
       warning:
         "Stuur alleen USDT via het BNB Smart Chain-netwerk (BEP20). Geld dat via een ander netwerk wordt verstuurd, gaat verloren.",
-      howTitle: "Zo verstuur je vanuit Binance",
       step1: "Open Binance, tik op Pay en dan op Versturen.",
       step2: "Plak de Pay-ID hierboven en voer een bedrag in USDT in.",
       step3: "Bevestig. Bedankt!",
+      exStep1:
+        "Kies in je exchange (Bybit, OKX, KuCoin…) of wallet Opnemen of Versturen, en dan USDT.",
+      exStep2: "Kies het netwerk BNB Smart Chain (BEP20) en plak het adres hierboven.",
+      exStep3: "Vul een bedrag in en bevestig. Bedankt!",
+      adTitle: "Geen crypto? Bekijk een advertentie",
+      adHint: "Een korte videoadvertentie steunt de app ook, en het kost je niets.",
+      adButton: "Advertentie bekijken",
+      adLoading: "Advertentie laden…",
+      adThanks: "Bedankt voor je steun!",
+      adFailed: "Er is nu geen advertentie beschikbaar. Probeer het later opnieuw.",
     },
   },
   tournament: {
