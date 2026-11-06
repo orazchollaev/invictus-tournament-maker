@@ -103,30 +103,34 @@ export async function listMyDatasets(uid: string): Promise<MarketListing[]> {
 }
 
 /**
- * Fetches and validates a dataset. Returns null when the payload is missing or
- * does not pass validation. `countDownload` bumps the public counter, which the
- * rules only allow for signed-in users; it is best effort and never fails the download.
+ * Fetches and validates a dataset, for previewing or downloading. Returns null
+ * when the payload is missing or does not pass validation. Does not touch the
+ * download counter — see `countDownload`.
  */
-export async function downloadDataset(
-  id: string,
-  countDownload: boolean
-): Promise<MarketDataset | null> {
+export async function fetchDataset(id: string): Promise<MarketDataset | null> {
   if (USE_DEV_MOCK) return (await mock()).downloadDataset(id)
   await ensureFirebase()
-  const firestore = FirebaseFirestore
-  const { snapshot } = await firestore.getDocument<{ data: string }>({
+  const { snapshot } = await FirebaseFirestore.getDocument<{ data: string }>({
     reference: `${PAYLOADS}/${id}`,
   })
-  const dataset = await decodeDataset(snapshot.data?.data)
-  if (dataset && countDownload) {
-    void firestore
-      .updateDocument({
-        reference: `${DATASETS}/${id}`,
-        data: { downloads: { __type__: "increment", operand: 1 } },
-      })
-      .catch(() => {})
+  return decodeDataset(snapshot.data?.data)
+}
+
+/**
+ * Bumps the public download counter, which the rules only allow for signed-in
+ * users. Best effort: it never fails the download.
+ */
+export async function countDownload(id: string): Promise<void> {
+  if (USE_DEV_MOCK) return
+  try {
+    await ensureFirebase()
+    await FirebaseFirestore.updateDocument({
+      reference: `${DATASETS}/${id}`,
+      data: { downloads: { __type__: "increment", operand: 1 } },
+    })
+  } catch {
+    // Counting is a courtesy; the dataset was already added.
   }
-  return dataset
 }
 
 /**

@@ -25,14 +25,22 @@ let listings: MarketListing[] = Array.from({ length: 45 }, (_, i) => ({
   createdAt: Date.now() - i * 86_400_000,
 }))
 
+// A 1x1 pixel stand-in for a shrunk team picture.
+const PIXEL =
+  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=="
+
 const sample = (label: string): MarketDataset => ({
   label,
   description: "Dev sample",
   type: "club",
   teams: [
-    { id: "d1", name: "Dev Red", color: "#e63946", power: 80 },
+    { id: "d1", name: "Dev Red", color: "#e63946", power: 80, img: PIXEL },
     { id: "d2", name: "Dev Blue", color: "#457b9d", power: 70, flag: "tr" },
     { id: "d3", name: "Dev Green", color: "#2a9d8f", power: 60 },
+  ],
+  players: [
+    { id: "p1", teamId: "d1", name: "Dev Striker", position: "FWD", power: 80 },
+    { id: "p2", teamId: "d1", name: "Dev Keeper", position: "GK", power: 70 },
   ],
 })
 
