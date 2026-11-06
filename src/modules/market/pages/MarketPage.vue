@@ -54,13 +54,21 @@ const sorts = computed(() => [
   { value: "popular", label: t("market.sortPopular") },
 ])
 
-// Searches what is already loaded: a server-side text search would need an
-// index per sort order, and a page is only 20 small documents anyway.
+const typeFilter = ref<"all" | MarketListing["type"]>("all")
+const typeFilters = computed(() => [
+  { value: "all", label: t("market.filterAll") },
+  { value: "club", label: t("market.type.club") },
+  { value: "country", label: t("market.type.country") },
+])
+
+// Searches and filters what is already loaded: a server-side query would need
+// an index per sort order, and a page is only 20 small documents anyway.
 const visible = computed(() => {
   const q = query.value.trim().toLowerCase()
-  if (!q) return market.listings
-  return market.listings.filter((l) =>
-    [l.label, l.description, l.authorName].some((s) => s.toLowerCase().includes(q))
+  return market.listings.filter(
+    (l) =>
+      (typeFilter.value === "all" || l.type === typeFilter.value) &&
+      (!q || [l.label, l.description, l.authorName].some((s) => s.toLowerCase().includes(q)))
   )
 })
 
@@ -122,6 +130,14 @@ watch(
         />
       </div>
 
+      <AppButtonGroup
+        v-model="typeFilter"
+        :options="typeFilters"
+        size="md"
+        block
+        class="market-filter"
+      />
+
       <p v-if="market.failed" class="market-note">
         {{ t("market.networkError") }}
         <AppButton size="xs" @click="market.load(!market.listings.length)">
@@ -157,6 +173,10 @@ watch(
 
 <style scoped>
 .market-tabs {
+  margin-bottom: var(--sp-3);
+}
+
+.market-filter {
   margin-bottom: var(--sp-3);
 }
 
