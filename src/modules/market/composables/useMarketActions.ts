@@ -11,7 +11,8 @@ import * as api from "../services/marketApi"
 import * as authService from "../services/authService"
 import { buildDataset, type PublishDraft } from "../utils/buildDataset"
 import { toLocalTeam } from "../utils/toLocalTeam"
-import type { MarketListing, ReportReason } from "../types"
+import { shrinkTeamImages } from "../services/shrinkImage"
+import type { MarketDataset, MarketListing, ReportReason } from "../types"
 
 /** Plugin errors carry a `code` next to the message; both help when a tester reports back. */
 function describeError(e: unknown): string {
@@ -51,27 +52,30 @@ export function useMarketActions() {
     }
   }
 
-  async function download(listing: MarketListing): Promise<boolean> {
-    const ok = await showConfirm(t("market.downloadConfirm", { name: listing.label }), {
-      confirmLabel: t("market.download"),
-    })
-    if (!ok) return false
+  /**
+   * Adds the previewed dataset — or only `teamIds` of it — to the user's teams,
+   * with the players that belong to them.
+   */
+  async function download(
+    listing: MarketListing,
+    dataset: MarketDataset,
+    teamIds: ReadonlySet<string>
+  ): Promise<boolean> {
+    const chosen = dataset.teams.filter((x) => teamIds.has(x.id))
+    if (!chosen.length) return false
     try {
-      const dataset = await api.downloadDataset(listing.id, !!market.user)
-      if (!dataset) {
-        await showAlert(t("market.invalidDataset"))
-        return false
-      }
       // Added on top of what is loaded, exactly like the bundled sample sets.
       // The crest engine is loaded only when a team actually has a crest to draw.
-      const renderCrest = dataset.teams.some((x) => x.crest)
+      const renderCrest = chosen.some((x) => x.crest)
         ? (await import("@/engine/crest")).renderCrestDataUrl
         : undefined
-      const local = dataset.teams.map((x) => toLocalTeam(x, renderCrest))
+      const local = chosen.map((x) => toLocalTeam(x, renderCrest))
+      const roster = (dataset.players ?? []).filter((p) => teamIds.has(p.teamId))
       const existing = new Set(teams.teams.map((x) => x.id))
-      const out = remapDatasetIds(local, dataset.players ?? [], existing, uid)
+      const out = remapDatasetIds(local, roster, existing, uid)
       teams.teams.push(...out.teams)
       players.players.push(...out.players)
+      if (market.user) void api.countDownload(listing.id)
       void logEvent("market_download", { type: dataset.type })
       // Every Nth added dataset shows an interstitial — best effort, never blocks.
       void onCommunityDatasetAdded()
@@ -83,11 +87,16 @@ export function useMarketActions() {
     }
   }
 
-  async function publish(draft: PublishDraft, teamIds: string[]): Promise<boolean> {
+  async function publish(
+    draft: PublishDraft,
+    teamIds: string[],
+    withImages: boolean
+  ): Promise<boolean> {
     if (!(await ensureSignedIn()) || !market.user) return false
     const picked = teams.teams.filter((x) => teamIds.includes(x.id))
     try {
-      await api.publishDataset(buildDataset(draft, picked), market.user)
+      const images = withImages ? await shrinkTeamImages(picked) : undefined
+      await api.publishDataset(buildDataset(draft, picked, images), market.user)
       void logEvent("market_publish", { type: draft.type })
       await market.load(true)
       return true

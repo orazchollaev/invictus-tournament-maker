@@ -5,6 +5,8 @@ import { parseCrest } from "./parseCrest"
 
 const HEX_COLOR = /^#[0-9a-fA-F]{6}$/
 const FLAG = /^[a-z0-9_-]{2,32}$/i
+// Raster only: SVG data-URLs can carry script, so they never pass.
+const IMAGE = /^data:image\/(?:webp|jpeg|png);base64,[A-Za-z0-9+/]+={0,2}$/
 
 const isObject = (v: unknown): v is Record<string, unknown> =>
   typeof v === "object" && v !== null && !Array.isArray(v)
@@ -33,6 +35,10 @@ function parseTeam(raw: unknown): MarketTeam | null {
   if (abbr) team.abbr = abbr
   const crest = raw.crest === undefined ? null : parseCrest(raw.crest)
   if (crest) team.crest = crest
+  const img = raw.img
+  if (typeof img === "string" && img.length <= MARKET_LIMITS.maxImageChars && IMAGE.test(img)) {
+    team.img = img
+  }
   return team
 }
 
@@ -57,7 +63,8 @@ function parsePlayer(raw: unknown): MarketPlayer | null {
 /**
  * Checks untrusted input (a download, an upload) and returns a clean copy, or
  * null when it cannot be used. Strict on purpose: unknown fields are dropped
- * (so `tournaments`, images and data-URLs never ride along), and one bad
+ * (so `tournaments` never rides along, and a team picture survives only as a
+ * small raster data-URL), and one bad
  * team/player rejects the whole dataset rather than loading it half-broken.
  */
 export function validateDataset(input: unknown): MarketDataset | null {

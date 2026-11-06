@@ -5,9 +5,14 @@ export const MARKET_LIMITS = {
   maxLabel: 40,
   maxDescription: 200,
   maxName: 40,
+  /** Length of one team picture data-URL; a 64px WebP at q0.4 is about 1–3k. */
+  maxImageChars: 8_000,
   /** Length of the gzip + base64 payload string; Firestore documents cap at 1 MiB. */
   maxPayloadChars: 900_000,
 } as const
+
+/** Shared team pictures are shrunk to this on publish: small on purpose. */
+export const IMAGE_SHRINK = { size: 64, quality: 0.4 } as const
 
 export const PAGE_SIZE = 20
 

@@ -15,10 +15,10 @@ function normalizeColor(color: string): string {
 
 /**
  * Reduces a team to what the market shares. A builder crest travels as its
- * small recipe; rendered images, uploaded photos and image URLs stay behind —
- * they are large, and arbitrary pictures would need moderating.
+ * small recipe. An uploaded picture travels only as `img`, which the caller has
+ * already shrunk to low quality; originals and image URLs stay behind.
  */
-export function toMarketTeam(team: Team): MarketTeam {
+export function toMarketTeam(team: Team, img?: string): MarketTeam {
   const out: MarketTeam = {
     id: team.id,
     name: team.name.trim().slice(0, MARKET_LIMITS.maxName) || "?",
@@ -30,7 +30,9 @@ export function toMarketTeam(team: Team): MarketTeam {
   if (abbr) out.abbr = abbr
   // Only the builder recipe travels; uploaded photos and URLs never do.
   const crest = team.crest ? parseCrest(team.crest) : null
+  // A crest recipe is smaller and sharper than a picture, so it wins.
   if (crest) out.crest = crest
+  else if (img) out.img = img
   return out
 }
 
@@ -42,12 +44,16 @@ export interface PublishDraft {
 }
 
 /** The dataset to publish: the picked teams, in the order the user has them. */
-export function buildDataset(draft: PublishDraft, teams: readonly Team[]): MarketDataset {
+export function buildDataset(
+  draft: PublishDraft,
+  teams: readonly Team[],
+  images: ReadonlyMap<string, string> = new Map()
+): MarketDataset {
   const dataset: MarketDataset = {
     label: draft.label.trim(),
     description: draft.description.trim(),
     type: draft.type,
-    teams: teams.map(toMarketTeam),
+    teams: teams.map((t) => toMarketTeam(t, images.get(t.id))),
   }
   if (draft.category) dataset.category = draft.category
   return dataset

@@ -1,6 +1,6 @@
 import type { CrestSpec } from "@/engine/crest/types"
 
-/** A team as shared through the market: display data plus strength, no images. */
+/** A team as shared through the market: display data, strength and at most a tiny crest. */
 export interface MarketTeam {
   id: string
   name: string
@@ -10,6 +10,8 @@ export interface MarketTeam {
   abbr?: string // up to 7 chars
   /** Crest-builder recipe; the image is redrawn from it on download, never shipped. */
   crest?: CrestSpec
+  /** Low-quality raster crest (small data-URL) for teams with an uploaded picture. */
+  img?: string
 }
 
 export interface MarketPlayer {

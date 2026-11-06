@@ -2,9 +2,10 @@
 import { computed, ref } from "vue"
 import { useI18n } from "vue-i18n"
 import { Check } from "@lucide/vue"
-import { AppButton, AppButtonGroup, AppField, AppIcon, AppSheet } from "@/components/ui"
+import { AppButton, AppButtonGroup, AppField, AppIcon, AppSheet, AppToggle } from "@/components/ui"
 import { useTeamsStore } from "@/modules/teams/store"
 import { TeamBadge } from "@/modules/teams/components"
+import { isDrawnCrest } from "@/modules/teams/utils/imageUtils"
 import { useMarketActions } from "../composables/useMarketActions"
 import { MARKET_LIMITS } from "../constants"
 import type { MarketDataset } from "../types"
@@ -20,7 +21,16 @@ const label = ref("")
 const description = ref("")
 const type = ref<MarketDataset["type"]>("club")
 const picked = ref(new Set<string>())
+const withImages = ref(true)
 const busy = ref(false)
+
+// Only uploaded pictures are shrunk and shared; flags and builder crests already travel.
+const imageCount = computed(
+  () =>
+    teamsStore.teams.filter(
+      (x) => picked.value.has(x.id) && x.image && !x.crest && !isDrawnCrest(x.image)
+    ).length
+)
 
 const typeOptions = computed(() => [
   { value: "club", label: t("market.type.club") },
@@ -56,7 +66,8 @@ async function submit() {
   try {
     const ok = await actions.publish(
       { label: label.value, description: description.value, type: type.value },
-      [...picked.value]
+      [...picked.value],
+      withImages.value
     )
     if (ok) sheet.value?.close()
   } finally {
@@ -121,6 +132,14 @@ async function submit() {
           </li>
         </ul>
       </section>
+
+      <div v-if="imageCount" class="mps-images">
+        <div class="mps-images-text">
+          <span class="mps-teams-title">{{ t("market.includeImages") }}</span>
+          <span class="mps-hint">{{ t("market.includeImagesHint", { n: imageCount }) }}</span>
+        </div>
+        <AppToggle v-model="withImages" :aria-label="t('market.includeImages')" />
+      </div>
 
       <p class="mps-hint">{{ t("market.publishNotice") }}</p>
     </div>
@@ -255,6 +274,20 @@ async function submit() {
 .mps-badge {
   min-width: 0;
   flex: 1;
+}
+
+.mps-images {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+}
+
+.mps-images-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
 }
 
 .mps-hint {
