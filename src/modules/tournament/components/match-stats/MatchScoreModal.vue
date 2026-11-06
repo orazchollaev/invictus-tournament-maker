@@ -25,6 +25,7 @@ import {
   dropWatchedMatch,
   isFatigueFactorEnabled,
   isInjuryFatigueImpactEnabled,
+  matchHomeAdvantage,
   pendingKey,
   playedMatches,
   resolvePower,
@@ -119,6 +120,13 @@ const unavailable = computed(() => {
   }
 })
 
+/** This fixture's home edge — the tournament's own, or 0 for a neutral final. */
+const homeAdvantage = computed(() =>
+  tournament.value && props.matchId
+    ? matchHomeAdvantage(tournament.value, props.matchId)
+    : undefined
+)
+
 const home = ref(props.result?.home ?? 0)
 const away = ref(props.result?.away ?? 0)
 const penHome = ref(props.result?.penHome ?? 0)
@@ -200,9 +208,14 @@ function rollTie(): KnockoutDecision {
     awayId: props.awayTeam!.id,
   }
   const bothTeams = [props.homeTeam!, props.awayTeam!]
-  if (!props.requiresWinner) return { result: simulateMatch(fakeMatch as never, bothTeams) }
+  if (!props.requiresWinner) {
+    return {
+      result: simulateMatch(fakeMatch as never, bothTeams, undefined, homeAdvantage.value),
+    }
+  }
   return decideKnockoutResult(fakeMatch as never, bothTeams, {
     aggregateOffset: props.aggregateOffset,
+    homeAdvantage: homeAdvantage.value,
   })
 }
 
@@ -684,6 +697,7 @@ const canShowStats = computed(() => !!props.result?.stats)
     :away-fatigue="fatigueByTeam.away"
     :requires-winner="requiresWinner"
     :aggregate-offset="aggregateOffset"
+    :home-advantage="homeAdvantage"
     :subtitle="subtitle"
     @finish="onManagedFinish"
     @cancel="managing = false"

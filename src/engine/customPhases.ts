@@ -41,7 +41,8 @@ import { knockoutComplete, updateThirdPlaceSlotsIn } from "./knockoutOps"
 import { DOUBLE_ELIM_MIN_TEAMS, doubleElimPlacements, finalizeBracket } from "./doubleElim"
 import { resolvePower } from "./power"
 import { legModeToCount } from "./legs"
-import type { GroupHost, KnockoutHost, LeagueHost, ScoringHost } from "./hosts"
+import type { GroupHost, KnockoutHost, LeagueHost, ScoringHost, VenueHost } from "./hosts"
+import { phaseVenue } from "./venue"
 
 /** The fewest teams each kind of phase can be run with. */
 export const PHASE_MIN_TEAMS: Record<PhaseKind, number> = {
@@ -384,16 +385,28 @@ export function phaseScoring(phase: TournamentPhase): ScoringHost {
   }
 }
 
-export function groupHostOf(phase: TournamentPhase): GroupHost {
-  return { ...phaseScoring(phase), groups: phase.groups }
+/*
+ * `venue` is the tournament the phase belongs to, read for its home edge.
+ * Only the simulating call sites pass it; a host built to record a result or
+ * check completion has no use for where the match is played.
+ */
+
+export function groupHostOf(phase: TournamentPhase, venue?: VenueHost): GroupHost {
+  return { ...phaseScoring(phase), ...phaseVenue(phase, venue), groups: phase.groups }
 }
 
-export function leagueHostOf(phase: TournamentPhase): LeagueHost {
-  return { ...phaseScoring(phase), teamIds: phase.teamIds, league: phase.league }
-}
-
-export function knockoutHostOf(phase: TournamentPhase): KnockoutHost {
+export function leagueHostOf(phase: TournamentPhase, venue?: VenueHost): LeagueHost {
   return {
+    ...phaseScoring(phase),
+    ...phaseVenue(phase, venue),
+    teamIds: phase.teamIds,
+    league: phase.league,
+  }
+}
+
+export function knockoutHostOf(phase: TournamentPhase, venue?: VenueHost): KnockoutHost {
+  return {
+    ...phaseVenue(phase, venue),
     // An unbuilt phase has no rounds yet; the empty array keeps every read
     // safe without quietly giving the phase a container it has not earned.
     rounds: phase.rounds ?? [],

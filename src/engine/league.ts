@@ -197,7 +197,7 @@ export function simulateLeagueMatch(
     tournament.teamIds,
     tournament.league.matchdays.flatMap((md) => md.matches)
   )
-  match.result = simulateMatch(match as any, teams, adjustments)
+  match.result = simulateMatch(match as any, teams, adjustments, tournament.homeAdvantage)
   recalcLeagueStandings(
     tournament.league,
     tournament.tiebreaker,
@@ -215,7 +215,8 @@ export function simulateLeagueMatchday(tournament: LeagueHost, matchdayIdx: numb
     tournament.league.matchdays.flatMap((md) => md.matches)
   )
   for (const match of tournament.league.matchdays[matchdayIdx].matches) {
-    if (!match.result) match.result = simulateMatch(match as any, teams, adjustments)
+    if (!match.result)
+      match.result = simulateMatch(match as any, teams, adjustments, tournament.homeAdvantage)
   }
   recalcLeagueStandings(
     tournament.league,
@@ -305,7 +306,7 @@ export function simulateTierMatch(
     tier.teamIds,
     tier.league.matchdays.flatMap((md) => md.matches)
   )
-  match.result = simulateMatch(match as any, teams, adjustments)
+  match.result = simulateMatch(match as any, teams, adjustments, tournament.homeAdvantage)
   recalcLeagueStandings(
     tier.league,
     tournament.tiebreaker,
@@ -329,7 +330,8 @@ export function simulateTierMatchday(
     tier.league.matchdays.flatMap((md) => md.matches)
   )
   for (const match of tier.league.matchdays[matchdayIdx].matches) {
-    if (!match.result) match.result = simulateMatch(match as any, teams, adjustments)
+    if (!match.result)
+      match.result = simulateMatch(match as any, teams, adjustments, tournament.homeAdvantage)
   }
   recalcLeagueStandings(
     tier.league,

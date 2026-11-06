@@ -11,7 +11,14 @@
 // existing call site changes, while a phase can be adapted with a small
 // object literal (see engine/customPhases.ts) whose container fields are the
 // phase's own reactive arrays — so writes land on the phase, not on a copy.
-import type { Group, League, Match, Round, Tiebreaker, Tournament } from "../modules/tournament/types"
+import type {
+  Group,
+  League,
+  Match,
+  Round,
+  Tiebreaker,
+  Tournament,
+} from "../modules/tournament/types"
 
 /** Table points and tiebreaker rules, plus any per-team point deductions. */
 export type ScoringHost = {
@@ -22,10 +29,20 @@ export type ScoringHost = {
   teamPointAdjustments?: Record<string, number>
 }
 
-export type GroupHost = ScoringHost & { groups?: Group[] }
+/**
+ * Where a fixture is played. `homeAdvantage` is the tournament's own home
+ * edge (undefined = the app-wide setting); `neutralFinal` sends a one-off
+ * final to neutral ground, so neither side gets it.
+ */
+export type VenueHost = {
+  homeAdvantage?: number
+  neutralFinal?: boolean
+}
+
+export type GroupHost = ScoringHost & VenueHost & { groups?: Group[] }
 
 /** `teamIds` is the pool form guidance is computed over, not the whole tournament's. */
-export type LeagueHost = ScoringHost & { teamIds: string[]; league?: League }
+export type LeagueHost = ScoringHost & VenueHost & { teamIds: string[]; league?: League }
 
 /**
  * A knockout bracket plus the optional third-place tie hanging off its
@@ -34,7 +51,7 @@ export type LeagueHost = ScoringHost & { teamIds: string[]; league?: League }
  * Deliberately no `winnerId`: a tournament has one, a phase does not, so the
  * ops return the winner and let the caller decide where it belongs.
  */
-export type KnockoutHost = {
+export type KnockoutHost = VenueHost & {
   rounds: Round[]
   /** `rounds` is a double-elimination layout, see engine/doubleElim.ts. */
   doubleElim?: boolean

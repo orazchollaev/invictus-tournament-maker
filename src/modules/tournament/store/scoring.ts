@@ -9,6 +9,7 @@ import {
   isLeagueLike,
   getTiersWinner,
   getLeaguePlayoffData,
+  clampHomeAdvantage,
 } from "@/engine"
 import { makeWithTournament } from "./helpers"
 
@@ -70,6 +71,21 @@ export function useScoringActions(tournaments: Ref<Tournament[]>) {
     })
   }
 
+  /**
+   * Where the matches are played. Only simulation reads it, so nothing is
+   * recalculated: results already on the board stay as they were played.
+   * A null home edge drops the field, putting the tournament back on the
+   * app-wide setting.
+   */
+  function setVenue(tournamentId: string, homeAdvantage: number | null, neutralFinal: boolean) {
+    withTournament(tournamentId, (t) => {
+      if (homeAdvantage === null) delete t.homeAdvantage
+      else t.homeAdvantage = clampHomeAdvantage(homeAdvantage)
+      if (neutralFinal) t.neutralFinal = true
+      else delete t.neutralFinal
+    })
+  }
+
   function setTeamPointAdjustment(tournamentId: string, teamId: string, value: number) {
     withTournament(tournamentId, (t) => {
       if (!t.teamPointAdjustments) t.teamPointAdjustments = {}
@@ -94,5 +110,11 @@ export function useScoringActions(tournaments: Ref<Tournament[]>) {
     })
   }
 
-  return { setTiebreaker, setPointsConfig, setTeamPointAdjustment, setTeamPowerAdjustment }
+  return {
+    setTiebreaker,
+    setPointsConfig,
+    setVenue,
+    setTeamPointAdjustment,
+    setTeamPowerAdjustment,
+  }
 }

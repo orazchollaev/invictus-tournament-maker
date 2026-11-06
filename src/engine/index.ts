@@ -78,6 +78,7 @@ export {
   simulatePenaltyShootout,
   setSimConfig,
   getSimConfig,
+  clampHomeAdvantage,
   isFormFactorEnabled,
   isRedCardImpactEnabled,
   isInjuriesEnabled,
@@ -139,7 +140,8 @@ export {
   fatigueInjuryMultiplier,
 } from "./fatigue"
 export { MORALE_STEP, MORALE_MAX, MORALE_STREAK_WINDOW, computeMoraleAdjustments } from "./morale"
-export { setTableConfig } from "./tableConfig"
+export { setTableConfig, getTiebreaker } from "./tableConfig"
+export { isFinalRound, knockoutHomeAdvantage, matchHomeAdvantage, phaseVenue } from "./venue"
 export { setPowerResolver, resolvePower } from "./power"
 export {
   getWinnerId,

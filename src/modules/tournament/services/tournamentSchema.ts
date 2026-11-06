@@ -485,6 +485,13 @@ export function normalizeTournament(raw: unknown): Tournament | null {
     if (raw[key] !== undefined) (tournament as unknown as Record<string, unknown>)[key] = raw[key]
   }
 
+  // Unset means "follow the app-wide setting", so a missing or broken value
+  // is dropped rather than replaced with a number that would pin it.
+  if (typeof raw.homeAdvantage === "number" && Number.isFinite(raw.homeAdvantage)) {
+    tournament.homeAdvantage = Math.max(0, Math.min(20, Math.round(raw.homeAdvantage)))
+  }
+  if (raw.neutralFinal === true) tournament.neutralFinal = true
+
   const pointAdj = numberRecord(raw.teamPointAdjustments)
   if (pointAdj) tournament.teamPointAdjustments = pointAdj
   const powerAdj = numberRecord(raw.teamPowerAdjustments)

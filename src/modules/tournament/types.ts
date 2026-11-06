@@ -320,6 +320,8 @@ export interface PhaseKnockoutConfig {
   roundLegModes: Partial<Record<KnockoutStage, LegMode>>
   finalLegMode: LegMode
   thirdPlaceLegMode: LegMode
+  /** A one-off final is played on neutral ground: no home edge for either side. */
+  neutralFinal?: boolean
 }
 
 /**
@@ -421,6 +423,17 @@ export interface Tournament {
   thirdPlaceLegMode?: LegMode
 
   tiebreaker?: Tiebreaker
+
+  /**
+   * This tournament's home edge, 0-20 power. Unset follows the app-wide
+   * setting, so a tournament only carries one when it was asked to differ.
+   */
+  homeAdvantage?: number
+  /**
+   * A one-off final — the bracket's, or the league playoff's — is played on
+   * neutral ground. A two-legged final keeps its home and away legs.
+   */
+  neutralFinal?: boolean
 
   // league (only when format === "league")
   league?: League

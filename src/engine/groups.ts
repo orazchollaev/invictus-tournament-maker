@@ -227,7 +227,12 @@ export function simulateGroupMatch(
 ) {
   const group = tournament.groups![groupIdx]
   const adjustments = fixtureAdjustments(group.teamIds, group.matches)
-  group.matches[matchIdx].result = simulateMatch(group.matches[matchIdx] as any, teams, adjustments)
+  group.matches[matchIdx].result = simulateMatch(
+    group.matches[matchIdx] as any,
+    teams,
+    adjustments,
+    tournament.homeAdvantage
+  )
   recalcStandings(
     group,
     tournament.tiebreaker,
@@ -243,7 +248,12 @@ export function simulateGroup(tournament: GroupHost, groupIdx: number, teams: Te
   for (let i = 0; i < group.matches.length; i++) {
     if (!group.matches[i].result) {
       const adjustments = fixtureAdjustments(group.teamIds, group.matches)
-      group.matches[i].result = simulateMatch(group.matches[i] as any, teams, adjustments)
+      group.matches[i].result = simulateMatch(
+        group.matches[i] as any,
+        teams,
+        adjustments,
+        tournament.homeAdvantage
+      )
     }
   }
   recalcStandings(
@@ -276,7 +286,12 @@ export function simulateGroupWeek(tournament: GroupHost, groupIdx: number, teams
   const adjustments = fixtureAdjustments(group.teamIds, group.matches)
   for (let i = start; i < end; i++) {
     if (!group.matches[i].result)
-      group.matches[i].result = simulateMatch(group.matches[i] as any, teams, adjustments)
+      group.matches[i].result = simulateMatch(
+        group.matches[i] as any,
+        teams,
+        adjustments,
+        tournament.homeAdvantage
+      )
   }
   recalcStandings(
     group,
@@ -304,7 +319,12 @@ export function simulateWeek(tournament: GroupHost, teams: Team[]): number {
     const adjustments = fixtureAdjustments(group.teamIds, group.matches)
     for (let i = start; i < Math.min(end, group.matches.length); i++) {
       if (!group.matches[i].result)
-        group.matches[i].result = simulateMatch(group.matches[i] as any, teams, adjustments)
+        group.matches[i].result = simulateMatch(
+          group.matches[i] as any,
+          teams,
+          adjustments,
+          tournament.homeAdvantage
+        )
     }
     recalcStandings(
       group,

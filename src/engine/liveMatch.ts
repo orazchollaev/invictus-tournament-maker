@@ -140,6 +140,8 @@ export interface LiveMatchState {
   aggregateOffset: { home: number; away: number } | null
   /** True once the match is known to be going to 120. */
   extraTime: boolean
+  /** This fixture's home edge, fixed at kick-off. Unset uses the app-wide setting. */
+  homeAdvantage?: number
   finished: boolean
   /**
    * The kind of afternoon it is, drawn once at kick-off.
@@ -168,6 +170,8 @@ export interface CreateLiveMatchInput {
   requiresWinner?: boolean
   /** Leg 2 of a tie: the first leg's score, in this match's home/away frame. */
   aggregateOffset?: { home: number; away: number } | null
+  /** This fixture's home edge — 0 on neutral ground; unset uses the app-wide setting. */
+  homeAdvantage?: number
 }
 
 export function createLiveMatch(
@@ -227,6 +231,7 @@ export function createLiveMatch(
     requiresWinner: input.requiresWinner ?? false,
     aggregateOffset: input.aggregateOffset ?? null,
     extraTime: false,
+    ...(input.homeAdvantage !== undefined ? { homeAdvantage: input.homeAdvantage } : {}),
     finished: false,
     tempoRoll: rng(),
   }
@@ -468,6 +473,7 @@ function currentLambdas(state: LiveMatchState): { home: number; away: number } {
     },
     minutes: 1,
     rng: () => state.tempoRoll,
+    homeAdvantage: state.homeAdvantage,
   })
   return { home: Math.max(0, home), away: Math.max(0, away) }
 }

@@ -46,10 +46,16 @@ function isLevel(home: number, away: number, offset?: AggregateOffset | null): b
 export function decideKnockoutResult(
   match: Match | GroupMatch,
   teams: Team[],
-  opts?: { adjustments?: Map<string, number>; aggregateOffset?: AggregateOffset | null }
+  opts?: {
+    adjustments?: Map<string, number>
+    aggregateOffset?: AggregateOffset | null
+    /** This tie's home edge — 0 on neutral ground; undefined uses the app-wide setting. */
+    homeAdvantage?: number
+  }
 ): KnockoutDecision {
   const offset = opts?.aggregateOffset ?? null
-  const ninety = simulateMatch(match, teams, opts?.adjustments)
+  const homeAdvantage = opts?.homeAdvantage
+  const ninety = simulateMatch(match, teams, opts?.adjustments, homeAdvantage)
   // The dismissals belong to the tie, not to the ninety — a side reduced to
   // ten before extra time is still a man down in it, and the stored result
   // has to carry them however the tie ends.
@@ -60,7 +66,7 @@ export function decideKnockoutResult(
     return { result: { ...ft, ...reds } }
   }
 
-  const extra = simulateExtraTime(match, teams, opts?.adjustments, ninety.reds)
+  const extra = simulateExtraTime(match, teams, opts?.adjustments, ninety.reds, homeAdvantage)
   const afterExtra = { home: ninety.home + extra.home, away: ninety.away + extra.away }
 
   if (!isLevel(afterExtra.home, afterExtra.away, offset)) {

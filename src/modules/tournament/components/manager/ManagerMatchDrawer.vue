@@ -61,6 +61,8 @@ const props = defineProps<{
   awayFatigue?: Map<string, number>
   requiresWinner?: boolean
   aggregateOffset?: { home: number; away: number } | null
+  /** This fixture's home edge; unset uses the app-wide setting. */
+  homeAdvantage?: number
   subtitle?: string
 }>()
 
@@ -98,6 +100,7 @@ const state: LiveMatchState = createLiveMatch({
   awayFatigue: props.awayFatigue,
   requiresWinner: props.requiresWinner ?? false,
   aggregateOffset: props.aggregateOffset ?? null,
+  homeAdvantage: props.homeAdvantage,
 })
 
 const match = useManagerMatch(state, props.managedSide, speed)

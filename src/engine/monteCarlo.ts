@@ -15,6 +15,7 @@ import {
 } from "./leaguePlayoff"
 import { isLeagueLike } from "./formats"
 import { tournamentAdjustments } from "./form"
+import { knockoutHomeAdvantage } from "./venue"
 
 /**
  * Form adjustments for a Monte Carlo run. Every run replays the tournament from
@@ -44,10 +45,15 @@ export interface MonteCarloResult {
   bracketRounds: number
 }
 
-function simDoubleLegInPlace(match: any, teams: Team[], adjustments: Adjustments) {
+function simDoubleLegInPlace(
+  match: any,
+  teams: Team[],
+  adjustments: Adjustments,
+  homeAdvantage: number | undefined
+) {
   if (!match.homeId || !match.awayId) return
   if (!match.result) {
-    match.result = simulateMatch(match, teams, adjustments)
+    match.result = simulateMatch(match, teams, adjustments, homeAdvantage)
   }
   if (match.leg2Result === null) {
     // Leg 2 reverses the fixture, so leg 1 goes over flipped into its frame.
@@ -55,6 +61,7 @@ function simDoubleLegInPlace(match: any, teams: Team[], adjustments: Adjustments
     match.leg2Result = decideKnockoutResult(leg2 as any, teams, {
       adjustments,
       aggregateOffset: { home: match.result.away, away: match.result.home },
+      homeAdvantage,
     }).result
   }
 }
@@ -71,10 +78,11 @@ function simBracketInPlace(
     propagate()
     rounds[r].matches.forEach((match) => {
       if (!match.homeId || !match.awayId) return
+      const homeAdvantage = knockoutHomeAdvantage(t, r, match)
       if (match.leg2Result !== undefined) {
-        simDoubleLegInPlace(match, teams, adjustments)
+        simDoubleLegInPlace(match, teams, adjustments, homeAdvantage)
       } else if (!match.result) {
-        match.result = decideKnockoutResult(match, teams, { adjustments }).result
+        match.result = decideKnockoutResult(match, teams, { adjustments, homeAdvantage }).result
       }
     })
   }
@@ -257,7 +265,7 @@ function runOnce(
       for (const tier of t.tiers) {
         for (const md of tier.league.matchdays) {
           for (const m of md.matches) {
-            if (!m.result) m.result = simulateMatch(m as any, teams, adjustments)
+            if (!m.result) m.result = simulateMatch(m as any, teams, adjustments, t.homeAdvantage)
           }
         }
         recalcLeagueStandings(
@@ -282,7 +290,7 @@ function runOnce(
     } else if (t.league) {
       for (const md of t.league.matchdays) {
         for (const m of md.matches) {
-          if (!m.result) m.result = simulateMatch(m as any, teams, adjustments)
+          if (!m.result) m.result = simulateMatch(m as any, teams, adjustments, t.homeAdvantage)
         }
       }
       recalcLeagueStandings(

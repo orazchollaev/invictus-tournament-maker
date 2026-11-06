@@ -35,7 +35,7 @@ export function setSimConfig(config: {
     _formFactorEnabled = config.formFactor
   }
   if (config.homeAdvantage !== undefined) {
-    _homeAdvantage = Math.max(0, Math.min(20, config.homeAdvantage))
+    _homeAdvantage = clampHomeAdvantage(config.homeAdvantage)
   }
   if (config.redCardImpact !== undefined) {
     _redCardImpact = config.redCardImpact
@@ -244,9 +244,20 @@ function resolveSides(
   }
 }
 
-/** -1..1: how far the match tilts towards the home side, home advantage included. */
-export function sideStrength(hp: number, ap: number): number {
-  return Math.tanh((hp + _homeAdvantage - ap) / 40)
+/** Clamped to the range the app-wide setting allows. */
+export function clampHomeAdvantage(value: number): number {
+  return Math.max(0, Math.min(20, value))
+}
+
+/**
+ * -1..1: how far the match tilts towards the home side, home advantage included.
+ *
+ * `homeAdvantage` overrides the app-wide setting for this one match — a
+ * tournament's own value, or 0 on neutral ground. Undefined falls back to it.
+ */
+export function sideStrength(hp: number, ap: number, homeAdvantage?: number): number {
+  const edge = homeAdvantage === undefined ? _homeAdvantage : clampHomeAdvantage(homeAdvantage)
+  return Math.tanh((hp + edge - ap) / 40)
 }
 
 /** Goals a side is expected to score over ninety minutes, before any tactics. */
@@ -268,10 +279,12 @@ export function matchLambdas(
     tactics?: { home: TacticProfile; away: TacticProfile }
     minutes?: number
     rng?: () => number
+    /** This match's home edge; undefined uses the app-wide setting. */
+    homeAdvantage?: number
   }
 ): { home: number; away: number; strength: number } {
   const rng = opts?.rng ?? Math.random
-  const strength = sideStrength(hp, ap)
+  const strength = sideStrength(hp, ap, opts?.homeAdvantage)
   const base = BASE_LAMBDA * ((opts?.minutes ?? REGULATION_MINUTES) / REGULATION_MINUTES)
   const randomFactor = 0.85 + rng() * 0.3
   const strengthMult = 1.8 - (_surpriseFactor / 100) * 1.7
@@ -297,11 +310,12 @@ export function matchLambdas(
 export function simulateMatch(
   match: Match | GroupMatch,
   teams: Team[],
-  adjustments?: Map<string, number>
+  adjustments?: Map<string, number>,
+  homeAdvantage?: number
 ): { home: number; away: number; reds?: RedCard[] } {
   const reds = _redCardImpact ? rollMatchReds() : []
   const { hp, ap, tactics } = resolveSides(match, teams, adjustments, inMatchRedPenalty(reds))
-  const { home: hBase, away: aBase, strength } = matchLambdas(hp, ap, { tactics })
+  const { home: hBase, away: aBase, strength } = matchLambdas(hp, ap, { tactics, homeAdvantage })
 
   let hLambda = hBase
   let aLambda = aBase
@@ -343,13 +357,15 @@ export function simulateExtraTime(
   match: Match | GroupMatch,
   teams: Team[],
   adjustments?: Map<string, number>,
-  reds?: RedCard[]
+  reds?: RedCard[],
+  homeAdvantage?: number
 ): { home: number; away: number } {
   const penalty = _redCardImpact ? extraTimeRedPenalty(reds) : undefined
   const { hp, ap, tactics } = resolveSides(match, teams, adjustments, penalty)
   const { home: hLambda, away: aLambda } = matchLambdas(hp, ap, {
     tactics,
     minutes: EXTRA_TIME_MINUTES,
+    homeAdvantage,
   })
 
   return {

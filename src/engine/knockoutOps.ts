@@ -16,6 +16,7 @@ import { getLoserId, getWinnerId, propagateWinners } from "./bracket"
 import { decideKnockoutResult } from "./knockout"
 import { simulateMatch } from "./simulation"
 import { doubleElimWinnerId, reconcileDoubleElim } from "./doubleElim"
+import { knockoutHomeAdvantage } from "./venue"
 
 /** Points the third-place tie at whoever just lost the semifinals. */
 export function updateThirdPlaceSlotsIn(host: KnockoutHost) {
@@ -158,12 +159,14 @@ export function clearKnockoutLeg2(
 export function decideLeg2Result(
   match: Match,
   teams: Team[],
-  adjustments?: Map<string, number>
+  adjustments?: Map<string, number>,
+  homeAdvantage?: number
 ): MatchResult {
   const leg2Sim = { id: match.id, homeId: match.awayId, awayId: match.homeId }
   return decideKnockoutResult(leg2Sim as never, teams, {
     adjustments,
     aggregateOffset: { home: match.result!.away, away: match.result!.home },
+    homeAdvantage,
   }).result
 }
 
@@ -177,8 +180,10 @@ function playDoubleLeg(
 ) {
   const match = host.rounds[ri]?.matches[mi]
   if (!match || !match.homeId || !match.awayId) return
-  if (!match.result) match.result = simulateMatch(match, teams, adjustments)
-  if (match.leg2Result === null) match.leg2Result = decideLeg2Result(match, teams, adjustments)
+  const edge = knockoutHomeAdvantage(host, ri, match)
+  if (!match.result) match.result = simulateMatch(match, teams, adjustments, edge)
+  if (match.leg2Result === null)
+    match.leg2Result = decideLeg2Result(match, teams, adjustments, edge)
 }
 
 /** Leg 1 only, dropping any leg 2 already played — it belonged to the old score. */
@@ -192,7 +197,7 @@ export function simulateKnockoutLeg1(
   const match = host.rounds[ri]?.matches[mi]
   if (!match || !match.homeId || !match.awayId) return knockoutWinnerId(host)
   if (match.leg2Result === undefined) return knockoutWinnerId(host)
-  match.result = simulateMatch(match, teams, adjustments)
+  match.result = simulateMatch(match, teams, adjustments, knockoutHomeAdvantage(host, ri, match))
   match.leg2Result = null
   invalidateFrom(host, ri, mi)
   return settleKnockout(host, teams)
@@ -208,7 +213,12 @@ export function simulateKnockoutLeg2(
   const match = host.rounds[ri]?.matches[mi]
   if (!match || !match.homeId || !match.awayId || !match.result) return knockoutWinnerId(host)
   if (match.leg2Result === undefined) return knockoutWinnerId(host)
-  match.leg2Result = decideLeg2Result(match, teams, adjustments)
+  match.leg2Result = decideLeg2Result(
+    match,
+    teams,
+    adjustments,
+    knockoutHomeAdvantage(host, ri, match)
+  )
   return settleKnockout(host, teams)
 }
 
@@ -230,7 +240,10 @@ export function simulateKnockoutTie(
     host,
     ri,
     mi,
-    decideKnockoutResult(match, teams, { adjustments }).result,
+    decideKnockoutResult(match, teams, {
+      adjustments,
+      homeAdvantage: knockoutHomeAdvantage(host, ri, match),
+    }).result,
     teams
   )
 }
@@ -248,7 +261,11 @@ export function simulateKnockoutRound(
     if (!match.homeId || !match.awayId) return
     if (!match.result) {
       if (match.leg2Result !== undefined) playDoubleLeg(host, ri, mi, teams, adjustments)
-      else match.result = decideKnockoutResult(match, teams, { adjustments }).result
+      else
+        match.result = decideKnockoutResult(match, teams, {
+          adjustments,
+          homeAdvantage: knockoutHomeAdvantage(host, ri, match),
+        }).result
     } else if (match.leg2Result === null) {
       // Leg 1 done, leg 2 outstanding.
       playDoubleLeg(host, ri, mi, teams, adjustments)
@@ -284,7 +301,10 @@ export function simulateKnockoutAll(
       if (!match.homeId || !match.awayId) return
       if (match.leg2Result !== undefined) playDoubleLeg(host, r, mi, teams, adjustments)
       else if (!match.result)
-        match.result = decideKnockoutResult(match, teams, { adjustments }).result
+        match.result = decideKnockoutResult(match, teams, {
+          adjustments,
+          homeAdvantage: knockoutHomeAdvantage(host, r, match),
+        }).result
     })
     propagateHost(host, teams)
     if (opts.stopAfterRound?.(r + 1)) return knockoutWinnerId(host)
@@ -319,16 +339,17 @@ export function simulateThirdPlaceTie(
 ) {
   const m = host.thirdPlaceMatch
   if (!m || !m.homeId || !m.awayId) return
+  const edge = host.homeAdvantage
   if (m.leg2Result !== undefined) {
     if (!m.result) {
-      m.result = simulateMatch(m, teams, adjustments)
+      m.result = simulateMatch(m, teams, adjustments, edge)
       m.leg2Result = null
     }
-    if (m.leg2Result === null) m.leg2Result = decideLeg2Result(m, teams, adjustments)
+    if (m.leg2Result === null) m.leg2Result = decideLeg2Result(m, teams, adjustments, edge)
     return
   }
   if (m.result) return
-  m.result = decideKnockoutResult(m, teams, { adjustments }).result
+  m.result = decideKnockoutResult(m, teams, { adjustments, homeAdvantage: edge }).result
 }
 
 /** Every tie in the bracket is decided (byes and empty slots aside). */

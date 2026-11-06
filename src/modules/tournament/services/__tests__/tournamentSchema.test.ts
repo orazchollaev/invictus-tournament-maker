@@ -194,7 +194,10 @@ describe("repairing a partial record", () => {
     const t = normalizeTournament({
       ...healthy(),
       format: "league",
-      tiers: [{ name: "D1", teamIds: ["a"], league: { matchdays: [], standings: [] } }, { name: "D2" }],
+      tiers: [
+        { name: "D1", teamIds: ["a"], league: { matchdays: [], standings: [] } },
+        { name: "D2" },
+      ],
     })
     expect(t?.tiers).toHaveLength(1)
   })
@@ -242,9 +245,7 @@ describe("phase graphs", () => {
           status: "active",
           teamIds: ["a", "b"],
           config: { kind: "group", group: { groupCount: 2 } },
-          groups: [
-            { name: "Group A", teamIds: ["a", "b"], matches: [], standings: [] },
-          ],
+          groups: [{ name: "Group A", teamIds: ["a", "b"], matches: [], standings: [] }],
         },
         {
           id: "p2",
@@ -400,5 +401,30 @@ describe("parseStoredTournament", () => {
     const once = normalizeTournament(healthy()) as Tournament
     const twice = parseStoredTournament(JSON.stringify(once))
     expect(twice).toEqual(once)
+  })
+})
+
+describe("venue", () => {
+  it("keeps a tournament's own home edge and neutral final", () => {
+    const t = normalizeTournament({ ...healthy(), homeAdvantage: 12, neutralFinal: true })
+    expect(t?.homeAdvantage).toBe(12)
+    expect(t?.neutralFinal).toBe(true)
+  })
+
+  it("leaves both unset on a record written before they existed", () => {
+    const t = normalizeTournament(healthy())
+    expect(t).not.toHaveProperty("homeAdvantage")
+    expect(t).not.toHaveProperty("neutralFinal")
+  })
+
+  it("clamps an out-of-range edge and drops a broken one", () => {
+    expect(normalizeTournament({ ...healthy(), homeAdvantage: 99 })?.homeAdvantage).toBe(20)
+    expect(normalizeTournament({ ...healthy(), homeAdvantage: -3 })?.homeAdvantage).toBe(0)
+    expect(normalizeTournament({ ...healthy(), homeAdvantage: "lots" })).not.toHaveProperty(
+      "homeAdvantage"
+    )
+    expect(normalizeTournament({ ...healthy(), neutralFinal: "yes" })).not.toHaveProperty(
+      "neutralFinal"
+    )
   })
 })

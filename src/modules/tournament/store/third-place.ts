@@ -99,7 +99,7 @@ export function useThirdPlaceActions(tournaments: Ref<Tournament[]>, getTeams: (
     if (!t?.thirdPlaceMatch) return
     const m = t.thirdPlaceMatch
     if (!m.homeId || !m.awayId || m.leg2Result === undefined) return
-    m.result = simulateMatch(m, getTeams(), tournamentAdjustments(t))
+    m.result = simulateMatch(m, getTeams(), tournamentAdjustments(t), t.homeAdvantage)
     m.leg2Result = null
   }
 
@@ -108,7 +108,7 @@ export function useThirdPlaceActions(tournaments: Ref<Tournament[]>, getTeams: (
     if (!t?.thirdPlaceMatch) return
     const m = t.thirdPlaceMatch
     if (!m.homeId || !m.awayId || !m.result || m.leg2Result === undefined) return
-    m.leg2Result = decideLeg2Result(m, getTeams(), tournamentAdjustments(t))
+    m.leg2Result = decideLeg2Result(m, getTeams(), tournamentAdjustments(t), t.homeAdvantage)
   }
 
   function simulateThirdPlace(tournamentId: string) {

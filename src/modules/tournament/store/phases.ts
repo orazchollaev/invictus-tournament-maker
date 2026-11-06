@@ -114,24 +114,24 @@ export function usePhasesActions(tournaments: Ref<Tournament[]>, getTeams: () =>
     groupIdx: number,
     matchIdx: number
   ) {
-    withPhase(tournamentId, phaseId, (phase, _t, teams) => {
+    withPhase(tournamentId, phaseId, (phase, t, teams) => {
       if (!phase.groups) return
-      simulateGroupMatch(groupHostOf(phase), groupIdx, matchIdx, teams)
+      simulateGroupMatch(groupHostOf(phase, t), groupIdx, matchIdx, teams)
     })
   }
 
   function simPhaseGroup(tournamentId: string, phaseId: string, groupIdx: number) {
-    withPhase(tournamentId, phaseId, (phase, _t, teams) => {
+    withPhase(tournamentId, phaseId, (phase, t, teams) => {
       if (!phase.groups) return
-      simulateGroup(groupHostOf(phase), groupIdx, teams)
+      simulateGroup(groupHostOf(phase, t), groupIdx, teams)
     })
   }
 
   function simPhaseGroupWeek(tournamentId: string, phaseId: string, groupIdx: number): number {
     return (
-      withPhase(tournamentId, phaseId, (phase, _t, teams) => {
+      withPhase(tournamentId, phaseId, (phase, t, teams) => {
         if (!phase.groups) return -1
-        return simulateGroupWeek(groupHostOf(phase), groupIdx, teams)
+        return simulateGroupWeek(groupHostOf(phase, t), groupIdx, teams)
       }) ?? -1
     )
   }
@@ -139,17 +139,17 @@ export function usePhasesActions(tournaments: Ref<Tournament[]>, getTeams: () =>
   /** The same week across every group of the phase — one matchday of the stage. */
   function simPhaseWeek(tournamentId: string, phaseId: string): number {
     return (
-      withPhase(tournamentId, phaseId, (phase, _t, teams) => {
+      withPhase(tournamentId, phaseId, (phase, t, teams) => {
         if (!phase.groups) return -1
-        return simulateWeek(groupHostOf(phase), teams)
+        return simulateWeek(groupHostOf(phase, t), teams)
       }) ?? -1
     )
   }
 
   function simAllPhaseGroups(tournamentId: string, phaseId: string) {
-    withPhase(tournamentId, phaseId, (phase, _t, teams) => {
+    withPhase(tournamentId, phaseId, (phase, t, teams) => {
       if (!phase.groups) return
-      simulateAllGroups(groupHostOf(phase), teams)
+      simulateAllGroups(groupHostOf(phase, t), teams)
     })
   }
 
@@ -187,23 +187,23 @@ export function usePhasesActions(tournaments: Ref<Tournament[]>, getTeams: () =>
     matchdayIdx: number,
     matchIdx: number
   ) {
-    withPhase(tournamentId, phaseId, (phase, _t, teams) => {
+    withPhase(tournamentId, phaseId, (phase, t, teams) => {
       if (!phase.league) return
-      simulateLeagueMatch(leagueHostOf(phase), matchdayIdx, matchIdx, teams)
+      simulateLeagueMatch(leagueHostOf(phase, t), matchdayIdx, matchIdx, teams)
     })
   }
 
   function simPhaseLeagueMatchday(tournamentId: string, phaseId: string, matchdayIdx: number) {
-    withPhase(tournamentId, phaseId, (phase, _t, teams) => {
+    withPhase(tournamentId, phaseId, (phase, t, teams) => {
       if (!phase.league) return
-      simulateLeagueMatchday(leagueHostOf(phase), matchdayIdx, teams)
+      simulateLeagueMatchday(leagueHostOf(phase, t), matchdayIdx, teams)
     })
   }
 
   function simAllPhaseLeague(tournamentId: string, phaseId: string) {
-    withPhase(tournamentId, phaseId, (phase, _t, teams) => {
+    withPhase(tournamentId, phaseId, (phase, t, teams) => {
       if (!phase.league) return
-      simulateAllLeague(leagueHostOf(phase), teams)
+      simulateAllLeague(leagueHostOf(phase, t), teams)
     })
   }
 
@@ -294,7 +294,7 @@ export function usePhasesActions(tournaments: Ref<Tournament[]>, getTeams: () =>
     withPhase(tournamentId, phaseId, (phase, t, teams) => {
       if (!phase.rounds) return
       simulateKnockoutLeg1(
-        knockoutHostOf(phase),
+        knockoutHostOf(phase, t),
         roundIdx,
         matchIdx,
         teams,
@@ -312,7 +312,7 @@ export function usePhasesActions(tournaments: Ref<Tournament[]>, getTeams: () =>
     withPhase(tournamentId, phaseId, (phase, t, teams) => {
       if (!phase.rounds) return
       simulateKnockoutLeg2(
-        knockoutHostOf(phase),
+        knockoutHostOf(phase, t),
         roundIdx,
         matchIdx,
         teams,
@@ -329,14 +329,20 @@ export function usePhasesActions(tournaments: Ref<Tournament[]>, getTeams: () =>
   ) {
     withPhase(tournamentId, phaseId, (phase, t, teams) => {
       if (!phase.rounds) return
-      simulateKnockoutTie(knockoutHostOf(phase), roundIdx, matchIdx, teams, tournamentAdjustments(t))
+      simulateKnockoutTie(
+        knockoutHostOf(phase, t),
+        roundIdx,
+        matchIdx,
+        teams,
+        tournamentAdjustments(t)
+      )
     })
   }
 
   function simPhaseBracketRound(tournamentId: string, phaseId: string, roundIdx: number) {
     withPhase(tournamentId, phaseId, (phase, t, teams) => {
       if (!phase.rounds) return
-      simulateKnockoutRound(knockoutHostOf(phase), roundIdx, teams, tournamentAdjustments(t))
+      simulateKnockoutRound(knockoutHostOf(phase, t), roundIdx, teams, tournamentAdjustments(t))
     })
   }
 
@@ -349,7 +355,7 @@ export function usePhasesActions(tournaments: Ref<Tournament[]>, getTeams: () =>
     withPhase(tournamentId, phaseId, (phase, t, teams) => {
       if (!phase.rounds) return
       const teamId = t.manager?.teamId
-      const host = knockoutHostOf(phase)
+      const host = knockoutHostOf(phase, t)
       phase.rounds[roundIdx]?.matches.forEach((match, mi) => {
         if (teamId && (match.homeId === teamId || match.awayId === teamId)) return
         simulateKnockoutTie(host, roundIdx, mi, teams, tournamentAdjustments(t))
@@ -360,7 +366,7 @@ export function usePhasesActions(tournaments: Ref<Tournament[]>, getTeams: () =>
   function simAllPhaseBracket(tournamentId: string, phaseId: string) {
     withPhase(tournamentId, phaseId, (phase, t, teams) => {
       if (!phase.rounds) return
-      const host = knockoutHostOf(phase)
+      const host = knockoutHostOf(phase, t)
       simulateKnockoutAll(host, teams, {
         adjustments: () => tournamentAdjustments(t),
         stopAfterRound: (next) => hasTieFrom(host, next, t.manager?.teamId),
@@ -423,7 +429,7 @@ export function usePhasesActions(tournaments: Ref<Tournament[]>, getTeams: () =>
     withPhase(tournamentId, phaseId, (phase, t, teams) => {
       const m = phase.thirdPlaceMatch
       if (!m || !m.homeId || !m.awayId || m.leg2Result === undefined) return
-      m.result = simulateMatch(m, teams, tournamentAdjustments(t))
+      m.result = simulateMatch(m, teams, tournamentAdjustments(t), t.homeAdvantage)
       m.leg2Result = null
     })
   }
@@ -432,14 +438,14 @@ export function usePhasesActions(tournaments: Ref<Tournament[]>, getTeams: () =>
     withPhase(tournamentId, phaseId, (phase, t, teams) => {
       const m = phase.thirdPlaceMatch
       if (!m || !m.homeId || !m.awayId || !m.result || m.leg2Result === undefined) return
-      m.leg2Result = decideLeg2Result(m, teams, tournamentAdjustments(t))
+      m.leg2Result = decideLeg2Result(m, teams, tournamentAdjustments(t), t.homeAdvantage)
     })
   }
 
   function simPhaseThirdPlace(tournamentId: string, phaseId: string) {
     withPhase(tournamentId, phaseId, (phase, t, teams) => {
       if (!phase.thirdPlaceMatch) return
-      simulateThirdPlaceTie(knockoutHostOf(phase), teams, tournamentAdjustments(t))
+      simulateThirdPlaceTie(knockoutHostOf(phase, t), teams, tournamentAdjustments(t))
     })
   }
 
