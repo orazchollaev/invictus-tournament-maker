@@ -14,11 +14,19 @@ import { useStatusBar } from "@/composables/useStatusBar"
 import { scheduleSupportPrompt, supportOpen } from "@/composables/useSupport"
 import { logEvent } from "@/composables/useAnalytics"
 import { flushPendingSaves } from "@/modules/tournament/services/persistence"
+import {
+  currentAnnouncement,
+  initAnnouncements,
+} from "@/modules/announcements/composables/useAnnouncements"
 
 // Loaded when first opened: through the settings barrel, a static import pulled
 // every settings component (and the QR code library) into the launch bundle.
 const SettingsSupportModal = defineAsyncComponent(
   () => import("@/modules/settings/components/SettingsSupportModal.vue")
+)
+// Most launches have no announcement to show, so the sheet loads only when one does.
+const AnnouncementSheet = defineAsyncComponent(
+  () => import("@/modules/announcements/components/AnnouncementSheet.vue")
 )
 
 const settings = useSettingsStore()
@@ -81,6 +89,7 @@ onMounted(async () => {
   wide.addEventListener("change", syncHeaderPads)
   void logEvent("app_open")
   scheduleSupportPrompt()
+  initAnnouncements(router)
 
   const backHandle = await App.addListener("backButton", () => {
     const currentPath = router.currentRoute.value.path
@@ -127,6 +136,7 @@ onUnmounted(() => {
     <AppDialog />
     <AppOnboarding v-if="!settings.onboardingSeen" />
     <SettingsSupportModal v-if="supportOpen" @close="supportOpen = false" />
+    <AnnouncementSheet v-if="currentAnnouncement" :announcement="currentAnnouncement" />
     <MusicController />
     <Transition name="market-fab">
       <MarketFab v-if="showMarketFab" :stacked="marketFabStacked" />

@@ -66,6 +66,13 @@ service cloud.firestore {
       allow delete: if signedIn() && resource.data.authorUid == request.auth.uid;
     }
 
+    // In-app announcements. Read by every launch over REST, without signing in;
+    // written only by `pnpm announce` through the admin SDK, which bypasses rules.
+    match /announcements/{id} {
+      allow read: if true;
+      allow write: if false;
+    }
+
     // Write-only for clients; read them in the console. One report per user per dataset.
     match /reports/{id} {
       allow read: if false;
