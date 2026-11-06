@@ -11,7 +11,12 @@ import type {
   LeaguePlayoffSeedMode,
   TournamentFormat,
 } from "@/modules/tournament/types"
-import type { GroupConfigPayload, SwissConfigPayload } from "../components/config"
+import type {
+  GroupConfigPayload,
+  SwissConfigPayload,
+  VenueConfigPayload,
+} from "../components/config"
+import { useVenueSummary } from "./useVenueSummary"
 import type { KnockoutConfigPayload } from "../components/create/CreateKnockoutConfigModal.vue"
 import type { LeagueConfigPayload } from "../components/create/CreateLeagueConfigModal.vue"
 import type { PhaseGraphDraft } from "./useCustomPhaseGraph"
@@ -82,6 +87,11 @@ export function useCreateTournamentDraft() {
   // Picked when a Swiss ceremony opens so the animated reveal and the fixture
   // that gets committed on completion come from one seed; cleared after create.
   const pendingSwissSeed = ref<number | null>(null)
+
+  // null = follow the app-wide home advantage, which is what most
+  // tournaments want; a number pins this one to its own.
+  const homeAdvantage = ref<number | null>(null)
+  const neutralFinal = ref(false)
 
   const teamPointAdjustments = ref<Record<string, number>>({})
   const teamPowerAdjustments = ref<Record<string, number>>({})
@@ -209,6 +219,18 @@ export function useCreateTournamentDraft() {
     return opponents + " · " + draw
   })
 
+  /**
+   * A final to move to neutral ground: any bracket, or a league whose playoff
+   * is on (Swiss always has one). A custom graph sets it per knockout phase.
+   */
+  const hasFinal = computed(() => {
+    if (format.value === "custom") return false
+    if (format.value === "league") return playoffEnabled.value
+    return true
+  })
+
+  const venueConfigSummary = useVenueSummary(homeAdvantage, neutralFinal, hasFinal)
+
   const leagueConfigSummary = computed(() =>
     tierCount.value > 1
       ? t("tournament.create.config.divisionsShort", { n: tierCount.value })
@@ -253,6 +275,11 @@ export function useCreateTournamentDraft() {
     winPoints.value = payload.winPoints
     drawPoints.value = payload.drawPoints
     lossPoints.value = payload.lossPoints
+  }
+
+  function applyVenueConfig(payload: VenueConfigPayload) {
+    homeAdvantage.value = payload.homeAdvantage
+    neutralFinal.value = payload.neutralFinal
   }
 
   function applyLeagueConfig(payload: LeagueConfigPayload) {
@@ -354,6 +381,10 @@ export function useCreateTournamentDraft() {
     drawPoints,
     lossPoints,
     pendingSwissSeed,
+    homeAdvantage,
+    neutralFinal,
+    hasFinal,
+    venueConfigSummary,
     teamPointAdjustments,
     teamPowerAdjustments,
     allTeams,
@@ -372,5 +403,6 @@ export function useCreateTournamentDraft() {
     applyKnockoutConfig,
     applySwissConfig,
     applyLeagueConfig,
+    applyVenueConfig,
   }
 }

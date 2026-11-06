@@ -929,6 +929,19 @@ export default {
       noAvailable: "Keine verfügbaren Teams",
       noTeams: "Keine Teams ausgewählt",
     },
+    venue: {
+      title: "Spielort",
+      homeAdvantage: "Heimvorteil",
+      customHomeAdvantage: "Eigener Heimvorteil",
+      appDefaultHint: "Aus: folgt der App-Einstellung ({n})",
+      homeAdvantageHint:
+        "Stärkebonus für das Heimteam in diesem Turnier. 0 = jedes Spiel auf neutralem Platz.",
+      neutralFinal: "Neutrales Finale",
+      neutralFinalHint:
+        "Ein einzelnes Finale gibt keinem Team Heimvorteil. Ein Finale mit Hin- und Rückspiel bleibt so.",
+      summaryDefault: "App-Standard ({n})",
+      summaryCustom: "Heimvorteil {n}",
+    },
     phases: {
       title: "Phasen",
       help: "Ziehe den rechten Port einer Phase auf den linken Port der nächsten Phase.",

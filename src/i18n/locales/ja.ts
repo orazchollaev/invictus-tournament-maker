@@ -922,6 +922,18 @@ export default {
       noAvailable: "利用可能なチームはありません",
       noTeams: "チームが選択されていません",
     },
+    venue: {
+      title: "会場",
+      homeAdvantage: "ホームアドバンテージ",
+      customHomeAdvantage: "独自のホームアドバンテージ",
+      appDefaultHint: "オフ：アプリの設定に従う（{n}）",
+      homeAdvantageHint: "この大会でホームチームに加わるパワーボーナス。0 = 全試合が中立地。",
+      neutralFinal: "決勝は中立地",
+      neutralFinalHint:
+        "一発勝負の決勝ではどちらにもホームアドバンテージがありません。2試合制の決勝はホーム＆アウェイのままです。",
+      summaryDefault: "アプリの既定値（{n}）",
+      summaryCustom: "ホーム補正 {n}",
+    },
     phases: {
       title: "フェーズ",
       help: "フェーズの右ポートを次のフェーズの左ポートへドラッグします。",

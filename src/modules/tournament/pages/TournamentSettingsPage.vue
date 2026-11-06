@@ -11,7 +11,17 @@ import {
   TeamSelectorFullscreenModal,
 } from "@/modules/tournament/components/shared"
 import { AppButton, AppCard, AppChip, AppConfigButton, AppIcon, AppModal } from "@/components/ui"
-import { ArrowLeft, LayoutGrid, List, Lock, Save, Settings, Shuffle, Trophy } from "@lucide/vue"
+import {
+  ArrowLeft,
+  House,
+  LayoutGrid,
+  List,
+  Lock,
+  Save,
+  Settings,
+  Shuffle,
+  Trophy,
+} from "@lucide/vue"
 import {
   SettingsDangerZone,
   SettingsKnockoutConfigModal,
@@ -23,7 +33,9 @@ import type { GroupConfigPayload } from "../components/config"
 import type { KnockoutConfigPayload } from "../components/settings/SettingsKnockoutConfigModal.vue"
 import type { LeagueConfigPayload } from "../components/settings/SettingsLeagueConfigModal.vue"
 import type { SwissConfigPayload } from "../components/config"
-import { GroupConfigModal, SwissConfigModal } from "../components/config"
+import { GroupConfigModal, SwissConfigModal, VenueConfigModal } from "../components/config"
+import type { VenueConfigPayload } from "../components/config"
+import { useVenueSummary } from "../composables/useVenueSummary"
 // Lazy, and only ever rendered for a custom tournament — see the card below.
 const PhaseGraphCanvas = defineAsyncComponent(
   () => import("../components/phases/PhaseGraphCanvas.vue")
@@ -127,6 +139,14 @@ const swissConfigSummary = computed(() => {
       : t("common.random")
   return `${opponents} · ${draw}`
 })
+const venueConfigSummary = useVenueSummary(draft.homeAdvantage, draft.neutralFinal, draft.hasFinal)
+const showVenueModal = ref(false)
+
+function applyVenueConfig(payload: VenueConfigPayload) {
+  draft.homeAdvantage.value = payload.homeAdvantage
+  draft.neutralFinal.value = payload.neutralFinal
+}
+
 const leagueConfigSummary = computed(() =>
   draft.tierCount.value > 1
     ? t("tournament.create.config.divisionsShort", { n: draft.tierCount.value })
@@ -316,7 +336,7 @@ function handleSave() {
           @close="configuringPhaseId = null"
         />
 
-        <div v-if="!draft.isCustomFormat.value" class="form-card config-button-stack">
+        <div class="form-card config-button-stack">
           <AppConfigButton
             v-if="draft.isGroupFormat.value"
             :icon="LayoutGrid"
@@ -339,12 +359,28 @@ function handleSave() {
             @click="showSwissModal = true"
           />
           <AppConfigButton
+            v-if="!draft.isCustomFormat.value"
             :icon="Trophy"
             :label="t('tournament.create.config.knockout')"
             :summary="knockoutConfigSummary"
             @click="showKnockoutModal = true"
           />
+          <AppConfigButton
+            :icon="House"
+            :label="t('tournament.venue.title')"
+            :summary="venueConfigSummary"
+            @click="showVenueModal = true"
+          />
         </div>
+
+        <VenueConfigModal
+          v-if="showVenueModal"
+          :home-advantage="draft.homeAdvantage.value"
+          :neutral-final="draft.neutralFinal.value"
+          :show-neutral-final="draft.hasFinal.value"
+          @save="applyVenueConfig"
+          @close="showVenueModal = false"
+        />
 
         <GroupConfigModal
           v-if="showGroupModal && draft.isGroupFormat.value"

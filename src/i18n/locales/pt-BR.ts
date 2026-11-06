@@ -924,6 +924,19 @@ export default {
       noAvailable: "Nenhum time disponível",
       noTeams: "Nenhum time selecionado",
     },
+    venue: {
+      title: "Estádio",
+      homeAdvantage: "Vantagem de mando",
+      customHomeAdvantage: "Vantagem de mando personalizada",
+      appDefaultHint: "Desligado: segue a configuração do app ({n})",
+      homeAdvantageHint:
+        "Bônus de força para o mandante neste torneio. 0 = todos os jogos em campo neutro.",
+      neutralFinal: "Final em campo neutro",
+      neutralFinalHint:
+        "Uma final em jogo único não dá vantagem de mando a ninguém. Uma final em ida e volta mantém o mando.",
+      summaryDefault: "Padrão do app ({n})",
+      summaryCustom: "Mando {n}",
+    },
     phases: {
       title: "Fases",
       help: "Arraste a porta direita de uma fase até a porta esquerda da fase seguinte.",

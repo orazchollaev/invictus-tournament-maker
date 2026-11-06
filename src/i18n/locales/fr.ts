@@ -929,6 +929,19 @@ export default {
       noAvailable: "Aucune équipe disponible",
       noTeams: "Aucune équipe sélectionnée",
     },
+    venue: {
+      title: "Lieu",
+      homeAdvantage: "Avantage du terrain",
+      customHomeAdvantage: "Avantage du terrain personnalisé",
+      appDefaultHint: "Désactivé : suit le réglage de l'app ({n})",
+      homeAdvantageHint:
+        "Bonus de puissance pour l'équipe à domicile dans ce tournoi. 0 = tous les matchs sur terrain neutre.",
+      neutralFinal: "Finale sur terrain neutre",
+      neutralFinalHint:
+        "Une finale sur un seul match ne donne l'avantage du terrain à personne. Une finale aller-retour reste inchangée.",
+      summaryDefault: "Réglage de l'app ({n})",
+      summaryCustom: "Avantage domicile {n}",
+    },
     phases: {
       title: "Phases",
       help: "Faites glisser le port droit d’une phase vers le port gauche de la suivante.",

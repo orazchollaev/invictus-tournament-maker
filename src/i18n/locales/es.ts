@@ -924,6 +924,19 @@ export default {
       noAvailable: "No hay equipos disponibles",
       noTeams: "No hay equipos seleccionados",
     },
+    venue: {
+      title: "Sede",
+      homeAdvantage: "Ventaja de local",
+      customHomeAdvantage: "Ventaja de local propia",
+      appDefaultHint: "Desactivado: usa el ajuste de la app ({n})",
+      homeAdvantageHint:
+        "Bonificación de poder para el equipo local en este torneo. 0 = todos los partidos en campo neutral.",
+      neutralFinal: "Final en campo neutral",
+      neutralFinalHint:
+        "Una final a partido único no da ventaja de local a nadie. Una final a doble partido mantiene ida y vuelta.",
+      summaryDefault: "Predeterminado de la app ({n})",
+      summaryCustom: "Ventaja local {n}",
+    },
     phases: {
       title: "Fases",
       help: "Arrastra el puerto derecho de una fase hasta el puerto izquierdo de la siguiente.",

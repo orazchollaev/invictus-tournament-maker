@@ -116,6 +116,7 @@ const knockoutSeedMode = ref<PhaseSeedMode>(
 )
 const doubleElim = ref(cfg.kind === "knockout" ? !!cfg.knockout.doubleElim : false)
 const hasThirdPlace = ref(cfg.kind === "knockout" ? cfg.knockout.hasThirdPlace : false)
+const neutralFinal = ref(cfg.kind === "knockout" ? !!cfg.knockout.neutralFinal : false)
 const knockoutLegMode = ref<LegMode>(
   cfg.kind === "knockout" ? cfg.knockout.knockoutLegMode : "single"
 )
@@ -247,6 +248,7 @@ function build(): PhaseConfig {
       roundLegModes: { ...roundLegModes.value },
       finalLegMode: finalLegMode.value,
       thirdPlaceLegMode: thirdPlaceLegMode.value,
+      ...(neutralFinal.value ? { neutralFinal: true } : {}),
     },
   }
 }
@@ -391,6 +393,12 @@ function handleSave() {
                 {{ t("tournament.phases.config.thirdPlace") }}
               </span>
               <AppToggle v-model="hasThirdPlace" />
+            </div>
+            <div class="form-row">
+              <span class="form-label form-label--md">
+                {{ t("tournament.venue.neutralFinal") }}
+              </span>
+              <AppToggle v-model="neutralFinal" />
             </div>
           </div>
         </div>

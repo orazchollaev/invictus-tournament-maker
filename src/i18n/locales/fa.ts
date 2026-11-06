@@ -921,6 +921,19 @@ export default {
       noAvailable: "تیمی موجود نیست",
       noTeams: "تیمی انتخاب نشده",
     },
+    venue: {
+      title: "ورزشگاه",
+      homeAdvantage: "امتیاز میزبانی",
+      customHomeAdvantage: "امتیاز میزبانی سفارشی",
+      appDefaultHint: "خاموش: طبق تنظیم برنامه ({n})",
+      homeAdvantageHint:
+        "قدرت اضافی برای تیم میزبان در این تورنمنت. 0 = همه بازی‌ها در زمین بی‌طرف.",
+      neutralFinal: "فینال در زمین بی‌طرف",
+      neutralFinalHint:
+        "فینال تک‌بازی به هیچ تیمی امتیاز میزبانی نمی‌دهد. فینال رفت و برگشت به همان شکل می‌ماند.",
+      summaryDefault: "پیش‌فرض برنامه ({n})",
+      summaryCustom: "امتیاز میزبانی {n}",
+    },
     phases: {
       title: "مراحل",
       help: "درگاه راست یک مرحله را به درگاه چپ مرحله بعد بکشید.",

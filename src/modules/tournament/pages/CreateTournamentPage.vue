@@ -5,7 +5,16 @@ import { ManualDraw } from "../components/draw"
 import { GroupDraw } from "../components/group"
 import { TeamSelectorButton, TeamSelectorFullscreenModal } from "../components/shared"
 import { DrawCeremony } from "../components/draw-ceremony"
-import { Shuffle, ArrowLeft, ChevronDown, LayoutGrid, Trophy, List, Workflow } from "@lucide/vue"
+import {
+  Shuffle,
+  ArrowLeft,
+  ChevronDown,
+  House,
+  LayoutGrid,
+  Trophy,
+  List,
+  Workflow,
+} from "@lucide/vue"
 import { randomTournamentName } from "@/composables/useRandomNames"
 import type { CeremonyContext, DrawMode } from "@/engine"
 import {
@@ -13,7 +22,7 @@ import {
   CreateKnockoutConfigModal,
   CreateLeagueConfigModal,
 } from "../components/create"
-import { GroupConfigModal, SwissConfigModal } from "../components/config"
+import { GroupConfigModal, SwissConfigModal, VenueConfigModal } from "../components/config"
 // Lazy: the blueprint editor pulls in Vue Flow, and most visits to this page
 // never open it.
 const PhaseGraphModal = defineAsyncComponent(
@@ -81,6 +90,11 @@ const {
   applyKnockoutConfig,
   applySwissConfig,
   applyLeagueConfig,
+  applyVenueConfig,
+  homeAdvantage,
+  neutralFinal,
+  hasFinal,
+  venueConfigSummary,
   pendingSwissSeed,
 } = draft
 const { doCreate } = useCreateTournamentSubmit(draft)
@@ -101,6 +115,7 @@ const showGroupModal = ref(false)
 const showKnockoutModal = ref(false)
 const showLeagueModal = ref(false)
 const showSwissModal = ref(false)
+const showVenueModal = ref(false)
 
 function handleCreate() {
   if (!canCreate.value) return
@@ -322,7 +337,22 @@ function onCeremonyComplete(orderedIds: string[]) {
           :summary="knockoutConfigSummary"
           @click="showKnockoutModal = true"
         />
+        <AppConfigButton
+          :icon="House"
+          :label="t('tournament.venue.title')"
+          :summary="venueConfigSummary"
+          @click="showVenueModal = true"
+        />
       </div>
+
+      <VenueConfigModal
+        v-if="showVenueModal"
+        :home-advantage="homeAdvantage"
+        :neutral-final="neutralFinal"
+        :show-neutral-final="hasFinal"
+        @save="applyVenueConfig"
+        @close="showVenueModal = false"
+      />
 
       <PhaseGraphModal
         v-if="showPhasesModal"

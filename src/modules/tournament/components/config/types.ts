@@ -15,6 +15,12 @@ export interface SwissConfigPayload {
   lossPoints: number
 }
 
+export interface VenueConfigPayload {
+  /** The tournament's own home edge; null follows the app-wide setting. */
+  homeAdvantage: number | null
+  neutralFinal: boolean
+}
+
 export interface GroupConfigPayload {
   drawType: DrawType
   groupCount: number

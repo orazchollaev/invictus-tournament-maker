@@ -910,6 +910,19 @@
       noAvailable: "No available teams",
       noTeams: "No teams selected",
     },
+    venue: {
+      title: "Venue",
+      homeAdvantage: "Home advantage",
+      customHomeAdvantage: "Custom home advantage",
+      appDefaultHint: "Off: follows the app setting ({n})",
+      homeAdvantageHint:
+        "Power bonus for the home side in this tournament. 0 = every match on neutral ground.",
+      neutralFinal: "Neutral final",
+      neutralFinalHint:
+        "A one-off final gives neither side home advantage. A two-legged final keeps home and away.",
+      summaryDefault: "App default ({n})",
+      summaryCustom: "Home edge {n}",
+    },
     phases: {
       title: "Phases",
       help: "Drag a phase’s right port to the next phase’s left port.",

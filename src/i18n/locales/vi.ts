@@ -921,6 +921,19 @@ export default {
       noAvailable: "Không có đội khả dụng",
       noTeams: "Chưa chọn đội",
     },
+    venue: {
+      title: "Sân thi đấu",
+      homeAdvantage: "Lợi thế sân nhà",
+      customHomeAdvantage: "Lợi thế sân nhà tùy chỉnh",
+      appDefaultHint: "Tắt: theo cài đặt ứng dụng ({n})",
+      homeAdvantageHint:
+        "Điểm sức mạnh cộng cho đội chủ nhà trong giải này. 0 = mọi trận đấu trên sân trung lập.",
+      neutralFinal: "Chung kết sân trung lập",
+      neutralFinalHint:
+        "Trận chung kết một lượt không đội nào có lợi thế sân nhà. Chung kết hai lượt vẫn giữ sân nhà và sân khách.",
+      summaryDefault: "Mặc định ứng dụng ({n})",
+      summaryCustom: "Lợi thế sân nhà {n}",
+    },
     phases: {
       title: "Giai đoạn",
       help: "Kéo cổng phải của một giai đoạn tới cổng trái của giai đoạn tiếp theo.",

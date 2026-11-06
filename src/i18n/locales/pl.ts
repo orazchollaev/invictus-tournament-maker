@@ -923,6 +923,19 @@ export default {
       noAvailable: "Brak dostępnych drużyn",
       noTeams: "Nie wybrano drużyn",
     },
+    venue: {
+      title: "Stadion",
+      homeAdvantage: "Przewaga własnego boiska",
+      customHomeAdvantage: "Własna przewaga boiska",
+      appDefaultHint: "Wył.: zgodnie z ustawieniem aplikacji ({n})",
+      homeAdvantageHint:
+        "Bonus siły dla gospodarza w tym turnieju. 0 = każdy mecz na neutralnym terenie.",
+      neutralFinal: "Finał na neutralnym terenie",
+      neutralFinalHint:
+        "Finał w jednym meczu nie daje nikomu przewagi boiska. Dwumecz finałowy zostaje u siebie i na wyjeździe.",
+      summaryDefault: "Domyślne aplikacji ({n})",
+      summaryCustom: "Przewaga gospodarza {n}",
+    },
     phases: {
       title: "Fazy",
       help: "Przeciągnij prawy port fazy do lewego portu następnej fazy.",

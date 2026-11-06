@@ -926,6 +926,19 @@ export default {
       noAvailable: "Nessuna squadra disponibile",
       noTeams: "Nessuna squadra selezionata",
     },
+    venue: {
+      title: "Campo",
+      homeAdvantage: "Vantaggio casalingo",
+      customHomeAdvantage: "Vantaggio casalingo personalizzato",
+      appDefaultHint: "Disattivato: segue l'impostazione dell'app ({n})",
+      homeAdvantageHint:
+        "Bonus di forza per la squadra di casa in questo torneo. 0 = ogni partita in campo neutro.",
+      neutralFinal: "Finale in campo neutro",
+      neutralFinalHint:
+        "Una finale in gara secca non dà il vantaggio casalingo a nessuno. Una finale di andata e ritorno resta tale.",
+      summaryDefault: "Predefinito dell'app ({n})",
+      summaryCustom: "Vantaggio casa {n}",
+    },
     phases: {
       title: "Fasi",
       help: "Trascina la porta destra di una fase sulla porta sinistra della fase successiva.",

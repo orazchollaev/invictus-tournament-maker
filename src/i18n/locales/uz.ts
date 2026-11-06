@@ -927,6 +927,19 @@ export default {
       noAvailable: "Mavjud jamoalar yo'q",
       noTeams: "Jamoa tanlanmagan",
     },
+    venue: {
+      title: "Stadion",
+      homeAdvantage: "Uy maydoni ustunligi",
+      customHomeAdvantage: "Maxsus uy maydoni ustunligi",
+      appDefaultHint: "O'chiq: ilova sozlamasi ishlatiladi ({n})",
+      homeAdvantageHint:
+        "Ushbu turnirda mezbon jamoaga beriladigan qo'shimcha kuch. 0 = barcha o'yinlar betaraf maydonda.",
+      neutralFinal: "Betaraf maydonda final",
+      neutralFinalHint:
+        "Bir o'yinli finalda hech bir jamoa uy ustunligini olmaydi. Ikki o'yinli final uy va mehmonda qoladi.",
+      summaryDefault: "Ilova standarti ({n})",
+      summaryCustom: "Uy ustunligi {n}",
+    },
     phases: {
       title: "Bosqichlar",
       help: "Bosqichning o'ng portini keyingi bosqichning chap portiga suring.",

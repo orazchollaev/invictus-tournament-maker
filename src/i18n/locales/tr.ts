@@ -915,6 +915,19 @@
       noAvailable: "Müsait takım yok",
       noTeams: "Takım seçilmedi",
     },
+    venue: {
+      title: "Saha",
+      homeAdvantage: "Ev sahibi avantajı",
+      customHomeAdvantage: "Özel ev sahibi avantajı",
+      appDefaultHint: "Kapalı: uygulama ayarını kullanır ({n})",
+      homeAdvantageHint:
+        "Bu turnuvada ev sahibi takıma verilen güç bonusu. 0 = tüm maçlar tarafsız sahada.",
+      neutralFinal: "Tarafsız saha finali",
+      neutralFinalHint:
+        "Tek maçlık finalde iki takım da ev sahibi avantajı almaz. Çift ayaklı final iç saha/deplasman olarak kalır.",
+      summaryDefault: "Uygulama varsayılanı ({n})",
+      summaryCustom: "Ev avantajı {n}",
+    },
     phases: {
       title: "Aşamalar",
       help: "Bir aşamanın sağ portunu sonraki aşamanın sol portuna sürükle.",

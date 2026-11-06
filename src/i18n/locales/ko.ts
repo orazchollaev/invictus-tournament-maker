@@ -920,6 +920,19 @@ export default {
       noAvailable: "가능한 팀이 없습니다",
       noTeams: "선택된 팀이 없습니다",
     },
+    venue: {
+      title: "경기장",
+      homeAdvantage: "홈 어드밴티지",
+      customHomeAdvantage: "사용자 지정 홈 어드밴티지",
+      appDefaultHint: "끔: 앱 설정을 따름 ({n})",
+      homeAdvantageHint:
+        "이 대회에서 홈팀에 주는 파워 보너스입니다. 0 = 모든 경기를 중립 경기장에서 진행.",
+      neutralFinal: "중립 경기장 결승",
+      neutralFinalHint:
+        "단판 결승에서는 어느 팀도 홈 어드밴티지를 받지 않습니다. 2차전 결승은 홈 앤드 어웨이를 유지합니다.",
+      summaryDefault: "앱 기본값 ({n})",
+      summaryCustom: "홈 보정 {n}",
+    },
     phases: {
       title: "단계",
       help: "단계의 오른쪽 포트를 다음 단계의 왼쪽 포트로 드래그하세요.",

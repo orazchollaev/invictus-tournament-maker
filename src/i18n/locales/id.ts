@@ -924,6 +924,19 @@ export default {
       noAvailable: "Tidak ada tim yang tersedia",
       noTeams: "Tidak ada tim yang dipilih",
     },
+    venue: {
+      title: "Venue",
+      homeAdvantage: "Keuntungan kandang",
+      customHomeAdvantage: "Keuntungan kandang khusus",
+      appDefaultHint: "Mati: mengikuti pengaturan aplikasi ({n})",
+      homeAdvantageHint:
+        "Bonus kekuatan untuk tim tuan rumah di turnamen ini. 0 = semua laga di tempat netral.",
+      neutralFinal: "Final di tempat netral",
+      neutralFinalHint:
+        "Final satu laga tidak memberi keuntungan kandang kepada siapa pun. Final dua leg tetap kandang dan tandang.",
+      summaryDefault: "Bawaan aplikasi ({n})",
+      summaryCustom: "Keuntungan kandang {n}",
+    },
     phases: {
       title: "Fase",
       help: "Tarik port kanan sebuah fase ke port kiri fase berikutnya.",

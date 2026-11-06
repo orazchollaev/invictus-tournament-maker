@@ -106,6 +106,8 @@ export function useTournamentSettingsDraft(
   const winPoints = ref(t0?.winPoints ?? DEFAULTS.winPoints)
   const drawPoints = ref(t0?.drawPoints ?? DEFAULTS.drawPoints)
   const lossPoints = ref(t0?.lossPoints ?? DEFAULTS.lossPoints)
+  const homeAdvantage = ref<number | null>(t0?.homeAdvantage ?? null)
+  const neutralFinal = ref(!!t0?.neutralFinal)
   const teamPointAdjustments = ref<Record<string, number>>({ ...(t0?.teamPointAdjustments ?? {}) })
   const teamPowerAdjustments = ref<Record<string, number>>({ ...(t0?.teamPowerAdjustments ?? {}) })
 
@@ -126,6 +128,16 @@ export function useTournamentSettingsDraft(
   const isCustomFormat = computed(() => original.value?.format === "custom")
   const isMultiTier = computed(() => (original.value?.tiers?.length ?? 0) > 1)
   const usesStandings = computed(() => isLeagueFormat.value || isGroupFormat.value)
+  /** A final to move to neutral ground. A custom graph sets that per knockout phase. */
+  const hasFinal = computed(
+    () => !isCustomFormat.value && (!isLeagueFormat.value || playoffEnabled.value)
+  )
+
+  const venueChanged = computed(
+    () =>
+      homeAdvantage.value !== (original.value?.homeAdvantage ?? null) ||
+      (hasFinal.value && neutralFinal.value) !== !!original.value?.neutralFinal
+  )
 
   /** Playoff config is frozen once the bracket has been seeded. */
   const playoffChanged = computed(() => {
@@ -183,6 +195,7 @@ export function useTournamentSettingsDraft(
       (isLeagueFormat.value && playoffChanged.value) ||
       (isSwissFormat.value && swissChanged.value) ||
       tiebreaker.value !== (orig.tiebreaker ?? DEFAULTS.tiebreaker) ||
+      venueChanged.value ||
       (usesStandings.value && pointsChanged.value) ||
       (usesStandings.value &&
         !sameAdjustments(teamPointAdjustments.value, orig.teamPointAdjustments ?? {})) ||
@@ -305,6 +318,9 @@ export function useTournamentSettingsDraft(
     if (tiebreaker.value !== (orig.tiebreaker ?? DEFAULTS.tiebreaker)) {
       store.setTiebreaker(id, tiebreaker.value)
     }
+    if (venueChanged.value) {
+      store.setVenue(id, homeAdvantage.value, hasFinal.value && neutralFinal.value)
+    }
     if (usesStandings.value && pointsChanged.value) {
       store.setPointsConfig(id, winPoints.value, drawPoints.value, lossPoints.value)
     }
@@ -345,6 +361,8 @@ export function useTournamentSettingsDraft(
     winPoints,
     drawPoints,
     lossPoints,
+    homeAdvantage,
+    neutralFinal,
     teamPointAdjustments,
     teamPowerAdjustments,
     swissOpponentCount,
@@ -356,6 +374,7 @@ export function useTournamentSettingsDraft(
     isSwissFormat,
     isGroupFormat,
     isMultiTier,
+    hasFinal,
     hasChanges,
     save,
   }

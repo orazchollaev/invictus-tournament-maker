@@ -927,6 +927,19 @@ export default {
       noAvailable: "Geen beschikbare teams",
       noTeams: "Geen teams geselecteerd",
     },
+    venue: {
+      title: "Speellocatie",
+      homeAdvantage: "Thuisvoordeel",
+      customHomeAdvantage: "Eigen thuisvoordeel",
+      appDefaultHint: "Uit: volgt de app-instelling ({n})",
+      homeAdvantageHint:
+        "Krachtbonus voor de thuisploeg in dit toernooi. 0 = elke wedstrijd op neutraal terrein.",
+      neutralFinal: "Finale op neutraal terrein",
+      neutralFinalHint:
+        "Een finale van één wedstrijd geeft niemand thuisvoordeel. Een finale over twee wedstrijden blijft thuis en uit.",
+      summaryDefault: "App-standaard ({n})",
+      summaryCustom: "Thuisvoordeel {n}",
+    },
     phases: {
       title: "Fasen",
       help: "Sleep de rechterpoort van een fase naar de linkerpoort van de volgende fase.",

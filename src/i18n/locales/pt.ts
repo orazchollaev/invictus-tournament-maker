@@ -924,6 +924,19 @@ export default {
       noAvailable: "Nenhuma equipe disponível",
       noTeams: "Nenhuma equipe selecionada",
     },
+    venue: {
+      title: "Estádio",
+      homeAdvantage: "Vantagem de casa",
+      customHomeAdvantage: "Vantagem de casa personalizada",
+      appDefaultHint: "Desligado: segue a definição da app ({n})",
+      homeAdvantageHint:
+        "Bónus de poder para a equipa da casa neste torneio. 0 = todos os jogos em campo neutro.",
+      neutralFinal: "Final em campo neutro",
+      neutralFinalHint:
+        "Uma final a jogo único não dá vantagem de casa a ninguém. Uma final a duas mãos mantém casa e fora.",
+      summaryDefault: "Predefinição da app ({n})",
+      summaryCustom: "Vantagem de casa {n}",
+    },
     phases: {
       title: "Fases",
       help: "Arraste a porta direita de uma fase até à porta esquerda da fase seguinte.",

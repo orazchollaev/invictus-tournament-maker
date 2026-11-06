@@ -60,9 +60,16 @@ export function useCreateTournamentSubmit(draft: ReturnType<typeof useCreateTour
     teamPointAdjustments,
     teamPowerAdjustments,
     pendingSwissSeed,
+    homeAdvantage,
+    neutralFinal,
+    hasFinal,
   } = draft
 
+  /** Per-tournament settings every format shares, applied once the tournament exists. */
   function applyAdjustments(id: string) {
+    if (homeAdvantage.value !== null || (hasFinal.value && neutralFinal.value)) {
+      store.setVenue(id, homeAdvantage.value, hasFinal.value && neutralFinal.value)
+    }
     for (const [teamId, val] of Object.entries(teamPointAdjustments.value)) {
       if (val !== 0) store.setTeamPointAdjustment(id, teamId, val)
     }
