@@ -36,3 +36,6 @@ docs/tsconfig.tsbuildinfo
 
 # Generated knowledge graph (graphify) — rebuilt locally, not source
 graphify-out/
+
+# Service-account keys for scripts (pnpm announce)
+.secrets/

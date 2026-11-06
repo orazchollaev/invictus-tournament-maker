@@ -1,0 +1,26 @@
+{
+  "id": "example-market-launch",
+  "enabled": true,
+  "startAt": "2026-11-10T09:00:00+03:00",
+  "endAt": "2026-11-17T23:59:00+03:00",
+  "priority": 0,
+  "frequency": "once",
+  "platforms": null,
+  "minVersion": null,
+  "maxVersion": null,
+  "defaultLocale": "en",
+  "imageUrl": null,
+  "action": { "type": "route", "target": "/market" },
+  "content": {
+    "en": {
+      "title": "The dataset market is open",
+      "body": "Download leagues, clubs and national teams made by other players.\nShare your own in one tap.",
+      "cta": "Open market"
+    },
+    "tr": {
+      "title": "Veri pazarı açıldı",
+      "body": "Diğer oyuncuların hazırladığı ligleri, kulüpleri ve milli takımları indir.\nKendininkini tek dokunuşla paylaş.",
+      "cta": "Pazarı aç"
+    }
+  }
+}
