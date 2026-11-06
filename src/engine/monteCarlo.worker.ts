@@ -1,13 +1,18 @@
 /// <reference lib="webworker" />
 import type { Team } from "../modules/teams/types"
-import type { Tournament } from "../modules/tournament/types"
+import type { Tiebreaker, Tournament } from "../modules/tournament/types"
 import { runMonteCarloSimulations, type MonteCarloResult } from "./monteCarlo"
+import { getSimConfig, setSimConfig } from "./simulation"
+import { setTableConfig } from "./tableConfig"
 
 interface RunMessage {
   type: "run"
   tournament: Tournament
   teams: Team[]
   n: number
+  /** The main thread's settings — this worker's module state starts on defaults. */
+  simConfig?: ReturnType<typeof getSimConfig>
+  tiebreaker?: Tiebreaker
 }
 
 interface CancelMessage {
@@ -29,6 +34,8 @@ self.onmessage = async (event: MessageEvent<InboundMessage>) => {
   }
 
   cancelSignal.cancelled = false
+  if (msg.simConfig) setSimConfig(msg.simConfig)
+  if (msg.tiebreaker) setTableConfig({ tiebreaker: msg.tiebreaker })
   const result = await runMonteCarloSimulations(
     msg.tournament,
     msg.teams,

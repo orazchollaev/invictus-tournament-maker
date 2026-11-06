@@ -2,6 +2,7 @@ import { ref } from "vue"
 import type { Tournament } from "../types"
 import type { Team } from "@/modules/teams/types"
 import type { MonteCarloResult } from "@/engine/monteCarlo"
+import { getSimConfig, getTiebreaker } from "@/engine"
 
 export function useMonteCarlo() {
   const isRunning = ref(false)
@@ -49,7 +50,16 @@ export function useMonteCarlo() {
       // can't clone them directly, so strip reactivity via a plain JSON round-trip.
       const plainTournament = JSON.parse(JSON.stringify(tournament)) as Tournament
       const plainTeams = JSON.parse(JSON.stringify(teams)) as Team[]
-      activeWorker.postMessage({ type: "run", tournament: plainTournament, teams: plainTeams, n })
+      // A worker has its own copy of the engine's module state, so the user's
+      // simulation settings have to travel with the run or it plays on defaults.
+      activeWorker.postMessage({
+        type: "run",
+        tournament: plainTournament,
+        teams: plainTeams,
+        n,
+        simConfig: getSimConfig(),
+        tiebreaker: getTiebreaker(),
+      })
     })
   }
 
