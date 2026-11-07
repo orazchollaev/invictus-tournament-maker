@@ -26,6 +26,8 @@ export interface AppMenuItem<Key extends string = string> {
   label: string
   icon?: Component
   disabled?: boolean
+  /** Destructive (delete): drawn in the danger colour. */
+  danger?: boolean
 }
 
 defineProps<{
@@ -59,7 +61,10 @@ const emit = defineEmits<{ select: [key: K] }>()
           v-for="item in items"
           :key="item.key"
           class="app-menu-item"
-          :class="{ 'app-menu-item--active': item.key === active }"
+          :class="{
+            'app-menu-item--active': item.key === active,
+            'app-menu-item--danger': item.danger,
+          }"
           :aria-current="item.key === active ? 'page' : undefined"
           :disabled="item.disabled"
           @select="emit('select', item.key)"
@@ -115,6 +120,11 @@ const emit = defineEmits<{ select: [key: K] }>()
 }
 .app-menu-item--active .app-menu-icon {
   color: var(--accent);
+}
+
+.app-menu-item--danger,
+.app-menu-item--danger .app-menu-icon {
+  color: var(--danger);
 }
 
 .app-menu-item[data-disabled] {

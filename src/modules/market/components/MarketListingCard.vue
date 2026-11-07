@@ -1,64 +1,51 @@
 <script setup lang="ts">
+/**
+ * One community dataset on the market list, on the same AppListItem as every
+ * other list page: a club/country icon, the name over its description (or,
+ * without one, its type and author), and the team and download counts.
+ */
 import { computed } from "vue"
 import { useI18n } from "vue-i18n"
-import { AppCard } from "@/components/ui"
+import { Download, Flag, Shield } from "@lucide/vue"
+import { AppChip, AppIcon, AppListItem } from "@/components/ui"
 import type { MarketListing } from "../types"
 
 const props = defineProps<{ listing: MarketListing }>()
+const emit = defineEmits<{ click: [] }>()
 
 const { t } = useI18n()
 
-// One quiet line instead of a row of badges.
-const meta = computed(() =>
-  [
-    t("common.teams", { n: props.listing.teamCount }),
-    t(`market.type.${props.listing.type}`),
-    `↓ ${props.listing.downloads}`,
-    props.listing.authorName,
-  ].join(" · ")
+const subtitle = computed(
+  () =>
+    props.listing.description ||
+    [t(`market.type.${props.listing.type}`), props.listing.authorName].join(" · ")
 )
 </script>
 
 <template>
-  <AppCard variant="outlined" interactive padding="sm" class="market-card">
-    <span class="market-card-title">{{ listing.label }}</span>
-    <p class="market-card-desc">{{ listing.description }}</p>
-    <p class="market-card-meta">{{ meta }}</p>
-  </AppCard>
+  <AppListItem
+    :title="listing.label"
+    :subtitle="subtitle"
+    :lead-icon="listing.type === 'country' ? Flag : Shield"
+    @open="emit('click')"
+  >
+    <template #trail>
+      <AppChip square>{{ t("common.teams", { n: listing.teamCount }) }}</AppChip>
+      <span class="downloads">
+        <AppIcon :icon="Download" size="xs" />
+        {{ listing.downloads }}
+      </span>
+    </template>
+  </AppListItem>
 </template>
 
 <style scoped>
-.market-card {
-  cursor: pointer;
-}
-
-.market-card :deep(.card-body) {
-  display: flex;
-  flex-direction: column;
+.downloads {
+  display: inline-flex;
+  align-items: center;
   gap: 2px;
-  min-width: 0;
-}
-
-.market-card-title {
-  font-size: var(--fs-base);
-  font-weight: 600;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.market-card-desc,
-.market-card-meta {
-  margin: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-size: var(--fs-sm);
-  color: var(--text-muted);
-}
-
-.market-card-meta {
   font-size: var(--fs-xs);
-  opacity: 0.8;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
 }
 </style>

@@ -5,22 +5,33 @@ import { useTeamsStore } from "../store"
 import { useSettingsStore } from "@/modules/settings/store"
 import {
   GenerateCoachesModal,
+  TeamCrest,
   TeamFormModal,
-  TeamBadge,
   TeamsFilterMenu,
 } from "@/modules/teams/components"
 import type { Team } from "../types"
 import {
   AppButton,
-  AppCard,
-  AppChip,
+  AppButtonGroup,
   AppEmptyState,
   AppIcon,
+  AppListItem,
   AppPagination,
   AppSearchInput,
-  AppButtonGroup,
+  AppStarRating,
+  type AppMenuItem,
 } from "@/components/ui"
-import { X, Pencil, Plus, Users, List, Grid3x3, ClipboardList, Store, Swords } from "@lucide/vue"
+import {
+  ClipboardList,
+  Grid3x3,
+  List,
+  Pencil,
+  Plus,
+  Store,
+  Swords,
+  Trash2,
+  Users,
+} from "@lucide/vue"
 import { useI18n } from "vue-i18n"
 
 const { t } = useI18n()
@@ -32,6 +43,23 @@ const showAddModal = ref(false)
 const showCoachesModal = ref(false)
 const editingTeam = ref<Team | null>(null)
 const query = ref("")
+
+type MenuKey = "edit" | "compare" | "delete"
+
+const menuItems = computed<AppMenuItem<MenuKey>[]>(() => [
+  { key: "edit", label: t("common.edit"), icon: Pencil },
+  { key: "compare", label: t("teams.compare.button"), icon: Swords },
+  { key: "delete", label: t("common.delete"), icon: Trash2, danger: true },
+])
+
+function onMenu(team: Team, key: MenuKey) {
+  if (key === "edit") editingTeam.value = team
+  else if (key === "compare") router.push({ path: "/teams/compare", query: { a: team.id } })
+  else store.remove(team.id)
+}
+
+/** Power (1-99) as a five-star rating, in half stars. Cosmetic only. */
+const stars = (team: Team) => Math.round((team.power / 99) * 10) / 2
 
 const isGrid = computed(() => settings.teamsListView === "grid")
 
@@ -139,34 +167,29 @@ const pagedTeams = computed(() => {
 
     <div v-if="store.teams.length" class="t-list">
       <p v-if="!filtered.length" class="empty-text">{{ t("teams.noMatch", { query }) }}</p>
-      <TransitionGroup name="list" tag="div" :class="isGrid ? 'team-grid' : 't-list-inner'">
-        <AppCard
+      <TransitionGroup name="list" tag="div" :class="isGrid ? 't-grid' : 't-list-inner'">
+        <AppListItem
           v-for="(team, i) in pagedTeams"
           :key="team.id"
-          rail
-          interactive
-          padding="sm"
-          class="team-card"
-          :class="{ 'team-card--grid': isGrid }"
-          :style="{ '--rail-color': team.color, '--i': i }"
-          @click="router.push(`/teams/${team.id}`)"
+          :layout="isGrid ? 'grid' : 'list'"
+          :title="team.name"
+          :menu="menuItems"
+          :menu-label="t('tournament.header.more')"
+          :style="{ '--i': i }"
+          @open="router.push(`/teams/${team.id}`)"
+          @select="onMenu(team, $event)"
         >
-          <TeamBadge :team="team" :size="18" class="team-card-badge" />
-          <AppChip square class="team-power">{{ team.power }}</AppChip>
-          <div class="team-actions">
-            <AppButton
-              variant="text"
-              icon-only
-              :title="t('common.edit')"
-              @click.stop="editingTeam = team"
-            >
-              <AppIcon :icon="Pencil" />
-            </AppButton>
-            <AppButton variant="danger" icon-only @click.stop="store.remove(team.id)">
-              <AppIcon :icon="X" />
-            </AppButton>
-          </div>
-        </AppCard>
+          <template #lead>
+            <TeamCrest :team="team" :size="28" />
+          </template>
+          <template #subtitle>
+            <AppStarRating :value="stars(team)" :size="11" />
+            <span v-if="team.abbr" class="team-abbr">{{ team.abbr }}</span>
+          </template>
+          <template #trail>
+            <span class="team-power">{{ team.power }}</span>
+          </template>
+        </AppListItem>
       </TransitionGroup>
       <AppPagination v-model="page" :total-items="filtered.length" :page-size="PAGE_SIZE" />
     </div>
@@ -239,62 +262,20 @@ const pagedTeams = computed(() => {
   justify-content: center;
 }
 
-.team-card {
-  cursor: pointer;
+.team-abbr {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  letter-spacing: 0.04em;
 }
 
-/* List: badge, power and actions sit on one line. */
-.team-card :deep(.card-body) {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-2);
-  min-width: 0;
-}
-
-.team-card-badge {
-  flex: 1;
-  min-width: 0;
-}
-
+/* Power, the number the simulation runs on. */
 .team-power {
-  min-width: 34px;
-  justify-content: center;
+  min-width: 2ch;
+  font-family: var(--font-mono);
+  font-size: var(--fs-base);
   font-weight: 700;
   font-variant-numeric: tabular-nums;
-}
-
-.team-actions {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-1);
-  flex-shrink: 0;
-}
-
-.team-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--sp-1);
-}
-
-@media (min-width: 641px) {
-  .team-grid {
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  }
-}
-
-.team-card--grid {
-  position: relative;
-}
-
-.team-card--grid :deep(.card-body) {
-  flex-direction: column;
-  align-items: flex-start;
-  padding-inline-end: 68px;
-}
-
-.team-card--grid .team-actions {
-  position: absolute;
-  top: var(--sp-2);
-  inset-inline-end: var(--sp-2);
+  color: var(--text);
+  text-align: end;
 }
 </style>

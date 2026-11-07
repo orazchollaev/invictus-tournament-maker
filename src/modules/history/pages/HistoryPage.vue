@@ -4,12 +4,17 @@ import { useRouter } from "vue-router"
 import { useTournamentStore } from "@/modules/tournament/store"
 import { useSettingsStore } from "@/modules/settings/store"
 import { useI18n } from "vue-i18n"
-import { AppCard, AppChip, AppEmptyState, AppSearchInput } from "@/components/ui"
+import { ChevronRight, History } from "@lucide/vue"
+import { AppEmptyState, AppIcon, AppListItem, AppSearchInput } from "@/components/ui"
 import { HistoryFilterMenu } from "@/modules/history/components"
+import { ChampionPill } from "@/modules/tournament/components"
+import { TeamCrest } from "@/modules/teams/components"
+import { useTeamsStore } from "@/modules/teams/store"
 
 const { t } = useI18n()
 const router = useRouter()
 const store = useTournamentStore()
+const teamsStore = useTeamsStore()
 const settings = useSettingsStore()
 const query = ref("")
 
@@ -64,6 +69,11 @@ const filtered = computed(() => {
   return list
 })
 
+/** The series' latest champion, if a season has been finished. */
+function champion(s: SeriesEntry) {
+  return s.champId ? teamsStore.teams.find((tm) => tm.id === s.champId) : undefined
+}
+
 function formatLabel(format: string) {
   if (format === "group+bracket") return t("tournaments.format.groupsKo")
   if (format === "league") return t("tournaments.format.league")
@@ -93,63 +103,32 @@ function formatLabel(format: string) {
       <p v-if="!filtered.length" class="empty-text">{{ t("tournaments.noMatch", { query }) }}</p>
 
       <div v-if="filtered.length" class="t-list">
-        <AppCard
+        <AppListItem
           v-for="s in filtered"
           :key="s.name"
-          rail
-          interactive
-          padding="sm"
-          class="series-row"
-          @click="router.push('/history/' + encodeURIComponent(s.name))"
+          :title="s.name"
+          :lead-icon="champion(s) ? undefined : History"
+          @open="router.push('/history/' + encodeURIComponent(s.name))"
         >
-          <span class="series-name">{{ s.name }}</span>
-          <div class="series-meta">
-            <AppChip>
-              {{ s.seasons }} {{ s.seasons === 1 ? t("common.season", 1) : t("common.season", 2) }}
-            </AppChip>
-            <AppChip variant="accent">{{ formatLabel(s.format) }}</AppChip>
-            <span class="series-teams">{{ t("common.teams", { n: s.teamCount }) }}</span>
-          </div>
-        </AppCard>
+          <template v-if="champion(s)" #lead>
+            <TeamCrest :team="champion(s)!" :size="28" />
+          </template>
+          <template #subtitle>
+            {{ s.seasons }} {{ s.seasons === 1 ? t("common.season", 1) : t("common.season", 2) }} ·
+            {{ formatLabel(s.format) }} · {{ t("common.teams", { n: s.teamCount }) }}
+          </template>
+          <template #trail>
+            <ChampionPill v-if="champion(s)" :team="champion(s)!" />
+            <AppIcon :icon="ChevronRight" size="sm" class="series-chevron" />
+          </template>
+        </AppListItem>
       </div>
     </template>
   </div>
 </template>
 
 <style scoped>
-.series-row {
-  cursor: pointer;
-}
-
-.series-row :deep(.card-body) {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sp-1);
-  min-width: 0;
-}
-
-.series-name {
-  font-size: var(--fs-base);
-  font-weight: 600;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.series-meta {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-2);
-}
-
-.series-teams {
-  font-size: var(--fs-xs);
+.series-chevron {
   color: var(--text-muted);
-}
-/* Interpunct before the team count, separating it from the chips. */
-.series-teams::before {
-  content: "·";
-  margin-inline-end: var(--sp-2);
-  opacity: 0.5;
 }
 </style>

@@ -23,29 +23,6 @@
   letter-spacing: -0.03em;
 }
 
-/* ── Detail page header ──────────────────────────────────────── */
-.t-header {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-3);
-}
-
-.t-header-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.t-header h1 {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: var(--sp-2);
-  font-size: var(--fs-xl);
-  font-weight: 800;
-  letter-spacing: -0.03em;
-}
-
 /* Row holding an AppSearchInput plus whatever sits beside it (view toggle, clear). */
 .search-row {
   display: flex;
@@ -87,11 +64,24 @@
 .t-list-inner {
   display: flex;
   flex-direction: column;
-  gap: var(--sp-1);
+  gap: var(--sp-2);
 }
 
 .t-list-inner {
   position: relative;
+}
+
+/* The grid view of the same lists: two columns on a phone, as many as fit above. */
+.t-grid {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--sp-2);
+}
+@media (min-width: 641px) {
+  .t-grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  }
 }
 
 .btn-row {
@@ -115,15 +105,6 @@
     flex-wrap: wrap;
     gap: var(--sp-2);
     margin-bottom: var(--sp-2);
-  }
-
-  .t-header {
-    margin-bottom: var(--sp-2);
-  }
-
-  .t-header-top {
-    flex-wrap: wrap;
-    gap: var(--sp-2);
   }
 
   .btn-row {

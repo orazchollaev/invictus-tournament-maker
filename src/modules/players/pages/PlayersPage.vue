@@ -12,15 +12,16 @@ import {
 import type { Player } from "../types"
 import {
   AppButton,
-  AppCard,
+  AppButtonGroup,
   AppChip,
   AppEmptyState,
   AppIcon,
+  AppListItem,
   AppPagination,
   AppSearchInput,
-  AppButtonGroup,
+  type AppMenuItem,
 } from "@/components/ui"
-import { X, Pencil, Plus, Sparkles, UserRound, List, Grid3x3, Trash2 } from "@lucide/vue"
+import { Grid3x3, List, Pencil, Plus, Sparkles, Trash2, UserRound } from "@lucide/vue"
 import { useI18n } from "vue-i18n"
 import { showConfirm } from "@/composables/useDialog"
 
@@ -34,6 +35,18 @@ const showGenerateModal = ref(false)
 const editingPlayer = ref<Player | null>(null)
 const query = ref("")
 const teamFilter = ref("all")
+
+type MenuKey = "edit" | "delete"
+
+const menuItems = computed<AppMenuItem<MenuKey>[]>(() => [
+  { key: "edit", label: t("common.edit"), icon: Pencil },
+  { key: "delete", label: t("common.delete"), icon: Trash2, danger: true },
+])
+
+function onMenu(player: Player, key: MenuKey) {
+  if (key === "edit") editingPlayer.value = player
+  else store.remove(player.id)
+}
 
 // The search field updates `query` on every keystroke, but re-filtering and
 // re-rendering the whole list on every keystroke is what causes the freeze
@@ -79,7 +92,7 @@ const filtered = computed(() => {
 })
 
 // Rendering every match at once is what makes 100+ players feel laggy — a
-// full AppCard tree per row, animated by TransitionGroup, adds up fast. Only
+// full card tree per row, animated by TransitionGroup, adds up fast. Only
 // one page's worth of cards is ever mounted at a time.
 const PAGE_SIZE = 24
 const page = ref(1)
@@ -147,57 +160,36 @@ async function handleDeleteAll() {
 
     <div v-if="store.players.length" class="t-list">
       <p v-if="!filtered.length" class="empty-text">{{ t("players.noMatch") }}</p>
-      <TransitionGroup name="list" tag="div" :class="isGrid ? 'player-grid' : 't-list-inner'">
-        <AppCard
+      <TransitionGroup name="list" tag="div" :class="isGrid ? 't-grid' : 't-list-inner'">
+        <AppListItem
           v-for="(player, i) in pagedPlayers"
           :key="player.id"
-          rail
-          padding="sm"
-          interactive
-          class="player-card"
-          :class="{ 'player-card--grid': isGrid }"
-          :style="{ '--rail-color': teamOf(player)?.color ?? '#999', '--i': i }"
-          @click="$router.push(`/players/${player.id}`)"
+          :layout="isGrid ? 'grid' : 'list'"
+          :title="player.name"
+          :subtitle="teamOf(player)?.name ?? '—'"
+          :menu="menuItems"
+          :menu-label="t('tournament.header.more')"
+          :style="{ '--i': i }"
+          @open="$router.push(`/players/${player.id}`)"
+          @select="onMenu(player, $event)"
         >
-          <div class="player-card-main">
+          <template #lead>
             <PlayerAvatar
               :name="player.name"
               :color="teamOf(player)?.color ?? '#999'"
               :number="player.number"
               :image="player.image"
               :face="player.face"
-              :size="28"
-              class="player-card-avatar"
+              :size="32"
             />
-            <div class="player-card-info">
-              <span class="player-card-name">{{ player.name }}</span>
-              <span class="player-card-team">{{ teamOf(player)?.name ?? "—" }}</span>
-            </div>
-          </div>
-          <div class="player-card-tags">
-            <AppChip
-              square
-              class="player-position"
-              :title="t(`players.positions.${player.position}`)"
-            >
+          </template>
+          <template #trail>
+            <AppChip square :title="t(`players.positions.${player.position}`)">
               {{ player.position }}
             </AppChip>
-            <AppChip square class="player-power">{{ player.power }}</AppChip>
-          </div>
-          <div class="player-actions">
-            <AppButton
-              variant="text"
-              icon-only
-              :title="t('common.edit')"
-              @click.stop="editingPlayer = player"
-            >
-              <AppIcon :icon="Pencil" />
-            </AppButton>
-            <AppButton variant="danger" icon-only @click.stop="store.remove(player.id)">
-              <AppIcon :icon="X" />
-            </AppButton>
-          </div>
-        </AppCard>
+            <span class="player-power">{{ player.power }}</span>
+          </template>
+        </AppListItem>
       </TransitionGroup>
       <AppPagination v-model="page" :total-items="filtered.length" :page-size="PAGE_SIZE" />
     </div>
@@ -284,108 +276,15 @@ async function handleDeleteAll() {
   margin-inline-start: var(--sp-2);
 }
 
-.player-card :deep(.card-body) {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-2);
-  min-width: 0;
-}
-
-.player-card-main {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-2);
-  flex: 1;
-  min-width: 0;
-}
-
-.player-card-avatar {
-  flex-shrink: 0;
-}
-
-.player-card-info {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  line-height: 1.3;
-}
-
-.player-card-tags {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-1);
-  flex-shrink: 0;
-}
-
-.player-card-name {
-  font-size: var(--fs-base);
-  font-weight: 600;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.player-card-team {
-  font-size: var(--fs-xs);
-  color: var(--text-muted);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.player-position {
-  min-width: 34px;
-  justify-content: center;
-  font-variant-numeric: tabular-nums;
-}
-
+/* Power, the number the simulation runs on. */
 .player-power {
-  min-width: 30px;
-  justify-content: center;
+  min-width: 2ch;
+  font-family: var(--font-mono);
+  font-size: var(--fs-base);
   font-weight: 700;
   font-variant-numeric: tabular-nums;
-}
-
-.player-actions {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-1);
-  flex-shrink: 0;
-}
-
-.player-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--sp-1);
-}
-
-@media (min-width: 641px) {
-  .player-grid {
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  }
-}
-
-.player-card--grid {
-  position: relative;
-}
-
-/* Grid cards are narrow — stack the name row above the tag row instead of
-   cramming everything onto one line, or the name gets squeezed to nothing. */
-.player-card--grid :deep(.card-body) {
-  flex-direction: column;
-  align-items: stretch;
-  padding-inline-end: 68px;
-}
-
-.player-card--grid .player-card-tags {
-  padding-inline-start: calc(28px + var(--sp-2));
-}
-
-.player-card--grid .player-actions {
-  position: absolute;
-  top: var(--sp-2);
-  inset-inline-end: var(--sp-2);
+  color: var(--text);
+  text-align: end;
 }
 
 .delete-all-fab {
