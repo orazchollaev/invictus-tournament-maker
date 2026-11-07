@@ -13,6 +13,7 @@ dependencies {
     implementation project(':capacitor-community-in-app-review')
     implementation project(':capacitor-firebase-analytics')
     implementation project(':capacitor-firebase-authentication')
+    implementation project(':capacitor-firebase-crashlytics')
     implementation project(':capacitor-firebase-firestore')
     implementation project(':capacitor-firebase-remote-config')
     implementation project(':capacitor-app')

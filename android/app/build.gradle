@@ -52,6 +52,9 @@ try {
     def servicesJSON = file('google-services.json')
     if (servicesJSON.text) {
         apply plugin: 'com.google.gms.google-services'
+        // Uploads the R8 mapping file on release builds so native stack traces
+        // arrive deobfuscated. Needs google-services, so it lives in this guard.
+        apply plugin: 'com.google.firebase.crashlytics'
     }
 } catch(Exception e) {
     logger.info("google-services.json not found, google-services plugin not applied. Push Notifications won't work")

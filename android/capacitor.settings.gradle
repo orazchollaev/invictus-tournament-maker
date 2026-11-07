@@ -14,6 +14,9 @@ project(':capacitor-firebase-analytics').projectDir = new File('../node_modules/
 include ':capacitor-firebase-authentication'
 project(':capacitor-firebase-authentication').projectDir = new File('../node_modules/.pnpm/@capacitor-firebase+authent_f2a95b3084f7532a6648d2274f754bfd/node_modules/@capacitor-firebase/authentication/android')
 
+include ':capacitor-firebase-crashlytics'
+project(':capacitor-firebase-crashlytics').projectDir = new File('../node_modules/.pnpm/@capacitor-firebase+crashly_6322561d540a8b617fca87a82485458d/node_modules/@capacitor-firebase/crashlytics/android')
+
 include ':capacitor-firebase-firestore'
 project(':capacitor-firebase-firestore').projectDir = new File('../node_modules/.pnpm/@capacitor-firebase+firesto_e88b6a03bed28e37be7a3c21234f38b1/node_modules/@capacitor-firebase/firestore/android')
 

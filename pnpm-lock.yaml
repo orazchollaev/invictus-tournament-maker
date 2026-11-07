@@ -20,6 +20,9 @@ importers:
       '@capacitor-firebase/authentication':
         specifier: ^8.6.0
         version: 8.6.0(@capacitor/core@8.6.0)(firebase@13.1.0)
+      '@capacitor-firebase/crashlytics':
+        specifier: ^8.6.0
+        version: 8.6.0(@capacitor/core@8.6.0)(firebase@13.1.0)
       '@capacitor-firebase/firestore':
         specifier: ^8.6.0
         version: 8.6.0(@capacitor/core@8.6.0)(firebase@13.1.0)
@@ -284,6 +287,15 @@ packages:
     peerDependencies:
       '@capacitor/core': '>=8.0.0'
       firebase: ^12.6.0
+    peerDependenciesMeta:
+      firebase:
+        optional: true
+
+  '@capacitor-firebase/crashlytics@8.6.0':
+    resolution: {integrity: sha512-01Geqo9xNdIcdKle8F/vrkYrC7jZiQ2Zq8WKaqQK8z/wZQM0LHugw4dn6bpFatYSIOQbzK+UMhR/xt1sEIcztg==}
+    peerDependencies:
+      '@capacitor/core': '>=8.0.0'
+      firebase: '*'
     peerDependenciesMeta:
       firebase:
         optional: true
@@ -5303,6 +5315,12 @@ snapshots:
       firebase: 13.1.0
 
   '@capacitor-firebase/authentication@8.6.0(@capacitor/core@8.6.0)(firebase@13.1.0)':
+    dependencies:
+      '@capacitor/core': 8.6.0
+    optionalDependencies:
+      firebase: 13.1.0
+
+  '@capacitor-firebase/crashlytics@8.6.0(@capacitor/core@8.6.0)(firebase@13.1.0)':
     dependencies:
       '@capacitor/core': 8.6.0
     optionalDependencies:
