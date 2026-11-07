@@ -30,7 +30,7 @@ export const useSettingsStore = defineStore("settings", () => {
   const knockoutLegMode = ref<LegMode>("single")
   const finalLegMode = ref<LegMode>("single")
   const surpriseFactor = ref(50)
-  const showTeamAbbr = ref(true)
+  const showTeamAbbr = ref(false)
   const confettiOnWin = ref(true)
   const soundOnWin = ref(true)
   const drawCeremony = ref(true)
@@ -160,7 +160,7 @@ export const useSettingsStore = defineStore("settings", () => {
     knockoutLegMode.value = "single"
     finalLegMode.value = "single"
     surpriseFactor.value = 50
-    showTeamAbbr.value = true
+    showTeamAbbr.value = false
     confettiOnWin.value = true
     soundOnWin.value = true
     drawCeremony.value = true
