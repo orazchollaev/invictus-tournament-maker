@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Component } from "vue"
+import { ToggleGroupItem, ToggleGroupRoot } from "reka-ui"
 
 withDefaults(
   defineProps<{
@@ -11,25 +12,37 @@ withDefaults(
   { size: "sm" }
 )
 
-defineEmits<{ "update:modelValue": [value: string] }>()
+const emit = defineEmits<{ "update:modelValue": [value: string] }>()
+
+// A segmented control always has one segment on. Reka's single toggle group
+// lets a second tap on the active item clear it, which arrives here as an
+// empty value; dropping that keeps the current segment selected.
+function onUpdate(value: unknown) {
+  if (typeof value === "string" && value) emit("update:modelValue", value)
+}
 </script>
 
 <template>
-  <div class="btn-group" :class="[`btn-group--${size}`, { 'btn-group--block': block }]">
-    <button
+  <ToggleGroupRoot
+    type="single"
+    class="btn-group"
+    :class="[`btn-group--${size}`, { 'btn-group--block': block }]"
+    :model-value="modelValue"
+    @update:model-value="onUpdate"
+  >
+    <ToggleGroupItem
       v-for="opt in options"
       :key="opt.value"
-      type="button"
+      :value="opt.value"
       :disabled="opt.disabled"
       :class="{ active: modelValue === opt.value, 'icon-only': opt.icon }"
       :title="opt.icon ? opt.label : undefined"
       :aria-label="opt.icon ? opt.label : undefined"
-      @click="$emit('update:modelValue', opt.value)"
     >
       <component :is="opt.icon" v-if="opt.icon" :size="14" />
       <template v-else>{{ opt.label }}</template>
-    </button>
-  </div>
+    </ToggleGroupItem>
+  </ToggleGroupRoot>
 </template>
 
 <style scoped>
