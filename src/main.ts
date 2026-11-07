@@ -161,6 +161,10 @@ window.addEventListener("unhandledrejection", (event) => {
   void logError("unhandledrejection", event.reason)
 })
 window.addEventListener("error", (event) => {
+  // The browser's "ResizeObserver loop …" notice is a warning, not a failure:
+  // nothing threw, and the skipped notifications arrive next frame. Reporting
+  // it would bury real crashes under the hundreds a busy page can produce.
+  if (!event.error && /ResizeObserver loop/.test(event.message)) return
   void logError("window", event.error ?? event.message)
 })
 
