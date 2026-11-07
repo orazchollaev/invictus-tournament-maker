@@ -114,7 +114,7 @@
       },
       simulate: {
         title: "Monte Carlo simülasyonu çalıştırın",
-        desc: "Bir turnuvanın Ayarlarını açın ve binlerce kez oynatmak için “10.000× Simüle Et” seçeneğine dokunun. Simülasyon Sonuçları sayfası, her takımın şampiyonluk oranlarını ve ortalama istatistiklerini gösterir.",
+        desc: "Bir turnuvayı açın, ⋯ menüsüne dokunun ve 10.000 kez oynatmak için “Monte Carlo Simülasyonu”nu seçin. Simülasyon Sonuçları sayfası, her takımın şampiyonluk oranlarını ve ortalama istatistiklerini gösterir.",
       },
       seasons: {
         title: "Yeni sezonlar başlatın ve geçmişi takip edin",

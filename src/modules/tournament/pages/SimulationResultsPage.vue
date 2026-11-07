@@ -3,9 +3,9 @@ import { computed } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import { useI18n } from "vue-i18n"
 
-import { ArrowLeft, Download, BarChart2, Trophy, Medal, Users } from "@lucide/vue"
+import { Download, BarChart2, Trophy, Medal, Users } from "@lucide/vue"
 import { TeamBadge } from "@/modules/teams/components"
-import { AppButton, AppEmptyState } from "@/components/ui"
+import { AppButton, AppEmptyState, AppPageHeader } from "@/components/ui"
 
 import { useTournamentStore } from "@/modules/tournament/store"
 import { useTeamsStore } from "@/modules/teams/store"
@@ -81,7 +81,7 @@ const { saveJSON: handleSaveJSON, saveCSV: handleSaveCSV } = useSimResultExport(
     <template v-if="!result || !tournament">
       <AppEmptyState :icon="BarChart2" :title="t('tournament.simulationResults.noResults')">
         <template #action>
-          <AppButton @click="router.push(`/tournaments/${tournamentId}/settings`)">
+          <AppButton @click="router.push(`/tournaments/${tournamentId}`)">
             {{ t("tournament.simulationResults.runFirst") }}
           </AppButton>
         </template>
@@ -89,26 +89,11 @@ const { saveJSON: handleSaveJSON, saveCSV: handleSaveCSV } = useSimResultExport(
     </template>
 
     <template v-else>
-      <!-- Header -->
-      <div class="srp-header">
-        <RouterLink :to="`/tournaments/${tournamentId}/settings`" class="back-link">
-          <ArrowLeft :size="14" />
-          {{ t("tournament.settings") }}
-        </RouterLink>
-        <div class="srp-title-row">
-          <h2 class="srp-title page-title">
-            <BarChart2 :size="18" class="srp-title-icon" />
-            {{ t("tournament.simulationResults.title") }}
-          </h2>
-          <span class="srp-badge">
-            {{ t("tournament.simulationResults.runs", { n: runs.toLocaleString() }) }}
-          </span>
-        </div>
-        <div class="srp-subtitle">
-          {{ tournament.name }} —
-          {{ t("tournament.simulationResults.season", { n: tournament.season }) }}
-        </div>
-      </div>
+      <AppPageHeader
+        :title="t('tournament.simulationResults.title')"
+        :subtitle="`${tournament.name} · ${t('tournament.simulationResults.season', { n: tournament.season })} · ${t('tournament.simulationResults.runs', { n: runs.toLocaleString() })}`"
+        @back="router.push(`/tournaments/${tournamentId}`)"
+      />
 
       <!-- Format summary -->
       <div class="srp-summary-row">
@@ -263,40 +248,6 @@ const { saveJSON: handleSaveJSON, saveCSV: handleSaveCSV } = useSimResultExport(
 <style scoped>
 .srp {
   padding-bottom: 40px;
-}
-
-.srp-header {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  margin-bottom: 20px;
-}
-.srp-title-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-top: 4px;
-}
-.srp-title {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-2);
-}
-.srp-title-icon {
-  color: var(--text-muted);
-}
-.srp-badge {
-  font-size: var(--fs-sm);
-  font-weight: 600;
-  color: var(--accent);
-  background: color-mix(in srgb, var(--accent) 12%, var(--surface));
-  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
-  border-radius: var(--radius);
-  padding: 2px 9px;
-}
-.srp-subtitle {
-  font-size: 13px;
-  color: var(--text-muted);
 }
 
 .srp-summary-row {

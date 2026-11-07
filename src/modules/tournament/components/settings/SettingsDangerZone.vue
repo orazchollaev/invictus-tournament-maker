@@ -3,6 +3,8 @@ import { useTournamentStore } from "@/modules/tournament/store"
 import { useRouter } from "vue-router"
 import { showConfirm } from "@/composables/useDialog"
 import { useI18n } from "vue-i18n"
+import { RotateCcw, Trash2, TriangleAlert } from "@lucide/vue"
+import { AppButton, AppCard, AppIcon } from "@/components/ui"
 
 const props = defineProps<{
   tournamentId: string
@@ -36,63 +38,69 @@ async function handleDelete() {
 </script>
 
 <template>
-  <div class="form-card form-card--danger">
-    <div class="form-section-title form-section-title--danger">
+  <AppCard padding="md">
+    <template #title>
+      <AppIcon :icon="TriangleAlert" size="md" class="danger-icon" />
       {{ t("tournament.settingsPage.dangerZone.title") }}
-    </div>
-    <div class="danger-list">
-      <div class="danger-item">
-        <div class="danger-info">
-          <div class="danger-label">{{ t("tournament.settingsPage.dangerZone.resetLabel") }}</div>
-          <div class="danger-desc">{{ t("tournament.settingsPage.dangerZone.resetDesc") }}</div>
-        </div>
-        <button class="danger" @click="handleReset">{{ t("common.reset") }}</button>
+    </template>
+
+    <div class="danger-row">
+      <div class="danger-info">
+        <div class="danger-label">{{ t("tournament.settingsPage.dangerZone.resetLabel") }}</div>
+        <div class="danger-desc">{{ t("tournament.settingsPage.dangerZone.resetDesc") }}</div>
       </div>
-      <div class="danger-item">
-        <div class="danger-info">
-          <div class="danger-label">{{ t("tournament.settingsPage.dangerZone.deleteLabel") }}</div>
-          <div class="danger-desc">{{ t("tournament.settingsPage.dangerZone.deleteDesc") }}</div>
-        </div>
-        <button class="danger" @click="handleDelete">{{ t("common.delete") }}</button>
-      </div>
+      <AppButton size="sm" @click="handleReset">
+        <AppIcon :icon="RotateCcw" size="sm" />
+        {{ t("common.reset") }}
+      </AppButton>
     </div>
-  </div>
+
+    <div class="danger-row">
+      <div class="danger-info">
+        <div class="danger-label">{{ t("tournament.settingsPage.dangerZone.deleteLabel") }}</div>
+        <div class="danger-desc">{{ t("tournament.settingsPage.dangerZone.deleteDesc") }}</div>
+      </div>
+      <AppButton size="sm" variant="danger" @click="handleDelete">
+        <AppIcon :icon="Trash2" size="sm" />
+        {{ t("common.delete") }}
+      </AppButton>
+    </div>
+  </AppCard>
 </template>
 
-<style src="./settings.css"></style>
 <style scoped>
-.form-card--danger {
-  border-color: color-mix(in srgb, var(--danger) 25%, transparent);
-  background: color-mix(in srgb, var(--danger) 3%, var(--surface));
-}
-.form-section-title--danger {
+.danger-icon {
   color: var(--danger);
 }
-.danger-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-.danger-item {
+
+.danger-row {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 10px 12px;
-  border: 1px solid color-mix(in srgb, var(--danger) 25%, transparent);
-  background: color-mix(in srgb, var(--danger) 4%, var(--surface));
-  border-radius: var(--radius);
+  gap: var(--sp-3);
+  padding: var(--sp-3) 0;
+  border-bottom: 1px solid var(--border-light);
 }
+.danger-row:first-child {
+  padding-top: 0;
+}
+.danger-row:last-child {
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
 .danger-info {
   flex: 1;
+  min-width: 0;
 }
+
 .danger-label {
-  font-size: 13px;
+  font-size: var(--fs-base);
   font-weight: 600;
-  color: var(--danger);
 }
+
 .danger-desc {
+  margin-top: 2px;
   font-size: var(--fs-sm);
   color: var(--text-muted);
-  margin-top: 2px;
 }
 </style>

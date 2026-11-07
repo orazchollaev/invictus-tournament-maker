@@ -1,51 +1,37 @@
 <script setup lang="ts">
-import { defineAsyncComponent, ref, computed } from "vue"
+/**
+ * Tournament settings, in the order people reach for them: what it is called,
+ * who plays (and the draw), the format, per-team adjustments, then reset and
+ * delete. Every edit lands in a draft; the Save bar appears only while there
+ * is something to save, and leaving with unsaved changes asks first.
+ */
+import { ref, computed } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import { useI18n } from "vue-i18n"
+import { Info, Save, SlidersHorizontal, Trophy } from "@lucide/vue"
 import { useTeamsStore } from "@/modules/teams/store"
 import { useTournamentStore } from "@/modules/tournament/store"
 import { ManualDraw } from "@/modules/tournament/components/draw"
 import { GroupDraw } from "@/modules/tournament/components/group"
 import {
-  TeamSelectorButton,
-  TeamSelectorFullscreenModal,
-} from "@/modules/tournament/components/shared"
-import { AppButton, AppCard, AppChip, AppConfigButton, AppIcon, AppModal } from "@/components/ui"
-import {
-  ArrowLeft,
-  House,
-  LayoutGrid,
-  List,
-  Lock,
-  Save,
-  Settings,
-  Shuffle,
-  Trophy,
-} from "@lucide/vue"
+  AppButton,
+  AppCard,
+  AppEmptyState,
+  AppField,
+  AppIcon,
+  AppModal,
+  AppPageHeader,
+} from "@/components/ui"
 import {
   SettingsDangerZone,
-  SettingsKnockoutConfigModal,
-  SettingsLeagueConfigModal,
-  SettingsSimulation,
+  SettingsFormatCard,
   SettingsTeamAdjustments,
+  SettingsTeamsCard,
 } from "../components/settings"
-import type { GroupConfigPayload } from "../components/config"
-import type { KnockoutConfigPayload } from "../components/settings/SettingsKnockoutConfigModal.vue"
-import type { LeagueConfigPayload } from "../components/settings/SettingsLeagueConfigModal.vue"
-import type { SwissConfigPayload } from "../components/config"
-import { GroupConfigModal, SwissConfigModal, VenueConfigModal } from "../components/config"
-import type { VenueConfigPayload } from "../components/config"
-import { useVenueSummary } from "../composables/useVenueSummary"
-// Lazy, and only ever rendered for a custom tournament — see the card below.
-const PhaseGraphCanvas = defineAsyncComponent(
-  () => import("../components/phases/PhaseGraphCanvas.vue")
-)
-const PhaseConfigSheet = defineAsyncComponent(
-  () => import("../components/phases/PhaseConfigSheet.vue")
-)
+import type { DrawType } from "../types"
 import { useTournamentSettingsDraft } from "../composables/useTournamentSettingsDraft"
 import { useUnsavedChangesGuard } from "@/composables/useUnsavedChangesGuard"
-import { MAX_TIER_COUNT } from "@/constants"
+import { showConfirm } from "@/composables/useDialog"
 
 const { t } = useI18n()
 const route = useRoute()
@@ -63,31 +49,43 @@ const draft = useTournamentSettingsDraft(tournamentId, tournament)
 const seasonCount = computed(
   () => store.tournaments.filter((tn) => tn.name === tournament.value?.name).length
 )
-
 const winnerTeam = computed(() => allTeams.value.find((tm) => tm.id === tournament.value?.winnerId))
-const dateStr = computed(() =>
+const createdOn = computed(() =>
   tournament.value ? new Date(tournament.value.createdAt).toLocaleDateString() : ""
 )
-
 const localTeams = computed(() =>
   allTeams.value.filter((tm) => draft.teamIds.value.includes(tm.id))
 )
 
-const totalTeams = computed(() => tournament.value?.teamIds.length ?? 0)
-const maxTierCount = computed(() => Math.min(MAX_TIER_COUNT, Math.floor(totalTeams.value / 2)))
-const minTierSize = computed(() => Math.floor(totalTeams.value / draft.tierCount.value))
-const maxPromotionCount = computed(() => Math.max(1, minTierSize.value - 1))
-
+// ── Draw ─────────────────────────────────────────────────────────
+// A redraw works on the saved tournament, so pending edits (a team added or
+// removed above all) are saved first — otherwise the new draw would ignore them.
 const showManualDraw = ref(false)
-const showTeamsFullscreen = ref(false)
-const showGroupModal = ref(false)
-const showKnockoutModal = ref(false)
-const showLeagueModal = ref(false)
-const showSwissModal = ref(false)
-const configuringPhaseId = ref<string | null>(null)
-const configuringPhase = computed(() =>
-  tournament.value?.phases?.find((p) => p.id === configuringPhaseId.value)
-)
+
+async function onRedraw(mode: DrawType) {
+  if (mode === "manual") {
+    if (draft.hasChanges.value) draft.save()
+    showManualDraw.value = true
+    return
+  }
+  const ok = await showConfirm(t("tournament.settingsPage.drawMethod.redrawConfirm"), {
+    confirmLabel: t("tournament.settingsPage.drawMethod.redrawConfirmLabel"),
+  })
+  if (!ok) return
+  if (draft.hasChanges.value) draft.save()
+  store.redrawTournament(tournamentId.value, mode === "seeded")
+}
+
+function onManualConfirm(orderedIds: string[]) {
+  showManualDraw.value = false
+  store.redrawTournament(tournamentId.value, false, orderedIds)
+}
+
+// ── Save / leave ─────────────────────────────────────────────────
+function save() {
+  draft.save()
+  router.push(`/tournaments/${tournamentId.value}`)
+}
 
 const leaveModal = ref<InstanceType<typeof AppModal> | null>(null)
 let leaveChoice: "leave" | "save-leave" | "stay" = "stay"
@@ -109,137 +107,24 @@ function onLeaveClosed() {
   leaveChoice = "stay"
   chooseLeave(choice)
 }
-
-const groupConfigSummary = computed(() => {
-  const base = t("tournament.create.config.groupsAndAdvance", {
-    groups: draft.groupCount.value,
-    advance: draft.qualifiersPerGroup.value * draft.groupCount.value,
-  })
-  if (draft.wildcardCount.value <= 0) return base
-  return `${base} · ${t("tournament.create.config.wildcardsShort", { n: draft.wildcardCount.value })}`
-})
-const knockoutConfigSummary = computed(() => {
-  if (draft.isLeagueFormat.value) {
-    return draft.playoffEnabled.value
-      ? t("tournament.create.config.playoffShort", { n: draft.playoffQualifierCount.value })
-      : t("tournament.create.config.playoffOff")
-  }
-  const thirdPlace = draft.hasThirdPlace.value
-    ? t("tournament.create.config.thirdPlaceOn")
-    : t("tournament.create.config.noThirdPlace")
-  return `${t(`common.${draft.drawType.value}`)} · ${thirdPlace}`
-})
-const swissConfigSummary = computed(() => {
-  const opponents = t("tournament.create.config.swissOpponentsShort", {
-    n: draft.swissOpponentCount.value,
-  })
-  const draw =
-    draft.drawType.value === "seeded" && draft.swissPotCount.value > 1
-      ? t("tournament.create.config.swissPotsShort", { n: draft.swissPotCount.value })
-      : t("common.random")
-  return `${opponents} · ${draw}`
-})
-const venueConfigSummary = useVenueSummary(draft.homeAdvantage, draft.neutralFinal, draft.hasFinal)
-const showVenueModal = ref(false)
-
-function applyVenueConfig(payload: VenueConfigPayload) {
-  draft.homeAdvantage.value = payload.homeAdvantage
-  draft.neutralFinal.value = payload.neutralFinal
-}
-
-const leagueConfigSummary = computed(() =>
-  draft.tierCount.value > 1
-    ? t("tournament.create.config.divisionsShort", { n: draft.tierCount.value })
-    : t("tournament.create.config.singleDivisionShort")
-)
-
-function applyGroupConfig(payload: GroupConfigPayload) {
-  draft.drawType.value = payload.drawType
-  draft.groupCount.value = payload.groupCount
-  draft.qualifiersPerGroup.value = payload.qualifiersPerGroup
-  draft.wildcardCount.value = payload.wildcardCount
-  draft.groupLegMode.value = payload.groupLegMode
-  draft.tiebreaker.value = payload.tiebreaker
-  draft.winPoints.value = payload.winPoints
-  draft.drawPoints.value = payload.drawPoints
-  draft.lossPoints.value = payload.lossPoints
-}
-
-function applyKnockoutConfig(payload: KnockoutConfigPayload) {
-  if (!draft.isGroupFormat.value) draft.drawType.value = payload.drawType
-  draft.hasThirdPlace.value = payload.hasThirdPlace
-  draft.roundLegModes.value = payload.roundLegModes
-  draft.thirdPlaceLegMode.value = payload.thirdPlaceLegMode
-  draft.finalLegMode.value = payload.finalLegMode
-  draft.playoffEnabled.value = payload.playoffEnabled
-  draft.playoffQualifierCount.value = payload.playoffQualifierCount
-  draft.leaguePlayoffSeedMode.value = payload.playoffSeedMode
-  draft.playoffSeedMode.value = payload.groupPlayoffSeedMode
-}
-
-function applySwissConfig(payload: SwissConfigPayload) {
-  draft.swissOpponentCount.value = payload.opponentCount
-  draft.swissPotCount.value = payload.potCount
-  draft.leagueLegMode.value = payload.legMode
-  draft.swissBalanceHomeAway.value = payload.balanceHomeAway
-  draft.drawType.value = payload.drawType
-  draft.tiebreaker.value = payload.tiebreaker
-  draft.winPoints.value = payload.winPoints
-  draft.drawPoints.value = payload.drawPoints
-  draft.lossPoints.value = payload.lossPoints
-}
-
-function applyLeagueConfig(payload: LeagueConfigPayload) {
-  draft.leagueLegMode.value = payload.leagueLegMode
-  draft.tierCount.value = payload.tierCount
-  draft.promotionCount.value = payload.promotionCount
-  draft.tiebreaker.value = payload.tiebreaker
-  draft.winPoints.value = payload.winPoints
-  draft.drawPoints.value = payload.drawPoints
-  draft.lossPoints.value = payload.lossPoints
-}
-
-function handleManualConfirm(orderedIds: string[]) {
-  showManualDraw.value = false
-  store.redrawTournament(tournamentId.value, false, orderedIds)
-}
-
-function handleSave() {
-  draft.save()
-  router.push(`/tournaments/${tournamentId.value}`)
-}
 </script>
 
 <template>
   <div class="page">
-    <AppCard v-if="!tournament" padding="md">
-      <p class="muted">{{ t("tournament.settingsPage.notFound") }}</p>
-      <AppButton
-        icon-only
-        :aria-label="t('tournament.settingsPage.backToTournaments')"
-        @click="router.push('/tournaments')"
-      >
-        <AppIcon :icon="ArrowLeft" size="sm" />
-      </AppButton>
-    </AppCard>
+    <AppEmptyState v-if="!tournament" :description="t('tournament.settingsPage.notFound')">
+      <template #action>
+        <AppButton @click="router.push('/tournaments')">
+          {{ t("tournament.settingsPage.backToTournaments") }}
+        </AppButton>
+      </template>
+    </AppEmptyState>
 
     <template v-else>
-      <div class="page-top">
-        <AppButton
-          icon-only
-          :aria-label="t('common.back')"
-          @click="router.push(`/tournaments/${tournamentId}`)"
-        >
-          <AppIcon :icon="ArrowLeft" size="sm" />
-        </AppButton>
-        <div class="title-row">
-          <h2 class="page-title">
-            <AppIcon :icon="Settings" size="lg" class="title-icon" />
-            {{ t("tournament.settingsPage.title") }}
-          </h2>
-          <AppChip>S{{ tournament.season }}</AppChip>
-        </div>
-      </div>
+      <AppPageHeader
+        :title="t('tournament.settingsPage.title')"
+        :subtitle="`${tournament.name} · ${t('tournament.header.season', { n: tournament.season })}`"
+        @back="router.push(`/tournaments/${tournamentId}`)"
+      />
 
       <!-- Manual draw takes over the page while it is open -->
       <AppCard v-if="showManualDraw" padding="md">
@@ -247,251 +132,95 @@ function handleSave() {
           v-if="draft.isGroupFormat.value"
           :teams="localTeams"
           :group-count="draft.groupCount.value"
-          @confirm="handleManualConfirm"
+          @confirm="onManualConfirm"
           @cancel="showManualDraw = false"
         />
         <ManualDraw
           v-else
           :teams="localTeams"
-          @confirm="handleManualConfirm"
+          @confirm="onManualConfirm"
           @cancel="showManualDraw = false"
         />
       </AppCard>
 
       <div v-else class="stack">
-        <AppCard :title="t('tournament.settingsPage.tournamentName.title')" padding="md">
-          <input
-            v-model="draft.name.value"
-            class="name-input"
-            type="text"
-            :placeholder="tournament.name"
-          />
-          <p v-if="seasonCount > 1" class="hint">
-            {{ t("tournament.settingsPage.tournamentName.hint", { n: seasonCount }) }}
-          </p>
+        <AppCard padding="md">
+          <template #title>
+            <AppIcon :icon="Info" size="md" />
+            {{ t("tournament.settingsPage.tournamentName.title") }}
+          </template>
 
-          <p class="info-meta">
-            {{ t("tournament.settingsPage.info.teams", { n: totalTeams }) }} ·
-            {{ t("tournament.settingsPage.info.created", { date: dateStr }) }}
+          <AppField
+            layout="stack"
+            :hint="
+              seasonCount > 1
+                ? t('tournament.settingsPage.tournamentName.hint', { n: seasonCount })
+                : undefined
+            "
+          >
+            <input
+              v-model="draft.name.value"
+              class="name-input"
+              type="text"
+              :placeholder="tournament.name"
+              :aria-label="t('tournament.settingsPage.tournamentName.title')"
+            />
+          </AppField>
+
+          <p class="meta">
+            {{ t("tournament.header.teams", { n: tournament.teamIds.length }) }} ·
+            {{ t("tournament.header.created", { date: createdOn }) }}
           </p>
-          <p v-if="winnerTeam" class="info-champion">
+          <p v-if="winnerTeam" class="meta meta--champion">
             <AppIcon :icon="Trophy" size="xs" />
             <span :style="{ color: winnerTeam.color }">{{ winnerTeam.name }}</span>
             {{ t("tournament.settingsPage.info.champion") }}
           </p>
         </AppCard>
 
+        <SettingsTeamsCard
+          v-model:team-ids="draft.teamIds.value"
+          :tournament="tournament"
+          :all-teams="allTeams"
+          :has-any-results="hasAnyResults"
+          @redraw="onRedraw"
+        />
+
+        <SettingsFormatCard
+          :draft="draft"
+          :tournament="tournament"
+          :has-any-results="hasAnyResults"
+          @open-manual-draw="showManualDraw = true"
+        />
+
         <AppCard padding="md">
-          <template #title>{{ t("tournament.settingsPage.manageTeams.title") }}</template>
-          <template #actions>
-            <AppChip v-if="hasAnyResults">
-              <AppIcon :icon="Lock" size="xs" />
-              {{ t("tournament.settingsPage.locked") }}
-            </AppChip>
+          <template #title>
+            <AppIcon :icon="SlidersHorizontal" size="md" />
+            {{ t("tournament.settingsPage.teamAdjustments.title") }}
           </template>
-
-          <TeamSelectorButton
-            v-if="!hasAnyResults"
-            :teams="allTeams"
-            :selected="draft.teamIds.value"
-            :label="t('teamSelector.title')"
-            @click="showTeamsFullscreen = true"
+          <SettingsTeamAdjustments
+            v-model:team-point-adjustments="draft.teamPointAdjustments.value"
+            v-model:team-power-adjustments="draft.teamPowerAdjustments.value"
+            :teams="localTeams"
+            :has-any-results="hasAnyResults"
+            :show-points="draft.isLeagueFormat.value || draft.isGroupFormat.value"
           />
-          <p v-else class="locked-banner">
-            <AppIcon :icon="Lock" size="sm" />
-            {{ t("tournament.settingsPage.manageTeams.lockedBanner") }}
-          </p>
         </AppCard>
-
-        <TeamSelectorFullscreenModal
-          v-if="!hasAnyResults"
-          v-model:open="showTeamsFullscreen"
-          :teams="allTeams"
-          :selected="draft.teamIds.value"
-          @update:selected="draft.teamIds.value = $event"
-        />
-
-        <!-- Custom format: the graph is settled at creation, so it is shown
-             rather than offered for editing. Changing it after a phase has been
-             seeded would leave results that no longer belong to any stage. -->
-        <AppCard v-if="draft.isCustomFormat.value" padding="md">
-          <div class="form-section-title">{{ t("tournament.phases.title") }}</div>
-          <div class="phase-preview">
-            <PhaseGraphCanvas
-              :phases="tournament.phases ?? []"
-              :edges="tournament.phaseEdges ?? []"
-              :errors="[]"
-              :intake-of="(id) => tournament?.phases?.find((p) => p.id === id)?.teamIds.length ?? 0"
-              readonly
-              @configure="configuringPhaseId = $event"
-            />
-          </div>
-        </AppCard>
-
-        <PhaseConfigSheet
-          v-if="configuringPhase"
-          :phase="configuringPhase"
-          :intake="configuringPhase.teamIds.length"
-          readonly
-          @close="configuringPhaseId = null"
-        />
-
-        <div class="form-card config-button-stack">
-          <AppConfigButton
-            v-if="draft.isGroupFormat.value"
-            :icon="LayoutGrid"
-            :label="t('tournament.create.config.group')"
-            :summary="groupConfigSummary"
-            @click="showGroupModal = true"
-          />
-          <AppConfigButton
-            v-if="draft.isLeagueFormat.value && !draft.isSwissFormat.value"
-            :icon="List"
-            :label="t('tournament.create.config.league')"
-            :summary="leagueConfigSummary"
-            @click="showLeagueModal = true"
-          />
-          <AppConfigButton
-            v-if="draft.isSwissFormat.value"
-            :icon="Shuffle"
-            :label="t('tournament.create.config.swiss')"
-            :summary="swissConfigSummary"
-            @click="showSwissModal = true"
-          />
-          <AppConfigButton
-            v-if="!draft.isCustomFormat.value"
-            :icon="Trophy"
-            :label="t('tournament.create.config.knockout')"
-            :summary="knockoutConfigSummary"
-            @click="showKnockoutModal = true"
-          />
-          <AppConfigButton
-            :icon="House"
-            :label="t('tournament.venue.title')"
-            :summary="venueConfigSummary"
-            @click="showVenueModal = true"
-          />
-        </div>
-
-        <VenueConfigModal
-          v-if="showVenueModal"
-          :home-advantage="draft.homeAdvantage.value"
-          :neutral-final="draft.neutralFinal.value"
-          :show-neutral-final="draft.hasFinal.value"
-          @save="applyVenueConfig"
-          @close="showVenueModal = false"
-        />
-
-        <GroupConfigModal
-          v-if="showGroupModal && draft.isGroupFormat.value"
-          :draw-type="draft.drawType.value"
-          :group-count="draft.groupCount.value"
-          :qualifiers-per-group="draft.qualifiersPerGroup.value"
-          :wildcard-count="draft.wildcardCount.value"
-          :group-leg-mode="draft.groupLegMode.value"
-          :tiebreaker="draft.tiebreaker.value"
-          :win-points="draft.winPoints.value"
-          :draw-points="draft.drawPoints.value"
-          :loss-points="draft.lossPoints.value"
-          :tournament-id="tournamentId"
-          :groups-done="!!tournament.groupsDone"
-          :has-any-results="hasAnyResults"
-          :team-count="draft.teamIds.value.length"
-          @save="applyGroupConfig"
-          @close="showGroupModal = false"
-          @open-manual-draw="showManualDraw = true"
-        />
-
-        <SettingsKnockoutConfigModal
-          v-if="showKnockoutModal"
-          :variant="draft.isLeagueFormat.value ? 'leaguePlayoff' : 'bracket'"
-          :is-group-format="draft.isGroupFormat.value"
-          :draw-type="draft.drawType.value"
-          :has-third-place="draft.hasThirdPlace.value"
-          :round-leg-modes="draft.roundLegModes.value"
-          :third-place-leg-mode="draft.thirdPlaceLegMode.value"
-          :final-leg-mode="draft.finalLegMode.value"
-          :playoff-enabled="draft.playoffEnabled.value"
-          :playoff-qualifier-count="draft.playoffQualifierCount.value"
-          :playoff-seed-mode="draft.leaguePlayoffSeedMode.value"
-          :group-playoff-seed-mode="draft.playoffSeedMode.value"
-          :tournament-id="tournamentId"
-          :tournament="tournament"
-          :has-any-results="hasAnyResults"
-          :team-count="draft.teamIds.value.length"
-          :league-playoff-started="draft.originalPlayoff.value?.started ?? false"
-          @save="applyKnockoutConfig"
-          @close="showKnockoutModal = false"
-          @open-manual-draw="showManualDraw = true"
-        />
-
-        <SwissConfigModal
-          v-if="showSwissModal && draft.isSwissFormat.value"
-          :opponent-count="draft.swissOpponentCount.value"
-          :pot-count="draft.swissPotCount.value"
-          :leg-mode="draft.leagueLegMode.value"
-          :balance-home-away="draft.swissBalanceHomeAway.value"
-          :draw-type="draft.drawType.value === 'random' ? 'random' : 'seeded'"
-          :tiebreaker="draft.tiebreaker.value"
-          :win-points="draft.winPoints.value"
-          :draw-points="draft.drawPoints.value"
-          :loss-points="draft.lossPoints.value"
-          :team-count="draft.teamIds.value.length"
-          :has-any-results="hasAnyResults"
-          @save="applySwissConfig"
-          @close="showSwissModal = false"
-        />
-
-        <SettingsLeagueConfigModal
-          v-if="showLeagueModal && draft.isLeagueFormat.value && !draft.isSwissFormat.value"
-          :league-leg-mode="draft.leagueLegMode.value"
-          :tier-count="draft.tierCount.value"
-          :promotion-count="draft.promotionCount.value"
-          :tiebreaker="draft.tiebreaker.value"
-          :win-points="draft.winPoints.value"
-          :draw-points="draft.drawPoints.value"
-          :loss-points="draft.lossPoints.value"
-          :has-any-results="hasAnyResults"
-          :is-multi-tier="draft.isMultiTier.value"
-          :max-tier-count="maxTierCount"
-          :max-promotion-count="maxPromotionCount"
-          @save="applyLeagueConfig"
-          @close="showLeagueModal = false"
-        />
-
-        <SettingsTeamAdjustments
-          v-model:team-point-adjustments="draft.teamPointAdjustments.value"
-          v-model:team-power-adjustments="draft.teamPowerAdjustments.value"
-          :teams="localTeams"
-          :has-any-results="hasAnyResults"
-          :show-points="draft.isLeagueFormat.value || draft.isGroupFormat.value"
-        />
-
-        <!-- Monte Carlo branches per fixed format and a custom graph fits none
-             of them, so the prediction is withheld rather than made up. -->
-        <SettingsSimulation
-          v-if="!draft.isCustomFormat.value"
-          :tournament-id="tournamentId"
-          :tournament="tournament"
-        />
 
         <SettingsDangerZone :tournament-id="tournamentId" />
+      </div>
 
-        <div class="footer">
-          <AppButton
-            variant="filled"
-            size="md"
-            :disabled="!draft.hasChanges.value"
-            @click="handleSave"
-          >
-            <AppIcon :icon="Save" />
+      <Transition name="save-bar">
+        <div v-if="draft.hasChanges.value && !showManualDraw" class="save-bar">
+          <AppButton @click="router.push(`/tournaments/${tournamentId}`)">
+            {{ t("common.cancel") }}
+          </AppButton>
+          <AppButton variant="filled" class="save-bar-save" @click="save">
+            <AppIcon :icon="Save" size="sm" />
             {{ t("tournament.settingsPage.saveChanges") }}
           </AppButton>
-          <RouterLink :to="`/tournaments/${tournamentId}`" class="cancel-link">
-            {{ t("common.cancel") }}
-          </RouterLink>
         </div>
-      </div>
+      </Transition>
     </template>
 
     <AppModal
@@ -518,111 +247,81 @@ function handleSave() {
 </template>
 
 <style scoped>
-/* .phase-canvas sizes itself via flex:1 1 auto — outside a flex ancestor its
-   min-height never becomes a definite height, so the canvas's own 100%-height
-   internals (Vue Flow) collapse to nothing and no nodes are drawn. */
-.phase-preview {
-  display: flex;
-  height: 320px;
-  margin-top: var(--sp-3);
-}
-
-.title-row {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-3);
-}
-
-.title-icon {
-  color: var(--text-muted);
+.page {
+  /* Room for the save bar, so it never covers the last card. */
+  padding-bottom: calc(var(--sp-6) * 2 + var(--safe-bottom));
 }
 
 .name-input {
   width: 100%;
-  font-size: var(--fs-base);
-  font-weight: 600;
+  box-sizing: border-box;
   padding: var(--sp-2) var(--sp-3);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   background: var(--bg);
   color: var(--text);
-  box-sizing: border-box;
-}
-.name-input:focus {
-  outline: none;
-  border-color: var(--accent);
+  font-size: var(--fs-base);
+  font-weight: 600;
 }
 
-.hint {
-  margin: var(--sp-2) 0 0;
-  padding: var(--sp-2) var(--sp-3);
-  background: var(--bg);
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius);
-  font-size: var(--fs-xs);
-  color: var(--text-muted);
-  line-height: 1.6;
-}
-
-.info-meta {
+.meta {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-1);
   margin: var(--sp-3) 0 0;
   font-size: var(--fs-sm);
   color: var(--text-muted);
 }
-
-.info-champion {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  margin: var(--sp-2) 0 0;
-  font-size: var(--fs-sm);
-  color: var(--text-muted);
+.meta--champion {
+  margin-top: var(--sp-1);
 }
-.info-champion span {
+.meta--champion span {
   font-weight: 600;
 }
 
-.locked-banner {
+/* Floats over the bottom of the page while there are unsaved changes. */
+.save-bar {
+  position: sticky;
+  bottom: calc(var(--sp-3) + var(--safe-bottom));
+  z-index: var(--z-sticky);
   display: flex;
-  align-items: center;
+  justify-content: flex-end;
   gap: var(--sp-2);
-  margin: 0;
-  padding: var(--sp-2) var(--sp-3);
-  font-size: var(--fs-sm);
-  color: var(--text-muted);
-  background: var(--bg);
+  margin-top: var(--sp-4);
+  padding: var(--sp-2);
   border: 1px solid var(--border-light);
-  border-radius: var(--radius);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--elev-3);
+}
+.save-bar-save {
+  flex: 1;
+  justify-content: center;
 }
 
-.footer {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-3);
-  padding: var(--sp-5) 0 var(--sp-2);
-  border-top: 1px solid var(--border-light);
-}
-
-.cancel-link {
-  font-size: var(--fs-base);
-  color: var(--text-muted);
-  text-decoration: none;
-  padding: var(--sp-2) var(--sp-3);
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius);
+.save-bar-enter-active,
+.save-bar-leave-active {
   transition:
-    color var(--dur-fast) var(--ease),
-    border-color var(--dur-fast) var(--ease);
+    opacity var(--dur-fast) var(--ease),
+    transform var(--dur-fast) var(--ease);
 }
-.cancel-link:hover {
-  color: var(--text);
-  border-color: var(--border);
+.save-bar-enter-from,
+.save-bar-leave-to {
+  opacity: 0;
+  transform: translateY(8px);
 }
 
 .leave-msg {
-  font-size: var(--fs-base);
-  color: var(--text-muted);
   margin: 0 0 var(--sp-5);
+  font-size: var(--fs-base);
   line-height: 1.5;
+  color: var(--text-muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .save-bar-enter-active,
+  .save-bar-leave-active {
+    transition: none;
+  }
 }
 </style>

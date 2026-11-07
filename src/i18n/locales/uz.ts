@@ -115,7 +115,7 @@ export default {
       },
       simulate: {
         title: "Monte-Karlo simulyatsiyasini ishga tushiring",
-        desc: "Turnir sozlamalarini oching va uni minglab marta o'ynatish uchun “10 000× simulyatsiya” tugmasini bosing. Simulyatsiya natijalari sahifasi har bir jamoaning chempionlik ehtimoli va o'rtacha statistikasini ko'rsatadi.",
+        desc: "Turnirni oching, ⋯ menyusini bosing va uni 10 000 marta o'ynatish uchun “Monte-Karlo simulyatsiyasi”ni tanlang. Simulyatsiya natijalari sahifasi har bir jamoaning chempionlik ehtimoli va o'rtacha statistikasini ko'rsatadi.",
       },
       seasons: {
         title: "Yangi mavsumlarni boshlang va tarixni kuzating",

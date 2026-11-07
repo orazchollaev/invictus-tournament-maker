@@ -115,7 +115,7 @@ export default {
       },
       simulate: {
         title: "Rode uma simulação Monte Carlo",
-        desc: "Abra as Configurações de um torneio e toque em “Simular 10.000×” para disputá-lo milhares de vezes. A página de Resultados da Simulação mostra as chances de título e as estatísticas médias de cada time.",
+        desc: "Abra um torneio, toque no menu ⋯ e escolha “Simulação Monte Carlo” para disputá-lo 10.000 vezes. A página de Resultados da Simulação mostra as chances de título e as estatísticas médias de cada time.",
       },
       seasons: {
         title: "Comece novas temporadas e acompanhe o histórico",

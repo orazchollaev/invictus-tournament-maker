@@ -16,6 +16,7 @@ import {
   DetailHeader,
   DetailPhaseTabs,
   DetailMultiTierModal,
+  MonteCarloSheet,
   phaseIdOf,
   type MainTab,
 } from "../components/detail"
@@ -95,6 +96,7 @@ const managedTeamName = computed(() => {
 })
 
 const showManagerPicker = ref(false)
+const showPrediction = ref(false)
 function onManagerConfirmed() {
   showManagerPicker.value = false
   changeTab("manager")
@@ -237,12 +239,14 @@ const showStartPlayoffButton = computed(
         :current-season-id="tournament.id"
         :manager-blocked="managerBlocked"
         :can-become-manager="canBecomeManager"
+        :can-predict="!isCustom"
         :unsaved="unsaved"
         :saving="saving"
         @save="onSave"
         @back="router.push('/tournaments')"
         @open-new-season="openNewSeason"
         @open-manager-picker="showManagerPicker = true"
+        @predict="showPrediction = true"
         @simulate-all="store.simulateTournament(tournament!.id)"
         @open-settings="router.push(`/tournaments/${tournament!.id}/settings`)"
         @advance="isCustom ? advanceNextPhase() : onAdvance()"
@@ -389,6 +393,12 @@ const showStartPlayoffButton = computed(
       </div>
     </template>
 
+    <MonteCarloSheet
+      v-if="showPrediction && tournament"
+      :tournament="tournament"
+      @close="showPrediction = false"
+    />
+
     <ManagerTeamPickerModal
       v-if="showManagerPicker && tournament"
       :tournament-id="tournament.id"
@@ -525,6 +535,12 @@ const showStartPlayoffButton = computed(
 }
 
 @media (max-width: 600px) {
+  .tab-surface {
+    margin-inline: calc(var(--sp-2) * -1);
+    border-inline: none;
+    border-radius: 0;
+  }
+
   .tab-panel {
     padding: var(--sp-2);
   }

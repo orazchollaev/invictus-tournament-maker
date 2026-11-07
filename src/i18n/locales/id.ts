@@ -115,7 +115,7 @@ export default {
       },
       simulate: {
         title: "Jalankan simulasi Monte Carlo",
-        desc: "Buka Pengaturan turnamen dan ketuk “Simulasikan 10.000×” untuk memainkannya ribuan kali. Halaman Hasil Simulasi menunjukkan peluang juara dan rata-rata statistik setiap tim.",
+        desc: "Buka turnamen, ketuk menu ⋯ lalu pilih “Simulasi Monte Carlo” untuk memainkannya 10.000 kali. Halaman Hasil Simulasi menunjukkan peluang juara dan rata-rata statistik setiap tim.",
       },
       seasons: {
         title: "Mulai musim baru & lacak riwayat",

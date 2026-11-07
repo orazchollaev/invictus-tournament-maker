@@ -117,7 +117,7 @@ export default {
       },
       simulate: {
         title: "Monte-Carlo-Simulation ausführen",
-        desc: "Öffne die Einstellungen eines Turniers und tippe auf „10.000× simulieren“, um es tausendfach durchzuspielen. Die Seite mit den Simulationsergebnissen zeigt die Titelchancen und Durchschnittswerte jedes Teams.",
+        desc: "Öffne ein Turnier, tippe auf das ⋯-Menü und wähle „Monte-Carlo-Simulation“, um es 10.000-mal durchzuspielen. Die Seite mit den Simulationsergebnissen zeigt die Titelchancen und Durchschnittswerte jedes Teams.",
       },
       seasons: {
         title: "Neue Saisons starten und Verlauf verfolgen",

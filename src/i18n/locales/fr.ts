@@ -115,7 +115,7 @@ export default {
       },
       simulate: {
         title: "Lancez une simulation Monte Carlo",
-        desc: "Ouvrez les paramètres d'un tournoi et appuyez sur « Simuler 10 000× » pour le rejouer des milliers de fois. La page des résultats de simulation affiche les chances de titre et les statistiques moyennes de chaque équipe.",
+        desc: "Ouvrez un tournoi, appuyez sur le menu ⋯ et choisissez « Simulation Monte-Carlo » pour le rejouer 10 000 fois. La page des résultats de simulation affiche les chances de titre et les statistiques moyennes de chaque équipe.",
       },
       seasons: {
         title: "Commencez de nouvelles saisons et suivez l’historique",

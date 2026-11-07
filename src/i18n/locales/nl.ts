@@ -114,7 +114,7 @@ export default {
       },
       simulate: {
         title: "Draai een Monte Carlo-simulatie",
-        desc: "Open de Instellingen van een toernooi en tik op “10.000× simuleren” om het duizenden keren te spelen. De pagina Simulatieresultaten toont de titelkansen en gemiddelde statistieken van elk team.",
+        desc: "Open een toernooi, tik op het ⋯-menu en kies “Monte Carlo-simulatie” om het 10.000 keer te spelen. De pagina Simulatieresultaten toont de titelkansen en gemiddelde statistieken van elk team.",
       },
       seasons: {
         title: "Start nieuwe seizoenen & volg de geschiedenis",

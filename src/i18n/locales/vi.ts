@@ -113,7 +113,7 @@ export default {
       },
       simulate: {
         title: "Chạy mô phỏng Monte Carlo",
-        desc: "Mở Cài đặt của giải đấu và nhấn “Mô phỏng 10.000×” để mô phỏng hàng nghìn lần. Trang Kết quả mô phỏng hiển thị xác suất vô địch và các chỉ số trung bình của từng đội.",
+        desc: "Mở một giải đấu, nhấn menu ⋯ và chọn “Mô phỏng Monte Carlo” để mô phỏng 10.000 lần. Trang Kết quả mô phỏng hiển thị xác suất vô địch và các chỉ số trung bình của từng đội.",
       },
       seasons: {
         title: "Bắt đầu mùa giải mới & theo dõi lịch sử",

@@ -10,8 +10,15 @@
  * rest — simulate all, manager mode, settings — sit behind the ⋯ menu.
  */
 import { computed } from "vue"
-import { ArrowLeft, ArrowRight, RefreshCw, Save, Settings, UserCog, Zap } from "@lucide/vue"
-import { AppButton, AppIcon, AppMenu, AppSelect, type AppMenuItem } from "@/components/ui"
+import { ArrowRight, BarChart2, RefreshCw, Save, Settings, UserCog, Zap } from "@lucide/vue"
+import {
+  AppButton,
+  AppIcon,
+  AppMenu,
+  AppPageHeader,
+  AppSelect,
+  type AppMenuItem,
+} from "@/components/ui"
 import { useI18n } from "vue-i18n"
 
 const props = defineProps<{
@@ -38,6 +45,8 @@ const props = defineProps<{
   /** No manager yet, and the season hasn't played a match — the only window
    *  in which taking charge of a side is still on offer. */
   canBecomeManager?: boolean
+  /** Monte Carlo branches per fixed format; a custom phase graph fits none. */
+  canPredict?: boolean
   /** Changes since the last save; the Save button shows only while there are some. */
   unsaved?: boolean
   saving?: boolean
@@ -51,6 +60,7 @@ const emit = defineEmits<{
   advance: []
   startPlayoff: []
   openManagerPicker: []
+  predict: []
   save: []
   switchSeason: [id: string]
 }>()
@@ -84,7 +94,7 @@ const nextStep = computed(() => {
   return null
 })
 
-type MenuKey = "simulateAll" | "manager" | "settings"
+type MenuKey = "simulateAll" | "predict" | "manager" | "settings"
 
 const menuItems = computed(() => {
   const items: AppMenuItem<MenuKey>[] = []
@@ -96,6 +106,13 @@ const menuItems = computed(() => {
       disabled: props.managerBlocked,
     })
   }
+  if (props.canPredict) {
+    items.push({
+      key: "predict",
+      label: t("tournament.settingsPage.simulation.title"),
+      icon: BarChart2,
+    })
+  }
   if (props.canBecomeManager) {
     items.push({ key: "manager", label: t("manager.settings.title"), icon: UserCog })
   }
@@ -105,28 +122,24 @@ const menuItems = computed(() => {
 
 function onMenu(key: MenuKey) {
   if (key === "simulateAll") emit("simulateAll")
+  else if (key === "predict") emit("predict")
   else if (key === "manager") emit("openManagerPicker")
   else emit("openSettings")
 }
 </script>
 
 <template>
-  <header class="dh">
-    <AppButton icon-only :aria-label="t('common.back')" @click="emit('back')">
-      <AppIcon :icon="ArrowLeft" size="md" />
-    </AppButton>
-
-    <div class="dh-identity">
-      <h1 class="dh-title">{{ name }}</h1>
+  <AppPageHeader class="dh" :title="name" @back="emit('back')">
+    <template #subtitle>
       <!-- A plain text dropdown under the name; AppSelect's field look is
            stripped in detail.css. -->
       <span v-if="seasons.length > 1" class="dh-season-select">
         <AppSelect v-model="seasonModel" size="sm" :options="seasons" />
       </span>
-      <span v-else class="dh-season">{{ t("tournament.header.season", { n: season }) }}</span>
-    </div>
+      <template v-else>{{ t("tournament.header.season", { n: season }) }}</template>
+    </template>
 
-    <div class="dh-actions">
+    <template #actions>
       <AppButton
         v-if="unsaved"
         icon-only
@@ -150,8 +163,8 @@ function onMenu(key: MenuKey) {
         <span class="dh-next-label">{{ nextStep.label }}</span>
       </AppButton>
       <AppMenu :items="menuItems" :label="t('tournament.header.more')" @select="onMenu" />
-    </div>
-  </header>
+    </template>
+  </AppPageHeader>
 </template>
 
 <style src="./detail.css"></style>

@@ -113,7 +113,7 @@ export default {
       },
       simulate: {
         title: "Uruchom symulację Monte Carlo",
-        desc: "Otwórz ustawienia turnieju i dotknij „Symuluj 10 000×”, aby rozegrać go tysiące razy. Strona wyników symulacji pokazuje szanse każdej drużyny na tytuł i średnie statystyki.",
+        desc: "Otwórz turniej, dotknij menu ⋯ i wybierz „Symulacja Monte Carlo”, aby rozegrać go 10 000 razy. Strona wyników symulacji pokazuje szanse każdej drużyny na tytuł i średnie statystyki.",
       },
       seasons: {
         title: "Rozpoczynaj nowe sezony i śledź historię",

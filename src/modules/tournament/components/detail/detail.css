@@ -1,33 +1,6 @@
 /* ── Header ──────────────────────────────────────────────────────
-   One compact row: back · name over its season · Save (only when there
-   is something to save), the step the tournament waits on, the ⋯ menu. */
-.dh {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-2);
-  margin-bottom: var(--sp-3);
-}
-
-.dh-identity {
-  flex: 1;
-  min-width: 0;
-}
-
-.dh-title {
-  margin: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-size: var(--fs-md);
-  font-weight: 800;
-  letter-spacing: -0.01em;
-  line-height: 1.25;
-}
-
-.dh-season {
-  font-size: var(--fs-xs);
-  color: var(--text-muted);
-}
+   Layout comes from AppPageHeader; only the season picker and the
+   next-step button are styled here. */
 
 /* AppSelect stripped down to text: no fill, no border, no padding. The
    extra .dh qualifier outranks the select's own scoped rules. */
@@ -49,13 +22,6 @@
 }
 .dh .dh-season-select .asel-value {
   flex: none;
-}
-
-.dh-actions {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-1);
-  flex-shrink: 0;
 }
 
 /* Same height as the ⋯ button beside it. A long label ("Advance to

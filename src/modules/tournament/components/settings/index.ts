@@ -1,6 +1,7 @@
 export { default as SettingsDangerZone } from "./SettingsDangerZone.vue"
+export { default as SettingsFormatCard } from "./SettingsFormatCard.vue"
 export { default as SettingsKnockoutConfigModal } from "./SettingsKnockoutConfigModal.vue"
 export { default as SettingsLeagueConfigModal } from "./SettingsLeagueConfigModal.vue"
-export { default as SettingsSimulation } from "./SettingsSimulation.vue"
 export { default as SettingsTeamAdjustments } from "./SettingsTeamAdjustments.vue"
+export { default as SettingsTeamsCard } from "./SettingsTeamsCard.vue"
 export { default as TspLockedCard } from "./TspLockedCard.vue"

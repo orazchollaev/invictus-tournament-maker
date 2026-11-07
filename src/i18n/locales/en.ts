@@ -113,7 +113,7 @@
       },
       simulate: {
         title: "Run a Monte Carlo simulation",
-        desc: "Open a tournament’s Settings and tap “Simulate 10,000×” to play it out thousands of times. The Simulation Results page shows each team’s championship odds and average stats.",
+        desc: "Open a tournament, tap the ⋯ menu and choose “Monte Carlo Simulation” to play it out 10,000 times. The Simulation Results page shows each team’s championship odds and average stats.",
       },
       seasons: {
         title: "Start new seasons & track history",

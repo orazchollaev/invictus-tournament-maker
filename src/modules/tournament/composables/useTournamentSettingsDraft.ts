@@ -379,3 +379,6 @@ export function useTournamentSettingsDraft(
     save,
   }
 }
+
+/** Everything the settings page and its cards bind to. */
+export type TournamentSettingsDraft = ReturnType<typeof useTournamentSettingsDraft>

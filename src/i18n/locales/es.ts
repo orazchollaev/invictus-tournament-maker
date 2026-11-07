@@ -115,7 +115,7 @@ export default {
       },
       simulate: {
         title: "Ejecuta una simulación de Montecarlo",
-        desc: "Abre la Configuración de un torneo y toca “Simular 10.000×” para reproducirlo miles de veces. La página de Resultados de simulación muestra las probabilidades de campeonato de cada equipo y sus estadísticas promedio.",
+        desc: "Abre un torneo, toca el menú ⋯ y elige “Simulación Monte Carlo” para jugarlo 10.000 veces. La página de Resultados de simulación muestra las probabilidades de campeonato de cada equipo y sus estadísticas promedio.",
       },
       seasons: {
         title: "Inicia nuevas temporadas y sigue el historial",
