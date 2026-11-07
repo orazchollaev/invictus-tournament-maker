@@ -5,16 +5,7 @@ import { ManualDraw } from "../components/draw"
 import { GroupDraw } from "../components/group"
 import { TeamSelectorButton, TeamSelectorFullscreenModal } from "../components/shared"
 import { DrawCeremony } from "../components/draw-ceremony"
-import {
-  Shuffle,
-  ArrowLeft,
-  ChevronDown,
-  House,
-  LayoutGrid,
-  Trophy,
-  List,
-  Workflow,
-} from "@lucide/vue"
+import { Shuffle, ArrowLeft, House, LayoutGrid, Trophy, List, Workflow } from "@lucide/vue"
 import { randomTournamentName } from "@/composables/useRandomNames"
 import type { CeremonyContext, DrawMode } from "@/engine"
 import {
@@ -32,7 +23,7 @@ import { entryPhases, randomSeed } from "@/engine"
 import { useCreateTournamentDraft } from "../composables/useCreateTournamentDraft"
 import { useCreateTournamentSubmit } from "../composables/useCreateTournamentSubmit"
 import { SettingsTeamAdjustments } from "../components/settings"
-import { AppButton, AppConfigButton, AppIcon } from "@/components/ui"
+import { AppButton, AppCollapsible, AppConfigButton, AppIcon } from "@/components/ui"
 import { useI18n } from "vue-i18n"
 import { useRouter } from "vue-router"
 
@@ -104,7 +95,6 @@ const showManualDraw = ref(false)
 const showCeremony = ref(false)
 const ceremonyContext = ref<CeremonyContext | null>(null)
 const { t } = useI18n()
-const showAdjustments = ref(false)
 
 // Phase configuration modals — opened from the AppConfigButton rows below the
 // format cards. Each modal edits a local draft and only writes back to the
@@ -432,25 +422,15 @@ function onCeremonyComplete(orderedIds: string[]) {
 
       <!-- Team Adjustments (collapsible, advanced) -->
       <template v-if="selected.length >= 2">
-        <div class="ctp-adj-wrap">
-          <div class="ctp-collapse-btn" @click="showAdjustments = !showAdjustments">
-            <span>{{ $t("tournament.settingsPage.teamAdjustments.title") }}</span>
-            <ChevronDown
-              :size="14"
-              class="ctp-collapse-icon"
-              :class="{ 'ctp-collapse-icon--open': showAdjustments }"
-            />
-          </div>
-          <div v-if="showAdjustments">
-            <SettingsTeamAdjustments
-              v-model:team-point-adjustments="teamPointAdjustments"
-              v-model:team-power-adjustments="teamPowerAdjustments"
-              :teams="selectedTeams"
-              :has-any-results="false"
-              :show-points="format !== 'bracket'"
-            />
-          </div>
-        </div>
+        <AppCollapsible :title="$t('tournament.settingsPage.teamAdjustments.title')">
+          <SettingsTeamAdjustments
+            v-model:team-point-adjustments="teamPointAdjustments"
+            v-model:team-power-adjustments="teamPowerAdjustments"
+            :teams="selectedTeams"
+            :has-any-results="false"
+            :show-points="format !== 'bracket'"
+          />
+        </AppCollapsible>
       </template>
 
       <!-- Footer actions -->
@@ -550,49 +530,6 @@ function onCeremonyComplete(orderedIds: string[]) {
   height: 1px;
   background: var(--border-light);
   min-width: 12px;
-}
-
-/* Collapsible adjustments */
-.ctp-adj-wrap {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.ctp-collapse-btn {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  padding: 8px 12px;
-  background: var(--surface);
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius);
-  cursor: pointer;
-  font-size: var(--fs-sm);
-  font-weight: 700;
-  font-family: var(--font-ui);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--text-muted);
-  text-align: start;
-  transition:
-    color 0.15s,
-    border-color 0.15s;
-}
-
-.ctp-collapse-btn:hover {
-  color: var(--text);
-  border-color: var(--border);
-}
-
-.ctp-collapse-icon {
-  flex-shrink: 0;
-  transition: transform 0.2s;
-}
-
-.ctp-collapse-icon--open {
-  transform: rotate(180deg);
 }
 
 .ctp-footer {
