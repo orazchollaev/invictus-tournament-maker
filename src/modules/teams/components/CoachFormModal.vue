@@ -2,7 +2,14 @@
 import { computed, ref } from "vue"
 import { useI18n } from "vue-i18n"
 import { Dices } from "@lucide/vue"
-import { AppButton, AppButtonGroup, AppField, AppModal, AppSelect } from "@/components/ui"
+import {
+  AppButton,
+  AppButtonGroup,
+  AppField,
+  AppModal,
+  AppSelect,
+  AppSlider,
+} from "@/components/ui"
 import { FORMATION_LIST, PLAY_STYLES } from "@/engine"
 import { useModal } from "@/composables/useModal"
 import { useTeamsStore } from "../store"
@@ -99,16 +106,7 @@ function sack() {
             <span class="power-value">{{ power }}</span>
           </span>
         </template>
-        <input
-          v-model.number="power"
-          class="power-slider"
-          type="range"
-          min="1"
-          max="99"
-          step="1"
-          :style="{ '--pct': `${((power - 1) / 98) * 100}%` }"
-          :aria-label="t('coach.form.power')"
-        />
+        <AppSlider v-model="power" :min="1" :max="99" :aria-label="t('coach.form.power')" />
       </AppField>
 
       <AppButton variant="text" size="xs" @click="randomize">

@@ -6,6 +6,7 @@ import {
   AppIcon,
   AppModal,
   AppColorPicker,
+  AppSlider,
   AppStarRating,
 } from "@/components/ui"
 import FlagPicker from "./FlagPicker.vue"
@@ -205,7 +206,7 @@ function submit() {
     :title="isEdit ? t('teams.form.editTitle') : t('teams.form.addTitle')"
     @close="emit('close')"
   >
-    <div class="form" :style="{ '--team-color': color, '--power-color': color }">
+    <div class="form" :style="{ '--team-color': color }">
       <!-- Live identity preview: click the crest to pick a flag or a custom image. -->
       <div class="preview">
         <div
@@ -307,14 +308,11 @@ function submit() {
               <span class="power-value">{{ power }}</span>
             </span>
           </template>
-          <input
-            v-model.number="power"
-            class="power-slider"
-            type="range"
-            min="1"
-            max="99"
-            step="1"
-            :style="{ '--pct': `${((power - 1) / 98) * 100}%` }"
+          <AppSlider
+            v-model="power"
+            :min="1"
+            :max="99"
+            :color="color"
             :aria-label="t('teams.form.power')"
           />
         </AppField>

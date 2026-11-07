@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, nextTick } from "vue"
-import { AppButton, AppField, AppIcon, AppModal, AppSelect } from "@/components/ui"
+import { AppButton, AppField, AppIcon, AppModal, AppSelect, AppSlider } from "@/components/ui"
 import PlayerAvatar from "./PlayerAvatar.vue"
 import TeamSelect from "./TeamSelect.vue"
 import NumberPickerModal from "./NumberPickerModal.vue"
@@ -122,7 +122,6 @@ function submit() {
       class="form"
       :style="{
         '--player-color': selectedTeam?.color ?? '#999',
-        '--power-color': selectedTeam?.color ?? '#999',
       }"
     >
       <div class="preview">
@@ -220,14 +219,11 @@ function submit() {
               <span class="power-value">{{ power }}</span>
             </span>
           </template>
-          <input
-            v-model.number="power"
-            class="power-slider"
-            type="range"
-            min="1"
-            max="99"
-            step="1"
-            :style="{ '--pct': `${((power - 1) / 98) * 100}%` }"
+          <AppSlider
+            v-model="power"
+            :min="1"
+            :max="99"
+            :color="selectedTeam?.color ?? '#999'"
             :aria-label="t('players.form.power')"
           />
         </AppField>
