@@ -11,6 +11,7 @@ import { initAnalytics, logScreenView, logError } from "./composables/useAnalyti
 import { initAppOpenAd } from "./composables/useAppOpenAd"
 import { initAdClock } from "./lib/admob"
 import { idbStorage } from "./lib/idbStorage"
+import { breadcrumb, setCrashKey } from "./lib/crashlytics"
 import { useTournamentStore } from "./modules/tournament/store"
 import { useTeamsStore } from "./modules/teams/store"
 import { usePlayersStore } from "./modules/players/store"
@@ -144,8 +145,12 @@ async function bootstrap() {
   // why nothing is held at launch.
   initAdClock()
   initAppOpenAd()
+  // A crash report is far easier to reproduce knowing the language it ran in
+  // and the screens that led to it.
+  void setCrashKey("locale", String(i18n.global.locale.value))
   router.afterEach((to) => {
     void logScreenView(to.path)
+    void breadcrumb(`screen ${to.path}`)
   })
 }
 
