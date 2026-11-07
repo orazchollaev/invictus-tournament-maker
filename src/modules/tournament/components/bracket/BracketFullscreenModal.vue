@@ -30,6 +30,7 @@ const {
   zoomIn,
   zoomOut,
   fitScreen,
+  fitInitial,
   reset,
 } = useBracketViewport({ maxFitZoom: 1.5 })
 
@@ -46,7 +47,7 @@ watch(open, (isOpen) => {
     reset()
     document.body.style.overflow = "hidden"
     document.addEventListener("keydown", onEsc)
-    nextTick(fitScreen)
+    nextTick(fitInitial)
   } else {
     document.body.style.overflow = ""
     document.removeEventListener("keydown", onEsc)

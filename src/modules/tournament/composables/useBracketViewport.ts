@@ -9,6 +9,10 @@ const ZOOM_SETTLE_MS = 150
 const DOUBLE_TAP_MS = 300
 const DOUBLE_TAP_DIST = 30
 const DOUBLE_TAP_ZOOM = 2
+/** Below this a match card can no longer be read; a first view never opens smaller. */
+const READABLE_ZOOM = 0.6
+/** Breathing room between a top-left-anchored bracket and the viewport edge. */
+const FIT_EDGE = 8
 
 function clamp(z: number, max = MAX_ZOOM) {
   return Math.min(max, Math.max(MIN_ZOOM, z))
@@ -228,6 +232,39 @@ export function useBracketViewport(options: BracketViewportOptions = {}) {
     pan.y = 0
   }
 
+  /**
+   * The first view of a bracket. A small one is fitted whole, as fitScreen
+   * does. A big one on a narrow screen would fit only as an unreadable
+   * thumbnail floating in empty space, so it opens at a readable scale instead,
+   * filling the height it can and anchored at the top-left — the first round,
+   * where play starts — leaving the rest a pan away. The fit button still
+   * shows the whole bracket.
+   */
+  function fitInitial() {
+    const wrapper = wrapperRef.value
+    const inner = innerRef.value
+    if (!wrapper || !inner) return
+    const iW = inner.scrollWidth
+    const iH = inner.scrollHeight
+    const wW = wrapper.clientWidth
+    const wH = wrapper.clientHeight
+    if (!iW || !iH) return fitScreen()
+
+    const whole = Math.min(wW / iW, wH / iH) * 0.9
+    if (whole >= READABLE_ZOOM) return fitScreen()
+
+    const z = +clamp(Math.max(READABLE_ZOOM, (wH / iH) * 0.95), maxFitZoom).toFixed(2)
+    zoom.value = z
+    // The layer is centred, so an overflow is split evenly between both sides;
+    // shifting by half of it lines the layer's start edge up with the viewport's.
+    // In a right-to-left locale the first round sits on the right.
+    const overflowX = iW * z - wW
+    const overflowY = iH * z - wH
+    const startSide = getComputedStyle(wrapper).direction === "rtl" ? -1 : 1
+    pan.x = overflowX > 0 ? startSide * (overflowX / 2 + FIT_EDGE) : 0
+    pan.y = overflowY > 0 ? overflowY / 2 + FIT_EDGE : 0
+  }
+
   /** Freeze the current view and hand back a restore callback (used around PNG export). */
   function snapshot() {
     const z = zoom.value
@@ -269,6 +306,7 @@ export function useBracketViewport(options: BracketViewportOptions = {}) {
     zoomIn,
     zoomOut,
     fitScreen,
+    fitInitial,
     reset,
     snapshot,
   }

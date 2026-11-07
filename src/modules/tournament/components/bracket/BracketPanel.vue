@@ -57,7 +57,7 @@ const showFullBracket = ref(false)
 // The viewport is sized off the screen now, so a rotation changes how much
 // room the bracket has and the old fit no longer matches it.
 function refit() {
-  nextTick(fitScreen)
+  nextTick(fitInitial)
 }
 
 /**
@@ -73,7 +73,7 @@ let mountIdle = 0
 
 function mountBracket() {
   ready.value = true
-  nextTick(fitScreen)
+  nextTick(fitInitial)
 }
 
 onMounted(() => {
@@ -106,6 +106,7 @@ const {
   zoomIn,
   zoomOut,
   fitScreen,
+  fitInitial,
   reset,
   snapshot,
 } = useBracketViewport({
