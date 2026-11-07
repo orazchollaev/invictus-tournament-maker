@@ -76,14 +76,12 @@ const speedOptions = computed(() => [
 </template>
 
 <style scoped>
+/* Sits in AppModal's footer, which brings the padding, rule and safe area. */
 .dc-footer {
   display: flex;
   align-items: center;
   gap: var(--sp-2);
-  padding: var(--sp-3) var(--sp-4);
-  border-top: 1px solid var(--border-light);
-  background: var(--bg);
-  flex-shrink: 0;
+  width: 100%;
 }
 
 /* Pushes the trailing control away from the primary actions. */
@@ -106,7 +104,6 @@ const speedOptions = computed(() => [
 @media (max-width: 600px) {
   .dc-footer {
     flex-wrap: wrap-reverse;
-    padding-bottom: calc(var(--sp-3) + var(--safe-bottom));
   }
   .dc-push-right {
     margin-inline-start: 0;

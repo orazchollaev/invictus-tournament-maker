@@ -1,8 +1,6 @@
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, onUnmounted } from "vue"
-import { useI18n } from "vue-i18n"
-import { X } from "@lucide/vue"
-import { AppIcon } from "@/components/ui"
+import { ref, computed, watch } from "vue"
+import { AppModal } from "@/components/ui"
 import type { Team } from "@/modules/teams/types"
 import type { CeremonyContext, Pot, DrawPlan } from "@/engine"
 import { useSettingsStore } from "@/modules/settings/store"
@@ -29,7 +27,6 @@ const emit = defineEmits<{
   cancel: []
 }>()
 
-const { t } = useI18n()
 const settings = useSettingsStore()
 
 const {
@@ -88,62 +85,65 @@ watch(phase, (p) => {
   }
 })
 
-function onKey(e: KeyboardEvent) {
-  if (e.key === "Escape" && phase.value !== "drawing") emit("cancel")
+// ── Leaving ──────────────────────────────────────────────────
+// Every way out plays the drawer's exit animation first. The footer's actions
+// hand theirs to close(); the close button, Escape and the backdrop end up in
+// onClosed with nothing settled, which is a cancel.
+const modal = ref<InstanceType<typeof AppModal> | null>(null)
+let settled = false
+
+function finish(action: () => void) {
+  settled = true
+  modal.value?.close(action)
 }
 
-onMounted(() => {
-  document.body.style.overflow = "hidden"
-  document.addEventListener("keydown", onKey)
-})
-onUnmounted(() => {
-  document.body.style.overflow = ""
-  document.removeEventListener("keydown", onKey)
-})
+function onClosed() {
+  if (!settled) emit("cancel")
+}
 </script>
 
 <template>
-  <div class="dc-backdrop">
-    <div class="dc-panel" role="dialog" aria-modal="true">
-      <header class="dc-header">
-        <span class="dc-title">{{ title }}</span>
-        <button class="dc-close" :aria-label="t('common.cancel')" @click="emit('cancel')">
-          <AppIcon :icon="X" size="md" />
-        </button>
-      </header>
+  <AppModal
+    ref="modal"
+    :title="title"
+    width="720px"
+    flush
+    :dismiss-on-outside-click="false"
+    @close="onClosed"
+  >
+    <div class="dc-body">
+      <DrawTeamPanel
+        v-if="canEditTeams"
+        :available-teams="allAvailableTeams!"
+        :selected="localTeamIds"
+        @update:selected="(ids) => (localTeamIds = ids)"
+      />
 
-      <div class="dc-body">
-        <DrawTeamPanel
-          v-if="canEditTeams"
-          :available-teams="allAvailableTeams!"
-          :selected="localTeamIds"
-          @update:selected="(ids) => (localTeamIds = ids)"
-        />
-
-        <PotEditor
-          v-if="phase === 'pots'"
-          :pots="pots"
+      <PotEditor
+        v-if="phase === 'pots'"
+        :pots="pots"
+        :teams="localTeams"
+        :errors="errors"
+        :readonly="locked"
+        @reset="resetPots"
+      />
+      <template v-else>
+        <div class="dc-progress">
+          <div class="dc-progress-bar" :style="{ width: `${Math.round(progress * 100)}%` }" />
+        </div>
+        <DrawStage
+          :revealed="revealed"
+          :current="current"
+          :sequence="sequence"
           :teams="localTeams"
-          :errors="errors"
-          :readonly="locked"
-          @reset="resetPots"
+          :speed="speed"
+          :kind="context.kind"
+          :instant="skipped"
         />
-        <template v-else>
-          <div class="dc-progress">
-            <div class="dc-progress-bar" :style="{ width: `${Math.round(progress * 100)}%` }" />
-          </div>
-          <DrawStage
-            :revealed="revealed"
-            :current="current"
-            :sequence="sequence"
-            :teams="localTeams"
-            :speed="speed"
-            :kind="context.kind"
-            :instant="skipped"
-          />
-        </template>
-      </div>
+      </template>
+    </div>
 
+    <template #footer>
       <DrawCeremonyFooter
         v-model:speed="speed"
         :phase="phase"
@@ -151,113 +151,30 @@ onUnmounted(() => {
         :paused="paused"
         :has-previous-draw="!!previousTeamIds"
         @start="start"
-        @cancel="emit('cancel')"
-        @use-old-draw="emit('useOldDraw')"
+        @cancel="finish(() => emit('cancel'))"
+        @use-old-draw="finish(() => emit('useOldDraw'))"
         @skip="skip"
         @toggle-pause="togglePause"
-        @complete="emit('complete', [...orderedIds])"
+        @complete="finish(() => emit('complete', [...orderedIds]))"
       />
-    </div>
-  </div>
+    </template>
+  </AppModal>
 </template>
 
 <style scoped>
-@keyframes dc-backdrop-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-@keyframes dc-panel-in {
-  from {
-    opacity: 0;
-    transform: translateY(12px) scale(0.97);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-.dc-backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: var(--z-overlay);
-  background: var(--scrim-strong);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--sp-4);
-  animation: dc-backdrop-in var(--dur) var(--ease) both;
-}
-
-.dc-panel {
-  width: min(720px, 100%);
-  /* The backdrop's padding already keeps it clear of the edges and the banner. */
-  max-height: 100%;
-  display: flex;
-  flex-direction: column;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--elev-3);
-  overflow: hidden;
-  padding-top: var(--safe-top);
-  animation: dc-panel-in var(--dur-slow) cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
-.dc-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--sp-2);
-  padding: var(--sp-3) var(--sp-4);
-  background: var(--bg);
-  border-bottom: 1px solid var(--border-light);
-  flex-shrink: 0;
-}
-
-.dc-title {
-  font-family: var(--font);
-  font-size: var(--fs-md);
-  font-weight: 600;
-}
-
-.dc-close {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  padding: 0;
-  border: none;
-  background: transparent;
-  color: var(--text-muted);
-  border-radius: var(--radius);
-  cursor: pointer;
-}
-.dc-close:hover {
-  background: color-mix(in srgb, var(--border) 60%, transparent);
-  color: var(--text);
-}
-
 .dc-body {
-  padding: var(--sp-4);
-  overflow-y: auto;
-  flex: 1;
   display: flex;
   flex-direction: column;
   gap: var(--sp-3);
+  padding: var(--sp-4);
 }
 
 .dc-progress {
   height: 4px;
-  background: var(--border-light);
-  border-radius: 2px;
-  overflow: hidden;
   margin-bottom: var(--sp-3);
+  overflow: hidden;
+  border-radius: 2px;
+  background: var(--border-light);
 }
 
 .dc-progress-bar {
@@ -267,31 +184,8 @@ onUnmounted(() => {
 }
 
 @media (max-width: 600px) {
-  .dc-backdrop {
-    padding: 0;
+  .dc-body {
+    padding: var(--sp-3);
   }
-  .dc-panel :deep(.dc-footer) {
-    padding-bottom: calc(var(--sp-3) + var(--safe-bottom));
-  }
-  .dc-panel {
-    width: 100%;
-    height: 100%;
-    max-height: 100%;
-    border-radius: 0;
-    border: none;
-  }
-}
-
-/* Painted at 24px over the stage; the hit area is a full tap target. */
-.dc-close {
-  position: relative;
-}
-.dc-close::after {
-  content: "";
-  position: absolute;
-  inset: 50% auto auto 50%;
-  width: max(100%, var(--tap-min));
-  height: max(100%, var(--tap-min));
-  transform: translate(-50%, -50%);
 }
 </style>
