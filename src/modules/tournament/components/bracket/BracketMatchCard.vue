@@ -8,6 +8,7 @@ import { NO_TEAM_COLOR } from "@/modules/teams/utils/color"
 import { getWinnerId } from "@/engine"
 import { useSettingsStore } from "@/modules/settings/store"
 import { useManagedTeamId } from "@/composables/useManagedTeam"
+import { useBracketTeams } from "@/modules/tournament/composables/useBracketTeams"
 import { MatchScoreModal } from "@/modules/tournament/components/match-stats"
 import { Pencil } from "@lucide/vue"
 
@@ -40,6 +41,7 @@ const emit = defineEmits<{
 const { t } = useI18n()
 const settings = useSettingsStore()
 const lowQuality = computed(() => settings.bracketQuality === "low")
+const teamById = useBracketTeams(() => props.teams)
 
 const isDouble = computed(() => props.match.leg2Result !== undefined)
 
@@ -68,16 +70,16 @@ function isWinner(teamId: string | null) {
   return getWinnerId(props.match) === teamId
 }
 
+const homeTeam = computed(() =>
+  props.match.homeId ? (teamById.value.get(props.match.homeId) ?? null) : null
+)
+const awayTeam = computed(() =>
+  props.match.awayId ? (teamById.value.get(props.match.awayId) ?? null) : null
+)
 /* Row identity colour, matching the connector strands the bracket already
    draws in the winner's colour — the card and the line it feeds now agree. */
-function colorOf(teamId: string | null) {
-  if (!teamId) return NO_TEAM_COLOR
-  return props.teams.find((t) => t.id === teamId)?.color ?? NO_TEAM_COLOR
-}
-const homeColor = computed(() => colorOf(props.match.homeId))
-const awayColor = computed(() => colorOf(props.match.awayId))
-const homeTeam = computed(() => props.teams.find((t) => t.id === props.match.homeId) ?? null)
-const awayTeam = computed(() => props.teams.find((t) => t.id === props.match.awayId) ?? null)
+const homeColor = computed(() => homeTeam.value?.color ?? NO_TEAM_COLOR)
+const awayColor = computed(() => awayTeam.value?.color ?? NO_TEAM_COLOR)
 
 // ── Score entry ────────────────────────────────────────────────
 // A bracket card is 28px per row and lives inside a pan/zoom layer, so it holds
@@ -190,7 +192,7 @@ const wentToExtraTime = computed(() =>
         :class="{ winner: isWinner(match.homeId), loser: match.result && !isWinner(match.homeId) }"
         @mouseenter="match.homeId && $emit('hover-team', match.homeId)"
       >
-        <TeamBadge :team-id="match.homeId" :teams="teams" :size="14" />
+        <TeamBadge :team="homeTeam" :size="14" />
       </div>
       <div
         class="mc-row mc-row--away"
@@ -198,7 +200,7 @@ const wentToExtraTime = computed(() =>
         :class="{ winner: isWinner(match.awayId), loser: match.result && !isWinner(match.awayId) }"
         @mouseenter="match.awayId && $emit('hover-team', match.awayId)"
       >
-        <TeamBadge :team-id="match.awayId" :teams="teams" :size="14" />
+        <TeamBadge :team="awayTeam" :size="14" />
       </div>
     </div>
 
@@ -297,7 +299,8 @@ const wentToExtraTime = computed(() =>
   border: 1px solid var(--border-light);
   border-radius: var(--radius);
   background: var(--surface);
-  box-shadow: var(--elev-1);
+  /* No drop shadow: the pan layer is re-rasterised on every zoom step, and a
+     blurred shadow per card is the most expensive thing in it to paint. */
   font-size: var(--fs-sm);
   box-sizing: border-box;
   overflow: hidden;
@@ -316,33 +319,17 @@ const wentToExtraTime = computed(() =>
 .mc.dimmed {
   opacity: 0.22;
 }
-.bracket-pan-layer.zooming .mc.champion,
-.bracket-pan-layer.dragging .mc.champion {
-  animation-play-state: paused;
-}
 .mc.mc--low-q,
-.mc.mc--static:not(.champion) {
+.mc.mc--static {
   animation: none;
 }
-.mc.mc--low-q.champion {
+/* A big bracket mounts a score per card at once; their pop-in is skipped too. */
+.mc.mc--low-q :deep(.sc),
+.mc.mc--static :deep(.sc) {
   animation: none;
-  box-shadow:
-    0 0 0 2px var(--gold-glow),
-    0 0 22px var(--gold-glow);
 }
-@keyframes champion-glow {
-  0%,
-  100% {
-    box-shadow:
-      0 0 0 1px var(--gold-soft),
-      0 2px 10px var(--gold-faint);
-  }
-  50% {
-    box-shadow:
-      0 0 0 2px var(--gold-glow),
-      0 0 22px var(--gold-glow),
-      0 0 38px var(--gold-soft);
-  }
+.mc.champion {
+  box-shadow: 0 0 0 2px var(--gold-soft);
 }
 
 /* ── Teams column (left, fills remaining width) ── */
@@ -376,7 +363,6 @@ const wentToExtraTime = computed(() =>
   bottom: 0;
   width: 3px;
   background: var(--tc, transparent);
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.18);
 }
 .mc-row--away {
   border-bottom: none;

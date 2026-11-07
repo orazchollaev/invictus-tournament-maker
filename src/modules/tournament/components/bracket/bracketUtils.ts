@@ -34,9 +34,12 @@ export function reuseDisplayRounds(
   )
 }
 
-export function teamColor(teamId: string | null | undefined, teams: Team[]): string | null {
+export function teamColor(
+  teamId: string | null | undefined,
+  teamById: Map<string, Team>
+): string | null {
   if (!teamId) return null
-  return teams.find((t) => t.id === teamId)?.color ?? null
+  return teamById.get(teamId)?.color ?? null
 }
 
 export interface ConnInfo {
@@ -57,7 +60,7 @@ export function buildConnInfo(
   ri: number,
   ci: number,
   displayRounds: DisplayMatch[][],
-  teams: Team[],
+  teamById: Map<string, Team>,
   matchCenterY: (ri: number, mi: number) => number,
   hoveredTeamId: string | null,
   highlightEnabled: boolean,
@@ -73,8 +76,8 @@ export function buildConnInfo(
   const bottomWinner = bottomMatch ? getWinnerId(bottomMatch) : null
   const active = !!(destMatch?.homeId && destMatch?.awayId)
 
-  const topColor = connColorsEnabled && topWinner ? teamColor(topWinner, teams) : null
-  const bottomColor = connColorsEnabled && bottomWinner ? teamColor(bottomWinner, teams) : null
+  const topColor = connColorsEnabled && topWinner ? teamColor(topWinner, teamById) : null
+  const bottomColor = connColorsEnabled && bottomWinner ? teamColor(bottomWinner, teamById) : null
 
   let advancingId: string | null = null
   if (topWinner && (destMatch?.homeId === topWinner || destMatch?.awayId === topWinner)) {
@@ -85,7 +88,7 @@ export function buildConnInfo(
   ) {
     advancingId = bottomWinner
   }
-  const forwardColor = connColorsEnabled && advancingId ? teamColor(advancingId, teams) : null
+  const forwardColor = connColorsEnabled && advancingId ? teamColor(advancingId, teamById) : null
 
   const hoverActive = highlightEnabled && hoveredTeamId != null
 

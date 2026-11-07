@@ -7,6 +7,7 @@ import { type DisplayMatch, type ConnInfo, buildConnInfo, reuseDisplayRounds } f
 import { useSettingsStore } from "@/modules/settings/store"
 import { LARGE_BRACKET } from "./bracketUtils"
 import { useEngineLabels } from "@/composables/useEngineLabels"
+import { useBracketTeams } from "@/modules/tournament/composables/useBracketTeams"
 
 const props = defineProps<{ tournament: Tournament; teams: Team[]; isExporting?: boolean }>()
 const emit = defineEmits<{
@@ -37,6 +38,7 @@ const emit = defineEmits<{
 }>()
 const settings = useSettingsStore()
 const { engineLabel } = useEngineLabels()
+const teamById = useBracketTeams(() => props.teams)
 const hoveredTeamId = ref<string | null>(null)
 /** Entrance animations on a hundred cards at once are felt on a phone; skip them. */
 const isLarge = computed(() => (props.tournament.rounds[0]?.matches.length ?? 0) > LARGE_BRACKET)
@@ -102,7 +104,7 @@ const connectorInfosByRound = computed<ConnInfo[][]>(() =>
         ri,
         ci,
         displayRounds.value,
-        props.teams,
+        teamById.value,
         matchCenterY,
         hoveredTeamId.value,
         settings.bracketHighlightOnHover,

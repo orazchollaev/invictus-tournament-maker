@@ -18,6 +18,7 @@ import { useSettingsStore } from "@/modules/settings/store"
 import { LARGE_BRACKET } from "./bracketUtils"
 import { useI18n } from "vue-i18n"
 import { useEngineLabels } from "@/composables/useEngineLabels"
+import { useBracketTeams } from "@/modules/tournament/composables/useBracketTeams"
 
 const props = defineProps<{ tournament: Tournament; teams: Team[]; isExporting?: boolean }>()
 const emit = defineEmits<{
@@ -46,6 +47,7 @@ const emit = defineEmits<{
   "clear-third-place-result": []
   "sim-third-place": []
 }>()
+const teamById = useBracketTeams(() => props.teams)
 const settings = useSettingsStore()
 const { t } = useI18n()
 const { engineLabel } = useEngineLabels()
@@ -112,7 +114,7 @@ const champion = computed(() => {
   const finalMatch = allRounds.value[finalRi.value]?.matches[0]
   if (!finalMatch?.result) return null
   const winnerId = getWinnerId(finalMatch)
-  return props.teams.find((t) => t.id === winnerId) ?? null
+  return (winnerId && teamById.value.get(winnerId)) || null
 })
 
 const champBannerTop = computed(() => HEADER_H + bracketH.value / 2 + CARD_H / 2 + -120)
@@ -154,7 +156,7 @@ const connInfosLByRound = computed<ConnInfo[][]>(() =>
         ri,
         ci,
         displayRounds.value,
-        props.teams,
+        teamById.value,
         matchCenterY,
         hoveredTeamId.value,
         settings.bracketHighlightOnHover,
@@ -175,7 +177,7 @@ const connInfosRByRound = computed<ConnInfo[][]>(() =>
         ri,
         ci,
         displayRounds.value,
-        props.teams,
+        teamById.value,
         matchCenterY,
         hoveredTeamId.value,
         settings.bracketHighlightOnHover,
@@ -211,7 +213,7 @@ function finalLineColor(side: "home" | "away"): string {
         : "var(--border)"
   const finalMatch = displayRounds.value[finalRi.value]?.[0]
   const teamId = side === "home" ? finalMatch?.homeId : finalMatch?.awayId
-  return teamColor(teamId, props.teams) ?? (teamId ? "var(--accent)" : "var(--border)")
+  return teamColor(teamId, teamById.value) ?? (teamId ? "var(--accent)" : "var(--border)")
 }
 
 function finalLineOpacity(side: "home" | "away"): number {
@@ -221,7 +223,7 @@ function finalLineOpacity(side: "home" | "away"): number {
   if (settings.bracketHighlightOnHover && hoveredTeamId.value) {
     return hoveredTeamId.value === teamId ? 0.9 : 0.1
   }
-  return teamColor(teamId, props.teams) ? 0.85 : 0.55
+  return teamColor(teamId, teamById.value) ? 0.85 : 0.55
 }
 </script>
 

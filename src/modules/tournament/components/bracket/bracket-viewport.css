@@ -1,5 +1,5 @@
 /* Shared pan/zoom viewport chrome — used by the inline panel and the fullscreen modal.
-   The class names must stay stable: BracketMatchCard keys its champion-glow pause
+   The class names must stay stable: BracketMatchCard and the zoom/drag state key
    off `.bracket-pan-layer.zooming` / `.dragging`. */
 
 .bracket-viewport {

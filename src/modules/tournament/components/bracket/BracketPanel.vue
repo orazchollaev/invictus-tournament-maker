@@ -15,6 +15,7 @@ import { useBracketActions } from "@/modules/tournament/composables/useBracketAc
 import { useBracketExport, canNativeShare } from "@/modules/tournament/composables/useBracketExport"
 import { useBracketViewport } from "@/modules/tournament/composables/useBracketViewport"
 import { useBracketZoomHint } from "@/modules/tournament/composables/useBracketZoomHint"
+import { provideBracketTeams } from "@/modules/tournament/composables/useBracketTeams"
 import { Download, Maximize2, Share2 } from "@lucide/vue"
 
 const props = defineProps<{
@@ -31,6 +32,9 @@ const props = defineProps<{
 
 const { t } = useI18n()
 const settings = useSettingsStore()
+
+// One team lookup for every card and connector, inline and full view alike.
+provideBracketTeams(() => props.teams)
 
 const bracketActions = useBracketActions(
   () => props.tournament.id,
@@ -132,7 +136,7 @@ const { isExporting, exportPng } = useBracketExport({
         <AppButton variant="outlined" size="xs" :disabled="isExporting" @click="exportPng">
           <AppIcon :icon="canNativeShare ? Share2 : Download" size="sm" />
           <span class="btn-label">
-            {{ isExporting ? "…" : canNativeShare ? t("common.share") : "Export PNG" }}
+            {{ isExporting ? "…" : canNativeShare ? t("common.share") : t("common.export") }}
           </span>
         </AppButton>
 
@@ -183,7 +187,10 @@ const { isExporting, exportPng } = useBracketExport({
     </div>
   </div>
 
-  <BracketFullscreenModal v-model:open="showFullBracket" :title="`${tournament.name} — Knockout`">
+  <BracketFullscreenModal
+    v-model:open="showFullBracket"
+    :title="`${tournament.name} · ${t('tournament.phases.kinds.knockout')}`"
+  >
     <component
       :is="activeBracket"
       :tournament="tournament"
