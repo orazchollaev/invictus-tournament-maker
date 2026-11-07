@@ -20,7 +20,7 @@ import { SeasonChart } from "@/modules/teams/components"
 import {
   TeamCoachCard,
   TeamFormRow,
-  TeamHeaderCard,
+  TeamDetailHeader,
   TeamMatchList,
   TeamSquadCard,
   TeamStatsGrid,
@@ -86,13 +86,13 @@ const tabValue = computed({
     </AppCard>
 
     <div v-else class="stack" :style="{ '--rail-color': team.color, gap: 0 }">
-      <TeamHeaderCard
+      <TeamDetailHeader
         :team="team"
         @back="router.back()"
         @compare="router.push({ path: '/teams/compare', query: { a: team.id } })"
       />
 
-      <AppTabs v-model="tabValue" style="margin-top: var(--sp-4)">
+      <AppTabs v-model="tabValue">
         <AppTab value="overview">
           <AppIcon :icon="BarChart3" />
           {{ t("teams.detail.tabs.overview") }}
@@ -190,6 +190,12 @@ const tabValue = computed({
 }
 
 @media (max-width: 600px) {
+  .tab-surface {
+    margin-inline: calc(var(--sp-2) * -1);
+    border-inline: none;
+    border-radius: 0;
+  }
+
   .tab-panel {
     padding: var(--sp-2);
     gap: var(--sp-2);

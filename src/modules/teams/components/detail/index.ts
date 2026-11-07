@@ -1,6 +1,6 @@
 export { default as TeamCoachCard } from "./TeamCoachCard.vue"
+export { default as TeamDetailHeader } from "./TeamDetailHeader.vue"
 export { default as TeamFormRow } from "./TeamFormRow.vue"
-export { default as TeamHeaderCard } from "./TeamHeaderCard.vue"
 export { default as TeamMatchList } from "./TeamMatchList.vue"
 export { default as TeamSquadCard } from "./TeamSquadCard.vue"
 export { default as TeamStatsGrid } from "./TeamStatsGrid.vue"

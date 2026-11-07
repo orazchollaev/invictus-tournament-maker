@@ -1,17 +1,8 @@
 <script setup lang="ts">
 import { useRouter } from "vue-router"
-import {
-  ArrowLeft,
-  Users,
-  UserRound,
-  Trophy,
-  Play,
-  BarChart3,
-  History,
-  Settings,
-} from "@lucide/vue"
+import { Users, UserRound, Trophy, Play, BarChart3, History, Settings } from "@lucide/vue"
 import { useI18n } from "vue-i18n"
-import { AppButton, AppIcon } from "@/components/ui"
+import { AppPageHeader } from "@/components/ui"
 
 const { t } = useI18n()
 const router = useRouter()
@@ -29,13 +20,7 @@ const STEPS = [
 
 <template>
   <div class="page">
-    <div class="page-top page-top--lead">
-      <AppButton variant="text" @click="router.back()">
-        <AppIcon :icon="ArrowLeft" />
-        {{ t("common.back") }}
-      </AppButton>
-      <h2 class="page-title">{{ t("guide.title") }}</h2>
-    </div>
+    <AppPageHeader :title="t('guide.title')" @back="router.back()" />
 
     <p class="intro">{{ t("guide.intro") }}</p>
 

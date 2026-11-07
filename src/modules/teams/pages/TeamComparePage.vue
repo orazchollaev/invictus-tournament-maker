@@ -2,7 +2,7 @@
 import { computed } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import { useI18n } from "vue-i18n"
-import { ArrowLeft, ArrowLeftRight, Swords } from "@lucide/vue"
+import { ArrowLeftRight, Swords } from "@lucide/vue"
 import { resolvePower } from "@/engine"
 import { useTeamsStore } from "../store"
 import { useTournamentStore } from "@/modules/tournament/store"
@@ -11,6 +11,7 @@ import {
   AppCard,
   AppEmptyState,
   AppIcon,
+  AppPageHeader,
   AppSectionHeader,
   AppSelect,
 } from "@/components/ui"
@@ -81,14 +82,11 @@ const split = computed(() => {
 
 <template>
   <div class="page">
-    <div class="page-top">
-      <h2 class="page-title">
-        <AppButton icon-only size="sm" :aria-label="t('common.back')" @click="router.back()">
-          <AppIcon :icon="ArrowLeft" size="sm" />
-        </AppButton>
-        {{ t("teams.compare.title") }}
-      </h2>
-    </div>
+    <AppPageHeader
+      :title="t('teams.compare.title')"
+      :subtitle="teamA && teamB ? `${teamA.name} – ${teamB.name}` : undefined"
+      @back="router.back()"
+    />
 
     <AppCard v-if="teamsStore.teams.length < 2" padding="md">
       <AppEmptyState :icon="Swords" :description="t('teams.compare.needTwoTeams')" />

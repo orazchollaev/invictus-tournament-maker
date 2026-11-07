@@ -2,12 +2,12 @@
 import { computed, ref } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import { useI18n } from "vue-i18n"
-import { ArrowLeft, Pencil } from "@lucide/vue"
+import { ArrowLeft } from "@lucide/vue"
 import { AppButton, AppCard, AppEmptyState, AppIcon } from "@/components/ui"
 import { usePlayersStore } from "../store"
 import { useTeamsStore } from "@/modules/teams/store"
 import { usePlayerCareer } from "../composables/usePlayerCareer"
-import { PlayerCareerCard, PlayerHeaderCard, PlayerHonoursCard } from "../components/detail"
+import { PlayerCareerCard, PlayerDetailHeader, PlayerHonoursCard } from "../components/detail"
 import { PlayerFormModal } from "@/modules/players/components"
 
 const route = useRoute()
@@ -40,21 +40,21 @@ const editing = ref(false)
       </AppEmptyState>
     </AppCard>
 
-    <div v-else class="stack" :style="{ '--rail-color': team?.color ?? 'var(--accent)' }">
-      <PlayerHeaderCard :player="player" :team="team" @back="router.back()" />
+    <div v-else :style="{ '--rail-color': team?.color ?? 'var(--accent)' }">
+      <PlayerDetailHeader
+        :player="player"
+        :team="team"
+        @back="router.back()"
+        @edit="editing = true"
+      />
 
-      <!-- Always rendered, zeros and all. Hiding it behind "has he played?"
+      <div class="stack">
+        <!-- Always rendered, zeros and all. Hiding it behind "has he played?"
            made the page look broken for anyone whose seasons predate match
            reports — the structure itself is the answer to "what is tracked". -->
-      <PlayerCareerCard :totals="totals" :position="player.position" :empty="!hasCareer" />
+        <PlayerCareerCard :totals="totals" :position="player.position" :empty="!hasCareer" />
 
-      <PlayerHonoursCard v-if="honours.length" :honours="honours" />
-
-      <div class="actions">
-        <AppButton @click="editing = true">
-          <AppIcon :icon="Pencil" />
-          {{ t("players.form.editTitle") }}
-        </AppButton>
+        <PlayerHonoursCard v-if="honours.length" :honours="honours" />
       </div>
     </div>
 
@@ -65,10 +65,5 @@ const editing = ref(false)
 <style scoped>
 /* Every card header on this page picks up the player's team colour. */
 .stack :deep(.card-header) {
-}
-
-.actions {
-  display: flex;
-  justify-content: flex-start;
 }
 </style>

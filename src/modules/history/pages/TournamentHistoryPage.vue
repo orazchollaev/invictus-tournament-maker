@@ -3,13 +3,12 @@ import { computed, ref } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import { useTournamentStore } from "@/modules/tournament/store"
 import { isLeagueLike } from "@/engine"
-import { ArrowLeft, Trophy, Medal, BarChart3, Table2, Users, Goal } from "@lucide/vue"
+import { Trophy, Medal, BarChart3, Table2, Users, Goal } from "@lucide/vue"
 import { useI18n } from "vue-i18n"
 import {
-  AppButton,
-  AppChip,
   AppEmptyState,
   AppIcon,
+  AppPageHeader,
   AppSwipeView,
   AppTab,
   AppTabs,
@@ -66,20 +65,11 @@ const tabValue = computed({
 
 <template>
   <div class="page">
-    <div class="t-header">
-      <AppButton icon-only :aria-label="t('history.title')" @click="router.push('/history')">
-        <AppIcon :icon="ArrowLeft" size="sm" />
-      </AppButton>
-      <div class="t-header-top">
-        <h1>
-          {{ name }}
-          <AppChip square>
-            {{ allSeasons.length }}
-            {{ allSeasons.length === 1 ? t("common.season", 1) : t("common.season", 2) }}
-          </AppChip>
-        </h1>
-      </div>
-    </div>
+    <AppPageHeader
+      :title="name"
+      :subtitle="`${allSeasons.length} ${t('common.season', allSeasons.length === 1 ? 1 : 2)}`"
+      @back="router.push('/history')"
+    />
 
     <AppEmptyState v-if="!completedSeasons.length" :description="t('history.noCompletedSeasons')" />
 
@@ -157,6 +147,12 @@ const tabValue = computed({
 }
 
 @media (max-width: 600px) {
+  .tab-surface {
+    margin-inline: calc(var(--sp-2) * -1);
+    border-inline: none;
+    border-radius: 0;
+  }
+
   .tab-panel {
     padding: var(--sp-2);
   }

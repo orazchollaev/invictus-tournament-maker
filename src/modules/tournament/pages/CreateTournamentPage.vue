@@ -5,7 +5,7 @@ import { ManualDraw } from "../components/draw"
 import { GroupDraw } from "../components/group"
 import { TeamSelectorButton, TeamSelectorFullscreenModal } from "../components/shared"
 import { DrawCeremony } from "../components/draw-ceremony"
-import { Shuffle, ArrowLeft, House, LayoutGrid, Trophy, List, Workflow } from "@lucide/vue"
+import { Shuffle, House, LayoutGrid, Trophy, List, Workflow } from "@lucide/vue"
 import { randomTournamentName } from "@/composables/useRandomNames"
 import type { CeremonyContext, DrawMode } from "@/engine"
 import {
@@ -23,7 +23,7 @@ import { entryPhases, randomSeed } from "@/engine"
 import { useCreateTournamentDraft } from "../composables/useCreateTournamentDraft"
 import { useCreateTournamentSubmit } from "../composables/useCreateTournamentSubmit"
 import { SettingsTeamAdjustments } from "../components/settings"
-import { AppButton, AppCollapsible, AppConfigButton, AppIcon } from "@/components/ui"
+import { AppCollapsible, AppConfigButton, AppPageHeader } from "@/components/ui"
 import { useI18n } from "vue-i18n"
 import { useRouter } from "vue-router"
 
@@ -206,13 +206,7 @@ function onCeremonyComplete(orderedIds: string[]) {
 
 <template>
   <div class="page">
-    <!-- Page header -->
-    <div class="page-top page-top--lead">
-      <AppButton icon-only :aria-label="$t('common.back')" @click="router.push('/tournaments')">
-        <AppIcon :icon="ArrowLeft" size="sm" />
-      </AppButton>
-      <h2 class="page-title">{{ $t("tournaments.newBtn") }}</h2>
-    </div>
+    <AppPageHeader :title="$t('tournaments.newBtn')" @back="router.push('/tournaments')" />
 
     <!-- Manual draw overlay -->
     <template v-if="showManualDraw">
