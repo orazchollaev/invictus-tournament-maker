@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import { ref, nextTick, onMounted, onUnmounted } from "vue"
+import { computed, ref, nextTick, onMounted, onUnmounted } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import { APP_VERSION } from "@/constants"
 import { useSettingsStore } from "@/modules/settings/store"
 import { logEvent } from "@/composables/useAnalytics"
 import { openSupport } from "@/composables/useSupport"
 import { isMarketAvailable } from "@/modules/market/services/authService"
-import { AppButton } from "@/components/ui"
+import { AppButton, AppMenu } from "@/components/ui"
+import type { AppMenuItem } from "@/components/ui"
 import {
   Palette,
   LayoutGrid,
@@ -155,11 +156,17 @@ const initialCategory = CATEGORIES.includes(route.query.category as Category)
   : "appearance"
 
 const activeCategory = ref<Category>(initialCategory)
-const menuOpen = ref(false)
 const aboutOpen = ref(false)
 
+const categoryMenuItems = computed<AppMenuItem<Category>[]>(() =>
+  visibleCategories.map((cat) => ({
+    key: cat,
+    label: t(`settings.nav.${cat}`),
+    icon: CATEGORY_ICONS[cat],
+  }))
+)
+
 function selectCategory(id: Category) {
-  menuOpen.value = false
   if (activeCategory.value === id) return
   activeCategory.value = id
   nextTick(() => {
@@ -175,27 +182,22 @@ function selectCategory(id: Category) {
     </div>
 
     <div class="mobile-nav">
-      <button class="mobile-nav-trigger" :aria-expanded="menuOpen" @click="menuOpen = !menuOpen">
-        <Menu :size="18" class="mobile-nav-burger" />
-        <component :is="CATEGORY_ICONS[activeCategory]" :size="16" class="side-link-icon" />
-        <span class="mobile-nav-label">{{ t(`settings.nav.${activeCategory}`) }}</span>
-        <ChevronDown :size="16" class="mobile-nav-chev" :class="{ 'is-open': menuOpen }" />
-      </button>
-      <Transition name="menu">
-        <div v-if="menuOpen" class="mobile-nav-menu">
-          <button
-            v-for="cat in visibleCategories"
-            :key="cat"
-            class="side-link"
-            :class="{ 'side-link--active': activeCategory === cat }"
-            :aria-current="activeCategory === cat ? 'page' : undefined"
-            @click="selectCategory(cat)"
-          >
-            <component :is="CATEGORY_ICONS[cat]" :size="16" class="side-link-icon" />
-            <span>{{ t(`settings.nav.${cat}`) }}</span>
+      <AppMenu
+        :items="categoryMenuItems"
+        :label="t('settings.title')"
+        :active="activeCategory"
+        block
+        @select="selectCategory"
+      >
+        <template #trigger>
+          <button type="button" class="mobile-nav-trigger">
+            <Menu :size="18" class="mobile-nav-burger" />
+            <component :is="CATEGORY_ICONS[activeCategory]" :size="16" class="side-link-icon" />
+            <span class="mobile-nav-label">{{ t(`settings.nav.${activeCategory}`) }}</span>
+            <ChevronDown :size="16" class="mobile-nav-chev" />
           </button>
-        </div>
-      </Transition>
+        </template>
+      </AppMenu>
     </div>
 
     <div class="settings-layout">
@@ -485,37 +487,12 @@ function selectCategory(id: Category) {
   color: var(--text-muted);
   transition: transform var(--dur-fast) var(--ease);
 }
-.mobile-nav-chev.is-open {
+.mobile-nav-trigger[data-state="open"] .mobile-nav-chev {
   transform: rotate(180deg);
 }
-.mobile-nav-menu {
-  position: absolute;
-  top: calc(100% + var(--sp-2));
-  inset-inline-start: 0;
-  inset-inline-end: 0;
-  z-index: var(--z-dropdown);
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  padding: var(--sp-2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: var(--surface);
-  box-shadow: var(--elev-3);
-}
-
-/* dropdown open/close animation */
-.menu-enter-active,
-.menu-leave-active {
-  transition:
-    opacity var(--dur-fast) var(--ease),
-    transform var(--dur-fast) var(--ease);
-  transform-origin: top;
-}
-.menu-enter-from,
-.menu-leave-to {
-  opacity: 0;
-  transform: translateY(-6px) scaleY(0.96);
+.mobile-nav-trigger:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 @media (max-width: 860px) {

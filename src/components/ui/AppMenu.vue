@@ -3,6 +3,11 @@
  * An overflow menu: a "⋯" button that opens a short list of actions. Picking
  * one closes the menu and reports its key. For options that stay open while
  * the user changes them, use AppSortFilterMenu instead.
+ *
+ * The `trigger` slot swaps the "⋯" button for any button of the caller's (it
+ * is rendered as-child, so it gets `data-state="open"` while the menu is up).
+ * `active` marks the current item, for a menu that navigates between views;
+ * `block` opens the list at the trigger's full width.
  */
 import type { Component } from "vue"
 import {
@@ -25,8 +30,10 @@ export interface AppMenuItem<Key extends string = string> {
 
 defineProps<{
   items: AppMenuItem<K>[]
-  /** Accessible name for the trigger, which shows only an icon. */
+  /** Accessible name for the default trigger, which shows only an icon. */
   label: string
+  active?: K
+  block?: boolean
 }>()
 
 const emit = defineEmits<{ select: [key: K] }>()
@@ -35,16 +42,25 @@ const emit = defineEmits<{ select: [key: K] }>()
 <template>
   <DropdownMenuRoot>
     <DropdownMenuTrigger as-child>
-      <AppButton icon-only variant="outlined" :aria-label="label" :title="label">
-        <AppIcon :icon="Ellipsis" size="md" />
-      </AppButton>
+      <slot name="trigger">
+        <AppButton icon-only variant="outlined" :aria-label="label" :title="label">
+          <AppIcon :icon="Ellipsis" size="md" />
+        </AppButton>
+      </slot>
     </DropdownMenuTrigger>
     <DropdownMenuPortal>
-      <DropdownMenuContent class="app-menu" align="end" :side-offset="6">
+      <DropdownMenuContent
+        class="app-menu"
+        :class="{ 'app-menu--block': block }"
+        :align="block ? 'start' : 'end'"
+        :side-offset="6"
+      >
         <DropdownMenuItem
           v-for="item in items"
           :key="item.key"
           class="app-menu-item"
+          :class="{ 'app-menu-item--active': item.key === active }"
+          :aria-current="item.key === active ? 'page' : undefined"
           :disabled="item.disabled"
           @select="emit('select', item.key)"
         >
@@ -85,6 +101,20 @@ const emit = defineEmits<{ select: [key: K] }>()
 
 .app-menu-item[data-highlighted] {
   background: var(--bg-hover);
+}
+
+.app-menu--block {
+  width: var(--reka-dropdown-menu-trigger-width);
+}
+
+.app-menu-item--active,
+.app-menu-item--active[data-highlighted] {
+  color: var(--accent);
+  background: var(--accent-subtle);
+  font-weight: 600;
+}
+.app-menu-item--active .app-menu-icon {
+  color: var(--accent);
 }
 
 .app-menu-item[data-disabled] {
