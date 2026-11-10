@@ -4,7 +4,17 @@ A popup shown inside the app during a date window, in the user's language. One
 JSON file per announcement lives here, so every one has a history in git.
 Firestore (`announcements/{id}`) holds what is live; the app reads it.
 
-## Publishing
+## Admin panel
+
+`/admin/` on the deployed site (locally `pnpm dev` → `localhost:2008/admin/`) lists,
+creates, edits, duplicates, switches off and deletes announcements, with a preview. Only
+`orazchollaev@gmail.com` can sign in (Google); `firestore.rules` enforces the same address,
+so the rules below must be published once. Source: `src/admin/`.
+
+One-time Firebase setup: Authentication → Sign-in method → **Google** enabled, and
+Authentication → Settings → **Authorized domains** includes the Vercel domain.
+
+## Publishing from the command line
 
 ```bash
 pnpm announce check   announcements/my-news.json   # validate + preview, touches nothing

@@ -16,5 +16,13 @@ export default defineConfig({
   },
   build: {
     chunkSizeWarningLimit: 1000,
+    rolldownOptions: {
+      // The announcement admin panel ships as a second page of the same build,
+      // served at /admin/. See src/admin/.
+      input: {
+        main: fileURLToPath(new URL("./index.html", import.meta.url)),
+        admin: fileURLToPath(new URL("./admin/index.html", import.meta.url)),
+      },
+    },
   },
 })
