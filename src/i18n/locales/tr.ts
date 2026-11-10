@@ -561,6 +561,19 @@
       "Hesabınız ve yayınladığınız tüm veri setleri silinsin mi? Bu geri alınamaz. Cihazınızdaki takımlar etkilenmez.",
     accountDeleted: "Hesabınız ve yayınladığınız veri setleri silindi.",
     reauthNeeded: "Güvenlik için çıkış yapıp tekrar giriş yapın ve yeniden deneyin.",
+    creators: {
+      tab: "Üreticiler",
+      search: "Üretici ara",
+      champion: "Haftanın üreticisi",
+      championCount: "Geçen hafta {n} indirme",
+      noChampion: "Henüz kazanan yok. Bu hafta en çok indirilen üretici rozeti kazanır.",
+      rules:
+        "Haftalar Pazar 23:59 UTC'de biter. Bir kişinin bir veri setini indirmesi bir kez sayılır, kendi indirmelerin sayılmaz.",
+      datasets: "{n} veri seti",
+      wins: "{n}× haftanın üreticisi",
+      empty: "Henüz üretici yok. İlk veri setini sen yayınla.",
+      noDatasets: "Şu an markette veri seti yok.",
+    },
   },
   settings: {
     title: "Ayarlar",

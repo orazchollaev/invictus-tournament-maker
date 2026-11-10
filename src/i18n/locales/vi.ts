@@ -568,6 +568,19 @@ export default {
       "Xóa tài khoản và mọi bộ dữ liệu bạn đã đăng? Không thể hoàn tác. Các đội trên máy của bạn không bị ảnh hưởng.",
     accountDeleted: "Tài khoản và các bộ dữ liệu đã đăng của bạn đã bị xóa.",
     reauthNeeded: "Vì lý do bảo mật, hãy đăng xuất, đăng nhập lại rồi thử lại.",
+    creators: {
+      tab: "Nhà sáng tạo",
+      search: "Tìm nhà sáng tạo",
+      champion: "Nhà sáng tạo của tuần",
+      championCount: "{n} lượt tải tuần trước",
+      noChampion: "Chưa có người thắng. Ai có nhiều lượt tải nhất tuần này sẽ nhận huy hiệu.",
+      rules:
+        "Mỗi tuần kết thúc vào Chủ nhật lúc 23:59 UTC. Mỗi người chỉ được tính một lần cho mỗi bộ dữ liệu, lượt tải của chính bạn không được tính.",
+      datasets: "{n} bộ dữ liệu",
+      wins: "{n}× nhà sáng tạo của tuần",
+      empty: "Chưa có nhà sáng tạo. Hãy đăng bộ dữ liệu đầu tiên.",
+      noDatasets: "Hiện không có bộ dữ liệu nào trên market.",
+    },
   },
   settings: {
     title: "Cài đặt",

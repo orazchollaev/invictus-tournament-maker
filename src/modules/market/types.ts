@@ -52,6 +52,24 @@ export interface MarketListing {
   createdAt: number
 }
 
+/** One publisher, as the creators list shows them. */
+export interface MarketCreator {
+  uid: string
+  name: string
+  /** Datasets they currently have on the market. */
+  datasets: number
+  /** Every download of their datasets, all time. */
+  downloads: number
+}
+
+/** A creator's downloads within one market week (see utils/week.ts). */
+export interface WeeklyTally {
+  week: number
+  authorUid: string
+  authorName: string
+  count: number
+}
+
 export interface MarketUser {
   uid: string
   name: string

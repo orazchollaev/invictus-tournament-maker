@@ -569,6 +569,19 @@ export default {
       "Je account en alle datasets die je hebt gepubliceerd verwijderen? Dit kan niet ongedaan worden gemaakt. Je lokale teams blijven ongewijzigd.",
     accountDeleted: "Je account en gepubliceerde datasets zijn verwijderd.",
     reauthNeeded: "Log voor de veiligheid uit, log opnieuw in en probeer het nog eens.",
+    creators: {
+      tab: "Makers",
+      search: "Makers zoeken",
+      champion: "Maker van de week",
+      championCount: "{n} downloads vorige week",
+      noChampion: "Nog geen winnaar. Wie deze week de meeste downloads heeft, krijgt de badge.",
+      rules:
+        "Weken eindigen zondag om 23:59 UTC. Elke persoon telt één keer per dataset, en je eigen downloads tellen niet mee.",
+      datasets: "{n} datasets",
+      wins: "{n}× maker van de week",
+      empty: "Nog geen makers. Publiceer een dataset en wees de eerste.",
+      noDatasets: "Er staan nu geen datasets in de market.",
+    },
   },
   settings: {
     title: "Instellingen",

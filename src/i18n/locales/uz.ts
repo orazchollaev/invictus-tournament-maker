@@ -571,6 +571,19 @@ export default {
       "Hisobingiz va siz nashr qilgan barcha to'plamlar o'chirilsinmi? Buni ortga qaytarib bo'lmaydi. Qurilmadagi jamoalaringizga ta'sir qilmaydi.",
     accountDeleted: "Hisobingiz va nashr qilingan to'plamlaringiz o'chirildi.",
     reauthNeeded: "Xavfsizlik uchun tizimdan chiqing, qayta kiring va yana urinib ko'ring.",
+    creators: {
+      tab: "Mualliflar",
+      search: "Muallif qidirish",
+      champion: "Hafta muallifi",
+      championCount: "O'tgan hafta {n} ta yuklab olish",
+      noChampion: "Hali g'olib yo'q. Bu hafta eng ko'p yuklab olingan muallif nishonni oladi.",
+      rules:
+        "Haftalar yakshanba 23:59 UTC da tugaydi. Har bir kishi bir to'plam uchun bir marta hisoblanadi, o'zingizning yuklab olishlaringiz hisoblanmaydi.",
+      datasets: "{n} ta to'plam",
+      wins: "{n}× hafta muallifi",
+      empty: "Hali mualliflar yo'q. Birinchi bo'lib to'plam joylang.",
+      noDatasets: "Hozir bozorda to'plamlar yo'q.",
+    },
   },
   settings: {
     title: "Sozlamalar",

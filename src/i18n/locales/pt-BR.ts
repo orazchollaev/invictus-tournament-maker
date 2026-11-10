@@ -570,6 +570,19 @@ export default {
       "Excluir sua conta e todos os conjuntos que você publicou? Isso não pode ser desfeito. Seus times locais não são afetados.",
     accountDeleted: "Sua conta e os conjuntos publicados foram excluídos.",
     reauthNeeded: "Por segurança, saia, entre de novo e tente outra vez.",
+    creators: {
+      tab: "Criadores",
+      search: "Buscar criadores",
+      champion: "Criador da semana",
+      championCount: "{n} downloads na semana passada",
+      noChampion: "Ainda não há vencedor. Quem tiver mais downloads nesta semana ganha o selo.",
+      rules:
+        "As semanas terminam no domingo às 23:59 UTC. Cada pessoa conta uma só vez por conjunto e seus próprios downloads não contam.",
+      datasets: "{n} conjuntos",
+      wins: "{n}× criador da semana",
+      empty: "Ainda não há criadores. Publique um conjunto e seja o primeiro.",
+      noDatasets: "No momento não há conjuntos no market.",
+    },
   },
   settings: {
     title: "Configurações",

@@ -75,7 +75,7 @@ export function useMarketActions() {
       const out = remapDatasetIds(local, roster, existing, uid)
       teams.teams.push(...out.teams)
       players.players.push(...out.players)
-      if (market.user) void api.countDownload(listing.id)
+      if (market.user) void api.countDownload(listing, market.user)
       void logEvent("market_download", { type: dataset.type })
       // Every Nth added dataset shows an interstitial — best effort, never blocks.
       void onCommunityDatasetAdded()
@@ -99,6 +99,7 @@ export function useMarketActions() {
       await api.publishDataset(buildDataset(draft, picked, images), market.user)
       void logEvent("market_publish", { type: draft.type })
       await market.load(true)
+      if (market.creators.length) void market.loadCreators()
       return true
     } catch (e) {
       const tooLarge = e instanceof Error && e.message === "too-large"
@@ -114,8 +115,9 @@ export function useMarketActions() {
     })
     if (!ok) return false
     try {
-      await api.deleteDataset(listing.id)
+      await api.deleteDataset(listing.id, listing.authorUid)
       market.removeListing(listing.id)
+      if (market.creators.length) void market.loadCreators()
       return true
     } catch {
       await showAlert(t("market.networkError"))
@@ -147,6 +149,7 @@ export function useMarketActions() {
       await authService.deleteAccount()
       market.user = null
       await market.load(true)
+      if (market.creators.length) void market.loadCreators()
       await showAlert(t("market.accountDeleted"))
       return true
     } catch (e) {

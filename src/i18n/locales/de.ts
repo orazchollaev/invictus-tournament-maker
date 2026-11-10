@@ -571,6 +571,20 @@ export default {
       "Dein Konto und alle von dir veröffentlichten Datensätze löschen? Das kann nicht rückgängig gemacht werden. Deine lokalen Teams sind nicht betroffen.",
     accountDeleted: "Dein Konto und deine veröffentlichten Datensätze wurden gelöscht.",
     reauthNeeded: "Melde dich aus Sicherheitsgründen ab, wieder an und versuche es erneut.",
+    creators: {
+      tab: "Ersteller",
+      search: "Ersteller suchen",
+      champion: "Ersteller der Woche",
+      championCount: "{n} Downloads letzte Woche",
+      noChampion:
+        "Noch kein Gewinner. Wer diese Woche die meisten Downloads hat, bekommt das Abzeichen.",
+      rules:
+        "Wochen enden sonntags um 23:59 UTC. Jede Person zählt pro Datensatz nur einmal, eigene Downloads zählen nicht.",
+      datasets: "{n} Datensätze",
+      wins: "{n}× Ersteller der Woche",
+      empty: "Noch keine Ersteller. Veröffentliche als Erster einen Datensatz.",
+      noDatasets: "Derzeit keine Datensätze im Market.",
+    },
   },
   settings: {
     title: "Einstellungen",

@@ -1,12 +1,24 @@
+/* A quiet one-line hint: a tint and a small dot, nothing that competes with
+   the content below it. */
 .notice {
-  background: color-mix(in srgb, var(--accent-2) 12%, var(--surface));
-  border: 1px solid color-mix(in srgb, var(--accent-2) 40%, transparent);
-  border-left: 3px solid var(--accent-2);
-  padding: var(--sp-3) var(--sp-4);
-  font-size: var(--fs-base);
-  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  background: color-mix(in srgb, var(--accent-2) 8%, transparent);
+  padding: var(--sp-2) var(--sp-3);
+  font-size: var(--fs-sm);
+  color: var(--text-muted);
   border-radius: var(--radius);
   margin-bottom: var(--sp-3);
+}
+
+.notice::before {
+  content: "";
+  flex-shrink: 0;
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-pill);
+  background: var(--accent-2);
 }
 
 /* ── Tabs ──────────────────────────────────────────────────────

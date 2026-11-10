@@ -558,6 +558,19 @@
       "Delete your account and every dataset you published? This cannot be undone. Your local teams are not affected.",
     accountDeleted: "Your account and published datasets were deleted.",
     reauthNeeded: "For security, sign out, sign in again and retry.",
+    creators: {
+      tab: "Creators",
+      search: "Search creators",
+      champion: "Creator of the week",
+      championCount: "{n} downloads last week",
+      noChampion: "No winner yet. Whoever gets the most downloads this week earns the badge.",
+      rules:
+        "Weeks end Sunday 23:59 UTC. Each person's download of a dataset counts once, and your own downloads don't count.",
+      datasets: "{n} datasets",
+      wins: "{n}× creator of the week",
+      empty: "No creators yet. Publish a dataset to be the first.",
+      noDatasets: "No datasets on the market right now.",
+    },
   },
   settings: {
     title: "Settings",

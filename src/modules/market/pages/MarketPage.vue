@@ -1,8 +1,12 @@
 <script setup lang="ts">
 /**
- * Two halves: "Built-in" is the datasets shipped with the app (offline, every
- * platform) and "Community" is the online market. Every "pick a dataset" link
- * in the app lands on the built-in tab via `?tab=offline`.
+ * Three tabs: "Built-in" is the datasets shipped with the app (offline, every
+ * platform), "Community" the online market, "Creators" the people publishing
+ * to it. Every "pick a dataset" link in the app lands on the built-in tab via
+ * `?tab=offline`.
+ *
+ * Below the tabs each one has a single toolbar row — search, plus the shared
+ * filter button on the community list — the same header every list page has.
  */
 import { computed, ref, watch } from "vue"
 import { useRoute, useRouter } from "vue-router"
@@ -13,11 +17,14 @@ import { useMarketStore } from "../store"
 import { useMarketActions } from "../composables/useMarketActions"
 import {
   MarketBuiltinDatasets,
+  MarketCreatorSheet,
+  MarketCreators,
   MarketDetailSheet,
+  MarketFilterMenu,
   MarketListingCard,
   MarketPublishSheet,
 } from "../components"
-import type { MarketListing, MarketSort } from "../types"
+import type { MarketCreator, MarketListing, MarketSort } from "../types"
 
 const { t } = useI18n()
 const route = useRoute()
@@ -25,41 +32,36 @@ const router = useRouter()
 const market = useMarketStore()
 const actions = useMarketActions()
 
-type Tab = "offline" | "online"
+type Tab = "offline" | "online" | "creators"
+const TABS: readonly Tab[] = ["offline", "online", "creators"]
 
 const tabs = computed(() => [
   { value: "offline", label: t("market.tabBuiltin") },
   { value: "online", label: t("market.tabCommunity") },
+  { value: "creators", label: t("market.creators.tab") },
 ])
 
 function initialTab(): Tab {
   if (!market.available) return "offline"
-  return route.query.tab === "offline" ? "offline" : "online"
+  const asked = route.query.tab as Tab
+  return TABS.includes(asked) ? asked : "online"
 }
 
 const tab = ref<Tab>(initialTab())
 
-// Kept in the URL so going back to the market returns to the same half.
+// Kept in the URL so going back to the market returns to the same tab.
 function selectTab(value: string) {
-  tab.value = value === "offline" ? "offline" : "online"
+  tab.value = TABS.includes(value as Tab) ? (value as Tab) : "online"
+  query.value = ""
   void router.replace({ query: { ...route.query, tab: tab.value } })
 }
 
 const query = ref("")
 const selected = ref<MarketListing | null>(null)
+const creator = ref<MarketCreator | null>(null)
 const publishing = ref(false)
 
-const sorts = computed(() => [
-  { value: "new", label: t("market.sortNew") },
-  { value: "popular", label: t("market.sortPopular") },
-])
-
 const typeFilter = ref<"all" | MarketListing["type"]>("all")
-const typeFilters = computed(() => [
-  { value: "all", label: t("market.filterAll") },
-  { value: "club", label: t("market.type.club") },
-  { value: "country", label: t("market.type.country") },
-])
 
 // Searches and filters what is already loaded: a server-side query would need
 // an index per sort order, and a page is only 20 small documents anyway.
@@ -78,15 +80,16 @@ async function openPublish() {
   if (await actions.ensureSignedIn()) publishing.value = true
 }
 
-// The network is touched only once the community tab is actually opened.
-let started = false
+// The network is touched only once an online tab is actually opened.
 watch(
   tab,
   async (value) => {
-    if (value !== "online" || started) return
-    started = true
+    if (value === "offline") return
     await market.init()
-    if (!market.listings.length) await market.load(true)
+    // The winner's badge shows on their datasets too, so it loads with either tab.
+    void market.loadChampions()
+    if (value === "online" && !market.listings.length) await market.load(true)
+    if (value === "creators" && !market.creators.length) await market.loadCreators()
   },
   { immediate: true }
 )
@@ -97,7 +100,7 @@ watch(
     <div class="page-top">
       <h2 class="page-title">{{ t("market.title") }}</h2>
       <AppButton
-        v-if="market.available && tab === 'online'"
+        v-if="market.available && tab !== 'offline'"
         variant="filled"
         icon-only
         :title="t('market.publish')"
@@ -119,24 +122,22 @@ watch(
 
     <MarketBuiltinDatasets v-if="tab === 'offline'" />
 
+    <template v-else-if="tab === 'creators'">
+      <div class="search-row">
+        <AppSearchInput v-model="query" :placeholder="t('market.creators.search')" />
+      </div>
+      <MarketCreators :query="query" @open="creator = $event" />
+    </template>
+
     <template v-else>
       <div class="search-row">
         <AppSearchInput v-model="query" :placeholder="t('market.search')" />
-        <AppButtonGroup
-          :model-value="market.sort"
-          :options="sorts"
-          size="md"
-          @update:model-value="market.setSort($event as MarketSort)"
+        <MarketFilterMenu
+          v-model:type="typeFilter"
+          :sort="market.sort"
+          @update:sort="market.setSort($event as MarketSort)"
         />
       </div>
-
-      <AppButtonGroup
-        v-model="typeFilter"
-        :options="typeFilters"
-        size="md"
-        block
-        class="market-filter"
-      />
 
       <p v-if="market.failed" class="market-note">
         {{ t("market.networkError") }}
@@ -166,6 +167,12 @@ watch(
       </AppButton>
     </template>
 
+    <MarketCreatorSheet
+      v-if="creator"
+      :creator="creator"
+      @close="creator = null"
+      @select="selected = $event"
+    />
     <MarketDetailSheet v-if="selected" :listing="selected" @close="selected = null" />
     <MarketPublishSheet v-if="publishing" @close="publishing = false" />
   </div>
@@ -173,10 +180,6 @@ watch(
 
 <style scoped>
 .market-tabs {
-  margin-bottom: var(--sp-3);
-}
-
-.market-filter {
   margin-bottom: var(--sp-3);
 }
 

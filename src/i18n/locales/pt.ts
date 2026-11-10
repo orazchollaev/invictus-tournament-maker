@@ -570,6 +570,20 @@ export default {
       "Eliminar a sua conta e todos os conjuntos que publicou? Esta ação não pode ser desfeita. As suas equipas locais não são afetadas.",
     accountDeleted: "A sua conta e os conjuntos publicados foram eliminados.",
     reauthNeeded: "Por segurança, termine sessão, inicie sessão novamente e tente outra vez.",
+    creators: {
+      tab: "Criadores",
+      search: "Pesquisar criadores",
+      champion: "Criador da semana",
+      championCount: "{n} transferências na semana passada",
+      noChampion:
+        "Ainda não há vencedor. Quem tiver mais transferências esta semana ganha o distintivo.",
+      rules:
+        "As semanas terminam ao domingo às 23:59 UTC. Cada pessoa conta uma só vez por conjunto e as suas próprias transferências não contam.",
+      datasets: "{n} conjuntos",
+      wins: "{n}× criador da semana",
+      empty: "Ainda não há criadores. Publique um conjunto e seja o primeiro.",
+      noDatasets: "De momento não há conjuntos no market.",
+    },
   },
   settings: {
     title: "Configurações",

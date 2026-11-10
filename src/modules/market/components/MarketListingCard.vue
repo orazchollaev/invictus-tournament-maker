@@ -6,14 +6,19 @@
  */
 import { computed } from "vue"
 import { useI18n } from "vue-i18n"
-import { Download, Flag, Shield } from "@lucide/vue"
+import { Download, Flag, Shield, Trophy } from "@lucide/vue"
 import { AppChip, AppIcon, AppListItem } from "@/components/ui"
+import { useMarketStore } from "../store"
 import type { MarketListing } from "../types"
 
 const props = defineProps<{ listing: MarketListing }>()
 const emit = defineEmits<{ click: [] }>()
 
 const { t } = useI18n()
+const market = useMarketStore()
+
+/** The author is the reigning creator of the week. */
+const champion = computed(() => market.champion?.authorUid === props.listing.authorUid)
 
 const subtitle = computed(
   () =>
@@ -30,6 +35,9 @@ const subtitle = computed(
     @open="emit('click')"
   >
     <template #trail>
+      <span v-if="champion" class="champion" :title="t('market.creators.champion')">
+        <AppIcon :icon="Trophy" size="xs" />
+      </span>
       <AppChip square>{{ t("common.teams", { n: listing.teamCount }) }}</AppChip>
       <span class="downloads">
         <AppIcon :icon="Download" size="xs" />
@@ -40,6 +48,11 @@ const subtitle = computed(
 </template>
 
 <style scoped>
+.champion {
+  display: inline-flex;
+  color: var(--gold-text);
+}
+
 .downloads {
   display: inline-flex;
   align-items: center;

@@ -571,6 +571,20 @@ export default {
       "Supprimer votre compte et tous les jeux de données que vous avez publiés ? Cette action est irréversible. Vos équipes locales ne sont pas affectées.",
     accountDeleted: "Votre compte et vos jeux de données publiés ont été supprimés.",
     reauthNeeded: "Par sécurité, déconnectez-vous, reconnectez-vous puis réessayez.",
+    creators: {
+      tab: "Créateurs",
+      search: "Rechercher des créateurs",
+      champion: "Créateur de la semaine",
+      championCount: "{n} téléchargements la semaine dernière",
+      noChampion:
+        "Pas encore de gagnant. Celui qui a le plus de téléchargements cette semaine remporte le badge.",
+      rules:
+        "Les semaines se terminent le dimanche à 23:59 UTC. Chaque personne compte une seule fois par jeu de données, et vos propres téléchargements ne comptent pas.",
+      datasets: "{n} jeux de données",
+      wins: "{n}× créateur de la semaine",
+      empty: "Pas encore de créateurs. Publiez un jeu de données pour être le premier.",
+      noDatasets: "Aucun jeu de données sur le market pour le moment.",
+    },
   },
   settings: {
     title: "Paramètres",

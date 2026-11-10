@@ -570,6 +570,19 @@ export default {
       "¿Eliminar tu cuenta y todos los conjuntos que publicaste? No se puede deshacer. Tus equipos locales no se verán afectados.",
     accountDeleted: "Tu cuenta y tus conjuntos publicados se han eliminado.",
     reauthNeeded: "Por seguridad, cierra sesión, vuelve a iniciarla e inténtalo de nuevo.",
+    creators: {
+      tab: "Creadores",
+      search: "Buscar creadores",
+      champion: "Creador de la semana",
+      championCount: "{n} descargas la semana pasada",
+      noChampion: "Aún no hay ganador. Quien tenga más descargas esta semana gana la insignia.",
+      rules:
+        "Las semanas terminan el domingo a las 23:59 UTC. Cada persona cuenta una sola vez por conjunto y tus propias descargas no cuentan.",
+      datasets: "{n} conjuntos",
+      wins: "{n}× creador de la semana",
+      empty: "Aún no hay creadores. Publica un conjunto y sé el primero.",
+      noDatasets: "Ahora mismo no hay conjuntos en el market.",
+    },
   },
   settings: {
     title: "Configuración",

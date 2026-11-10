@@ -37,6 +37,11 @@ const props = defineProps<{
   sortLabel?: string
   /** Overrides the panel's min-width — a lead section usually needs more room. */
   width?: string
+  /**
+   * False when each sort key already has its one natural direction (e.g. a
+   * server-side "newest" / "most downloaded"): the asc/desc section is hidden.
+   */
+  directional?: boolean
 }>()
 
 const sortKey = defineModel<T>("sortKey", { required: true })
@@ -106,7 +111,7 @@ function onDirSelect(dir: unknown) {
           </RadioGroupItem>
         </RadioGroupRoot>
 
-        <template v-if="filterActive">
+        <template v-if="filterActive && directional !== false">
           <div class="sort-filter-sep" />
           <RadioGroupRoot
             :model-value="sortAsc ? 'asc' : 'desc'"

@@ -571,6 +571,20 @@ export default {
       "Eliminare il tuo account e tutti i dataset che hai pubblicato? L'operazione è irreversibile. Le tue squadre locali non verranno toccate.",
     accountDeleted: "Il tuo account e i dataset pubblicati sono stati eliminati.",
     reauthNeeded: "Per sicurezza, esci, accedi di nuovo e riprova.",
+    creators: {
+      tab: "Creatori",
+      search: "Cerca creatori",
+      champion: "Creatore della settimana",
+      championCount: "{n} download la settimana scorsa",
+      noChampion:
+        "Ancora nessun vincitore. Chi ottiene più download questa settimana vince il badge.",
+      rules:
+        "Le settimane finiscono la domenica alle 23:59 UTC. Ogni persona conta una sola volta per dataset e i tuoi download non contano.",
+      datasets: "{n} dataset",
+      wins: "{n}× creatore della settimana",
+      empty: "Ancora nessun creatore. Pubblica un dataset e sii il primo.",
+      noDatasets: "Al momento nessun dataset nel market.",
+    },
   },
   settings: {
     title: "Impostazioni",

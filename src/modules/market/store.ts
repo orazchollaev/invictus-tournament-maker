@@ -2,7 +2,9 @@ import { defineStore } from "pinia"
 import { ref } from "vue"
 import * as api from "./services/marketApi"
 import * as authService from "./services/authService"
-import type { MarketListing, MarketSort, MarketUser } from "./types"
+import type { MarketCreator, MarketListing, MarketSort, MarketUser, WeeklyTally } from "./types"
+import { tallyWins, topOfWeek, weeksToSettle } from "./utils/champions"
+import { weekOf } from "./utils/week"
 
 /**
  * Session state for the market: who is signed in and the page of listings on
@@ -87,6 +89,65 @@ export const useMarketStore = defineStore(
       listings.value = listings.value.filter((l) => l.id !== id)
     }
 
+    // ── Creators ────────────────────────────────────────────────────
+    const creators = ref<MarketCreator[]>([])
+    const creatorsLoading = ref(false)
+    const creatorsFailed = ref(false)
+    /** Last finished week's winner: the one wearing the badge right now. */
+    const champion = ref<WeeklyTally | null>(null)
+    /** Weeks won, by uid. */
+    const wins = ref<Map<string, number>>(new Map())
+    let championsLoaded: Promise<void> | null = null
+
+    /**
+     * Reads the settled winners and settles any finished week that has none
+     * yet — the app has no server of its own, so the first device to look
+     * after a week ends writes its result. Once per session.
+     */
+    function loadChampions() {
+      if (!available) return Promise.resolve()
+      championsLoaded ??= (async () => {
+        try {
+          const winners = await api.listWinners()
+          const current = weekOf(Date.now())
+          const weeks = weeksToSettle(
+            current,
+            winners.map((w) => w.week)
+          )
+          const tallies = await Promise.all(weeks.map((w) => api.listWeek(w)))
+          weeks.forEach((week, i) => {
+            const recorded = winners.find((w) => w.week === week) ?? null
+            const top = topOfWeek(tallies[i], recorded)
+            if (!top || top === recorded) return
+            const at = winners.indexOf(recorded as WeeklyTally)
+            if (at >= 0) winners.splice(at, 1, top)
+            else winners.push(top)
+            if (user.value) void api.recordWinner(top)
+          })
+          champion.value = winners.find((w) => w.week === current - 1) ?? null
+          wins.value = tallyWins(winners)
+        } catch {
+          // No badge this session; nothing else depends on it.
+          championsLoaded = null
+        }
+      })()
+      return championsLoaded
+    }
+
+    async function loadCreators() {
+      if (!available || creatorsLoading.value) return
+      creatorsLoading.value = true
+      creatorsFailed.value = false
+      try {
+        const [list] = await Promise.all([api.listCreators(), loadChampions()])
+        creators.value = list
+      } catch {
+        creatorsFailed.value = true
+      } finally {
+        creatorsLoading.value = false
+      }
+    }
+
     return {
       available,
       user,
@@ -102,6 +163,13 @@ export const useMarketStore = defineStore(
       load,
       setSort,
       removeListing,
+      creators,
+      creatorsLoading,
+      creatorsFailed,
+      champion,
+      wins,
+      loadChampions,
+      loadCreators,
     }
   },
   { persistedState: { persist: false } }

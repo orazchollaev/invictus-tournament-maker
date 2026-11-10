@@ -569,6 +569,20 @@ export default {
       "Hapus akun Anda dan semua dataset yang Anda publikasikan? Tindakan ini tidak dapat dibatalkan. Tim lokal Anda tidak terpengaruh.",
     accountDeleted: "Akun dan dataset yang Anda publikasikan telah dihapus.",
     reauthNeeded: "Demi keamanan, keluar, masuk lagi, lalu coba ulang.",
+    creators: {
+      tab: "Kreator",
+      search: "Cari kreator",
+      champion: "Kreator minggu ini",
+      championCount: "{n} unduhan minggu lalu",
+      noChampion:
+        "Belum ada pemenang. Kreator dengan unduhan terbanyak minggu ini mendapat lencana.",
+      rules:
+        "Minggu berakhir hari Minggu pukul 23:59 UTC. Setiap orang dihitung sekali per dataset, dan unduhanmu sendiri tidak dihitung.",
+      datasets: "{n} dataset",
+      wins: "{n}× kreator minggu ini",
+      empty: "Belum ada kreator. Publikasikan dataset dan jadilah yang pertama.",
+      noDatasets: "Saat ini tidak ada dataset di market.",
+    },
   },
   settings: {
     title: "Pengaturan",

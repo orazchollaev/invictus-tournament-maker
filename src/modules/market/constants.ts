@@ -16,6 +16,9 @@ export const IMAGE_SHRINK = { size: 64, quality: 0.4 } as const
 
 export const PAGE_SIZE = 20
 
+/** How many creators the creators list shows, most downloaded first. */
+export const CREATORS_LIMIT = 50
+
 export const REPORT_REASONS = ["spam", "copyright", "offensive", "other"] as const
 
 export const DATASET_TYPES = ["country", "club"] as const

@@ -13,6 +13,27 @@ service cloud.firestore {
       return v is string && v.size() > 0 && v.size() <= max;
     }
 
+    // Market weeks run Monday 00:00 UTC to Sunday 23:59 UTC, numbered from
+    // 1970-01-05. Same numbers as src/modules/market/utils/week.ts.
+    function marketWeek() {
+      return math.floor((request.time.toMillis() - 345600000) / 604800000);
+    }
+
+    // A number field before this write: 0 when the document is new or lacks it.
+    function before(field) {
+      return resource == null ? 0 : resource.data.get(field, 0);
+    }
+
+    // True when this write (or the batch it is in) records the signed-in
+    // user's first download of `datasetId`. Every download counter below moves
+    // only alongside such a record, which is what makes a download count once.
+    function firstDownloadOf(datasetId) {
+      let path = /databases/$(database)/documents/downloads/$(datasetId + '_' + request.auth.uid);
+      return datasetId is string
+        && !exists(path)
+        && existsAfter(path);
+    }
+
     // Public listing entry: a few hundred bytes, read by everyone.
     match /datasets/{id} {
       allow read: if true;
@@ -42,10 +63,12 @@ service cloud.firestore {
         && request.resource.data.downloads == 0
         && request.resource.data.createdAt == request.time;
 
-      // The only change anyone may make: bump the download counter by one.
+      // The only change anyone may make: bump the download counter by one, in
+      // the same batch as that user's first download record for it.
       allow update: if signedIn()
         && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['downloads'])
-        && request.resource.data.downloads == resource.data.downloads + 1;
+        && request.resource.data.downloads == resource.data.downloads + 1
+        && firstDownloadOf(id);
 
       allow delete: if signedIn() && resource.data.authorUid == request.auth.uid;
     }
@@ -75,6 +98,101 @@ service cloud.firestore {
       allow write: if request.auth != null
         && request.auth.token.email == 'orazchollaev@gmail.com'
         && request.auth.token.email_verified == true;
+    }
+
+    // ── Creators and the weekly badge ─────────────────────────────────
+    // The app has no server, so clients keep these counters themselves and
+    // the rules make each bump answer to a real event in the same batch.
+
+    // One per (dataset, downloader), never updated: a second download of the
+    // same dataset fails here, and with it every counter in its batch. The
+    // author's own downloads are refused outright.
+    match /downloads/{id} {
+      allow read: if false;
+      allow create: if signedIn()
+        && request.resource.data.keys().hasOnly(['datasetId', 'uid', 'week', 'createdAt'])
+        && request.resource.data.uid == request.auth.uid
+        && id == request.resource.data.datasetId + '_' + request.auth.uid
+        && request.resource.data.week == marketWeek()
+        && request.resource.data.createdAt == request.time
+        && get(/databases/$(database)/documents/datasets/$(request.resource.data.datasetId)).data.authorUid != request.auth.uid
+        && getAfter(/databases/$(database)/documents/datasets/$(request.resource.data.datasetId)).data.downloads
+           == get(/databases/$(database)/documents/datasets/$(request.resource.data.datasetId)).data.downloads + 1;
+    }
+
+    // Totals for the creators list. `lastDataset` / `lastDownload` name the
+    // dataset a bump is for, so the rule can check that event happened.
+    match /creators/{uid} {
+      allow read: if true;
+
+      // Publishing: +1 dataset, alongside creating that dataset.
+      allow create, update: if signedIn()
+        && uid == request.auth.uid
+        && request.resource.data.keys().hasOnly(['name', 'datasets', 'downloads', 'lastDataset', 'lastDownload'])
+        && (resource == null
+            || request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name', 'datasets', 'lastDataset']))
+        && text(request.resource.data.name, 60)
+        && request.resource.data.datasets == before('datasets') + 1
+        && request.resource.data.get('downloads', 0) == before('downloads')
+        && !exists(/databases/$(database)/documents/datasets/$(request.resource.data.lastDataset))
+        && getAfter(/databases/$(database)/documents/datasets/$(request.resource.data.lastDataset)).data.authorUid == uid;
+
+      // Deleting a dataset: -1, alongside deleting it.
+      allow update: if signedIn()
+        && uid == request.auth.uid
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['datasets', 'lastDataset'])
+        && request.resource.data.datasets == resource.data.get('datasets', 0) - 1
+        && get(/databases/$(database)/documents/datasets/$(request.resource.data.lastDataset)).data.authorUid == uid
+        && !existsAfter(/databases/$(database)/documents/datasets/$(request.resource.data.lastDataset));
+
+      // Someone else downloading one of their datasets for the first time: +1.
+      allow create, update: if signedIn()
+        && request.resource.data.keys().hasOnly(['name', 'datasets', 'downloads', 'lastDataset', 'lastDownload'])
+        && (resource == null
+            || request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name', 'downloads', 'lastDownload']))
+        && request.resource.data.downloads == before('downloads') + 1
+        && request.resource.data.get('datasets', 0) == before('datasets')
+        && firstDownloadOf(request.resource.data.lastDownload)
+        && get(/databases/$(database)/documents/datasets/$(request.resource.data.lastDownload)).data.authorUid == uid
+        && request.resource.data.name == get(/databases/$(database)/documents/datasets/$(request.resource.data.lastDownload)).data.authorName;
+
+      allow delete: if signedIn() && uid == request.auth.uid;
+    }
+
+    // A creator's downloads in one week, `{week}_{authorUid}`. Only the
+    // current week can move, so a finished week's numbers are final.
+    match /weekly/{id} {
+      allow read: if true;
+
+      allow create, update: if signedIn()
+        && request.resource.data.keys().hasOnly(['week', 'authorUid', 'authorName', 'count', 'lastDownload'])
+        && request.resource.data.week == marketWeek()
+        && id == string(request.resource.data.week) + '_' + request.resource.data.authorUid
+        && (resource == null
+            || request.resource.data.diff(resource.data).affectedKeys().hasOnly(['authorName', 'count', 'lastDownload']))
+        && request.resource.data.count == before('count') + 1
+        && firstDownloadOf(request.resource.data.lastDownload)
+        && get(/databases/$(database)/documents/datasets/$(request.resource.data.lastDownload)).data.authorUid == request.resource.data.authorUid
+        && request.resource.data.authorName == get(/databases/$(database)/documents/datasets/$(request.resource.data.lastDownload)).data.authorName;
+
+      allow delete: if signedIn() && resource.data.authorUid == request.auth.uid;
+    }
+
+    // The winner of each finished week, `{week}`. The app has nothing to run
+    // at midnight on Sunday, so the first device to look afterwards settles
+    // it. The count has to match that week's real tally, and a record can only
+    // be replaced by a higher one, so a false claim does not survive the next
+    // honest visit.
+    match /winners/{week} {
+      allow read: if true;
+      allow create, update: if signedIn()
+        && request.resource.data.keys().hasOnly(['week', 'authorUid', 'authorName', 'count'])
+        && week == string(request.resource.data.week)
+        && request.resource.data.week < marketWeek()
+        && request.resource.data.count > 0
+        && request.resource.data.count == get(/databases/$(database)/documents/weekly/$(week + '_' + request.resource.data.authorUid)).data.count
+        && request.resource.data.authorName == get(/databases/$(database)/documents/weekly/$(week + '_' + request.resource.data.authorUid)).data.authorName
+        && (resource == null || request.resource.data.count > resource.data.count);
     }
 
     // Write-only for clients; read them in the console. One report per user per dataset.

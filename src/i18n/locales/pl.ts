@@ -567,6 +567,20 @@ export default {
       "Usunąć Twoje konto i wszystkie opublikowane przez Ciebie zestawy danych? Tej operacji nie można cofnąć. Twoje lokalne drużyny pozostaną bez zmian.",
     accountDeleted: "Twoje konto i opublikowane zestawy danych zostały usunięte.",
     reauthNeeded: "Ze względów bezpieczeństwa wyloguj się, zaloguj ponownie i spróbuj jeszcze raz.",
+    creators: {
+      tab: "Twórcy",
+      search: "Szukaj twórców",
+      champion: "Twórca tygodnia",
+      championCount: "{n} pobrań w zeszłym tygodniu",
+      noChampion:
+        "Jeszcze nie ma zwycięzcy. Odznakę zdobywa ten, kto ma najwięcej pobrań w tym tygodniu.",
+      rules:
+        "Tygodnie kończą się w niedzielę o 23:59 UTC. Każda osoba liczy się raz na zestaw, a własne pobrania się nie liczą.",
+      datasets: "Zestawy: {n}",
+      wins: "{n}× twórca tygodnia",
+      empty: "Jeszcze nie ma twórców. Opublikuj zestaw jako pierwszy.",
+      noDatasets: "Obecnie brak zestawów w markecie.",
+    },
   },
   settings: {
     title: "Ustawienia",

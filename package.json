@@ -11,6 +11,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "announce": "node scripts/announce.ts",
+    "market:backfill": "node scripts/backfill-creators.ts",
     "release": "release-it",
     "release:patch": "release-it patch",
     "release:minor": "release-it minor",
