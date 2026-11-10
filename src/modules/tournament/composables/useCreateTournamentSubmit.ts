@@ -134,6 +134,7 @@ export function useCreateTournamentSubmit(draft: ReturnType<typeof useCreateTour
         knockoutLegMode: settingsStore.knockoutLegMode,
         finalLegMode: finalLegMode.value,
         roundLegModes: roundLegModes.value,
+        doubleElim: doubleElim.value,
         tiebreaker: tiebreaker.value,
         winPoints: winPoints.value,
         drawPoints: drawPoints.value,

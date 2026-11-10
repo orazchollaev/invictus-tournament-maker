@@ -160,3 +160,55 @@ describe("createLeagueTournament", () => {
     expect(t.winnerId).toBeNull()
   })
 })
+
+/**
+ * A league or swiss playoff keeps its double-elimination flag on the
+ * tournament, next to the leg modes, so the next season has to carry it the
+ * same way — it used to start the playoff as a single bracket.
+ */
+describe("newSeason keeps a double-elimination playoff", () => {
+  function finished(t: Tournament) {
+    t.winnerId = t.teamIds[0]
+  }
+  const playoff = { enabled: true, qualifierCount: 4, seedMode: "seeded" as const, started: false }
+
+  it("league", () => {
+    const { crud, tournaments, ids } = setup()
+    const id = crud.createLeagueTournament("League", ids)
+    const t = tournaments.value.find((x) => x.id === id)!
+    t.leaguePlayoff = { ...playoff }
+    t.doubleElim = true
+    finished(t)
+    const nextId = crud.newSeason(id)
+    const next = tournaments.value.find((x) => x.id === nextId)!
+    expect(next.doubleElim).toBe(true)
+  })
+
+  it("swiss", () => {
+    const { crud, tournaments, ids } = setup()
+    const id = crud.createSwiss("Swiss", ids, {
+      opponentCount: 3,
+      potCount: 1,
+      balanceHomeAway: true,
+      playoffQualifierCount: 4,
+      doubleElim: true,
+    })
+    const t = tournaments.value.find((x) => x.id === id)!
+    expect(t.doubleElim).toBe(true)
+    finished(t)
+    const nextId = crud.newSeason(id)
+    const next = tournaments.value.find((x) => x.id === nextId)!
+    expect(next.doubleElim).toBe(true)
+  })
+
+  it("does not switch it on for a single-bracket playoff", () => {
+    const { crud, tournaments, ids } = setup()
+    const id = crud.createLeagueTournament("League", ids)
+    const t = tournaments.value.find((x) => x.id === id)!
+    t.leaguePlayoff = { ...playoff }
+    finished(t)
+    const nextId = crud.newSeason(id)
+    const next = tournaments.value.find((x) => x.id === nextId)!
+    expect(next.doubleElim).toBeFalsy()
+  })
+})

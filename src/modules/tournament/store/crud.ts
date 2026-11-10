@@ -234,6 +234,7 @@ export function useCrudActions(
         knockoutLegMode: t.knockoutLegMode,
         finalLegMode: t.finalLegMode,
         roundLegModes: t.roundLegModes ? { ...t.roundLegModes } : undefined,
+        doubleElim: t.doubleElim,
         tiebreaker: t.tiebreaker,
         winPoints: t.winPoints,
         drawPoints: t.drawPoints,
@@ -268,6 +269,7 @@ export function useCrudActions(
         if (t.finalLegMode) newT.finalLegMode = t.finalLegMode
         if (t.roundLegModes) newT.roundLegModes = { ...t.roundLegModes }
         if (t.thirdPlaceLegMode) newT.thirdPlaceLegMode = t.thirdPlaceLegMode
+        if (t.doubleElim) newT.doubleElim = true
       }
       carryManager(t, newT)
       tournaments.value.push(newT)
@@ -387,6 +389,7 @@ export function useCrudActions(
       if (t.finalLegMode) newT.finalLegMode = t.finalLegMode
       if (t.roundLegModes) newT.roundLegModes = { ...t.roundLegModes }
       if (t.thirdPlaceLegMode) newT.thirdPlaceLegMode = t.thirdPlaceLegMode
+      if (t.doubleElim) newT.doubleElim = true
     }
     carryManager(t, newT)
     tournaments.value.push(newT)

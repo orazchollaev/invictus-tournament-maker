@@ -87,7 +87,9 @@ describe("createCustom", () => {
     const a = createPhase("league", { name: "A" })
     const b = createPhase("league", { name: "B" })
     const cyclic = [createPhaseEdge(a.id, b.id, 1, 2), createPhaseEdge(b.id, a.id, 1, 2)]
-    expect(s.crud.createCustom("Bad", s.ids, { phases: [a, b], phaseEdges: cyclic })).toBeUndefined()
+    expect(
+      s.crud.createCustom("Bad", s.ids, { phases: [a, b], phaseEdges: cyclic })
+    ).toBeUndefined()
     expect(s.tournaments.value).toHaveLength(0)
   })
 })
@@ -369,8 +371,48 @@ describe("newSeason", () => {
 
     // The same rule every other format follows: the job only carries while the
     // club is still in the competition.
-    const nextId = s.crud.newSeason(id, false, undefined, undefined, undefined, undefined, s.ids.slice(1))
+    const nextId = s.crud.newSeason(
+      id,
+      false,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      s.ids.slice(1)
+    )
     const next = s.tournaments.value.find((x) => x.id === nextId)!
     expect(next.manager).toBeUndefined()
+  })
+})
+
+describe("newSeason with a double-elimination knockout", () => {
+  it("builds the knockout as a double bracket again", () => {
+    const s = setup()
+    const group = createPhase("group", { name: "Groups", teamCount: TEAMS })
+    if (group.config.kind === "group") group.config.group.groupCount = 4
+    const cup = createPhase("knockout", { name: "Cup", teamCount: 8, isFinal: true })
+    if (cup.config.kind === "knockout") cup.config.knockout.doubleElim = true
+    const id = s.crud.createCustom("DE", s.ids, {
+      phases: [group, cup],
+      phaseEdges: [createPhaseEdge(group.id, cup.id, 1, 2)],
+    })!
+    s.phases.simulateCustomTournament(id)
+    const first = phaseOf(
+      s.tournaments.value.find((x) => x.id === id)!,
+      cup.id
+    )
+
+    const nextId = s.crud.newSeason(id)!
+    s.phases.simulateCustomTournament(nextId)
+    const second = phaseOf(
+      s.tournaments.value.find((x) => x.id === nextId)!,
+      cup.id
+    )
+
+    expect(second.config.kind === "knockout" && second.config.knockout.doubleElim).toBe(true)
+    // A double bracket has its losers side and grand final on top of the
+    // winners rounds, so a single bracket would come back shorter.
+    expect(second.rounds?.length).toBe(first.rounds?.length)
+    expect(second.rounds!.length).toBeGreaterThan(3)
   })
 })

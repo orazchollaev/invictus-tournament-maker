@@ -600,6 +600,8 @@ export interface CreateSwissOptions {
   knockoutLegMode?: LegMode
   finalLegMode?: LegMode
   roundLegModes?: Partial<Record<KnockoutStage, LegMode>>
+  /** The playoff bracket is a double-elimination one. */
+  doubleElim?: boolean
   tiebreaker?: Tiebreaker
   winPoints?: number
   drawPoints?: number
@@ -640,6 +642,7 @@ export function createSwissTournament(
     knockoutLegMode: opts.knockoutLegMode ?? "single",
     finalLegMode: opts.finalLegMode ?? "single",
     roundLegModes: opts.roundLegModes,
+    ...(opts.doubleElim ? { doubleElim: true } : {}),
     tiebreaker: opts.tiebreaker,
     winPoints: opts.winPoints,
     drawPoints: opts.drawPoints,
