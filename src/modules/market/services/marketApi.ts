@@ -308,7 +308,14 @@ export async function publishDataset(dataset: MarketDataset, author: MarketUser)
         {
           type: "set",
           reference: `${CREATORS}/${author.uid}`,
-          data: { name: listing.authorName, datasets: increment(1), lastDataset: id },
+          // `downloads` is written (as +0) so a first-time creator has the field the
+          // creators list orders by — Firestore leaves out documents without it.
+          data: {
+            name: listing.authorName,
+            datasets: increment(1),
+            downloads: increment(0),
+            lastDataset: id,
+          },
           options: { merge: true },
         },
       ],
