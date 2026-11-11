@@ -43,11 +43,14 @@ export function resizeImageFile(file: File, size = 128, quality = 0.85): Promise
       }
       ctx.drawImage(img, sx, sy, srcSize, srcSize, 0, 0, size, size)
 
-      // Formats that commonly carry transparency keep it (PNG); everything
-      // else (JPEG, HEIC, ...) is re-encoded as JPEG for the smaller payload.
+      // Formats that commonly carry transparency keep it: as WebP, a fraction
+      // of PNG's size, or PNG where the WebView cannot encode WebP (it then
+      // hands back PNG anyway). Everything else (JPEG, HEIC, ...) is
+      // re-encoded as JPEG for the smaller payload.
       const preserveAlpha = ["image/png", "image/webp", "image/gif"].includes(file.type)
-      const mime = preserveAlpha ? "image/png" : "image/jpeg"
-      resolve(canvas.toDataURL(mime, quality))
+      if (!preserveAlpha) return resolve(canvas.toDataURL("image/jpeg", quality))
+      const webp = canvas.toDataURL("image/webp", quality)
+      resolve(webp.startsWith("data:image/webp") ? webp : canvas.toDataURL("image/png"))
     }
 
     img.onerror = () => {
