@@ -53,18 +53,14 @@
     "firebase": "^13.1.0",
     "html-to-image": "^1.11.13",
     "idb-keyval": "^6.3.0",
-    "jspdf": "^4.2.1",
-    "jspdf-autotable": "^5.0.9",
     "pinia": "^4.1.0",
     "pinia-plugin-persistedstate-2": "^2.0.32",
     "qrcode": "^1.5.4",
     "reka-ui": "^2.11.0",
-    "sharp": "^0.35.5",
     "vue": "^3.5.44",
     "vue-draggable-plus": "^0.6.1",
     "vue-i18n": "^11.4.17",
-    "vue-router": "^5.4.0",
-    "workbox-window": "^7.4.1"
+    "vue-router": "^5.4.0"
   },
   "devDependencies": {
     "@capacitor/assets": "^4.0.0",
