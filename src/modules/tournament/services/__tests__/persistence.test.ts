@@ -9,6 +9,7 @@
 // each of them once ended the same way: loadTournaments rejected, hydrate never
 // resolved, and the user got a blank screen with their data still on disk.
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
+import { gunzipSync } from "node:zlib"
 import type { Tournament } from "@/modules/tournament/types"
 
 /** An in-memory stand-in for IndexedDB, with failures we can switch on. */
@@ -88,6 +89,13 @@ function tournament(id: string, name = "Cup"): Tournament {
     winnerId: null,
     createdAt: 1700000000000,
   }
+}
+
+/** A stored record, decoded: records are written gzipped, a flush writes plain JSON. */
+function readItem(id: string): Tournament & Record<string, unknown> {
+  const raw = db.get(ITEM + id)
+  const text = raw instanceof Uint8Array ? gunzipSync(raw).toString("utf8") : (raw as string)
+  return JSON.parse(text)
 }
 
 function seed(...ids: string[]) {
@@ -258,7 +266,8 @@ describe("one bad record does not take the others down", () => {
 describe("writing", () => {
   it("writes a tournament under its own key", async () => {
     await saveTournament(tournament("a"))
-    expect(JSON.parse(db.get(ITEM + "a") as string).id).toBe("a")
+    expect(db.get(ITEM + "a")).toBeInstanceOf(Uint8Array)
+    expect(readItem("a").id).toBe("a")
   })
 
   it("resolves rather than rejecting when the write is refused for quota", async () => {
@@ -304,7 +313,7 @@ describe("writing", () => {
       await vi.advanceTimersByTimeAsync(SAVE_DEBOUNCE_MS - 1)
       expect(writes()).toHaveLength(0)
       await vi.advanceTimersByTimeAsync(10)
-      expect(writes()).toHaveLength(1)
+      await vi.waitFor(() => expect(writes()).toHaveLength(1))
     })
 
     it("collapses a burst into one write of the latest state", async () => {
@@ -316,8 +325,8 @@ describe("writing", () => {
         void saveTournament(t)
       }
       await vi.advanceTimersByTimeAsync(SAVE_DEBOUNCE_MS + 10)
-      expect(writes()).toHaveLength(1)
-      expect(JSON.parse(db.get(ITEM + "a") as string).name).toBe("edit-9")
+      await vi.waitFor(() => expect(writes()).toHaveLength(1))
+      expect(readItem("a").name).toBe("edit-9")
     })
 
     it("still writes during a long continuous burst (max wait)", async () => {
@@ -336,8 +345,10 @@ describe("writing", () => {
       void saveTournament(tournament("a"))
       void saveTournament(tournament("b"))
       await vi.advanceTimersByTimeAsync(SAVE_DEBOUNCE_MS + 10)
-      expect(db.has(ITEM + "a")).toBe(true)
-      expect(db.has(ITEM + "b")).toBe(true)
+      await vi.waitFor(() => {
+        expect(db.has(ITEM + "a")).toBe(true)
+        expect(db.has(ITEM + "b")).toBe(true)
+      })
     })
 
     it("flushPendingSaves writes immediately and resolves the promise", async () => {
@@ -349,6 +360,25 @@ describe("writing", () => {
       // Nothing left queued: the timer must not write a second time.
       await vi.advanceTimersByTimeAsync(SAVE_DEBOUNCE_MS * 2)
       expect(writes()).toHaveLength(1)
+    })
+
+    it("a flush writes plain JSON at once; a write it overtook does not land on top", async () => {
+      const old = saveTournament(tournament("a", "old"))
+      await vi.advanceTimersByTimeAsync(SAVE_DEBOUNCE_MS + 10)
+      // The "old" write is compressing now; a newer edit is flushed meanwhile.
+      void saveTournament(tournament("a", "new"))
+      flushPendingSaves()
+      expect(typeof db.get(ITEM + "a")).toBe("string")
+      await old // resolves once the overtaken write has finished compressing
+      expect(readItem("a").name).toBe("new")
+    })
+
+    it("a delete drops a write that is still compressing", async () => {
+      const p = saveTournament(tournament("a"))
+      await vi.advanceTimersByTimeAsync(SAVE_DEBOUNCE_MS + 10)
+      deleteTournamentRecord("a")
+      await p
+      expect(db.has(ITEM + "a")).toBe(false)
     })
 
     it("flushPendingSaves with nothing queued is a no-op", () => {
@@ -374,10 +404,11 @@ describe("writing", () => {
     it("a save after a write starts a fresh debounce", async () => {
       void saveTournament(tournament("a", "one"))
       await vi.advanceTimersByTimeAsync(SAVE_DEBOUNCE_MS + 10)
+      await vi.waitFor(() => expect(writes()).toHaveLength(1))
       void saveTournament(tournament("a", "two"))
       await vi.advanceTimersByTimeAsync(SAVE_DEBOUNCE_MS + 10)
-      expect(writes()).toHaveLength(2)
-      expect(JSON.parse(db.get(ITEM + "a") as string).name).toBe("two")
+      await vi.waitFor(() => expect(writes()).toHaveLength(2))
+      expect(readItem("a").name).toBe("two")
     })
 
     it("a refused write during a flush does not throw", () => {

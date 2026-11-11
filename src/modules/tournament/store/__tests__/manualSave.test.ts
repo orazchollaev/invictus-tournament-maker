@@ -5,6 +5,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest"
 import { createPinia, setActivePinia } from "pinia"
 import { nextTick } from "vue"
+import { gunzipSync } from "node:zlib"
 import type { Tournament } from "@/modules/tournament/types"
 
 const db = new Map<string, unknown>()
@@ -54,7 +55,12 @@ async function loaded() {
   return store
 }
 
-const stored = () => JSON.parse(db.get("tournament:item:a") as string) as Tournament
+/** The stored record, decoded: the Save button writes it gzipped. */
+const stored = () => {
+  const raw = db.get("tournament:item:a")
+  const text = raw instanceof Uint8Array ? gunzipSync(raw).toString("utf8") : (raw as string)
+  return JSON.parse(text) as Tournament
+}
 
 beforeEach(() => {
   db.clear()

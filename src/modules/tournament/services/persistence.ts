@@ -1,6 +1,7 @@
 import { toRaw } from "vue"
 import { get, set, del, keys } from "idb-keyval"
 import { idbStorage } from "@/lib/idbStorage"
+import { gzipCompress, gzipDecompress, isGzip } from "@/lib/gzip"
 import type { Tournament } from "../types"
 import { parseStoredTournament, repackedResultCount } from "./tournamentSchema"
 
@@ -32,6 +33,8 @@ interface PendingSave {
 
 /** Debounced (trailing, with a max wait) and coalesced per tournament id. */
 const scheduled = new Map<string, PendingSave>()
+/** Per tournament, the number of the latest write started (see writeTournament). */
+const writeGen = new Map<string, number>()
 
 function idle(run: () => void): void {
   if (typeof requestIdleCallback === "function") requestIdleCallback(run, { timeout: 500 })
@@ -47,7 +50,7 @@ function idle(run: () => void): void {
  * behind. Swallowing it keeps the app running on the state it already has in
  * memory; the next save attempt is one mutation away.
  */
-function writeTournament(t: Tournament): void {
+function writeTournament(t: Tournament, compress = true): Promise<void> {
   try {
     // t is a Pinia-reactive proxy; JSON.stringify walks every property of
     // every nested match/group/team through the Proxy's get trap, which
@@ -55,8 +58,39 @@ function writeTournament(t: Tournament): void {
     // of matches). toRaw hands stringify the plain underlying object
     // instead, so the walk is a normal property read the whole way down.
     const json = JSON.stringify(toRaw(t))
-    void Promise.resolve(set(itemKey(t.id), json)).catch(() => {})
-  } catch {}
+    const key = itemKey(t.id)
+    const gen = (writeGen.get(t.id) ?? 0) + 1
+    writeGen.set(t.id, gen)
+    // A flush on the way to the background writes the plain string at once:
+    // there may be no time left for the compression to finish. A compressed
+    // write that a newer one overtook while it was compressing is dropped, so
+    // older state never lands on top of newer.
+    const write = compress
+      ? encodeRecord(json).then((v) => (writeGen.get(t.id) === gen ? set(key, v) : undefined))
+      : set(key, json)
+    return Promise.resolve(write).catch(() => {})
+  } catch {
+    return Promise.resolve()
+  }
+}
+
+/**
+ * Records are stored gzipped (packed reports compress about 4:1). A plain JSON
+ * string — every record written before this, or by a flush — still reads.
+ */
+async function encodeRecord(json: string): Promise<string | Uint8Array> {
+  if (typeof CompressionStream !== "function") return json
+  try {
+    return new Uint8Array(await gzipCompress(json))
+  } catch {
+    return json
+  }
+}
+
+async function decodeRecord(raw: unknown): Promise<unknown> {
+  if (raw instanceof ArrayBuffer) raw = new Uint8Array(raw)
+  if (raw instanceof Uint8Array && isGzip(raw)) return gzipDecompress(raw)
+  return raw
 }
 
 /**
@@ -71,8 +105,7 @@ function firePending(id: string, immediate: boolean): void {
   const finish = () => {
     // The tournament is read now, not when the save was requested, so a
     // mutation that landed while this was queued is the one actually written.
-    writeTournament(pending.tournament)
-    pending.resolve()
+    void writeTournament(pending.tournament, !immediate).then(pending.resolve)
   }
   if (immediate) finish()
   else idle(finish)
@@ -116,7 +149,12 @@ export async function saveTournamentNow(t: Tournament): Promise<boolean> {
   cancelPendingSaves([t.id])
   try {
     // Stringified before the first await: what is written is what was on screen.
-    await set(itemKey(t.id), JSON.stringify(toRaw(t)))
+    const json = JSON.stringify(toRaw(t))
+    const gen = (writeGen.get(t.id) ?? 0) + 1
+    writeGen.set(t.id, gen)
+    const value = await encodeRecord(json)
+    // Overtaken while compressing: the newer write is the one that stands.
+    if (writeGen.get(t.id) === gen) await set(itemKey(t.id), value)
     return true
   } catch {
     return false
@@ -151,6 +189,8 @@ if (typeof document !== "undefined") {
 
 export function deleteTournamentRecord(id: string): void {
   cancelPendingSaves([id])
+  // A write still compressing must not resurrect the record.
+  writeGen.delete(id)
   void del(itemKey(id))
 }
 
@@ -223,7 +263,7 @@ async function loadFromItems(): Promise<Tournament[] | null> {
   const items = await Promise.all(
     ids.map(async (id) => {
       try {
-        const raw = await get(itemKey(id))
+        const raw = await decodeRecord(await get(itemKey(id)))
         if (raw === undefined) return null
         // Parsed *and* checked: valid JSON is not the same as a usable
         // tournament, and it was the second gap that emptied the screen.
@@ -232,7 +272,7 @@ async function loadFromItems(): Promise<Tournament[] | null> {
         const parsed = parseStoredTournament(raw)
         // The record on disk still holds unpacked reports (~6 KB a match).
         // Rewrite it once, packed, so it is small on disk from now on too.
-        if (parsed && repackedResultCount() !== before) writeTournament(parsed)
+        if (parsed && repackedResultCount() !== before) void writeTournament(parsed)
         return parsed
       } catch {
         // One corrupted record (bad JSON, a storage read error) used to be
@@ -364,6 +404,7 @@ async function currentIds(): Promise<string[]> {
 export async function clearAllTournaments(): Promise<void> {
   // A queued save would otherwise land after the clear and resurrect a record.
   cancelPendingSaves()
+  writeGen.clear()
   const ids = await currentIds()
   await Promise.all(ids.map((id) => del(itemKey(id))))
   await del(INDEX_KEY)
@@ -378,6 +419,8 @@ export async function clearAllTournaments(): Promise<void> {
  */
 export async function replaceAllTournaments(tournaments: Tournament[]): Promise<void> {
   await clearAllTournaments()
-  await Promise.all(tournaments.map((t) => set(itemKey(t.id), JSON.stringify(toRaw(t)))))
+  await Promise.all(
+    tournaments.map(async (t) => set(itemKey(t.id), await encodeRecord(JSON.stringify(toRaw(t)))))
+  )
   await set(INDEX_KEY, JSON.stringify(tournaments.map((t) => t.id)))
 }
