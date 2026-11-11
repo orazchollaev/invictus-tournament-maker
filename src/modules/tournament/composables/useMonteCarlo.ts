@@ -1,4 +1,4 @@
-import { ref } from "vue"
+import { ref, toRaw } from "vue"
 import type { Tournament } from "../types"
 import type { Team } from "@/modules/teams/types"
 import type { MonteCarloResult } from "@/engine/monteCarlo"
@@ -48,8 +48,15 @@ export function useMonteCarlo() {
 
       // tournament/teams are Vue reactive proxies — postMessage's structured clone
       // can't clone them directly, so strip reactivity via a plain JSON round-trip.
-      const plainTournament = JSON.parse(JSON.stringify(tournament)) as Tournament
-      const plainTeams = JSON.parse(JSON.stringify(teams)) as Team[]
+      // Stringified from the plain objects behind the proxies (much faster on a
+      // big tournament), and without the teams' pictures, which the engine never
+      // reads. Match reports stay: discipline, fatigue and injuries read them.
+      const plainTournament = JSON.parse(JSON.stringify(toRaw(tournament))) as Tournament
+      const plainTeams = JSON.parse(
+        JSON.stringify(toRaw(teams), (key, value) =>
+          key === "image" || key === "crest" ? undefined : value
+        )
+      ) as Team[]
       // A worker has its own copy of the engine's module state, so the user's
       // simulation settings have to travel with the run or it plays on defaults.
       activeWorker.postMessage({

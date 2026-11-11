@@ -60,6 +60,8 @@ export function generateStatsInWorker(
   const relevantPlayers = players.filter((p) => teamIds.has(p.teamId))
 
   const id = ++seq
+  const withoutPictures = (key: string, value: unknown) =>
+    key === "image" || key === "face" || key === "crest" ? undefined : value
   return new Promise((resolve) => {
     waiting.set(id, resolve)
     // Teams/players/jobs all trace back to the reactive tournament/team/player
@@ -68,11 +70,14 @@ export function generateStatsInWorker(
     // postMessage's structured clone can't carry those directly (it throws
     // DataCloneError and silently kills the whole batch, which is why every
     // match report can vanish at once), so strip reactivity from all three.
+    // Pictures (a team's uploaded image and crest, a player's face) are left
+    // behind: the engine never reads them, and an image is a data URL of tens
+    // of KB to stringify, copy and parse again for every batch.
     getWorker().postMessage({
       id,
       jobs: JSON.parse(JSON.stringify(jobs)),
-      teams: JSON.parse(JSON.stringify(relevantTeams)),
-      players: JSON.parse(JSON.stringify(relevantPlayers)),
+      teams: JSON.parse(JSON.stringify(relevantTeams, withoutPictures)),
+      players: JSON.parse(JSON.stringify(relevantPlayers, withoutPictures)),
     })
   })
 }
