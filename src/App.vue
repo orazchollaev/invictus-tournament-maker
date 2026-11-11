@@ -5,7 +5,9 @@ import { App } from "@capacitor/app"
 import { AppHeader, AppMobileBottomNav, AppOnboarding, ErrorBoundary } from "@/components/layout"
 import { AppDialog } from "@/components/ui"
 import { MusicController } from "@/modules/music/components"
-import { MarketFab } from "@/modules/market/components"
+// By file, not through the market barrel: the barrel's MarketBuiltinDatasets pulls
+// useDataManagement and every bundled sample dataset into the launch bundle.
+import MarketFab from "@/modules/market/components/MarketFab.vue"
 import { usePlayersStore } from "@/modules/players/store"
 import { useSettingsStore } from "@/modules/settings/store"
 import { useTeamsStore } from "@/modules/teams/store"
