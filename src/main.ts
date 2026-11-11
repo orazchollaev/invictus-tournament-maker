@@ -1,4 +1,4 @@
-import { createApp } from "vue"
+import { createApp, toRaw } from "vue"
 import { createPinia } from "pinia"
 import { createPersistedStatePlugin } from "pinia-plugin-persistedstate-2"
 
@@ -42,6 +42,16 @@ if (typeof Object.hasOwn !== "function") {
  * instead of one per mutation.
  */
 const idleScheduled = new WeakMap<object, Promise<string>>()
+
+/**
+ * Below the top level, stringify the plain objects behind the reactive proxies: a
+ * read through a proxy's get trap for every field of every player and team is much
+ * slower. The top level is left alone — a setup store's raw state holds its refs
+ * themselves, which the proxy unwraps.
+ */
+function unwrapReactive(key: string, value: unknown): unknown {
+  return key !== "" && value !== null && typeof value === "object" ? toRaw(value) : value
+}
 function idleSerialize(state: object): Promise<string> {
   const pending = idleScheduled.get(state)
   if (pending) return pending
@@ -49,7 +59,7 @@ function idleSerialize(state: object): Promise<string> {
   const promise = new Promise<string>((resolve) => {
     const run = () => {
       idleScheduled.delete(state)
-      resolve(JSON.stringify(state))
+      resolve(JSON.stringify(state, unwrapReactive))
     }
     if (typeof requestIdleCallback === "function") requestIdleCallback(run, { timeout: 500 })
     else setTimeout(run, 0)
