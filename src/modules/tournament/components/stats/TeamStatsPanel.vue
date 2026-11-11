@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import { ref, computed } from "vue"
+import { ref, computed, defineAsyncComponent } from "vue"
 import { useI18n } from "vue-i18n"
 import type { Tournament, League } from "@/modules/tournament/types"
 import type { Team } from "@/modules/teams/types"
 import { useTournamentStats } from "@/modules/tournament/composables/useTournamentStats"
 import { isCustomFormat, isLeagueLike } from "@/engine"
-import { LeagueProgressChart } from "@/modules/tournament/components/league"
 import { TeamBadge } from "@/modules/teams/components"
 import { AppCard, AppTable, AppButtonGroup, AppSelect } from "@/components/ui"
 import { useEngineLabels } from "@/composables/useEngineLabels"
@@ -14,6 +13,12 @@ const props = defineProps<{
   tournament: Tournament
   teams: Team[]
 }>()
+
+// chart.js is ~150 kB: loaded when a progress chart is first shown, not with the
+// tournament page.
+const LeagueProgressChart = defineAsyncComponent(
+  () => import("@/modules/tournament/components/league/LeagueProgressChart.vue")
+)
 
 const { t } = useI18n()
 
