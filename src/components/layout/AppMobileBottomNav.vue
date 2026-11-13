@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from "vue"
+import { computed, ref, type Component } from "vue"
 import { useRouter } from "vue-router"
 import { Trophy, Users, UserRound, History, Settings } from "@lucide/vue"
 import { useI18n } from "vue-i18n"
@@ -9,16 +9,18 @@ const { t } = useI18n()
 const router = useRouter()
 const { isNavActive } = useNavActive()
 
-const items = [
+const items: { to: string; also?: string[]; icon: Component; label: () => string }[] = [
   { to: "/tournaments", icon: Trophy, label: () => t("nav.tournaments") },
   { to: "/teams", icon: Users, label: () => t("nav.teams") },
   { to: "/players", icon: UserRound, label: () => t("nav.players") },
   { to: "/history", icon: History, label: () => t("nav.history") },
-  { to: "/settings", icon: Settings, label: () => t("nav.settings") },
+  { to: "/settings", also: ["/market"], icon: Settings, label: () => t("nav.settings") },
 ]
 
 const navEl = ref<HTMLElement | null>(null)
-const activeIndex = computed(() => items.findIndex((i) => isNavActive(i.to)))
+const activeIndex = computed(() =>
+  items.findIndex((i) => isNavActive(i.to) || i.also?.some(isNavActive))
+)
 /** Fractional tab position while a finger drags the glass lens; null at rest. */
 const dragPos = ref<number | null>(null)
 const dragging = ref(false)
