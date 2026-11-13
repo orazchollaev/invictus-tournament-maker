@@ -453,7 +453,8 @@ export const useTournamentStore = defineStore(
       tiebreaker?: Tiebreaker,
       winPoints?: number,
       drawPoints?: number,
-      lossPoints?: number
+      lossPoints?: number,
+      promotionPlayoffSize = 0
     ): string {
       const allTeams = getTeams()
       const season =
@@ -464,7 +465,14 @@ export const useTournamentStore = defineStore(
         name: td.name,
         teams: allTeams.filter((t) => td.teamIds.includes(t.id)),
       }))
-      const newT = createMultiTierLeague(name, resolvedTiers, season, legMode, promotionCount)
+      const newT = createMultiTierLeague(
+        name,
+        resolvedTiers,
+        season,
+        legMode,
+        promotionCount,
+        promotionPlayoffSize
+      )
       if (tiebreaker) newT.tiebreaker = tiebreaker
       if (winPoints !== undefined) newT.winPoints = winPoints
       if (drawPoints !== undefined) newT.drawPoints = drawPoints
@@ -619,7 +627,9 @@ export const useTournamentStore = defineStore(
         // came from, and then the rest of whatever phases are already underway.
         // Never the next phase — advancing into it is the draw the user presses
         // the header button for, exactly as with group -> bracket below.
-        if (isCustomFormat(t) && src.phaseId) {
+        // A multi-tier league's promotion play-off is a phase as well, and is
+        // settled the same way: by the time it exists its division is done.
+        if (src.phaseId) {
           const phaseId = src.phaseId
           if (src.kind === "group") {
             phases.simPhaseWeek(tournamentId, phaseId)
@@ -741,6 +751,13 @@ export const useTournamentStore = defineStore(
         if (isLeagueLike(t)) {
           if (t.tiers?.length) {
             leagueActions.simAllTiers(tournamentId)
+            // Finishing the divisions drew their promotion play-offs; play
+            // those out too.
+            for (const phase of t.phases ?? []) {
+              if (phase.promotionTier !== undefined) {
+                phases.simAllPhaseBracket(tournamentId, phase.id)
+              }
+            }
           } else {
             leagueActions.simAllLeague(tournamentId)
           }

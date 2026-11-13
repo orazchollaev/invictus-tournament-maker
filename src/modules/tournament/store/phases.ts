@@ -22,6 +22,7 @@ import {
   decideLeg2Result,
   groupHostOf,
   hasTieFrom,
+  isCustomFormat,
   isPhaseComplete,
   knockoutHostOf,
   leagueHostOf,
@@ -76,7 +77,9 @@ export function usePhasesActions(tournaments: Ref<Tournament[]>, getTeams: () =>
     const out = fn(phase, t, adjustedTeams(getTeams(), t))
     recalcPhase(phase)
     refreshPhaseStatuses(t)
-    t.winnerId = customWinnerId(t)
+    // A multi-tier league's promotion play-off is a phase too, but the league's
+    // own table decides that tournament's winner — not this.
+    if (isCustomFormat(t)) t.winnerId = customWinnerId(t)
     return out
   }
 

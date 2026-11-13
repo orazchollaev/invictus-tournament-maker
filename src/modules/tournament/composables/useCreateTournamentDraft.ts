@@ -68,6 +68,7 @@ export function useCreateTournamentDraft() {
   const tierCount = ref(1)
   const tierAssignments = ref<Record<string, number>>({})
   const promotionCount = ref(1)
+  const promotionPlayoffSize = ref(0)
   const playoffEnabled = ref(false)
   const playoffQualifierCount = ref(4)
   const leaguePlayoffSeedMode = ref<LeaguePlayoffSeedMode>("seeded")
@@ -287,6 +288,7 @@ export function useCreateTournamentDraft() {
     tierCount.value = payload.tierCount
     tierAssignments.value = payload.tierAssignments
     promotionCount.value = payload.promotionCount
+    promotionPlayoffSize.value = payload.promotionPlayoffSize
     tiebreaker.value = payload.tiebreaker
     winPoints.value = payload.winPoints
     drawPoints.value = payload.drawPoints
@@ -368,6 +370,7 @@ export function useCreateTournamentDraft() {
     tierCount,
     tierAssignments,
     promotionCount,
+    promotionPlayoffSize,
     playoffEnabled,
     playoffQualifierCount,
     leaguePlayoffSeedMode,

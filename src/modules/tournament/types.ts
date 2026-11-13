@@ -293,6 +293,11 @@ export interface PhaseGroupConfig {
 
 export interface PhaseLeagueConfig {
   legMode: LegMode
+  /**
+   * Bottom N of the final table drop out of the tournament at season end. The
+   * new season asks who takes their places. 0 or unset = no relegation.
+   */
+  relegationCount?: number
   tiebreaker: Tiebreaker
   winPoints: number
   drawPoints: number
@@ -368,6 +373,13 @@ export interface TournamentPhase {
    * which of them crowns the winner has to be said explicitly.
    */
   isFinal?: boolean
+  /**
+   * Set only on a multi-tier league's promotion play-off: the index of the
+   * lower division whose table it is drawn from. Such a phase lives in
+   * `t.phases` with no edges, purely so the custom format's knockout
+   * plumbing (result entry, simulation, fixtures, stats) carries it.
+   */
+  promotionTier?: number
   /** Blueprint canvas position. Presentation only. */
   pos: { x: number; y: number }
   config: PhaseConfig
@@ -447,8 +459,15 @@ export interface Tournament {
 
   // multi-tier league (array of tiers ordered top→bottom, replaces single `league` when set)
   tiers?: LeagueTier[]
-  // how many teams swap between adjacent tiers at season end
+  // how many teams swap directly between adjacent tiers at season end (0 = none)
   promotionCount?: number
+  /**
+   * Size of each lower division's promotion play-off (0/unset = none): the
+   * places right below the direct promotion spots play a knockout and its
+   * winner goes up too, taking one more team down from the division above.
+   * See engine/promotion.ts.
+   */
+  promotionPlayoffSize?: number
 
   // scoring points (group+bracket and league formats)
   winPoints?: number

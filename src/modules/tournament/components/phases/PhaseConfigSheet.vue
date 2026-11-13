@@ -187,6 +187,16 @@ const legOptionsForKind = computed(() =>
   props.phase.kind === "league" ? leagueLegOptions.value : multiLegOptions.value
 )
 
+/**
+ * League only: how many of the bottom places leave the tournament at season
+ * end. At least two teams always stay, so the table is still a table.
+ */
+const relegationCount = ref(cfg.kind === "league" ? (cfg.league.relegationCount ?? 0) : 0)
+const maxRelegation = computed(() => Math.max(0, teamCount.value - 2))
+watch(maxRelegation, (max) => {
+  relegationCount.value = Math.min(relegationCount.value, max)
+})
+
 /** How many matchdays the Swiss draw will produce, so the size is visible up front. */
 const swissMatchdays = computed(() => opponentCount.value * legModeToCount(legMode.value))
 
@@ -216,6 +226,9 @@ function build(): PhaseConfig {
         winPoints: winPoints.value,
         drawPoints: drawPoints.value,
         lossPoints: lossPoints.value,
+        ...(relegationCount.value > 0
+          ? { relegationCount: Math.min(relegationCount.value, maxRelegation.value) }
+          : {}),
       },
     }
   }
@@ -324,9 +337,20 @@ function handleSave() {
       <template v-else-if="phase.kind === 'league'">
         <div class="form-card">
           <div class="form-section-title">{{ t("tournament.phases.config.shape") }}</div>
-          <div class="form-row">
-            <span class="form-label form-label--md">{{ t("tournament.phases.config.legs") }}</span>
-            <AppButtonGroup v-model="legMode" :options="legOptionsForKind" />
+          <div class="form-rows">
+            <div class="form-row">
+              <span class="form-label form-label--md">
+                {{ t("tournament.phases.config.legs") }}
+              </span>
+              <AppButtonGroup v-model="legMode" :options="legOptionsForKind" />
+            </div>
+            <AppStepper
+              v-model="relegationCount"
+              :label="t('tournament.phases.config.relegation')"
+              :min="0"
+              :max="maxRelegation"
+              :hint="t('tournament.phases.config.relegationHint')"
+            />
           </div>
         </div>
       </template>

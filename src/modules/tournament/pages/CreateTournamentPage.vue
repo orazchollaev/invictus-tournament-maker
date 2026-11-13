@@ -53,6 +53,7 @@ const {
   tierCount,
   tierAssignments,
   promotionCount,
+  promotionPlayoffSize,
   playoffEnabled,
   playoffQualifierCount,
   leaguePlayoffSeedMode,
@@ -404,6 +405,7 @@ function onCeremonyComplete(orderedIds: string[]) {
         :tier-count="tierCount"
         :tier-assignments="tierAssignments"
         :promotion-count="promotionCount"
+        :promotion-playoff-size="promotionPlayoffSize"
         :tiebreaker="tiebreaker"
         :win-points="winPoints"
         :draw-points="drawPoints"

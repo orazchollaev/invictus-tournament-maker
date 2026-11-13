@@ -17,6 +17,8 @@ import {
   getLeaguePlayoffQualifierIds,
   computeLeaguePlayoffPlan,
   randomSeed,
+  computeSeasonMoves,
+  customRelegatedIds,
 } from "@/engine"
 import type { CeremonyContext, DrawMode, DrawPlan, Pot } from "@/engine"
 import type { PlayoffSeedMode, Tournament } from "@/modules/tournament/types"
@@ -54,6 +56,8 @@ export function useTournamentCeremonies(
   const showSeasonModal = ref(false)
   const showManualSeason = ref(false)
   const showMultiTierModal = ref(false)
+  /** Custom format: a league phase relegated someone, so ask who replaces them. */
+  const showRelegationModal = ref(false)
   const showPlayoffManualDraw = ref(false)
   const showLeaguePlayoffManualDraw = ref(false)
   const pendingOverrideTeamIds = ref<string[] | null>(null)
@@ -172,6 +176,10 @@ export function useTournamentCeremonies(
     // to pending. There is no single bracket to draw, so no ceremony to run —
     // the entry phase's own seeding is the draw, exactly as at creation.
     if (isCustomFormat(t)) {
+      if (customRelegatedIds(t).length) {
+        showRelegationModal.value = true
+        return
+      }
       // A league entry phase has nothing to reveal — everyone plays everyone.
       const entryKind = entryPhases(t.phases ?? [], t.phaseEdges ?? [])[0]?.kind
       if (settings.drawCeremony && entryKind && entryKind !== "league") {
@@ -356,34 +364,21 @@ export function useTournamentCeremonies(
     ceremonyAction.value = null
   }
 
+  /**
+   * Custom format with relegation: the entry phase redraws itself from the new
+   * line-up. No ceremony here — its pots would be built from last season's
+   * field, not the one the user just chose.
+   */
+  function handleRelegationSeasonConfirm(teamIds: string[]) {
+    showRelegationModal.value = false
+    startNewLeagueSeason(teamIds)
+  }
+
   function handleMultiTierSeasonConfirm() {
     showMultiTierModal.value = false
     const t = tournament.value
     if (!t?.tiers) return
-    const tiers = t.tiers
-    const n = tiers.length
-    const pc = t.promotionCount ?? 1
-
-    const relegated: string[][] = []
-    const promoted: string[][] = []
-    for (let i = 0; i < n - 1; i++) {
-      const upper = tiers[i].league.standings
-      const lower = tiers[i + 1].league.standings
-      relegated[i] = upper.slice(upper.length - pc).map((s) => s.teamId)
-      promoted[i] = lower.slice(0, pc).map((s) => s.teamId)
-    }
-
-    const newTierTeamIds: string[][] = tiers.map((tier, i) => {
-      const leavingUp = i > 0 ? promoted[i - 1] : []
-      const leavingDown = i < n - 1 ? relegated[i] : []
-      const staying = tier.league.standings
-        .filter((s) => !leavingUp.includes(s.teamId) && !leavingDown.includes(s.teamId))
-        .map((s) => s.teamId)
-      const arrivingFromAbove = i > 0 ? relegated[i - 1] : []
-      const arrivingFromBelow = i < n - 1 ? promoted[i] : []
-      return [...staying, ...arrivingFromAbove, ...arrivingFromBelow]
-    })
-
+    const { nextTierTeamIds: newTierTeamIds } = computeSeasonMoves(t)
     const id = store.newMultiTierSeason(t.id, newTierTeamIds)
     if (id) router.push(`/tournaments/${id}`)
   }
@@ -581,6 +576,8 @@ export function useTournamentCeremonies(
     showSeasonModal,
     showManualSeason,
     showMultiTierModal,
+    showRelegationModal,
+    handleRelegationSeasonConfirm,
     showPlayoffManualDraw,
     showLeaguePlayoffManualDraw,
     showCeremony,

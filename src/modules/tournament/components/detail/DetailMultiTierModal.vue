@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { ref } from "vue"
+import { computed, ref } from "vue"
 import { AppModal } from "@/components/ui"
 import type { Tournament } from "@/modules/tournament/types"
 import type { Team } from "@/modules/teams/types"
 import { TeamBadge } from "@/modules/teams/components"
+import { computeSeasonMoves } from "@/engine"
 import { useI18n } from "vue-i18n"
 
 const props = defineProps<{
@@ -19,12 +20,22 @@ const emit = defineEmits<{
 const { t } = useI18n()
 
 const modal = ref<InstanceType<typeof AppModal> | null>(null)
+
+/** The same moves the store will apply on confirm, so the preview cannot drift. */
+const moves = computed(() => computeSeasonMoves(props.tournament))
+
+function moveOf(teamId: string): "up" | "playoffUp" | "down" | null {
+  if (moves.value.playoffWinners.has(teamId)) return "playoffUp"
+  if (moves.value.promoted.has(teamId)) return "up"
+  if (moves.value.relegated.has(teamId)) return "down"
+  return null
+}
 </script>
 
 <template>
   <AppModal
     ref="modal"
-    :title="`New Season — ${tournament.name}`"
+    :title="t('promotion.seasonTitle', { name: tournament.name })"
     :width="'min(520px, calc(100vw - 32px))'"
     @close="emit('close')"
   >
@@ -37,10 +48,8 @@ const modal = ref<InstanceType<typeof AppModal> | null>(null)
             :key="row.teamId"
             class="mt-tier-row"
             :class="{
-              'mt-row--promoted': ti > 0 && rank < (tournament.promotionCount ?? 0),
-              'mt-row--relegated':
-                ti < tournament.tiers!.length - 1 &&
-                rank >= tier.league.standings.length - (tournament.promotionCount ?? 0),
+              'mt-row--promoted': moveOf(row.teamId) === 'up' || moveOf(row.teamId) === 'playoffUp',
+              'mt-row--relegated': moveOf(row.teamId) === 'down',
             }"
           >
             <span class="mt-rank">{{ rank + 1 }}</span>
@@ -51,20 +60,14 @@ const modal = ref<InstanceType<typeof AppModal> | null>(null)
               class="mt-name"
             />
             <span class="mt-pts">{{ row.pts }} pts</span>
-            <span
-              v-if="ti > 0 && rank < (tournament.promotionCount ?? 0)"
-              class="mt-badge mt-badge--up"
-            >
-              ↑ Up
+            <span v-if="moveOf(row.teamId) === 'up'" class="mt-badge mt-badge--up">
+              ↑ {{ t("promotion.up") }}
             </span>
-            <span
-              v-else-if="
-                ti < tournament.tiers!.length - 1 &&
-                rank >= tier.league.standings.length - (tournament.promotionCount ?? 0)
-              "
-              class="mt-badge mt-badge--down"
-            >
-              ↓ Down
+            <span v-else-if="moveOf(row.teamId) === 'playoffUp'" class="mt-badge mt-badge--up">
+              ↑ {{ t("promotion.playoffShort") }}
+            </span>
+            <span v-else-if="moveOf(row.teamId) === 'down'" class="mt-badge mt-badge--down">
+              ↓ {{ t("promotion.down") }}
             </span>
           </div>
         </div>

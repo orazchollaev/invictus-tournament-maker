@@ -11,6 +11,7 @@ const props = defineProps<{
   relegationCountOverride?: number
   promotionCount?: number
   playoffQualifierCount?: number
+  promotionPlayoffRange?: { fromRank: number; toRank: number }
   /** Custom format: which places go to which next phase. */
   bands?: StandingsBand[]
 }>()
@@ -39,6 +40,7 @@ const playedMatchdays = computed(() => matchdays.value.filter((_, i) => matchday
       :total-matchdays="totalMatchdays"
       :promotion-count="promotionCount"
       :playoff-qualifier-count="playoffQualifierCount"
+      :promotion-playoff-range="promotionPlayoffRange"
       :relegation-count="relegationCount"
       :bands="bands"
     />

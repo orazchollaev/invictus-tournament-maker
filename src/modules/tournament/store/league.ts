@@ -18,6 +18,7 @@ import {
   allTiersDone,
   getTiersWinner,
   getLeaguePlayoffData,
+  syncPromotionPlayoffs,
 } from "@/engine"
 import { adjustedTeams } from "./helpers"
 
@@ -70,6 +71,15 @@ export function useLeagueActions(tournaments: Ref<Tournament[]>, getTeams: () =>
 
   // ── Multi-tier ───────────────────────────────────────────────────
 
+  /**
+   * After any division result: redraw whatever promotion play-off the change
+   * affects, then crown the champion once every division is done.
+   */
+  function afterTierChange(t: Tournament) {
+    syncPromotionPlayoffs(t, adjustedTeams(getTeams(), t))
+    if (allTiersDone(t) && !getLeaguePlayoffData(t)?.enabled) t.winnerId = getTiersWinner(t)
+  }
+
   function setTierResult(
     tournamentId: string,
     tierIdx: number,
@@ -81,7 +91,7 @@ export function useLeagueActions(tournaments: Ref<Tournament[]>, getTeams: () =>
     const t = getT(tournamentId)
     if (!t) return
     setTierMatchResult(t, tierIdx, matchdayIdx, matchIdx, home, away)
-    if (allTiersDone(t) && !getLeaguePlayoffData(t)?.enabled) t.winnerId = getTiersWinner(t)
+    afterTierChange(t)
   }
 
   function clearTierResult(
@@ -93,6 +103,7 @@ export function useLeagueActions(tournaments: Ref<Tournament[]>, getTeams: () =>
     const t = getT(tournamentId)
     if (!t) return
     clearTierMatchResult(t, tierIdx, matchdayIdx, matchIdx)
+    syncPromotionPlayoffs(t, adjustedTeams(getTeams(), t))
   }
 
   function simTierMatch(
@@ -104,28 +115,28 @@ export function useLeagueActions(tournaments: Ref<Tournament[]>, getTeams: () =>
     const t = getT(tournamentId)
     if (!t) return
     simulateTierMatch(t, tierIdx, matchdayIdx, matchIdx, adjustedTeams(getTeams(), t))
-    if (allTiersDone(t) && !getLeaguePlayoffData(t)?.enabled) t.winnerId = getTiersWinner(t)
+    afterTierChange(t)
   }
 
   function simTierMatchday(tournamentId: string, tierIdx: number, matchdayIdx: number) {
     const t = getT(tournamentId)
     if (!t) return
     simulateTierMatchday(t, tierIdx, matchdayIdx, adjustedTeams(getTeams(), t))
-    if (allTiersDone(t) && !getLeaguePlayoffData(t)?.enabled) t.winnerId = getTiersWinner(t)
+    afterTierChange(t)
   }
 
   function simAllTierAction(tournamentId: string, tierIdx: number) {
     const t = getT(tournamentId)
     if (!t) return
     simulateAllTier(t, tierIdx, adjustedTeams(getTeams(), t))
-    if (allTiersDone(t) && !getLeaguePlayoffData(t)?.enabled) t.winnerId = getTiersWinner(t)
+    afterTierChange(t)
   }
 
   function simAllTiersAction(tournamentId: string) {
     const t = getT(tournamentId)
     if (!t) return
     simulateAllTiers(t, adjustedTeams(getTeams(), t))
-    if (allTiersDone(t) && !getLeaguePlayoffData(t)?.enabled) t.winnerId = getTiersWinner(t)
+    afterTierChange(t)
   }
 
   return {

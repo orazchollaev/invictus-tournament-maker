@@ -98,6 +98,7 @@ export function useSettingsFormatConfig(draft: TournamentSettingsDraft) {
     draft.leagueLegMode.value = payload.leagueLegMode
     draft.tierCount.value = payload.tierCount
     draft.promotionCount.value = payload.promotionCount
+    draft.promotionPlayoffSize.value = payload.promotionPlayoffSize
     draft.tiebreaker.value = payload.tiebreaker
     draft.winPoints.value = payload.winPoints
     draft.drawPoints.value = payload.drawPoints

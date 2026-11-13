@@ -1,4 +1,20 @@
 ﻿export default {
+  promotion: {
+    up: "Çıktı",
+    down: "Düştü",
+    playoffUp: "Play-off ile çıktı",
+    playoffTitle: "Yükselme play-off'u",
+    playoffPending: "Lig bitince {from}–{to}. sıradakiler bir yükselme bileti için play-off oynar.",
+    playoffShort: "Play-off",
+    seasonTitle: "Yeni sezon — {name}",
+    relegationTitle: "Küme düşme",
+    relegated: "Düşenler",
+    comingUp: "Yerine gelenler",
+    strongest: "En güçlüler",
+    random: "Rastgele",
+    pickTeam: "Takım seç",
+    notEnoughTeams: "Turnuva dışında her yeri dolduracak kadar takım yok.",
+  },
   drawCeremony: {
     potLabel: "Torba {n}",
     potSingle: "Torba",
@@ -1011,6 +1027,8 @@
         qualifiersPerGroup: "Grup başına yükselen",
         wildcards: "Wildcard",
         wildcardsHint: "Bir sıra altta kalanların en iyileri",
+        relegation: "Sezon sonu düşen takım",
+        relegationHint: "Sondakiler ayrılır; yeni sezonda yerlerine kimin geleceğini sen seçersin",
         advancing: "{count} takım yükselir",
       },
       errors: {
@@ -1129,6 +1147,10 @@
       divisions: "{n} lig",
       promotionRelegation: "Yükselme / Küme Düşme",
       teamsSwap: "takımlar komşu kademeler arasında yer değiştirir",
+      promotionPlayoff: "Yükselme play-off'u",
+      promotionPlayoffOff: "Kapalı",
+      promotionPlayoffHint:
+        "Direkt çıkanların hemen altındakiler eleme oynar — kazanan da yükselir",
       playoff: {
         enable: "Play-off aşaması ekle",
         hint: "Ligin ardından en iyi takımlar eleme usulü bir play-off oynar.",

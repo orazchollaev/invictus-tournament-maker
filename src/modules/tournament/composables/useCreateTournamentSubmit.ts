@@ -45,6 +45,7 @@ export function useCreateTournamentSubmit(draft: ReturnType<typeof useCreateTour
     teamsPerTier,
     tierCount,
     promotionCount,
+    promotionPlayoffSize,
     playoffEnabled,
     playoffQualifierCount,
     leaguePlayoffSeedMode,
@@ -164,7 +165,8 @@ export function useCreateTournamentSubmit(draft: ReturnType<typeof useCreateTour
           tiebreaker.value,
           winPoints.value,
           drawPoints.value,
-          lossPoints.value
+          lossPoints.value,
+          promotionPlayoffSize.value
         )
         applyAdjustments(id)
         applyLeaguePlayoffSettings(id)

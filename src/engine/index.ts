@@ -296,6 +296,19 @@ export {
 } from "./phaseFactory"
 export type { PhaseScoringDefaults, CreatePhaseOptions, CreateCustomOptions } from "./phaseFactory"
 export {
+  PROMOTION_PLAYOFF_SIZES,
+  promotionPlayoffRange,
+  relegationCountFor,
+  directPromotionCountFor,
+  promotionPlayoffOf,
+  syncPromotionPlayoffs,
+  promotionPlayoffsDone,
+  computeSeasonMoves,
+  customRelegatedIds,
+  suggestReplacements,
+} from "./promotion"
+export type { SeasonMoves } from "./promotion"
+export {
   buildLineup,
   generateMatchStats,
   assembleMatchStats,

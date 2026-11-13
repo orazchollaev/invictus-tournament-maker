@@ -35,6 +35,8 @@ const props = defineProps<{
   promotionCount?: number
   playoffQualifierCount?: number
   relegationCount: number
+  /** A lower division's promotion play-off places, 1-based inclusive. */
+  promotionPlayoffRange?: { fromRank: number; toRank: number }
   /** When set, replaces the single-zone tinting above. */
   bands?: StandingsBand[]
 }>()
@@ -84,9 +86,13 @@ function isLastPromoted(rank: number) {
   return promoCount() > 0 && rank === promoCount() - 1
 }
 function isPlayoffQualifier(rank: number) {
+  const range = props.promotionPlayoffRange
+  if (range) return rank + 1 >= range.fromRank && rank + 1 <= range.toRank
   return playoffCount() > 0 && rank < playoffCount()
 }
 function isLastPlayoffQualifier(rank: number) {
+  const range = props.promotionPlayoffRange
+  if (range) return rank + 1 === range.toRank
   return playoffCount() > 0 && rank === playoffCount() - 1
 }
 </script>
@@ -117,16 +123,38 @@ function isLastPlayoffQualifier(rank: number) {
             {
               'lv-row--champion': rank === 0 && isFinished,
               'lv-band-end': isBandEnd(rank),
-              'lv-pos--1': rank === 0 && !bands && !promotionCount && !playoffCount(),
-              'lv-pos--2': rank === 1 && !bands && !promotionCount && !playoffCount(),
-              'lv-pos--3': rank === 2 && !bands && !promotionCount && !playoffCount(),
-              'lv-pos--4': rank === 3 && !bands && !promotionCount && !playoffCount(),
+              'lv-pos--1':
+                rank === 0 &&
+                !bands &&
+                !promotionCount &&
+                !playoffCount() &&
+                !promotionPlayoffRange,
+              'lv-pos--2':
+                rank === 1 &&
+                !bands &&
+                !promotionCount &&
+                !playoffCount() &&
+                !promotionPlayoffRange,
+              'lv-pos--3':
+                rank === 2 &&
+                !bands &&
+                !promotionCount &&
+                !playoffCount() &&
+                !promotionPlayoffRange,
+              'lv-pos--4':
+                rank === 3 &&
+                !bands &&
+                !promotionCount &&
+                !playoffCount() &&
+                !promotionPlayoffRange,
               'lv-pos--playoff': !bands && isPlayoffQualifier(rank),
               'lv-pos--playoff-last': !bands && isLastPlayoffQualifier(rank),
               'lv-pos--promoted': !bands && isPromoted(rank),
               'lv-pos--promoted-last': !bands && isLastPromoted(rank),
-              'lv-pos--relegated': !bands && isRelegated(rank),
-              'lv-pos--relegated-first': !bands && isFirstRelegated(rank),
+              // Not hidden by bands: a custom table can feed a next phase
+              // and still drop its bottom places out of the tournament.
+              'lv-pos--relegated': isRelegated(rank),
+              'lv-pos--relegated-first': isFirstRelegated(rank),
             },
           ]"
         >

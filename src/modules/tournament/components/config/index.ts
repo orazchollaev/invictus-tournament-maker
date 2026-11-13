@@ -3,6 +3,7 @@ export { default as GroupConfigModal } from "./GroupConfigModal.vue"
 export { default as ScoringFields } from "./ScoringFields.vue"
 export { default as SwissConfigFields } from "./SwissConfigFields.vue"
 export { default as SwissConfigModal } from "./SwissConfigModal.vue"
+export { default as PromotionPlayoffField } from "./PromotionPlayoffField.vue"
 export { default as TiebreakerField } from "./TiebreakerField.vue"
 export { default as VenueConfigModal } from "./VenueConfigModal.vue"
 

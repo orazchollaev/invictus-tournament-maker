@@ -427,7 +427,8 @@ export function createMultiTierLeague(
   tierDefs: Array<{ name: string; teams: Team[] }>,
   season = 1,
   legMode: LegMode = "single",
-  promotionCount = 1
+  promotionCount = 1,
+  promotionPlayoffSize = 0
 ): Tournament {
   const tiers: LeagueTier[] = tierDefs.map(({ name: tierName, teams }) => {
     const teamIds = teams.map((t) => t.id)
@@ -453,6 +454,7 @@ export function createMultiTierLeague(
     teamIds: tiers.flatMap((tier) => tier.teamIds),
     tiers,
     promotionCount,
+    ...(promotionPlayoffSize > 0 ? { promotionPlayoffSize } : {}),
     rounds: [],
     winnerId: null,
     createdAt: Date.now(),

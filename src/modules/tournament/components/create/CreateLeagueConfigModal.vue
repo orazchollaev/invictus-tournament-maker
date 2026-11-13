@@ -5,7 +5,11 @@ import { AppModal, AppButton, AppStepper, AppButtonGroup } from "@/components/ui
 import type { LegMode, Tiebreaker } from "@/modules/tournament/types"
 import type { Team } from "@/modules/teams/types"
 import { useLegOptions } from "@/modules/tournament/composables/useLegOptions"
-import { ScoringFields, TiebreakerField } from "@/modules/tournament/components/config"
+import {
+  PromotionPlayoffField,
+  ScoringFields,
+  TiebreakerField,
+} from "@/modules/tournament/components/config"
 import { TeamBadge } from "@/modules/teams/components"
 import { MAX_TIER_COUNT } from "@/constants"
 
@@ -14,6 +18,7 @@ export interface LeagueConfigPayload {
   tierCount: number
   tierAssignments: Record<string, number>
   promotionCount: number
+  promotionPlayoffSize: number
   tiebreaker: Tiebreaker
   winPoints: number
   drawPoints: number
@@ -36,6 +41,7 @@ const leagueLegMode = ref(props.leagueLegMode)
 const tierCount = ref(props.tierCount)
 const tierAssignments = ref<Record<string, number>>({ ...props.tierAssignments })
 const promotionCount = ref(props.promotionCount)
+const promotionPlayoffSize = ref(props.promotionPlayoffSize)
 const tiebreaker = ref(props.tiebreaker)
 const winPoints = ref(props.winPoints)
 const drawPoints = ref(props.drawPoints)
@@ -61,6 +67,13 @@ const teamsPerTier = computed(() => {
 const maxPromotionCount = computed(() => {
   if (tierCount.value <= 1) return 0
   return Math.max(0, Math.min(...teamsPerTier.value.map((b) => b.length)) - 1)
+})
+
+/** The play-off sits below direct promotion and above the division's own drop zone. */
+const maxPlayoffSize = computed(() => {
+  if (tierCount.value <= 1) return 0
+  const smallest = Math.min(...teamsPerTier.value.map((b) => b.length))
+  return Math.max(0, smallest - 2 * promotionCount.value - 1)
 })
 
 watch(tierCount, (count) => {
@@ -99,6 +112,7 @@ function handleSave() {
     tierCount: tierCount.value,
     tierAssignments: tierAssignments.value,
     promotionCount: promotionCount.value,
+    promotionPlayoffSize: promotionPlayoffSize.value,
     tiebreaker: tiebreaker.value,
     winPoints: winPoints.value,
     drawPoints: drawPoints.value,
@@ -141,10 +155,12 @@ function handleSave() {
         <AppStepper
           v-model="promotionCount"
           :label="t('tournament.create.promotionRelegation')"
-          :min="1"
+          :min="0"
           :max="maxPromotionCount"
           :hint="t('tournament.create.teamsSwap')"
         />
+
+        <PromotionPlayoffField v-model="promotionPlayoffSize" :max="maxPlayoffSize" />
 
         <div class="ctp-tier-blocks">
           <div v-for="(ids, ti) in teamsPerTier" :key="ti" class="ctp-tier-block">

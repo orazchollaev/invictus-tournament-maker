@@ -61,6 +61,12 @@ const bands = computed(() => {
   }))
 })
 
+/** The bottom places this league phase drops out of the tournament. */
+const relegationCount = computed(() => {
+  const cfg = phase.value?.config
+  return cfg?.kind === "league" ? (cfg.league.relegationCount ?? 0) : 0
+})
+
 const groupView = ref<"groups" | "wildcards">("groups")
 </script>
 
@@ -105,6 +111,7 @@ const groupView = ref<"groups" | "wildcards">("groups")
       :tournament="view"
       :teams="teams"
       :league-override="phase.league"
+      :relegation-count-override="relegationCount"
       :bands="bands"
     />
   </div>

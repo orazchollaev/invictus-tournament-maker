@@ -295,6 +295,9 @@ function normalizePhase(value: unknown): TournamentPhase | null {
     teamIds: stringArray(value.teamIds),
     status: statusRaw && PHASE_STATUSES.includes(statusRaw) ? statusRaw : "pending",
   }
+  if (typeof value.promotionTier === "number" && value.promotionTier >= 1) {
+    phase.promotionTier = Math.round(value.promotionTier)
+  }
 
   const groups = normalizeGroups(value.groups)
   if (groups) phase.groups = groups
@@ -477,6 +480,7 @@ export function normalizeTournament(raw: unknown): Tournament | null {
     "leaguePlayoff",
     "swiss",
     "promotionCount",
+    "promotionPlayoffSize",
     "winPoints",
     "drawPoints",
     "lossPoints",

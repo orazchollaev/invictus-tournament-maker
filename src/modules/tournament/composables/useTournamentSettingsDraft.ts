@@ -93,6 +93,7 @@ export function useTournamentSettingsDraft(
 
   const tiebreaker = ref<Tiebreaker>(t0?.tiebreaker ?? DEFAULTS.tiebreaker)
   const promotionCount = ref(t0?.promotionCount ?? DEFAULTS.promotionCount)
+  const promotionPlayoffSize = ref(t0?.promotionPlayoffSize ?? 0)
   const tierCount = ref(t0?.tiers?.length ?? DEFAULTS.tierCount)
 
   const playoffEnabled = ref(originalPlayoff.value?.enabled ?? false)
@@ -192,6 +193,7 @@ export function useTournamentSettingsDraft(
       (isMultiTier.value && tierCount.value !== (orig.tiers?.length ?? DEFAULTS.tierCount)) ||
       (isMultiTier.value &&
         promotionCount.value !== (orig.promotionCount ?? DEFAULTS.promotionCount)) ||
+      (isMultiTier.value && promotionPlayoffSize.value !== (orig.promotionPlayoffSize ?? 0)) ||
       (isLeagueFormat.value && playoffChanged.value) ||
       (isSwissFormat.value && swissChanged.value) ||
       tiebreaker.value !== (orig.tiebreaker ?? DEFAULTS.tiebreaker) ||
@@ -306,6 +308,9 @@ export function useTournamentSettingsDraft(
     ) {
       store.setPromotionCount(id, promotionCount.value)
     }
+    if (isMultiTier.value && promotionPlayoffSize.value !== (orig.promotionPlayoffSize ?? 0)) {
+      store.setPromotionPlayoffSize(id, promotionPlayoffSize.value)
+    }
 
     if (isLeagueFormat.value && !originalPlayoff.value?.started && playoffChanged.value) {
       store.changeLeaguePlayoffSettings(id, {
@@ -354,6 +359,7 @@ export function useTournamentSettingsDraft(
     leagueLegMode,
     tiebreaker,
     promotionCount,
+    promotionPlayoffSize,
     tierCount,
     playoffEnabled,
     playoffQualifierCount,

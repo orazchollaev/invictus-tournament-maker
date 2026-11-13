@@ -5,12 +5,17 @@ import type { LegMode, Tiebreaker } from "@/modules/tournament/types"
 import { AppModal, AppButton, AppStepper, AppButtonGroup } from "@/components/ui"
 import TspLockedCard from "./TspLockedCard.vue"
 import { useLegOptions } from "@/modules/tournament/composables/useLegOptions"
-import { ScoringFields, TiebreakerField } from "@/modules/tournament/components/config"
+import {
+  PromotionPlayoffField,
+  ScoringFields,
+  TiebreakerField,
+} from "@/modules/tournament/components/config"
 
 export interface LeagueConfigPayload {
   leagueLegMode: LegMode
   tierCount: number
   promotionCount: number
+  promotionPlayoffSize: number
   tiebreaker: Tiebreaker
   winPoints: number
   drawPoints: number
@@ -23,6 +28,7 @@ const props = defineProps<
     isMultiTier: boolean
     maxTierCount: number
     maxPromotionCount: number
+    maxPromotionPlayoffSize: number
   }
 >()
 const emit = defineEmits<{ save: [LeagueConfigPayload]; close: [] }>()
@@ -33,6 +39,7 @@ const modalRef = ref<InstanceType<typeof AppModal>>()
 const leagueLegMode = ref(props.leagueLegMode)
 const tierCount = ref(props.tierCount)
 const promotionCount = ref(props.promotionCount)
+const promotionPlayoffSize = ref(props.promotionPlayoffSize)
 const tiebreaker = ref(props.tiebreaker)
 const winPoints = ref(props.winPoints)
 const drawPoints = ref(props.drawPoints)
@@ -43,6 +50,7 @@ function handleSave() {
     leagueLegMode: leagueLegMode.value,
     tierCount: tierCount.value,
     promotionCount: promotionCount.value,
+    promotionPlayoffSize: promotionPlayoffSize.value,
     tiebreaker: tiebreaker.value,
     winPoints: winPoints.value,
     drawPoints: drawPoints.value,
@@ -86,10 +94,11 @@ function handleSave() {
         <AppStepper
           v-model="promotionCount"
           :label="t('tournament.create.promotionRelegation')"
-          :min="1"
+          :min="0"
           :max="maxPromotionCount"
           :hint="t('tournament.settingsPage.leagueFormat.slotsSwapped')"
         />
+        <PromotionPlayoffField v-model="promotionPlayoffSize" :max="maxPromotionPlayoffSize" />
       </TspLockedCard>
     </template>
 

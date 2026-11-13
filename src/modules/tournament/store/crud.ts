@@ -25,6 +25,8 @@ import {
   resetPhase,
   clearPhaseResults,
   isCustomFinished,
+  promotionPlayoffsDone,
+  syncPromotionPlayoffs,
   randomSeed,
   uid,
   updateThirdPlaceSlotsIn,
@@ -317,7 +319,16 @@ export function useCrudActions(
   function setPromotionCount(tournamentId: string, count: number) {
     const t = tournaments.value.find((t) => t.id === tournamentId)
     if (!t || !t.tiers?.length) return
-    t.promotionCount = Math.max(1, count)
+    t.promotionCount = Math.max(0, count)
+    syncPromotionPlayoffs(t, getTeams())
+  }
+
+  /** 0 turns the promotion play-offs off. */
+  function setPromotionPlayoffSize(tournamentId: string, size: number) {
+    const t = tournaments.value.find((t) => t.id === tournamentId)
+    if (!t || !t.tiers?.length) return
+    t.promotionPlayoffSize = Math.max(0, size)
+    syncPromotionPlayoffs(t, getTeams())
   }
 
   function rebuildTiers(tournamentId: string, newTierCount: number) {
@@ -344,6 +355,7 @@ export function useCrudActions(
     const newT = createMultiTierLeague(t.name, tierDefs, t.season, legMode, t.promotionCount ?? 1)
     t.tiers = newT.tiers
     t.teamIds = newT.teamIds
+    t.phases = undefined
     if (prevPlayoff && t.tiers?.length) t.tiers[0].playoff = { ...prevPlayoff, started: false }
     t.winnerId = null
   }
@@ -369,7 +381,8 @@ export function useCrudActions(
       tierDefs,
       season,
       t.tiers[0].league.legMode,
-      t.promotionCount ?? 1
+      t.promotionCount ?? 1,
+      t.promotionPlayoffSize ?? 0
     )
     if (t.tiebreaker) newT.tiebreaker = t.tiebreaker
     if (t.winPoints !== undefined) newT.winPoints = t.winPoints
@@ -449,6 +462,8 @@ export function useCrudActions(
           recalcLeagueStandings(tier.league, t.tiebreaker, winPts, drawPts, lossPts)
         }
         if (t.tiers[0].playoff) t.tiers[0].playoff.started = false
+        // Promotion play-offs were drawn from tables that no longer exist.
+        t.phases = undefined
         t.rounds = []
         t.winnerId = null
         return
@@ -502,7 +517,8 @@ export function useCrudActions(
           !!t.winnerId &&
           t.tiers.every((tier) =>
             tier.league.matchdays.every((md) => md.matches.every((m) => m.result !== null))
-          )
+          ) &&
+          promotionPlayoffsDone(t)
         )
       }
       return !!t.winnerId
@@ -535,6 +551,7 @@ export function useCrudActions(
     createCustom,
     newSeason,
     newMultiTierSeason,
+    setPromotionPlayoffSize,
     setPromotionCount,
     rebuildTiers,
     renameTournament,

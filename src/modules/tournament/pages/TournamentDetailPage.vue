@@ -11,6 +11,7 @@ import { ParticipantsTable } from "@/modules/tournament/components/participants"
 import { ManualDraw, PlayoffManualDraw } from "@/modules/tournament/components/draw"
 import { TournamentStats } from "@/modules/tournament/components/stats"
 import { DrawCeremony } from "@/modules/tournament/components/draw-ceremony"
+import { NewSeasonRelegationModal } from "@/modules/tournament/components/new-season"
 import { AppModal, AppSubTabBar, AppSwipeView } from "@/components/ui"
 import {
   DetailHeader,
@@ -20,7 +21,13 @@ import {
   phaseIdOf,
   type MainTab,
 } from "../components/detail"
-import { advancablePhases } from "@/engine"
+import {
+  advancablePhases,
+  directPromotionCountFor,
+  promotionPlayoffOf,
+  promotionPlayoffRange,
+  relegationCountFor,
+} from "@/engine"
 import { phaseTournamentView } from "../utils/phaseView"
 import { ManagerTeamPanel, ManagerTeamPickerModal } from "../components/manager"
 import { PhasePanel } from "../components/phases"
@@ -136,6 +143,8 @@ const {
   showSeasonModal,
   showManualSeason,
   showMultiTierModal,
+  showRelegationModal,
+  handleRelegationSeasonConfirm,
   showPlayoffManualDraw,
   showLeaguePlayoffManualDraw,
   showCeremony,
@@ -166,6 +175,14 @@ const allGroupsDone = computed(
   () => tournament.value?.groups?.every((g) => g.matches.every((m) => m.result !== null)) ?? false
 )
 
+/** The open division's promotion play-off places, and the play-off once drawn. */
+const activeTierPlayoffRange = computed(() =>
+  tournament.value ? promotionPlayoffRange(tournament.value, activeTierIdx.value) : null
+)
+const activeTierPlayoff = computed(() =>
+  tournament.value ? promotionPlayoffOf(tournament.value, activeTierIdx.value) : undefined
+)
+
 /** Phases whose sources are all finished and which have not been drawn yet. */
 const readyPhases = computed(() => (tournament.value ? advancablePhases(tournament.value) : []))
 
@@ -189,6 +206,12 @@ watch(
     // Follow the graph forward as phases open up, unless the user has picked
     // one themselves and it is still there.
     if (phases.some((p) => p.id === fixturePhaseId.value)) return
+    // A multi-tier league's play-offs sit beside its own fixtures, which stay
+    // the default; "" is that league view.
+    if (!isCustom.value) {
+      fixturePhaseId.value = ""
+      return
+    }
     const live = phases.find((p) => p.status !== "done") ?? phases[phases.length - 1]
     fixturePhaseId.value = live?.id ?? ""
   },
@@ -292,23 +315,42 @@ const showStartPlayoffButton = computed(
                   />
                 </div>
                 <Transition name="tab" mode="out-in">
-                  <LeagueView
-                    :key="activeTierIdx"
-                    :tournament="tournament"
-                    :teams="allTeams"
-                    :league-override="tournament.tiers[activeTierIdx]?.league"
-                    :relegation-count-override="
-                      activeTierIdx < tournament.tiers.length - 1
-                        ? (tournament.promotionCount ?? 0)
-                        : 0
-                    "
-                    :promotion-count="activeTierIdx > 0 ? (tournament.promotionCount ?? 0) : 0"
-                    :playoff-qualifier-count="
-                      activeTierIdx === 0 && leaguePlayoffData?.enabled
-                        ? leaguePlayoffData.qualifierCount
-                        : 0
-                    "
-                  />
+                  <div :key="activeTierIdx" class="tier-view">
+                    <LeagueView
+                      :tournament="tournament"
+                      :teams="allTeams"
+                      :league-override="tournament.tiers[activeTierIdx]?.league"
+                      :relegation-count-override="relegationCountFor(tournament, activeTierIdx)"
+                      :promotion-count="directPromotionCountFor(tournament, activeTierIdx)"
+                      :promotion-playoff-range="activeTierPlayoffRange ?? undefined"
+                      :playoff-qualifier-count="
+                        activeTierIdx === 0 && leaguePlayoffData?.enabled
+                          ? leaguePlayoffData.qualifierCount
+                          : 0
+                      "
+                    />
+                    <!-- The division's promotion play-off: drawn automatically
+                         once its table is final, played like any knockout. -->
+                    <section v-if="activeTierPlayoffRange" class="tier-playoff">
+                      <h3 class="tier-playoff-title">{{ trns("promotion.playoffTitle") }}</h3>
+                      <!-- The bracket fills its parent's height, so it needs one. -->
+                      <div v-if="activeTierPlayoff" class="tier-playoff-bracket">
+                        <PhasePanel
+                          :tournament="tournament"
+                          :phase-id="activeTierPlayoff.id"
+                          :teams="allTeams"
+                        />
+                      </div>
+                      <div v-else class="locked-panel">
+                        {{
+                          trns("promotion.playoffPending", {
+                            from: activeTierPlayoffRange.fromRank,
+                            to: activeTierPlayoffRange.toRank,
+                          })
+                        }}
+                      </div>
+                    </section>
+                  </div>
                 </Transition>
               </template>
               <template v-else>
@@ -360,6 +402,27 @@ const showStartPlayoffButton = computed(
                 <div v-else class="locked-panel">
                   {{ trns("tournament.phases.notStarted") }}
                 </div>
+              </template>
+              <!-- Multi-tier: the divisions' fixtures, plus each promotion
+                   play-off once drawn. -->
+              <template v-else-if="startedPhases.length">
+                <div class="gs-subtab-row">
+                  <AppSubTabBar
+                    v-model="fixturePhaseId"
+                    :options="[
+                      { value: '', label: trns('tournament.tabs.league') },
+                      ...startedPhases.map((p) => ({ value: p.id, label: p.name })),
+                    ]"
+                  />
+                </div>
+                <FixturesPanel
+                  v-if="fixturePhaseView"
+                  :key="fixturePhaseId"
+                  :tournament="fixturePhaseView"
+                  :teams="allTeams"
+                  :phase-id="fixturePhaseId"
+                />
+                <FixturesPanel v-else :tournament="tournament" :teams="allTeams" />
               </template>
               <FixturesPanel v-else :tournament="tournament" :teams="allTeams" />
             </div>
@@ -418,6 +481,14 @@ const showStartPlayoffButton = computed(
       @complete="onCeremonyComplete"
       @use-old-draw="onCeremonyUseOldDraw"
       @cancel="showCeremony = false"
+    />
+
+    <NewSeasonRelegationModal
+      v-if="showRelegationModal && tournament"
+      :tournament="tournament"
+      :all-teams="allTeams"
+      @confirm="handleRelegationSeasonConfirm"
+      @close="showRelegationModal = false"
     />
 
     <DetailMultiTierModal
@@ -520,6 +591,41 @@ const showStartPlayoffButton = computed(
 
 .not-found {
   color: var(--text-muted);
+}
+
+.tier-view {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+}
+
+.tier-playoff {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  padding-top: var(--sp-3);
+  border-top: 1px solid var(--border-light);
+}
+
+.tier-playoff-title {
+  margin: 0;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--accent-2);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.tier-playoff-bracket {
+  height: min(60vh, 460px);
+}
+
+.tier-playoff .locked-panel {
+  min-height: 0;
+  height: auto;
+  padding: var(--sp-3);
+  border: 1px dashed var(--border-light);
+  border-radius: var(--radius);
 }
 
 .locked-panel {

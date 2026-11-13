@@ -1,4 +1,21 @@
 ﻿export default {
+  promotion: {
+    up: "Up",
+    down: "Down",
+    playoffUp: "Up via play-off",
+    playoffTitle: "Promotion play-off",
+    playoffPending:
+      "Places {from}–{to} play for one more promotion spot once the division finishes.",
+    playoffShort: "Play-off",
+    seasonTitle: "New season — {name}",
+    relegationTitle: "Relegation",
+    relegated: "Relegated",
+    comingUp: "Coming up",
+    strongest: "Strongest",
+    random: "Random",
+    pickTeam: "Pick a team",
+    notEnoughTeams: "Not enough teams outside the tournament to fill every place.",
+  },
   drawCeremony: {
     potLabel: "Pot {n}",
     potSingle: "Pot",
@@ -1006,6 +1023,8 @@
         qualifiersPerGroup: "Advance per group",
         wildcards: "Wildcards",
         wildcardsHint: "Best of the teams finishing one place below",
+        relegation: "Relegated at season end",
+        relegationHint: "Bottom teams leave; you pick who replaces them in the new season",
         advancing: "{count} teams advance",
       },
       errors: {
@@ -1123,6 +1142,10 @@
       divisions: "{n} divisions",
       promotionRelegation: "Promotion / Relegation",
       teamsSwap: "teams swap between adjacent tiers",
+      promotionPlayoff: "Promotion play-off",
+      promotionPlayoffOff: "Off",
+      promotionPlayoffHint:
+        "The places right below direct promotion play a knockout — the winner goes up too",
       playoff: {
         enable: "Add a playoff stage",
         hint: "Top teams qualify for a knockout playoff after the regular season.",

@@ -62,6 +62,15 @@ const maxTierCount = computed(() => Math.min(MAX_TIER_COUNT, Math.floor(totalTea
 const maxPromotionCount = computed(() =>
   Math.max(1, Math.floor(totalTeams.value / props.draft.tierCount.value) - 1)
 )
+/** Room for a play-off between direct promotion and the division's own drop zone. */
+const maxPromotionPlayoffSize = computed(() =>
+  Math.max(
+    0,
+    Math.floor(totalTeams.value / props.draft.tierCount.value) -
+      2 * props.draft.promotionCount.value -
+      1
+  )
+)
 
 const teamCount = computed(() => props.draft.teamIds.value.length)
 </script>
@@ -207,6 +216,7 @@ const teamCount = computed(() => props.draft.teamIds.value.length)
     :league-leg-mode="draft.leagueLegMode.value"
     :tier-count="draft.tierCount.value"
     :promotion-count="draft.promotionCount.value"
+    :promotion-playoff-size="draft.promotionPlayoffSize.value"
     :tiebreaker="draft.tiebreaker.value"
     :win-points="draft.winPoints.value"
     :draw-points="draft.drawPoints.value"
@@ -215,6 +225,7 @@ const teamCount = computed(() => props.draft.teamIds.value.length)
     :is-multi-tier="draft.isMultiTier.value"
     :max-tier-count="maxTierCount"
     :max-promotion-count="maxPromotionCount"
+    :max-promotion-playoff-size="maxPromotionPlayoffSize"
     @save="applyLeague"
     @close="openModal = null"
   />
