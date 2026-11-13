@@ -21,6 +21,21 @@ function writeScore(score: number) {
   }
 }
 
+/** Long enough for the new tournament's page to mount and paint on a slow phone. */
+const CREATION_AD_DELAY_MS = 2_500
+/** Upper bound on the extra wait for an idle slot after the delay. */
+const IDLE_TIMEOUT_MS = 2_000
+
+function afterPageSettles(): Promise<void> {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      if (typeof requestIdleCallback === "function")
+        requestIdleCallback(() => resolve(), { timeout: IDLE_TIMEOUT_MS })
+      else resolve()
+    }, CREATION_AD_DELAY_MS)
+  })
+}
+
 export function useInterstitialAd() {
   /**
    * weight: 1 for a brand-new tournament, 0.75 for a new season of an existing one.
@@ -35,6 +50,13 @@ export function useInterstitialAd() {
       writeScore(score)
       return
     }
+    // Fired in the same tick as the navigation to the new tournament. Starting
+    // the SDK and the ad's own WebView while that page mounts stacked both on
+    // the UI thread and in GPU memory: on low-end phones that was a frozen
+    // (ANR) or white screen right after a big draw. Wait for the page to settle.
+    await afterPageSettles()
+    // Left the app meanwhile: keep the score so the ad comes on a later creation.
+    if (document.visibilityState !== "visible") return
     writeScore(0)
     await showInterstitialAd(INTERSTITIAL_AD_UNIT_ID)
   }
